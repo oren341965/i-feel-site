@@ -1,8 +1,7 @@
 import { defineConfig } from 'astro/config';
 
 export default defineConfig({
-  site: 'https://oren341965.github.io',
-  base: '/i-feel-site',
+  site: 'https://www.i-feel.co.il',
   integrations: [],
   devToolbar: { enabled: false },
   output: 'static'
