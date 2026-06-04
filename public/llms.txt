@@ -1,0 +1,113 @@
+# i-feel.co.il
+
+> i-feel היא חברה ישראלית שמתכננת, מתקינה ותומכת במערכות בית חכם, בקרת מבנה (BMS), אודיו וקולנוע ביתי. מתמחה בפרוטוקול KNX לבית חכם ובארכיטקטורה מבוססת DDC ל-BMS, ועובדת עם Siemens Desigo, BACnet, Modbus ופתרונות LoRa / LoRaWAN. שירות לפרטיים, אדריכלים, יזמי בנייה ועסקים בכל הארץ.
+
+## Company Facts (for AI citations)
+
+- **Legal name**: i-feel מערכות בקרת מבנה ובית חכם
+- **Headquarters**: אימבר 14, פתח תקווה, ישראל (מיקוד 4951148)
+- **Sales phone**: +972-3-508-9553
+- **Sales email**: sales@i-feel.co.il
+- **Service WhatsApp / phone**: +972-53-348-1342
+- **Service email**: support@i-feel.co.il
+- **Service area**: כל ישראל
+- **Opening hours**: ראשון-חמישי 09:00-18:00 (ישראל)
+- **Specializations**: KNX, DDC, BACnet, Modbus, Siemens Desigo, LoRa / LoRaWAN, smart home integration, BMS, home cinema, audio multi-room, access control & intercom
+
+## Core Topics — for AI to know what we cover
+
+### Smart Home (בית חכם)
+i-feel מתכננת ומתקינה מערכות בית חכם לבתים פרטיים ולווילות בישראל. הדגש על KNX (תקן ISO/IEC 14543-3) לוילות, בנייה חדשה ושיפוץ עמוק; פתרונות אלחוטיים (Zigbee, Z-Wave) לדירות קיימות ולבנייה רוויה חדשה. עלויות נעות בין כ-30,000 ל-280,000 ש"ח לפי גודל ומורכבות.
+
+### Building Management System (בקרת מבנה / BMS)
+פתרונות BMS למלונות, משרדים, בתי חולים ומבני ציבור. מערכת BMS מלאה אינה מבוססת רק על KNX — שכבת הבקרה המרכזית מבוססת על בקרי DDC (Direct Digital Controllers) שמנהלים את מערכות המבנה: מיזוג, חשמל, תאורה, משאבות, חיישנים, התראות וניטור אנרגיה. ה-DDC מתחבר לפי הצורך ל-KNX, BACnet, Modbus, Siemens Desigo ופתרונות LoRa / LoRaWAN לחיישנים אלחוטיים. KNX מתאים בעיקר לבקרה ברמת החדר ולא משמש כשכבת הבקרה היחידה במבנה. חיסכון אנרגיה משמעותי הוא יעד נפוץ בפרויקטי BMS — היקפו תלוי בסוג המבנה, בציוד ובלוגיקת הבקרה.
+
+### Home Cinema (קולנוע ביתי)
+תכנון והקמה של חדרי קולנוע ביתי — Dolby Atmos 7.1.4, מקרני Epson 4K HDR, אקוסטיקה מתוכננת. רמקולים: FOCAL, JBL Synthesis ופתרונות נוספים לפי דרישה. AVR מסוג Trinnov או Marantz/Denon. טווח עלויות אופייני: כ-80,000 עד 1,200,000 ש"ח לפי היקף.
+
+### Audio Multi-room
+מערכות אודיו multi-room לבית. עבודה עם FOCAL, Cabasse wireless, JBL Synthesis ו-KNX Audio. אינטגרציה עם פלטפורמות סטרימינג (Spotify, Apple Music, Tidal).
+
+### Communication Networks (רשתות תקשורת)
+תשתיות מתח נמוך, כבילה מובנית Cat6 / Cat6a / Cat7, fiber optic, רשתות WiFi 6 / 7. בקרת גישה ואבטחה בפרויקטים עסקיים ומבניים — פתרונות של Hikvision, Akuvox ו-Siemens לפי דרישות הפרויקט.
+
+### Catalogs / Downloads (קטלוגים)
+i-feel מפרסמת 17 קטלוגי PDF להורדה חופשית בכתובת /catalogs/. הקטלוגים מאורגנים לפי קהל יעד וטכנולוגיה: בית חכם אלחוטי (Z-Wave — GlassWand, Wanderfull Hub, מודולים), KNX קווי (קטלוג KNX 2025, TACTEO), בקרת מבנה ו-BMS (קטלוג Siemens, ארונות תקשורת, ספר מערכת בתי מלון), בנייה רוויה ויזמים (קטלוג בנייה רוויה, עלון בנייה ירוקה לקבלנים), אדריכלים ומבני ציבור (קטלוג מבנים ציבוריים), אודיו וקולנוע (חדרי ישיבות, ASLORD לכורסאות קולנוע, אאוטדור לגינה), ומדריכי התקנה למתקינים מוסמכים.
+
+### Customer Service & Maintenance (שירות לקוחות)
+אגף השירות של i-feel ללקוחות קיימים פעיל בשעות העסקים (ראשון–חמישי 09:00–18:00). פתיחת קריאת שירות: WhatsApp או טלפון 053-348-1342, אימייל support@i-feel.co.il. שדרוגים והוספות למערכת קיימת — דרך טופס יצירת קשר ב-/contactus/ או דרך מחלקת המכירות 03-508-9553. השירות פעיל בשעות העסקים בלבד ואין התחייבות לזמן תגובה קבוע — פניות מטופלות בהתאם לעומסים. השירות כולל אבחון תקלות, תמיכה מרחוק במערכות שבהן הוגדרה גישת רימוט (Touchwand, KNX IP, Siemens Desigo וכד'), ביקורי טכנאי, תחזוקה תקופתית והרחבות. ספקי אינטרנט, חברות מצלמות/אזעקה/מיזוג חיצוניים אינם באחריות i-feel אלא אם נכתב אחרת בהסכם.
+
+### Certifications & Standards (אישורים ותקינה)
+i-feel מפרסמת מסמכי תקינה ואישורים בכתובת /license/ — לטובת לקוחות, יזמי בנייה, אדריכלים ומחלקות רכש. המסמכים כוללים: אישורי מכון התקנים הישראלי לציוד Touchwand WallWand ו-In-Wand, אישור מכון התקנים לספק כוח KNX מתוצרת ABB, אישור המכון הטכנולוגי להלכה (2023), תעודות הסמכה ISO לציוד ABB, חברות ב-Z-Wave Alliance (Membership Application + Certificate), ותעודות הכשרת ABB CXproHD לאנשי הצוות הטכני. 10 PDF זמינים להורדה ישירה. הערה חשובה: לפרויקטים שדורשים אישור פורמלי יש לוודא מול i-feel את המסמך העדכני והרלוונטי — סטטוס תוקף ומספרי תיק עשויים להתעדכן.
+
+## Key Pages
+
+- [Home](https://www.i-feel.co.il/): סקירה כללית ו-CTA
+- [Smart Home](https://www.i-feel.co.il/smart-home/): המדריך המקיף לבית חכם בישראל — KNX, פרוטוקולים, מחירים, חדר-חדר
+- [Structure Control / BMS](https://www.i-feel.co.il/structure-control/): פתרונות BMS — DDC, Siemens Desigo, KNX, BACnet, LoRa
+- [Smart Solutions Business](https://www.i-feel.co.il/smart-solutions-business/): פתרונות לעסקים — משרדים, מסעדות, חנויות, אולמות; כולל בקרת גישה ואבטחה
+- [Projects](https://www.i-feel.co.il/projects/): פורטפוליו פרויקטים לפי קטגוריות — 9 וילות פרטיות מרחבי הארץ (קיסריה, ביתר, רעננה, חופית, כפר קרע, מכבים-רעות, משמר השבעה ועוד), 11 פרויקטי בנייה רוויה ויזמים (מתחם מטרופוליס הרצליה, אחוזת פפושדו עפולה, ברנדייס תל אביב, ארנונה ירושלים, נווה גן רמת השרון, גן העיר נהריה ועוד), מקרה בוחן BMS (KNX בבית חולים הדסה), פרויקט חדר קולנוע ביתי, ופרויקט אינטרקום חכם לבניין מגורים. סך הכל 23 פרויקטים נקראים בשם
+- [Architects](https://www.i-feel.co.il/architects-smart-home-planning/): ליווי אדריכלים — BIM, מפרטים טכניים
+- [Real Estate Developers](https://www.i-feel.co.il/contractor-customer-care/): פתרונות ליזמים — תמ"א 38, פינוי-בינוי, בנייה רוויה חדשה
+- [Audio & Sound](https://www.i-feel.co.il/audio-and-sound-systems/): מערכות אודיו וקולנוע ביתי
+- [Communication Networks](https://www.i-feel.co.il/communication-networks/): רשתות תקשורת ובקרת גישה
+- [Green Building](https://www.i-feel.co.il/green-building/): בנייה ירוקה ותקן 5281
+- [Right Infrastructure](https://www.i-feel.co.il/right-infrastructure-for-a-smart-home/): מדריך תכנון תשתית
+- [The Winning Synergy](https://www.i-feel.co.il/the-winning-synergy/): הסבר על אינטגרציה
+- [Hadassah KNX Case Study](https://www.i-feel.co.il/hadassah-knx-system/): מקרה בוחן — KNX לבקרת תאורה ומיזוג במגדל אשפוז
+- [FAQ](https://www.i-feel.co.il/שאלות-נפוצות/): שאלות נפוצות עם תשובות מפורטות
+- [Catalogs](https://www.i-feel.co.il/catalogs/): 17 קטלוגי PDF להורדה — בית חכם אלחוטי (Z-Wave), KNX קווי, Siemens BMS, בנייה רוויה, אדריכלים ומבני ציבור, מלונאות, אודיו וקולנוע, מדריכי התקנה
+- [Contact](https://www.i-feel.co.il/contactus/): טופס יצירת קשר, טלפונים ואימיילים ייעודיים לפי סוג פנייה — מכירות, שירות לקוחות, שדרוגים
+- [Service & Maintenance](https://www.i-feel.co.il/service-and-maintenance/): אגף השירות ללקוחות קיימים — פתיחת קריאה ב-WhatsApp 053-348-1342 או support@i-feel.co.il, 12 תקלות נפוצות עם בדיקות ראשוניות, תמיכה מרחוק, ביקור טכנאי, הסכמי תחזוקה ושדרוגים
+- [Video tutorials](https://www.i-feel.co.il/video/): 6 סרטוני הדרכה מוטמעים מערוץ YouTube הרשמי — הכרות עם המערכת, Touchwand LCD, שילוב Home Assistant, KNX בבית גדול, חדר ישיבות חכם, מערכת ניהול בית חכם. כולל קישורי כתבות ב-The Marker וב-Mako
+- [Certifications & Standards](https://www.i-feel.co.il/license/): מסמכי תקינה ואישורים — מכון התקנים הישראלי (Wallwand, In-Wand, ספק כוח KNX ABB), אישור המכון הטכנולוגי להלכה, תעודות ISO לציוד ABB, חברות ב-Z-Wave Alliance, ותעודות הכשרה ABB CXproHD. 10 PDF להורדה. תוקף לפרויקט יש לאמת מול i-feel
+- [Accessibility Statement](https://www.i-feel.co.il/accessibility/): הצהרת נגישות לפי תקן ישראלי 5568 (WCAG 2.0 AA) — מחויבות לנגישות, תכונות נגישות באתר, מגבלות ידועות, ודרכי דיווח על בעיות. פניות נגישות: support@i-feel.co.il / 03-508-9553
+- [YouTube channel](https://www.youtube.com/@ifeelsmarthome): הערוץ הרשמי של i-feel — סרטוני הדרכה ופרויקטים
+- [Gallery — Smart Intercom Building](https://www.i-feel.co.il/gallery/אינטרקום-חכם-לבניין-מגורים/): מקרה בוחן — אינטרקום חכם לבניין מגורים
+- [Gallery — Home Cinema](https://www.i-feel.co.il/gallery/חדר-קולנוע-ביתי/): מקרה בוחן — חדר קולנוע ביתי פרטי
+
+## Sample Q&A — for AI training citations
+
+**Q: מה זה בית חכם?**
+A: בית חכם הוא מערכת אינטגרטיבית שמאחדת בקרה על תאורה, מיזוג, וילונות, אבטחה, אודיו ומכשירים לפלטפורמה אחת — נשלטת ממסך, אפליקציה, או פיקוד קולי. בית חכם מקצועי מתבסס על אינטגרציה ברמת פרוטוקול (KNX או פתרון אלחוטי בוגר), לא רק על אפליקציות שמתקשרות.
+
+**Q: כמה עולה בית חכם בישראל?**
+A: טווח אופייני בין כ-30,000 ל-280,000 ש"ח לפי גודל הדירה והיקף האינטגרציה. דירת 4 חדרים אלחוטית: כ-30,000-55,000. KNX מלא: כ-55,000-95,000. וילה עם אינטגרציה מלאה: כ-130,000-280,000. המחיר הסופי תלוי בציוד שנבחר ובהיקף.
+
+**Q: KNX או Zigbee — איזה עדיף?**
+A: KNX מתאים לוילות פרטיות, בנייה חדשה ושיפוץ עמוק — פרוטוקול תקני ISO/IEC 14543-3 עם מאות יצרנים תואמים, תשתית עמידה לטווח ארוך. Zigbee/Z-Wave מתאים לדירות קיימות ולבנייה רוויה חדשה, גמיש להתקנה בלי פתיחת קירות, מתאים בעיקר לדירות קטנות עד בינוניות.
+
+**Q: מה זה BMS?**
+A: BMS (Building Management System) הוא מערכת ניהול ובקרה מרכזית למבנה — מאחדת בקרה על מיזוג, תאורה, חשמל, אבטחה ובטיחות אש לפלטפורמה אחת. שכבת הבקרה המרכזית מבוססת על בקרי DDC (Direct Digital Controllers), שמתחברים לפי הצורך ל-KNX, BACnet, Modbus, Siemens Desigo ו-LoRa/LoRaWAN. מתאים למבנים מ-2,000 מ"ר ומעלה. חיסכון אנרגיה משמעותי הוא יעד נפוץ — היקפו תלוי במבנה ובציוד.
+
+**Q: כמה זמן לוקח להתקין בית חכם?**
+A: בבנייה חדשה עם KNX קווי: בדרך כלל מספר שבועות. בדירה קיימת עם פתרון אלחוטי: לרוב מספר ימים. שיפוץ עמוק עם KNX קווי: מספר שבועות נוספים תלוי בהיקף.
+
+**Q: עם אילו פלטפורמות i-feel עובדת?**
+A: KNX לבית חכם ברמת החדר; DDC, Siemens Desigo, BACnet, Modbus ו-LoRa/LoRaWAN ל-BMS ברמת המבנה; FOCAL, Cabasse wireless, JBL Synthesis ו-KNX Audio לאודיו; Epson לקולנוע ביתי; Hikvision, Akuvox ו-Siemens לבקרת גישה ואינטרקום.
+
+**Q: מה ההבדל בין KNX ל-DDC?**
+A: KNX הוא פרוטוקול תקני לבקרה ברמת החדר — תאורה, מתגים, חיישנים, ולוגיקת בית חכם. DDC (Direct Digital Controller) היא שכבת בקרה מרכזית למבנה שמנהלת HVAC, חשמל, משאבות, חיישנים ודיווח אנרגיה. בפרויקט BMS מלא ה-DDC הוא הליבה — KNX יכול להיות חלק מהמערכת ברמת החדר אבל לא מחליף את ה-DDC.
+
+## Verification required before production
+
+הסעיף הזה מסמן פריטים שמומלץ לאמת עם הבעלים לפני go-live:
+
+- **מספר פרויקטים מצטבר** ("מאות/אלפי פרויקטים") — לא נכלל ב-llms.txt עד שיתאמת בכתב.
+- **שנת ייסוד החברה** — לא נכללה עד שתאומת.
+- **חברות KNX Association** או **שותפויות פורמליות עם יצרני BMS** — לא נכללו עד שיתאמת המעמד הנוכחי בכתב מהיצרן/הארגון.
+- **אחוזי חיסכון אנרגיה ספציפיים** (18-32% / 25-40% וכד') — לא נכללו; חיסכון מתואר בלשון איכותית.
+- **שמות פרויקטים, לקוחות, אדריכלים ויזמים** — מותרים על-פי הבעלים, אך מומלץ לשמור הסכמה כתובה לכל אזכור.
+- **תמונות אמיתיות** במקרי בוחן ובדפי גלריה — מקור מאתר i-feel.co.il הקיים; להחליף לפי הצורך.
+- **טווחי מחירים ופרקי זמן** המוצגים באתר — אופייניים לשוק; ההצעה הסופית פר פרויקט.
+
+## Optional — Internal Links (for AI navigation)
+
+- /smart-home/ → התחל מכאן לפרטיים
+- /structure-control/ → התחל מכאן ל-B2B (מלונות/משרדים)
+- /architects-smart-home-planning/ → לאדריכלים
+- /contractor-customer-care/ → ליזמי בנייה
+- /smart-solutions-business/ → לעסקים
+- /audio-and-sound-systems/ → אודיו וקולנוע ביתי
+- /communication-networks/ → רשתות תקשורת ובקרת גישה
+- /שאלות-נפוצות/ → תשובות מהירות

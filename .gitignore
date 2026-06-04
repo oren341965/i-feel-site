@@ -1,0 +1,29 @@
+# dependencies
+node_modules/
+.npm-cache/
+
+# build output
+dist/
+.astro/
+
+# env / secrets
+.env
+.env.*
+!.env.example
+
+# logs
+npm-debug.log*
+*.log
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Netlify
+.netlify/
+
+# Stray CLI state written into the project dir
+.appdata/
+.config/

@@ -1,0 +1,19 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import content from '../../page-html/shopengine-template/page-24.html?raw';
+
+const meta = {
+  title: "סל הקניות | i-feel",
+  description: "סל הקניות שלך באתר i-feel — מערכות בית חכם, KNX, BMS וקולנוע ביתי.",
+  canonical: "https://www.i-feel.co.il/shopengine-template/cart/",
+  ogTitle: "",
+  ogDescription: "",
+  ogUrl: "https://www.i-feel.co.il/shopengine-template/cart/",
+  ogImage: "https://www.i-feel.co.il/assets/og-cover.jpg",
+  robots: "noindex, follow",
+  jsonLd: "{\n  \"@context\": \"https://schema.org\",\n  \"@graph\": [\n    {\n      \"@type\": [\"LocalBusiness\", \"HomeAndConstructionBusiness\"],\n      \"@id\": \"https://www.i-feel.co.il/#business\",\n      \"name\": \"i-feel\",\n      \"alternateName\": \"i-feel מערכות בקרת מבנה ובית חכם\",\n      \"url\": \"https://www.i-feel.co.il/\",\n      \"logo\": \"https://www.i-feel.co.il/assets/ifeel-logo.png\",\n      \"image\": \"https://www.i-feel.co.il/assets/og-cover.jpg\",\n      \"description\": \"i-feel מתכננת, מתקינה ותומכת במערכות בית חכם KNX, בקרת מבנה (BMS), אודיו וקולנוע ביתי לבתים פרטיים, מלונות, משרדים ומבני ציבור בישראל.\",\n      \"telephone\": \"+972-3-508-9553\",\n      \"email\": \"sales@i-feel.co.il\",\n      \"address\": {\n        \"@type\": \"PostalAddress\",\n        \"streetAddress\": \"אימבר 14\",\n        \"addressLocality\": \"פתח תקווה\",\n        \"addressRegion\": \"מחוז המרכז\",\n        \"postalCode\": \"4951148\",\n        \"addressCountry\": \"IL\"\n      },\n      \"geo\": {\n        \"@type\": \"GeoCoordinates\",\n        \"latitude\": 32.09124,\n        \"longitude\": 34.88762\n      },\n      \"openingHoursSpecification\": [{\n        \"@type\": \"OpeningHoursSpecification\",\n        \"dayOfWeek\": [\"Sunday\",\"Monday\",\"Tuesday\",\"Wednesday\",\"Thursday\"],\n        \"opens\": \"09:00\",\n        \"closes\": \"18:00\"\n      }],\n      \"areaServed\": {\n        \"@type\": \"Country\",\n        \"name\": \"Israel\",\n        \"sameAs\": \"https://www.wikidata.org/wiki/Q801\"\n      },\n      \"knowsAbout\": [\n        \"KNX\",\n        \"Building Management System\",\n        \"Smart Home\",\n        \"Home Cinema\",\n        \"Audio Multi-room\",\n        \"Zigbee\",\n        \"BACnet\"\n      ],\n      \"sameAs\": [\n        \"https://www.facebook.com/SmarthomeIsrael\",\n        \"https://www.instagram.com/ifeelisrael\",\n        \"https://www.linkedin.com/company/200156\"\n      ]\n    },\n    {\n      \"@type\": \"WebSite\",\n      \"@id\": \"https://www.i-feel.co.il/#website\",\n      \"url\": \"https://www.i-feel.co.il/\",\n      \"name\": \"i-feel\",\n      \"inLanguage\": \"he-IL\",\n      \"publisher\": { \"@id\": \"https://www.i-feel.co.il/#business\" }\n    }\n  ]\n}"
+};
+---
+<BaseLayout {...meta}>
+  <Fragment set:html={content} />
+</BaseLayout>

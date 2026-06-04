@@ -1,0 +1,72 @@
+User-agent: *
+Allow: /
+Disallow: /old/
+Disallow: /wp-admin/
+Disallow: /wp-login.php
+Disallow: /cart/
+Disallow: /checkout/
+Disallow: /my-account/
+Disallow: /shopengine-template/
+Disallow: /?s=
+Disallow: /*?add-to-cart=
+
+# AI crawlers — explicitly allowed (we want llms.txt + AI Overviews coverage)
+User-agent: GPTBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: OAI-SearchBot
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: Claude-Web
+Allow: /
+
+User-agent: Claude-User
+Allow: /
+
+User-agent: anthropic-ai
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Perplexity-User
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: GoogleOther
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
+User-agent: Applebot-Extended
+Allow: /
+
+User-agent: meta-externalagent
+Allow: /
+
+User-agent: cohere-ai
+Allow: /
+
+User-agent: CCBot
+Allow: /
+
+User-agent: Bytespider
+Allow: /
+
+User-agent: Diffbot
+Allow: /
+
+# Sitemap location
+Sitemap: https://www.i-feel.co.il/sitemap.xml
+
+# AI discovery file (RFC draft for LLM-readable content)
+# https://www.i-feel.co.il/llms.txt

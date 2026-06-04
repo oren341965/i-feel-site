@@ -1,0 +1,89 @@
+# Netlify _redirects — i-feel.co.il static site
+# Format: <from-path> <to-path> <status>
+# Built: Phase 10F (2026-05-24)
+# All 301 (permanent) unless noted.
+
+# ---- Service / customer-area pages ----
+/qr/                         /service-and-maintenance/   301
+/service-2/                  /service-and-maintenance/   301
+/שירותי-ענן/                  /service-and-maintenance/   301
+/contact-us/                 /contactus/                  301
+
+# ---- Media / press ----
+/talking-about-us/           /video/#press                301
+
+# ---- WordPress magazine sections (intentionally not migrated) ----
+/podcast/                    /                            301
+/articles/                   /                            301
+/talk-about-design/          /                            301
+
+# ---- Private-villa gallery slugs (12 → /projects/#private) ----
+/gallery/smarthome-caesarea/         /projects/#private  301
+/gallery/smarthome-beytar/           /projects/#private  301
+/gallery/smarthome-hofit/            /projects/#private  301
+/gallery/smart-private/              /projects/#private  301
+/gallery/בית-יוקרתי-ברעננה/         /projects/#private  301
+/gallery/בית-פרטי-ברעננה/           /projects/#private  301
+/gallery/הכי-מודרנית-בכפר/          /projects/#private  301
+/gallery/בתים-פרטיים/                /projects/#private  301
+/gallery/פרויקט/                     /projects/#private  301
+/gallery/פרויקט-חשמל-חכם/           /projects/#private  301
+
+# ---- Developer / dense-residential gallery slugs (11 → /projects/#developers) ----
+/gallery/metropolis-2/                                /projects/#developers  301
+/gallery/metropolis/                                  /projects/#developers  301
+/gallery/sela/                                        /projects/#developers  301
+/gallery/ramat-gan/                                   /projects/#developers  301
+/gallery/gan-hair/                                    /projects/#developers  301
+/gallery/papushado/                                   /projects/#developers  301
+/gallery/ecocity/                                     /projects/#developers  301
+/gallery/arnona/                                      /projects/#developers  301
+/gallery/neve-gan/                                    /projects/#developers  301
+/gallery/מתחם-מטרופוליס-הרצליה/                      /projects/#developers  301
+/gallery/פרוייקט-האקליפטוס-בית-שמש/                  /projects/#developers  301
+
+# ---- WordPress admin paths (block any leaked discovery) ----
+/wp-admin/*                  /                            301
+/wp-login.php                /                            301
+
+# ---- WordPress native search query — redirect to contact until Pagefind ships ----
+# Netlify _redirects supports query-param matching with the ? prefix on the path
+/                            /contactus/                  301!  Query:s=:term
+
+# ---- End of file ----
+
+# Legacy flat HTML routes from production ZIP
+/accessibility.html /accessibility/ 301!
+/architects-smart-home-planning.html /architects-smart-home-planning/ 301!
+/audio-and-sound-systems.html /audio-and-sound-systems/ 301!
+/blog.html /blog/ 301!
+/catalogs.html /catalogs/ 301!
+/communication-networks.html /communication-networks/ 301!
+/contactus.html /contactus/ 301!
+/contractor-customer-care.html /contractor-customer-care/ 301!
+/green-building.html /green-building/ 301!
+/hadassah-knx-system.html /hadassah-knx-system/ 301!
+/license.html /license/ 301!
+/projects.html /projects/ 301!
+/right-infrastructure-for-a-smart-home.html /right-infrastructure-for-a-smart-home/ 301!
+/service-and-maintenance.html /service-and-maintenance/ 301!
+/smart-home.html /smart-home/ 301!
+/smart-solutions-business.html /smart-solutions-business/ 301!
+/structure-control.html /structure-control/ 301!
+/the-winning-synergy.html /the-winning-synergy/ 301!
+/video.html /video/ 301!
+/שאלות-נפוצות.html /שאלות-נפוצות/ 301!
+/gallery/אינטרקום-חכם-לבניין-מגורים.html /gallery/אינטרקום-חכם-לבניין-מגורים/ 301!
+/gallery/חדר-קולנוע-ביתי.html /gallery/חדר-קולנוע-ביתי/ 301!
+/shopengine-template/cart.html /shopengine-template/cart/ 301!
+# ---- Unified KNX / smart-home legacy routes ----
+/knx/ /smart-home/ 301
+/knx-system/ /smart-home/ 301
+/smart-home-knx/ /smart-home/ 301
+/home-automation/ /smart-home/ 301
+
+# ---- BMS case studies ----
+/structure-control/caesarea-rail-campus.html /structure-control/caesarea-rail-campus/ 301!
+/structure-control/brinks-bnei-brak.html /structure-control/brinks-bnei-brak/ 301!
+/structure-control/amazon-sarona.html /structure-control/amazon-sarona/ 301!
+/structure-control/d-city-roxon-hotels.html /structure-control/d-city-roxon-hotels/ 301!

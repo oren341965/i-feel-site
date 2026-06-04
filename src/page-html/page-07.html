@@ -1,0 +1,208 @@
+<!-- BREADCRUMB -->
+<nav class="bg-brand-50 border-b border-brand-100" aria-label="פירורי לחם">
+  <div class="max-w-7xl mx-auto px-4 py-3 text-sm">
+    <a href="/" class="text-brand-600 hover:text-accent-600">דף הבית</a>
+    <span class="mx-2 text-brand-400">›</span>
+    <span class="text-brand-900 font-medium">צור קשר</span>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero-gradient text-white">
+  <div class="max-w-5xl mx-auto px-4 py-16">
+    <h1 class="text-4xl md:text-5xl font-extrabold mb-4">צור קשר עם i-feel</h1>
+    <p class="text-xl text-brand-100 leading-relaxed">
+      פנייה אחת — תגיע למחלקה הנכונה. אנחנו כאן בשביל לקוחות חדשים, יזמי בנייה, אדריכלים, ופרויקטי בקרת מבנה — וגם ללקוחות קיימים שצריכים שירות.
+    </p>
+    <p class="text-sm text-brand-200 mt-4">
+      שעות פעילות: ראשון–חמישי 09:00–18:00 · משרדנו: אימבר 14, פתח תקווה
+    </p>
+  </div>
+</section>
+
+<!-- THANK YOU BANNER (shown via JS when ?sent=1) -->
+<section id="thank-you" class="hidden bg-green-50 border-y border-green-200" aria-live="polite">
+  <div class="max-w-3xl mx-auto px-4 py-6 text-center">
+    <h2 class="text-2xl font-bold text-green-800 mb-2">תודה — הפנייה התקבלה</h2>
+    <p class="text-green-700">נחזור אליכם בשעות הפעילות הקרובות. אם זה דחוף, צרו קשר ישירות ב-WhatsApp שירות <a href="https://wa.me/972533481342" class="underline font-semibold">053-348-1342</a>.</p>
+  </div>
+</section>
+
+<!-- THREE CONTACT PATHS -->
+<section class="py-12 lg:py-16">
+  <div class="max-w-7xl mx-auto px-4">
+    <h2 class="text-2xl md:text-3xl font-extrabold text-brand-900 mb-2">איך לפנות אלינו</h2>
+    <p class="text-brand-700 mb-8">בחרו את הערוץ שמתאים לפנייה שלכם — או השתמשו בטופס למטה ונפנה את הפנייה למחלקה הרלוונטית.</p>
+
+    <div class="grid md:grid-cols-2 gap-5">
+
+      <!-- Sales -->
+      <article class="bg-white border-2 border-brand-100 hover:border-accent-500 rounded-2xl p-6 transition">
+        <div class="text-xs font-bold uppercase tracking-wider text-accent-600 mb-2">מכירות ופרויקטים חדשים</div>
+        <h3 class="text-xl font-bold text-brand-900 mb-3">לקוח חדש או פרויקט</h3>
+        <p class="text-sm text-brand-700 mb-4">בית חכם פרטי, BMS למבנה, פרויקט יזמי, ליווי תכנון אדריכלי, או מערכת אודיו וקולנוע.</p>
+        <div class="space-y-2 text-sm">
+          <p><span class="text-brand-500">טלפון:</span> <a href="tel:+972-3-508-9553" class="font-bold text-brand-900 hover:text-accent-600">03-508-9553</a></p>
+          <p><span class="text-brand-500">אימייל:</span> <a href="mailto:sales@i-feel.co.il" class="font-bold text-brand-900 hover:text-accent-600">sales@i-feel.co.il</a></p>
+        </div>
+      </article>
+
+      <!-- Service -->
+      <article class="bg-white border-2 border-brand-100 hover:border-green-500 rounded-2xl p-6 transition">
+        <div class="text-xs font-bold uppercase tracking-wider text-green-700 mb-2">שירות לקוחות</div>
+        <h3 class="text-xl font-bold text-brand-900 mb-3">לקוח קיים שצריך תמיכה</h3>
+        <p class="text-sm text-brand-700 mb-4">פתיחת קריאת שירות, תקלות, שאלות תפעול, או בקשה לתחזוקה תקופתית.</p>
+        <a href="https://www.superform.spot-nik.com/form/63cd83d84533621571484d9b" target="_blank" rel="noopener" class="inline-flex items-center justify-center gap-2 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm font-bold transition mb-3 w-full">
+          טופס פתיחת קריאת שירות ↗
+        </a>
+        <div class="space-y-2 text-sm">
+          <p><span class="text-brand-500">WhatsApp / טלפון:</span> <a href="https://wa.me/972533481342" class="font-bold text-brand-900 hover:text-green-700">053-348-1342</a></p>
+          <p><span class="text-brand-500">אימייל:</span> <a href="mailto:support@i-feel.co.il" class="font-bold text-brand-900 hover:text-green-700">support@i-feel.co.il</a></p>
+        </div>
+      </article>
+
+    </div>
+  </div>
+</section>
+
+<!-- FORM SECTION -->
+<section id="contact-form-wrapper" class="bg-brand-50 py-12 lg:py-16 border-y border-brand-100">
+  <div class="max-w-3xl mx-auto px-4">
+    <h2 class="text-2xl md:text-3xl font-extrabold text-brand-900 mb-2">טופס יצירת קשר</h2>
+    <p class="text-brand-700 mb-8">מלאו את הפרטים ונחזור אליכם בשעות הפעילות הקרובות. שדות עם <span class="text-accent-600 font-bold">*</span> חובה.</p>
+
+    <form name="contact" method="POST" data-netlify="true" data-netlify-honeypot="bot-field" action="/contactus/?sent=1" class="bg-white rounded-2xl border border-brand-100 p-6 md:p-8 space-y-5">
+
+      <!-- Required by Netlify Forms for AJAX-style POST processing -->
+      <input type="hidden" name="form-name" value="contact">
+
+      <!-- Subject pre-filled from URL ?subject= param (e.g., links from /projects/ cards) -->
+      <input type="hidden" name="subject" id="f-subject">
+
+      <!-- Honeypot: hidden from real users, bots fill it and get rejected -->
+      <p hidden aria-hidden="true" style="display:none">
+        <label>Leave this field empty: <input name="bot-field" tabindex="-1" autocomplete="off" /></label>
+      </p>
+
+      <div class="grid md:grid-cols-2 gap-5">
+        <div>
+          <label for="f-name" class="req block text-sm font-bold text-brand-900 mb-1">שם מלא</label>
+          <input id="f-name" type="text" name="שם מלא" required autocomplete="name">
+        </div>
+        <div>
+          <label for="f-phone" class="req block text-sm font-bold text-brand-900 mb-1">טלפון</label>
+          <input id="f-phone" type="tel" name="טלפון" required autocomplete="tel" inputmode="tel" pattern="[0-9\-+\s()]{7,}">
+        </div>
+      </div>
+
+      <div>
+        <label for="f-email" class="req block text-sm font-bold text-brand-900 mb-1">אימייל</label>
+        <input id="f-email" type="email" name="אימייל" required autocomplete="email">
+      </div>
+
+      <div>
+        <label for="f-inquiry-type" class="req block text-sm font-bold text-brand-900 mb-1">סוג פנייה</label>
+        <select id="f-inquiry-type" name="סוג פנייה" required>
+          <option value="">-- בחרו סוג פנייה --</option>
+          <option value="לקוח חדש">לקוח חדש</option>
+          <option value="שירות לקוחות">שירות לקוחות</option>
+          <option value="יזם בנייה">יזם בנייה</option>
+          <option value="אדריכל / מעצב">אדריכל / מעצב</option>
+          <option value="BMS / בקרת מבנה">BMS / בקרת מבנה</option>
+          <option value="שדרוגים ותוספות">שדרוגים ותוספות</option>
+        </select>
+      </div>
+
+      <div>
+        <label for="f-address" class="block text-sm font-bold text-brand-900 mb-1">כתובת / עיר</label>
+        <input id="f-address" type="text" name="כתובת או עיר" autocomplete="street-address" placeholder="לדוגמה: רחוב הרצל 12, רמת השרון">
+      </div>
+
+      <div>
+        <label for="f-message" class="req block text-sm font-bold text-brand-900 mb-1">תיאור הפנייה</label>
+        <textarea id="f-message" name="תיאור הפנייה" rows="5" required placeholder="ספרו לנו במשפט-שניים מה הצורך — סוג הפרויקט, או מה התקלה אם זו קריאת שירות."></textarea>
+      </div>
+
+      <div class="flex items-start gap-2 pt-2">
+        <input id="f-consent" type="checkbox" name="אישור יצירת קשר" value="כן" required class="mt-1 w-4 h-4">
+        <label for="f-consent" class="text-sm text-brand-700 leading-snug">
+          אני מאשר/ת יצירת קשר מטעם i-feel לצורך מענה לפנייה זו. <span class="text-accent-600 font-bold">*</span>
+        </label>
+      </div>
+
+      <div class="pt-2">
+        <button type="submit" class="w-full md:w-auto bg-accent-500 hover:bg-accent-600 text-white px-8 py-3.5 rounded-lg font-bold text-lg transition shadow-md">
+          שליחת פנייה ←
+        </button>
+      </div>
+
+      <p class="text-xs text-brand-500 pt-2 border-t border-brand-100">
+        הטופס מעובד דרך Netlify Forms. אנחנו לא משתפים את הפרטים שלכם עם צד שלישי לצרכי שיווק.
+      </p>
+    </form>
+  </div>
+</section>
+
+<!-- SERVICE GUIDANCE -->
+<section class="py-12 lg:py-16">
+  <div class="max-w-3xl mx-auto px-4">
+    <div class="bg-green-50 border-2 border-green-200 rounded-2xl p-6 md:p-8">
+      <h2 class="text-xl md:text-2xl font-extrabold text-brand-900 mb-3">פנייה בנושא שירות? עזרו לנו לעזור לכם</h2>
+      <p class="text-brand-700 mb-4">אם זו קריאת שירות, נשמח אם תכינו מראש את הפרטים הבאים — זה יעזור לטכנאי להגיע מוכן ולקצר את הטיפול:</p>
+      <ul class="space-y-2 text-brand-800">
+        <li class="flex items-start gap-2"><span class="text-green-700 font-bold">·</span> <span><strong>שם הלקוח</strong> כפי שמופיע בהסכם השירות</span></li>
+        <li class="flex items-start gap-2"><span class="text-green-700 font-bold">·</span> <span><strong>כתובת ההתקנה</strong> המלאה (לא רק עיר)</span></li>
+        <li class="flex items-start gap-2"><span class="text-green-700 font-bold">·</span> <span><strong>טלפון</strong> שאליו אפשר לחזור</span></li>
+        <li class="flex items-start gap-2"><span class="text-green-700 font-bold">·</span> <span><strong>סוג המערכת</strong> שהותקנה (KNX, Z-Wave, BMS, סימנס וכד')</span></li>
+        <li class="flex items-start gap-2"><span class="text-green-700 font-bold">·</span> <span><strong>תיאור התקלה</strong> — מתי התחילה, מה ניסיתם, האם זה קורה כל הזמן או לסירוגין</span></li>
+        <li class="flex items-start gap-2"><span class="text-green-700 font-bold">·</span> <span><strong>תמונה או סרטון</strong> של התקלה, אם אפשר — מאוד עוזר לאבחון מרחוק</span></li>
+      </ul>
+      <p class="text-sm text-brand-600 mt-5 pt-4 border-t border-green-200">
+        את כל הפרטים אפשר לשלוח דרך הטופס למעלה, או ישירות ב-WhatsApp שירות <a href="https://wa.me/972533481342" class="font-bold underline">053-348-1342</a>.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- ADDRESS + RELATED -->
+<section class="bg-brand-50 py-12 border-y border-brand-100">
+  <div class="max-w-7xl mx-auto px-4 grid md:grid-cols-2 gap-8">
+    <div>
+      <h2 class="text-xl md:text-2xl font-extrabold text-brand-900 mb-3">המשרד שלנו</h2>
+      <address class="text-brand-800 not-italic space-y-1 mb-4">
+        <p><strong>i-feel מערכות בקרת מבנה ובית חכם</strong></p>
+        <p>אימבר 14, פתח תקווה 4951148</p>
+        <p>ישראל</p>
+        <p class="text-sm text-brand-600 mt-2">שעות פעילות: ראשון–חמישי 09:00–18:00</p>
+      </address>
+      <p class="text-sm">
+        <a href="https://www.google.com/maps/search/?api=1&query=אימבר+14+פתח+תקווה" target="_blank" rel="noopener" class="text-accent-600 font-semibold hover:underline">פתיחה במפת Google ↗</a>
+      </p>
+    </div>
+    <div>
+      <h2 class="text-xl md:text-2xl font-extrabold text-brand-900 mb-3">לפני שאתם פונים</h2>
+      <p class="text-brand-700 mb-3">אולי תמצאו את התשובה מהר יותר באחד הקישורים הבאים:</p>
+      <ul class="space-y-2 text-sm">
+        <li><a href="/שאלות-נפוצות/" class="text-accent-600 font-semibold hover:underline">שאלות נפוצות →</a> — מחירים, פרוטוקולים, התקנה, שירות</li>
+        <li><a href="/catalogs/" class="text-accent-600 font-semibold hover:underline">קטלוגים להורדה →</a> — KNX, Z-Wave, Siemens BMS ועוד</li>
+        <li><a href="/video/" class="text-accent-600 font-semibold hover:underline">הדרכות וידאו →</a> — מדריכי שימוש (בקרוב)</li>
+        <li><a href="/service-and-maintenance/" class="text-accent-600 font-semibold hover:underline">שירות ותחזוקה →</a> — מידע ללקוחות קיימים (בקרוב)</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- DEPARTMENT LINKS -->
+<section class="py-10">
+  <div class="max-w-5xl mx-auto px-4 text-center">
+    <h2 class="text-xl md:text-2xl font-bold text-brand-900 mb-4">קריאה לפי תחום</h2>
+    <div class="flex flex-wrap justify-center gap-2 text-sm">
+      <a href="/smart-home/" class="px-4 py-2 bg-brand-50 hover:bg-brand-100 rounded-lg text-brand-700 border border-brand-200">בית חכם</a>
+      <a href="/structure-control/" class="px-4 py-2 bg-brand-50 hover:bg-brand-100 rounded-lg text-brand-700 border border-brand-200">בקרת מבנה BMS</a>
+      <a href="/contractor-customer-care/" class="px-4 py-2 bg-brand-50 hover:bg-brand-100 rounded-lg text-brand-700 border border-brand-200">יזמי בנייה</a>
+      <a href="/architects-smart-home-planning/" class="px-4 py-2 bg-brand-50 hover:bg-brand-100 rounded-lg text-brand-700 border border-brand-200">אדריכלים</a>
+      <a href="/audio-and-sound-systems/" class="px-4 py-2 bg-brand-50 hover:bg-brand-100 rounded-lg text-brand-700 border border-brand-200">אודיו וקולנוע</a>
+      <a href="/communication-networks/" class="px-4 py-2 bg-brand-50 hover:bg-brand-100 rounded-lg text-brand-700 border border-brand-200">רשתות תקשורת</a>
+    </div>
+  </div>
+</section>

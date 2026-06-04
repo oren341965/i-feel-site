@@ -1,0 +1,18 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import content from '../page-html/page-07.html?raw';
+
+const meta = {
+  title: "צור קשר | בית חכם, BMS ושירות לקוחות | i-feel",
+  description: "צרו קשר עם i-feel — מכירות, שירות לקוחות ושדרוגים. טופס יצירת קשר, מייל, טלפון ו-WhatsApp. תשובה בשעות הפעילות. אימבר 14, פתח תקווה.",
+  canonical: "https://www.i-feel.co.il/contactus/",
+  ogTitle: "צור קשר | i-feel",
+  ogDescription: "טופס יצירת קשר, מספרי מכירות ושירות, ומייל ייעודי לפי סוג הפנייה. i-feel — בית חכם, BMS, שירות לקוחות.",
+  ogUrl: "https://www.i-feel.co.il/contactus/",
+  ogImage: "https://www.i-feel.co.il/assets/og-cover.jpg",
+  jsonLd: "{\n  \"@context\": \"https://schema.org\",\n  \"@graph\": [\n    {\n      \"@type\": \"ContactPage\",\n      \"@id\": \"https://www.i-feel.co.il/contactus/#page\",\n      \"url\": \"https://www.i-feel.co.il/contactus/\",\n      \"name\": \"צור קשר עם i-feel\",\n      \"description\": \"טופס יצירת קשר, מספרי מכירות ושירות, מייל ייעודי לפי סוג הפנייה.\",\n      \"inLanguage\": \"he-IL\",\n      \"isPartOf\": { \"@id\": \"https://www.i-feel.co.il/#website\" },\n      \"about\": { \"@id\": \"https://www.i-feel.co.il/#business\" }\n    },\n    {\n      \"@type\": \"BreadcrumbList\",\n      \"itemListElement\": [\n        {\"@type\":\"ListItem\",\"position\":1,\"name\":\"דף הבית\",\"item\":\"https://www.i-feel.co.il/\"},\n        {\"@type\":\"ListItem\",\"position\":2,\"name\":\"צור קשר\",\"item\":\"https://www.i-feel.co.il/contactus/\"}\n      ]\n    },\n    {\n      \"@type\": \"Organization\",\n      \"@id\": \"https://www.i-feel.co.il/#business\",\n      \"name\": \"i-feel\",\n      \"url\": \"https://www.i-feel.co.il/\",\n      \"logo\": \"https://www.i-feel.co.il/assets/ifeel-logo.png\",\n      \"address\": {\n        \"@type\": \"PostalAddress\",\n        \"streetAddress\": \"אימבר 14\",\n        \"addressLocality\": \"פתח תקווה\",\n        \"addressRegion\": \"מחוז המרכז\",\n        \"postalCode\": \"4951148\",\n        \"addressCountry\": \"IL\"\n      },\n      \"contactPoint\": [\n        {\n          \"@type\": \"ContactPoint\",\n          \"contactType\": \"sales\",\n          \"telephone\": \"+972-3-508-9553\",\n          \"email\": \"sales@i-feel.co.il\",\n          \"areaServed\": \"IL\",\n          \"availableLanguage\": [\"he\",\"en\"]\n        },\n        {\n          \"@type\": \"ContactPoint\",\n          \"contactType\": \"customer support\",\n          \"telephone\": \"+972-53-348-1342\",\n          \"email\": \"support@i-feel.co.il\",\n          \"areaServed\": \"IL\",\n          \"availableLanguage\": [\"he\",\"en\"]\n        }\n      ],\n      \"sameAs\": [\n        \"https://www.facebook.com/SmarthomeIsrael\",\n        \"https://www.instagram.com/ifeelisrael\",\n        \"https://www.linkedin.com/company/200156\",\n        \"https://www.youtube.com/@ifeelsmarthome\"\n      ]\n    }\n  ]\n}"
+};
+---
+<BaseLayout {...meta}>
+  <Fragment set:html={content} />
+</BaseLayout>

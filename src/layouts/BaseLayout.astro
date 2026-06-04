@@ -1,0 +1,79 @@
+---
+import '../styles/global.css';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+
+export interface Props {
+  title: string;
+  description?: string;
+  canonical?: string;
+  ogTitle?: string;
+  ogDescription?: string;
+  ogUrl?: string;
+  ogImage?: string;
+  jsonLd?: string;
+  robots?: string;
+}
+
+const {
+  title,
+  description = '',
+  canonical = 'https://www.i-feel.co.il/',
+  ogTitle = title,
+  ogDescription = description,
+  ogUrl = canonical,
+  ogImage = 'https://www.i-feel.co.il/assets/og-cover.jpg',
+  jsonLd = '',
+  robots = ''
+} = Astro.props;
+---
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{title}</title>
+    {description && <meta name="description" content={description} />}
+    {robots && <meta name="robots" content={robots} />}
+    <link rel="canonical" href={canonical} />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={ogUrl} />
+    <meta property="og:title" content={ogTitle} />
+    {ogDescription && <meta property="og:description" content={ogDescription} />}
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:locale" content="he_IL" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="icon" type="image/png" href="/assets/favicon.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script is:inline>
+      tailwind.config = {
+    theme: {
+      extend: {
+        fontFamily: { sans: ['Heebo', 'system-ui', 'sans-serif'] },
+        colors: {
+          brand: {
+            50:'#f0f5fb', 100:'#dae6f2', 200:'#b4cce5', 300:'#83a8d1',
+            400:'#5285ba', 500:'#3868a0', 600:'#285183', 700:'#1e3e66',
+            800:'#1a3354', 900:'#0f1f36'
+          },
+          accent: { 500:'#d4a544', 600:'#b8892e' }
+        }
+      }
+    }
+  }
+    </script>
+    {jsonLd && <script type="application/ld+json" set:html={jsonLd} />}
+  </head>
+  <body class="bg-white text-brand-900 antialiased">
+    <Header />
+    <main id="main-content">
+      <slot />
+    </main>
+    <Footer />
+  </body>
+</html>
