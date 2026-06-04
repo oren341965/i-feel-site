@@ -27,3 +27,12 @@ Thumbs.db
 # Stray CLI state written into the project dir
 .appdata/
 .config/
+
+# Build artifacts / deploy zips (not source)
+*.zip
+
+# Local preview server cruft
+.chrome-preview-profile/
+preview-server.mjs
+start-preview.cmd
+*.err
