@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>פרויקטים בבקרת מבנה ותאורה חכמה | i-feel</title>
+<meta name="description" content="תיק עבודות i-feel — פרויקטים נבחרים בתחום בקרת מבנה (BMS), אוטומציה ותאורה חכמה: מלונות, משרדים, מבני ציבור, אולמות תצוגה וקמפוסים.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy:#0a1a2f;
+    --navy-2:#0f2740;
+    --ink:#14233a;
+    --accent:#13c2c2;
+    --accent-2:#2f80ed;
+    --accent-grad:linear-gradient(135deg,#13c2c2 0%,#2f80ed 100%);
+    --paper:#f5f8fb;
+    --card:#ffffff;
+    --muted:#5b6b7e;
+    --line:#e4ebf2;
+    --shadow:0 10px 30px rgba(13,38,66,.08);
+    --shadow-lg:0 24px 60px rgba(13,38,66,.18);
+    --radius:18px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    font-family:'Heebo',-apple-system,Segoe UI,Arial,sans-serif;
+    background:var(--paper);color:var(--ink);line-height:1.65;
+    -webkit-font-smoothing:antialiased;
+  }
+  a{color:inherit;text-decoration:none}
+  .wrap{max-width:1240px;margin:0 auto;padding:0 22px}
+
+  /* ===== Header / Hero ===== */
+  header.hero{
+    position:relative;color:#fff;overflow:hidden;
+    background:radial-gradient(1200px 600px at 80% -10%,rgba(19,194,194,.35),transparent 60%),
+               radial-gradient(900px 500px at 10% 20%,rgba(47,128,237,.30),transparent 55%),
+               linear-gradient(160deg,var(--navy) 0%,var(--navy-2) 100%);
+  }
+  .hero-grid{
+    position:absolute;inset:0;opacity:.18;pointer-events:none;
+    background-image:linear-gradient(rgba(255,255,255,.5) 1px,transparent 1px),
+                     linear-gradient(90deg,rgba(255,255,255,.5) 1px,transparent 1px);
+    background-size:46px 46px;
+    -webkit-mask-image:radial-gradient(700px 400px at 70% 0%,#000,transparent 75%);
+            mask-image:radial-gradient(700px 400px at 70% 0%,#000,transparent 75%);
+  }
+  .topbar{display:flex;align-items:center;justify-content:space-between;padding:22px 0;position:relative;z-index:2}
+  .brand{display:flex;align-items:center;gap:12px;font-weight:800;font-size:24px;letter-spacing:.5px}
+  .brand .dot{width:13px;height:13px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 5px rgba(19,194,194,.25)}
+  .brand small{display:block;font-size:11px;font-weight:500;color:#9fc3d6;letter-spacing:3px;margin-top:-4px}
+  .topbar nav{display:flex;gap:8px}
+  .topbar nav a{font-size:14px;color:#cfe0ec;padding:8px 14px;border-radius:999px;transition:.2s}
+  .topbar nav a:hover{background:rgba(255,255,255,.1);color:#fff}
+
+  .hero-inner{position:relative;z-index:2;padding:46px 0 120px;text-align:center}
+  .eyebrow{display:inline-flex;align-items:center;gap:9px;font-size:13px;font-weight:600;letter-spacing:1px;
+    color:#bfeef0;background:rgba(19,194,194,.14);border:1px solid rgba(19,194,194,.35);
+    padding:8px 18px;border-radius:999px;margin-bottom:24px}
+  .eyebrow::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--accent)}
+  h1{font-size:clamp(32px,5.4vw,60px);font-weight:900;line-height:1.08;letter-spacing:-.5px}
+  h1 .grad{background:var(--accent-grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .hero-inner p.lead{max-width:680px;margin:22px auto 0;font-size:clamp(16px,2vw,20px);color:#c5d6e4;font-weight:300}
+
+  .stats{display:flex;flex-wrap:wrap;justify-content:center;gap:14px;margin-top:40px}
+  .stat{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);
+    backdrop-filter:blur(6px);border-radius:16px;padding:18px 26px;min-width:150px}
+  .stat b{display:block;font-size:32px;font-weight:800;background:var(--accent-grad);
+    -webkit-background-clip:text;background-clip:text;color:transparent}
+  .stat span{font-size:13px;color:#bcd0e0;font-weight:500}
+
+  .wave{position:absolute;bottom:-1px;left:0;right:0;line-height:0;z-index:1}
+  .wave svg{width:100%;height:70px;display:block}
+
+  /* ===== Filters ===== */
+  .filterbar{position:sticky;top:0;z-index:30;background:rgba(245,248,251,.86);
+    backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+  .filterbar .wrap{display:flex;gap:10px;flex-wrap:wrap;align-items:center;padding:14px 22px}
+  .chip{border:1px solid var(--line);background:#fff;color:var(--muted);
+    font-family:inherit;font-size:14px;font-weight:600;padding:9px 18px;border-radius:999px;
+    cursor:pointer;transition:.2s;white-space:nowrap}
+  .chip:hover{border-color:var(--accent);color:var(--ink)}
+  .chip.active{background:var(--ink);color:#fff;border-color:var(--ink)}
+  .chip .n{font-size:12px;opacity:.6;margin-inline-start:6px;font-weight:500}
+
+  /* ===== Grid ===== */
+  main{padding:38px 0 70px}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(330px,1fr));gap:26px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    overflow:hidden;box-shadow:var(--shadow);display:flex;flex-direction:column;
+    cursor:pointer;transition:transform .25s,box-shadow .25s;opacity:1}
+  .card:hover{transform:translateY(-6px);box-shadow:var(--shadow-lg)}
+  .card.hide{display:none}
+  .thumb{position:relative;height:198px;overflow:hidden;background:var(--navy)}
+  .thumb img{width:100%;height:100%;object-fit:cover;transition:transform .5s}
+  .card:hover .thumb img{transform:scale(1.06)}
+  .thumb.ph{display:flex;align-items:center;justify-content:center}
+  .thumb.ph svg{width:74px;height:74px;opacity:.9}
+  .badges{position:absolute;top:12px;inset-inline-start:12px;display:flex;gap:7px;flex-wrap:wrap;z-index:2}
+  .badge{font-size:11.5px;font-weight:700;padding:5px 11px;border-radius:999px;
+    background:rgba(10,26,47,.72);color:#eafaff;backdrop-filter:blur(4px);letter-spacing:.3px}
+  .badge.tech{background:rgba(19,194,194,.92);color:#04222a}
+  .thumb::after{content:"";position:absolute;inset:0;
+    background:linear-gradient(180deg,transparent 45%,rgba(7,18,33,.55) 100%)}
+  .num{position:absolute;bottom:10px;inset-inline-end:14px;z-index:2;color:#fff;
+    font-size:13px;font-weight:700;opacity:.85}
+  .card-body{padding:20px 20px 22px;display:flex;flex-direction:column;flex:1}
+  .card-body h3{font-size:20px;font-weight:800;line-height:1.25}
+  .loc{display:flex;align-items:center;gap:6px;color:var(--accent-2);font-size:13.5px;
+    font-weight:600;margin-top:6px}
+  .loc svg{width:14px;height:14px}
+  .teaser{color:var(--muted);font-size:14.5px;margin-top:12px;
+    display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+  .more{margin-top:16px;display:inline-flex;align-items:center;gap:7px;
+    color:var(--ink);font-weight:700;font-size:14px}
+  .more svg{width:16px;height:16px;transition:transform .2s}
+  .card:hover .more svg{transform:translateX(-4px)}
+
+  /* ===== Modal ===== */
+  .overlay{position:fixed;inset:0;background:rgba(8,18,33,.72);backdrop-filter:blur(4px);
+    z-index:100;display:none;align-items:flex-start;justify-content:center;padding:40px 18px;overflow-y:auto}
+  .overlay.open{display:flex}
+  .modal{background:#fff;width:100%;max-width:820px;border-radius:22px;overflow:hidden;
+    box-shadow:var(--shadow-lg);animation:pop .28s ease}
+  @keyframes pop{from{opacity:0;transform:translateY(24px) scale(.98)}to{opacity:1;transform:none}}
+  .modal-hero{position:relative;height:300px;background:var(--navy)}
+  .modal-hero img{width:100%;height:100%;object-fit:cover}
+  .modal-hero.ph{display:flex;align-items:center;justify-content:center}
+  .modal-hero.ph svg{width:110px;height:110px;opacity:.9}
+  .modal-hero::after{content:"";position:absolute;inset:0;
+    background:linear-gradient(180deg,transparent 40%,rgba(7,18,33,.82) 100%)}
+  .modal-hero .cap{position:absolute;bottom:20px;inset-inline-start:26px;inset-inline-end:26px;z-index:2;color:#fff}
+  .modal-hero .cap h2{font-size:clamp(24px,4vw,34px);font-weight:900;line-height:1.15}
+  .modal-hero .cap .loc{color:#9fe9ec}
+  .modal-hero .badges{top:18px}
+  .closeb{position:absolute;top:16px;inset-inline-end:16px;z-index:3;width:42px;height:42px;border-radius:50%;
+    border:none;background:rgba(10,26,47,.6);color:#fff;font-size:22px;cursor:pointer;
+    display:flex;align-items:center;justify-content:center;transition:.2s}
+  .closeb:hover{background:var(--accent);color:var(--ink);transform:rotate(90deg)}
+  .modal-body{padding:30px clamp(22px,4vw,40px) 40px}
+  .sec{margin-bottom:26px}
+  .sec h4{display:flex;align-items:center;gap:10px;font-size:17px;font-weight:800;margin-bottom:9px;color:var(--ink)}
+  .sec h4 i{display:inline-flex;width:30px;height:30px;border-radius:9px;background:rgba(19,194,194,.14);
+    color:var(--accent-2);align-items:center;justify-content:center;flex:none}
+  .sec h4 i svg{width:17px;height:17px}
+  .sec p{color:#3b4d63;font-size:15.5px}
+  .pill-tech{display:inline-block;background:var(--ink);color:#fff;font-weight:600;
+    font-size:14.5px;padding:8px 16px;border-radius:12px}
+  .scope-list,.benefit-list{list-style:none;display:grid;gap:9px;margin-top:4px}
+  .scope-list li,.benefit-list li{display:flex;gap:10px;align-items:flex-start;
+    color:#3b4d63;font-size:15px}
+  .scope-list li::before{content:"";flex:none;margin-top:9px;width:7px;height:7px;border-radius:2px;
+    background:var(--accent-2);transform:rotate(45deg)}
+  .benefit-list li svg{flex:none;width:19px;height:19px;color:var(--accent);margin-top:1px}
+  @media(min-width:560px){.scope-list{grid-template-columns:1fr 1fr}}
+
+  /* ===== CTA / Footer ===== */
+  .cta{margin:30px 0 0;border-radius:24px;color:#fff;text-align:center;padding:56px 24px;
+    background:radial-gradient(800px 400px at 80% 0%,rgba(19,194,194,.4),transparent 60%),
+               linear-gradient(160deg,var(--navy),var(--navy-2))}
+  .cta h2{font-size:clamp(26px,3.6vw,38px);font-weight:900}
+  .cta p{color:#c5d6e4;max-width:560px;margin:14px auto 26px;font-weight:300;font-size:17px}
+  .btn{display:inline-flex;align-items:center;gap:10px;background:var(--accent-grad);color:#04222a;
+    font-weight:800;font-size:16px;padding:15px 30px;border-radius:999px;transition:.2s;
+    box-shadow:0 12px 30px rgba(19,194,194,.35)}
+  .btn:hover{transform:translateY(-3px);box-shadow:0 18px 40px rgba(19,194,194,.5)}
+  footer{padding:40px 0;text-align:center;color:var(--muted);font-size:14px}
+  footer .brand{justify-content:center;color:var(--ink);margin-bottom:10px}
+
+  .empty{text-align:center;color:var(--muted);padding:60px 0;font-size:18px;display:none}
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="hero-grid"></div>
+  <div class="wrap">
+    <div class="topbar">
+      <div class="brand">i-feel<span class="dot"></span><small>SMART BUILDINGS</small></div>
+      <nav>
+        <a href="#projects">פרויקטים</a>
+        <a href="#contact">צרו קשר</a>
+      </nav>
+    </div>
+    <div class="hero-inner">
+      <span class="eyebrow">תיק עבודות נבחר</span>
+      <h1>פרויקטים ב<span class="grad">בקרת מבנה</span><br>ותאורה חכמה</h1>
+      <p class="lead">מערכות BMS, אוטומציה ותאורה חכמה למלונות, משרדים, מבני ציבור ואולמות תצוגה — תכנון, הטמעה והפעלה מקצה לקצה.</p>
+      <div class="stats">
+        <div class="stat"><b>24</b><span>פרויקטים נבחרים</span></div>
+        <div class="stat"><b>KNX</b><span>תקן בקרה פתוח</span></div>
+        <div class="stat"><b>BMS</b><span>Siemens Desigo</span></div>
+        <div class="stat"><b>100%</b><span>תכנון והטמעה עצמאיים</span></div>
+      </div>
+    </div>
+  </div>
+  <div class="wave">
+    <svg viewBox="0 0 1440 70" preserveAspectRatio="none"><path fill="#f5f8fb" d="M0,40 C360,75 720,0 1080,28 C1260,42 1380,55 1440,50 L1440,70 L0,70 Z"></path></svg>
+  </div>
+</header>
+
+<div class="filterbar" id="projects">
+  <div class="wrap" id="filters"></div>
+</div>
+
+<main>
+  <div class="wrap">
+    <div class="grid" id="grid"></div>
+    <div class="empty" id="empty">לא נמצאו פרויקטים בקטגוריה זו.</div>
+
+    <section class="cta" id="contact">
+      <h2>יש לכם מבנה? יש לנו פתרון.</h2>
+      <p>תכנון והטמעה של מערכות בקרת מבנה, אוטומציה ותאורה חכמה — בהתאמה מלאה לצרכים שלכם.</p>
+      <a class="btn" href="/contactus/">
+        לפרטים ותיאום פגישה
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" width="18" height="18"><path d="M15 18l-6-6 6-6"/></svg>
+      </a>
+    </section>
+  </div>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="brand">i-feel<span class="dot"></span></div>
+    <div>בית חכם · בקרת מבנה · אוטומציה ותאורה חכמה</div>
+    <div style="margin-top:8px;opacity:.7">© <span id="yr"></span> i-feel. כל הזכויות שמורות.</div>
+  </div>
+</footer>
+
+<!-- Modal -->
+<div class="overlay" id="overlay">
+  <div class="modal" id="modal"></div>
+</div>
+
+<script>
+/* ---------- Icons ---------- */
+const I = {
+  pin:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21s7-5.6 7-11a7 7 0 1 0-14 0c0 5.4 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>',
+  arrow:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M15 18l-6-6 6-6"/></svg>',
+  target:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4"/></svg>',
+  bulb:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-4 10.5c.7.7 1 1.3 1 2.5h6c0-1.2.3-1.8 1-2.5A6 6 0 0 0 12 3z"/></svg>',
+  chip:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="6" y="6" width="12" height="12" rx="2"/><path d="M9 1v4M15 1v4M9 19v4M15 19v4M1 9h4M1 15h4M19 9h4M19 15h4"/></svg>',
+  layers:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l9 5-9 5-9-5 9-5z"/><path d="M3 13l9 5 9-5"/></svg>',
+  check:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6L9 17l-5-5"/></svg>',
+  building:'<svg viewBox="0 0 24 24" fill="none" stroke="#cfe8ee" stroke-width="1.5"><rect x="4" y="3" width="16" height="18" rx="1"/><path d="M8 7h2M14 7h2M8 11h2M14 11h2M8 15h2M14 15h2M10 21v-3h4v3"/></svg>'
+};
+
+/* ---------- Categories ---------- */
+const CATS = {
+  bms:'בקרת מבנה',
+  hotel:'מלונאות',
+  office:'משרדים',
+  showroom:'אולמות תצוגה',
+  public:'מבני ציבור'
+};
+
+/* ---------- Data ---------- */
+const P = [
+{n:1,t:'המכון הגיאולוגי',loc:'ירושלים',cat:'public',tech:'KNX · DALI',img:'image1.png',
+ ch:'הקמת מערכת תאורה חכמה במבנה מחקר ומשרדים, המאפשרת שליטה מלאה בתאורה בהתאם לתפוסת החדרים, שעות הפעילות וצרכי המשתמשים. נדרש פתרון שיספק נוחות מרבית לעובדים לצד חיסכון משמעותי בצריכת האנרגיה ויכולת ניהול ותחזוקה פשוטה לאורך זמן.',
+ sol:'תכנון והטמעה של מערכת תאורה חכמה המבוססת על אוטומציה מתקדמת, הכוללת בקרת תאורה לפי אזורים, הפעלה אוטומטית בהתאם לנוכחות משתמשים, ויכולת התאמה של עוצמות התאורה לצרכים המשתנים של המבנה.',
+ sys:'מערכת KNX מתקדמת בשילוב בקרי DALI לניהול גופי התאורה וחיישני נוכחות לניטור תפוסת החללים והפעלת התאורה באופן אוטומטי וחכם.',
+ scope:['עשרות מעגלי תאורה במשרדים וחדרי עבודה','בקרי DALI לניהול גופי התאורה','חיישני נוכחות לאזורים משותפים וחללי שירות','הפעלה אוטומטית לפי תפוסה'],
+ ben:['חיסכון משמעותי בצריכת החשמל','שיפור נוחות המשתמשים בתאורה אוטומטית','הארכת חיי גופי התאורה','מערכת יציבה וקלה לתפעול ותחזוקה','גמישות מלאה לשינויים עתידיים ללא שינוי תשתיות']},
+
+{n:2,t:'ברינקס (BRINKS)',loc:'בני ברק',cat:'bms',tech:'Siemens Desigo BMS',img:'image2.jpeg',
+ ch:'הקמת מערכת בקרת מבנה מרכזית עבור מתקן תפעולי בעל דרישות גבוהות של אמינות, זמינות ובקרה רציפה. נדרש לאחד מגוון מערכות טכניות תחת פלטפורמה אחת, לאפשר שליטה בזמן אמת, לייעל את צריכת האנרגיה ולספק לצוות האחזקה כלי ניהול מתקדם ונוח.',
+ sol:'תכנון והטמעה של מערכת בקרת מבנה מרכזית (BMS) המאפשרת ניטור, שליטה וניהול של כלל המערכות האלקטרומכניות באתר מממשק אחד, עם התראות, לוחות מחוונים, תרחישי הפעלה אוטומטיים ותיעוד מלא של אירועים ותקלות.',
+ sys:'מערכת Siemens Desigo המבוססת על בקרי DDC מתקדמים, הכוללת ממשק ניהול מרכזי לניטור ושליטה בכל מערכות המבנה.',
+ scope:['מערכות מיזוג אוויר ואוורור','מערכות אינסטלציה ומשאבות','מערכות תאורה','מערכות חשמל ולוחות חשמל','לוחות זמנים ותרחישי הפעלה אוטומטיים','ניטור תקלות, התראות ומגמות (Trends)'],
+ ben:['ריכוז כלל מערכות המבנה בפלטפורמה אחת','שיפור משמעותי ביכולת הניטור והבקרה','חיסכון באנרגיה בתפעול אוטומטי ולוחות זמנים','התראות בזמן אמת על תקלות ואירועים חריגים','שיפור אמינות והקטנת זמני תגובה','גמישות להרחבה ושילוב מערכות נוספות']},
+
+{n:3,t:'קמפוס הרכבת',loc:'קיסריה',cat:'bms',tech:'Siemens Desigo BMS',img:'image4.png',
+ ch:'הקמת מערכת בקרת מבנה מרכזית עבור קמפוס רחב היקף הכולל מספר מבנים ומערכות טכניות מורכבות. הפרויקט דרש ריכוז כלל מערכות האנרגיה והתפעול תחת פלטפורמה אחת, תוך שיפור היעילות האנרגטית, זמינות המערכות ויכולת הניהול השוטפת.',
+ sol:'תכנון והטמעה של מערכת BMS מרכזית המאפשרת שליטה, בקרה וניטור בזמן אמת של כלל מערכות המבנה — מסכי ניהול גרפיים, ניתוח נתוני אנרגיה, התראות אוטומטיות ומנגנוני דיווח מתקדמים לקבלת החלטות מהירה.',
+ sys:'מערכת Siemens Desigo המבוססת על בקרי DDC מתקדמים, עם שרת ניהול מרכזי המאגד את כלל מערכות הקמפוס תחת ממשק אחיד.',
+ scope:['ניהול ובקרת אנרגיה מרכזית','שליטה וניטור של מערך הצ׳ילרים','בקרה על יחידות טיפול באוויר (יט״א)','בקרה על מערכות חימום וקירור','ניטור מונים וצריכות אנרגיה','אינטגרציה ללוחות חשמל ותשתית','מערכת מגמות (Trends) ודוחות ביצועים'],
+ ben:['שליטה מלאה על כלל הקמפוס מממשק אחד','שיפור היעילות האנרגטית והמעקב אחר צריכות','התראות מיידיות על תקלות ואירועים קריטיים','שיפור זמינות וצמצום זמני השבתה','דוחות ניהוליים וניתוח ביצועים לאורך זמן','תשתית גמישה להרחבות עתידיות']},
+
+{n:4,t:'מרכז הספורט',loc:'אילת',cat:'bms',tech:'Siemens Desigo BMS',img:null,
+ ch:'הקמת מערכת בקרת מבנה מרכזית עבור קומפלקס ספורט מודרני הכולל אולמות ספורט, טריבונות, שטחים ציבוריים ומערכות תשתית רבות. נדרש לאפשר שליטה מלאה על כלל מערכות המבנה, סביבת פעילות נוחה ובטוחה, חיסכון באנרגיה וניהול מרכזי מתקדם.',
+ sol:'תכנון והטמעה של מערכת BMS מרכזית לניטור ושליטה בזמן אמת על כלל המערכות הטכניות — הפעלה אוטומטית לפי לוחות זמנים ואירועים, ניהול תקלות והתראות וממשק גרפי מתקדם לצוותי התפעול והאחזקה.',
+ sys:'מערכת Siemens Desigo המבוססת על בקרי DDC מתקדמים, בשילוב ממשק ניהול מרכזי עבור כלל מערכות המבנה.',
+ scope:['בקרת תאורה באולמות הספורט ובטריבונות','שליטה וניטור של מיזוג אוויר ואוורור','ניטור מערכות חשמל ולוחות חשמל','ניהול אנרגיה ומעקב אחר צריכות','ניטור צריכת מים ומערכות אינסטלציה','גילוי והתראות על הצפות ותקלות תשתית'],
+ ben:['שליטה מלאה על הקומפלקס מממשק אחד','חיסכון משמעותי באנרגיה בבקרה חכמה','התאמת תאורה ומיזוג לאופי הפעילות','זיהוי מהיר של הצפות ותקלות תשתית','שיפור יעילות התחזוקה וזמני התגובה','מערכת אמינה וגמישה להרחבות עתידיות']},
+
+{n:5,t:'הוט סינמה',loc:'רשת בתי קולנוע',cat:'public',tech:'KNX · דימור',img:'image6.png',
+ ch:'הקמת מערכת תאורה חכמה עבור מתחם בתי קולנוע הכולל מספר אולמות הקרנה ושטחים ציבוריים. נדרש ליצור חוויית צפייה מושלמת תוך סנכרון מלא בין מערכות התאורה למערכות ההקרנה, לצד חיסכון באנרגיה ותפעול פשוט.',
+ sol:'תכנון והטמעה של מערכת תאורה חכמה המפעילה אוטומטית תרחישי תאורה שונים בהתאם לשלבי ההקרנה, ומאפשרת מעבר חלק בין מצבי התאורה ללא התערבות ידנית.',
+ sys:'מערכת KNX בשילוב בקרי דימור מתקדמים ואינטגרציה מלאה למערכות המקרנים וההקרנה באולמות הקולנוע.',
+ scope:['תאורת אולמות הקולנוע','תאורת לובי, מבואות ומסדרונות','מערכות דימור מתקדמות','תרחישי תאורה אוטומטיים','אינטגרציה עם מערכות ההקרנה והמקרנים','ממשקי שליטה ותפעול לצוותי האתר'],
+ ben:['חוויית צפייה מקצועית ואיכותית','הפעלה אוטומטית של התאורה לפי מצב ההקרנה','חיסכון באנרגיה בשליטה מדויקת בעוצמות','תפעול פשוט ויעיל לצוותי המקום','שיפור אמינות והפחתת תקלות תפעוליות','גמישות להרחבה והתאמה לדרישות עתידיות']},
+
+{n:6,t:'משרדי Conecteam',loc:'',cat:'office',tech:'Siemens Desigo',img:null,
+ ch:'הקמת מערכת בקרת מבנה ותאורה עבור מתחם משרדים מודרני, תוך מתן שליטה מרכזית על מערכות התאורה והתשתיות החשמליות. נדרש פתרון שיאפשר ניהול יעיל של המבנה, חיסכון באנרגיה ונוחות מרבית לעובדים ולהנהלה.',
+ sol:'תכנון והטמעה של מערכת בקרת מבנה מרכזית לניטור, שליטה וניהול של מערכות התאורה והחשמל מממשק אחיד — לוחות זמנים, תרחישי הפעלה אוטומטיים, התראות ומסכי ניהול גרפיים ידידותיים.',
+ sys:'מערכת Siemens Desigo המבוססת על בקרי DDC וממשק ניהול מרכזי לניטור ושליטה על מערכות התאורה והחשמל במבנה.',
+ scope:['שליטה ובקרה על מערכות התאורה','ניהול אזורי תאורה וחלוקה לפי שימושים','שליטה על מעגלי חשמל נבחרים','לוחות זמנים ותרחישי הפעלה אוטומטיים','ניטור תקלות והתראות בזמן אמת','ממשק גרפי מרכזי לניהול ותפעול'],
+ ben:['שליטה מלאה על התאורה מממשק אחד','חיסכון באנרגיה בניהול חכם של שעות הפעילות','שיפור נוחות המשתמשים בסביבת העבודה','ניטור וזיהוי תקלות בזמן אמת','תפעול פשוט וידידותי לאחזקה','מערכת גמישה להרחבות ושינויים']},
+
+{n:7,t:'משרדי RAPID',loc:'',cat:'office',tech:'KNX · DALI',img:'image7.png',
+ ch:'הקמת מערכת תאורה חכמה עבור משרדי החברה, ויצירת סביבת עבודה נוחה, מודרנית ויעילה. נדרש לאפשר שליטה גמישה בתאורה באזורים שונים, לשפר את חוויית המשתמש ולצמצם צריכת אנרגיה באמצעות אוטומציה ובקרה מתקדמת.',
+ sol:'תכנון והטמעה של מערכת תאורה חכמה לשליטה מלאה על גופי התאורה במשרדים, חדרי ישיבות, חללים משותפים ואזורי עבודה — כולל תרחישי תאורה, הפעלה לפי אזורים וניהול מרכזי.',
+ sys:'מערכת KNX בשילוב בקרי DALI לשליטה מדויקת על גופי התאורה, כולל דימור והתאמת התאורה לצורכי המשתמשים.',
+ scope:['תאורת משרדים וחללי עבודה','תאורת חדרי ישיבות','תאורת שטחים ציבוריים ומעברים','בקרת DALI לגופי התאורה','תרחישי תאורה מותאמים לפעילות','ממשקי שליטה וניהול למשתמשים ולאחזקה'],
+ ben:['שיפור נוחות העובדים בשליטה גמישה בתאורה','חיסכון משמעותי בצריכת החשמל','שליטה מדויקת בכל גוף תאורה ובכל אזור','סביבת עבודה מודרנית ונעימה','מערכת אמינה המבוססת על תקנים פתוחים','גמישות מלאה לשינויים והרחבות']},
+
+{n:8,t:'משרדי AMAZON',loc:'שרונה, תל אביב',cat:'office',tech:'KNX · תאורה והצללה',img:null,
+ ch:'הקמת מערכת אוטומציה מתקדמת עבור משרדי החברה במתחם שרונה, וניהול חכם של מערכות התאורה והצלונים בקנה מידה גדול. הפרויקט דרש שילוב בין נוחות המשתמשים, ניצול מיטבי של אור טבעי, חיסכון באנרגיה ושליטה מרכזית על אלפי רכיבי הצללה ותאורה.',
+ sol:'תכנון והטמעה של מערכת KNX מרכזית המנהלת את מערכות התאורה והצלונים — שליטה אוטומטית וידנית, תרחישים מותאמים לאזורי עבודה וניהול חכם של חדירת אור השמש בהתאם לשעות היום ולתנאי הסביבה.',
+ sys:'מערכת KNX מתקדמת לניהול ושליטה על מערכות התאורה וההצללה, כולל אינטגרציה בין מערכות הבקרה במבנה.',
+ scope:['שליטה ובקרה על מערכות התאורה','ניהול אלפי צלונים ממונעים','תרחישי תאורה והצללה אוטומטיים','שליטה לפי אזורים, קומות וחללי עבודה','תזמון אוטומטי לפי שעות הפעילות','ממשקי שליטה למשתמשים ולאחזקה'],
+ ben:['שיפור משמעותי בנוחות העובדים','ניצול מיטבי של תאורה טבעית והפחתת עומסי חום','חיסכון באנרגיה בבקרה חכמה על תאורה והצללה','שליטה מרכזית על אלפי רכיבים מממשק אחד','גמישות מלאה בהתאמת סביבת העבודה','מערכת אמינה למתחמי משרדים גדולים']},
+
+{n:9,t:'משרדי הנהלת הפניקס',loc:'',cat:'office',tech:'KNX',img:null,
+ ch:'הקמת מערכת תאורה חכמה עבור משרדי ההנהלה, ויצירת סביבת עבודה יוקרתית, נוחה ויעילה, לצד חיסכון באנרגיה ושליטה פשוטה למשתמשים.',
+ sol:'תכנון והטמעה של מערכת KNX לשליטה מרכזית על התאורה, הפעלת תרחישים מותאמים לחללי העבודה וחדרי הישיבות וניהול יעיל של מערך התאורה.',
+ sys:'מערכת KNX לבקרת תאורה חכמה.',
+ scope:['שליטה ובקרה על מערכות התאורה','תרחישי תאורה לחדרי ישיבות ומשרדי הנהלה','שליטה לפי אזורים ושעות פעילות'],
+ ben:['חוויית משתמש משופרת','חיסכון באנרגיה','תפעול פשוט ונוח','מערכת יציבה ואמינה']},
+
+{n:10,t:'תיאטרון ז׳ראר בכר',loc:'ירושלים',cat:'public',tech:'KNX',img:'image8.jpeg',
+ ch:'הקמת מערכת תאורה חכמה עבור מתחם התיאטרון, המאפשרת גמישות תפעולית, יצירת אווירה מתאימה לאירועים שונים וניהול יעיל של מערכות התאורה.',
+ sol:'הטמעת מערכת KNX לשליטה מרכזית על התאורה באולמות, במבואות ובשטחים הציבוריים, כולל הפעלת תרחישי תאורה בהתאם לצורכי המקום.',
+ sys:'מערכת KNX לבקרת תאורה חכמה.',
+ scope:['שליטה על תאורת האולמות והמבואות','תרחישי תאורה מותאמים לאירועים','ניהול מרכזי של מערכות התאורה','שליטה באמצעות אפליקציה ייעודית'],
+ ben:['גמישות תפעולית גבוהה','חיסכון באנרגיה','שיפור חוויית המבקרים','מערכת אמינה וקלה לתפעול']},
+
+{n:11,t:'משרדי חנן מור',loc:'',cat:'office',tech:'KNX',img:null,
+ ch:'יצירת סביבת עבודה מודרנית ונוחה תוך שליטה יעילה במערכות התאורה במשרדי החברה.',
+ sol:'תכנון והטמעה של מערכת תאורה חכמה לשליטה מרכזית על כלל אזורי המשרד והתאמת התאורה לצורכי המשתמשים.',
+ sys:'מערכת KNX לבקרת תאורה חכמה.',
+ scope:['שליטה על תאורת משרדים','תאורת חדרי ישיבות','תאורת שטחים משותפים','תרחישי תאורה מתקדמים'],
+ ben:['שיפור נוחות המשתמשים','חיסכון באנרגיה','תפעול פשוט וידידותי','גמישות בהתאמת חללי העבודה']},
+
+{n:12,t:'משרדי וקסמן',loc:'',cat:'office',tech:'KNX',img:null,
+ ch:'הטמעת מערכת תאורה חכמה המאפשרת נוחות מרבית לעובדים לצד חיסכון באנרגיה.',
+ sol:'הקמת מערכת KNX לניהול מרכזי של התאורה במשרדים, המאפשרת שליטה לפי אזורים ויצירת תרחישי תאורה מותאמים לצורכי הארגון.',
+ sys:'מערכת KNX לבקרת תאורה.',
+ scope:['ניהול מרכזי של מערכות התאורה','חלוקה לאזורי תאורה','תרחישי הפעלה מותאמים','שליטה נוחה למשתמשים'],
+ ben:['שיפור איכות סביבת העבודה','חיסכון בצריכת החשמל','שליטה פשוטה וגמישה']},
+
+{n:13,t:'עולם הספורט',loc:'פתח תקווה',cat:'public',tech:'KNX',img:null,
+ ch:'ניהול יעיל של מערכות התאורה בחנות ובמתחם מסחרי רחב היקף, תוך התאמת התאורה לאזורי המכירה, התצוגה והשירות, ויצירת חוויית קנייה נוחה ומזמינה ללקוחות.',
+ sol:'הטמעת מערכת תאורה חכמה לשליטה מרכזית על כלל אזורי החנות, יצירת תרחישי תאורה בהתאם לאופי הפעילות ושיפור היעילות האנרגטית.',
+ sys:'מערכת KNX לבקרת תאורה חכמה.',
+ scope:['שליטה על תאורת אזורי המכירה','שליטה על תאורת אזורי התצוגה','תאורת מחסנים ושטחים תפעוליים','תרחישי תאורה מותאמים לפעילות המסחרית'],
+ ben:['חוויית קנייה משופרת','חיסכון בצריכת החשמל','ניהול מרכזי של התאורה','גמישות תפעולית גבוהה']},
+
+{n:14,t:'משרדי INNOVIZ',loc:'',cat:'office',tech:'KNX · BMS · HMI',img:null,
+ ch:'הקמת מערכת אוטומציה ובקרת מבנה מתקדמת עבור משרדי החברה, ושילוב כלל מערכות המבנה תחת פלטפורמה אחת. נדרש לספק שליטה נוחה ואינטואיטיבית למשתמשים, לצד יכולות ניהול ובקרה מתקדמות לצוותי התפעול.',
+ sol:'תכנון והטמעה של מערכת KNX ובקרת מבנה מתקדמת, הכוללת ממשק HMI מרכזי לניהול כלל מערכות המבנה, ניטור תקלות, ניהול תרחישים ולוחות זמנים ושליטה מלאה במערכות המיזוג והתאורה.',
+ sys:'מערכת KNX בשילוב מערכת בקרת מבנה מרכזית וממשק HMI מתקדם לניהול כלל מערכות האתר.',
+ scope:['שליטה ובקרה על מערכות התאורה','שליטה וניטור של מערכות מיזוג האוויר','בקרה על יחידות טיפול באוויר (יט״א)','ניהול לוחות זמנים ותרחישי הפעלה','ניטור תקלות והתראות בזמן אמת','ממשק HMI מרכזי לניהול כלל המערכות'],
+ ben:['שליטה מלאה על כלל מערכות המבנה ממסך אחד','שיפור נוחות המשתמשים ואיכות סביבת העבודה','חיסכון באנרגיה בבקרה חכמה','ניטור וזיהוי תקלות בזמן אמת','תפעול פשוט ויעיל לצוותי התחזוקה']},
+
+{n:15,t:'מלון ROXON',loc:'אילת',cat:'hotel',tech:'KNX · Silverbyte',img:'image11.png',
+ ch:'הקמת מערכת אוטומציה חכמה לחדרי המלון ולשטחים הציבוריים, תוך שילוב בין נוחות האורחים, חיסכון באנרגיה ותפעול יעיל. נדרש פתרון המותאם לדרישות מלונאיות, כולל עבודה בשבתות וחגים.',
+ sol:'תכנון והטמעה של מערכת KNX לניהול חדרי המלון, הכוללת אינטגרציה מלאה למערכת המלונאית, קידוד כרטיסים, ניהול תפוסת חדרים והפעלת תרחישים אוטומטיים בהתאם לסטטוס האורח.',
+ sys:'מערכת KNX מתקדמת בשילוב מערכת ניהול מלונאית Silverbyte ומערכת קידוד כרטיסים.',
+ scope:['בקרת חדרים חכמה','תזמונים אוטומטיים למערכות המלון','מערכת שומרת שבת וחגים','אינטגרציה למערכת Silverbyte','קידוד כרטיסי אורח','שליטה על תאורה ומיזוג לפי סטטוס החדר'],
+ ben:['חוויית אירוח מתקדמת ונוחה','חיסכון משמעותי באנרגיה','אינטגרציה עם מערכות המלון','תפעול פשוט לצוותי הקבלה והאחזקה','התאמה מלאה לדרישות המלונאות המודרנית']},
+
+{n:16,t:'מלון ROXON',loc:'ערד',cat:'hotel',tech:'KNX · Silverbyte',img:'image9.png',
+ ch:'יישום מערכת אוטומציה מלאה למלון, תוך שילוב בין ניהול חדרים חכם, חיסכון באנרגיה והתאמה מלאה לתפעול המלונאי השוטף.',
+ sol:'הטמעת מערכת KNX לניהול חדרי המלון, המאפשרת שליטה מרכזית על מערכות החדר, אינטגרציה למערכת המלונאית וניהול יעיל של צריכת האנרגיה.',
+ sys:'מערכת KNX בשילוב מערכת ניהול מלונאית Silverbyte ומערכת קידוד כרטיסים.',
+ scope:['בקרת חדרים ותאורה','תזמונים אוטומטיים','מערכת שומרת שבת וחגים','אינטגרציה למערכת Silverbyte','ניהול כרטיסי אורח וחיבור למערכות המלון'],
+ ben:['שיפור חוויית האורח','הפחתת עלויות אנרגיה','ניהול מרכזי ויעיל של חדרי המלון','תפעול פשוט לצוות המלון','התאמה מלאה לדרישות המלון המודרני']},
+
+{n:17,t:'מלון D-CITY',loc:'מעלה אדומים',cat:'hotel',tech:'KNX · Silverbyte',img:'image12.png',
+ ch:'הקמת מערכת אוטומציה מתקדמת עבור אחד ממתחמי המלונאות היוקרתיים בישראל, תוך שילוב מלא בין מערכות החדרים, מערכות הניהול המלונאי ודרישות תפעול מיוחדות.',
+ sol:'תכנון והטמעה של מערכת KNX מלאה לניהול חדרי המלון, המאפשרת אינטגרציה מלאה למערכת Silverbyte, קידוד כרטיסים, ניהול תרחישי חדר והתאמה לדרישות שבת וחגים.',
+ sys:'מערכת KNX לניהול חדרי המלון, בשילוב מערכת ניהול מלונאית Silverbyte ומערכת קידוד כרטיסים.',
+ scope:['אוטומציה ובקרת חדרים','שליטה על תאורה, מיזוג ותרחישי חדר','תזמונים חכמים','מערכת שומרת שבת וחגים','אינטגרציה מלאה למערכת Silverbyte','קידוד כרטיסי אורחים וממשקי ניהול לצוותי המלון'],
+ ben:['חוויית אירוח מתקדמת ואחידה בכל החדרים','חיסכון באנרגיה בניהול חכם של תפוסת החדרים','שיפור יעילות התפעול של צוותי המלון','אינטגרציה מלאה בין הבקרה לניהול המלונאי','התאמה מלאה לדרישות שבת, חגים וצרכים מיוחדים']},
+
+{n:18,t:'אולם תצוגה ORA',loc:'',cat:'showroom',tech:'KNX',img:null,
+ ch:'הקמת מערכת אוטומציה מתקדמת עבור אולם תצוגת רכבים, תוך יצירת חוויית לקוח מרשימה ושמירה על שליטה מלאה במערכות המבנה.',
+ sol:'הטמעת מערכת KNX לשליטה מרכזית על מערכות התאורה והחשמל, יצירת תרחישי תאורה ייעודיים להצגת הרכבים וניהול יעיל של מערכות המבנה.',
+ sys:'מערכת KNX לבקרת תאורה ומערכות המבנה.',
+ scope:['שליטה על תאורת אולם התצוגה','תרחישי תאורה להצגת רכבים','בקרה על מערכות חשמל','ניהול מרכזי של מערכות המבנה'],
+ ben:['שיפור חוויית הלקוח','הדגשה מיטבית של רכבי התצוגה','חיסכון באנרגיה','תפעול פשוט וגמיש','התאמה מלאה לצורכי אולם התצוגה']},
+
+{n:19,t:'אולם תצוגה MITSUBISHI',loc:'',cat:'showroom',tech:'KNX',img:null,
+ ch:'יצירת סביבת תצוגה מתקדמת המאפשרת הדגשה מיטבית של הרכבים ושליטה נוחה במערכות המבנה, תוך שמירה על חוויית לקוח איכותית וניהול יעיל של המערכות הטכניות.',
+ sol:'הטמעת מערכת KNX לניהול מרכזי של מערכות התאורה והחשמל, כולל יצירת תרחישי תאורה ייעודיים המותאמים לאזורי התצוגה השונים.',
+ sys:'מערכת KNX לבקרת תאורה ואוטומציה של המבנה.',
+ scope:['שליטה על תאורת אולם התצוגה','תרחישי תאורה ייעודיים','ניהול מערכות חשמל ותפעול','שליטה מרכזית על אזורי התצוגה'],
+ ben:['חוויית תצוגה משופרת','הדגשה מיטבית של הרכבים','חיסכון באנרגיה','גמישות תפעולית גבוהה','מערכת אמינה ויציבה']},
+
+{n:20,t:'אולם תצוגה HYUNDAI',loc:'תל אביב',cat:'showroom',tech:'KNX · מיזוג וחשמל',img:'image13.png',
+ ch:'הקמת מערכת אוטומציה ובקרת מבנה עבור אולם תצוגה מרכזי, תוך שילוב בין תאורה, מיזוג אוויר ומערכות חשמל במטרה לשפר את חוויית הלקוחות ולייעל את תפעול המבנה.',
+ sol:'תכנון והטמעה של מערכת KNX המשלבת שליטה ובקרה על מערכות התאורה, המיזוג והחשמל, ומאפשרת תפעול מרכזי של כלל מערכות האתר.',
+ sys:'מערכת KNX בשילוב בקרת מיזוג אוויר וחשמל.',
+ scope:['שליטה ובקרה על מערכות התאורה','שליטה על מערכות מיזוג האוויר','ניהול מערכות החשמל במבנה','תרחישי הפעלה אוטומטיים','ממשקי שליטה ותפעול מרכזיים'],
+ ben:['חוויית לקוח מתקדמת באולם התצוגה','חיסכון באנרגיה בבקרה חכמה','שליטה מרכזית על כלל מערכות המבנה','תפעול יעיל ופשוט לאחזקה ולניהול']},
+
+{n:21,t:'היכל התרבות',loc:'נצרת',cat:'public',tech:'KNX',img:null,
+ ch:'הקמת מערכת תאורה חכמה עבור היכל תרבות רב-שימושי, המארח מופעים, כנסים ואירועים קהילתיים, תוך מתן גמישות תפעולית מלאה והתאמת התאורה לאופי הפעילות.',
+ sol:'הטמעת מערכת KNX לשליטה מרכזית על כלל מערכות התאורה במבנה, כולל יצירת תרחישי תאורה ייעודיים למופעים, כנסים ואירועים.',
+ sys:'מערכת KNX לבקרת תאורה חכמה.',
+ scope:['שליטה על תאורת האולם והמבואות','תרחישי תאורה מותאמים לאירועים שונים','ניהול מרכזי של מערכות התאורה','שליטה פשוטה וידידותית למפעילי המקום'],
+ ben:['גמישות תפעולית גבוהה','חיסכון באנרגיה','שיפור חוויית המבקרים והמשתתפים','מערכת אמינה וקלה לתפעול']},
+
+{n:22,t:'היכל התרבות',loc:'כפר ויתקין',cat:'public',tech:'KNX',img:null,
+ ch:'יישום מערכת תאורה חכמה עבור מרכז תרבות ואירועים, המאפשרת התאמה מהירה של התאורה למגוון פעילויות, מופעים ואירועים לאורך השנה.',
+ sol:'הטמעת מערכת KNX לניהול ובקרה של מערכות התאורה במבנה, כולל יצירת תרחישים מותאמים למופעים, כנסים ואירועים קהילתיים.',
+ sys:'מערכת KNX לבקרת תאורה ואוטומציה של המבנה.',
+ scope:['שליטה על תאורת האולם והשטחים הציבוריים','תרחישי תאורה למופעים, כנסים ואירועים','ניהול מרכזי של מערכות התאורה','ממשקי שליטה נוחים לצוותי התפעול'],
+ ben:['תפעול פשוט וגמיש','התאמת התאורה לכל סוג אירוע','חיסכון באנרגיה','מערכת יציבה ואמינה לאורך שנים']},
+
+{n:23,t:'מכון מדעי הים',loc:'',cat:'public',tech:'KNX · חיישנים',img:null,
+ ch:'הקמת מערכת תאורה חכמה עבור מבנה הכולל כיתות לימוד, מעבדות מחקר וחללים אקדמיים, תוך התאמת התאורה לאופי השימוש המשתנה בכל חלל ושיפור היעילות האנרגטית.',
+ sol:'תכנון והטמעה של מערכת KNX בשילוב גלאי נוכחות וחיישנים חכמים, המאפשרים הפעלה אוטומטית של התאורה בהתאם לתפוסת החללים ולצרכי המשתמשים.',
+ sys:'מערכת KNX בשילוב גלאי נוכחות וחיישנים חכמים לניהול אוטומטי של התאורה.',
+ scope:['שליטה ובקרה על תאורת כיתות הלימוד','שליטה על תאורת מעבדות וחדרי מחקר','גלאי נוכחות להפעלה וכיבוי אוטומטיים','ניהול אזורי תאורה לפי שימוש','תרחישי תאורה לסביבות לימוד ומחקר'],
+ ben:['חיסכון משמעותי בצריכת החשמל','שיפור נוחות המשתמשים בלימוד ובמחקר','הפעלה אוטומטית בהתאם לתפוסת החללים','מערכת אמינה, גמישה וקלה לתפעול ותחזוקה']},
+
+{n:24,t:'בית ספר דבורה עומר',loc:'',cat:'public',tech:'KNX · DALI',img:null,
+ ch:'הקמת מערכת תאורה חכמה לבית ספר, שתספק סביבת לימוד נוחה ובריאה לתלמידים ולצוות, תוך שמירה על רמת תאורה תקנית בכיתות וחיסכון באנרגיה.',
+ sol:'תכנון והטמעה של מערכת תאורה חכמה המווסתת אוטומטית את עוצמת התאורה בהתאם לכמות האור הטבעי בכיתות, תוך שמירה רציפה על רמות התאורה הנדרשות בתקן.',
+ sys:'מערכת KNX בשילוב בקרי DALI וחיישני תאורה, המאפשרים דימור אוטומטי בהתאם לכמות האור הטבעי בחלל.',
+ scope:['בקרת תאורה בכיתות ובחללים ציבוריים','שמירה אוטומטית על רמת Lux מוגדרת בתקן','התאמת עוצמת התאורה לפי אור טבעי','שליטה אזורית וניהול מרכזי של התאורה','תרחישי תאורה ללמידה, פעילות וניקיון'],
+ ben:['סביבת לימוד איכותית ונעימה יותר','חיסכון משמעותי בצריכת החשמל','שמירה על תאורה אחידה ותקנית לאורך היום','הארכת חיי גופי התאורה','מערכת יציבה, חכמה וקלה לתפעול']}
+];
+
+/* ---------- Render ---------- */
+const IMG='/assets/structure-projects/img/';
+const grid=document.getElementById('grid');
+
+function cardHTML(p,i){
+  return `<article class="card" data-cat="${p.cat}" data-i="${i}">
+    <div class="thumb ${p.img?'':'ph'}" style="${p.img?'':'background:linear-gradient(135deg,#0f2740,#0a1a2f)'}">
+      ${p.img?`<img src="${IMG}${p.img}" alt="${p.t} ${p.loc}" loading="lazy">`:I.building}
+      <div class="badges"><span class="badge">${CATS[p.cat]}</span><span class="badge tech">${p.tech}</span></div>
+      <span class="num">פרויקט ${p.n}</span>
+    </div>
+    <div class="card-body">
+      <h3>${p.t}</h3>
+      ${p.loc?`<span class="loc">${I.pin}${p.loc}</span>`:''}
+      <p class="teaser">${p.ch}</p>
+      <span class="more">לפרטי הפרויקט ${I.arrow}</span>
+    </div>
+  </article>`;
+}
+
+grid.innerHTML=P.map(cardHTML).join('');
+
+/* ---------- Filters ---------- */
+const order=['all','bms','hotel','office','showroom','public'];
+const labels={all:'הכל',...CATS};
+const counts=p=>P.filter(x=>p==='all'||x.cat===p).length;
+document.getElementById('filters').innerHTML=order.map((k,idx)=>
+  `<button class="chip ${idx===0?'active':''}" data-f="${k}">${labels[k]}<span class="n">${counts(k)}</span></button>`
+).join('');
+
+document.getElementById('filters').addEventListener('click',e=>{
+  const b=e.target.closest('.chip'); if(!b)return;
+  document.querySelectorAll('.chip').forEach(c=>c.classList.remove('active'));
+  b.classList.add('active');
+  const f=b.dataset.f; let shown=0;
+  document.querySelectorAll('.card').forEach(c=>{
+    const ok=f==='all'||c.dataset.cat===f;
+    c.classList.toggle('hide',!ok); if(ok)shown++;
+  });
+  document.getElementById('empty').style.display=shown?'none':'block';
+});
+
+/* ---------- Modal ---------- */
+const overlay=document.getElementById('overlay');
+const modal=document.getElementById('modal');
+
+function modalHTML(p){
+  const badges=`<div class="badges"><span class="badge">${CATS[p.cat]}</span><span class="badge tech">${p.tech}</span></div>`;
+  const hero=p.img
+    ? `<div class="modal-hero"><img src="${IMG}${p.img}" alt="${p.t}">${badges}<button class="closeb" data-close>&times;</button><div class="cap"><h2>${p.t}</h2>${p.loc?`<span class="loc" style="color:#9fe9ec">${I.pin}${p.loc}</span>`:''}</div></div>`
+    : `<div class="modal-hero ph" style="background:linear-gradient(135deg,#0f2740,#0a1a2f)">${I.building}${badges}<button class="closeb" data-close>&times;</button><div class="cap"><h2>${p.t}</h2>${p.loc?`<span class="loc" style="color:#9fe9ec">${I.pin}${p.loc}</span>`:''}</div></div>`;
+  return hero+`<div class="modal-body">
+    <div class="sec"><h4><i>${I.target}</i>האתגר</h4><p>${p.ch}</p></div>
+    <div class="sec"><h4><i>${I.bulb}</i>הפתרון שבוצע</h4><p>${p.sol}</p></div>
+    <div class="sec"><h4><i>${I.chip}</i>המערכת והטכנולוגיה</h4><span class="pill-tech">${p.sys}</span></div>
+    <div class="sec"><h4><i>${I.layers}</i>היקף הפרויקט</h4><ul class="scope-list">${p.scope.map(s=>`<li>${s}</li>`).join('')}</ul></div>
+    <div class="sec"><h4><i>${I.check}</i>יתרונות ותוצאות</h4><ul class="benefit-list">${p.ben.map(s=>`<li>${I.check}<span>${s}</span></li>`).join('')}</ul></div>
+  </div>`;
+}
+
+function openModal(i){
+  modal.innerHTML=modalHTML(P[i]);
+  overlay.classList.add('open');
+  document.body.style.overflow='hidden';
+  modal.scrollTop=0; overlay.scrollTop=0;
+}
+function closeModal(){overlay.classList.remove('open');document.body.style.overflow='';}
+
+grid.addEventListener('click',e=>{
+  const c=e.target.closest('.card'); if(!c)return;
+  openModal(+c.dataset.i);
+});
+overlay.addEventListener('click',e=>{if(e.target===overlay||e.target.closest('[data-close]'))closeModal();});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal();});
+
+document.getElementById('yr').textContent=new Date().getFullYear();
+</script>
+</body>
+</html>
