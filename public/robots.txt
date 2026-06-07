@@ -66,7 +66,7 @@ User-agent: Diffbot
 Allow: /
 
 # Sitemap location
-Sitemap: https://www.i-feel.co.il/sitemap.xml
+Sitemap: https://i-feel.co.il/sitemap.xml
 
 # AI discovery file (RFC draft for LLM-readable content)
-# https://www.i-feel.co.il/llms.txt
+# https://i-feel.co.il/llms.txt

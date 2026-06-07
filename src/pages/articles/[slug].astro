@@ -1,0 +1,74 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { articles } from '../../data/articles';
+
+export function getStaticPaths() {
+  return articles.map((article) => ({
+    params: { slug: article.slug },
+    props: { article },
+  }));
+}
+
+const { article } = Astro.props;
+const canonical = `https://i-feel.co.il/articles/${article.slug}/`;
+const title = `${article.title} | i-feel`;
+const jsonLd = JSON.stringify({
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  headline: article.title,
+  description: article.description,
+  datePublished: article.updated,
+  dateModified: article.updated,
+  inLanguage: 'he-IL',
+  mainEntityOfPage: canonical,
+  author: {
+    '@type': 'Organization',
+    name: 'i-feel',
+    url: 'https://i-feel.co.il/',
+  },
+  publisher: {
+    '@type': 'Organization',
+    name: 'i-feel',
+    url: 'https://i-feel.co.il/',
+  },
+});
+---
+<BaseLayout title={title} description={article.description} canonical={canonical} ogTitle={article.title} ogDescription={article.description} ogUrl={canonical} jsonLd={jsonLd}>
+  <article class="bg-white">
+    <header class="bg-brand-900 text-white py-14 md:py-18">
+      <div class="max-w-4xl mx-auto px-4">
+        <a href="/articles/" class="text-accent-400 font-semibold hover:text-accent-300">מאמרים</a>
+        <p class="mt-4 text-sm text-brand-200">{article.category} · עודכן {article.updated}</p>
+        <h1 class="mt-4 text-4xl md:text-5xl font-extrabold leading-tight">{article.title}</h1>
+        <p class="mt-5 text-lg text-brand-100">{article.description}</p>
+      </div>
+    </header>
+
+    <div class="max-w-4xl mx-auto px-4 py-12">
+      <div class="space-y-10">
+        {article.sections.map((section) => (
+          <section>
+            <h2 class="text-3xl font-bold text-brand-900 mb-4">{section.heading}</h2>
+            <div class="space-y-4 text-lg leading-8 text-brand-700">
+              {section.body.map((paragraph) => <p>{paragraph}</p>)}
+            </div>
+          </section>
+        ))}
+      </div>
+
+      <aside class="mt-12 border-t border-brand-100 pt-8">
+        <h2 class="text-2xl font-bold mb-4">קישורים שימושיים</h2>
+        <div class="flex flex-wrap gap-3">
+          {article.related.map((item) => (
+            <a href={item.href} class="bg-accent-500 hover:bg-accent-600 text-white px-4 py-2 rounded-lg font-semibold transition">
+              {item.label}
+            </a>
+          ))}
+          <a href="/articles/" class="border border-brand-200 hover:border-accent-500 px-4 py-2 rounded-lg font-semibold transition">
+            כל המאמרים
+          </a>
+        </div>
+      </aside>
+    </div>
+  </article>
+</BaseLayout>

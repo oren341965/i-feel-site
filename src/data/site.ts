@@ -1,6 +1,6 @@
 export const site = {
   name: 'i-feel',
-  url: 'https://www.i-feel.co.il',
+  url: 'https://i-feel.co.il',
   phone: '03-508-9553',
   whatsappMaya: '053-345-0205',
   whatsappService: '053-348-1342',

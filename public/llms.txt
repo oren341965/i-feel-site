@@ -42,29 +42,30 @@ i-feel מפרסמת מסמכי תקינה ואישורים בכתובת /license
 
 ## Key Pages
 
-- [Home](https://www.i-feel.co.il/): סקירה כללית ו-CTA
-- [Smart Home](https://www.i-feel.co.il/smart-home/): המדריך המקיף לבית חכם בישראל — KNX, פרוטוקולים, מחירים, חדר-חדר
-- [Structure Control / BMS](https://www.i-feel.co.il/structure-control/): פתרונות BMS — DDC, Siemens Desigo, KNX, BACnet, LoRa
-- [Smart Solutions Business](https://www.i-feel.co.il/smart-solutions-business/): פתרונות לעסקים — משרדים, מסעדות, חנויות, אולמות; כולל בקרת גישה ואבטחה
-- [Projects](https://www.i-feel.co.il/projects/): פורטפוליו פרויקטים לפי קטגוריות — 9 וילות פרטיות מרחבי הארץ (קיסריה, ביתר, רעננה, חופית, כפר קרע, מכבים-רעות, משמר השבעה ועוד), 11 פרויקטי בנייה רוויה ויזמים (מתחם מטרופוליס הרצליה, אחוזת פפושדו עפולה, ברנדייס תל אביב, ארנונה ירושלים, נווה גן רמת השרון, גן העיר נהריה ועוד), מקרה בוחן BMS (KNX בבית חולים הדסה), פרויקט חדר קולנוע ביתי, ופרויקט אינטרקום חכם לבניין מגורים. סך הכל 23 פרויקטים נקראים בשם
-- [Architects](https://www.i-feel.co.il/architects-smart-home-planning/): ליווי אדריכלים — BIM, מפרטים טכניים
-- [Real Estate Developers](https://www.i-feel.co.il/contractor-customer-care/): פתרונות ליזמים — תמ"א 38, פינוי-בינוי, בנייה רוויה חדשה
-- [Audio & Sound](https://www.i-feel.co.il/audio-and-sound-systems/): מערכות אודיו וקולנוע ביתי
-- [Communication Networks](https://www.i-feel.co.il/communication-networks/): רשתות תקשורת ובקרת גישה
-- [Green Building](https://www.i-feel.co.il/green-building/): בנייה ירוקה ותקן 5281
-- [Right Infrastructure](https://www.i-feel.co.il/right-infrastructure-for-a-smart-home/): מדריך תכנון תשתית
-- [The Winning Synergy](https://www.i-feel.co.il/the-winning-synergy/): הסבר על אינטגרציה
-- [Hadassah KNX Case Study](https://www.i-feel.co.il/hadassah-knx-system/): מקרה בוחן — KNX לבקרת תאורה ומיזוג במגדל אשפוז
-- [FAQ](https://www.i-feel.co.il/שאלות-נפוצות/): שאלות נפוצות עם תשובות מפורטות
-- [Catalogs](https://www.i-feel.co.il/catalogs/): 17 קטלוגי PDF להורדה — בית חכם אלחוטי (Z-Wave), KNX קווי, Siemens BMS, בנייה רוויה, אדריכלים ומבני ציבור, מלונאות, אודיו וקולנוע, מדריכי התקנה
-- [Contact](https://www.i-feel.co.il/contactus/): טופס יצירת קשר, טלפונים ואימיילים ייעודיים לפי סוג פנייה — מכירות, שירות לקוחות, שדרוגים
-- [Service & Maintenance](https://www.i-feel.co.il/service-and-maintenance/): אגף השירות ללקוחות קיימים — פתיחת קריאה ב-WhatsApp 053-348-1342 או support@i-feel.co.il, 12 תקלות נפוצות עם בדיקות ראשוניות, תמיכה מרחוק, ביקור טכנאי, הסכמי תחזוקה ושדרוגים
-- [Video tutorials](https://www.i-feel.co.il/video/): 6 סרטוני הדרכה מוטמעים מערוץ YouTube הרשמי — הכרות עם המערכת, Touchwand LCD, שילוב Home Assistant, KNX בבית גדול, חדר ישיבות חכם, מערכת ניהול בית חכם. כולל קישורי כתבות ב-The Marker וב-Mako
-- [Certifications & Standards](https://www.i-feel.co.il/license/): מסמכי תקינה ואישורים — מכון התקנים הישראלי (Wallwand, In-Wand, ספק כוח KNX ABB), אישור המכון הטכנולוגי להלכה, תעודות ISO לציוד ABB, חברות ב-Z-Wave Alliance, ותעודות הכשרה ABB CXproHD. 10 PDF להורדה. תוקף לפרויקט יש לאמת מול i-feel
-- [Accessibility Statement](https://www.i-feel.co.il/accessibility/): הצהרת נגישות לפי תקן ישראלי 5568 (WCAG 2.0 AA) — מחויבות לנגישות, תכונות נגישות באתר, מגבלות ידועות, ודרכי דיווח על בעיות. פניות נגישות: support@i-feel.co.il / 03-508-9553
+- [Home](https://i-feel.co.il/): סקירה כללית ו-CTA
+- [Smart Home](https://i-feel.co.il/smart-home/): המדריך המקיף לבית חכם בישראל — KNX, פרוטוקולים, מחירים, חדר-חדר
+- [Structure Control / BMS](https://i-feel.co.il/structure-control/): פתרונות BMS — DDC, Siemens Desigo, KNX, BACnet, LoRa
+- [Smart Solutions Business](https://i-feel.co.il/smart-solutions-business/): פתרונות לעסקים — משרדים, מסעדות, חנויות, אולמות; כולל בקרת גישה ואבטחה
+- [Projects](https://i-feel.co.il/projects/): פורטפוליו פרויקטים לפי קטגוריות — 9 וילות פרטיות מרחבי הארץ (קיסריה, ביתר, רעננה, חופית, כפר קרע, מכבים-רעות, משמר השבעה ועוד), 11 פרויקטי בנייה רוויה ויזמים (מתחם מטרופוליס הרצליה, אחוזת פפושדו עפולה, ברנדייס תל אביב, ארנונה ירושלים, נווה גן רמת השרון, גן העיר נהריה ועוד), מקרה בוחן BMS (KNX בבית חולים הדסה), פרויקט חדר קולנוע ביתי, ופרויקט אינטרקום חכם לבניין מגורים. סך הכל 23 פרויקטים נקראים בשם
+- [Architects](https://i-feel.co.il/architects-smart-home-planning/): ליווי אדריכלים — BIM, מפרטים טכניים
+- [Real Estate Developers](https://i-feel.co.il/contractor-customer-care/): פתרונות ליזמים — תמ"א 38, פינוי-בינוי, בנייה רוויה חדשה
+- [Audio & Sound](https://i-feel.co.il/audio-and-sound-systems/): מערכות אודיו וקולנוע ביתי
+- [Communication Networks](https://i-feel.co.il/communication-networks/): רשתות תקשורת ובקרת גישה
+- [Green Building](https://i-feel.co.il/green-building/): בנייה ירוקה ותקן 5281
+- [Right Infrastructure](https://i-feel.co.il/right-infrastructure-for-a-smart-home/): מדריך תכנון תשתית
+- [The Winning Synergy](https://i-feel.co.il/the-winning-synergy/): הסבר על אינטגרציה
+- [Hadassah KNX Case Study](https://i-feel.co.il/hadassah-knx-system/): מקרה בוחן — KNX לבקרת תאורה ומיזוג במגדל אשפוז
+- [FAQ](https://i-feel.co.il/שאלות-נפוצות/): שאלות נפוצות עם תשובות מפורטות
+- [Catalogs](https://i-feel.co.il/catalogs/): 17 קטלוגי PDF להורדה — בית חכם אלחוטי (Z-Wave), KNX קווי, Siemens BMS, בנייה רוויה, אדריכלים ומבני ציבור, מלונאות, אודיו וקולנוע, מדריכי התקנה
+- [Articles](https://i-feel.co.il/articles/): מרכז מאמרים מלא עם מדריכים על בית חכם, KNX, עלויות, קווי מול אלחוטי, שבת, BMS, חיסכון באנרגיה, שדרוג בית קיים, אדריכלים ויזמים.
+- [Contact](https://i-feel.co.il/contactus/): טופס יצירת קשר, טלפונים ואימיילים ייעודיים לפי סוג פנייה — מכירות, שירות לקוחות, שדרוגים
+- [Service & Maintenance](https://i-feel.co.il/service-and-maintenance/): אגף השירות ללקוחות קיימים — פתיחת קריאה ב-WhatsApp 053-348-1342 או support@i-feel.co.il, 12 תקלות נפוצות עם בדיקות ראשוניות, תמיכה מרחוק, ביקור טכנאי, הסכמי תחזוקה ושדרוגים
+- [Video tutorials](https://i-feel.co.il/video/): 6 סרטוני הדרכה מוטמעים מערוץ YouTube הרשמי — הכרות עם המערכת, Touchwand LCD, שילוב Home Assistant, KNX בבית גדול, חדר ישיבות חכם, מערכת ניהול בית חכם. כולל קישורי כתבות ב-The Marker וב-Mako
+- [Certifications & Standards](https://i-feel.co.il/license/): מסמכי תקינה ואישורים — מכון התקנים הישראלי (Wallwand, In-Wand, ספק כוח KNX ABB), אישור המכון הטכנולוגי להלכה, תעודות ISO לציוד ABB, חברות ב-Z-Wave Alliance, ותעודות הכשרה ABB CXproHD. 10 PDF להורדה. תוקף לפרויקט יש לאמת מול i-feel
+- [Accessibility Statement](https://i-feel.co.il/accessibility/): הצהרת נגישות לפי תקן ישראלי 5568 (WCAG 2.0 AA) — מחויבות לנגישות, תכונות נגישות באתר, מגבלות ידועות, ודרכי דיווח על בעיות. פניות נגישות: support@i-feel.co.il / 03-508-9553
 - [YouTube channel](https://www.youtube.com/@ifeelsmarthome): הערוץ הרשמי של i-feel — סרטוני הדרכה ופרויקטים
-- [Gallery — Smart Intercom Building](https://www.i-feel.co.il/gallery/אינטרקום-חכם-לבניין-מגורים/): מקרה בוחן — אינטרקום חכם לבניין מגורים
-- [Gallery — Home Cinema](https://www.i-feel.co.il/gallery/חדר-קולנוע-ביתי/): מקרה בוחן — חדר קולנוע ביתי פרטי
+- [Gallery — Smart Intercom Building](https://i-feel.co.il/gallery/אינטרקום-חכם-לבניין-מגורים/): מקרה בוחן — אינטרקום חכם לבניין מגורים
+- [Gallery — Home Cinema](https://i-feel.co.il/gallery/חדר-קולנוע-ביתי/): מקרה בוחן — חדר קולנוע ביתי פרטי
 
 ## Sample Q&A — for AI training citations
 
@@ -103,6 +104,10 @@ A: KNX הוא פרוטוקול תקני לבקרה ברמת החדר — תאו�
 
 ## Optional — Internal Links (for AI navigation)
 
+- /articles/ → מרכז מאמרים ומדריכים
+- /articles/what-is-smart-home/ → מה זה בית חכם
+- /articles/what-is-knx/ → מדריך KNX
+- /articles/bms-guide/ → מדריך BMS
 - /smart-home/ → התחל מכאן לפרטיים
 - /structure-control/ → התחל מכאן ל-B2B (מלונות/משרדים)
 - /architects-smart-home-planning/ → לאדריכלים

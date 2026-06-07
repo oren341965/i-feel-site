@@ -1,0 +1,53 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { articles } from '../../data/articles';
+
+const title = 'מאמרים ומדריכים | i-feel';
+const description = 'מדריכי i-feel לבית חכם, KNX, בקרת מבנה BMS, שדרוג בית קיים, יזמים, אדריכלים ושירות.';
+const canonical = 'https://i-feel.co.il/articles/';
+const jsonLd = JSON.stringify({
+  '@context': 'https://schema.org',
+  '@type': 'CollectionPage',
+  name: title,
+  description,
+  url: canonical,
+  inLanguage: 'he-IL',
+  hasPart: articles.map((article) => ({
+    '@type': 'Article',
+    headline: article.title,
+    description: article.description,
+    url: `https://i-feel.co.il/articles/${article.slug}/`,
+    dateModified: article.updated,
+  })),
+});
+---
+<BaseLayout title={title} description={description} canonical={canonical} ogTitle={title} ogDescription={description} ogUrl={canonical} jsonLd={jsonLd}>
+  <section class="bg-brand-900 text-white py-16 md:py-20">
+    <div class="max-w-7xl mx-auto px-4">
+      <p class="text-accent-400 font-semibold mb-3">מרכז ידע</p>
+      <h1 class="text-4xl md:text-5xl font-extrabold mb-5">מאמרים ומדריכים</h1>
+      <p class="max-w-3xl text-lg text-brand-100">
+        מדריכים מעשיים לבית חכם, KNX, בקרת מבנה BMS, שדרוגים, יזמים ואדריכלים. כל מאמר מוביל לעמוד תוכן מלא עם קישורים לעמודים ולקטלוגים הרלוונטיים.
+      </p>
+    </div>
+  </section>
+
+  <section class="py-14 bg-white">
+    <div class="max-w-7xl mx-auto px-4">
+      <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {articles.map((article) => (
+          <article class="border border-brand-100 rounded-lg p-6 bg-white shadow-sm hover:shadow-md transition">
+            <div class="text-sm font-semibold text-accent-600 mb-3">{article.category}</div>
+            <h2 class="text-2xl font-bold mb-3 leading-snug">
+              <a href={`/articles/${article.slug}/`} class="hover:text-accent-600">{article.title}</a>
+            </h2>
+            <p class="text-brand-600 mb-5">{article.description}</p>
+            <a href={`/articles/${article.slug}/`} class="inline-flex items-center text-accent-700 font-bold hover:text-accent-600">
+              קרא את המאמר המלא
+            </a>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+</BaseLayout>
