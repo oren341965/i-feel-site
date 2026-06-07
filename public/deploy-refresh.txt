@@ -1,0 +1,2 @@
+Deploy refresh requested 2026-06-07T06:12:00Z.
+Purpose: force Netlify to rebuild with the existing public/assets project images.
