@@ -3,6 +3,9 @@
 # Built: Phase 10F (2026-05-24)
 # All 301 (permanent) unless noted.
 
+# Netlify fallback: www / Netlify-hosted traffic must move to the canonical FTP site.
+/*                           https://i-feel.co.il/:splat 301!
+
 # ---- Service / customer-area pages ----
 /qr/                         /service-and-maintenance/   301
 /service-2/                  /service-and-maintenance/   301
