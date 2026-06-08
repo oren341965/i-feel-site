@@ -1,0 +1,33 @@
+<!doctype html>
+  <html lang="he" dir="rtl">
+  <head>
+    <meta charset="utf-8">
+    <title>מפנה לעמוד המתאים | i-feel</title>
+    <meta name="robots" content="noindex">
+    <script>
+      const redirects = {
+        "/מי-צריך-בית-חכם/": "/articles/what-is-smart-home/",
+        "/מי-צריך-בית-חכם": "/articles/what-is-smart-home/",
+        "/home-automation/": "/articles/wired-vs-wireless-smart-home/",
+        "/home-automation": "/articles/wired-vs-wireless-smart-home/",
+        "/smart-home-knx/": "/articles/what-is-knx/",
+        "/smart-home-knx": "/articles/what-is-knx/",
+        "/knx/": "/articles/what-is-knx/",
+        "/knx": "/articles/what-is-knx/",
+        "/knx-system/": "/articles/what-is-knx/",
+        "/knx-system": "/articles/what-is-knx/",
+        "/blog/": "/articles/",
+        "/blog": "/articles/",
+        "/about-us/": "/",
+        "/about-us": "/"
+  };
+    const path = decodeURIComponent(window.location.pathname);
+    const target = redirects[path];
+    if (target) { window.location.replace(target); } else { window.location.replace("/"); }
+  </script>
+    </head>
+    <body>
+      <p>מעביר אותך לעמוד המתאים...</p>
+      <p><a href="/">חזרה לדף הבית</a></p>
+    </body>
+    </html>
