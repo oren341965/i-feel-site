@@ -1,0 +1,138 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+const meta = {
+  title: 'הסכם שירות לקוח פרטי 2026 | i-feel',
+  description: 'מסמך שירות ללקוח פרטי עבור מערכות בית חכם ובקרת מבנה של i-feel.',
+  canonical: 'https://i-feel.co.il/service-agreement-private/',
+  ogTitle: 'הסכם שירות לקוח פרטי 2026 | i-feel',
+  ogDescription: 'מסמך שירות רשמי ללקוח פרטי עבור מערכות בית חכם, חשמל חכם, אודיו, אזעקה, מצלמות, תקשורת ואינטרקום.',
+  ogUrl: 'https://i-feel.co.il/service-agreement-private/',
+  ogImage: 'https://i-feel.co.il/assets/og-cover.jpg',
+  robots: 'noindex, nofollow'
+};
+---
+<BaseLayout {...meta}>
+  <section class="agreement-page" dir="rtl">
+    <style>
+      .agreement-page { background: #f3f7fb; padding: 32px 16px 56px; font-family: Heebo, Arial, sans-serif; color: #193247; }
+      .agreement-wrap { max-width: 920px; margin: 0 auto; }
+      .print-actions { display: flex; justify-content: flex-start; gap: 12px; margin-bottom: 18px; }
+      .print-actions button { border: 0; background: #078fc9; color: #fff; padding: 10px 18px; border-radius: 10px; font-weight: 700; cursor: pointer; }
+      .document { background: #fff; border: 1px solid #d7e3ec; box-shadow: 0 16px 42px rgba(0,0,0,.08); padding: 34px 42px; line-height: 1.65; }
+      .topbar { display: grid; grid-template-columns: 1fr 170px; gap: 24px; align-items: center; border-bottom: 3px solid #078fc9; padding-bottom: 18px; margin-bottom: 22px; }
+      .brand-title { text-align: center; }
+      .brand-title h1 { margin: 0 0 8px; color: #078fc9; font-size: 30px; font-weight: 800; letter-spacing: .03em; }
+      .brand-title p { margin: 0; font-size: 18px; color: #0b83b8; font-weight: 700; }
+      .brand-title .contact { margin-top: 8px; font-size: 14px; color: #657786; font-weight: 500; direction: ltr; }
+      .logo-box { text-align: left; }
+      .logo-box img { max-width: 155px; height: auto; }
+      .doc-title { text-align: center; margin: 10px 0 8px; color: #078fc9; font-size: 22px; font-weight: 800; }
+      .notice { text-align: center; font-weight: 700; margin: 0 0 18px; }
+      .fields { display: grid; grid-template-columns: 1fr 1fr 1fr; border: 1px solid #56636d; margin-bottom: 22px; }
+      .field { padding: 8px 10px; border-left: 1px solid #56636d; min-height: 38px; }
+      .field:last-child { border-left: 0; }
+      h2 { color: #078fc9; font-size: 18px; margin: 20px 0 8px; padding-bottom: 4px; border-bottom: 2px solid #078fc9; }
+      ul { margin: 0 0 10px; padding-right: 22px; }
+      li { margin-bottom: 6px; }
+      table { width: 100%; border-collapse: collapse; margin: 10px 0 18px; font-size: 15px; }
+      th { background: #078fc9; color: #fff; padding: 7px; border: 1px solid #1d4c66; }
+      td { border: 1px solid #667781; padding: 7px 10px; }
+      .red-line { color: #d71920; font-weight: 800; }
+      .signature { margin-top: 30px; display: grid; grid-template-columns: 1fr 1fr; gap: 34px; max-width: 520px; }
+      .sig-line { border-top: 1px solid #333; padding-top: 8px; text-align: center; min-height: 30px; }
+      .footer-note { margin-top: 24px; padding-top: 12px; border-top: 1px solid #d7e3ec; text-align: center; color: #777; font-size: 13px; }
+      @media print { header, footer, .print-actions { display: none !important; } .agreement-page { background: #fff; padding: 0; } .document { box-shadow: none; border: 0; padding: 18px 24px; } body { background: #fff; } @page { size: A4; margin: 12mm; } }
+      @media (max-width: 720px) { .document { padding: 24px 18px; } .topbar { grid-template-columns: 1fr; text-align: center; } .logo-box { text-align: center; } .fields { grid-template-columns: 1fr; } .field { border-left: 0; border-bottom: 1px solid #56636d; } .field:last-child { border-bottom: 0; } .signature { grid-template-columns: 1fr; } }
+    </style>
+
+    <div class="agreement-wrap">
+      <div class="print-actions"><button onclick="window.print()">הדפסה / שמירה כ-PDF</button></div>
+      <article class="document">
+        <div class="topbar">
+          <div class="brand-title">
+            <h1>I FEEL</h1>
+            <p>מערכות בית חכם ובקרת מבנה</p>
+            <div class="contact">www.i-feel.co.il | sales@i-feel.co.il | 03-508-9553</div>
+          </div>
+          <div class="logo-box"><img src="/assets/ifeel-logo.png" alt="I FEEL" /></div>
+        </div>
+
+        <h1 class="doc-title">הצעה להסכם שירות - לקוח פרטי</h1>
+        <p class="notice">מסמך זה מיועד ללקוח פרטי ואינו מהווה הסכם מלא ללא חתימת הלקוח.</p>
+
+        <div class="fields">
+          <div class="field"><strong>שם הלקוח:</strong> לקוח פרטי</div>
+          <div class="field"><strong>תאריך:</strong> ____________</div>
+          <div class="field"><strong>אתר / כתובת:</strong> _______________________________</div>
+        </div>
+
+        <h2>1. תכולת השירות</h2>
+        <ul>
+          <li>השירות חל על מערכת החשמל החכם, מערכת השליטה, מערכות אודיו, אזעקה, מצלמות, תקשורת ואינטרקום שהותקנו או חוברו במסגרת המערכת הקיימת שסופקה על ידי חברת I FEEL באתר.</li>
+          <li>הגעה לאתר תתבצע רק כאשר התקלה אינה ניתנת לפתרון מרחוק ולאחר ניסיון טיפול טלפוני או בדיקה ראשונית מרחוק, ככל שניתן לבצע זאת.</li>
+          <li>זמן ההגעה לאתר הלקוח תלוי בסוג התקלה, עומס הקריאות ומצב המשק.</li>
+        </ul>
+
+        <h2>2. שירות טלפוני במסגרת ההסכם</h2>
+        <ul>
+          <li>במסגרת התשלום תינתן תמיכה טלפונית ללא עלות לפתיחת קריאת שירות וקבלת הכוונה ראשונית מאיש שירות.</li>
+          <li>התמיכה הטלפונית אינה מהווה התחייבות לפתרון מלא של התקלה מרחוק, ואינה כוללת עבודות תכנות, שינויי מערכת, שדרוגים או הדרכה מלאה לשימוש במערכת.</li>
+        </ul>
+
+        <h2>3. עלויות ההסכם</h2>
+        <table>
+          <thead><tr><th>סעיף</th><th>מחיר / תנאי</th></tr></thead>
+          <tbody>
+            <tr><td>עלות חודשית ללקוח פרטי</td><td>50 ש"ח לחודש כולל מע"מ</td></tr>
+            <tr><td>דמי ביקור טכנאי</td><td>250 ש"ח לשעה</td></tr>
+            <tr><td>הנחה על מוצרים</td><td>50% הנחה על מוצרים מול המחירון הרשמי של החברה</td></tr>
+          </tbody>
+        </table>
+
+        <h2>4. הבהרות לגבי מחיר ההסכם</h2>
+        <ul>
+          <li>מחיר ההסכם לרוב אינו מכסה את כל העלות בעת תקלה, ומשתלב עם מספר גורמים, לרבות דמי ביקור, סוג המערכת, זמינות חלקים, מורכבות התקלה והחרגות ההסכם.</li>
+          <li><strong>דמי השתתפות עצמית / ביקור טכנאי:</strong> במסגרת הסכם זה דמי הביקור הם 250 ש"ח לשעה.</li>
+          <li>טיפול במערכת השליטה, מערכות מורכבות, רכיבי תקשורת, בקרים, מצלמות, מערכות שליטה או ציוד מיוחד עשוי להשפיע על עלות השירות ועל הצורך בחלקים נוספים.</li>
+          <li>החרגות: ההסכם אינו כולל חלקי פלסטיק, גומי, נורות, נזקי שימוש חיצוני, שברים, נזקי מים, נזקי חשמל, נזקי ברקים, ציוד שלא סופק על ידי החברה או חלקי חילוף שאינם זמינים במלאי.</li>
+        </ul>
+
+        <h2>5. החרגות ואי הכללות</h2>
+        <ul>
+          <li class="red-line">המחיר אינו כולל שירותי ענן, דמי מנוי, רישיונות תוכנה, שירותי צד שלישי או עלויות חיבור חיצוניות.</li>
+          <li>המחיר אינו כולל טיפול בתקלות שמקורן בשירותי ענן, ספקי אינטרנט, שירותים חיצוניים, שינויי תשתית או מערכות שלא סופקו או חוברו על ידי חברת I FEEL באתר.</li>
+          <li>ההסכם אינו כולל תקלות הנובעות משימוש לא תקין, שינוי שבוצע על ידי הלקוח או צד שלישי, עבודות חשמל, עבודות תשתית, נזקי מים, נזקי שריפה, נזקי ברקים, נפילות מתח, ציוד שניזוק פיזית או חבלה.</li>
+          <li>חלקי חילוף, מוצרים, רכיבים, אביזרים, ציוד חדש, עבודות התקנה, תכנות מחדש, שדרוגים ותוספות יחויבו בנפרד, אלא אם צוין אחרת בכתב.</li>
+        </ul>
+
+        <h2>6. פתיחת קריאת שירות והגעה לאתר</h2>
+        <ul>
+          <li>קריאת שירות תיפתח על ידי הלקוח באמצעות ערוץ השירות של החברה, בצירוף תיאור התקלה, תמונות או סרטונים במידת האפשר ופרטי יצירת קשר.</li>
+          <li>נציג החברה יבצע ניסיון אבחון ראשוני מרחוק. אם התקלה אינה ניתנת לפתרון מרחוק, תתואם הגעה לאתר בהתאם לזמינות ולדחיפות התקלה.</li>
+          <li>הלקוח מתחייב לאפשר גישה למערכות, לרשת התקשורת, לארונות החשמל והתקשורת ולכל רכיב רלוונטי הדרוש לצורך הבדיקה או הטיפול.</li>
+          <li>במידת הצורך, הלקוח ידאג לנוכחות חשמלאי מוסמך או בעל מקצוע אחר באתר, ככל שהדבר נדרש לצורך טיפול בטוח ותקין במערכת.</li>
+        </ul>
+
+        <h2>7. תנאי תשלום ותוקף</h2>
+        <ul>
+          <li>עלות ההסכם החודשית תשולם בהתאם לתנאי התשלום שיסוכמו עם הלקוח.</li>
+          <li>ההסכם כולל התחייבות לתקופה של 3 שנים ממועד תחילת השירות. במקרה של ביטול ההסכם על ידי הלקוח לפני תום תקופת ההתחייבות, יחול תשלום קנס בסך 100 ש"ח עבור כל חודש שחלף ממועד תחילת השירות ועד מועד הביטול.</li>
+          <li>דמי ביקור, חלקי חילוף, מוצרים, תוספות, עבודות חריגות ושירותים שאינם כלולים בהסכם יחויבו בנפרד.</li>
+          <li>תוקף ההצעה: 60 יום ממועד שליחתה, אלא אם צוין אחרת בכתב.</li>
+        </ul>
+
+        <h2>8. הגבלת אחריות</h2>
+        <ul>
+          <li>אחריות חברת I FEEL במסגרת ההסכם מוגבלת לשירותים המפורטים במסמך זה בלבד.</li>
+          <li>החברה לא תהיה אחראית לנזק עקיף, תוצאתי, אובדן שימוש, אובדן נתונים, אובדן הכנסה, פגיעה בפעילות שוטפת או כל נזק אחר שאינו נזק ישיר שנגרם עקב פעולה של החברה.</li>
+          <li>השירות כפוף לזמינות כוח אדם, מצב המשק, מגבלות בטיחות, תנאי גישה לאתר וזמינות חלקים.</li>
+        </ul>
+
+        <p><strong>בברכה,</strong><br />I FEEL - מערכות בית חכם ובקרת מבנה</p>
+        <div class="signature"><div class="sig-line">חתימת הלקוח</div><div class="sig-line">ת.ז.</div><div class="sig-line">תאריך</div></div>
+        <div class="footer-note">I FEEL Smart Home & BMS | מסמך שירות ללקוח פרטי</div>
+      </article>
+    </div>
+  </section>
+</BaseLayout>
