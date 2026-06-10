@@ -1,0 +1,178 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+const meta = {
+  title: 'הסכם שירות לקוח פרטי 2026 | i-feel',
+  description: 'הצעה להסכם שירות ללקוח פרטי של i-feel: תמיכה טלפונית, ביקור טכנאי, הנחה על מוצרים, תנאי תשלום, החרגות ותכולת השירות.',
+  canonical: 'https://i-feel.co.il/service-agreement-2026/',
+  ogTitle: 'הסכם שירות לקוח פרטי 2026 | i-feel',
+  ogDescription: 'מסמך תנאי שירות ללקוח פרטי במערכות בית חכם, שליטה, אודיו, אזעקה, מצלמות, תקשורת ואינטרקום.',
+  ogUrl: 'https://i-feel.co.il/service-agreement-2026/',
+  ogImage: 'https://i-feel.co.il/assets/og-cover.jpg',
+  jsonLd: JSON.stringify({
+    '@context': 'https://schema.org',
+    '@type': 'WebPage',
+    '@id': 'https://i-feel.co.il/service-agreement-2026/#page',
+    url: 'https://i-feel.co.il/service-agreement-2026/',
+    name: 'הסכם שירות לקוח פרטי 2026',
+    description: 'הצעה להסכם שירות ללקוח פרטי של i-feel',
+    inLanguage: 'he-IL',
+    isPartOf: { '@id': 'https://i-feel.co.il/#website' },
+    publisher: { '@id': 'https://i-feel.co.il/#business' }
+  })
+};
+---
+<BaseLayout {...meta}>
+  <main dir="rtl" class="bg-brand-50 text-brand-900">
+    <section class="hero-gradient text-white">
+      <div class="max-w-5xl mx-auto px-4 py-14 md:py-18">
+        <a href="/service-and-maintenance/" class="inline-block text-brand-100 hover:text-white text-sm mb-5">חזרה לשירות לקוחות</a>
+        <div class="inline-flex items-center gap-2 bg-white/10 backdrop-blur px-4 py-1.5 rounded-full text-sm font-medium mb-5 border border-white/20">
+          הסכם שירות 2026
+        </div>
+        <h1 class="text-4xl md:text-5xl font-extrabold mb-4">הצעה להסכם שירות - לקוח פרטי</h1>
+        <p class="text-xl text-brand-100 leading-relaxed max-w-3xl">
+          מסמך זה מיועד ללקוח פרטי ואינו מהווה הסכם מלא ללא חתימת הלקוח. השירות מיועד ללקוחות קיימים של i-feel במערכות בית חכם, מערכת שליטה, אודיו, אזעקה, מצלמות, תקשורת ואינטרקום שסופקו או חוברו במסגרת המערכת הקיימת באתר.
+        </p>
+      </div>
+    </section>
+
+    <section class="py-10 bg-white border-b border-brand-100">
+      <div class="max-w-5xl mx-auto px-4 grid md:grid-cols-3 gap-4">
+        <div class="bg-brand-50 border border-brand-100 rounded-2xl p-5">
+          <div class="text-sm text-brand-600 mb-1">עלות חודשית</div>
+          <div class="text-3xl font-extrabold text-accent-600">50 ₪</div>
+          <div class="text-sm text-brand-700 mt-1">לחודש כולל מע״מ</div>
+        </div>
+        <div class="bg-brand-50 border border-brand-100 rounded-2xl p-5">
+          <div class="text-sm text-brand-600 mb-1">דמי ביקור טכנאי</div>
+          <div class="text-3xl font-extrabold text-accent-600">250 ₪</div>
+          <div class="text-sm text-brand-700 mt-1">לשעה במסגרת ההסכם</div>
+        </div>
+        <div class="bg-brand-50 border border-brand-100 rounded-2xl p-5">
+          <div class="text-sm text-brand-600 mb-1">הנחה על מוצרים</div>
+          <div class="text-3xl font-extrabold text-accent-600">50%</div>
+          <div class="text-sm text-brand-700 mt-1">מול המחירון הרשמי של החברה</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="py-12">
+      <div class="max-w-5xl mx-auto px-4 space-y-6">
+        <article class="bg-white border border-brand-100 rounded-2xl p-6 shadow-sm">
+          <h2 class="text-2xl font-extrabold mb-4 border-r-4 border-accent-500 pr-3">פרטי הלקוח</h2>
+          <div class="grid md:grid-cols-3 gap-4 text-sm">
+            <div class="border border-brand-200 rounded-xl p-4"><strong>שם הלקוח:</strong> לקוח פרטי</div>
+            <div class="border border-brand-200 rounded-xl p-4"><strong>תאריך:</strong> ____________</div>
+            <div class="border border-brand-200 rounded-xl p-4"><strong>אתר / כתובת:</strong> _______________________________</div>
+          </div>
+        </article>
+
+        <article class="bg-white border border-brand-100 rounded-2xl p-6 shadow-sm">
+          <h2 class="text-2xl font-extrabold mb-4 border-r-4 border-accent-500 pr-3">1. תכולת השירות</h2>
+          <ul class="list-disc pr-6 space-y-2 leading-relaxed text-brand-800">
+            <li>השירות חל על מערכת החשמל החכם, מערכת השליטה, מערכות אודיו, אזעקה, מצלמות, תקשורת ואינטרקום שהותקנו או חוברו במסגרת המערכת הקיימת שסופקה על ידי חברת i-feel באתר.</li>
+            <li>הגעה לאתר תתבצע רק כאשר התקלה אינה ניתנת לפתרון מרחוק ולאחר ניסיון טיפול טלפוני או בדיקה ראשונית מרחוק, ככל שניתן לבצע זאת.</li>
+            <li>זמן ההגעה לאתר הלקוח תלוי בסוג התקלה, עומס הקריאות ומצב המשק.</li>
+          </ul>
+        </article>
+
+        <article class="bg-white border border-brand-100 rounded-2xl p-6 shadow-sm">
+          <h2 class="text-2xl font-extrabold mb-4 border-r-4 border-accent-500 pr-3">2. שירות טלפוני במסגרת ההסכם</h2>
+          <ul class="list-disc pr-6 space-y-2 leading-relaxed text-brand-800">
+            <li>במסגרת התשלום תינתן תמיכה טלפונית ללא עלות לפתיחת קריאת שירות וקבלת הכוונה ראשונית מאיש שירות.</li>
+            <li>התמיכה הטלפונית אינה מהווה התחייבות לפתרון מלא של התקלה מרחוק, ואינה כוללת עבודות תכנות, שינויי מערכת, שדרוגים או הדרכה מלאה לשימוש במערכת.</li>
+          </ul>
+        </article>
+
+        <article class="bg-white border border-brand-100 rounded-2xl p-6 shadow-sm">
+          <h2 class="text-2xl font-extrabold mb-4 border-r-4 border-accent-500 pr-3">3. עלויות ההסכם</h2>
+          <div class="overflow-x-auto">
+            <table class="w-full border-collapse text-sm md:text-base">
+              <thead>
+                <tr class="bg-accent-500 text-white">
+                  <th class="border border-brand-200 p-3 text-right">סעיף</th>
+                  <th class="border border-brand-200 p-3 text-right">מחיר / תנאי</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr><td class="border border-brand-200 p-3 font-bold">עלות חודשית ללקוח פרטי</td><td class="border border-brand-200 p-3">50 ש״ח לחודש כולל מע״מ</td></tr>
+                <tr><td class="border border-brand-200 p-3 font-bold">דמי ביקור טכנאי</td><td class="border border-brand-200 p-3">250 ש״ח לשעה</td></tr>
+                <tr><td class="border border-brand-200 p-3 font-bold">הנחה על מוצרים</td><td class="border border-brand-200 p-3">50% הנחה על מוצרים מול המחירון הרשמי של החברה</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </article>
+
+        <article class="bg-white border border-brand-100 rounded-2xl p-6 shadow-sm">
+          <h2 class="text-2xl font-extrabold mb-4 border-r-4 border-accent-500 pr-3">4. הבהרות לגבי מחיר ההסכם</h2>
+          <ul class="list-disc pr-6 space-y-2 leading-relaxed text-brand-800">
+            <li>מחיר ההסכם לרוב אינו מכסה את כל העלות בעת תקלה, ומשתלב עם מספר גורמים, לרבות דמי ביקור, סוג המערכת, זמינות חלקים, מורכבות התקלה והחרגות ההסכם.</li>
+            <li>דמי השתתפות עצמית / ביקור טכנאי: במסגרת הסכם זה דמי הביקור הם 250 ש״ח לשעה.</li>
+            <li>טיפול במערכת השליטה, מערכות מורכבות, רכיבי תקשורת, בקרים, מצלמות, מערכות שליטה או ציוד מיוחד עשוי להשפיע על עלות השירות ועל הצורך בחלקים נוספים.</li>
+            <li>ההסכם אינו כולל חלקי פלסטיק, גומי, נורות, נזקי שימוש חיצוני, שברים, נזקי מים, נזקי חשמל, נזקי ברקים, ציוד שלא סופק על ידי החברה או חלקי חילוף שאינם זמינים במלאי.</li>
+          </ul>
+        </article>
+
+        <article class="bg-white border border-brand-100 rounded-2xl p-6 shadow-sm">
+          <h2 class="text-2xl font-extrabold mb-4 border-r-4 border-accent-500 pr-3">5. החרגות ואי הכללות</h2>
+          <ul class="list-disc pr-6 space-y-2 leading-relaxed text-brand-800">
+            <li class="font-bold text-red-700">המחיר אינו כולל שירותי ענן, דמי מנוי, רישיונות תוכנה, שירותי צד שלישי או עלויות חיבור חיצוניות.</li>
+            <li>המחיר אינו כולל טיפול בתקלות שמקורן בשירותי ענן, ספקי אינטרנט, שירותים חיצוניים, שינויי תשתית או מערכות שלא סופקו או חוברו על ידי חברת i-feel באתר.</li>
+            <li>ההסכם אינו כולל תקלות הנובעות משימוש לא תקין, שינוי שבוצע על ידי הלקוח או צד שלישי, עבודות חשמל, עבודות תשתית, נזקי מים, נזקי שריפה, נזקי ברקים, נפילות מתח, ציוד שניזוק פיזית או חבלה.</li>
+            <li>חלקי חילוף, מוצרים, רכיבים, אביזרים, ציוד חדש, עבודות התקנה, תכנות מחדש, שדרוגים ותוספות יחויבו בנפרד, אלא אם צוין אחרת בכתב.</li>
+          </ul>
+        </article>
+
+        <article class="bg-white border border-brand-100 rounded-2xl p-6 shadow-sm">
+          <h2 class="text-2xl font-extrabold mb-4 border-r-4 border-accent-500 pr-3">6. פתיחת קריאת שירות והגעה לאתר</h2>
+          <ul class="list-disc pr-6 space-y-2 leading-relaxed text-brand-800">
+            <li>קריאת שירות תיפתח על ידי הלקוח באמצעות ערוץ השירות של החברה, בצירוף תיאור התקלה, תמונות או סרטונים במידת האפשר ופרטי יצירת קשר.</li>
+            <li>נציג החברה יבצע ניסיון אבחון ראשוני מרחוק. אם התקלה אינה ניתנת לפתרון מרחוק, תתואם הגעה לאתר בהתאם לזמינות ולדחיפות התקלה.</li>
+            <li>הלקוח מתחייב לאפשר גישה למערכות, לרשת התקשורת, לארונות החשמל והתקשורת ולכל רכיב רלוונטי הדרוש לצורך הבדיקה או הטיפול.</li>
+            <li>במידת הצורך, הלקוח ידאג לנוכחות חשמלאי מוסמך או בעל מקצוע אחר באתר, ככל שהדבר נדרש לצורך טיפול בטוח ותקין במערכת.</li>
+          </ul>
+        </article>
+
+        <article class="bg-white border border-brand-100 rounded-2xl p-6 shadow-sm">
+          <h2 class="text-2xl font-extrabold mb-4 border-r-4 border-accent-500 pr-3">7. תנאי תשלום ותוקף</h2>
+          <ul class="list-disc pr-6 space-y-2 leading-relaxed text-brand-800">
+            <li>עלות ההסכם החודשית תשולם בהתאם לתנאי התשלום שיסוכמו עם הלקוח.</li>
+            <li>ההסכם כולל התחייבות לתקופה של 3 שנים ממועד תחילת השירות. במקרה של ביטול ההסכם על ידי הלקוח לפני תום תקופת ההתחייבות, יחול תשלום קנס בסך 100 ש״ח עבור כל חודש שחלף ממועד תחילת השירות ועד מועד הביטול.</li>
+            <li>דמי ביקור, חלקי חילוף, מוצרים, תוספות, עבודות חריגות ושירותים שאינם כלולים בהסכם יחויבו בנפרד.</li>
+            <li>תוקף ההצעה: 60 יום ממועד שליחתה, אלא אם צוין אחרת בכתב.</li>
+          </ul>
+        </article>
+
+        <article class="bg-white border border-brand-100 rounded-2xl p-6 shadow-sm">
+          <h2 class="text-2xl font-extrabold mb-4 border-r-4 border-accent-500 pr-3">8. הגבלת אחריות</h2>
+          <ul class="list-disc pr-6 space-y-2 leading-relaxed text-brand-800">
+            <li>אחריות חברת i-feel במסגרת ההסכם מוגבלת לשירותים המפורטים במסמך זה בלבד.</li>
+            <li>החברה לא תהיה אחראית לנזק עקיף, תוצאתי, אובדן שימוש, אובדן נתונים, אובדן הכנסה, פגיעה בפעילות שוטפת או כל נזק אחר שאינו נזק ישיר שנגרם עקב פעולה של החברה.</li>
+            <li>השירות כפוף לזמינות כוח אדם, מצב המשק, מגבלות בטיחות, תנאי גישה לאתר וזמינות חלקים.</li>
+          </ul>
+        </article>
+
+        <article class="bg-white border border-brand-100 rounded-2xl p-6 shadow-sm">
+          <h2 class="text-2xl font-extrabold mb-4 border-r-4 border-accent-500 pr-3">חתימות</h2>
+          <div class="grid md:grid-cols-3 gap-4 text-sm">
+            <div class="border border-brand-200 rounded-xl p-4 min-h-20"><strong>חתימת הלקוח:</strong><br />___________</div>
+            <div class="border border-brand-200 rounded-xl p-4 min-h-20"><strong>ת.ז.:</strong><br />_____________</div>
+            <div class="border border-brand-200 rounded-xl p-4 min-h-20"><strong>תאריך:</strong><br />________________</div>
+          </div>
+        </article>
+
+        <div class="bg-brand-900 text-white rounded-2xl p-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+          <div>
+            <h2 class="text-2xl font-extrabold mb-2">רוצים להצטרף להסכם השירות?</h2>
+            <p class="text-brand-100">מחלקת השירות תחזור אליכם עם פרטי ההצטרפות ופתיחת ההסכם.</p>
+          </div>
+          <div class="flex flex-col sm:flex-row gap-3">
+            <a href="https://wa.me/972533006239?text=%D7%90%D7%A0%D7%99%20%D7%9E%D7%A2%D7%95%D7%A0%D7%99%D7%99%D7%9F%20%D7%9C%D7%94%D7%A6%D7%98%D7%A8%D7%A3%20%D7%9C%D7%94%D7%A1%D7%9B%D7%9D%20%D7%A9%D7%99%D7%A8%D7%95%D7%AA%20I%20FEEL" class="bg-green-500 hover:bg-green-600 text-white rounded-xl px-5 py-3 font-bold text-center">WhatsApp שירות</a>
+            <a href="mailto:support@i-feel.co.il?subject=הצטרפות להסכם שירות" class="bg-white hover:bg-brand-50 text-brand-900 rounded-xl px-5 py-3 font-bold text-center">support@i-feel.co.il</a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+</BaseLayout>
