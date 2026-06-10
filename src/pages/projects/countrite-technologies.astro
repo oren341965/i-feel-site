@@ -1,0 +1,107 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+const canonical = 'https://i-feel.co.il/projects/countrite-technologies/';
+const meta = {
+  title: 'כך נראה משרד חכם באמת: פרויקט CountRite Technologies | i-feel',
+  description: 'פרויקט משרד חכם של i-feel במשרדי CountRite Technologies: חשמל חכם, תאורה, צלונים, מיזוג Siemens, אודיו, Samsung Frame, אזעקה Paradox, מצלמות ו-Control4.',
+  canonical,
+  ogTitle: 'משרד חכם באמת: פרויקט CountRite Technologies',
+  ogDescription: 'מערכת משרד חכם המחברת חשמל, תאורה, צלונים, מיזוג, אודיו, טלוויזיות, אזעקה, מצלמות ו-Control4 לממשק שליטה אחד.',
+  ogUrl: canonical,
+  jsonLd: JSON.stringify({
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline: 'כך נראה משרד חכם באמת: פרויקט CountRite Technologies',
+    description: 'פרויקט משרד חכם של i-feel במשרדי CountRite Technologies.',
+    inLanguage: 'he-IL',
+    mainEntityOfPage: canonical,
+    author: { '@type': 'Organization', name: 'i-feel', url: 'https://i-feel.co.il/' },
+    publisher: { '@type': 'Organization', name: 'i-feel', url: 'https://i-feel.co.il/' },
+  })
+};
+---
+<BaseLayout {...meta}>
+  <article class="cr-page" dir="rtl">
+    <style>
+      .cr-page{font-family:Heebo,Arial,sans-serif;background:#f6f8fb;color:#132238;line-height:1.85}.cr-wrap{max-width:1120px;margin:0 auto;padding:0 22px}.cr-hero{background:linear-gradient(150deg,#0a1424,#102a45);color:#fff;padding:64px 0 78px}.cr-eyebrow{display:inline-flex;gap:8px;align-items:center;background:rgba(217,167,70,.16);border:1px solid rgba(217,167,70,.35);color:#f9dfaa;border-radius:999px;padding:8px 16px;font-weight:800;font-size:14px;margin-bottom:22px}.cr-hero h1{font-size:clamp(34px,5vw,58px);font-weight:900;line-height:1.1;max-width:900px}.cr-hero p{font-size:clamp(18px,2vw,22px);color:#dbe6f2;max-width:840px;margin-top:22px}.cr-tags{display:flex;flex-wrap:wrap;gap:10px;margin-top:30px}.cr-tags span{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);border-radius:999px;padding:8px 13px;color:#edf4fa;font-weight:700;font-size:14px}.cr-section{padding:56px 0}.cr-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:28px;align-items:start}.cr-card{background:#fff;border:1px solid #e3eaf2;border-radius:22px;box-shadow:0 12px 32px rgba(15,40,65,.08);padding:30px}.cr-card h2{font-size:29px;color:#0a1424;margin-bottom:14px}.cr-card h3{font-size:22px;color:#0a1424;margin:24px 0 10px}.cr-card p{color:#34475d;margin-bottom:14px}.cr-card ul{padding-right:20px;color:#34475d}.cr-card li{margin-bottom:8px}.cr-facts{display:grid;gap:12px}.cr-fact{background:#fff;border:1px solid #e3eaf2;border-radius:18px;padding:16px}.cr-fact b{display:block;color:#b98522;font-size:14px}.cr-fact span{font-weight:800;color:#132238}.cr-highlight{border-right:5px solid #d9a746;background:#fffaf0}.cr-gallery{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}.cr-placeholder{height:160px;border-radius:18px;border:1px dashed #b8c4d1;background:linear-gradient(135deg,#edf2f7,#fff);display:flex;align-items:center;justify-content:center;text-align:center;padding:18px;color:#607086;font-weight:700}.cr-cta{background:linear-gradient(150deg,#0a1424,#102a45);color:#fff;border-radius:28px;padding:40px;text-align:center;margin-top:28px}.cr-cta h2{font-size:32px;margin-bottom:10px}.cr-cta p{color:#dbe6f2}.cr-buttons{display:flex;flex-wrap:wrap;gap:12px;justify-content:center;margin-top:22px}.cr-btn{display:inline-block;background:#d9a746;color:#071322;font-weight:900;padding:13px 24px;border-radius:999px}.cr-btn.secondary{background:transparent;color:#fff;border:1px solid rgba(255,255,255,.28)}@media(max-width:850px){.cr-grid,.cr-gallery{grid-template-columns:1fr}.cr-hero{padding:44px 0}}
+    </style>
+
+    <header class="cr-hero">
+      <div class="cr-wrap">
+        <div class="cr-eyebrow">פרויקט משרד חכם, CountRite Technologies</div>
+        <h1>כך נראה משרד חכם באמת: פרויקט CountRite Technologies</h1>
+        <p>מערכת משרד חכם מתקדמת שמחברת את כל מערכות המשרד לממשק שליטה אחד: חשמל חכם, תאורה, צלונים, מיזוג אוויר, מערכות אודיו, טלוויזיות, אזעקה, מצלמות ו-Control4.</p>
+        <div class="cr-tags">
+          <span>חשמל חכם</span><span>תאורה וצלונים</span><span>מיזוג Siemens</span><span>אודיו</span><span>חדרי ישיבות</span><span>Control4</span>
+        </div>
+      </div>
+    </header>
+
+    <section class="cr-section">
+      <div class="cr-wrap">
+        <div class="cr-grid">
+          <div class="cr-card">
+            <h2>משרד חכם שמתאים לאופי החברה</h2>
+            <p>במשרדי CountRite Technologies הותקנה מערכת משרד חכם מתקדמת, המחברת את כל מערכות המשרד לממשק שליטה אחד. התוצאה היא סביבת עבודה מודרנית, נוחה, מדויקת ויעילה, שבה כל אזור במשרד מתפקד בהתאם לצרכים של העובדים, חדרי הישיבות והאורחים.</p>
+            <p>CountRite Technologies עוסקת בפתרונות מתקדמים לספירת אנשים, ניהול תפוסה, ניתוח נתונים ובקרה חכמה למבנים. לכן, הבחירה במשרד חכם שמחבר בין טכנולוגיה, נוחות ותפעול מדויק מתחברת באופן טבעי לאופי הפעילות של החברה עצמה.</p>
+
+            <h3>תכנון על בסיס התוכניות של האדריכלית גילה וינטר</h3>
+            <p>הפרויקט בוצע על בסיס התוכניות של האדריכלית גילה וינטר, תוך התאמה מלאה בין התכנון האדריכלי, תשתיות החשמל, מערכות המיזוג, האודיו והשליטה. כבר בשלב התכנון הושם דגש על תכנון מדויק של מערכת החשמל החכם, כך שכל נקודת הפעלה, מפסק, אזור תאורה, צלון ומערכת מיזוג יתוכננו מראש כחלק ממערכת אחת ולא כאוסף של פתרונות נפרדים.</p>
+
+            <h3>ביצוע, פיקוח ותשתיות נכונות</h3>
+            <p>אחד היתרונות החשובים בפרויקט היה הביצוע המקצועי של צוות i-feel, הכולל אנשי שטח ומהנדסי חשמל. הצוות ליווה את עבודת החשמל, בדק את התשתיות, וידא שהחיווט וההכנות בוצעו כהלכה, ופיקח על ההתאמה בין התכנון לביצוע בפועל. פיקוח כזה מצמצם תקלות, מונע טעויות בשטח, ומאפשר למערכת החכמה לעבוד בצורה יציבה ומדויקת לאורך זמן.</p>
+
+            <h3>מפסק חכם שהוא נקודת שליטה מרכזית</h3>
+            <p>במשרד הותקנו מפסקי שליטה חכמים המאפשרים שליטה לא רק על התאורה והצלונים, אלא גם על הטמפרטורה בכל אזור. כך כל מפסק הופך לנקודת שליטה מרכזית: ניתן להפעיל תאורה, לכוון מיזוג, לשלוט בצלונים וליצור תרחישים מותאמים כמו מצב ישיבה, מצב עבודה, מצב אירוח או סגירת משרד.</p>
+
+            <h3>חיבור ייעודי למיזוג Siemens</h3>
+            <p>מערכת המיזוג בפרויקט דרשה פתרון ייעודי, משום שמדובר במזגנים מיוחדים של Siemens ולא במערכות VRF רגילות. לכן סופק ציוד ייעודי המתאים למזגנים הללו ומאפשר חיבור נכון למערכת השליטה החכמה, כולל שליטה נוחה בטמפרטורה ובמצבי העבודה.</p>
+
+            <h3>אודיו, חדרי ישיבות וחוויית אירוח</h3>
+            <p>בנוסף, שולבו מערכות אודיו איכותיות המאפשרות סאונד בכל אזורי המשרד. בחדרי הישיבות ובכניסה למשרד הותקנו טלוויזיות Samsung Frame, המשתלבות בעיצוב החלל ומשמשות גם לתצוגה מקצועית וגם ליצירת חוויית אירוח מרשימה.</p>
+
+            <h3>מערכת אחת לכל המשרד</h3>
+            <p>מערכת האזעקה של Paradox חוברה גם היא למערכת השליטה של המשרד, לצד חיבור למצלמות ולמערכת Control4. כך מתקבלת מערכת אחודה אחת, שמרכזת את החשמל, התאורה, הצלונים, המיזוג, הסאונד, הטלוויזיות, האזעקה והמצלמות תחת ממשק אחד.</p>
+          </div>
+
+          <aside>
+            <div class="cr-card cr-highlight">
+              <h2>נתוני הפרויקט</h2>
+              <div class="cr-facts">
+                <div class="cr-fact"><b>לקוח</b><span>CountRite Technologies</span></div>
+                <div class="cr-fact"><b>תחום</b><span>משרד חכם, אודיו וחדרי ישיבות</span></div>
+                <div class="cr-fact"><b>תכנון אדריכלי</b><span>גילה וינטר</span></div>
+                <div class="cr-fact"><b>מערכות</b><span>חשמל חכם, תאורה, צלונים, מיזוג, אודיו, טלוויזיות, אזעקה ומצלמות</span></div>
+                <div class="cr-fact"><b>פלטפורמות ורכיבים</b><span>Control4, Siemens, Paradox, Samsung Frame</span></div>
+              </div>
+            </div>
+
+            <div class="cr-card" style="margin-top:22px">
+              <h2>תמונות מהפרויקט</h2>
+              <div class="cr-gallery">
+                <div class="cr-placeholder">להוסיף תמונה מהמייל או מדרייב</div>
+                <div class="cr-placeholder">להוסיף תמונה מהמייל או מדרייב</div>
+                <div class="cr-placeholder">להוסיף תמונה מהמייל או מדרייב</div>
+                <div class="cr-placeholder">להוסיף תמונה מהמייל או מדרייב</div>
+                <div class="cr-placeholder">להוסיף תמונה מהמייל או מדרייב</div>
+                <div class="cr-placeholder">להוסיף תמונה מהמייל או מדרייב</div>
+              </div>
+              <p style="margin-top:14px;color:#607086;font-size:14px">העמוד מוכן לקליטת התמונות. לאחר קבלת קישורי Drive ישירים או קבצים, נחליף את התיבות בגלריה בתמונות אמיתיות.</p>
+            </div>
+          </aside>
+        </div>
+
+        <div class="cr-cta">
+          <h2>רוצים לתכנן משרד חכם או חדר ישיבות מתקדם?</h2>
+          <p>i-feel מתכננת ומבצעת מערכות משרד חכם, אודיו, חדרי ישיבות, שליטה במיזוג, תאורה, הצללה ואבטחה תחת ממשק אחד.</p>
+          <div class="cr-buttons">
+            <a class="cr-btn" href="/contactus/">לתיאום פגישה</a>
+            <a class="cr-btn secondary" href="/audio-and-sound-systems/">אודיו, קולנוע וחדרי ישיבות</a>
+            <a class="cr-btn secondary" href="/smart-solutions-business/">פתרונות לעסקים</a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </article>
+</BaseLayout>
