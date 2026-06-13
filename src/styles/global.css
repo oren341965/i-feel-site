@@ -1,3 +1,7 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 html { scroll-behavior: smooth; }
   body { font-family: 'Heebo', system-ui, sans-serif; }
   .hero-gradient {
