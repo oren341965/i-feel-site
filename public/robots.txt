@@ -1,16 +1,9 @@
 User-agent: *
 Allow: /
 Disallow: /old/
-Disallow: /wp-admin/
-Disallow: /wp-login.php
-Disallow: /cart/
-Disallow: /checkout/
-Disallow: /my-account/
 Disallow: /shopengine-template/
-Disallow: /?s=
-Disallow: /*?add-to-cart=
 
-# AI crawlers — explicitly allowed (we want llms.txt + AI Overviews coverage)
+# AI crawlers explicitly allowed for llms.txt and AI Overviews coverage.
 User-agent: GPTBot
 Allow: /
 
@@ -68,5 +61,4 @@ Allow: /
 # Sitemap location
 Sitemap: https://i-feel.co.il/sitemap.xml
 
-# AI discovery file (RFC draft for LLM-readable content)
-# https://i-feel.co.il/llms.txt
+# AI discovery file: https://i-feel.co.il/llms.txt
