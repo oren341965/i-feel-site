@@ -8,7 +8,7 @@
   # Service / customer-area legacy routes.
   RewriteRule ^qr/?$ /service-and-maintenance/ [R=301,L]
   RewriteRule ^service-2/?$ /service-and-maintenance/ [R=301,L]
-  RewriteRule ^׳©׳™׳¨׳•׳×׳™-׳¢׳ ׳/?$ /service-and-maintenance/ [R=301,L]
+  RewriteRule ^שירותי-ענן/?$ /service-and-maintenance/ [R=301,L]
   RewriteRule ^contact-us/?$ /contactus/ [R=301,L]
 
   # Media / press.
@@ -35,12 +35,12 @@
   RewriteRule ^gallery/smarthome-beytar/?$ /projects/#private [R=301,L,NE]
   RewriteRule ^gallery/smarthome-hofit/?$ /projects/#private [R=301,L,NE]
   RewriteRule ^gallery/smart-private/?$ /projects/#private [R=301,L,NE]
-  RewriteRule ^gallery/׳‘׳™׳×-׳™׳•׳§׳¨׳×׳™-׳‘׳¨׳¢׳ ׳ ׳”/?$ /projects/#private [R=301,L,NE]
-  RewriteRule ^gallery/׳‘׳™׳×-׳₪׳¨׳˜׳™-׳‘׳¨׳¢׳ ׳ ׳”/?$ /projects/#private [R=301,L,NE]
-  RewriteRule ^gallery/׳”׳›׳™-׳׳•׳“׳¨׳ ׳™׳×-׳‘׳›׳₪׳¨/?$ /projects/#private [R=301,L,NE]
-  RewriteRule ^gallery/׳‘׳×׳™׳-׳₪׳¨׳˜׳™׳™׳/?$ /projects/#private [R=301,L,NE]
-  RewriteRule ^gallery/׳₪׳¨׳•׳™׳§׳˜/?$ /projects/#private [R=301,L,NE]
-  RewriteRule ^gallery/׳₪׳¨׳•׳™׳§׳˜-׳—׳©׳׳-׳—׳›׳/?$ /projects/#private [R=301,L,NE]
+  RewriteRule ^gallery/בית-יוקרתי-ברעננה/?$ /projects/#private [R=301,L,NE]
+  RewriteRule ^gallery/בית-פרטי-ברעננה/?$ /projects/#private [R=301,L,NE]
+  RewriteRule ^gallery/הכי-מודרנית-בכפר/?$ /projects/#private [R=301,L,NE]
+  RewriteRule ^gallery/בתים-פרטיים/?$ /projects/#private [R=301,L,NE]
+  RewriteRule ^gallery/פרויקט/?$ /projects/#private [R=301,L,NE]
+  RewriteRule ^gallery/פרויקט-חשמל-חכם/?$ /projects/#private [R=301,L,NE]
 
   # Developer / dense-residential gallery slugs.
   RewriteRule ^gallery/metropolis-2/?$ /projects/#developers [R=301,L,NE]
@@ -52,8 +52,8 @@
   RewriteRule ^gallery/ecocity/?$ /projects/#developers [R=301,L,NE]
   RewriteRule ^gallery/arnona/?$ /projects/#developers [R=301,L,NE]
   RewriteRule ^gallery/neve-gan/?$ /projects/#developers [R=301,L,NE]
-  RewriteRule ^gallery/׳׳×׳—׳-׳׳˜׳¨׳•׳₪׳•׳׳™׳¡-׳”׳¨׳¦׳׳™׳”/?$ /projects/#developers [R=301,L,NE]
-  RewriteRule ^gallery/׳₪׳¨׳•׳™׳™׳§׳˜-׳”׳׳§׳׳™׳₪׳˜׳•׳¡-׳‘׳™׳×-׳©׳׳©/?$ /projects/#developers [R=301,L,NE]
+  RewriteRule ^gallery/מתחם-מטרופוליס-הרצליה/?$ /projects/#developers [R=301,L,NE]
+  RewriteRule ^gallery/פרוייקט-האקליפטוס-בית-שמש/?$ /projects/#developers [R=301,L,NE]
 
   # WordPress admin/search leftovers.
   RewriteRule ^wp-admin/.*$ / [R=301,L]
@@ -81,9 +81,9 @@
   RewriteRule ^structure-control\.html$ /structure-control/ [R=301,L]
   RewriteRule ^the-winning-synergy\.html$ /the-winning-synergy/ [R=301,L]
   RewriteRule ^video\.html$ /video/ [R=301,L]
-  RewriteRule ^׳©׳׳׳•׳×-׳ ׳₪׳•׳¦׳•׳×\.html$ /׳©׳׳׳•׳×-׳ ׳₪׳•׳¦׳•׳×/ [R=301,L,NE]
-  RewriteRule ^gallery/׳׳™׳ ׳˜׳¨׳§׳•׳-׳—׳›׳-׳׳‘׳ ׳™׳™׳-׳׳’׳•׳¨׳™׳\.html$ /gallery/׳׳™׳ ׳˜׳¨׳§׳•׳-׳—׳›׳-׳׳‘׳ ׳™׳™׳-׳׳’׳•׳¨׳™׳/ [R=301,L,NE]
-  RewriteRule ^gallery/׳—׳“׳¨-׳§׳•׳׳ ׳•׳¢-׳‘׳™׳×׳™\.html$ /gallery/׳—׳“׳¨-׳§׳•׳׳ ׳•׳¢-׳‘׳™׳×׳™/ [R=301,L,NE]
+  RewriteRule ^שאלות-נפוצות\.html$ /שאלות-נפוצות/ [R=301,L,NE]
+  RewriteRule ^gallery/אינטרקום-חכם-לבניין-מגורים\.html$ /gallery/אינטרקום-חכם-לבניין-מגורים/ [R=301,L,NE]
+  RewriteRule ^gallery/חדר-קולנוע-ביתי\.html$ /gallery/חדר-קולנוע-ביתי/ [R=301,L,NE]
   RewriteRule ^shopengine-template/cart\.html$ /shopengine-template/cart/ [R=301,L]
 
   # BMS case-study flat HTML routes.

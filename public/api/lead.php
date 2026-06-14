@@ -131,7 +131,7 @@ if ($lead['email'] !== '' && !filter_var($lead['email'], FILTER_VALIDATE_EMAIL))
 $token = getenv('MONDAY_API_TOKEN') ?: '';
 $boardId = getenv('MONDAY_BOARD_ID') ?: DEFAULT_BOARD_ID;
 $groupId = getenv('MONDAY_GROUP_ID') ?: null;
-$itemName = trim('Lead from website - ' . $lead['name'] . ' - ' . $lead['lead_type']);
+$itemName = trim('Lead מהאתר - ' . $lead['name'] . ' - ' . $lead['lead_type']);
 
 $updateBody = implode("\n", [
     '**Lead from i-feel website**',

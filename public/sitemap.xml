@@ -115,27 +115,116 @@
     <priority>0.6</priority>
   </url>
   <url>
+    <loc>https://i-feel.co.il/שאלות-נפוצות/</loc>
+    <lastmod>2026-05-22</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://i-feel.co.il/gallery/אינטרקום-חכם-לבניין-מגורים/</loc>
+    <lastmod>2026-05-22</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://i-feel.co.il/gallery/חדר-קולנוע-ביתי/</loc>
+    <lastmod>2026-05-22</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
     <loc>https://i-feel.co.il/articles/</loc>
     <lastmod>2026-06-07</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
-  </url>
-  <url><loc>https://i-feel.co.il/articles/what-is-smart-home/</loc><lastmod>2026-06-07</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
-  <url><loc>https://i-feel.co.il/articles/smart-home-cost-2026/</loc><lastmod>2026-06-07</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
-  <url><loc>https://i-feel.co.il/articles/wired-vs-wireless-smart-home/</loc><lastmod>2026-06-07</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
-  <url><loc>https://i-feel.co.il/articles/what-is-knx/</loc><lastmod>2026-06-07</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
-  <url><loc>https://i-feel.co.il/articles/smart-home-for-shabbat/</loc><lastmod>2026-06-07</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
-  <url><loc>https://i-feel.co.il/articles/bms-guide/</loc><lastmod>2026-06-07</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
-  <url><loc>https://i-feel.co.il/articles/bms-save-energy/</loc><lastmod>2026-06-07</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
-  <url><loc>https://i-feel.co.il/articles/existing-home-smart-upgrade/</loc><lastmod>2026-06-07</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
-  <url><loc>https://i-feel.co.il/articles/smart-home-for-architects/</loc><lastmod>2026-06-07</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
-  <url><loc>https://i-feel.co.il/articles/smart-home-for-contractors/</loc><lastmod>2026-06-07</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
-  <url><loc>https://i-feel.co.il/articles/bms-vs-manual-control/</loc><lastmod>2026-06-07</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
-  <url><loc>https://i-feel.co.il/articles/bms-selection-mistakes/</loc><lastmod>2026-06-07</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
-  <url><loc>https://i-feel.co.il/articles/office-building-bms-guide/</loc><lastmod>2026-06-07</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
-  <url><loc>https://i-feel.co.il/articles/why-siemens-desigo-bms/</loc><lastmod>2026-06-07</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
-  <url><loc>https://i-feel.co.il/structure-control/projects/</loc><lastmod>2026-06-07</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
-  <url><loc>https://i-feel.co.il/structure-control/projects/museum-of-illusions/</loc><lastmod>2026-06-12</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
-  <url><loc>https://i-feel.co.il/projects/countrite-technologies/</loc><lastmod>2026-06-12</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
-  <url><loc>https://i-feel.co.il/service-agreement-2026/</loc><lastmod>2026-06-13</lastmod><changefreq>monthly</changefreq><priority>0.3</priority></url>
-</urlset>
+  </url>  <url>
+    <loc>https://i-feel.co.il/articles/what-is-smart-home/</loc>
+    <lastmod>2026-06-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>  <url>
+    <loc>https://i-feel.co.il/articles/smart-home-cost-2026/</loc>
+    <lastmod>2026-06-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>  <url>
+    <loc>https://i-feel.co.il/articles/wired-vs-wireless-smart-home/</loc>
+    <lastmod>2026-06-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>  <url>
+    <loc>https://i-feel.co.il/articles/what-is-knx/</loc>
+    <lastmod>2026-06-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>  <url>
+    <loc>https://i-feel.co.il/articles/smart-home-for-shabbat/</loc>
+    <lastmod>2026-06-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>  <url>
+    <loc>https://i-feel.co.il/articles/bms-guide/</loc>
+    <lastmod>2026-06-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>  <url>
+    <loc>https://i-feel.co.il/articles/bms-save-energy/</loc>
+    <lastmod>2026-06-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>  <url>
+    <loc>https://i-feel.co.il/articles/existing-home-smart-upgrade/</loc>
+    <lastmod>2026-06-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>  <url>
+    <loc>https://i-feel.co.il/articles/smart-home-for-architects/</loc>
+    <lastmod>2026-06-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>  <url>
+    <loc>https://i-feel.co.il/articles/smart-home-for-contractors/</loc>
+    <lastmod>2026-06-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>  <url>
+    <loc>https://i-feel.co.il/articles/bms-vs-manual-control/</loc>
+    <lastmod>2026-06-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>  <url>
+    <loc>https://i-feel.co.il/articles/bms-selection-mistakes/</loc>
+    <lastmod>2026-06-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>  <url>
+    <loc>https://i-feel.co.il/articles/office-building-bms-guide/</loc>
+    <lastmod>2026-06-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>  <url>
+    <loc>https://i-feel.co.il/articles/why-siemens-desigo-bms/</loc>
+    <lastmod>2026-06-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>  <url>
+    <loc>https://i-feel.co.il/structure-control/projects/</loc>
+    <lastmod>2026-06-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>  <url>
+    <loc>https://i-feel.co.il/structure-control/projects/museum-of-illusions/</loc>
+    <lastmod>2026-06-12</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>  <url>
+    <loc>https://i-feel.co.il/projects/countrite-technologies/</loc>
+    <lastmod>2026-06-12</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>  <url>
+    <loc>https://i-feel.co.il/service-agreement-2026/</loc>
+    <lastmod>2026-06-13</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.3</priority>
+  </url></urlset>

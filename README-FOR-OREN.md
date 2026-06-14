@@ -16,16 +16,16 @@ Oren is the site owner and current website manager.
 
 ## Run locally
 
-```bash
+``bash
 npm install
 npm run dev
-```
+``
 
 ## Build
 
-```bash
+``bash
 npm run build
-```
+``
 
 ## Production lead form
 

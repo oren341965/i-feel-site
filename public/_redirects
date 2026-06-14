@@ -1,50 +1,67 @@
-# Legacy redirects manifest. On cPanel/LiteSpeed, public/.htaccess is the source of truth.
+# Legacy _redirects manifest — cPanel/LiteSpeed source of truth is public/.htaccess.
 # Format: <from-path> <to-path> <status>
+# Built: Phase 10F (2026-05-24)
+# All 301 (permanent) unless noted.
 
+# Legacy fallback: www / alternate-hosted traffic must move to the canonical FTP site.
 /*                           https://i-feel.co.il/:splat 301!
 
-# Service / customer-area pages
+# ---- Service / customer-area pages ----
 /qr/                         /service-and-maintenance/   301
 /service-2/                  /service-and-maintenance/   301
+/שירותי-ענן/                  /service-and-maintenance/   301
 /contact-us/                 /contactus/                  301
 
-# Media / press
+# ---- Media / press ----
 /talking-about-us/           /video/#press                301
 
-# WordPress magazine sections. Do not redirect /articles/; it is a live page.
+# ---- WordPress magazine sections (intentionally not migrated) ----
 /podcast/                    /                            301
 /category/articles/          /articles/                   301
 /category/articles/page/2/   /articles/                   301
 /category/magazine/          /articles/                   301
 /talk-about-design/          /                            301
 
-# Old indexed WordPress deep links
+# ---- Old indexed WordPress deep links ----
 /hadassah-knx-system/ifeel-blog/ /hadassah-knx-system/ 301
 /license/%D7%90%D7%99%D7%A9%D7%95%D7%A8-%D7%94%D7%9C%D7%9B%D7%AA%D7%99-%D7%97%D7%A9%D7%9E%D7%9C-%D7%97%D7%9B%D7%9D-%D7%90%D7%99%D7%99-%D7%A4%D7%99%D7%9C-2023/ /license/ 301
 
-# Private-villa gallery slugs
+# ---- Private-villa gallery slugs (12 → /projects/#private) ----
 /gallery/smarthome-caesarea/         /projects/#private  301
 /gallery/smarthome-beytar/           /projects/#private  301
 /gallery/smarthome-hofit/            /projects/#private  301
 /gallery/smart-private/              /projects/#private  301
+/gallery/בית-יוקרתי-ברעננה/         /projects/#private  301
+/gallery/בית-פרטי-ברעננה/           /projects/#private  301
+/gallery/הכי-מודרנית-בכפר/          /projects/#private  301
+/gallery/בתים-פרטיים/                /projects/#private  301
+/gallery/פרויקט/                     /projects/#private  301
+/gallery/פרויקט-חשמל-חכם/           /projects/#private  301
 
-# Developer / dense-residential gallery slugs
-/gallery/metropolis-2/                /projects/#developers  301
-/gallery/metropolis/                  /projects/#developers  301
-/gallery/sela/                        /projects/#developers  301
-/gallery/ramat-gan/                   /projects/#developers  301
-/gallery/gan-hair/                    /projects/#developers  301
-/gallery/papushado/                   /projects/#developers  301
-/gallery/ecocity/                     /projects/#developers  301
-/gallery/arnona/                      /projects/#developers  301
-/gallery/neve-gan/                    /projects/#developers  301
+# ---- Developer / dense-residential gallery slugs (11 → /projects/#developers) ----
+/gallery/metropolis-2/                                /projects/#developers  301
+/gallery/metropolis/                                  /projects/#developers  301
+/gallery/sela/                                        /projects/#developers  301
+/gallery/ramat-gan/                                   /projects/#developers  301
+/gallery/gan-hair/                                    /projects/#developers  301
+/gallery/papushado/                                   /projects/#developers  301
+/gallery/ecocity/                                     /projects/#developers  301
+/gallery/arnona/                                      /projects/#developers  301
+/gallery/neve-gan/                                    /projects/#developers  301
+/gallery/מתחם-מטרופוליס-הרצליה/                      /projects/#developers  301
+/gallery/פרוייקט-האקליפטוס-בית-שמש/                  /projects/#developers  301
 
-# WordPress admin/search leftovers
+# ---- WordPress admin paths (block any leaked discovery) ----
 /wp-admin/*                  /                            301
 /wp-login.php                /                            301
+
+# ---- WordPress native search query — redirect to contact until Pagefind ships ----
+# Historical note: this query-param rule is kept only for legacy redirect manifests.
 /                            /contactus/                  301!  Query:s=:term
 
-# Legacy flat HTML routes
+# ---- End of file ----
+
+# Legacy flat HTML routes from production ZIP
 /accessibility.html /accessibility/ 301!
 /architects-smart-home-planning.html /architects-smart-home-planning/ 301!
 /audio-and-sound-systems.html /audio-and-sound-systems/ 301!
@@ -64,12 +81,16 @@
 /structure-control.html /structure-control/ 301!
 /the-winning-synergy.html /the-winning-synergy/ 301!
 /video.html /video/ 301!
+/שאלות-נפוצות.html /שאלות-נפוצות/ 301!
+/gallery/אינטרקום-חכם-לבניין-מגורים.html /gallery/אינטרקום-חכם-לבניין-מגורים/ 301!
+/gallery/חדר-קולנוע-ביתי.html /gallery/חדר-קולנוע-ביתי/ 301!
 /shopengine-template/cart.html /shopengine-template/cart/ 301!
-
-# Smart-home legacy routes. Product-specific KNX routes are intentionally not redirected here.
+# ---- Smart-home legacy routes ----
+# Product-specific KNX legacy routes are intentionally not redirected here.
+# Keep old Schneider and Siemens assets separate unless a redirect is approved explicitly.
 /home-automation/ /smart-home/ 301
 
-# BMS case studies
+# ---- BMS case studies ----
 /structure-control/amazon-tel-aviv-1/ /structure-control/amazon-sarona/ 301
 /structure-control/caesarea-rail-campus.html /structure-control/caesarea-rail-campus/ 301!
 /structure-control/brinks-bnei-brak.html /structure-control/brinks-bnei-brak/ 301!

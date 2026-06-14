@@ -20,6 +20,21 @@
   </div>
 </section>
 
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const params = new URLSearchParams(window.location.search);
+    const leadStatus = params.get('lead') || params.get('sent');
+    const thankYou = document.getElementById('thank-you');
+    if (thankYou && ['1', 'sent', 'sent-mail'].includes(leadStatus || '')) {
+      thankYou.classList.remove('hidden');
+    }
+
+    document.querySelectorAll('input[name="source_page"]').forEach((input) => {
+      input.value = window.location.href;
+    });
+  });
+</script>
+
 <!-- THANK YOU BANNER (shown via JS when ?sent=1) -->
 <section id="thank-you" class="hidden bg-green-50 border-y border-green-200" aria-live="polite">
   <div class="max-w-3xl mx-auto px-4 py-6 text-center">
@@ -71,75 +86,93 @@
     <h2 class="text-2xl md:text-3xl font-extrabold text-brand-900 mb-2">טופס יצירת קשר</h2>
     <p class="text-brand-700 mb-8">מלאו את הפרטים ונחזור אליכם בשעות הפעילות הקרובות. שדות עם <span class="text-accent-600 font-bold">*</span> חובה.</p>
 
-    <form name="contact" method="POST" data-netlify="true" data-netlify-honeypot="bot-field" action="/contactus/?sent=1" class="bg-white rounded-2xl border border-brand-100 p-6 md:p-8 space-y-5">
-
-      <!-- Required by Netlify Forms for AJAX-style POST processing -->
-      <input type="hidden" name="form-name" value="contact">
-
-      <!-- Subject pre-filled from URL ?subject= param (e.g., links from /projects/ cards) -->
-      <input type="hidden" name="subject" id="f-subject">
-
-      <!-- Honeypot: hidden from real users, bots fill it and get rejected -->
-      <p hidden aria-hidden="true" style="display:none">
-        <label>Leave this field empty: <input name="bot-field" tabindex="-1" autocomplete="off" /></label>
-      </p>
-
-      <div class="grid md:grid-cols-2 gap-5">
-        <div>
-          <label for="f-name" class="req block text-sm font-bold text-brand-900 mb-1">שם מלא</label>
-          <input id="f-name" type="text" name="שם מלא" required autocomplete="name">
+    <div class="bg-white rounded-2xl border border-brand-100 p-6 md:p-8 space-y-6">
+      <form action="/api/lead.php" method="post" accept-charset="UTF-8" class="grid gap-5">
+        <input type="hidden" name="source_page" value="/contactus/">
+        <div class="hidden" aria-hidden="true">
+          <label>Website <input type="text" name="website" tabindex="-1" autocomplete="off"></label>
         </div>
-        <div>
-          <label for="f-phone" class="req block text-sm font-bold text-brand-900 mb-1">טלפון</label>
-          <input id="f-phone" type="tel" name="טלפון" required autocomplete="tel" inputmode="tel" pattern="[0-9\-+\s()]{7,}">
+
+        <div class="grid md:grid-cols-2 gap-4">
+          <label class="block">
+            <span class="block text-sm font-bold text-brand-900 mb-1">שם מלא <span class="text-accent-600">*</span></span>
+            <input required name="name" type="text" autocomplete="name" class="w-full rounded-lg border border-brand-200 px-4 py-3 text-brand-900 focus:border-accent-500 focus:ring-2 focus:ring-accent-500/20" placeholder="שם פרטי ומשפחה">
+          </label>
+          <label class="block">
+            <span class="block text-sm font-bold text-brand-900 mb-1">טלפון <span class="text-accent-600">*</span></span>
+            <input required name="phone" type="tel" autocomplete="tel" inputmode="tel" class="w-full rounded-lg border border-brand-200 px-4 py-3 text-brand-900 focus:border-accent-500 focus:ring-2 focus:ring-accent-500/20" placeholder="050-0000000">
+          </label>
         </div>
-      </div>
 
-      <div>
-        <label for="f-email" class="req block text-sm font-bold text-brand-900 mb-1">אימייל</label>
-        <input id="f-email" type="email" name="אימייל" required autocomplete="email">
-      </div>
+        <div class="grid md:grid-cols-2 gap-4">
+          <label class="block">
+            <span class="block text-sm font-bold text-brand-900 mb-1">אימייל</span>
+            <input name="email" type="email" autocomplete="email" class="w-full rounded-lg border border-brand-200 px-4 py-3 text-brand-900 focus:border-accent-500 focus:ring-2 focus:ring-accent-500/20" placeholder="name@example.com">
+          </label>
+          <label class="block">
+            <span class="block text-sm font-bold text-brand-900 mb-1">סוג פנייה <span class="text-accent-600">*</span></span>
+            <select required name="lead_type" class="w-full rounded-lg border border-brand-200 px-4 py-3 text-brand-900 focus:border-accent-500 focus:ring-2 focus:ring-accent-500/20">
+              <option value="">בחרו מסלול</option>
+              <option value="לקוח פרטי">לקוח פרטי</option>
+              <option value="יזם בנייה">יזם בנייה</option>
+              <option value="אדריכל / מעצב">אדריכל / מעצב</option>
+              <option value="BMS / בקרת מבנה">BMS / בקרת מבנה</option>
+              <option value="שירות ללקוח קיים">שירות ללקוח קיים</option>
+              <option value="אחר">אחר</option>
+            </select>
+          </label>
+        </div>
 
-      <div>
-        <label for="f-inquiry-type" class="req block text-sm font-bold text-brand-900 mb-1">סוג פנייה</label>
-        <select id="f-inquiry-type" name="סוג פנייה" required>
-          <option value="">-- בחרו סוג פנייה --</option>
-          <option value="לקוח חדש">לקוח חדש</option>
-          <option value="שירות לקוחות">שירות לקוחות</option>
-          <option value="יזם בנייה">יזם בנייה</option>
-          <option value="אדריכל / מעצב">אדריכל / מעצב</option>
-          <option value="BMS / בקרת מבנה">BMS / בקרת מבנה</option>
-          <option value="שדרוגים ותוספות">שדרוגים ותוספות</option>
-        </select>
-      </div>
-
-      <div>
-        <label for="f-address" class="block text-sm font-bold text-brand-900 mb-1">כתובת / עיר</label>
-        <input id="f-address" type="text" name="כתובת או עיר" autocomplete="street-address" placeholder="לדוגמה: רחוב הרצל 12, רמת השרון">
-      </div>
-
-      <div>
-        <label for="f-message" class="req block text-sm font-bold text-brand-900 mb-1">תיאור הפנייה</label>
-        <textarea id="f-message" name="תיאור הפנייה" rows="5" required placeholder="ספרו לנו במשפט-שניים מה הצורך — סוג הפרויקט, או מה התקלה אם זו קריאת שירות."></textarea>
-      </div>
-
-      <div class="flex items-start gap-2 pt-2">
-        <input id="f-consent" type="checkbox" name="אישור יצירת קשר" value="כן" required class="mt-1 w-4 h-4">
-        <label for="f-consent" class="text-sm text-brand-700 leading-snug">
-          אני מאשר/ת יצירת קשר מטעם i-feel לצורך מענה לפנייה זו. <span class="text-accent-600 font-bold">*</span>
+        <label class="block">
+          <span class="block text-sm font-bold text-brand-900 mb-1">נושא</span>
+          <input name="subject" type="text" class="w-full rounded-lg border border-brand-200 px-4 py-3 text-brand-900 focus:border-accent-500 focus:ring-2 focus:ring-accent-500/20" placeholder="בית חכם, BMS, פרויקט יזמי, שירות וכדומה">
         </label>
+
+        <label class="block">
+          <span class="block text-sm font-bold text-brand-900 mb-1">מה תרצו שנדע?</span>
+          <textarea name="message" rows="5" class="w-full rounded-lg border border-brand-200 px-4 py-3 text-brand-900 focus:border-accent-500 focus:ring-2 focus:ring-accent-500/20" placeholder="ספרו בקצרה על הפרויקט, שלב הבנייה, כתובת/עיר, או התקלה במקרה של שירות"></textarea>
+        </label>
+
+        <div class="flex flex-col md:flex-row md:items-center gap-3">
+          <button type="submit" class="inline-flex items-center justify-center bg-accent-500 hover:bg-accent-600 text-white px-8 py-3.5 rounded-lg font-bold text-lg transition shadow-md">
+            שליחת פנייה
+          </button>
+          <p class="text-xs text-brand-500">
+            הפנייה נשלחת ל-Monday בלוח המכירות 2732725332. אם החיבור ל-Monday לא זמין, היא נשלחת אוטומטית לגיבוי במייל.
+          </p>
+        </div>
+      </form>
+
+      <div>
+        <h3 class="text-xl font-bold text-brand-900 mb-2">שליחת פנייה דרך הטופס הפעיל</h3>
+        <p class="text-brand-700 leading-relaxed">
+          הטופס נפתח במערכת Superform המאושרת לקריאות שירות ופניות לקוחות. אם אתם פונים לגבי פרויקט חדש, אפשר לציין בתחילת הפנייה אם מדובר בלקוח פרטי, יזם בנייה, אדריכל או פרויקט BMS.
+        </p>
       </div>
 
-      <div class="pt-2">
-        <button type="submit" class="w-full md:w-auto bg-accent-500 hover:bg-accent-600 text-white px-8 py-3.5 rounded-lg font-bold text-lg transition shadow-md">
-          שליחת פנייה ←
-        </button>
+      <a href="https://www.superform.spot-nik.com/form/63cd83d84533621571484d9b" target="_blank" rel="noopener" class="inline-flex w-full md:w-auto items-center justify-center gap-2 bg-accent-500 hover:bg-accent-600 text-white px-8 py-3.5 rounded-lg font-bold text-lg transition shadow-md">
+        פתיחת טופס פנייה מאובטח ↗
+      </a>
+
+      <div class="grid md:grid-cols-3 gap-4 pt-4 border-t border-brand-100 text-sm">
+        <a href="mailto:sales@i-feel.co.il?subject=פנייה%20חדשה%20מהאתר" class="rounded-xl border border-brand-100 bg-brand-50 hover:border-accent-500 p-4 transition">
+          <span class="block font-bold text-brand-900 mb-1">מכירות ופרויקטים</span>
+          <span class="text-brand-700">sales@i-feel.co.il</span>
+        </a>
+        <a href="mailto:support@i-feel.co.il?subject=פניית%20שירות%20מהאתר" class="rounded-xl border border-brand-100 bg-brand-50 hover:border-green-500 p-4 transition">
+          <span class="block font-bold text-brand-900 mb-1">שירות לקוחות</span>
+          <span class="text-brand-700">support@i-feel.co.il</span>
+        </a>
+        <a href="https://wa.me/972533006239" class="rounded-xl border border-brand-100 bg-brand-50 hover:border-green-500 p-4 transition">
+          <span class="block font-bold text-brand-900 mb-1">WhatsApp שירות</span>
+          <span class="text-brand-700">053-300-6239</span>
+        </a>
       </div>
 
       <p class="text-xs text-brand-500 pt-2 border-t border-brand-100">
-        הטופס מעובד דרך Netlify Forms. אנחנו לא משתפים את הפרטים שלכם עם צד שלישי לצרכי שיווק.
+        הפרטים משמשים למענה לפנייה בלבד. לפניות שירות דחופות מומלץ להשתמש בטופס השירות או ב-WhatsApp.
       </p>
-    </form>
+
   </div>
 </section>
 
