@@ -1,0 +1,95 @@
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+
+  # Canonical host.
+  RewriteCond %{HTTP_HOST} ^www\.i-feel\.co\.il$ [NC]
+  RewriteRule ^ https://i-feel.co.il%{REQUEST_URI} [R=301,L,NE]
+
+  # Service / customer-area legacy routes.
+  RewriteRule ^qr/?$ /service-and-maintenance/ [R=301,L]
+  RewriteRule ^service-2/?$ /service-and-maintenance/ [R=301,L]
+  RewriteRule ^׳©׳™׳¨׳•׳×׳™-׳¢׳ ׳/?$ /service-and-maintenance/ [R=301,L]
+  RewriteRule ^contact-us/?$ /contactus/ [R=301,L]
+
+  # Media / press.
+  RewriteRule ^talking-about-us/?$ /video/#press [R=301,L,NE]
+
+  # WordPress magazine sections. Do not redirect /articles/; it is a live page.
+  RewriteRule ^podcast/?$ / [R=301,L]
+  RewriteRule ^category/articles/?$ /articles/ [R=301,L]
+  RewriteRule ^category/articles/page/[0-9]+/?$ /articles/ [R=301,L]
+  RewriteRule ^category/magazine/?$ /articles/ [R=301,L]
+  RewriteRule ^talk-about-design/?$ / [R=301,L]
+
+  # High-value legacy SEO routes still visible in Google.
+  RewriteRule ^home-automation/?$ /smart-home/ [R=301,L]
+  RewriteRule ^about-us/?$ / [R=301,L]
+  RewriteRule ^hadassah-knx-system/ifeel-blog/?$ /hadassah-knx-system/ [R=301,L]
+
+  # Old WordPress certificate slug, percent-encoded to keep this file ASCII-only.
+  RewriteCond %{REQUEST_URI} ^/license/%D7%90%D7%99%D7%A9%D7%95%D7%A8-%D7%94%D7%9C%D7%9B%D7%AA%D7%99-%D7%97%D7%A9%D7%9E%D7%9C-%D7%97%D7%9B%D7%9D-%D7%90%D7%99%D7%99-%D7%A4%D7%99%D7%9C-2023/?$ [NC]
+  RewriteRule ^ /license/ [R=301,L,NE]
+
+  # Private-villa gallery slugs.
+  RewriteRule ^gallery/smarthome-caesarea/?$ /projects/#private [R=301,L,NE]
+  RewriteRule ^gallery/smarthome-beytar/?$ /projects/#private [R=301,L,NE]
+  RewriteRule ^gallery/smarthome-hofit/?$ /projects/#private [R=301,L,NE]
+  RewriteRule ^gallery/smart-private/?$ /projects/#private [R=301,L,NE]
+  RewriteRule ^gallery/׳‘׳™׳×-׳™׳•׳§׳¨׳×׳™-׳‘׳¨׳¢׳ ׳ ׳”/?$ /projects/#private [R=301,L,NE]
+  RewriteRule ^gallery/׳‘׳™׳×-׳₪׳¨׳˜׳™-׳‘׳¨׳¢׳ ׳ ׳”/?$ /projects/#private [R=301,L,NE]
+  RewriteRule ^gallery/׳”׳›׳™-׳׳•׳“׳¨׳ ׳™׳×-׳‘׳›׳₪׳¨/?$ /projects/#private [R=301,L,NE]
+  RewriteRule ^gallery/׳‘׳×׳™׳-׳₪׳¨׳˜׳™׳™׳/?$ /projects/#private [R=301,L,NE]
+  RewriteRule ^gallery/׳₪׳¨׳•׳™׳§׳˜/?$ /projects/#private [R=301,L,NE]
+  RewriteRule ^gallery/׳₪׳¨׳•׳™׳§׳˜-׳—׳©׳׳-׳—׳›׳/?$ /projects/#private [R=301,L,NE]
+
+  # Developer / dense-residential gallery slugs.
+  RewriteRule ^gallery/metropolis-2/?$ /projects/#developers [R=301,L,NE]
+  RewriteRule ^gallery/metropolis/?$ /projects/#developers [R=301,L,NE]
+  RewriteRule ^gallery/sela/?$ /projects/#developers [R=301,L,NE]
+  RewriteRule ^gallery/ramat-gan/?$ /projects/#developers [R=301,L,NE]
+  RewriteRule ^gallery/gan-hair/?$ /projects/#developers [R=301,L,NE]
+  RewriteRule ^gallery/papushado/?$ /projects/#developers [R=301,L,NE]
+  RewriteRule ^gallery/ecocity/?$ /projects/#developers [R=301,L,NE]
+  RewriteRule ^gallery/arnona/?$ /projects/#developers [R=301,L,NE]
+  RewriteRule ^gallery/neve-gan/?$ /projects/#developers [R=301,L,NE]
+  RewriteRule ^gallery/׳׳×׳—׳-׳׳˜׳¨׳•׳₪׳•׳׳™׳¡-׳”׳¨׳¦׳׳™׳”/?$ /projects/#developers [R=301,L,NE]
+  RewriteRule ^gallery/׳₪׳¨׳•׳™׳™׳§׳˜-׳”׳׳§׳׳™׳₪׳˜׳•׳¡-׳‘׳™׳×-׳©׳׳©/?$ /projects/#developers [R=301,L,NE]
+
+  # WordPress admin/search leftovers.
+  RewriteRule ^wp-admin/.*$ / [R=301,L]
+  RewriteRule ^wp-login\.php$ / [R=301,L]
+  RewriteCond %{QUERY_STRING} (^|&)s=[^&]+ [NC]
+  RewriteRule ^$ /contactus/? [R=301,L]
+
+  # Legacy flat HTML routes from the old production ZIP.
+  RewriteRule ^accessibility\.html$ /accessibility/ [R=301,L]
+  RewriteRule ^architects-smart-home-planning\.html$ /architects-smart-home-planning/ [R=301,L]
+  RewriteRule ^audio-and-sound-systems\.html$ /audio-and-sound-systems/ [R=301,L]
+  RewriteRule ^blog\.html$ /blog/ [R=301,L]
+  RewriteRule ^catalogs\.html$ /catalogs/ [R=301,L]
+  RewriteRule ^communication-networks\.html$ /communication-networks/ [R=301,L]
+  RewriteRule ^contactus\.html$ /contactus/ [R=301,L]
+  RewriteRule ^contractor-customer-care\.html$ /contractor-customer-care/ [R=301,L]
+  RewriteRule ^green-building\.html$ /green-building/ [R=301,L]
+  RewriteRule ^hadassah-knx-system\.html$ /hadassah-knx-system/ [R=301,L]
+  RewriteRule ^license\.html$ /license/ [R=301,L]
+  RewriteRule ^projects\.html$ /projects/ [R=301,L]
+  RewriteRule ^right-infrastructure-for-a-smart-home\.html$ /right-infrastructure-for-a-smart-home/ [R=301,L]
+  RewriteRule ^service-and-maintenance\.html$ /service-and-maintenance/ [R=301,L]
+  RewriteRule ^smart-home\.html$ /smart-home/ [R=301,L]
+  RewriteRule ^smart-solutions-business\.html$ /smart-solutions-business/ [R=301,L]
+  RewriteRule ^structure-control\.html$ /structure-control/ [R=301,L]
+  RewriteRule ^the-winning-synergy\.html$ /the-winning-synergy/ [R=301,L]
+  RewriteRule ^video\.html$ /video/ [R=301,L]
+  RewriteRule ^׳©׳׳׳•׳×-׳ ׳₪׳•׳¦׳•׳×\.html$ /׳©׳׳׳•׳×-׳ ׳₪׳•׳¦׳•׳×/ [R=301,L,NE]
+  RewriteRule ^gallery/׳׳™׳ ׳˜׳¨׳§׳•׳-׳—׳›׳-׳׳‘׳ ׳™׳™׳-׳׳’׳•׳¨׳™׳\.html$ /gallery/׳׳™׳ ׳˜׳¨׳§׳•׳-׳—׳›׳-׳׳‘׳ ׳™׳™׳-׳׳’׳•׳¨׳™׳/ [R=301,L,NE]
+  RewriteRule ^gallery/׳—׳“׳¨-׳§׳•׳׳ ׳•׳¢-׳‘׳™׳×׳™\.html$ /gallery/׳—׳“׳¨-׳§׳•׳׳ ׳•׳¢-׳‘׳™׳×׳™/ [R=301,L,NE]
+  RewriteRule ^shopengine-template/cart\.html$ /shopengine-template/cart/ [R=301,L]
+
+  # BMS case-study flat HTML routes.
+  RewriteRule ^structure-control/amazon-tel-aviv-1/?$ /structure-control/amazon-sarona/ [R=301,L]
+  RewriteRule ^structure-control/caesarea-rail-campus\.html$ /structure-control/caesarea-rail-campus/ [R=301,L]
+  RewriteRule ^structure-control/brinks-bnei-brak\.html$ /structure-control/brinks-bnei-brak/ [R=301,L]
+  RewriteRule ^structure-control/amazon-sarona\.html$ /structure-control/amazon-sarona/ [R=301,L]
+  RewriteRule ^structure-control/d-city-roxon-hotels\.html$ /structure-control/d-city-roxon-hotels/ [R=301,L]
+</IfModule>
