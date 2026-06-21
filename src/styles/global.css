@@ -12,3 +12,19 @@ html { scroll-behavior: smooth; }
   }
   .sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
   .focus\:not-sr-only:focus { position:static; width:auto; height:auto; padding:0.5rem 1rem; margin:0; overflow:visible; clip:auto; white-space:normal; background:#d4a544; color:white; border-radius:0.5rem; }
+
+  /* Typography for article content rendered inside .prose-he (restores heading hierarchy, lists and spacing after Tailwind Preflight) */
+  .prose-he section { margin-bottom: 2rem; }
+  .prose-he h2 { font-size: 1.875rem; line-height: 1.25; font-weight: 800; color: #0f1f36; margin: 2.5rem 0 1rem; }
+  .prose-he h3 { font-size: 1.375rem; line-height: 1.3; font-weight: 700; color: #1a3354; margin: 1.75rem 0 0.75rem; }
+  .prose-he p { font-size: 1.125rem; line-height: 1.85; color: #1a3354; margin-bottom: 1rem; }
+  .prose-he ul, .prose-he ol { margin: 0 0 1.25rem; padding-inline-start: 1.5rem; font-size: 1.125rem; line-height: 1.85; color: #1a3354; }
+  .prose-he ul { list-style: disc; }
+  .prose-he ol { list-style: decimal; }
+  .prose-he li { margin-bottom: 0.5rem; }
+  .prose-he a { color: #b8892e; font-weight: 600; text-decoration: underline; }
+  .prose-he a:hover { color: #d4a544; }
+  .prose-he strong { font-weight: 700; color: #0f1f36; }
+  .prose-he details { background: #f0f5fb; border: 1px solid #dae6f2; border-radius: 0.5rem; padding: 1rem 1.25rem; margin-bottom: 0.75rem; }
+  .prose-he summary { font-weight: 700; color: #0f1f36; cursor: pointer; font-size: 1.125rem; }
+  .prose-he details p { margin: 0.75rem 0 0; }
