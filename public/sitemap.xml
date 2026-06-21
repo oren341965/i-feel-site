@@ -257,4 +257,28 @@
     <lastmod>2026-06-13</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.3</priority>
+  </url>
+  <url>
+    <loc>https://i-feel.co.il/bms-offices/</loc>
+    <lastmod>2026-06-21</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://i-feel.co.il/bms-hotels/</loc>
+    <lastmod>2026-06-21</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://i-feel.co.il/bms-public-buildings/</loc>
+    <lastmod>2026-06-21</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://i-feel.co.il/bms-hospitals/</loc>
+    <lastmod>2026-06-21</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
   </url></urlset>
