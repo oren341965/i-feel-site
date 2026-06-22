@@ -441,8 +441,18 @@ const P = [
 const IMG='/assets/structure-projects/img/';
 const grid=document.getElementById('grid');
 
+const PROJECT_URLS = {
+  2: '/structure-control/brinks-bnei-brak/',
+  3: '/structure-control/caesarea-rail-campus/',
+  8: '/structure-control/amazon-sarona/',
+  15: '/structure-control/d-city-roxon-hotels/',
+  16: '/structure-control/d-city-roxon-hotels/',
+  17: '/structure-control/d-city-roxon-hotels/'
+};
+
 function cardHTML(p,i){
-  return `<article class="card" data-cat="${p.cat}" data-i="${i}">
+  const url = PROJECT_URLS[p.n] || '';
+  return `<article class="card" data-cat="${p.cat}" data-i="${i}" data-url="${url}">
     <div class="thumb ${p.img?'':'ph'}" style="${p.img?'':'background:linear-gradient(135deg,#0f2740,#0a1a2f)'}">
       ${p.img?`<img src="${IMG}${p.img}" alt="${p.t} ${p.loc}" loading="lazy">`:I.building}
       <div class="badges"><span class="badge">${CATS[p.cat]}</span><span class="badge tech">${p.tech}</span></div>
@@ -452,7 +462,7 @@ function cardHTML(p,i){
       <h3>${p.t}</h3>
       ${p.loc?`<span class="loc">${I.pin}${p.loc}</span>`:''}
       <p class="teaser">${p.ch}</p>
-      <span class="more">לפרטי הפרויקט ${I.arrow}</span>
+      <span class="more">${url ? 'לעמוד הפרויקט' : 'לפרטי הפרויקט'} ${I.arrow}</span>
     </div>
   </article>`;
 }
@@ -506,7 +516,12 @@ function openModal(i){
 function closeModal(){overlay.classList.remove('open');document.body.style.overflow='';}
 
 grid.addEventListener('click',e=>{
-  const c=e.target.closest('.card'); if(!c)return;
+  const c=e.target.closest('.card'); 
+  if(!c)return;
+  if(c.dataset.url){
+    window.location.href = c.dataset.url;
+    return;
+  }
   openModal(+c.dataset.i);
 });
 overlay.addEventListener('click',e=>{if(e.target===overlay||e.target.closest('[data-close]'))closeModal();});
