@@ -1,0 +1,53 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import content from '../page-html/bms-hotels.html?raw';
+
+const meta = {
+  title: "בקרת מבנה למלונות | BMS ו-GRMS לחדרי מלון | i-feel",
+  description: "בקרת מבנה למלונות: בקרת חדרים GRMS, חיסכון אנרגטי בחדרים ריקים ושילוב ל-PMS. תכנון, התקנה ושירות. אפיון מלון והערכת חיסכון — 03-508-9553.",
+  canonical: "https://i-feel.co.il/bms-hotels/",
+  ogTitle: "בקרת מבנה למלונות | BMS ו-GRMS | i-feel",
+  ogDescription: "בקרת חדרים GRMS וניהול מבנה אחד למלון — חוויית אורח אחידה, חיסכון אנרגטי ושילוב ל-PMS.",
+  ogUrl: "https://i-feel.co.il/bms-hotels/",
+  ogImage: "https://i-feel.co.il/assets/og-cover.jpg",
+  jsonLd: JSON.stringify({
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": ["LocalBusiness", "HomeAndConstructionBusiness"],
+        "@id": "https://i-feel.co.il/#business",
+        "name": "i-feel",
+        "alternateName": "i-feel מערכות בקרת מבנה ובית חכם",
+        "url": "https://i-feel.co.il/",
+        "logo": "https://i-feel.co.il/assets/ifeel-logo.png",
+        "image": "https://i-feel.co.il/assets/ifeel-logo.png",
+        "telephone": "+972-3-508-9553",
+        "email": "sales@i-feel.co.il",
+        "priceRange": "₪₪₪",
+        "address": { "@type": "PostalAddress", "streetAddress": "אימבר 14", "addressLocality": "פתח תקווה", "addressRegion": "מחוז המרכז", "postalCode": "4951148", "addressCountry": "IL" },
+        "areaServed": { "@type": "Country", "name": "Israel", "sameAs": "https://www.wikidata.org/wiki/Q801" },
+        "sameAs": ["https://www.facebook.com/SmarthomeIsrael", "https://www.instagram.com/ifeelisrael", "https://www.linkedin.com/company/200156"]
+      },
+      {
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          { "@type": "ListItem", "position": 1, "name": "דף הבית", "item": "https://i-feel.co.il/" },
+          { "@type": "ListItem", "position": 2, "name": "בקרת מבנה BMS", "item": "https://i-feel.co.il/structure-control/" },
+          { "@type": "ListItem", "position": 3, "name": "בקרת מבנה למלונות", "item": "https://i-feel.co.il/bms-hotels/" }
+        ]
+      },
+      {
+        "@type": "Service",
+        "name": "בקרת מבנה למלונות (BMS + GRMS)",
+        "serviceType": "Hotel Building Management & Guest Room Management",
+        "provider": { "@id": "https://i-feel.co.il/#business" },
+        "areaServed": { "@type": "Country", "name": "Israel" },
+        "description": "בקרת חדרים GRMS וניהול מבנה למלונות, כולל שילוב ל-PMS, חיסכון אנרגטי ושליטה מרכזית."
+      }
+    ]
+  })
+};
+---
+<BaseLayout {...meta}>
+  <Fragment set:html={content} />
+</BaseLayout>
