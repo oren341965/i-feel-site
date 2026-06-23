@@ -1,0 +1,59 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+const meta = { title: 'משרדי CountRite Technologies | מקרה בוחן משרד חכם | i-feel', description: 'משרדי CountRite בטירת הכרמל — מערכת משרד חכם מבוססת Control4 המאחדת חשמל חכם, תאורה, צלונים, מיזוג Siemens, אודיו, טלוויזיות Samsung Frame, אזעקה ומצלמות לממשק אחד.', canonical: 'https://i-feel.co.il/structure-control/countrite-technologies/', ogTitle: 'משרדי CountRite Technologies | משרד חכם | i-feel', ogDescription: 'כך נראה משרד חכם אמיתי: Control4, חשמל חכם, אודיו ושליטה מאוחדת. תכנון אדריכלי: גילה וינטר.', ogUrl: 'https://i-feel.co.il/structure-control/countrite-technologies/', ogImage: 'https://i-feel.co.il/assets/structure-projects/img/countrite-1.jpg' };
+const photos = [
+  ['countrite-1.jpg','כניסה ולובי הקבלה של משרדי CountRite עם קיר לוגו וטלוויזיית Samsung Frame'],
+  ['countrite-2.jpg','חלל עבודה פתוח עם חדרי ישיבות מזכוכית ונוף עירוני'],
+  ['countrite-3.jpg','עמדות עבודה מול חלון פנורמי עם נוף לים ותקרה אקוסטית'],
+  ['countrite-4.jpg','משרד עם נוף לים, תאורה אדריכלית ופתרונות אחסון'],
+  ['countrite-5.jpg','אזור המטבח והבר העסקי במשרד'],
+  ['countrite-6.jpg','פינת מטבח ובר עם אי מרכזי ותאורה ייעודית'],
+];
+---
+<BaseLayout {...meta}>
+  <nav class="bg-brand-50 border-b border-brand-100" aria-label="פירורי לחם"><div class="max-w-7xl mx-auto px-4 py-3 text-sm"><a href="/" class="text-brand-600 hover:text-accent-600">דף הבית</a><span class="mx-2 text-brand-400">›</span><a href="/structure-control/" class="text-brand-600 hover:text-accent-600">בקרת מבנה BMS</a><span class="mx-2 text-brand-400">›</span><span class="text-brand-900 font-medium">משרדי CountRite Technologies</span></div></nav>
+  <article class="max-w-4xl mx-auto px-4 py-12 lg:py-16 prose-he">
+    <p class="text-accent-600 font-bold mb-1">מקרה בוחן · משרד חכם ואוטומציה</p>
+    <h1>משרדי CountRite Technologies — טירת הכרמל</h1>
+    <p class="text-xl text-brand-700"><strong>סוג מבנה:</strong> משרדי הייטק / חברת טכנולוגיה. <strong>טכנולוגיה:</strong> Control4 · חשמל חכם · מיזוג Siemens · אודיו · אבטחה. <strong>תכנון אדריכלי:</strong> גילה וינטר.</p>
+    <img src="/assets/structure-projects/img/countrite-1.jpg" alt="כניסת משרדי CountRite Technologies — משרד חכם של i-feel" class="rounded-xl my-7 w-full" loading="eager" />
+    <h2>האתגר</h2>
+    <p>הקמת מערכת "משרד חכם" מתקדמת המחברת את כל מערכות המשרד — חשמל חכם, תאורה, צלונים, מיזוג אוויר, אודיו, טלוויזיות, אזעקה ומצלמות — לממשק שליטה אחד. הפרויקט בוצע על בסיס התכנון של האדריכלית גילה וינטר, בהתאמה מלאה בין התכנון האדריכלי, תשתיות החשמל, המיזוג, האודיו והשליטה. CountRite עוסקת בפתרונות מתקדמים לספירת אנשים, ניהול תפוסה ובקרה חכמה למבנים — ולכן משרד חכם שמחבר טכנולוגיה, נוחות ותפעול מדויק התאים באופן טבעי לאופי החברה.</p>
+    <h2>הפתרון שבוצע</h2>
+    <p>מערכת Control4 מרכזית המאחדת את כל מערכות המשרד לממשק אחד. כבר בשלב התכנון הושם דגש על תכנון מדויק של החשמל החכם, כך שכל נקודת הפעלה, מפסק, אזור תאורה, צלון ומערכת מיזוג תוכננו מראש כחלק ממערכת אחת — ולא כאוסף פתרונות נפרדים. צוות I Feel, הכולל אנשי שטח ומהנדסי חשמל, ליווה את עבודת החשמל, בדק את התשתיות ופיקח על ההתאמה בין התכנון לביצוע, כדי שהמערכת תעבוד בצורה יציבה ומדויקת לאורך זמן.</p>
+    <h2>המערכת והטכנולוגיה</h2>
+    <p>מערכת Control4 בשילוב חשמל חכם, בקרת מזגני Siemens ייעודיים (לא VRF רגיל, ולכן סופק ציוד בקרה ייעודי), מערכות אודיו רב-אזוריות, טלוויזיות Samsung Frame בחדרי הישיבות ובכניסה, ומערכת אזעקה Paradox המחוברת למצלמות — הכול תחת ממשק אחד.</p>
+    <h2>היקף הפרויקט</h2>
+    <ul>
+      <li>חשמל חכם ובקרת תאורה בכל המשרד</li>
+      <li>שליטה בצלונים חשמליים</li>
+      <li>בקרת מיזוג למזגני Siemens ייעודיים</li>
+      <li>מפסקי שליטה חכמים עם בקרת טמפרטורה אזורית</li>
+      <li>מערכות אודיו רב-אזוריות בכל אזורי המשרד</li>
+      <li>טלוויזיות Samsung Frame בחדרי ישיבות ובכניסה</li>
+      <li>אינטגרציית אזעקה Paradox ומצלמות</li>
+      <li>תרחישים: מצב ישיבה, עבודה, אירוח וסגירת משרד</li>
+    </ul>
+    <h2>יתרונות ותוצאות</h2>
+    <ul>
+      <li>כל מערכות המשרד מנוהלות מממשק אחד (Control4)</li>
+      <li>סביבת עבודה מודרנית, נוחה, מדויקת ויעילה</li>
+      <li>שליטה פשוטה ותרחישים מותאמים לכל אזור</li>
+      <li>אינטגרציה מלאה בין חשמל, מיזוג, אודיו, אבטחה ותצוגה</li>
+      <li>ביצוע ופיקוח הנדסי שמבטיחים יציבות לאורך זמן</li>
+    </ul>
+    <h2>גלריה</h2>
+    <div class="not-prose grid sm:grid-cols-2 gap-4 my-6">
+      {photos.map(([src, alt]) => (
+        <a href={`/assets/structure-projects/img/${src}`} target="_blank" rel="noopener" class="block overflow-hidden rounded-xl border border-brand-100">
+          <img src={`/assets/structure-projects/img/${src}`} alt={alt} class="w-full h-60 object-cover hover:scale-105 transition" loading="lazy" />
+        </a>
+      ))}
+    </div>
+    <p class="text-sm text-brand-500">צילום: ליאור טייטר · תכנון אדריכלי: גילה וינטר</p>
+    <p class="mt-8 flex flex-wrap gap-3 not-prose">
+      <a href="/structure-control/projects/" class="inline-flex items-center bg-accent-500 hover:bg-accent-600 text-white px-5 py-2.5 rounded-lg font-bold">← לכל פרויקטי בקרת המבנה</a>
+      <a href="/contactus/" class="inline-flex items-center bg-brand-100 hover:bg-brand-200 text-brand-900 px-5 py-2.5 rounded-lg font-bold">משרד חכם אצלכם — צרו קשר</a>
+    </p>
+  </article>
+</BaseLayout>
