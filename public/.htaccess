@@ -98,3 +98,19 @@
   RewriteRule ^structure-control/amazon-sarona\.html$ /structure-control/amazon-sarona/ [R=301,L]
   RewriteRule ^structure-control/d-city-roxon-hotels\.html$ /structure-control/d-city-roxon-hotels/ [R=301,L]
 </IfModule>
+
+# Caching policy — override the server default (which cached HTML for ~30 days).
+<IfModule mod_headers.c>
+  # HTML must revalidate every visit so content updates are seen immediately.
+  <FilesMatch "\.html$">
+    Header set Cache-Control "no-cache, max-age=0, must-revalidate"
+  </FilesMatch>
+  # Fingerprinted build assets and static media can cache long.
+  <FilesMatch "\.(css|js|mjs|woff2?|ttf|otf|eot|svg|png|jpe?g|webp|avif|gif|ico|pdf)$">
+    Header set Cache-Control "public, max-age=2628000"
+  </FilesMatch>
+  # llms.txt / robots / sitemap should refresh reasonably often.
+  <FilesMatch "\.(txt|xml)$">
+    Header set Cache-Control "public, max-age=3600, must-revalidate"
+  </FilesMatch>
+</IfModule>
