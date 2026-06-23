@@ -29,6 +29,12 @@
   RewriteRule ^בקרת-מבנה-לבניינים-ומשרדים-מה-זה-bms-ולמה/?$ /structure-control/ [R=301,L,NE]
   # Old Hebrew KNX URL still indexed — canonicalize to the current KNX page (was 404).
   RewriteRule ^בית-חכם-knx/?$ /knx-smart-home/ [R=301,L,NE]
+  # Recover old indexed URLs that now 404 -> 301 to canonical pages (2026-06-23).
+  RewriteRule ^כמה-עולה-בית-חכם-מדריך-מחירים-מלא-2026/?$ /smart-home-price/ [R=301,L,NE]
+  RewriteRule ^בית-חכם-קווי-לעומת-אלחוטי-מה-ההבדל-ואי-2/?$ /knx-vs-wireless/ [R=301,L,NE]
+  RewriteRule ^בית-חכם-אלחוטי-או-קווי-מדריך-השוואה-מלא/?$ /knx-vs-wireless/ [R=301,L,NE]
+  RewriteRule ^בקרת-מבנה-bms-המדריך-המלא-2026/?$ /structure-control/ [R=301,L,NE]
+  RewriteRule ^how-to-choose-a-company/?$ /answers/choosing-smart-home-integrator/ [R=301,L]
 
   # Newsletter project pages — interim redirect until full project pages are built.
   # (Ofir Bunker / Beit Elazari — content exists in email + Drive; remove these when the real pages ship.)
