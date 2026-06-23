@@ -1,0 +1,40 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+const url = 'https://i-feel.co.il/answers/smart-home-service-existing/';
+const question = 'מי נותן שירות למערכת בית חכם קיימת?';
+const answer = 'i-feel מפעילה מחלקת שירות פנימית ללקוחות עם מערכת בית חכם קיימת — כולל אבחון תקלות, תמיכה מרחוק במערכות עם גישת רימוט (Touchwand, KNX IP, Siemens Desigo), ביקורי טכנאי, תחזוקה תקופתית והרחבות. ניתן לקבל שירות גם למערכות שלא הותקנו על ידי i-feel, בכפוף לבדיקת תאימות. השירות פעיל בשעות העסקים (א׳–ה׳ 09:00–18:00). פתיחת קריאה: WhatsApp או טלפון 053-300-6239, או support@i-feel.co.il.';
+const meta = {
+  title: 'שירות למערכת בית חכם קיימת | i-feel',
+  description: answer.slice(0, 155),
+  canonical: url, ogTitle: question + ' | i-feel', ogDescription: 'אבחון, תמיכה מרחוק, ביקורי טכנאי, תחזוקה והרחבות — גם למערכות שלא הותקנו על ידנו.', ogUrl: url, ogImage: 'https://i-feel.co.il/assets/og-cover.jpg',
+  jsonLd: JSON.stringify({ '@context':'https://schema.org', '@graph': [
+    { '@type': ['LocalBusiness','HomeAndConstructionBusiness'], '@id':'https://i-feel.co.il/#business', name:'i-feel', url:'https://i-feel.co.il/', telephone:'+972-3-508-9553', email:'sales@i-feel.co.il', address:{ '@type':'PostalAddress', streetAddress:'אימבר 14', addressLocality:'פתח תקווה', postalCode:'4951148', addressCountry:'IL' }, areaServed:{ '@type':'Country', name:'Israel' } },
+    { '@type':'BreadcrumbList', itemListElement:[ { '@type':'ListItem', position:1, name:'דף הבית', item:'https://i-feel.co.il/' }, { '@type':'ListItem', position:2, name:'שאלות ותשובות', item:'https://i-feel.co.il/answers/' }, { '@type':'ListItem', position:3, name:question, item:url } ] },
+    { '@type':'Article', headline:question, author:{ '@id':'https://i-feel.co.il/#business' }, publisher:{ '@id':'https://i-feel.co.il/#business' }, mainEntityOfPage:url },
+    { '@type':'FAQPage', mainEntity:[
+      { '@type':'Question', name:question, acceptedAnswer:{ '@type':'Answer', text:answer } },
+      { '@type':'Question', name:'אתם נותנים שירות למערכת שלא אתם התקנתם?', acceptedAnswer:{ '@type':'Answer', text:'כן, בכפוף לבדיקת תאימות של המערכת הקיימת. לאחר אבחון נוכל להמליץ על תיקון, תחזוקה, שדרוג או החלפה.' } },
+      { '@type':'Question', name:'איך פותחים קריאת שירות?', acceptedAnswer:{ '@type':'Answer', text:'דרך WhatsApp או טלפון 053-300-6239, או במייל support@i-feel.co.il. השירות פעיל בשעות העסקים, א׳–ה׳ 09:00–18:00.' } } ] }
+  ] })
+};
+---
+<BaseLayout {...meta}>
+  <nav class="bg-brand-50 border-b border-brand-100" aria-label="פירורי לחם"><div class="max-w-7xl mx-auto px-4 py-3 text-sm"><a href="/" class="text-brand-600 hover:text-accent-600">דף הבית</a><span class="mx-2 text-brand-400">›</span><a href="/answers/" class="text-brand-600 hover:text-accent-600">שאלות ותשובות</a><span class="mx-2 text-brand-400">›</span><span class="text-brand-900 font-medium">שירות למערכת קיימת</span></div></nav>
+  <article class="max-w-3xl mx-auto px-4 py-12 lg:py-16"><div class="prose-he">
+    <h1>{question}</h1>
+    <div class="not-prose bg-brand-50 border-r-4 border-accent-500 rounded-lg p-6 my-6"><p class="text-lg leading-relaxed text-brand-800" style="margin:0"><strong>תשובה קצרה:</strong> {answer}</p></div>
+    <h2>מה כולל השירות</h2>
+    <ul>
+      <li><strong>אבחון תקלות</strong> — זיהוי מקור הבעיה במערכת הקיימת.</li>
+      <li><strong>תמיכה מרחוק</strong> — במערכות עם גישת רימוט (Touchwand, KNX IP, Siemens Desigo).</li>
+      <li><strong>ביקורי טכנאי</strong> — לתיקונים שדורשים נוכחות באתר.</li>
+      <li><strong>תחזוקה תקופתית והרחבות</strong> — שמירה על המערכת והוספת יכולות. ראו <a href="/service-and-maintenance/">שירות ותחזוקה</a>.</li>
+    </ul>
+    <h2>מערכות שלא הותקנו על ידנו</h2>
+    <p>גם אם המערכת הותקנה על ידי גורם אחר, ניתן לקבל שירות בכפוף לבדיקת תאימות. לאחר אבחון נמליץ על תיקון, תחזוקה, שדרוג או החלפה. ראו <a href="/smart-home-service/">שירות לבית חכם</a>.</p>
+    <h2>איך פותחים קריאה</h2>
+    <p>WhatsApp או טלפון <a href="tel:+972-53-300-6239">053-300-6239</a>, או במייל support@i-feel.co.il. השירות פעיל בשעות העסקים (א׳–ה׳ 09:00–18:00).</p>
+    <div class="not-prose bg-brand-50 rounded-lg p-5 my-8"><p class="font-bold text-brand-900 mb-2" style="margin:0">שאלות קשורות</p><ul class="space-y-1" style="margin:0"><li><a href="/answers/choosing-smart-home-integrator/" class="text-accent-600 font-semibold hover:underline">איך בוחרים אינטגרטור?</a></li><li><a href="/answers/knx-vs-control4/" class="text-accent-600 font-semibold hover:underline">KNX מול Control4?</a></li></ul></div>
+  </div></article>
+  <section class="bg-brand-900 text-white py-14"><div class="max-w-4xl mx-auto px-4 text-center"><h2 class="text-2xl md:text-3xl font-extrabold mb-4">צריכים שירות למערכת הקיימת?</h2><div class="flex flex-wrap justify-center gap-3"><a href="https://wa.me/972533006239" class="bg-green-500 hover:bg-green-600 text-white px-7 py-3 rounded-lg font-semibold">WhatsApp 053-300-6239</a><a href="/service-and-maintenance/" class="bg-white/10 text-white px-7 py-3 rounded-lg font-semibold border border-white/30">לעמוד השירות</a></div></div></section>
+</BaseLayout>

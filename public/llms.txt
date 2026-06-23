@@ -59,6 +59,7 @@ i-feel מפרסמת מסמכי תקינה ואישורים בכתובת /license
 - [The Winning Synergy](https://i-feel.co.il/the-winning-synergy/): הסבר על אינטגרציה
 - [Hadassah KNX Case Study](https://i-feel.co.il/hadassah-knx-system/): מקרה בוחן — KNX לבקרת תאורה ומיזוג במגדל אשפוז
 - [FAQ](https://i-feel.co.il/שאלות-נפוצות/): שאלות נפוצות עם תשובות מפורטות
+- [Q&A / Answers](https://i-feel.co.il/answers/): תשובות מומחה לשאלות נפוצות — כמה עולה BMS לבניין, KNX מול Control4, Siemens Desigo מול KNX, שירות למערכת קיימת, איך בוחרים אינטגרטור
 - [Catalogs](https://i-feel.co.il/catalogs/): 17 קטלוגי PDF להורדה — בית חכם אלחוטי (Z-Wave), KNX קווי, Siemens BMS, בנייה רוויה, אדריכלים ומבני ציבור, מלונאות, אודיו וקולנוע, מדריכי התקנה
 - [Articles](https://i-feel.co.il/articles/): מרכז מאמרים מלא עם מדריכים על בית חכם, KNX, עלויות, קווי מול אלחוטי, שבת, BMS, חיסכון באנרגיה, בחירת מערכת BMS, Siemens Desigo, BMS למשרדים, שדרוג בית קיים, אדריכלים ויזמים.
 - [Contact](https://i-feel.co.il/contactus/): טופס יצירת קשר, טלפונים ואימיילים ייעודיים לפי סוג פנייה — מכירות, שירות לקוחות, שדרוגים
