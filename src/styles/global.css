@@ -28,3 +28,7 @@ html { scroll-behavior: smooth; }
   .prose-he details { background: #f0f5fb; border: 1px solid #dae6f2; border-radius: 0.5rem; padding: 1rem 1.25rem; margin-bottom: 0.75rem; }
   .prose-he summary { font-weight: 700; color: #0f1f36; cursor: pointer; font-size: 1.125rem; }
   .prose-he details p { margin: 0.75rem 0 0; }
+  /* Callout boxes marked .not-prose keep their own text color (e.g. white on a dark box) instead of the dark article colors above. */
+  .prose-he .not-prose h1, .prose-he .not-prose h2, .prose-he .not-prose h3,
+  .prose-he .not-prose h4, .prose-he .not-prose p, .prose-he .not-prose li,
+  .prose-he .not-prose strong, .prose-he .not-prose span { color: inherit; }
