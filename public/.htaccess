@@ -25,6 +25,8 @@
   RewriteRule ^home-automation/?$ /smart-home/ [R=301,L]
   RewriteRule ^about-us/?$ / [R=301,L]
   RewriteRule ^hadassah-knx-system/ifeel-blog/?$ /hadassah-knx-system/ [R=301,L]
+  # Old BMS article still ranking ~#6 for "בקרת מבנה BMS" — recover it to the hub (was 404).
+  RewriteRule ^בקרת-מבנה-לבניינים-ומשרדים-מה-זה-bms-ולמה/?$ /structure-control/ [R=301,L,NE]
 
   # Newsletter project pages — interim redirect until full project pages are built.
   # (Ofir Bunker / Beit Elazari — content exists in email + Drive; remove these when the real pages ship.)
