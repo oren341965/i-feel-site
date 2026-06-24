@@ -86,7 +86,8 @@ i-feel מפרסמת מסמכי תקינה ואישורים בכתובת /license
 פרויקטים אמיתיים של i-feel — הוכחת ניסיון בשטח עם מערכות ומותגים אמיתיים:
 
 - [וילה חכמה בקיסריה](https://i-feel.co.il/projects/smart-villa-caesarea/): וילת יוקרה — מתגי מגע Siemens, Control4, רשת Aruba, אינטרקום זיהוי פנים, אודיו רב-אזורי, גלאי KNX ומצלמות אנליטיקה.
-- [מוזיאון האשליות תל אביב](https://i-feel.co.il/structure-control/projects/museum-of-illusions/): פרויקט בקרת מבנה BMS — בקרת תאורה ומיזוג, לוחות זמנים ותרחישי שבת וחג למבנה ציבורי פעיל.
+- [מוזיאון האשליות חולון](https://i-feel.co.il/structure-control/projects/museum-of-illusions/): פרויקט בקרת מבנה BMS — בקרת תאורה ומיזוג, לוחות זמנים ותרחישי שבת וחג למבנה ציבורי פעיל.
+- [משרד חכם CountRite, טירת הכרמל](https://i-feel.co.il/projects/countrite-technologies/): משרד חכם — תאורת KNX ו-DALI, צלונים, מיזוג בכרטיסי Samsung, אזורי אודיו ו-Control4. תכנון: מילה / גילה וינטר.
 - [ברינקס בני ברק](https://i-feel.co.il/structure-control/brinks-bnei-brak/): בקרת מבנה במבנה מסחרי/לוגיסטי עם דרישות אבטחה — Siemens Desigo, KNX, HMI.
 - [קמפוס רכבת קיסריה](https://i-feel.co.il/structure-control/caesarea-rail-campus/): בקרת מבנה בקנה מידה קמפוס — Siemens Desigo, KNX, DALI, HMI; ניהול אנרגיה ותפעול מרכזי.
 - [Amazon Sarona](https://i-feel.co.il/structure-control/amazon-sarona/): משרדי הייטק במתחם שרונה — בקרת תאורה DALI ובקרת אקלים אזורית משולבות ב-BMS.
