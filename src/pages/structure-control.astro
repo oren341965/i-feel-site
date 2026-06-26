@@ -45,6 +45,7 @@ const jsonLd = {
         'DDC',
         'Siemens Desigo',
         'KNX',
+        'DALI',
         'BACnet',
         'Modbus',
         'LoRaWAN',
@@ -65,7 +66,7 @@ const jsonLd = {
       },
       url: pageUrl,
       description:
-        'תכנון, אינטגרציה והטמעה של מערכות בקרת מבנה BMS למלונות, משרדים, בתי חולים ומבני ציבור, כולל בקרי DDC, Siemens Desigo, KNX, BACnet, Modbus וניטור אנרגיה.',
+        'תכנון, אינטגרציה והטמעה של מערכות בקרת מבנה BMS למלונות, משרדים, בתי חולים ומבני ציבור, כולל בקרי DDC, Siemens Desigo, KNX, DALI, BACnet, Modbus וניטור אנרגיה.',
       audience: [
         { '@type': 'BusinessAudience', audienceType: 'מלונות' },
         { '@type': 'BusinessAudience', audienceType: 'משרדים' },
@@ -78,6 +79,7 @@ const jsonLd = {
         itemListElement: [
           { '@type': 'Offer', itemOffered: { '@type': 'Service', name: 'אינטגרציית Siemens Desigo' } },
           { '@type': 'Offer', itemOffered: { '@type': 'Service', name: 'בקרי DDC וממשקי HMI' } },
+          { '@type': 'Offer', itemOffered: { '@type': 'Service', name: 'בקרת תאורה DALI במערכות BMS' } },
           { '@type': 'Offer', itemOffered: { '@type': 'Service', name: 'בקרת תאורה ומיזוג מבוססת KNX' } },
           { '@type': 'Offer', itemOffered: { '@type': 'Service', name: 'ניטור אנרגיה ודוחות תפעול' } },
         ],
@@ -150,13 +152,13 @@ const jsonLd = {
 };
 
 const meta = {
-  title: 'בקרת מבנה BMS | Siemens Desigo, KNX ו-DDC | i-feel',
+  title: 'בקרת מבנה BMS | DDC, Siemens Desigo, KNX ו-DALI | i-feel',
   description:
-    'בקרת מבנה BMS למלונות, משרדים, בתי חולים ומבני ציבור: תכנון, אינטגרציה והטמעה של DDC, Siemens Desigo, KNX, BACnet, Modbus וניטור אנרגיה.',
+    'בקרת מבנה BMS למלונות, משרדים, בתי חולים ומבני ציבור: תכנון, אינטגרציה והטמעה של DDC, Siemens Desigo, KNX, DALI, BACnet, Modbus וניטור אנרגיה.',
   canonical: pageUrl,
-  ogTitle: 'בקרת מבנה BMS | Siemens Desigo, KNX ו-DDC | i-feel',
+  ogTitle: 'בקרת מבנה BMS | DDC, Siemens Desigo, KNX ו-DALI | i-feel',
   ogDescription:
-    'פתרונות BMS למבנים מסחריים וציבוריים: DDC, Siemens Desigo, KNX, BACnet, Modbus, חיסכון אנרגיה וניהול מרכזי.',
+    'פתרונות BMS למבנים מסחריים וציבוריים: DDC, Siemens Desigo, KNX, DALI, BACnet, Modbus, חיסכון אנרגיה וניהול מרכזי.',
   ogUrl: pageUrl,
   ogImage: 'https://i-feel.co.il/assets/og-cover.jpg',
   jsonLd: JSON.stringify(jsonLd),
