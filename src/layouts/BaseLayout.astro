@@ -13,6 +13,8 @@ export interface Props {
   ogImage?: string;
   jsonLd?: string;
   robots?: string;
+  lang?: string;
+  dir?: string;
 }
 
 const {
@@ -24,11 +26,13 @@ const {
   ogUrl = canonical,
   ogImage = 'https://i-feel.co.il/assets/og-cover.jpg',
   jsonLd = '',
-  robots = ''
+  robots = '',
+  lang = 'he',
+  dir = 'rtl'
 } = Astro.props;
 ---
 <!DOCTYPE html>
-<html lang="he" dir="rtl">
+<html lang={lang} dir={dir}>
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />

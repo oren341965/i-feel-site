@@ -1,0 +1,54 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+const url = 'https://i-feel.co.il/en/smart-home-israel/';
+const businessNode = {
+  "@type": ["Organization","LocalBusiness","HomeAndConstructionBusiness","ProfessionalService"],
+  "@id": "https://i-feel.co.il/#business",
+  "name": "i-feel",
+  "alternateName": ["I FEEL","i-feel","איי פיל"],
+  "url": "https://i-feel.co.il/",
+  "logo": "https://i-feel.co.il/assets/ifeel-logo.png",
+  "telephone": "+972-3-508-9553",
+  "email": "sales@i-feel.co.il",
+  "foundingDate": "2008",
+  "address": { "@type": "PostalAddress", "streetAddress": "Imber 14", "addressLocality": "Petah Tikva", "addressCountry": "IL" },
+  "areaServed": { "@type": "Country", "name": "Israel" },
+  "knowsAbout": ["Smart Home","KNX","Building Management System","Siemens Desigo","DALI lighting control","DDC controllers","BACnet","Modbus","Home automation","Smart building integration"],
+  "sameAs": ["https://www.facebook.com/SmarthomeIsrael","https://www.instagram.com/ifeelisrael","https://www.linkedin.com/company/200156","https://www.youtube.com/@ifeelsmarthome"]
+};
+const meta = {
+  lang: "en", dir: "ltr",
+  title: "Smart Home Israel | KNX Smart Home Integrator | i-feel",
+  description: "I FEEL is an Israeli smart home integrator specializing in KNX, Siemens Desigo, DALI lighting control and smart building automation for villas, developers, hotels and offices.",
+  canonical: url,
+  ogTitle: "Smart Home Israel | KNX Integrator | i-feel",
+  ogDescription: "Israeli smart home and building automation integrator — KNX, Siemens Desigo, DALI.",
+  ogUrl: url,
+  ogImage: "https://i-feel.co.il/assets/og-cover.jpg",
+  jsonLd: JSON.stringify({ "@context":"https://schema.org","@graph":[
+    businessNode,
+    { "@type":"BreadcrumbList","itemListElement":[ {"@type":"ListItem","position":1,"name":"Home","item":"https://i-feel.co.il/"}, {"@type":"ListItem","position":2,"name":"Smart Home Israel","item":url} ] },
+    { "@type":"Service","name":"Smart Home Installation","serviceType":"KNX Smart Home Integration","provider":{"@id":"https://i-feel.co.il/#business"},"areaServed":{"@type":"Country","name":"Israel"} }
+  ]})
+};
+---
+<BaseLayout {...meta}>
+  <nav class="bg-brand-50 border-b border-brand-100"><div class="max-w-7xl mx-auto px-4 py-3 text-sm"><a href="/" class="text-brand-600 hover:text-accent-600">Home</a> › <span class="text-brand-900 font-medium">Smart Home Israel</span> · <a href="/smart-home/" class="text-accent-600">עברית</a></div></nav>
+  <section class="hero-gradient text-white"><div class="max-w-6xl mx-auto px-4 py-16 lg:py-20"><h1 class="text-4xl md:text-5xl font-extrabold leading-tight mb-5">Smart Home in Israel — by I FEEL</h1><p class="text-xl text-brand-100 max-w-3xl">I FEEL is an Israeli smart home and building management systems integrator specializing in KNX, Siemens Desigo, DALI lighting control and smart building automation.</p></div></section>
+  <div class="max-w-4xl mx-auto px-4 py-12 lg:py-16 text-lg leading-8 text-brand-800">
+    <p class="mb-5">Since 2008, <strong>I FEEL</strong> (i-feel) has designed, installed and maintained smart home and building automation systems across Israel, serving over 9,000 customers. We are not just installers — we are an <strong>integrator</strong> that connects lighting, climate (HVAC), shutters, security, intercom, cameras and audio into one system, under one company: planning, installation, programming and service.</p>
+    <h2 class="text-2xl font-bold text-brand-900 mt-8 mb-3">What we do</h2>
+    <ul class="list-disc pl-6 space-y-2 mb-5">
+      <li><strong>KNX smart homes</strong> — the international wired standard for reliable, future-proof home control. <a href="/knx-smart-home/" class="text-accent-600 font-semibold">KNX</a>.</li>
+      <li><strong>Wireless smart homes</strong> for existing apartments — no renovation needed.</li>
+      <li><strong>Home cinema & multi-room audio</strong>, lighting control, smart climate, security and intercom integration.</li>
+      <li><strong>Building Management Systems (BMS)</strong> for commercial buildings — see <a href="/en/building-management-system-israel/" class="text-accent-600 font-semibold">BMS Israel</a>.</li>
+    </ul>
+    <h2 class="text-2xl font-bold text-brand-900 mt-8 mb-3">Who we serve</h2>
+    <p class="mb-5">Private villas and luxury apartments, real-estate developers (smart apartments as a standard), architects, hotels, offices and public buildings across Israel.</p>
+    <h2 class="text-2xl font-bold text-brand-900 mt-8 mb-3">Why I FEEL</h2>
+    <p class="mb-5">One integrator, one responsibility. We control the full supply chain — including Siemens equipment import and in-house wireless system manufacturing — and run our own service department in Israel. The result: lighting, climate, security and audio that work as one reliable system for years.</p>
+    <h2 class="text-2xl font-bold text-brand-900 mt-8 mb-3">Contact</h2>
+    <p>i-feel · Imber 14, Petah Tikva, Israel · Sales: <a href="tel:+972-3-508-9553" class="text-accent-600 font-semibold">+972-3-508-9553</a> · sales@i-feel.co.il. More (Hebrew): <a href="/smart-home/" class="text-accent-600 font-semibold">בית חכם</a>, <a href="/structure-control/" class="text-accent-600 font-semibold">בקרת מבנה</a>, <a href="/contactus/" class="text-accent-600 font-semibold">contact</a>.</p>
+  </div>
+</BaseLayout>
