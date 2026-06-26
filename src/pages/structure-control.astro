@@ -151,6 +151,17 @@ const jsonLd = {
   ],
 };
 
+const daliBmsBlock = `
+<section id="dali-lighting-control" class="not-prose bg-brand-50 border border-brand-100 rounded-2xl p-6 md:p-8 my-10">
+  <h2 class="text-2xl md:text-3xl font-extrabold text-brand-900 mb-4">בקרת תאורה DALI כחלק ממערכת BMS</h2>
+  <p class="text-lg leading-8 text-brand-700">אחד הרכיבים החשובים ביותר בפרויקט BMS מסחרי הוא שכבת בקרת התאורה. i-feel מתמחה בשילוב מערכות DALI בתוך ארכיטקטורת BMS מלאה: מחיבור ה-DALI gateway לבקרי DDC, דרך שילוב בשרת Siemens Desigo, ועד לתרחישי חיסכון אנרגטי מלאים.</p>
+  <p class="text-lg leading-8 text-brand-700 mt-4">DALI מאפשר שליטה דיגיטלית נפרדת על כל גוף תאורה, עמעום לפי אור יום, כיבוי לפי חיישני נוכחות ודיווח על מצב ותקינות כל גוף. בפרויקטים כמו Amazon Sarona ורכבת קיסריה, DALI ותאורה חכמה משתלבים בתוך מערכת BMS עם KNX ו-Siemens Desigo.</p>
+  <a href="/structure-control/dali-lighting-control/" class="inline-flex items-center justify-center bg-accent-500 hover:bg-accent-600 text-white px-6 py-3 rounded-lg font-bold shadow-lg mt-5">קראו עוד על בקרת תאורה DALI במערכות BMS ←</a>
+</section>
+`;
+
+const enhancedContent = content.replace('</div></article>', `${daliBmsBlock}</div></article>`);
+
 const meta = {
   title: 'בקרת מבנה BMS | DDC, Siemens Desigo, KNX ו-DALI | i-feel',
   description:
@@ -165,5 +176,5 @@ const meta = {
 };
 ---
 <BaseLayout {...meta}>
-  <Fragment set:html={content} />
+  <Fragment set:html={enhancedContent} />
 </BaseLayout>
