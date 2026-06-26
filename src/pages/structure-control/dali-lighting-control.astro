@@ -1,0 +1,257 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+const pageUrl = 'https://i-feel.co.il/structure-control/dali-lighting-control/';
+
+const faqs = [
+  {
+    question: 'מה זה DALI?',
+    answer:
+      'DALI - Digital Addressable Lighting Interface - הוא פרוטוקול תקני בינלאומי (IEC 62386) לשליטה דיגיטלית בתאורה. הוא מאפשר לפקד על כל גוף תאורה בנפרד, לעמעם, לקבץ לקבוצות ולקבל נתוני מצב ותקינות בחזרה מהגוף.',
+  },
+  {
+    question: 'מה ההבדל בין DALI לבין KNX?',
+    answer:
+      'KNX הוא פרוטוקול בקרת מבנה כולל לתאורה, מיזוג, וילונות, חיישנים ועוד. DALI הוא פרוטוקול ייעודי לתאורה בלבד, עם עומק ורזולוציה גבוהים יותר ברמת גוף התאורה. בפרויקטים רבים הם עובדים ביחד: KNX מנהל את היגיון הבקרה, DALI מנהל את שכבת התאורה.',
+  },
+  {
+    question: 'האם DALI מאפשר חיסכון באנרגיה?',
+    answer:
+      'כן. שילוב עמעום לפי אור יום, כיבוי לפי חיישני נוכחות ולוחות זמנים חכמים יכול להביא לחיסכון משמעותי בצריכת החשמל לתאורה לעומת מערכת מסורתית, בהתאם למבנה, לתכנון ולשעות הפעילות.',
+  },
+  {
+    question: 'האם אפשר לחבר DALI למערכת Siemens Desigo?',
+    answer:
+      'כן. Siemens Desigo CC יכולה להשתלב עם DALI דרך בקרי DDC וגייטוויי מתאימים. זו תצורה נפוצה בפרויקטי BMS מסחריים שבהם שכבת התאורה צריכה להיות מנוהלת ממסוף מרכזי.',
+  },
+  {
+    question: 'למי מתאים DALI - משרדים, מלונות או מבני ציבור?',
+    answer:
+      'DALI מתאים לכל מבנה מסחרי שדורש ניהול תאורה מרכזי, חיסכון אנרגטי וגמישות: משרדים, מלונות, מוזיאונים, בתי חולים, קניונים ומבני ציבור.',
+  },
+  {
+    question: 'איך DALI משתלב עם מערכת BMS?',
+    answer:
+      'DALI מתחבר לבקרי DDC דרך gateway ייעודי. הבקר מנהל את פקודות הדימינג, לוחות הזמנים וחיישני הנוכחות, ומעביר נתוני מצב לשרת Siemens Desigo. כך מנהל האחזקה רואה את כל התאורה במסוף ה-BMS המרכזי.',
+  },
+  {
+    question: 'האם DALI מתאים לבתי מלון?',
+    answer:
+      'כן. בפרויקטי מלון, DALI משמש לרוב לתאורת שטחים ציבוריים כמו לובי, מסדרונות, חדרי אוכל ואזורי ספא, בשילוב בקרת חדר GRMS ו-KNX תחת מערכת BMS מרכזית.',
+  },
+];
+
+const jsonLd = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'Service',
+    name: 'בקרת תאורה DALI במערכות BMS',
+    description:
+      'תכנון, התקנה ואינטגרציה של מערכות בקרת תאורה DALI כחלק ממערכות בקרת מבנה BMS, כולל שילוב עם Siemens Desigo, KNX ו-DDC למשרדים, מלונות ומבנים מסחריים.',
+    provider: {
+      '@type': 'Organization',
+      name: 'i-feel',
+      url: 'https://i-feel.co.il',
+      telephone: '+97235089553',
+      address: {
+        '@type': 'PostalAddress',
+        addressCountry: 'IL',
+      },
+    },
+    areaServed: {
+      '@type': 'Country',
+      name: 'Israel',
+    },
+    serviceType: 'DALI Lighting Control Integration',
+    url: pageUrl,
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: faqs.map((faq) => ({
+      '@type': 'Question',
+      name: faq.question,
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: faq.answer,
+      },
+    })),
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      {
+        '@type': 'ListItem',
+        position: 1,
+        name: 'דף הבית',
+        item: 'https://i-feel.co.il/',
+      },
+      {
+        '@type': 'ListItem',
+        position: 2,
+        name: 'בקרת מבנה BMS',
+        item: 'https://i-feel.co.il/structure-control/',
+      },
+      {
+        '@type': 'ListItem',
+        position: 3,
+        name: 'בקרת תאורה DALI',
+        item: pageUrl,
+      },
+    ],
+  },
+];
+
+const meta = {
+  title: 'בקרת תאורה DALI במערכות BMS | i-feel',
+  description:
+    'i-feel מתמחה בתכנון, התקנה ואינטגרציה של מערכות בקרת תאורה DALI כחלק ממערכת BMS - שילוב עם Siemens Desigo, KNX ו-DDC למשרדים, מלונות ומבנים מסחריים.',
+  canonical: pageUrl,
+  ogTitle: 'בקרת תאורה DALI במערכות BMS | i-feel',
+  ogDescription:
+    'תכנון ואינטגרציה של DALI כחלק ממערכת בקרת מבנה BMS: תאורה דיגיטלית, DDC, Siemens Desigo, KNX וחיסכון אנרגטי.',
+  ogUrl: pageUrl,
+  ogImage: 'https://i-feel.co.il/assets/og-cover.jpg',
+  jsonLd: JSON.stringify(jsonLd),
+};
+---
+<BaseLayout {...meta}>
+  <nav class="bg-brand-50 border-b border-brand-100" aria-label="פירורי לחם">
+    <div class="max-w-7xl mx-auto px-4 py-3 text-sm">
+      <a href="/" class="text-brand-600 hover:text-accent-600">דף הבית</a>
+      <span class="mx-2 text-brand-400">›</span>
+      <a href="/structure-control/" class="text-brand-600 hover:text-accent-600">בקרת מבנה BMS</a>
+      <span class="mx-2 text-brand-400">›</span>
+      <span class="text-brand-900 font-medium">בקרת תאורה DALI</span>
+    </div>
+  </nav>
+
+  <article dir="rtl">
+    <header class="hero-gradient text-white">
+      <div class="max-w-6xl mx-auto px-4 py-16 lg:py-24">
+        <p class="inline-flex items-center gap-2 bg-white/10 border border-white/20 rounded-full px-4 py-1.5 text-sm font-bold mb-6">
+          DALI · BMS · Siemens Desigo · KNX · DDC
+        </p>
+        <h1 class="text-4xl md:text-6xl font-extrabold leading-tight max-w-5xl">
+          בקרת תאורה DALI במערכות בקרת מבנה BMS
+        </h1>
+        <p class="text-xl text-brand-100 mt-6 max-w-4xl leading-8">
+          i-feel מתמחה בתכנון, התקנה ואינטגרציה של מערכות בקרת תאורה DALI כחלק ממערכות בקרת מבנה BMS מלאות. אנחנו משלבים DALI עם Siemens Desigo, KNX, DDC ומערכות מיזוג - למשרדים, מלונות, מוזיאונים ומבנים מסחריים ברחבי ישראל.
+        </p>
+        <div class="flex flex-wrap gap-3 mt-8">
+          <a href="/contactus/" class="bg-accent-500 hover:bg-accent-600 text-white px-6 py-3 rounded-lg font-semibold shadow-lg">בדיקת התאמה לפרויקט</a>
+          <a href="/structure-control/projects/" class="bg-white/10 hover:bg-white/20 text-white px-6 py-3 rounded-lg font-semibold border border-white/30">פרויקטי BMS עם תאורה חכמה</a>
+        </div>
+      </div>
+    </header>
+
+    <div class="max-w-5xl mx-auto px-4 py-12 lg:py-16 prose-he">
+      <section id="what-is-dali">
+        <h2>מה זה DALI ולמה זה חשוב בפרויקט BMS?</h2>
+        <p>DALI - Digital Addressable Lighting Interface - הוא פרוטוקול תקני בינלאומי (IEC 62386) לבקרת תאורה דיגיטלית. בניגוד למתג רגיל שמפעיל ומכבה אור, DALI מאפשר לשלוט בכל גוף תאורה בנפרד: לעמעם, לקבץ לקבוצות, לשנות עוצמה לפי לוח זמנים ולקבל בחזרה נתוני תקינות ומצב מכל גוף.</p>
+        <p>בפרויקטי BMS, DALI הוא שכבת בקרה מועדפת לתאורה בגלל שלוש סיבות מרכזיות: הוא תקני ועובד עם מגוון יצרנים, הוא מאפשר כתובות דיגיטליות לכל גוף, והוא מתחבר לבקרי DDC ולמערכות ניהול כמו Siemens Desigo. כשמשרד, מלון או מבנה ציבורי רוצה לחסוך באנרגיה ולנהל תאורה בצורה חכמה, DALI הוא בסיס תכנוני חשוב.</p>
+      </section>
+
+      <section id="architecture">
+        <h2>איך DALI משתלב בתוך מערכת BMS?</h2>
+        <h3>ארכיטקטורת השכבות</h3>
+        <p>בפרויקטי BMS של i-feel, DALI אינו עומד לבד. הוא שכבת התאורה בתוך ארכיטקטורה שלמה:</p>
+        <ul>
+          <li><strong>שכבת השדה:</strong> גופי תאורה עם דרייברים DALI, חיישני נוכחות וחיישני אור יום.</li>
+          <li><strong>שכבת הבקרה:</strong> בקרי DDC שמתממשקים ל-DALI bus דרך gateway ייעודי.</li>
+          <li><strong>שכבת הניהול:</strong> Siemens Desigo CC שמנהל את נקודות הבקרה ממסוף אחד.</li>
+          <li><strong>שכבות משלימות:</strong> KNX לבקרה ברמת החדר, BACnet ו-Modbus לציוד HVAC ומערכות צד שלישי.</li>
+        </ul>
+        <p>בפועל זה אומר: חיישן נוכחות מזהה שהחדר ריק, הבקר מכבה את האורות דרך DALI, Desigo מתעד את הפעולה והצריכה, ומנהל האחזקה יכול לראות את מצב התאורה בדוחות ובמסכים המרכזיים.</p>
+
+        <h3>גרסאות DALI: DALI-1 ו-DALI-2</h3>
+        <p>חשוב להכיר את ההבדל בין DALI-1 לבין DALI-2, התקן העדכני יותר. DALI-2 מחזק אינטרופרביליות בין יצרנים ותומך בפרופילי מכשיר מוגדרים, כולל חיישנים ולחצנים. בפרויקטים חדשים ההעדפה היא לתכנן סביב ציוד DALI-2 כאשר דרישות הפרויקט מאפשרות זאת.</p>
+      </section>
+
+      <section id="projects" class="not-prose bg-brand-50 border border-brand-100 rounded-2xl p-6 md:p-8 my-10">
+        <h2 class="text-2xl md:text-3xl font-extrabold text-brand-900 mb-5">פרויקטים שבהם DALI ותאורה חכמה פוגשים BMS</h2>
+        <div class="grid md:grid-cols-3 gap-5">
+          <article class="bg-white border border-brand-100 rounded-xl p-5">
+            <h3 class="text-xl font-bold text-brand-900 mb-3"><a href="/structure-control/amazon-sarona/" class="hover:text-accent-600">Amazon Sarona</a></h3>
+            <p class="text-brand-700">משרדי הייטק עם בקרת תאורה והצללה, תרחישים לפי אזורים וניצול אור טבעי.</p>
+          </article>
+          <article class="bg-white border border-brand-100 rounded-xl p-5">
+            <h3 class="text-xl font-bold text-brand-900 mb-3"><a href="/structure-control/caesarea-rail-campus/" class="hover:text-accent-600">קמפוס רכבת קיסריה</a></h3>
+            <p class="text-brand-700">קמפוס רחב היקף עם BMS מרכזי, ניהול אנרגיה, לוחות זמנים וניטור בזמן אמת.</p>
+          </article>
+          <article class="bg-white border border-brand-100 rounded-xl p-5">
+            <h3 class="text-xl font-bold text-brand-900 mb-3"><a href="/structure-control/projects/museum-of-illusions/" class="hover:text-accent-600">מוזיאון האשליות חולון</a></h3>
+            <p class="text-brand-700">מבנה ציבורי פעיל עם שליטה מרכזית בתאורה, מיזוג ולוחות זמנים.</p>
+          </article>
+        </div>
+      </section>
+
+      <section id="benefits">
+        <h2>יתרונות DALI לעסקים ומבנים מסחריים</h2>
+        <ul>
+          <li><strong>חיסכון באנרגיה:</strong> עמעום לפי אור יום, כיבוי לפי נוכחות ולוחות זמנים חכמים מפחיתים הפעלה מיותרת של תאורה.</li>
+          <li><strong>ניהול תחזוקה חכם:</strong> גוף DALI יכול לדווח על מצב ותקלה, כך שצוות האחזקה מזהה בעיות מוקדם יותר.</li>
+          <li><strong>גמישות תכנונית:</strong> שינוי ייעוד חדר או חלוקת אזורים נעשים בתכנות, בלי שינוי חשמלי גדול.</li>
+          <li><strong>אינטרופרביליות:</strong> DALI-2 הוא תקן פתוח שמאפשר עבודה עם יצרנים שונים תחת מערכת בקרה אחת.</li>
+          <li><strong>התאמה לבנייה ירוקה:</strong> בקרת תאורה חכמה בתוך BMS תומכת ביעדי חיסכון וניהול אנרגיה במבנים מסחריים.</li>
+        </ul>
+      </section>
+
+      <section id="comparison">
+        <h2>DALI מול חלופות: מה נכון לפרויקט שלכם?</h2>
+        <h3>DALI מול 0-10V</h3>
+        <p>0-10V הוא פתרון ותיק ופשוט לעמעום תאורה, אבל הוא אנלוגי: אין כתובות דיגיטליות, אין פידבק ממצב גוף התאורה, ואין שליטה פרטנית נוחה בכל גוף. DALI יקר מעט יותר בציוד, אך מספק עומק בקרה, תחזוקה וגמישות טובים יותר לאורך זמן.</p>
+
+        <h3>DALI מול KNX לתאורה</h3>
+        <p>KNX יכול לשלוט בתאורה, אך בדרך כלל דרך actuator שמפעיל קבוצות. DALI עדיף כשצריך שליטה נפרדת בגופי תאורה, עמעום חלק ודיווח מצב. בפרויקטים מורכבים הם משלימים זה את זה: KNX מנהל את היגיון החדר, DALI מנהל את שכבת התאורה.</p>
+
+        <h3>DALI מול Casambi / Bluetooth Mesh</h3>
+        <p>מערכות אלחוטיות כמו Casambi מתאימות לפרויקטים קטנים או לשיפוצים שבהם קשה להניח תשתית. בפרויקט BMS מסחרי בקנה מידה גדול, DALI קווי בדרך כלל יציב יותר, ניתן לניהול מרכזי ומשתלב טוב יותר עם DDC ו-Siemens Desigo.</p>
+      </section>
+
+      <section id="scope">
+        <h2>מה כלול בפרויקט בקרת תאורה DALI של i-feel</h2>
+        <ul>
+          <li><strong>תכנון ואפיון:</strong> בחירת ארכיטקטורת DALI bus, מיפוי גופי תאורה, קבוצות, סצנות ותיאום מול תכנון החשמל והתאורה.</li>
+          <li><strong>אינטגרציה לבקרי DDC:</strong> חיבור DALI gateway לבקר, ותכנות הקשר בין חיישנים, לוחות זמנים ופקודות תאורה.</li>
+          <li><strong>שילוב ב-BMS המרכזי:</strong> חיבור לשרת הניהול, הגדרת תרחישים, התראות ודוחות צריכה.</li>
+          <li><strong>Commissioning ובדיקות:</strong> בדיקת כתובות DALI, כיול חיישני אור יום ואימות תרחישי עבודה.</li>
+          <li><strong>תיעוד והדרכה:</strong> מסירת מפת כתובות, תרחישים, לוחות זמנים והדרכה לצוות האחזקה.</li>
+        </ul>
+      </section>
+
+      <section id="faq">
+        <h2>שאלות נפוצות על DALI</h2>
+        {faqs.map((faq) => (
+          <details class="bg-brand-50 rounded-lg p-4 my-3 cursor-pointer">
+            <summary class="font-bold text-brand-900 text-lg">{faq.question}</summary>
+            <p class="mt-3 text-brand-700">{faq.answer}</p>
+          </details>
+        ))}
+      </section>
+
+      <section id="links">
+        <h2>קישורים רלוונטיים</h2>
+        <ul>
+          <li><a href="/structure-control/">בקרת מבנה BMS</a> - סקירה כללית.</li>
+          <li><a href="/structure-control/projects/">גלריית פרויקטי BMS</a> - פרויקטים בבקרת מבנה ותאורה חכמה.</li>
+          <li><a href="/bms-offices/">BMS למשרדים</a> - בקרת מיזוג, תאורה ואנרגיה.</li>
+          <li><a href="/bms-hotels/">BMS למלונות</a> - GRMS ושילוב PMS.</li>
+          <li><a href="/contactus/">צור קשר</a> - בדיקת התאמה ראשונית לפרויקט.</li>
+        </ul>
+      </section>
+    </div>
+
+    <section id="contact" class="bg-brand-900 text-white py-16">
+      <div class="max-w-4xl mx-auto px-4 text-center">
+        <h2 class="text-3xl md:text-4xl font-extrabold mb-4">רוצים לדעת אם DALI מתאים לפרויקט שלכם?</h2>
+        <p class="text-xl text-brand-200 mb-8">צרו קשר לשיחת ייעוץ ראשונית ונציע כיוון ארכיטקטוני ראשוני לבקרת תאורה בתוך מערכת BMS.</p>
+        <div class="flex flex-wrap justify-center gap-3">
+          <a href="tel:+972-3-508-9553" class="bg-accent-500 hover:bg-accent-600 text-white px-7 py-3.5 rounded-lg font-semibold text-lg">03-508-9553</a>
+          <a href="/contactus/" class="bg-white/10 hover:bg-white/20 text-white px-7 py-3.5 rounded-lg font-semibold text-lg border border-white/30">צרו קשר</a>
+        </div>
+      </div>
+    </section>
+  </article>
+</BaseLayout>
