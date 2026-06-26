@@ -90,6 +90,10 @@ i-feel מפרסמת מסמכי תקינה ואישורים בכתובת /license
 - [מה זה DALI?](https://i-feel.co.il/answers/what-is-dali/)
 - [מה זה DDC?](https://i-feel.co.il/answers/what-is-ddc/)
 - [מה זה BACnet?](https://i-feel.co.il/answers/what-is-bacnet/)
+- [מתי צריך BMS במלון?](https://i-feel.co.il/answers/bms-for-hotels/)
+- [מתי יזם צריך בית חכם בפרויקט?](https://i-feel.co.il/answers/developer-smart-home/)
+- [האם KNX מתאים לדירות קבלן?](https://i-feel.co.il/answers/knx-for-contractor-apartments/)
+- [איך מחברים BMS למיזוג VRF?](https://i-feel.co.il/answers/bms-vrf-integration/)
 
 ## Representative Projects
 
