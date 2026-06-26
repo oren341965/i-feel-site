@@ -2,15 +2,71 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import content from '../page-html/index.html?raw';
 
+const jsonLd = JSON.stringify({
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": ["Organization", "LocalBusiness", "HomeAndConstructionBusiness", "ProfessionalService"],
+      "@id": "https://i-feel.co.il/#business",
+      "name": "i-feel",
+      "alternateName": ["I FEEL", "i-feel", "איי פיל", "i-feel מערכות בקרת מבנה ובית חכם"],
+      "url": "https://i-feel.co.il/",
+      "logo": "https://i-feel.co.il/assets/ifeel-logo.png",
+      "image": "https://i-feel.co.il/assets/og-cover.jpg",
+      "description": "i-feel היא חברת אינטגרציה ישראלית המתמחה בתכנון, התקנה ותחזוקה של מערכות בית חכם KNX, בקרת מבנה BMS, Siemens Desigo, DALI, בקרת תאורה ומיזוג, אודיו, אינטרקום, מצלמות ואזעקה — לבתים פרטיים, וילות, יזמי בנייה, מלונות, משרדים ומבני ציבור בישראל. משנת 2008, מעל 9,000 לקוחות.",
+      "foundingDate": "2008",
+      "telephone": "+972-3-508-9553",
+      "email": "sales@i-feel.co.il",
+      "address": { "@type": "PostalAddress", "streetAddress": "אימבר 14", "addressLocality": "פתח תקווה", "addressRegion": "מחוז המרכז", "postalCode": "4951148", "addressCountry": "IL" },
+      "geo": { "@type": "GeoCoordinates", "latitude": 32.09124, "longitude": 34.88762 },
+      "openingHoursSpecification": [{ "@type": "OpeningHoursSpecification", "dayOfWeek": ["Sunday","Monday","Tuesday","Wednesday","Thursday"], "opens": "09:00", "closes": "18:00" }],
+      "areaServed": { "@type": "Country", "name": "Israel", "sameAs": "https://www.wikidata.org/wiki/Q801" },
+      "knowsAbout": [
+        "Smart Home", "בית חכם", "Building Management System", "בקרת מבנה", "BMS",
+        "KNX", "Siemens Desigo", "DALI lighting control", "DALI-2", "DDC controllers",
+        "BACnet", "Modbus", "LoRaWAN", "Home automation", "Smart building integration",
+        "HVAC control", "Home cinema", "Audio multi-room", "Zigbee", "Z-Wave"
+      ],
+      "sameAs": [
+        "https://www.facebook.com/SmarthomeIsrael",
+        "https://www.instagram.com/ifeelisrael",
+        "https://www.linkedin.com/company/200156",
+        "https://www.youtube.com/@ifeelsmarthome"
+      ],
+      "hasOfferCatalog": {
+        "@type": "OfferCatalog",
+        "name": "שירותי i-feel",
+        "itemListElement": [
+          { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "התקנת בית חכם KNX", "serviceType": "Smart Home Installation" } },
+          { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "בקרת מבנה BMS", "serviceType": "Building Management System" } },
+          { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "אינטגרציית KNX", "serviceType": "KNX Integration" } },
+          { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "אינטגרציית Siemens Desigo", "serviceType": "Siemens Desigo Integration" } },
+          { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "בקרת תאורה DALI", "serviceType": "DALI Lighting Control" } },
+          { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "שירות ותחזוקה לבית חכם", "serviceType": "Smart Home Maintenance" } }
+        ]
+      }
+    },
+    {
+      "@type": "WebSite",
+      "@id": "https://i-feel.co.il/#website",
+      "url": "https://i-feel.co.il/",
+      "name": "i-feel",
+      "alternateName": "I FEEL",
+      "inLanguage": "he-IL",
+      "publisher": { "@id": "https://i-feel.co.il/#business" }
+    }
+  ]
+});
+
 const meta = {
   title: "i-feel | בית חכם, KNX, בקרת מבנה BMS ואודיו בישראל",
-  description: "i-feel — תכנון, התקנה ותחזוקה של מערכות בית חכם KNX, בקרת מבנה BMS, אודיו וקולנוע ביתי. עבודה עם אדריכלים, יזמים ולקוחות פרטיים בכל הארץ. אימבר 14, פתח תקווה. 03-508-9553.",
+  description: "i-feel — תכנון, התקנה ותחזוקה של מערכות בית חכם KNX, בקרת מבנה BMS, Siemens Desigo, DALI, אודיו וקולנוע ביתי. עבודה עם אדריכלים, יזמים ולקוחות פרטיים בכל הארץ. אימבר 14, פתח תקווה. 03-508-9553.",
   canonical: "https://i-feel.co.il/",
   ogTitle: "i-feel | בית חכם, KNX, בקרת מבנה BMS ואודיו בישראל",
-  ogDescription: "חברה אחת לכל מערכות הבקרה — בית חכם KNX, בקרת מבנה BMS, אודיו וקולנוע ביתי. שירות בעברית, מפתח תקווה לכל הארץ.",
+  ogDescription: "חברה אחת לכל מערכות הבקרה — בית חכם KNX, בקרת מבנה BMS, Siemens Desigo, DALI, אודיו וקולנוע ביתי. שירות בעברית, מפתח תקווה לכל הארץ.",
   ogUrl: "https://i-feel.co.il/",
   ogImage: "https://i-feel.co.il/assets/og-cover.jpg",
-  jsonLd: "{\n  \"@context\": \"https://schema.org\",\n  \"@graph\": [\n    {\n      \"@type\": [\"LocalBusiness\", \"HomeAndConstructionBusiness\"],\n      \"@id\": \"https://i-feel.co.il/#business\",\n      \"name\": \"i-feel\",\n      \"alternateName\": \"i-feel מערכות בקרת מבנה ובית חכם\",\n      \"url\": \"https://i-feel.co.il/\",\n      \"logo\": \"https://i-feel.co.il/assets/ifeel-logo.png\",\n      \"image\": \"https://i-feel.co.il/assets/og-cover.jpg\",\n      \"description\": \"i-feel מתכננת, מתקינה ותומכת במערכות בית חכם KNX, בקרת מבנה (BMS), אודיו וקולנוע ביתי לבתים פרטיים, מלונות, משרדים ומבני ציבור בישראל.\",\n      \"telephone\": \"+972-3-508-9553\",\n      \"email\": \"sales@i-feel.co.il\",\n      \"address\": {\n        \"@type\": \"PostalAddress\",\n        \"streetAddress\": \"אימבר 14\",\n        \"addressLocality\": \"פתח תקווה\",\n        \"addressRegion\": \"מחוז המרכז\",\n        \"postalCode\": \"4951148\",\n        \"addressCountry\": \"IL\"\n      },\n      \"geo\": {\n        \"@type\": \"GeoCoordinates\",\n        \"latitude\": 32.09124,\n        \"longitude\": 34.88762\n      },\n      \"openingHoursSpecification\": [{\n        \"@type\": \"OpeningHoursSpecification\",\n        \"dayOfWeek\": [\"Sunday\",\"Monday\",\"Tuesday\",\"Wednesday\",\"Thursday\"],\n        \"opens\": \"09:00\",\n        \"closes\": \"18:00\"\n      }],\n      \"areaServed\": {\n        \"@type\": \"Country\",\n        \"name\": \"Israel\",\n        \"sameAs\": \"https://www.wikidata.org/wiki/Q801\"\n      },\n      \"knowsAbout\": [\n        \"KNX\",\n        \"Building Management System\",\n        \"Smart Home\",\n        \"Home Cinema\",\n        \"Audio Multi-room\",\n        \"Zigbee\",\n        \"BACnet\"\n      ],\n      \"sameAs\": [\n        \"https://www.facebook.com/SmarthomeIsrael\",\n        \"https://www.instagram.com/ifeelisrael\",\n        \"https://www.linkedin.com/company/200156\"\n      ]\n    },\n    {\n      \"@type\": \"WebSite\",\n      \"@id\": \"https://i-feel.co.il/#website\",\n      \"url\": \"https://i-feel.co.il/\",\n      \"name\": \"i-feel\",\n      \"inLanguage\": \"he-IL\",\n      \"publisher\": { \"@id\": \"https://i-feel.co.il/#business\" }\n    }\n  ]\n}"
+  jsonLd
 };
 ---
 <BaseLayout {...meta}>

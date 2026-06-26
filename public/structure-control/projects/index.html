@@ -217,8 +217,19 @@
 
 <main>
   <div class="wrap">
-    <div class="grid" id="grid"></div>
-    <div class="empty" id="empty">לא נמצאו פרויקטים בקטגוריה זו.</div>
+    <div class="grid" id="grid">
+      <!-- Static project list for search/AI crawlers (no-JS). JS replaces this with the interactive, filterable cards on load. -->
+      <article class="card"><h3><a href="/structure-control/projects/museum-of-illusions/">מוזיאון האשליות חולון — בקרת מבנה BMS</a></h3><p>בקרת תאורה ומיזוג, לוחות זמנים ותרחישי שבת וחג למבנה ציבורי פעיל. Siemens Desigo, KNX.</p></article>
+      <article class="card"><h3><a href="/structure-control/caesarea-rail-campus/">קמפוס רכבת קיסריה — בקרת מבנה BMS</a></h3><p>BMS בקנה מידה קמפוס: ניהול אנרגיה, צ׳ילרים, יחידות טיפול באוויר. Siemens Desigo, DDC, DALI, HMI.</p></article>
+      <article class="card"><h3><a href="/structure-control/brinks-bnei-brak/">ברינקס בני ברק — בקרת מבנה BMS</a></h3><p>בקרת מבנה במתקן תפעולי עם דרישות אבטחה. Siemens Desigo, DDC, KNX.</p></article>
+      <article class="card"><h3><a href="/structure-control/amazon-sarona/">Amazon Sarona — משרדים</a></h3><p>בקרת תאורה DALI ובקרת אקלים אזורית משולבות ב-BMS. KNX, DALI, Siemens Desigo.</p></article>
+      <article class="card"><h3><a href="/structure-control/d-city-roxon-hotels/">D-CITY / ROXON — מלונות</a></h3><p>בקרת חדרים GRMS למלונות, משולבת ל-PMS. KNX, HMI.</p></article>
+      <article class="card"><h3><a href="/projects/countrite-technologies/">משרד חכם CountRite, טירת הכרמל</a></h3><p>משרד חכם: תאורת KNX ו-DALI, צלונים, מיזוג בכרטיסי Samsung, אודיו ו-Control4.</p></article>
+      <article class="card"><h3><a href="/projects/smart-villa-caesarea/">וילה חכמה בקיסריה</a></h3><p>וילת יוקרה: Control4, Siemens, רשת Aruba, אינטרקום זיהוי פנים, אודיו רב-אזורי, מצלמות אנליטיקה.</p></article>
+      <article class="card"><h3><a href="/structure-control/dali-lighting-control/">בקרת תאורה DALI ו-DALI-2</a></h3><p>בקרת תאורה DALI/DALI-2 בבקרת מבנה, כולל שילוב Siemens Desigo ו-KNX-DALI.</p></article>
+      <article class="card"><h3><a href="/hadassah-knx-system/">בית חולים הדסה — מערכת KNX</a></h3><p>מקרה בוחן KNX: חיישני תנועה לבקרת תאורה ומיזוג במגדל אשפוז.</p></article>
+    </div>
+    <div class="empty" id="empty" style="display:none">לא נמצאו פרויקטים בקטגוריה זו.</div>
 
     <section class="cta" id="contact">
       <h2>יש לכם מבנה? יש לנו פתרון.</h2>
