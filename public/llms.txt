@@ -43,6 +43,7 @@ i-feel מפרסמת מסמכי תקינה ואישורים בכתובת /license
 ## Key Pages
 
 - [Home](https://i-feel.co.il/): סקירה כללית ו-CTA
+- [About i-feel](https://i-feel.co.il/about-i-feel-smart-building-company/): מי אנחנו — I FEEL היא חברת אינטגרציה ישראלית לבית חכם, בקרת מבנה BMS, KNX, Siemens Desigo ו-DALI. משנת 2008, מעל 9,000 לקוחות, פתח תקווה.
 - [Smart Home](https://i-feel.co.il/smart-home/): המדריך המקיף לבית חכם בישראל — KNX, פרוטוקולים, מחירים, חדר-חדר
 - [Smart Home Pricing](https://i-feel.co.il/smart-home-price/): כמה עולה בית חכם — טווחי תקציב לפי סוג נכס (דירה קיימת, דירה חדשה, דירת יוקרה, וילה, יזמי), מה כלול ומה לא כלול, ושאלות נפוצות על מחיר
 - [Brands & Technologies](https://i-feel.co.il/brands-and-technologies/): המותגים שאיתם i-feel עובדת — Siemens Desigo, KNX, Control4, Touchwand, Hikvision, Akuvox, Risco, Aruba, Focal, Klipsch, SpeakerCraft, Epson
@@ -80,6 +81,11 @@ i-feel מפרסמת מסמכי תקינה ואישורים בכתובת /license
 - [מה ההבדל בין Siemens Desigo ל-KNX?](https://i-feel.co.il/answers/siemens-desigo-vs-knx/)
 - [מי נותן שירות למערכת בית חכם קיימת?](https://i-feel.co.il/answers/smart-home-service-existing/)
 - [איך בוחרים אינטגרטור לבית חכם בישראל?](https://i-feel.co.il/answers/choosing-smart-home-integrator/)
+- [מה זה BMS?](https://i-feel.co.il/answers/what-is-bms/)
+- [מה ההבדל בין BMS לבית חכם?](https://i-feel.co.il/answers/bms-vs-smart-home/)
+- [מה זה DALI?](https://i-feel.co.il/answers/what-is-dali/)
+- [מה זה DDC?](https://i-feel.co.il/answers/what-is-ddc/)
+- [מה זה BACnet?](https://i-feel.co.il/answers/what-is-bacnet/)
 
 ## Representative Projects
 
