@@ -1,17 +1,20 @@
-name: Build and deploy to cPanel
+name: Build site
 
 on:
   push:
     branches:
       - main
+  pull_request:
+    branches:
+      - main
   workflow_dispatch:
 
 concurrency:
-  group: cpanel-deploy
+  group: site-build-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
-  build-and-deploy:
+  build:
     runs-on: ubuntu-latest
 
     steps:
@@ -29,16 +32,3 @@ jobs:
 
       - name: Build Astro site
         run: npm run build
-
-      - name: Deploy dist to cPanel by FTP
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
-        with:
-          server: ${{ secrets.FTP_SERVER }}
-          username: ${{ secrets.FTP_USERNAME }}
-          password: ${{ secrets.FTP_PASSWORD }}
-          protocol: ftps
-          port: 21
-          security: loose
-          timeout: 60000
-          local-dir: ./dist/
-          server-dir: ${{ secrets.FTP_SERVER_DIR }}
