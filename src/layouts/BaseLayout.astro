@@ -54,16 +54,16 @@ const {
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
-            {jsonLd && <script type="application/ld+json" set:html={jsonLd} />}
+    {jsonLd && <script type="application/ld+json" set:html={jsonLd} />}
 
-    <!-- Google tag (gtag.js) — Google Ads + GA4 -->
+    <!-- Google tag (gtag.js): Google Ads + GA4 -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=AW-18038181913"></script>
     <script is:inline>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
-      gtag('config', 'AW-18038181913');           /* ← Google Ads conversion ID */
-      gtag('config', 'G-XXXXXXXXXX');               /* ← GA4 Measurement ID (create property, then fill) */
+      gtag('config', 'AW-18038181913');
+      gtag('config', 'G-6MHSG7Z8DV');
 
       // Site-wide click conversions: phone + WhatsApp
       document.addEventListener('click', function (e) {
