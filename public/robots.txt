@@ -3,7 +3,7 @@ Allow: /
 Disallow: /old/
 Disallow: /shopengine-template/
 
-# AI crawlers — explicitly allowed (we want llms.txt + AI Overviews coverage)
+# AI crawlers explicitly allowed for llms.txt and AI Overview coverage
 User-agent: GPTBot
 Allow: /
 
@@ -64,5 +64,6 @@ Allow: /
 # Sitemap location
 Sitemap: https://i-feel.co.il/sitemap.xml
 
-# AI discovery file (RFC draft for LLM-readable content)
+# AI discovery files
 # https://i-feel.co.il/llms.txt
+# https://i-feel.co.il/ai-entity-profile.txt
