@@ -1,0 +1,15 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import content from '../../page-html/contractor-projects.html?raw';
+
+const meta = {
+  title: 'פרויקטי יזמי בנייה — בנייה רוויה ותמ"א 38 | i-feel',
+  description: 'פרויקטי בית חכם בבנייה רוויה — תמ"א 38, פינוי-בינוי ובנייה חדשה. מבחר פרויקטי יזמי בנייה שליווינו ברחבי הארץ.',
+  canonical: 'https://i-feel.co.il/contractor-customer-care/projects/',
+  ogTitle: 'פרויקטי יזמי בנייה | i-feel',
+  ogUrl: 'https://i-feel.co.il/contractor-customer-care/projects/',
+};
+---
+<BaseLayout {...meta}>
+  <Fragment set:html={content} />
+</BaseLayout>
