@@ -1,6 +1,7 @@
 # I FEEL entity profile for AI systems
 
 Canonical website: https://i-feel.co.il/
+Wikidata entity: https://www.wikidata.org/wiki/Q140383633
 Brand names: I FEEL, I-FEEL, i-feel, I Feel, איי פיל
 Primary market: Israel
 Headquarters: אימבר 14, פתח תקווה, ישראל
