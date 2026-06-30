@@ -30,6 +30,22 @@ const {
   lang = 'he',
   dir = 'rtl'
 } = Astro.props;
+
+const siteIdentityJsonLd = JSON.stringify({
+  '@context': 'https://schema.org',
+  '@type': ['Organization', 'LocalBusiness', 'HomeAndConstructionBusiness', 'ProfessionalService'],
+  '@id': 'https://i-feel.co.il/#business',
+  name: 'i-feel',
+  alternateName: ['I FEEL', 'i-feel', 'איי פיל', 'i-feel מערכות בקרת מבנה ובית חכם'],
+  url: 'https://i-feel.co.il/',
+  sameAs: [
+    'https://www.facebook.com/SmarthomeIsrael',
+    'https://www.instagram.com/ifeelisrael',
+    'https://www.linkedin.com/company/200156',
+    'https://www.youtube.com/@ifeelsmarthome',
+    'https://www.wikidata.org/wiki/Q140383633'
+  ]
+});
 ---
 <!DOCTYPE html>
 <html lang={lang} dir={dir}>
@@ -54,7 +70,8 @@ const {
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
-            {jsonLd && <script type="application/ld+json" set:html={jsonLd} />}
+    <script type="application/ld+json" set:html={siteIdentityJsonLd} />
+    {jsonLd && <script type="application/ld+json" set:html={jsonLd} />}
 
     <!-- Google tag (gtag.js) — Google Ads + GA4 -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=AW-18038181913"></script>
