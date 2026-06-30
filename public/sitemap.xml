@@ -36,6 +36,18 @@
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
+  <url>
+    <loc>https://i-feel.co.il/i-feel-smart-home-bms-israel/</loc>
+    <lastmod>2026-06-30</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://i-feel.co.il/smart-home-bms-companies-israel/</loc>
+    <lastmod>2026-06-30</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
   <url><loc>https://i-feel.co.il/en/smart-home-israel/</loc><lastmod>2026-06-24</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
   <url><loc>https://i-feel.co.il/en/building-management-system-israel/</loc><lastmod>2026-06-24</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
   <url><loc>https://i-feel.co.il/en/knx-integrator-israel/</loc><lastmod>2026-06-24</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
