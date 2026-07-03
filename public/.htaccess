@@ -129,6 +129,11 @@
     Header set Cache-Control "public, max-age=3600, must-revalidate"
   </FilesMatch>
 
+  # GSC 404-report URLs missed by the refined map (2026-07-03).
+  RewriteRule ^gallery/mishkenot-haoma/?$ /projects/ [R=301,L]
+  RewriteRule ^gallery/קדם-3-יפו/?$ /projects/#private [R=301,L,NE]
+  RewriteRule ^top-smart-home-systems-2026-2/?$ /brands-and-technologies/ [R=301,L]
+
   # === Cutover 301 map (old WordPress URLs) — merged 2026-07-03 ===
   # Source: D:\Claude\ifeel-cutover\redirects-final.htaccess (GSC 404 cleanup).
   RewriteRule ^gallery/kishon/?$ /projects/ [R=301,L]
