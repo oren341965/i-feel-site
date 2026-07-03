@@ -1,0 +1,6 @@
+# Certification PDFs are proof documents, not search-landing content.
+# Keep them downloadable but out of Google's index (GSC flagged them as
+# "Duplicate without user-selected canonical" — PDFs cannot carry a canonical tag).
+<IfModule mod_headers.c>
+  Header set X-Robots-Tag "noindex"
+</IfModule>
