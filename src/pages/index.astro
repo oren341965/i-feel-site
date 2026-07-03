@@ -9,7 +9,20 @@ const jsonLd = JSON.stringify({
       "@type": ["Organization", "LocalBusiness", "HomeAndConstructionBusiness", "ProfessionalService"],
       "@id": "https://i-feel.co.il/#business",
       "name": "i-feel",
-      "alternateName": ["I FEEL", "i-feel", "איי פיל", "i-feel מערכות בקרת מבנה ובית חכם"],
+      "legalName": "איי פיל מערכות בע\"מ",
+      "alternateName": [
+        "I FEEL",
+        "I-FEEL",
+        "i-feel",
+        "איי פיל",
+        "אייפיל",
+        "איי פיל מערכות",
+        "איי פיל מערכות בע\"מ",
+        "i-feel מערכות בקרת מבנה ובית חכם",
+        "I Feel Smart Home",
+        "I Feel BMS",
+        "I Feel KNX"
+      ],
       "url": "https://i-feel.co.il/",
       "logo": "https://i-feel.co.il/assets/ifeel-logo.png",
       "image": "https://i-feel.co.il/assets/og-cover.jpg",
@@ -18,8 +31,33 @@ const jsonLd = JSON.stringify({
       "slogan": "בית חכם ובקרת מבנה — תכנון, התקנה ושירות, משנת 2008",
       "knowsLanguage": ["he", "en"],
       "foundingDate": "2008",
-      "telephone": "+972-3-508-9553",
+      "identifier": {
+        "@type": "PropertyValue",
+        "propertyID": "Israeli company number",
+        "value": "513276469"
+      },
+      "taxID": "513276469",
+      "vatID": "IL513276469",
+      "telephone": ["+972-3-508-9553", "+972-53-300-6239"],
       "email": "sales@i-feel.co.il",
+      "contactPoint": [
+        {
+          "@type": "ContactPoint",
+          "contactType": "sales",
+          "telephone": "+972-3-508-9553",
+          "email": "sales@i-feel.co.il",
+          "areaServed": "IL",
+          "availableLanguage": ["he", "en"]
+        },
+        {
+          "@type": "ContactPoint",
+          "contactType": "customer service",
+          "telephone": "+972-53-300-6239",
+          "email": "support@i-feel.co.il",
+          "areaServed": "IL",
+          "availableLanguage": ["he", "en"]
+        }
+      ],
       "address": { "@type": "PostalAddress", "streetAddress": "אימבר 14", "addressLocality": "פתח תקווה", "addressRegion": "מחוז המרכז", "postalCode": "4951148", "addressCountry": "IL" },
       "geo": { "@type": "GeoCoordinates", "latitude": 32.09124, "longitude": 34.88762 },
       "openingHoursSpecification": [{ "@type": "OpeningHoursSpecification", "dayOfWeek": ["Sunday","Monday","Tuesday","Wednesday","Thursday"], "opens": "09:00", "closes": "18:00" }],
@@ -36,6 +74,11 @@ const jsonLd = JSON.stringify({
         "https://www.linkedin.com/company/200156",
         "https://www.youtube.com/@ifeelsmarthome",
         "https://www.wikidata.org/wiki/Q140383633"
+      ],
+      "mainEntityOfPage": [
+        { "@type": "WebPage", "@id": "https://i-feel.co.il/" },
+        { "@type": "WebPage", "@id": "https://i-feel.co.il/i-feel-smart-home-bms-israel/" },
+        { "@type": "DigitalDocument", "@id": "https://i-feel.co.il/ai-entity-profile.txt" }
       ],
       "hasOfferCatalog": {
         "@type": "OfferCatalog",
