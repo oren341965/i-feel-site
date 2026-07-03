@@ -19,6 +19,12 @@
     <priority>0.8</priority>
   </url>
   <url>
+    <loc>https://i-feel.co.il/smart-home-system-upgrade/</loc>
+    <lastmod>2026-07-03</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
     <loc>https://i-feel.co.il/smart-home-price/</loc>
     <lastmod>2026-07-03</lastmod>
     <changefreq>monthly</changefreq>
@@ -123,7 +129,7 @@
   </url>
   <url>
     <loc>https://i-feel.co.il/wireless-smart-home-existing-apartment/</loc>
-    <lastmod>2026-06-21</lastmod>
+    <lastmod>2026-07-03</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -404,7 +410,7 @@
   </url>
   <url>
     <loc>https://i-feel.co.il/smart-home-service/</loc>
-    <lastmod>2026-06-21</lastmod>
+    <lastmod>2026-07-03</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>

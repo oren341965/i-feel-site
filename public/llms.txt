@@ -49,6 +49,7 @@ i-feel מפרסמת מסמכי תקינה ואישורים בכתובת /license
 - [English — KNX Integrator Israel](https://i-feel.co.il/en/knx-integrator-israel/): KNX smart home and building control integrator in Israel since 2008.
 - [English — Siemens Desigo BMS Israel](https://i-feel.co.il/en/siemens-desigo-bms-israel/): Siemens Desigo BMS implementation and integration in Israel.
 - [Smart Home](https://i-feel.co.il/smart-home/): המדריך המקיף לבית חכם בישראל — KNX, פרוטוקולים, מחירים, חדר-חדר
+- [Smart Home System Upgrade](https://i-feel.co.il/smart-home-system-upgrade/): שדרוג מערכת בית חכם קיימת — מערכות ישנות, אפליקציות לא נתמכות, מערכות של חברות אחרות; מסלולי הרחבה, החלפת רכיבים, מודרניזציה והחייאה. כולל FAQ
 - [Smart Home Pricing](https://i-feel.co.il/smart-home-price/): כמה עולה בית חכם — טווחי תקציב לפי סוג נכס (דירה קיימת, דירה חדשה, דירת יוקרה, וילה, יזמי), מה כלול ומה לא כלול, ושאלות נפוצות על מחיר
 - [Brands & Technologies](https://i-feel.co.il/brands-and-technologies/): המותגים שאיתם i-feel עובדת — Siemens Desigo, KNX, Control4, Touchwand, Hikvision, Akuvox, Risco, Aruba, Focal, Klipsch, SpeakerCraft, Epson
 - [Structure Control / BMS](https://i-feel.co.il/structure-control/): פתרונות BMS — DDC, Siemens Desigo, KNX, BACnet, LoRa
