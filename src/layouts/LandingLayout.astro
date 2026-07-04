@@ -40,8 +40,9 @@ const {
       gtag('config', 'AW-18038181913');           /* ← Google Ads conversion ID */
       gtag('config', 'G-6MHSG7Z8DV');             /* ← GA4 Measurement ID */
 
-      /* Ads conversion labels — replace placeholders with real labels from account 251-497-1872 */
-      var ADS_LABELS = { form: 'FORM_LABEL', call: 'CALL_LABEL', wa: 'WA_LABEL' };
+      /* Ads conversion labels (account 251-497-1872). form = "Lead form – contactus (new site)".
+         call/wa stay placeholders until those conversion actions are created in Google Ads. */
+      var ADS_LABELS = { form: 'az2mCJjbtcYcEJmgo5lD', call: 'CALL_LABEL', wa: 'WA_LABEL' };
       function adsConversion(kind) {
         var label = ADS_LABELS[kind];
         if (!label || label.indexOf('_LABEL') !== -1) return; /* placeholder not replaced yet */

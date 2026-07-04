@@ -27,6 +27,10 @@
     const thankYou = document.getElementById('thank-you');
     if (thankYou && ['1', 'sent', 'sent-mail'].includes(leadStatus || '')) {
       thankYou.classList.remove('hidden');
+      if (typeof gtag === 'function') {
+        gtag('event', 'conversion', { send_to: 'AW-18038181913/az2mCJjbtcYcEJmgo5lD' });
+        gtag('event', 'generate_lead', { page_path: location.pathname });
+      }
     }
 
     document.querySelectorAll('input[name="source_page"]').forEach((input) => {
