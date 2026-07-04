@@ -24,7 +24,17 @@ function field(string $key, int $max = 4000): string
 
 function redirect_back(string $status): never
 {
-    $location = '/contactus/?' . http_build_query(['lead' => $status]);
+    // Landing pages pass redirect_to so the visitor stays on the page that converted.
+    // Only local, slash-delimited paths are accepted; anything else falls back to /contactus/.
+    $target = '/contactus/';
+    $to = $_POST['redirect_to'] ?? '';
+    if (is_string($to)
+        && preg_match('#^/[A-Za-z0-9\-_/]*/$#', $to)
+        && strpos($to, '//') === false) {
+        $target = $to;
+    }
+
+    $location = $target . '?' . http_build_query(['lead' => $status]);
     header('Location: ' . $location, true, 303);
     exit;
 }
@@ -66,7 +76,7 @@ function monday_request(string $query, array $variables, string $token): array
     return $decoded;
 }
 
-function fallback_mail(array $lead, string $reason): bool
+function fallback_mail(array $lead, string $reason, array $marketing = []): bool
 {
     $to = getenv('LEAD_FALLBACK_EMAIL') ?: DEFAULT_FALLBACK_EMAIL;
     $subject = 'Lead from i-feel website - ' . ($lead['name'] ?: 'unknown');
@@ -86,6 +96,12 @@ function fallback_mail(array $lead, string $reason): bool
         'Submitted at: ' . gmdate('c'),
         'IP: ' . ($_SERVER['REMOTE_ADDR'] ?? ''),
     ]);
+
+    foreach ($marketing as $key => $value) {
+        if ($value !== '') {
+            $body .= "\n" . $key . ': ' . $value;
+        }
+    }
 
     $headers = [
         'From: i-feel Website <no-reply@i-feel.co.il>',
@@ -120,6 +136,15 @@ $lead = [
     'source_page' => field('source_page', 300),
 ];
 
+$marketing = [
+    'utm_source' => field('utm_source', 200),
+    'utm_medium' => field('utm_medium', 200),
+    'utm_campaign' => field('utm_campaign', 200),
+    'utm_term' => field('utm_term', 200),
+    'utm_content' => field('utm_content', 200),
+    'gclid' => field('gclid', 200),
+];
+
 if ($lead['name'] === '' || $lead['phone'] === '' || $lead['lead_type'] === '') {
     redirect_back('missing');
 }
@@ -147,6 +172,16 @@ $updateBody = implode("\n", [
     '**Message**',
     $lead['message'] ?: '-',
 ]);
+
+$marketingLines = [];
+foreach ($marketing as $key => $value) {
+    if ($value !== '') {
+        $marketingLines[] = '* ' . $key . ': ' . $value;
+    }
+}
+if ($marketingLines !== []) {
+    $updateBody .= "\n\n**Marketing (UTM / Google Ads)**\n" . implode("\n", $marketingLines);
+}
 
 try {
     if ($token === '') {
@@ -181,7 +216,7 @@ try {
 } catch (Throwable $error) {
     error_log('[i-feel lead form] ' . $error->getMessage());
 
-    if (fallback_mail($lead, $error->getMessage())) {
+    if (fallback_mail($lead, $error->getMessage(), $marketing)) {
         redirect_back('sent-mail');
     }
 

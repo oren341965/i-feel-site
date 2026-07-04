@@ -1,0 +1,160 @@
+---
+import '../styles/global.css';
+
+export interface Props {
+  title: string;
+  description?: string;
+  canonical?: string;
+  phoneDisplay?: string;
+  phoneTel?: string;
+}
+
+const {
+  title,
+  description = '',
+  canonical = 'https://i-feel.co.il/',
+  phoneDisplay = '03-508-9553',
+  phoneTel = '+972-3-508-9553'
+} = Astro.props;
+---
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{title}</title>
+    {description && <meta name="description" content={description} />}
+    <meta name="robots" content="noindex, follow" />
+    <link rel="canonical" href={canonical} />
+    <link rel="icon" type="image/png" href="/assets/favicon.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+
+    <!-- Google tag (gtag.js) — Google Ads + GA4 -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=AW-18038181913"></script>
+    <script is:inline>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'AW-18038181913');           /* ← Google Ads conversion ID */
+      gtag('config', 'G-6MHSG7Z8DV');             /* ← GA4 Measurement ID */
+
+      /* Ads conversion labels — replace placeholders with real labels from account 251-497-1872 */
+      var ADS_LABELS = { form: 'FORM_LABEL', call: 'CALL_LABEL', wa: 'WA_LABEL' };
+      function adsConversion(kind) {
+        var label = ADS_LABELS[kind];
+        if (!label || label.indexOf('_LABEL') !== -1) return; /* placeholder not replaced yet */
+        gtag('event', 'conversion', { send_to: 'AW-18038181913/' + label });
+      }
+
+      // Click conversions: phone + WhatsApp (Ads + GA4)
+      document.addEventListener('click', function (e) {
+        var a = e.target.closest && e.target.closest('a');
+        if (!a) return;
+        var href = a.getAttribute('href') || '';
+        if (href.indexOf('tel:') === 0) {
+          adsConversion('call');
+          gtag('event', 'phone_click', { link_url: href, page_path: location.pathname });
+        } else if (href.indexOf('wa.me') !== -1 || href.indexOf('api.whatsapp.com') !== -1) {
+          adsConversion('wa');
+          gtag('event', 'whatsapp_click', { link_url: href, page_path: location.pathname });
+        }
+      });
+
+      document.addEventListener('DOMContentLoaded', function () {
+        var params = new URLSearchParams(window.location.search);
+
+        // Thank-you / error state after lead.php redirects back here
+        var leadStatus = params.get('lead') || params.get('sent') || '';
+        var thankYou = document.getElementById('thank-you');
+        var formError = document.getElementById('form-error');
+        if (thankYou && ['1', 'sent', 'sent-mail'].indexOf(leadStatus) !== -1) {
+          thankYou.classList.remove('hidden');
+          thankYou.scrollIntoView({ block: 'center' });
+          adsConversion('form');
+          gtag('event', 'generate_lead', { page_path: location.pathname });
+        } else if (formError && ['missing', 'bad-email', 'error'].indexOf(leadStatus) !== -1) {
+          formError.classList.remove('hidden');
+          formError.scrollIntoView({ block: 'center' });
+        }
+
+        // Capture UTM + click IDs, persist across the visit, fill hidden form fields
+        var keys = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_term', 'utm_content', 'gclid'];
+        keys.forEach(function (k) {
+          var v = params.get(k);
+          if (v) { try { sessionStorage.setItem('ifeel_' + k, v); } catch (err) {} }
+          var stored = v;
+          if (!stored) { try { stored = sessionStorage.getItem('ifeel_' + k); } catch (err) {} }
+          if (!stored) return;
+          document.querySelectorAll('input[name="' + k + '"]').forEach(function (input) {
+            input.value = stored;
+          });
+        });
+      });
+    </script>
+  </head>
+  <body class="bg-white text-brand-900 antialiased">
+
+    <!-- Minimal top bar: logo + click-to-call, no site navigation -->
+    <header class="bg-white border-b border-brand-100 sticky top-0 z-40 shadow-sm">
+      <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between gap-4">
+        <img src="/assets/ifeel-logo.png" alt="i-feel מערכות בקרת מבנה ובית חכם" class="h-9 w-auto" />
+        <div class="flex items-center gap-3">
+          <a href={`tel:${phoneTel}`} class="hidden sm:inline-flex items-center gap-2 text-brand-900 font-extrabold text-lg hover:text-accent-600 transition">
+            <svg class="w-5 h-5 text-accent-500" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true"><path d="M2 3.5A1.5 1.5 0 013.5 2h1.148a1.5 1.5 0 011.465 1.175l.716 3.223a1.5 1.5 0 01-1.052 1.767l-.933.267c-.41.117-.643.555-.48.95a11.542 11.542 0 006.254 6.254c.395.163.833-.07.95-.48l.267-.933a1.5 1.5 0 011.767-1.052l3.223.716A1.5 1.5 0 0118 15.352V16.5a1.5 1.5 0 01-1.5 1.5H15c-1.149 0-2.263-.15-3.326-.43A13.022 13.022 0 012.43 8.326 13.019 13.019 0 012 5V3.5z"/></svg>
+            {phoneDisplay}
+          </a>
+          <a href="#lead-form" class="inline-flex items-center bg-accent-500 hover:bg-accent-600 text-white px-5 py-2.5 rounded-lg font-bold transition shadow-md">
+            לתיאום ייעוץ חינם
+          </a>
+        </div>
+      </div>
+    </header>
+
+    <main id="main-content" class="pb-20 md:pb-0">
+
+      <!-- THANK YOU BANNER (shown via JS when ?lead=sent) -->
+      <section id="thank-you" class="hidden bg-green-50 border-b border-green-200" aria-live="polite">
+        <div class="max-w-3xl mx-auto px-4 py-8 text-center">
+          <h2 class="text-2xl font-extrabold text-green-800 mb-2">תודה — הפנייה התקבלה!</h2>
+          <p class="text-green-700 text-lg">נציג i-feel יחזור אליכם בשעות הפעילות הקרובות. רוצים לזרז? חייגו עכשיו <a href={`tel:${phoneTel}`} class="underline font-bold whitespace-nowrap">{phoneDisplay}</a>.</p>
+        </div>
+      </section>
+
+      <!-- ERROR BANNER (shown via JS when ?lead=missing/bad-email/error) -->
+      <section id="form-error" class="hidden bg-red-50 border-b border-red-200" aria-live="polite">
+        <div class="max-w-3xl mx-auto px-4 py-6 text-center">
+          <h2 class="text-xl font-extrabold text-red-800 mb-2">משהו השתבש בשליחה</h2>
+          <p class="text-red-700">בדקו ששם וטלפון מולאו ונסו שוב — או פשוט חייגו אלינו: <a href={`tel:${phoneTel}`} class="underline font-bold whitespace-nowrap">{phoneDisplay}</a>.</p>
+        </div>
+      </section>
+
+      <slot />
+    </main>
+
+    <!-- Minimal footer -->
+    <footer class="bg-brand-900 text-brand-100 py-8 mt-0">
+      <div class="max-w-6xl mx-auto px-4 text-center space-y-2 text-sm">
+        <p class="font-bold text-white">i-feel מערכות בקרת מבנה ובית חכם בע"מ</p>
+        <p>אימבר 14, פתח תקווה · טלפון: <a href={`tel:${phoneTel}`} class="font-bold text-accent-300 hover:underline">{phoneDisplay}</a> · sales@i-feel.co.il</p>
+        <p class="text-brand-300">פועלים מאז 2008 · שעות פעילות: ראשון–חמישי 09:00–18:00</p>
+        <p class="text-brand-300"><a href="https://i-feel.co.il/" class="hover:underline">i-feel.co.il</a> · <a href="/accessibility/" class="hover:underline">הצהרת נגישות</a></p>
+      </div>
+    </footer>
+
+    <!-- Sticky mobile CTA bar -->
+    <div class="fixed bottom-0 inset-x-0 z-50 md:hidden bg-white border-t border-brand-200 shadow-[0_-4px_12px_rgba(15,31,54,0.12)]">
+      <div class="grid grid-cols-2 gap-2 p-2">
+        <a href={`tel:${phoneTel}`} class="inline-flex items-center justify-center gap-2 bg-brand-800 text-white py-3 rounded-lg font-bold">
+          <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true"><path d="M2 3.5A1.5 1.5 0 013.5 2h1.148a1.5 1.5 0 011.465 1.175l.716 3.223a1.5 1.5 0 01-1.052 1.767l-.933.267c-.41.117-.643.555-.48.95a11.542 11.542 0 006.254 6.254c.395.163.833-.07.95-.48l.267-.933a1.5 1.5 0 011.767-1.052l3.223.716A1.5 1.5 0 0118 15.352V16.5a1.5 1.5 0 01-1.5 1.5H15c-1.149 0-2.263-.15-3.326-.43A13.022 13.022 0 012.43 8.326 13.019 13.019 0 012 5V3.5z"/></svg>
+          חייגו עכשיו
+        </a>
+        <a href="#lead-form" class="inline-flex items-center justify-center bg-accent-500 text-white py-3 rounded-lg font-bold">
+          השאירו פרטים
+        </a>
+      </div>
+    </div>
+
+  </body>
+</html>

@@ -1,0 +1,156 @@
+---
+import LandingLayout from '../../layouts/LandingLayout.astro';
+import LeadForm from '../../components/LeadForm.astro';
+
+const page = '/lp/smart-home-villa/';
+---
+<LandingLayout
+  title="בית חכם לוילה — תכנון והתקנה ברמה אחרת | i-feel"
+  description="בית חכם לוילה: תאורה, תריסים, מיזוג, קולנוע ביתי, אודיו רב-אזורי ואבטחה — בפרויקט אחד מתוכנן היטב. ייעוץ חינם."
+  canonical={`https://i-feel.co.il${page}`}
+>
+  <!-- HERO + FORM -->
+  <section class="hero-gradient text-white">
+    <div class="max-w-6xl mx-auto px-4 py-10 lg:py-16 grid lg:grid-cols-2 gap-10 items-start">
+      <div>
+        <p class="inline-flex flex-wrap gap-2 text-xs font-bold mb-4">
+          <span class="bg-white/10 border border-white/20 rounded-full px-3 py-1">פועלים מאז 2008</span>
+          <span class="bg-white/10 border border-white/20 rounded-full px-3 py-1">9,000+ לקוחות</span>
+          <span class="bg-white/10 border border-white/20 rounded-full px-3 py-1">וילות ובתי יוקרה בכל הארץ</span>
+        </p>
+        <h1 class="text-3xl md:text-5xl font-extrabold leading-tight mb-4">
+          בית חכם לוילה —<br class="hidden md:block" /> פרויקט אחד, יד אחת, אפס פשרות
+        </h1>
+        <p class="text-lg md:text-xl text-brand-100 leading-relaxed mb-6">
+          בווילה יש הרבה מערכות: תאורה, תריסים, מיזוג, קולנוע ביתי, אודיו רב-אזורי, בריכה, גינה, שערים ואבטחה.
+          i-feel מאחדת את כולן למערכת אחת מתוכננת — עם קבלן משנה אחד שאחראי על הכול, מהתוכניות ועד המסירה.
+        </p>
+        <ul class="space-y-3 text-brand-50 mb-8">
+          <li class="flex items-start gap-3"><span class="text-accent-400 font-extrabold mt-0.5">✓</span> תכנון מלא על גבי תוכניות האדריכל — לפני סגירת קירות</li>
+          <li class="flex items-start gap-3"><span class="text-accent-400 font-extrabold mt-0.5">✓</span> תשתית קווית בתקן KNX — האמינות שוילות בעולם נבנות עליה</li>
+          <li class="flex items-start gap-3"><span class="text-accent-400 font-extrabold mt-0.5">✓</span> קולנוע ביתי ואודיו רב-אזורי בתכנון אקוסטי מקצועי</li>
+          <li class="flex items-start gap-3"><span class="text-accent-400 font-extrabold mt-0.5">✓</span> גורם אחד מול האדריכל, המעצב והחשמלאי — פחות תקלות תיאום</li>
+        </ul>
+        <a href="tel:+972-3-508-9553" class="hidden md:inline-flex items-center gap-2 bg-white/10 hover:bg-white/20 border border-white/30 text-white px-6 py-3 rounded-lg font-bold transition">
+          מעדיפים לדבר? 03-508-9553
+        </a>
+      </div>
+
+      <LeadForm
+        leadType="לקוח פרטי"
+        subject="LP בית חכם לוילה (Google Ads)"
+        sourcePage={page}
+        heading="בונים או משפצים וילה? דברו איתנו"
+        buttonText="קבלו פגישת ייעוץ חינם"
+      />
+    </div>
+  </section>
+
+  <!-- PROOF STRIP -->
+  <section class="py-10 bg-white">
+    <div class="max-w-6xl mx-auto px-4">
+      <h2 class="text-2xl md:text-3xl font-extrabold text-brand-900 text-center mb-6">וילות ובתים פרטיים שביצענו</h2>
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+        <img src="/assets/private-homes-gallery/kfar-shmaryahu-facade-01-scaled.jpg" alt="וילה חכמה בכפר שמריהו" class="rounded-xl object-cover w-full h-40 md:h-48" loading="lazy" />
+        <img src="/assets/private-homes-gallery/private-home-gallery-02.jpg" alt="סלון בוילה חכמה" class="rounded-xl object-cover w-full h-40 md:h-48" loading="lazy" />
+        <img src="/assets/home-cinema-render.png" alt="קולנוע ביתי בוילה" class="rounded-xl object-cover w-full h-40 md:h-48" loading="lazy" />
+        <img src="/assets/private-homes-gallery/private-home-gallery-06.jpg" alt="תאורה חכמה בבית פרטי" class="rounded-xl object-cover w-full h-40 md:h-48" loading="lazy" />
+      </div>
+      <p class="text-center mt-4 text-sm text-brand-600">חלק מהפרויקטים — גלריית הפרויקטים המלאה מוצגת בפגישת הייעוץ.</p>
+    </div>
+  </section>
+
+  <!-- WHY I-FEEL -->
+  <section class="py-12 bg-brand-50 border-y border-brand-100">
+    <div class="max-w-6xl mx-auto px-4">
+      <h2 class="text-2xl md:text-3xl font-extrabold text-brand-900 text-center mb-8">מה מקבלים כשעובדים עם i-feel?</h2>
+      <div class="grid md:grid-cols-4 gap-5">
+        <div class="bg-white rounded-2xl border border-brand-100 p-6">
+          <div class="text-3xl mb-3">📐</div>
+          <h3 class="font-extrabold text-brand-900 mb-2">מתכננים לפני שקונים</h3>
+          <p class="text-sm text-brand-700">תכנית חשמל ותשתיות חכמות מלאה על גבי תוכניות האדריכל — כך שכל שקע, מפסק ורמקול במקום הנכון.</p>
+        </div>
+        <div class="bg-white rounded-2xl border border-brand-100 p-6">
+          <div class="text-3xl mb-3">🎬</div>
+          <h3 class="font-extrabold text-brand-900 mb-2">חוויית מגורים שלמה</h3>
+          <p class="text-sm text-brand-700">תרחישים חכמים: "ערב סרט", "אירוח", "יציאה מהבית" — הכול קורה בלחיצה אחת או אוטומטית.</p>
+        </div>
+        <div class="bg-white rounded-2xl border border-brand-100 p-6">
+          <div class="text-3xl mb-3">🔌</div>
+          <h3 class="font-extrabold text-brand-900 mb-2">KNX — תקן, לא מותג</h3>
+          <p class="text-sm text-brand-700">תשתית קווית בתקן העולמי הפתוח KNX: אלפי מוצרים ממאות יצרנים, בלי להינעל לספק אחד.</p>
+        </div>
+        <div class="bg-white rounded-2xl border border-brand-100 p-6">
+          <div class="text-3xl mb-3">🛠️</div>
+          <h3 class="font-extrabold text-brand-900 mb-2">שירות לאורך שנים</h3>
+          <p class="text-sm text-brand-700">הסכמי שירות, מוקד תמיכה ותחזוקה מונעת — הוילה שלכם מקבלת ליווי גם אחרי המסירה.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- HOW IT WORKS -->
+  <section class="py-12 bg-white">
+    <div class="max-w-5xl mx-auto px-4">
+      <h2 class="text-2xl md:text-3xl font-extrabold text-brand-900 text-center mb-8">מסלול הפרויקט</h2>
+      <div class="grid md:grid-cols-3 gap-6">
+        <div class="text-center">
+          <div class="w-12 h-12 rounded-full bg-accent-500 text-white font-extrabold text-xl flex items-center justify-center mx-auto mb-3">1</div>
+          <h3 class="font-extrabold text-brand-900 mb-2">פגישת ייעוץ ואפיון</h3>
+          <p class="text-sm text-brand-700">פוגשים אתכם (ואת האדריכל, אם תרצו), מבינים את סגנון החיים ומגדירים מה הבית צריך לדעת לעשות.</p>
+        </div>
+        <div class="text-center">
+          <div class="w-12 h-12 rounded-full bg-accent-500 text-white font-extrabold text-xl flex items-center justify-center mx-auto mb-3">2</div>
+          <h3 class="font-extrabold text-brand-900 mb-2">תכנון והצעה מפורטת</h3>
+          <p class="text-sm text-brand-700">תכנית תשתיות מלאה + הצעת מחיר מפורטת לפי אזורים ומערכות — אתם רואים בדיוק על מה אתם משלמים.</p>
+        </div>
+        <div class="text-center">
+          <div class="w-12 h-12 rounded-full bg-accent-500 text-white font-extrabold text-xl flex items-center justify-center mx-auto mb-3">3</div>
+          <h3 class="font-extrabold text-brand-900 mb-2">ביצוע, הפעלה ומסירה</h3>
+          <p class="text-sm text-brand-700">מלווים את הבנייה, מתקינים ומפעילים, מגדירים תרחישים ומדריכים — עד שהכול עובד מושלם.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="py-12 bg-brand-50 border-y border-brand-100">
+    <div class="max-w-3xl mx-auto px-4">
+      <h2 class="text-2xl md:text-3xl font-extrabold text-brand-900 text-center mb-8">שאלות נפוצות</h2>
+      <div class="space-y-3">
+        <details class="bg-white border border-brand-100 rounded-xl p-5">
+          <summary class="font-bold text-brand-900 cursor-pointer">כמה עולה בית חכם לוילה?</summary>
+          <p class="text-brand-700 mt-3">פרויקט וילה נבנה לפי היקף: מספר אזורים, קולנוע, אודיו, אבטחה וגודל הבית. ההצעה שלנו מפורטת לפי מערכות, כך שאפשר לתעדף. בפגישת הייעוץ תקבלו מסגרת תקציב ריאלית — חינם.</p>
+        </details>
+        <details class="bg-white border border-brand-100 rounded-xl p-5">
+          <summary class="font-bold text-brand-900 cursor-pointer">באיזה שלב של הבנייה כדאי לפנות?</summary>
+          <p class="text-brand-700 mt-3">מוקדם ככל האפשר — הכי טוב בשלב תכנון החשמל, לפני יציקות וסגירת קירות. כך התשתית מוכנה בדיוק למה שהבית צריך, בלי פיצוצים בתקציב בהמשך.</p>
+        </details>
+        <details class="bg-white border border-brand-100 rounded-xl p-5">
+          <summary class="font-bold text-brand-900 cursor-pointer">אתם עובדים מול האדריכל והמעצב שלנו?</summary>
+          <p class="text-brand-700 mt-3">כן — זו שיטת העבודה שלנו. אנחנו מגישים תוכניות מסודרות, משתתפים בישיבות תיאום ודואגים שהעיצוב והטכנולוגיה יעבדו יחד (כולל מפסקים ואביזרי קצה בעיצוב שתבחרו).</p>
+        </details>
+        <details class="bg-white border border-brand-100 rounded-xl p-5">
+          <summary class="font-bold text-brand-900 cursor-pointer">מי מטפל בבית אחרי המסירה?</summary>
+          <p class="text-brand-700 mt-3">אנחנו. ל-i-feel מערך שירות ותחזוקה פעיל מאז 2008, עם הסכמי שירות לוילות הכוללים תמיכה מרחוק וטכנאים בבית.</p>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <!-- FINAL CTA -->
+  <section class="hero-gradient text-white py-12">
+    <div class="max-w-3xl mx-auto px-4 text-center">
+      <h2 class="text-2xl md:text-3xl font-extrabold mb-3">הוילה שלכם ראויה לתכנון נכון</h2>
+      <p class="text-brand-100 text-lg mb-6">השאירו פרטים לפגישת ייעוץ חינם — נבחן יחד את התוכניות ונבנה לכם מסגרת ברורה.</p>
+      <div class="flex flex-col sm:flex-row justify-center gap-3">
+        <a href="#lead-form" class="inline-flex items-center justify-center bg-accent-500 hover:bg-accent-600 text-white px-8 py-4 rounded-lg font-extrabold text-lg transition shadow-md">
+          השאירו פרטים עכשיו
+        </a>
+        <a href="tel:+972-3-508-9553" class="inline-flex items-center justify-center bg-white/10 hover:bg-white/20 border border-white/30 text-white px-8 py-4 rounded-lg font-bold text-lg transition">
+          או חייגו: 03-508-9553
+        </a>
+      </div>
+    </div>
+  </section>
+</LandingLayout>

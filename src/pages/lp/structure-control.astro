@@ -1,0 +1,159 @@
+---
+import LandingLayout from '../../layouts/LandingLayout.astro';
+import LeadForm from '../../components/LeadForm.astro';
+
+const page = '/lp/structure-control/';
+---
+<LandingLayout
+  title="בקרת מבנה BMS — תכנון, הקמה ושירות | i-feel"
+  description="מערכות בקרת מבנה (BMS) למשרדים, מלונות ומבני ציבור: תכנון, הקמה, אינטגרציה ושירות. 180+ פרויקטים. הצעת מחיר ללא התחייבות."
+  canonical={`https://i-feel.co.il${page}`}
+>
+  <!-- HERO + FORM -->
+  <section class="hero-gradient text-white">
+    <div class="max-w-6xl mx-auto px-4 py-10 lg:py-16 grid lg:grid-cols-2 gap-10 items-start">
+      <div>
+        <p class="inline-flex flex-wrap gap-2 text-xs font-bold mb-4">
+          <span class="bg-white/10 border border-white/20 rounded-full px-3 py-1">180+ פרויקטי BMS</span>
+          <span class="bg-white/10 border border-white/20 rounded-full px-3 py-1">פועלים מאז 2008</span>
+          <span class="bg-white/10 border border-white/20 rounded-full px-3 py-1">Intel · IBM · אצטדיון טדי</span>
+        </p>
+        <h1 class="text-3xl md:text-5xl font-extrabold leading-tight mb-4">
+          מערכת בקרת מבנה (BMS) —<br class="hidden md:block" /> מתכנון ועד שירות שוטף
+        </h1>
+        <p class="text-lg md:text-xl text-brand-100 leading-relaxed mb-6">
+          מיזוג, תאורה, אנרגיה, משאבות ומערכות אלקטרומכניות — בממשק שליטה אחד.
+          i-feel מתכננת ומקימה מערכות בקרת מבנה למשרדים, מלונות, מפעלים ומבני ציבור,
+          עם צוות אינטגרציה ושירות ישראלי שמלווה את המבנה לאורך שנים.
+        </p>
+        <ul class="space-y-3 text-brand-50 mb-8">
+          <li class="flex items-start gap-3"><span class="text-accent-400 font-extrabold mt-0.5">✓</span> תכנון, אספקה, התקנה והרצה — קבלן בקרה אחד לכל הפרויקט</li>
+          <li class="flex items-start gap-3"><span class="text-accent-400 font-extrabold mt-0.5">✓</span> עבודה עם מערכות מובילות — כולל Siemens Desigo ותקני KNX/DALI</li>
+          <li class="flex items-start gap-3"><span class="text-accent-400 font-extrabold mt-0.5">✓</span> חיסכון מדיד באנרגיה ובעלויות תפעול המבנה</li>
+          <li class="flex items-start gap-3"><span class="text-accent-400 font-extrabold mt-0.5">✓</span> שירות, תחזוקה ושדרוג מערכות קיימות — גם של יצרנים אחרים</li>
+        </ul>
+        <a href="tel:+972-3-508-9553" class="hidden md:inline-flex items-center gap-2 bg-white/10 hover:bg-white/20 border border-white/30 text-white px-6 py-3 rounded-lg font-bold transition">
+          מעדיפים לדבר? 03-508-9553
+        </a>
+      </div>
+
+      <LeadForm
+        leadType="BMS / בקרת מבנה"
+        subject="LP בקרת מבנה BMS (Google Ads)"
+        sourcePage={page}
+        heading="יש לכם פרויקט בקרת מבנה?"
+        buttonText="קבלו הצעת מחיר ללא התחייבות"
+      />
+    </div>
+  </section>
+
+  <!-- PROOF STRIP -->
+  <section class="py-10 bg-white">
+    <div class="max-w-6xl mx-auto px-4">
+      <h2 class="text-2xl md:text-3xl font-extrabold text-brand-900 text-center mb-2">מתוך 180+ פרויקטי בקרת מבנה שביצענו</h2>
+      <p class="text-center text-brand-600 mb-6">ארגונים מובילים במשק סומכים על i-feel</p>
+      <div class="grid grid-cols-2 md:grid-cols-6 gap-3">
+        <figure><img src="/assets/structure-projects/img/cat-intel-kiryat-gat.jpg" alt="בקרת מבנה אינטל קריית גת" class="rounded-xl object-cover w-full h-28 md:h-32" loading="lazy" /><figcaption class="text-xs text-brand-600 text-center mt-1 font-semibold">Intel קריית גת</figcaption></figure>
+        <figure><img src="/assets/structure-projects/img/cat-ibm-givatayim.jpg" alt="בקרת מבנה IBM גבעתיים" class="rounded-xl object-cover w-full h-28 md:h-32" loading="lazy" /><figcaption class="text-xs text-brand-600 text-center mt-1 font-semibold">IBM גבעתיים</figcaption></figure>
+        <figure><img src="/assets/structure-projects/img/cat-amazon-sarona.jpg" alt="בקרת מבנה אמזון שרונה" class="rounded-xl object-cover w-full h-28 md:h-32" loading="lazy" /><figcaption class="text-xs text-brand-600 text-center mt-1 font-semibold">Amazon שרונה</figcaption></figure>
+        <figure><img src="/assets/structure-projects/img/cat-teddy-stadium.jpg" alt="בקרת מבנה אצטדיון טדי" class="rounded-xl object-cover w-full h-28 md:h-32" loading="lazy" /><figcaption class="text-xs text-brand-600 text-center mt-1 font-semibold">אצטדיון טדי</figcaption></figure>
+        <figure><img src="/assets/structure-projects/img/cat-rafael.jpg" alt="בקרת מבנה רפאל" class="rounded-xl object-cover w-full h-28 md:h-32" loading="lazy" /><figcaption class="text-xs text-brand-600 text-center mt-1 font-semibold">רפאל</figcaption></figure>
+        <figure><img src="/assets/structure-projects/img/cat-azrieli-sharona.jpg" alt="בקרת מבנה עזריאלי שרונה" class="rounded-xl object-cover w-full h-28 md:h-32" loading="lazy" /><figcaption class="text-xs text-brand-600 text-center mt-1 font-semibold">עזריאלי שרונה</figcaption></figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- WHY I-FEEL -->
+  <section class="py-12 bg-brand-50 border-y border-brand-100">
+    <div class="max-w-6xl mx-auto px-4">
+      <h2 class="text-2xl md:text-3xl font-extrabold text-brand-900 text-center mb-8">למה מנהלי פרויקטים ויועצים עובדים איתנו?</h2>
+      <div class="grid md:grid-cols-4 gap-5">
+        <div class="bg-white rounded-2xl border border-brand-100 p-6">
+          <div class="text-3xl mb-3">🏗️</div>
+          <h3 class="font-extrabold text-brand-900 mb-2">ניסיון מוכח בשטח</h3>
+          <p class="text-sm text-brand-700">180+ פרויקטי BMS מאז 2008: הייטק, מלונאות, תעשייה, ספורט ומבני ציבור — כולל אתרים מאוישים 24/7.</p>
+        </div>
+        <div class="bg-white rounded-2xl border border-brand-100 p-6">
+          <div class="text-3xl mb-3">🔗</div>
+          <h3 class="font-extrabold text-brand-900 mb-2">אינטגרציה אמיתית</h3>
+          <p class="text-sm text-brand-700">מיזוג, תאורה (DALI), חשמל, מים ואנרגיה — פרוטוקולים פתוחים (BACnet, KNX, Modbus) בממשק אחד.</p>
+        </div>
+        <div class="bg-white rounded-2xl border border-brand-100 p-6">
+          <div class="text-3xl mb-3">📉</div>
+          <h3 class="font-extrabold text-brand-900 mb-2">חיסכון תפעולי מדיד</h3>
+          <p class="text-sm text-brand-700">בקרה חכמה מפחיתה צריכת אנרגיה, מקצרת זמני טיפול בתקלות ומאריכה חיי ציוד אלקטרומכני.</p>
+        </div>
+        <div class="bg-white rounded-2xl border border-brand-100 p-6">
+          <div class="text-3xl mb-3">🛠️</div>
+          <h3 class="font-extrabold text-brand-900 mb-2">שירות לאורך חיי המבנה</h3>
+          <p class="text-sm text-brand-700">הסכמי שירות, ניטור ותחזוקה — וגם השתלטות על מערכות קיימות ושדרוגן, בלי להחליף הכול.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- HOW IT WORKS -->
+  <section class="py-12 bg-white">
+    <div class="max-w-5xl mx-auto px-4">
+      <h2 class="text-2xl md:text-3xl font-extrabold text-brand-900 text-center mb-8">איך מתקדמים?</h2>
+      <div class="grid md:grid-cols-3 gap-6">
+        <div class="text-center">
+          <div class="w-12 h-12 rounded-full bg-accent-500 text-white font-extrabold text-xl flex items-center justify-center mx-auto mb-3">1</div>
+          <h3 class="font-extrabold text-brand-900 mb-2">פגישת אפיון</h3>
+          <p class="text-sm text-brand-700">בוחנים את המפרט, התוכניות או המבנה הקיים ומגדירים היקף: מערכות, נקודות בקרה ולוחות זמנים.</p>
+        </div>
+        <div class="text-center">
+          <div class="w-12 h-12 rounded-full bg-accent-500 text-white font-extrabold text-xl flex items-center justify-center mx-auto mb-3">2</div>
+          <h3 class="font-extrabold text-brand-900 mb-2">הצעה הנדסית מפורטת</h3>
+          <p class="text-sm text-brand-700">הצעת מחיר לפי כתב כמויות: בקרים, תוכנה, לוחות, עבודות והרצה — שקוף ומוכן להשוואה.</p>
+        </div>
+        <div class="text-center">
+          <div class="w-12 h-12 rounded-full bg-accent-500 text-white font-extrabold text-xl flex items-center justify-center mx-auto mb-3">3</div>
+          <h3 class="font-extrabold text-brand-900 mb-2">הקמה, הרצה ומסירה</h3>
+          <p class="text-sm text-brand-700">התקנה ואינטגרציה, הרצה מול היועץ, הדרכת צוות התפעול — ומעבר חלק לשירות שוטף.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="py-12 bg-brand-50 border-y border-brand-100">
+    <div class="max-w-3xl mx-auto px-4">
+      <h2 class="text-2xl md:text-3xl font-extrabold text-brand-900 text-center mb-8">שאלות נפוצות</h2>
+      <div class="space-y-3">
+        <details class="bg-white border border-brand-100 rounded-xl p-5">
+          <summary class="font-bold text-brand-900 cursor-pointer">עם אילו מערכות אתם עובדים?</summary>
+          <p class="text-brand-700 mt-3">אנחנו עובדים עם מערכות מובילות בעולם — בהן Siemens Desigo — ועם פרוטוקולים פתוחים: BACnet, KNX, DALI ו-Modbus. הבחירה נעשית לפי דרישות הפרויקט והיועץ, לא לפי נוחות הספק.</p>
+        </details>
+        <details class="bg-white border border-brand-100 rounded-xl p-5">
+          <summary class="font-bold text-brand-900 cursor-pointer">יש לנו מערכת ישנה שאיש לא מתחזק — אפשר להציל?</summary>
+          <p class="text-brand-700 mt-3">ברוב המקרים כן. אנחנו מתמחים בהשתלטות על מערכות קיימות, שדרוג הדרגתי והחלפת רכיבים שהתיישנו — בלי להשבית את המבנה ובלי לזרוק את כל ההשקעה.</p>
+        </details>
+        <details class="bg-white border border-brand-100 rounded-xl p-5">
+          <summary class="font-bold text-brand-900 cursor-pointer">אתם עובדים מול יועץ הבקרה / מתכנן המיזוג שלנו?</summary>
+          <p class="text-brand-700 mt-3">כמובן — זו סביבת העבודה הטבעית שלנו. אנחנו מגישים הצעות לפי כתבי כמויות, משתתפים בישיבות תיאום ועומדים בדרישות מפרט והרצה של היועצים המובילים בישראל.</p>
+        </details>
+        <details class="bg-white border border-brand-100 rounded-xl p-5">
+          <summary class="font-bold text-brand-900 cursor-pointer">מה לגבי שירות אחרי המסירה?</summary>
+          <p class="text-brand-700 mt-3">ל-i-feel מערך שירות פעיל עם הסכמי תחזוקה, ניטור מרחוק ו-SLA מוגדר. חלק גדול מלקוחות ה-BMS שלנו איתנו שנים רבות — זה המדד הכי טוב.</p>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <!-- FINAL CTA -->
+  <section class="hero-gradient text-white py-12">
+    <div class="max-w-3xl mx-auto px-4 text-center">
+      <h2 class="text-2xl md:text-3xl font-extrabold mb-3">יש פרויקט על השולחן?</h2>
+      <p class="text-brand-100 text-lg mb-6">שלחו פרטים (אפשר גם מפרט או כתב כמויות) ונחזור אליכם עם הצעה הנדסית מסודרת.</p>
+      <div class="flex flex-col sm:flex-row justify-center gap-3">
+        <a href="#lead-form" class="inline-flex items-center justify-center bg-accent-500 hover:bg-accent-600 text-white px-8 py-4 rounded-lg font-extrabold text-lg transition shadow-md">
+          השאירו פרטים עכשיו
+        </a>
+        <a href="tel:+972-3-508-9553" class="inline-flex items-center justify-center bg-white/10 hover:bg-white/20 border border-white/30 text-white px-8 py-4 rounded-lg font-bold text-lg transition">
+          או חייגו: 03-508-9553
+        </a>
+      </div>
+    </div>
+  </section>
+</LandingLayout>

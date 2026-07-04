@@ -1,0 +1,154 @@
+---
+import LandingLayout from '../../layouts/LandingLayout.astro';
+import LeadForm from '../../components/LeadForm.astro';
+
+const page = '/lp/smart-home/';
+---
+<LandingLayout
+  title="בית חכם — תכנון והתקנה עם ליווי מלא | i-feel"
+  description="מערכת בית חכם מותאמת אישית: תאורה, תריסים, מיזוג ואודיו בשליטה אחת. ייעוץ חינם והצעת מחיר ללא התחייבות."
+  canonical={`https://i-feel.co.il${page}`}
+>
+  <!-- HERO + FORM -->
+  <section class="hero-gradient text-white">
+    <div class="max-w-6xl mx-auto px-4 py-10 lg:py-16 grid lg:grid-cols-2 gap-10 items-start">
+      <div>
+        <p class="inline-flex flex-wrap gap-2 text-xs font-bold mb-4">
+          <span class="bg-white/10 border border-white/20 rounded-full px-3 py-1">פועלים מאז 2008</span>
+          <span class="bg-white/10 border border-white/20 rounded-full px-3 py-1">9,000+ לקוחות</span>
+          <span class="bg-white/10 border border-white/20 rounded-full px-3 py-1">אלפי בתים ודירות חכמות</span>
+        </p>
+        <h1 class="text-3xl md:text-5xl font-extrabold leading-tight mb-4">
+          בית חכם שמתוכנן נכון —<br class="hidden md:block" /> מהתכנון ועד ההפעלה
+        </h1>
+        <p class="text-lg md:text-xl text-brand-100 leading-relaxed mb-6">
+          תאורה, תריסים, מיזוג, אודיו ואבטחה — הכול באפליקציה אחת ובלחיצה אחת.
+          צוות i-feel מלווה אתכם משלב התוכניות ועד ההדרכה בבית, עם שירות ישראלי שנשאר אחרי ההתקנה.
+        </p>
+        <ul class="space-y-3 text-brand-50 mb-8">
+          <li class="flex items-start gap-3"><span class="text-accent-400 font-extrabold mt-0.5">✓</span> תכנון אישי לפי הבית והתקציב שלכם — משדרוג נקודתי ועד בית מלא</li>
+          <li class="flex items-start gap-3"><span class="text-accent-400 font-extrabold mt-0.5">✓</span> טכנולוגיה קווית אמינה (KNX) לצד פתרונות אלחוטיים מתקדמים</li>
+          <li class="flex items-start gap-3"><span class="text-accent-400 font-extrabold mt-0.5">✓</span> התקנה מסודרת, הדרכה מלאה ושירות ותחזוקה לאורך שנים</li>
+        </ul>
+        <a href="tel:+972-3-508-9553" class="hidden md:inline-flex items-center gap-2 bg-white/10 hover:bg-white/20 border border-white/30 text-white px-6 py-3 rounded-lg font-bold transition">
+          מעדיפים לדבר? 03-508-9553
+        </a>
+      </div>
+
+      <LeadForm
+        leadType="לקוח פרטי"
+        subject="LP בית חכם (Google Ads)"
+        sourcePage={page}
+        heading="רוצים בית חכם? השאירו פרטים"
+        buttonText="קבלו ייעוץ והצעת מחיר חינם"
+      />
+    </div>
+  </section>
+
+  <!-- PROOF STRIP -->
+  <section class="py-10 bg-white">
+    <div class="max-w-6xl mx-auto px-4">
+      <h2 class="text-2xl md:text-3xl font-extrabold text-brand-900 text-center mb-6">בתים חכמים שהתקנו בפועל</h2>
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+        <img src="/assets/private-homes-gallery/private-home-gallery-01.jpg" alt="בית חכם — סלון עם תאורה חכמה" class="rounded-xl object-cover w-full h-40 md:h-48" loading="lazy" />
+        <img src="/assets/smart-home-ramat-hasharon.jpg" alt="בית חכם ברמת השרון" class="rounded-xl object-cover w-full h-40 md:h-48" loading="lazy" />
+        <img src="/assets/private-homes-gallery/private-home-gallery-03.jpg" alt="שליטה חכמה בתאורה ותריסים" class="rounded-xl object-cover w-full h-40 md:h-48" loading="lazy" />
+        <img src="/assets/private-homes-gallery/private-home-gallery-04.jpg" alt="מטבח וסלון בבית חכם" class="rounded-xl object-cover w-full h-40 md:h-48" loading="lazy" />
+      </div>
+    </div>
+  </section>
+
+  <!-- WHY I-FEEL -->
+  <section class="py-12 bg-brand-50 border-y border-brand-100">
+    <div class="max-w-6xl mx-auto px-4">
+      <h2 class="text-2xl md:text-3xl font-extrabold text-brand-900 text-center mb-8">למה משפחות בוחרות ב-i-feel?</h2>
+      <div class="grid md:grid-cols-4 gap-5">
+        <div class="bg-white rounded-2xl border border-brand-100 p-6">
+          <div class="text-3xl mb-3">🏠</div>
+          <h3 class="font-extrabold text-brand-900 mb-2">ניסיון של 18 שנה</h3>
+          <p class="text-sm text-brand-700">מאז 2008 התקנו מערכות באלפי בתים ודירות בכל הארץ — יש לנו תשובה לכל תרחיש.</p>
+        </div>
+        <div class="bg-white rounded-2xl border border-brand-100 p-6">
+          <div class="text-3xl mb-3">📐</div>
+          <h3 class="font-extrabold text-brand-900 mb-2">תכנון לפני הכול</h3>
+          <p class="text-sm text-brand-700">מתחילים מהתוכניות והצרכים שלכם — לא ממכירה של מוצר מדף. כל בית מקבל פתרון משלו.</p>
+        </div>
+        <div class="bg-white rounded-2xl border border-brand-100 p-6">
+          <div class="text-3xl mb-3">🔌</div>
+          <h3 class="font-extrabold text-brand-900 mb-2">טכנולוגיה שמחזיקה</h3>
+          <p class="text-sm text-brand-700">עובדים עם תקנים עולמיים פתוחים כמו KNX — לא נעולים ליצרן אחד, והמערכת גדלה איתכם.</p>
+        </div>
+        <div class="bg-white rounded-2xl border border-brand-100 p-6">
+          <div class="text-3xl mb-3">🛠️</div>
+          <h3 class="font-extrabold text-brand-900 mb-2">שירות אחרי ההתקנה</h3>
+          <p class="text-sm text-brand-700">מוקד שירות ותחזוקה ישראלי, הסכמי שירות ותמיכה גם שנים אחרי המסירה.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- HOW IT WORKS -->
+  <section class="py-12 bg-white">
+    <div class="max-w-5xl mx-auto px-4">
+      <h2 class="text-2xl md:text-3xl font-extrabold text-brand-900 text-center mb-8">איך זה עובד?</h2>
+      <div class="grid md:grid-cols-3 gap-6">
+        <div class="text-center">
+          <div class="w-12 h-12 rounded-full bg-accent-500 text-white font-extrabold text-xl flex items-center justify-center mx-auto mb-3">1</div>
+          <h3 class="font-extrabold text-brand-900 mb-2">שיחת ייעוץ חינם</h3>
+          <p class="text-sm text-brand-700">מספרים לנו על הבית ועל מה שחשוב לכם. מקבלים כיוון ראשוני וסדר גודל תקציבי — בלי התחייבות.</p>
+        </div>
+        <div class="text-center">
+          <div class="w-12 h-12 rounded-full bg-accent-500 text-white font-extrabold text-xl flex items-center justify-center mx-auto mb-3">2</div>
+          <h3 class="font-extrabold text-brand-900 mb-2">תכנון והצעת מחיר</h3>
+          <p class="text-sm text-brand-700">מתכננים את המערכת על גבי התוכניות שלכם ומגישים הצעה מפורטת וברורה — סעיף-סעיף.</p>
+        </div>
+        <div class="text-center">
+          <div class="w-12 h-12 rounded-full bg-accent-500 text-white font-extrabold text-xl flex items-center justify-center mx-auto mb-3">3</div>
+          <h3 class="font-extrabold text-brand-900 mb-2">התקנה, הדרכה וליווי</h3>
+          <p class="text-sm text-brand-700">מתקינים, מגדירים תרחישים, מדריכים את כל המשפחה — ונשארים זמינים בשירות ותחזוקה.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="py-12 bg-brand-50 border-y border-brand-100">
+    <div class="max-w-3xl mx-auto px-4">
+      <h2 class="text-2xl md:text-3xl font-extrabold text-brand-900 text-center mb-8">שאלות שכולם שואלים</h2>
+      <div class="space-y-3">
+        <details class="bg-white border border-brand-100 rounded-xl p-5">
+          <summary class="font-bold text-brand-900 cursor-pointer">כמה עולה בית חכם?</summary>
+          <p class="text-brand-700 mt-3">זה תלוי בגודל הבית, בהיקף המערכות ובטכנולוגיה. יש פתרונות התחלתיים בעלות של אלפי שקלים בודדים, ובתים מלאים בעשרות אלפים. בשיחת הייעוץ תקבלו סדר גודל מדויק לבית שלכם — חינם.</p>
+        </details>
+        <details class="bg-white border border-brand-100 rounded-xl p-5">
+          <summary class="font-bold text-brand-900 cursor-pointer">אנחנו באמצע בנייה / שיפוץ — מתי נכון לפנות?</summary>
+          <p class="text-brand-700 mt-3">עכשיו. השלב הטוב ביותר הוא לפני סגירת קירות, כשעוד אפשר להעביר חיווט. אבל גם לבית קיים יש פתרונות אלחוטיים מצוינים ללא שבירת קירות.</p>
+        </details>
+        <details class="bg-white border border-brand-100 rounded-xl p-5">
+          <summary class="font-bold text-brand-900 cursor-pointer">האם המערכת תמשיך לעבוד בעוד 10 שנים?</summary>
+          <p class="text-brand-700 mt-3">אנחנו עובדים עם תקנים עולמיים פתוחים (כמו KNX) שקיימים עשרות שנים ולא תלויים ביצרן אחד. בנוסף — אנחנו כאן מאז 2008, עם מערך שירות ותחזוקה פעיל.</p>
+        </details>
+        <details class="bg-white border border-brand-100 rounded-xl p-5">
+          <summary class="font-bold text-brand-900 cursor-pointer">כמה זמן לוקחת התקנה?</summary>
+          <p class="text-brand-700 mt-3">שדרוג נקודתי — ימים בודדים. בית מלא בבנייה — ההתקנה משתלבת בלוח הזמנים של הפרויקט, וההפעלה וההדרכה נעשות לקראת הכניסה לבית.</p>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <!-- FINAL CTA -->
+  <section class="hero-gradient text-white py-12">
+    <div class="max-w-3xl mx-auto px-4 text-center">
+      <h2 class="text-2xl md:text-3xl font-extrabold mb-3">מוכנים לבית שעובד בשבילכם?</h2>
+      <p class="text-brand-100 text-lg mb-6">השאירו פרטים ותקבלו שיחת ייעוץ חינם + הצעת מחיר מותאמת אישית.</p>
+      <div class="flex flex-col sm:flex-row justify-center gap-3">
+        <a href="#lead-form" class="inline-flex items-center justify-center bg-accent-500 hover:bg-accent-600 text-white px-8 py-4 rounded-lg font-extrabold text-lg transition shadow-md">
+          השאירו פרטים עכשיו
+        </a>
+        <a href="tel:+972-3-508-9553" class="inline-flex items-center justify-center bg-white/10 hover:bg-white/20 border border-white/30 text-white px-8 py-4 rounded-lg font-bold text-lg transition">
+          או חייגו: 03-508-9553
+        </a>
+      </div>
+    </div>
+  </section>
+</LandingLayout>

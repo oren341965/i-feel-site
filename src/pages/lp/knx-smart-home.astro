@@ -1,0 +1,148 @@
+---
+import LandingLayout from '../../layouts/LandingLayout.astro';
+import LeadForm from '../../components/LeadForm.astro';
+
+const page = '/lp/knx-smart-home/';
+---
+<LandingLayout
+  title="בית חכם קווי KNX — תכנון והתקנה מוסמכת | i-feel"
+  description="בית חכם קווי בתקן KNX: אמינות של עשרות שנים, ללא תלות ביצרן. תכנון, התקנה ושירות ע״י צוות מוסמך. ייעוץ חינם."
+  canonical={`https://i-feel.co.il${page}`}
+>
+  <!-- HERO + FORM -->
+  <section class="hero-gradient text-white">
+    <div class="max-w-6xl mx-auto px-4 py-10 lg:py-16 grid lg:grid-cols-2 gap-10 items-start">
+      <div>
+        <p class="inline-flex flex-wrap gap-2 text-xs font-bold mb-4">
+          <span class="bg-white/10 border border-white/20 rounded-full px-3 py-1">פועלים מאז 2008</span>
+          <span class="bg-white/10 border border-white/20 rounded-full px-3 py-1">מומחי KNX</span>
+          <span class="bg-white/10 border border-white/20 rounded-full px-3 py-1">אלפי בתים ודירות</span>
+        </p>
+        <h1 class="text-3xl md:text-5xl font-extrabold leading-tight mb-4">
+          בית חכם קווי בתקן KNX —<br class="hidden md:block" /> אמינות שנמדדת בעשורים
+        </h1>
+        <p class="text-lg md:text-xl text-brand-100 leading-relaxed mb-6">
+          KNX הוא התקן העולמי הפתוח לבתים ומבנים חכמים: מאות יצרנים, אלפי מוצרים, ותשתית קווית שלא תלויה
+          ב-WiFi, בענן או ביצרן אחד. i-feel מתכננת ומתקינה מערכות KNX מאז 2008 — מהדירה ועד הווילה.
+        </p>
+        <ul class="space-y-3 text-brand-50 mb-8">
+          <li class="flex items-start gap-3"><span class="text-accent-400 font-extrabold mt-0.5">✓</span> עובד גם בלי אינטרנט — המערכת יציבה, מהירה ועצמאית</li>
+          <li class="flex items-start gap-3"><span class="text-accent-400 font-extrabold mt-0.5">✓</span> תקן פתוח: חופש בחירה בין מאות יצרנים, היום ובעוד 20 שנה</li>
+          <li class="flex items-start gap-3"><span class="text-accent-400 font-extrabold mt-0.5">✓</span> תאורה, תריסים, מיזוג, חימום ואבטחה — הכול בתשתית אחת</li>
+          <li class="flex items-start gap-3"><span class="text-accent-400 font-extrabold mt-0.5">✓</span> תכנון, התקנה, הגדרות ושירות — הכול בבית אחד, i-feel</li>
+        </ul>
+        <a href="tel:+972-3-508-9553" class="hidden md:inline-flex items-center gap-2 bg-white/10 hover:bg-white/20 border border-white/30 text-white px-6 py-3 rounded-lg font-bold transition">
+          מעדיפים לדבר? 03-508-9553
+        </a>
+      </div>
+
+      <LeadForm
+        leadType="לקוח פרטי"
+        subject="LP KNX (Google Ads)"
+        sourcePage={page}
+        heading="מתכננים בית חכם KNX? דברו איתנו"
+        buttonText="קבלו ייעוץ KNX חינם"
+      />
+    </div>
+  </section>
+
+  <!-- PROOF STRIP -->
+  <section class="py-10 bg-white">
+    <div class="max-w-6xl mx-auto px-4">
+      <h2 class="text-2xl md:text-3xl font-extrabold text-brand-900 text-center mb-6">בתי KNX שהתקנו</h2>
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+        <img src="/assets/private-homes-gallery/private-home-gallery-01.jpg" alt="בית חכם KNX — סלון" class="rounded-xl object-cover w-full h-40 md:h-48" loading="lazy" />
+        <img src="/assets/private-homes-gallery/kfar-shmaryahu-facade-01-scaled.jpg" alt="וילה עם מערכת KNX בכפר שמריהו" class="rounded-xl object-cover w-full h-40 md:h-48" loading="lazy" />
+        <img src="/assets/smart-home-ramat-hasharon.jpg" alt="בית חכם KNX ברמת השרון" class="rounded-xl object-cover w-full h-40 md:h-48" loading="lazy" />
+        <img src="/assets/private-homes-gallery/private-home-gallery-09.jpg" alt="תאורה חכמה בשליטת KNX" class="rounded-xl object-cover w-full h-40 md:h-48" loading="lazy" />
+      </div>
+    </div>
+  </section>
+
+  <!-- KNX VS WIRELESS -->
+  <section class="py-12 bg-brand-50 border-y border-brand-100">
+    <div class="max-w-5xl mx-auto px-4">
+      <h2 class="text-2xl md:text-3xl font-extrabold text-brand-900 text-center mb-8">למה דווקא קווי (KNX) ולא אלחוטי?</h2>
+      <div class="grid md:grid-cols-3 gap-5">
+        <div class="bg-white rounded-2xl border border-brand-100 p-6">
+          <h3 class="font-extrabold text-brand-900 mb-2">⚡ יציבות מוחלטת</h3>
+          <p class="text-sm text-brand-700">אין תלות ב-WiFi, בסוללות או בשרת ענן של יצרן. המפסק עובד תמיד — גם כשהאינטרנט נופל.</p>
+        </div>
+        <div class="bg-white rounded-2xl border border-brand-100 p-6">
+          <h3 class="font-extrabold text-brand-900 mb-2">🌍 תקן עולמי פתוח</h3>
+          <p class="text-sm text-brand-700">KNX קיים משנות ה-90 ומגובה ע"י מאות יצרנים (סימנס, ABB, שניידר, ג'ירה ועוד). המערכת שלכם לא "תימחק" כשמותג נעלם.</p>
+        </div>
+        <div class="bg-white rounded-2xl border border-brand-100 p-6">
+          <h3 class="font-extrabold text-brand-900 mb-2">📈 ערך לנכס</h3>
+          <p class="text-sm text-brand-700">תשתית KNX מקצועית היא נכס שנשאר עם הבית ומעלה את ערכו — לא גאדג'ט שמתיישן אחרי שנתיים.</p>
+        </div>
+      </div>
+      <p class="text-center text-brand-700 mt-6 text-sm">בבתים קיימים אנחנו משלבים גם פתרונות אלחוטיים איכותיים — בייעוץ נתאים את הטכנולוגיה הנכונה לבית שלכם.</p>
+    </div>
+  </section>
+
+  <!-- HOW IT WORKS -->
+  <section class="py-12 bg-white">
+    <div class="max-w-5xl mx-auto px-4">
+      <h2 class="text-2xl md:text-3xl font-extrabold text-brand-900 text-center mb-8">איך זה עובד?</h2>
+      <div class="grid md:grid-cols-3 gap-6">
+        <div class="text-center">
+          <div class="w-12 h-12 rounded-full bg-accent-500 text-white font-extrabold text-xl flex items-center justify-center mx-auto mb-3">1</div>
+          <h3 class="font-extrabold text-brand-900 mb-2">ייעוץ ובדיקת תוכניות</h3>
+          <p class="text-sm text-brand-700">בוחנים את תוכניות החשמל ומגדירים יחד מה המערכת צריכה לכלול — חינם וללא התחייבות.</p>
+        </div>
+        <div class="text-center">
+          <div class="w-12 h-12 rounded-full bg-accent-500 text-white font-extrabold text-xl flex items-center justify-center mx-auto mb-3">2</div>
+          <h3 class="font-extrabold text-brand-900 mb-2">תכנון KNX והצעת מחיר</h3>
+          <p class="text-sm text-brand-700">תכנית תשתית מלאה לחשמלאי + הצעה מפורטת לפי רכיבים. שקוף, ברור, בלי הפתעות.</p>
+        </div>
+        <div class="text-center">
+          <div class="w-12 h-12 rounded-full bg-accent-500 text-white font-extrabold text-xl flex items-center justify-center mx-auto mb-3">3</div>
+          <h3 class="font-extrabold text-brand-900 mb-2">התקנה, תכנות והדרכה</h3>
+          <p class="text-sm text-brand-700">מתקינים ומתכנתים את המערכת, בונים תרחישים ומדריכים — ונשארים איתכם בשירות ותחזוקה.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="py-12 bg-brand-50 border-y border-brand-100">
+    <div class="max-w-3xl mx-auto px-4">
+      <h2 class="text-2xl md:text-3xl font-extrabold text-brand-900 text-center mb-8">שאלות נפוצות על KNX</h2>
+      <div class="space-y-3">
+        <details class="bg-white border border-brand-100 rounded-xl p-5">
+          <summary class="font-bold text-brand-900 cursor-pointer">כמה עולה מערכת KNX לבית?</summary>
+          <p class="text-brand-700 mt-3">התמחור תלוי במספר הנקודות (תאורה, תריסים, מיזוג) ובאביזרי הקצה שתבחרו. מערכת KNX היא השקעה בתשתית הבית — ובייעוץ תקבלו הצעה מפורטת לפי רכיבים, כך שאפשר לתעדף ולהתאים לתקציב.</p>
+        </details>
+        <details class="bg-white border border-brand-100 rounded-xl p-5">
+          <summary class="font-bold text-brand-900 cursor-pointer">האם KNX מתאים רק לבנייה חדשה?</summary>
+          <p class="text-brand-700 mt-3">KNX דורש חיווט ולכן אידיאלי בבנייה או שיפוץ. בבית קיים ללא שיפוץ נציע שילוב של פתרונות אלחוטיים איכותיים — ולעיתים שילוב היברידי של שניהם.</p>
+        </details>
+        <details class="bg-white border border-brand-100 rounded-xl p-5">
+          <summary class="font-bold text-brand-900 cursor-pointer">מה ההבדל בין KNX ל"בית חכם" רגיל מהחנות?</summary>
+          <p class="text-brand-700 mt-3">מוצרי מדף אלחוטיים תלויים באפליקציה, בענן וביצרן ספציפי. KNX הוא תקן הנדסי: התשתית בקירות, הרכיבים מתחלפים, והמערכת ממשיכה לעבוד עשרות שנים — כמו מערכת החשמל עצמה.</p>
+        </details>
+        <details class="bg-white border border-brand-100 rounded-xl p-5">
+          <summary class="font-bold text-brand-900 cursor-pointer">מי מתכנת ומתחזק את המערכת?</summary>
+          <p class="text-brand-700 mt-3">צוות i-feel — אנחנו מתכננים, מתקינים, מתכנתים ומתחזקים בעצמנו, עם מערך שירות פעיל מאז 2008. שינויים עתידיים (תרחישים, הרחבות) נעשים בקלות.</p>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <!-- FINAL CTA -->
+  <section class="hero-gradient text-white py-12">
+    <div class="max-w-3xl mx-auto px-4 text-center">
+      <h2 class="text-2xl md:text-3xl font-extrabold mb-3">רוצים בית חכם שיחזיק שנים?</h2>
+      <p class="text-brand-100 text-lg mb-6">השאירו פרטים ותקבלו ייעוץ KNX חינם מצוות שמתכנן ומתקין בעצמו — לא משווק.</p>
+      <div class="flex flex-col sm:flex-row justify-center gap-3">
+        <a href="#lead-form" class="inline-flex items-center justify-center bg-accent-500 hover:bg-accent-600 text-white px-8 py-4 rounded-lg font-extrabold text-lg transition shadow-md">
+          השאירו פרטים עכשיו
+        </a>
+        <a href="tel:+972-3-508-9553" class="inline-flex items-center justify-center bg-white/10 hover:bg-white/20 border border-white/30 text-white px-8 py-4 rounded-lg font-bold text-lg transition">
+          או חייגו: 03-508-9553
+        </a>
+      </div>
+    </div>
+  </section>
+</LandingLayout>

@@ -1,0 +1,159 @@
+---
+import LandingLayout from '../../layouts/LandingLayout.astro';
+import LeadForm from '../../components/LeadForm.astro';
+
+const page = '/lp/dali/';
+---
+<LandingLayout
+  title="בקרת תאורה DALI — תכנון, אספקה והתקנה | i-feel"
+  description="מערכות בקרת תאורה DALI למשרדים, מלונות ובנייני מסחר: עמעום, תרחישים וחיסכון באנרגיה, באינטגרציה מלאה ל-KNX ולבקרת המבנה. ייעוץ והצעת מחיר ללא התחייבות."
+  canonical={`https://i-feel.co.il${page}`}
+>
+  <!-- HERO + FORM -->
+  <section class="hero-gradient text-white">
+    <div class="max-w-6xl mx-auto px-4 py-10 lg:py-16 grid lg:grid-cols-2 gap-10 items-start">
+      <div>
+        <p class="inline-flex flex-wrap gap-2 text-xs font-bold mb-4">
+          <span class="bg-white/10 border border-white/20 rounded-full px-3 py-1">180+ פרויקטי בקרת מבנה</span>
+          <span class="bg-white/10 border border-white/20 rounded-full px-3 py-1">פועלים מאז 2008</span>
+          <span class="bg-white/10 border border-white/20 rounded-full px-3 py-1">מומחי DALI · KNX · BMS</span>
+        </p>
+        <h1 class="text-3xl md:text-5xl font-extrabold leading-tight mb-4">
+          בקרת תאורה DALI —<br class="hidden md:block" /> שליטה מלאה, חיסכון אמיתי
+        </h1>
+        <p class="text-lg md:text-xl text-brand-100 leading-relaxed mb-6">
+          עמעום מדויק, תרחישי תאורה לכל חלל וניהול מרכזי של כל גופי התאורה בבניין —
+          i-feel מתכננת, מספקת ומתקינה מערכות DALI למשרדים, מלונות ומבני מסחר,
+          באינטגרציה מלאה ל-KNX ולמערכת בקרת המבנה.
+        </p>
+        <ul class="space-y-3 text-brand-50 mb-8">
+          <li class="flex items-start gap-3"><span class="text-accent-400 font-extrabold mt-0.5">✓</span> שליטה בכל גוף תאורה בנפרד: עמעום, קבוצות ותרחישים</li>
+          <li class="flex items-start gap-3"><span class="text-accent-400 font-extrabold mt-0.5">✓</span> חיסכון משמעותי באנרגיה — תאורה לפי נוכחות ואור יום</li>
+          <li class="flex items-start gap-3"><span class="text-accent-400 font-extrabold mt-0.5">✓</span> אינטגרציית DALI–KNX–BMS מקצועית, בלי קופסאות שחורות</li>
+          <li class="flex items-start gap-3"><span class="text-accent-400 font-extrabold mt-0.5">✓</span> שירות מקצה לקצה: תכנון, אספקה, התקנה, הרצה ותחזוקה</li>
+        </ul>
+        <a href="tel:+972-3-508-9553" class="hidden md:inline-flex items-center gap-2 bg-white/10 hover:bg-white/20 border border-white/30 text-white px-6 py-3 rounded-lg font-bold transition">
+          מעדיפים לדבר? 03-508-9553
+        </a>
+      </div>
+
+      <LeadForm
+        leadType="BMS / בקרת מבנה"
+        subject="LP בקרת תאורה DALI (Google Ads)"
+        sourcePage={page}
+        heading="מתכננים בקרת תאורה לפרויקט?"
+        buttonText="קבלו ייעוץ והצעת מחיר חינם"
+      />
+    </div>
+  </section>
+
+  <!-- PROOF STRIP -->
+  <section class="py-10 bg-white">
+    <div class="max-w-6xl mx-auto px-4">
+      <h2 class="text-2xl md:text-3xl font-extrabold text-brand-900 text-center mb-2">פרויקטים שביצענו</h2>
+      <p class="text-center text-brand-600 mb-6">בקרת תאורה ובקרת מבנה בארגונים מובילים</p>
+      <div class="grid grid-cols-2 md:grid-cols-6 gap-3">
+        <figure><img src="/assets/structure-projects/img/cat-azrieli-sharona.jpg" alt="בקרת תאורה עזריאלי שרונה" class="rounded-xl object-cover w-full h-28 md:h-32" loading="lazy" /><figcaption class="text-xs text-brand-600 text-center mt-1 font-semibold">עזריאלי שרונה</figcaption></figure>
+        <figure><img src="/assets/structure-projects/img/cat-amazon-sarona.jpg" alt="בקרת תאורה אמזון שרונה" class="rounded-xl object-cover w-full h-28 md:h-32" loading="lazy" /><figcaption class="text-xs text-brand-600 text-center mt-1 font-semibold">Amazon שרונה</figcaption></figure>
+        <figure><img src="/assets/structure-projects/img/cat-ubs-herzliya.jpg" alt="בקרת תאורה UBS הרצליה" class="rounded-xl object-cover w-full h-28 md:h-32" loading="lazy" /><figcaption class="text-xs text-brand-600 text-center mt-1 font-semibold">UBS הרצליה</figcaption></figure>
+        <figure><img src="/assets/structure-projects/img/cat-julius-baer.jpg" alt="בקרת תאורה יוליוס בר" class="rounded-xl object-cover w-full h-28 md:h-32" loading="lazy" /><figcaption class="text-xs text-brand-600 text-center mt-1 font-semibold">Julius Baer</figcaption></figure>
+        <figure><img src="/assets/structure-projects/img/cat-kpmg-haifa.jpg" alt="בקרת תאורה KPMG חיפה" class="rounded-xl object-cover w-full h-28 md:h-32" loading="lazy" /><figcaption class="text-xs text-brand-600 text-center mt-1 font-semibold">KPMG חיפה</figcaption></figure>
+        <figure><img src="/assets/structure-projects/img/cat-mercedes-colmobil.jpg" alt="בקרת תאורה מרצדס כלמוביל" class="rounded-xl object-cover w-full h-28 md:h-32" loading="lazy" /><figcaption class="text-xs text-brand-600 text-center mt-1 font-semibold">Mercedes כלמוביל</figcaption></figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- WHY DALI WITH I-FEEL -->
+  <section class="py-12 bg-brand-50 border-y border-brand-100">
+    <div class="max-w-6xl mx-auto px-4">
+      <h2 class="text-2xl md:text-3xl font-extrabold text-brand-900 text-center mb-8">למה DALI — ולמה עם i-feel?</h2>
+      <div class="grid md:grid-cols-4 gap-5">
+        <div class="bg-white rounded-2xl border border-brand-100 p-6">
+          <div class="text-3xl mb-3">💡</div>
+          <h3 class="font-extrabold text-brand-900 mb-2">שליטה ברמת הגוף הבודד</h3>
+          <p class="text-sm text-brand-700">כל דרייבר DALI ניתן לכתובת, עמעום ודיווח תקלות — לא עוד "קו תאורה" אחד גדול שדולק על כולם.</p>
+        </div>
+        <div class="bg-white rounded-2xl border border-brand-100 p-6">
+          <div class="text-3xl mb-3">📉</div>
+          <h3 class="font-extrabold text-brand-900 mb-2">חיסכון באנרגיה</h3>
+          <p class="text-sm text-brand-700">שילוב חיישני נוכחות ואור יום מוריד את צריכת התאורה משמעותית — בדרך כלל אחד ההחזרים המהירים בבניין.</p>
+        </div>
+        <div class="bg-white rounded-2xl border border-brand-100 p-6">
+          <div class="text-3xl mb-3">🔗</div>
+          <h3 class="font-extrabold text-brand-900 mb-2">אינטגרציה ל-KNX ו-BMS</h3>
+          <p class="text-sm text-brand-700">אנחנו לא "רק תאורה": DALI אצלנו מתחבר לבקרת המבנה, למיזוג ולניהול האנרגיה — מערכת אחת שלמה.</p>
+        </div>
+        <div class="bg-white rounded-2xl border border-brand-100 p-6">
+          <div class="text-3xl mb-3">🛠️</div>
+          <h3 class="font-extrabold text-brand-900 mb-2">גורם אחד אחראי</h3>
+          <p class="text-sm text-brand-700">תכנון, אספקה, התקנה, תכנות והרצה — צוות אחד, אחריות אחת, ושירות שנשאר אחרי המסירה.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- HOW IT WORKS -->
+  <section class="py-12 bg-white">
+    <div class="max-w-5xl mx-auto px-4">
+      <h2 class="text-2xl md:text-3xl font-extrabold text-brand-900 text-center mb-8">איך מתקדמים?</h2>
+      <div class="grid md:grid-cols-3 gap-6">
+        <div class="text-center">
+          <div class="w-12 h-12 rounded-full bg-accent-500 text-white font-extrabold text-xl flex items-center justify-center mx-auto mb-3">1</div>
+          <h3 class="font-extrabold text-brand-900 mb-2">אפיון הפרויקט</h3>
+          <p class="text-sm text-brand-700">בוחנים תוכניות תאורה, מפרט יועץ או מבנה קיים — ומגדירים קבוצות, תרחישים והיקף בקרה.</p>
+        </div>
+        <div class="text-center">
+          <div class="w-12 h-12 rounded-full bg-accent-500 text-white font-extrabold text-xl flex items-center justify-center mx-auto mb-3">2</div>
+          <h3 class="font-extrabold text-brand-900 mb-2">תכנון והצעת מחיר</h3>
+          <p class="text-sm text-brand-700">סכמת בקרה מלאה: בקרים, ספקי DALI, חיישנים ולוחות — עם הצעה מפורטת לפי כתב כמויות.</p>
+        </div>
+        <div class="text-center">
+          <div class="w-12 h-12 rounded-full bg-accent-500 text-white font-extrabold text-xl flex items-center justify-center mx-auto mb-3">3</div>
+          <h3 class="font-extrabold text-brand-900 mb-2">התקנה, תכנות והרצה</h3>
+          <p class="text-sm text-brand-700">כתובות, קבוצות ותרחישים מתוכנתים ונבדקים מול היועץ — כולל הדרכת צוות התפעול.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="py-12 bg-brand-50 border-y border-brand-100">
+    <div class="max-w-3xl mx-auto px-4">
+      <h2 class="text-2xl md:text-3xl font-extrabold text-brand-900 text-center mb-8">שאלות נפוצות על DALI</h2>
+      <div class="space-y-3">
+        <details class="bg-white border border-brand-100 rounded-xl p-5">
+          <summary class="font-bold text-brand-900 cursor-pointer">מה היתרון של DALI על פני בקרת תאורה רגילה?</summary>
+          <p class="text-brand-700 mt-3">DALI הוא תקן דיגיטלי דו-כיווני: כל גוף מקבל כתובת, ניתן לעמעום מדויק ומדווח על תקלות. אפשר לשנות קבוצות ותרחישים בתוכנה — בלי למשוך חוטים מחדש בכל שינוי במשרד.</p>
+        </details>
+        <details class="bg-white border border-brand-100 rounded-xl p-5">
+          <summary class="font-bold text-brand-900 cursor-pointer">האם DALI משתלב עם KNX או עם מערכת בקרת המבנה?</summary>
+          <p class="text-brand-700 mt-3">כן — וזו בדיוק ההתמחות שלנו. אנחנו מחברים את ה-DALI ל-KNX ול-BMS (כולל Siemens Desigo) כך שהתאורה היא חלק ממערכת הבניין: נוכחות, לו"ז, מיזוג ואנרגיה עובדים יחד.</p>
+        </details>
+        <details class="bg-white border border-brand-100 rounded-xl p-5">
+          <summary class="font-bold text-brand-900 cursor-pointer">האם אפשר להוסיף DALI לבניין קיים?</summary>
+          <p class="text-brand-700 mt-3">לרוב כן, במיוחד במסגרת החלפת תאורה ל-LED או שיפוץ קומות. נבחן את התשתית הקיימת ונציע מסלול הדרגתי — קומה-קומה, בלי להשבית את הבניין.</p>
+        </details>
+        <details class="bg-white border border-brand-100 rounded-xl p-5">
+          <summary class="font-bold text-brand-900 cursor-pointer">אתם מספקים גם את הציוד או רק מתכנתים?</summary>
+          <p class="text-brand-700 mt-3">אנחנו נותנים פתרון מקצה לקצה: תכנון, אספקת ציוד מהיצרנים המובילים, התקנה, תכנות, הרצה מול היועץ — ושירות ותחזוקה אחרי המסירה.</p>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <!-- FINAL CTA -->
+  <section class="hero-gradient text-white py-12">
+    <div class="max-w-3xl mx-auto px-4 text-center">
+      <h2 class="text-2xl md:text-3xl font-extrabold mb-3">רוצים שליטה מלאה בתאורה?</h2>
+      <p class="text-brand-100 text-lg mb-6">השאירו פרטים (אפשר לציין גם מפרט או כמות גופים) ונחזור עם הצעה מסודרת.</p>
+      <div class="flex flex-col sm:flex-row justify-center gap-3">
+        <a href="#lead-form" class="inline-flex items-center justify-center bg-accent-500 hover:bg-accent-600 text-white px-8 py-4 rounded-lg font-extrabold text-lg transition shadow-md">
+          השאירו פרטים עכשיו
+        </a>
+        <a href="tel:+972-3-508-9553" class="inline-flex items-center justify-center bg-white/10 hover:bg-white/20 border border-white/30 text-white px-8 py-4 rounded-lg font-bold text-lg transition">
+          או חייגו: 03-508-9553
+        </a>
+      </div>
+    </div>
+  </section>
+</LandingLayout>
