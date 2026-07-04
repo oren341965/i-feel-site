@@ -131,6 +131,12 @@
     Header set Cache-Control "public, max-age=3600, must-revalidate"
   </FilesMatch>
 
+  # GSC Discovered/Crawled-not-indexed cleanup (2026-07-04):
+  # smart-home-cost is an orphaned server page (not in repo) competing with /smart-home-price/;
+  # hubitat is an old WP page that 404s.
+  RewriteRule ^answers/smart-home-cost/?$ /smart-home-price/ [R=301,L]
+  RewriteRule ^hubitat/?$ /brands-and-technologies/ [R=301,L]
+
   # GSC 404-report URLs missed by the refined map (2026-07-03).
   RewriteRule ^gallery/mishkenot-haoma/?$ /projects/ [R=301,L]
   RewriteRule ^gallery/קדם-3-יפו/?$ /projects/#private [R=301,L,NE]
