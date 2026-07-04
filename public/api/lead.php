@@ -4,6 +4,12 @@ declare(strict_types=1);
 const DEFAULT_BOARD_ID = '2732725332';
 const DEFAULT_FALLBACK_EMAIL = 'sales@i-feel.co.il';
 
+// Server-local secrets (MONDAY_API_TOKEN etc.) live in config.php next to this
+// file. It is uploaded straight to the server and never committed to git.
+if (is_file(__DIR__ . '/config.php')) {
+    require __DIR__ . '/config.php';
+}
+
 function field(string $key, int $max = 4000): string
 {
     $value = $_POST[$key] ?? '';
@@ -183,20 +189,57 @@ if ($marketingLines !== []) {
     $updateBody .= "\n\n**Marketing (UTM / Google Ads)**\n" . implode("\n", $marketingLines);
 }
 
+// Board 2732725332 requires phone + email column values on item creation
+// (create_item without them fails with DATA_VALIDATIONS_ERROR).
+$requiredColumnValues = [
+    'phone' => [
+        'phone' => preg_replace('/\D+/', '', $lead['phone']) ?: '0',
+        'countryShortName' => 'IL',
+    ],
+    '_____3' => [
+        'email' => $lead['email'] !== '' ? $lead['email'] : 'no-reply@i-feel.co.il',
+        'text' => $lead['email'] !== '' ? $lead['email'] : 'לא נמסר אימייל',
+    ],
+];
+
+$extraColumnValues = [
+    'dropdown_mm3s443s' => ['ids' => [5]],       // מקור פנייה: אתר
+    'color_mm3sddjy' => ['label' => 'ליד חדש'],  // סטטוס ליד
+];
+$utmColumnMap = [
+    'utm_source' => 'short_textzqle0408',
+    'utm_medium' => 'short_text99tuldfa',
+    'utm_campaign' => 'short_text2l9c35ow',
+    'gclid' => 'short_textr4lgm1qe',
+];
+foreach ($utmColumnMap as $key => $columnId) {
+    if ($marketing[$key] !== '') {
+        $extraColumnValues[$columnId] = $marketing[$key];
+    }
+}
+
 try {
     if ($token === '') {
         throw new RuntimeException('MONDAY_API_TOKEN is not configured');
     }
 
-    $createItem = monday_request(
-        'mutation ($boardId: ID!, $groupId: String, $itemName: String!) { create_item(board_id: $boardId, group_id: $groupId, item_name: $itemName) { id } }',
-        [
-            'boardId' => $boardId,
-            'groupId' => $groupId,
-            'itemName' => $itemName,
-        ],
-        $token
-    );
+    $createMutation = 'mutation ($boardId: ID!, $groupId: String, $itemName: String!, $columnValues: JSON) { create_item(board_id: $boardId, group_id: $groupId, item_name: $itemName, column_values: $columnValues) { id } }';
+    $createVariables = [
+        'boardId' => $boardId,
+        'groupId' => $groupId,
+        'itemName' => $itemName,
+        'columnValues' => json_encode(array_merge($requiredColumnValues, $extraColumnValues), JSON_UNESCAPED_UNICODE),
+    ];
+
+    try {
+        $createItem = monday_request($createMutation, $createVariables, $token);
+    } catch (Throwable $createError) {
+        // Extra columns may fail validation independently — retry with the
+        // required columns only before giving up on Monday entirely.
+        error_log('[i-feel lead form] full create failed, retrying minimal: ' . $createError->getMessage());
+        $createVariables['columnValues'] = json_encode($requiredColumnValues, JSON_UNESCAPED_UNICODE);
+        $createItem = monday_request($createMutation, $createVariables, $token);
+    }
 
     $itemId = $createItem['data']['create_item']['id'] ?? null;
     if (!$itemId) {
