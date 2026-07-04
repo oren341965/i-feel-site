@@ -30,6 +30,8 @@
   RewriteRule ^hadassah-knx-system/ifeel-blog/?$ /hadassah-knx-system/ [R=301,L]
   # Old BMS article still ranking ~#6 for "בקרת מבנה BMS" — recover it to the hub (was 404).
   RewriteRule ^בקרת-מבנה-לבניינים-ומשרדים-מה-זה-bms-ולמה/?$ /structure-control/ [R=301,L,NE]
+  # Old /בקרת-מבנה-2/ slug (was 404) — consolidate to the BMS hub for the "בקרת מבנה" term.
+  RewriteRule ^בקרת-מבנה-2/?$ /structure-control/ [R=301,L,NE]
   # Old Hebrew KNX URL still indexed — canonicalize to the current KNX page (was 404).
   RewriteRule ^בית-חכם-knx/?$ /knx-smart-home/ [R=301,L,NE]
   # Recover old indexed URLs that now 404 -> 301 to canonical pages (2026-06-23).
