@@ -1,0 +1,421 @@
+<nav class="bg-brand-50 border-b border-brand-100" aria-label="פירורי לחם"><div class="max-w-7xl mx-auto px-4 py-3 text-sm"><a href="/" class="text-brand-600 hover:text-accent-600">דף הבית</a><span class="mx-2 text-brand-400">›</span><a href="/smart-home/" class="text-brand-600 hover:text-accent-600">בית חכם</a><span class="mx-2 text-brand-400">›</span><span class="text-brand-900 font-medium">בניית מפסק חכם</span></div></nav>
+
+<section class="hero-gradient text-white"><div class="max-w-6xl mx-auto px-4 py-14 lg:py-20"><div class="inline-flex items-center gap-2 bg-white/10 backdrop-blur px-4 py-1.5 rounded-full text-sm font-medium mb-6 border border-white/20">כלי תכנון · מפסק זכוכית GlassWand · 9 לחצנים</div><h1 class="text-4xl md:text-5xl lg:text-6xl font-extrabold leading-tight mb-6">בניית מפסק חכם — בחרו אייקונים לכל לחצן במפסק שלכם</h1><p class="text-xl text-brand-100 mb-8 max-w-3xl">כאן מרכיבים את מפסקי הזכוכית של הבית: לכל מפסק נותנים שם מיקום (סלון, מטבח, חדר שינה הורים), גוררים אייקונים ללחצנים — ובסיום מדפיסים או שולחים אלינו. כך המתכנת שלנו יודע מראש בדיוק מה להגדיר בכל לחצן, והתכנות בבית שלכם מהיר ומדויק.</p><div class="flex flex-wrap gap-3"><a href="#builder" class="bg-accent-500 hover:bg-accent-600 text-white px-6 py-3 rounded-lg font-semibold shadow-lg">התחילו לבנות מפסק</a><a href="/catalogs/" class="bg-white/10 hover:bg-white/20 text-white px-6 py-3 rounded-lg font-semibold border border-white/30">לקטלוגים של המפסקים</a></div></div></section>
+
+<section class="bg-white border-b border-brand-100"><div class="max-w-6xl mx-auto px-4 py-10"><div class="grid md:grid-cols-3 gap-6">
+  <div class="bg-brand-50 rounded-2xl p-6 border border-brand-100"><div class="w-10 h-10 rounded-full bg-accent-500 text-white font-extrabold flex items-center justify-center text-lg mb-3">1</div><h2 class="text-lg font-bold text-brand-900 mb-1">מוסיפים מפסק לכל חדר</h2><p class="text-brand-700 text-base leading-relaxed">כותבים את המיקום בבית מעל כל מפסק — סלון, מטבח, ממ"ד, חדר שינה הורים.</p></div>
+  <div class="bg-brand-50 rounded-2xl p-6 border border-brand-100"><div class="w-10 h-10 rounded-full bg-accent-500 text-white font-extrabold flex items-center justify-center text-lg mb-3">2</div><h2 class="text-lg font-bold text-brand-900 mb-1">בוחרים אייקון לכל לחצן</h2><p class="text-brand-700 text-base leading-relaxed">לוחצים על לחצן ובוחרים אייקון, או גוררים אייקון מהמאגר ישירות אל הלחצן.</p></div>
+  <div class="bg-brand-50 rounded-2xl p-6 border border-brand-100"><div class="w-10 h-10 rounded-full bg-accent-500 text-white font-extrabold flex items-center justify-center text-lg mb-3">3</div><h2 class="text-lg font-bold text-brand-900 mb-1">מדפיסים ושולחים אלינו</h2><p class="text-brand-700 text-base leading-relaxed">שומרים PDF להדפסה ושולחים לנו את התכנון בלחיצה — המתכנת מקבל הכל מראש.</p></div>
+</div><p class="text-sm text-brand-500 mt-6">שימו לב: מפסק GlassWand תומך עד 6 יציאות ישירות (תאורה ותריסים) ועד 3 לחצני תרחיש. התכנון כאן הוא בסיס לעבודת המתכנת — נעבור עליו יחד ונתאים אותו לחיווט בפועל.</p></div></section>
+
+<section id="builder" class="bg-brand-50/50 py-10 lg:py-14"><div class="max-w-6xl mx-auto px-4">
+
+  <div id="lead-banner" class="hidden mb-6 rounded-xl px-5 py-4 font-semibold"></div>
+
+  <div class="flex flex-wrap items-center justify-between gap-3 mb-6">
+    <h2 class="text-2xl md:text-3xl font-extrabold text-brand-900">המפסקים שלי</h2>
+    <div class="flex flex-wrap gap-2">
+      <button type="button" id="add-switch" class="bg-brand-700 hover:bg-brand-800 text-white px-5 py-2.5 rounded-lg font-semibold">+ הוספת מפסק</button>
+      <button type="button" id="print-btn" class="bg-accent-500 hover:bg-accent-600 text-white px-5 py-2.5 rounded-lg font-semibold">הדפסה / שמירת PDF</button>
+      <button type="button" id="clear-all" class="bg-white hover:bg-brand-50 text-brand-700 px-4 py-2.5 rounded-lg font-semibold border border-brand-200">ניקוי הכל</button>
+    </div>
+  </div>
+
+  <div class="grid lg:grid-cols-[1fr,300px] gap-8 items-start">
+    <div id="switches" class="grid gap-6 md:grid-cols-2"></div>
+
+    <aside class="hidden lg:block sticky top-6 bg-white rounded-2xl border border-brand-100 p-4 max-h-[80vh] overflow-y-auto">
+      <h3 class="font-extrabold text-brand-900 mb-1">מאגר האייקונים</h3>
+      <p class="text-xs text-brand-500 mb-3">גררו אייקון אל לחצן במפסק, או לחצו על לחצן ובחרו מהרשימה.</p>
+      <div id="palette"></div>
+    </aside>
+  </div>
+
+  <div class="mt-12 bg-white rounded-2xl border border-brand-100 p-6 md:p-8">
+    <h2 class="text-2xl md:text-3xl font-extrabold text-brand-900 mb-2">סיימתם? שלחו לנו את התכנון</h2>
+    <p class="text-brand-700 mb-6">התכנון המלא — כל מפסק, מיקומו והאייקון בכל לחצן — יישלח לצוות התכנות שלנו. מומלץ גם לשמור עותק PDF לעצמכם בכפתור ההדפסה למעלה.</p>
+    <form id="send-form" action="/api/lead.php" method="post" accept-charset="UTF-8" class="grid gap-5">
+      <input type="hidden" name="source_page" value="/switch-configurator/">
+      <input type="hidden" name="redirect_to" value="/switch-configurator/">
+      <input type="hidden" name="lead_type" value="תכנון מפסקי GlassWand">
+      <input type="hidden" name="subject" value="תכנון אייקונים למפסקים אלחוטיים">
+      <textarea name="message" id="spec-message" class="hidden" aria-hidden="true"></textarea>
+      <div class="hidden" aria-hidden="true"><label>Website <input type="text" name="website" tabindex="-1" autocomplete="off"></label></div>
+      <div class="grid md:grid-cols-3 gap-4">
+        <label class="block"><span class="block text-sm font-bold text-brand-900 mb-1">שם מלא <span class="text-accent-600">*</span></span><input required name="name" type="text" autocomplete="name" class="w-full rounded-lg border border-brand-200 px-4 py-3 text-brand-900 focus:border-accent-500 focus:ring-2 focus:ring-accent-500/20" placeholder="שם פרטי ומשפחה"></label>
+        <label class="block"><span class="block text-sm font-bold text-brand-900 mb-1">טלפון <span class="text-accent-600">*</span></span><input required name="phone" type="tel" autocomplete="tel" inputmode="tel" class="w-full rounded-lg border border-brand-200 px-4 py-3 text-brand-900 focus:border-accent-500 focus:ring-2 focus:ring-accent-500/20" placeholder="050-0000000"></label>
+        <label class="block"><span class="block text-sm font-bold text-brand-900 mb-1">אימייל</span><input name="email" type="email" autocomplete="email" class="w-full rounded-lg border border-brand-200 px-4 py-3 text-brand-900 focus:border-accent-500 focus:ring-2 focus:ring-accent-500/20" placeholder="name@example.com"></label>
+      </div>
+      <div class="flex flex-wrap items-center gap-4">
+        <button type="submit" class="bg-accent-500 hover:bg-accent-600 text-white px-8 py-3.5 rounded-lg font-bold text-lg shadow-lg">שליחת התכנון ל-i-feel</button>
+        <span class="text-brand-600 text-sm">או התקשרו: <a href="tel:+972-3-508-9553" class="font-bold text-accent-600 hover:text-accent-500">03-508-9553</a></span>
+      </div>
+    </form>
+  </div>
+
+</div></section>
+
+<!-- Icon picker modal -->
+<div id="picker-overlay" class="hidden fixed inset-0 z-50 bg-brand-900/60 p-4 overflow-y-auto">
+  <div class="max-w-2xl mx-auto my-8 bg-white rounded-2xl shadow-2xl">
+    <div class="flex items-center justify-between gap-3 p-4 border-b border-brand-100">
+      <h3 class="font-extrabold text-brand-900 text-lg">בחירת אייקון <span id="picker-target-label" class="font-medium text-brand-500 text-sm"></span></h3>
+      <button type="button" id="picker-close" class="w-9 h-9 rounded-full bg-brand-50 hover:bg-brand-100 text-brand-700 font-bold text-lg" aria-label="סגירה">✕</button>
+    </div>
+    <div class="p-4">
+      <input type="text" id="picker-search" class="w-full rounded-lg border border-brand-200 px-4 py-2.5 mb-4 text-brand-900 focus:border-accent-500 focus:ring-2 focus:ring-accent-500/20" placeholder="חיפוש: תאורה, תריס, מזגן...">
+      <button type="button" id="picker-remove" class="hidden w-full mb-4 bg-red-50 hover:bg-red-100 text-red-700 border border-red-200 rounded-lg px-4 py-2.5 font-semibold">הסרת האייקון מהלחצן הזה</button>
+      <div id="picker-icons" class="max-h-[55vh] overflow-y-auto"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Printable sheet (populated by JS, visible only in print) -->
+<div id="print-area" class="hidden"></div>
+
+<style>
+  .gw-cell { aspect-ratio: 1; }
+  .gw-cell.drag-over { outline: 3px dashed #d4a544; outline-offset: -3px; }
+  .gw-icon-svg svg { width: 100%; height: 100%; display: block; }
+  @media print {
+    body * { visibility: hidden; }
+    #print-area, #print-area * { visibility: visible; }
+    #print-area { display: block !important; position: absolute; inset: 0; width: 100%; background: white; }
+    .print-switch { break-inside: avoid; page-break-inside: avoid; }
+  }
+</style>
+
+<script>
+(function () {
+  'use strict';
+
+  /* ---------- Icon library (id, Hebrew name, category, inline SVG) ---------- */
+  function svg(inner) {
+    return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg">' + inner + '</svg>';
+  }
+  var ICONS = [
+    { id: 'bulb', name: 'תאורה', cat: 'תאורה', svg: svg('<path d="M12 3a6 6 0 0 1 4 10.5c-.6.5-1 1.5-1 2.5h-6c0-1-.4-2-1-2.5A6 6 0 0 1 12 3z"/><path d="M9.5 19h5"/><path d="M10.5 21.5h3"/>') },
+    { id: 'spot', name: 'ספוט / שקוע', cat: 'תאורה', svg: svg('<path d="M3 4h18"/><path d="M9 4v2.5a3 3 0 0 0 6 0V4"/><path d="M12 11v3"/><path d="M8 10l-1.7 2.6"/><path d="M16 10l1.7 2.6"/>') },
+    { id: 'pendant', name: 'גוף תאורה תלוי', cat: 'תאורה', svg: svg('<path d="M12 3v5"/><path d="M7 13a5 5 0 0 1 10 0z"/><path d="M12 13v3"/><circle cx="12" cy="18" r="1.3"/>') },
+    { id: 'wall-lamp', name: 'תאורת קיר', cat: 'תאורה', svg: svg('<path d="M4 3v18"/><path d="M4 10h4"/><circle cx="12" cy="10" r="3.2"/><path d="M12 15v2.5"/><path d="M16 13l2 1.6"/>') },
+    { id: 'table-lamp', name: 'מנורת לילה', cat: 'תאורה', svg: svg('<path d="M8 4h8l2 7H6z"/><path d="M12 11v6"/><path d="M8 20h8"/><path d="M12 17v3"/>') },
+    { id: 'dimmer', name: 'עמעום (דימר)', cat: 'תאורה', svg: svg('<circle cx="12" cy="12" r="4.5"/><path d="M12 3.5v1.5"/><path d="M12 19v1.5"/><path d="M3.5 12h1.5"/><path d="M19 12h1.5"/><path d="M6 6l1 1"/><path d="M17 17l1 1"/>') },
+    { id: 'night-light', name: 'תאורת לילה', cat: 'תאורה', svg: svg('<path d="M20 13.5A8 8 0 1 1 10.5 4 6.5 6.5 0 0 0 20 13.5z"/><path d="M6 4.5l.4 1.1L7.5 6l-1.1.4L6 7.5l-.4-1.1L4.5 6l1.1-.4z"/>') },
+    { id: 'outdoor-light', name: 'תאורת חוץ', cat: 'תאורה', svg: svg('<path d="M12 3v3"/><rect x="9" y="6" width="6" height="9" rx="1"/><path d="M9 19h6"/><path d="M12 15v4"/>') },
+    { id: 'all-on', name: 'הדלקה כללית', cat: 'תאורה', svg: svg('<circle cx="12" cy="12" r="4"/><path d="M12 2.5v2"/><path d="M12 19.5v2"/><path d="M2.5 12h2"/><path d="M19.5 12h2"/><path d="M5 5l1.4 1.4"/><path d="M17.6 17.6L19 19"/><path d="M19 5l-1.4 1.4"/><path d="M6.4 17.6L5 19"/>') },
+    { id: 'all-off', name: 'כיבוי כללי', cat: 'תרחישים', svg: svg('<path d="M12 3v8"/><path d="M7 5.5a7.5 7.5 0 1 0 10 0"/>') },
+    { id: 'shutter-up', name: 'תריס למעלה', cat: 'תריסים ווילונות', svg: svg('<rect x="5" y="3" width="14" height="18" rx="2"/><path d="M5 7h14"/><path d="M5 10h14"/><path d="M12 18v-5"/><path d="M9.5 15.5L12 13l2.5 2.5"/>') },
+    { id: 'shutter-down', name: 'תריס למטה', cat: 'תריסים ווילונות', svg: svg('<rect x="5" y="3" width="14" height="18" rx="2"/><path d="M5 7h14"/><path d="M5 10h14"/><path d="M12 13v5"/><path d="M9.5 15.5L12 18l2.5-2.5"/>') },
+    { id: 'shutter-stop', name: 'תריס — עצירה', cat: 'תריסים ווילונות', svg: svg('<rect x="5" y="3" width="14" height="18" rx="2"/><path d="M5 7h14"/><path d="M5 10h14"/><rect x="10" y="13.5" width="4" height="4"/>') },
+    { id: 'curtain', name: 'וילון', cat: 'תריסים ווילונות', svg: svg('<path d="M3 4h18"/><path d="M7 4c1.2 5 1 11-2.5 16"/><path d="M17 4c-1.2 5-1 11 2.5 16"/><path d="M12 4v5"/>') },
+    { id: 'ac', name: 'מזגן / קירור', cat: 'אקלים', svg: svg('<path d="M12 2.5v19"/><path d="M4 7.5l16 9"/><path d="M20 7.5l-16 9"/><path d="M12 2.5L10 4.5"/><path d="M12 2.5l2 2"/><path d="M12 21.5l-2-2"/><path d="M12 21.5l2-2"/>') },
+    { id: 'heat', name: 'חימום', cat: 'אקלים', svg: svg('<path d="M8 4.5c-1.8 1.8-1.8 3.7 0 5.5s1.8 3.7 0 5.5"/><path d="M12.5 4.5c-1.8 1.8-1.8 3.7 0 5.5s1.8 3.7 0 5.5"/><path d="M17 4.5c-1.8 1.8-1.8 3.7 0 5.5s1.8 3.7 0 5.5"/><path d="M5 20h14"/>') },
+    { id: 'boiler', name: 'דוד מים חמים', cat: 'אקלים', svg: svg('<path d="M12 3s6 7.2 6 11a6 6 0 0 1-12 0c0-3.8 6-11 6-11z"/><path d="M12 10l-1.6 3.2h3.2L12 16.5"/>') },
+    { id: 'fan', name: 'מאוורר', cat: 'אקלים', svg: svg('<circle cx="12" cy="12" r="1.8"/><path d="M12 10.2c0-3 1.4-5.8 3.8-4.9s.2 4.4-3.8 4.9z"/><path d="M13.8 12c3 0 5.8 1.4 4.9 3.8s-4.4.2-4.9-3.8z"/><path d="M12 13.8c0 3-1.4 5.8-3.8 4.9s-.2-4.4 3.8-4.9z"/><path d="M10.2 12c-3 0-5.8-1.4-4.9-3.8s4.4-.2 4.9 3.8z"/>') },
+    { id: 'scene-morning', name: 'תרחיש בוקר', cat: 'תרחישים', svg: svg('<path d="M3 17h18"/><path d="M7 17a5 5 0 0 1 10 0"/><path d="M12 5.5v3"/><path d="M5 10.5L6.7 12"/><path d="M19 10.5L17.3 12"/>') },
+    { id: 'scene-night', name: 'תרחיש לילה', cat: 'תרחישים', svg: svg('<path d="M17 13A6.5 6.5 0 1 1 9.5 5.5 5.5 5.5 0 0 0 17 13z"/><path d="M17.5 4.5h3.5l-3.5 4h3.5"/>') },
+    { id: 'scene-away', name: 'יציאה מהבית', cat: 'תרחישים', svg: svg('<path d="M13 21H5a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h8"/><path d="M13 12h8"/><path d="M18 9l3 3-3 3"/><circle cx="9" cy="12" r="0.9"/>') },
+    { id: 'scene-guests', name: 'תרחיש אורחים', cat: 'תרחישים', svg: svg('<circle cx="9" cy="8" r="3"/><path d="M4 20c0-3 2.2-5 5-5s5 2 5 5"/><circle cx="16.5" cy="9" r="2.4"/><path d="M15.5 15.6c2.7.4 4.4 2 4.4 4.4"/>') },
+    { id: 'scene-cinema', name: 'תרחיש קולנוע', cat: 'תרחישים', svg: svg('<rect x="4" y="4" width="16" height="10" rx="1"/><path d="M10.5 6.8v4.4l3.8-2.2z"/><path d="M12 14v4"/><path d="M8 18h8"/>') },
+    { id: 'tv', name: 'טלוויזיה', cat: 'מדיה וכללי', svg: svg('<rect x="3" y="5" width="18" height="12" rx="2"/><path d="M8 21h8"/><path d="M12 17v4"/>') },
+    { id: 'music', name: 'מוזיקה', cat: 'מדיה וכללי', svg: svg('<path d="M9 18V6l10-2v10"/><circle cx="7" cy="18" r="2"/><circle cx="17" cy="14" r="2"/>') },
+    { id: 'gate', name: 'שער', cat: 'מדיה וכללי', svg: svg('<path d="M4 21V8"/><path d="M20 21V8"/><path d="M4 8a8 8 0 0 1 16 0"/><path d="M8 21v-8"/><path d="M12 21v-9"/><path d="M16 21v-8"/><path d="M4 13h16"/>') },
+    { id: 'door', name: 'דלת כניסה', cat: 'מדיה וכללי', svg: svg('<rect x="6" y="3" width="12" height="18" rx="1"/><circle cx="15" cy="12" r="1"/>') },
+    { id: 'lock', name: 'נעילה', cat: 'מדיה וכללי', svg: svg('<rect x="6" y="11" width="12" height="9" rx="2"/><path d="M9 11V8a3 3 0 0 1 6 0v3"/><path d="M12 14.5v2"/>') },
+    { id: 'alarm', name: 'אזעקה', cat: 'מדיה וכללי', svg: svg('<path d="M18 16v-5a6 6 0 1 0-12 0v5l-2 2h16z"/><path d="M10.5 20.5a1.5 1.5 0 0 0 3 0"/>') },
+    { id: 'irrigation', name: 'השקיה', cat: 'מדיה וכללי', svg: svg('<path d="M9 21h6"/><path d="M12 21v-8"/><path d="M12 12V8.5"/><path d="M8.5 12L6 9.5"/><path d="M15.5 12L18 9.5"/><path d="M9.5 9L8 6"/><path d="M14.5 9L16 6"/>') },
+    { id: 'socket', name: 'שקע מבוקר', cat: 'מדיה וכללי', svg: svg('<rect x="4" y="4" width="16" height="16" rx="3"/><circle cx="9.5" cy="12" r="1"/><circle cx="14.5" cy="12" r="1"/>') },
+    { id: 'intercom', name: 'אינטרקום', cat: 'מדיה וכללי', svg: svg('<rect x="5" y="3" width="14" height="18" rx="2"/><rect x="8" y="6" width="8" height="6"/><circle cx="12" cy="16.5" r="1.5"/>') }
+  ];
+  var CATS = ['תאורה', 'תריסים ווילונות', 'אקלים', 'תרחישים', 'מדיה וכללי'];
+  function iconById(id) { for (var i = 0; i < ICONS.length; i++) if (ICONS[i].id === id) return ICONS[i]; return null; }
+
+  /* ---------- State ---------- */
+  var STORAGE_KEY = 'ifeel-switch-config-v1';
+  var state = { switches: [] };
+  try {
+    var saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null');
+    if (saved && saved.switches && saved.switches.length) state = saved;
+  } catch (e) { /* corrupted storage — start fresh */ }
+  if (!state.switches.length) state.switches.push({ location: '', cells: [null, null, null, null, null, null, null, null, null] });
+
+  function save() { try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch (e) {} }
+
+  /* ---------- Rendering ---------- */
+  var switchesEl = document.getElementById('switches');
+  var paletteEl = document.getElementById('palette');
+
+  function renderAll() {
+    switchesEl.innerHTML = '';
+    state.switches.forEach(function (sw, si) { switchesEl.appendChild(renderSwitch(sw, si)); });
+    save();
+  }
+
+  function renderSwitch(sw, si) {
+    var card = document.createElement('div');
+    card.className = 'bg-white rounded-2xl border border-brand-100 shadow-sm p-5';
+
+    var head = document.createElement('div');
+    head.className = 'flex items-center gap-2 mb-4';
+    var loc = document.createElement('input');
+    loc.type = 'text';
+    loc.value = sw.location;
+    loc.placeholder = 'מיקום בבית — למשל: סלון';
+    loc.className = 'flex-1 rounded-lg border border-brand-200 px-3 py-2 font-bold text-brand-900 focus:border-accent-500 focus:ring-2 focus:ring-accent-500/20';
+    loc.addEventListener('input', function () { sw.location = loc.value; save(); });
+    var del = document.createElement('button');
+    del.type = 'button';
+    del.className = 'w-9 h-9 rounded-lg bg-brand-50 hover:bg-red-50 hover:text-red-600 text-brand-500 font-bold';
+    del.title = 'מחיקת המפסק';
+    del.textContent = '✕';
+    del.addEventListener('click', function () {
+      if (confirm('למחוק את המפסק הזה?')) { state.switches.splice(si, 1); if (!state.switches.length) state.switches.push({ location: '', cells: [null,null,null,null,null,null,null,null,null] }); renderAll(); }
+    });
+    head.appendChild(loc); head.appendChild(del);
+    card.appendChild(head);
+
+    var panel = document.createElement('div');
+    panel.className = 'bg-brand-900 rounded-2xl p-4 max-w-[300px] mx-auto';
+    var grid = document.createElement('div');
+    grid.className = 'grid grid-cols-3 gap-2';
+    for (var c = 0; c < 9; c++) grid.appendChild(renderCell(sw, si, c));
+    panel.appendChild(grid);
+    card.appendChild(panel);
+
+    var hint = document.createElement('p');
+    hint.className = 'text-xs text-brand-400 mt-3 text-center';
+    hint.textContent = 'לחצן 1 בפינה הימנית העליונה; הספירה מימין לשמאל, שורה אחר שורה.';
+    card.appendChild(hint);
+    return card;
+  }
+
+  function renderCell(sw, si, ci) {
+    var cell = document.createElement('button');
+    cell.type = 'button';
+    var iconId = sw.cells[ci];
+    var icon = iconId ? iconById(iconId) : null;
+    cell.className = 'gw-cell relative rounded-xl flex flex-col items-center justify-center gap-0.5 transition ' + (icon ? 'bg-brand-700 text-accent-300 hover:bg-brand-600' : 'bg-brand-800 text-brand-500 hover:bg-brand-700 border-2 border-dashed border-brand-600');
+    cell.setAttribute('data-si', si);
+    cell.setAttribute('data-ci', ci);
+    var num = document.createElement('span');
+    num.className = 'absolute top-1 right-1.5 text-[10px] font-bold ' + (icon ? 'text-accent-300/70' : 'text-brand-500');
+    num.textContent = ci + 1;
+    cell.appendChild(num);
+    if (icon) {
+      var holder = document.createElement('span');
+      holder.className = 'gw-icon-svg w-8 h-8';
+      holder.innerHTML = icon.svg;
+      cell.appendChild(holder);
+      var label = document.createElement('span');
+      label.className = 'text-[9px] leading-tight text-brand-100 px-0.5 text-center';
+      label.textContent = icon.name;
+      cell.appendChild(label);
+    } else {
+      var plus = document.createElement('span');
+      plus.className = 'text-2xl leading-none';
+      plus.textContent = '+';
+      cell.appendChild(plus);
+    }
+    cell.addEventListener('click', function () { openPicker(si, ci); });
+    cell.addEventListener('dragover', function (e) { e.preventDefault(); cell.classList.add('drag-over'); });
+    cell.addEventListener('dragleave', function () { cell.classList.remove('drag-over'); });
+    cell.addEventListener('drop', function (e) {
+      e.preventDefault(); cell.classList.remove('drag-over');
+      var id = e.dataTransfer.getData('text/plain');
+      if (iconById(id)) { state.switches[si].cells[ci] = id; renderAll(); }
+    });
+    return cell;
+  }
+
+  function paletteItem(icon, forModal) {
+    var el = document.createElement('button');
+    el.type = 'button';
+    el.className = 'flex flex-col items-center gap-1 rounded-xl border border-brand-100 hover:border-accent-400 hover:bg-accent-500/5 p-2 text-brand-700';
+    var holder = document.createElement('span');
+    holder.className = 'gw-icon-svg w-8 h-8 text-brand-700';
+    holder.innerHTML = icon.svg;
+    el.appendChild(holder);
+    var label = document.createElement('span');
+    label.className = 'text-[11px] leading-tight text-center';
+    label.textContent = icon.name;
+    el.appendChild(label);
+    if (!forModal) {
+      el.draggable = true;
+      el.title = 'גררו אל לחצן במפסק';
+      el.addEventListener('dragstart', function (e) { e.dataTransfer.setData('text/plain', icon.id); });
+      el.addEventListener('click', function () { alert('גררו את האייקון אל לחצן במפסק, או לחצו על לחצן במפסק ובחרו אייקון מהחלון שייפתח.'); });
+    }
+    return el;
+  }
+
+  function renderPalette(container, forModal, filter) {
+    container.innerHTML = '';
+    CATS.forEach(function (cat) {
+      var icons = ICONS.filter(function (ic) {
+        if (ic.cat !== cat) return false;
+        if (filter && ic.name.indexOf(filter) === -1 && cat.indexOf(filter) === -1) return false;
+        return true;
+      });
+      if (!icons.length) return;
+      var h = document.createElement('div');
+      h.className = 'text-xs font-bold text-brand-500 mt-3 mb-1.5 first:mt-0';
+      h.textContent = cat;
+      container.appendChild(h);
+      var grid = document.createElement('div');
+      grid.className = forModal ? 'grid grid-cols-4 sm:grid-cols-5 gap-2' : 'grid grid-cols-3 gap-2';
+      icons.forEach(function (icon) {
+        var item = paletteItem(icon, forModal);
+        if (forModal) item.addEventListener('click', function () { pickIcon(icon.id); });
+        grid.appendChild(item);
+      });
+      container.appendChild(grid);
+    });
+  }
+
+  /* ---------- Icon picker modal ---------- */
+  var overlay = document.getElementById('picker-overlay');
+  var pickerIcons = document.getElementById('picker-icons');
+  var pickerSearch = document.getElementById('picker-search');
+  var pickerRemove = document.getElementById('picker-remove');
+  var pickerLabel = document.getElementById('picker-target-label');
+  var pickTarget = null;
+
+  function openPicker(si, ci) {
+    pickTarget = { si: si, ci: ci };
+    var sw = state.switches[si];
+    pickerLabel.textContent = '— ' + (sw.location || 'מפסק ' + (si + 1)) + ', לחצן ' + (ci + 1);
+    pickerRemove.classList.toggle('hidden', !sw.cells[ci]);
+    pickerSearch.value = '';
+    renderPalette(pickerIcons, true, '');
+    overlay.classList.remove('hidden');
+    document.body.style.overflow = 'hidden';
+  }
+  function closePicker() { overlay.classList.add('hidden'); document.body.style.overflow = ''; pickTarget = null; }
+  function pickIcon(id) {
+    if (pickTarget) { state.switches[pickTarget.si].cells[pickTarget.ci] = id; renderAll(); }
+    closePicker();
+  }
+  document.getElementById('picker-close').addEventListener('click', closePicker);
+  overlay.addEventListener('click', function (e) { if (e.target === overlay) closePicker(); });
+  pickerSearch.addEventListener('input', function () { renderPalette(pickerIcons, true, pickerSearch.value.trim()); });
+  pickerRemove.addEventListener('click', function () {
+    if (pickTarget) { state.switches[pickTarget.si].cells[pickTarget.ci] = null; renderAll(); }
+    closePicker();
+  });
+
+  /* ---------- Toolbar ---------- */
+  document.getElementById('add-switch').addEventListener('click', function () {
+    state.switches.push({ location: '', cells: [null,null,null,null,null,null,null,null,null] });
+    renderAll();
+    switchesEl.lastElementChild.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    switchesEl.lastElementChild.querySelector('input').focus();
+  });
+  document.getElementById('clear-all').addEventListener('click', function () {
+    if (confirm('לנקות את כל המפסקים ולהתחיל מחדש?')) {
+      state = { switches: [{ location: '', cells: [null,null,null,null,null,null,null,null,null] }] };
+      renderAll();
+    }
+  });
+
+  /* ---------- Print ---------- */
+  document.getElementById('print-btn').addEventListener('click', function () {
+    var area = document.getElementById('print-area');
+    var d = new Date();
+    var dateStr = d.getDate() + '.' + (d.getMonth() + 1) + '.' + d.getFullYear();
+    var nameVal = document.querySelector('#send-form input[name="name"]').value;
+    var phoneVal = document.querySelector('#send-form input[name="phone"]').value;
+    var html = '<div dir="rtl" style="font-family:Heebo,system-ui,sans-serif;color:#0f1f36;padding:24px;">';
+    html += '<div style="display:flex;justify-content:space-between;align-items:center;border-bottom:3px solid #d4a544;padding-bottom:12px;margin-bottom:6px;">';
+    html += '<div><div style="font-size:22px;font-weight:800;">תכנון מפסקי GlassWand — בחירת אייקונים</div>';
+    html += '<div style="font-size:13px;color:#285183;">i-feel בית חכם ובקרת מבנה · 03-508-9553 · i-feel.co.il</div></div>';
+    html += '<div style="font-size:13px;color:#285183;text-align:left;">תאריך: ' + dateStr + (nameVal ? '<br>לקוח: ' + escapeHtml(nameVal) : '') + (phoneVal ? '<br>טלפון: ' + escapeHtml(phoneVal) : '') + '</div></div>';
+    html += '<div style="font-size:12px;color:#5285ba;margin-bottom:18px;">מספור הלחצנים: לחצן 1 בפינה הימנית העליונה, הספירה מימין לשמאל, שורה אחר שורה (במבט על המפסק).</div>';
+    html += '<div style="display:flex;flex-wrap:wrap;gap:18px;">';
+    state.switches.forEach(function (sw, si) {
+      html += '<div class="print-switch" style="border:1px solid #b4cce5;border-radius:14px;padding:14px;width:300px;">';
+      html += '<div style="font-weight:800;font-size:16px;margin-bottom:10px;text-align:center;border-bottom:1px solid #dae6f2;padding-bottom:6px;">' + (sw.location ? escapeHtml(sw.location) : 'מפסק ' + (si + 1)) + '</div>';
+      html += '<div style="background:#0f1f36;border-radius:12px;padding:10px;"><div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;">';
+      sw.cells.forEach(function (cellId, ci) {
+        var icon = cellId ? iconById(cellId) : null;
+        html += '<div style="aspect-ratio:1;border-radius:8px;background:' + (icon ? '#1e3e66' : '#16294a') + ';position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;color:#ecd08a;">';
+        html += '<span style="position:absolute;top:2px;right:5px;font-size:9px;color:#83a8d1;">' + (ci + 1) + '</span>';
+        if (icon) {
+          html += '<span style="width:30px;height:30px;display:block;">' + icon.svg + '</span>';
+          html += '<span style="font-size:8.5px;color:#dae6f2;text-align:center;line-height:1.1;">' + icon.name + '</span>';
+        } else {
+          html += '<span style="font-size:10px;color:#3868a0;">ריק</span>';
+        }
+        html += '</div>';
+      });
+      html += '</div></div>';
+      var lines = [];
+      sw.cells.forEach(function (cellId, ci) { if (cellId) { var ic = iconById(cellId); if (ic) lines.push((ci + 1) + ' — ' + ic.name); } });
+      if (lines.length) html += '<div style="font-size:11px;color:#285183;margin-top:8px;line-height:1.6;">' + lines.join('<br>') + '</div>';
+      html += '</div>';
+    });
+    html += '</div>';
+    html += '<div style="margin-top:22px;font-size:12px;color:#5285ba;border-top:1px solid #dae6f2;padding-top:10px;">את הדף הזה שולחים ל-i-feel — במייל sales@i-feel.co.il או דרך טופס השליחה באתר: i-feel.co.il/switch-configurator/ · טלפון 03-508-9553</div>';
+    html += '</div>';
+    area.innerHTML = html;
+    area.classList.remove('hidden');
+    window.print();
+    setTimeout(function () { area.classList.add('hidden'); }, 500);
+  });
+
+  function escapeHtml(s) {
+    return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  }
+
+  /* ---------- Send form ---------- */
+  document.getElementById('send-form').addEventListener('submit', function (e) {
+    var hasContent = state.switches.some(function (sw) { return sw.cells.some(function (c) { return c; }); });
+    if (!hasContent) {
+      e.preventDefault();
+      alert('עוד לא נבחרו אייקונים. הוסיפו לפחות אייקון אחד למפסק לפני השליחה.');
+      return;
+    }
+    var lines = ['תכנון מפסקי GlassWand מתוך בונה המפסקים באתר:', ''];
+    state.switches.forEach(function (sw, si) {
+      var cellLines = [];
+      sw.cells.forEach(function (cellId, ci) {
+        if (cellId) { var ic = iconById(cellId); if (ic) cellLines.push('לחצן ' + (ci + 1) + ': ' + ic.name); }
+      });
+      if (!cellLines.length && !sw.location) return;
+      lines.push('◼ מפסק ' + (si + 1) + (sw.location ? ' — ' + sw.location : '') + ':');
+      lines.push(cellLines.length ? cellLines.join(' | ') : '(ללא אייקונים)');
+      lines.push('');
+    });
+    lines.push('מספור הלחצנים: 1 = ימני עליון, מימין לשמאל, שורה אחר שורה.');
+    var msg = lines.join('\n');
+    if (msg.length > 3900) msg = msg.slice(0, 3900) + '\n[קוצר — התכנון המלא שמור אצל הלקוח]';
+    document.getElementById('spec-message').value = msg;
+  });
+
+  /* ---------- Success banner (?lead=...) ---------- */
+  var params = new URLSearchParams(location.search);
+  var leadStatus = params.get('lead');
+  if (leadStatus) {
+    var banner = document.getElementById('lead-banner');
+    banner.classList.remove('hidden');
+    if (leadStatus === 'sent' || leadStatus === 'sent-mail') {
+      banner.className = 'mb-6 rounded-xl px-5 py-4 font-semibold bg-green-50 text-green-800 border border-green-200';
+      banner.textContent = 'התכנון נשלח בהצלחה! צוות התכנות של i-feel קיבל את הפירוט המלא וניצור קשר להמשך. אפשר להמשיך לערוך ולשלוח עדכון בכל שלב.';
+    } else if (leadStatus === 'missing' || leadStatus === 'bad-email') {
+      banner.className = 'mb-6 rounded-xl px-5 py-4 font-semibold bg-amber-50 text-amber-800 border border-amber-200';
+      banner.textContent = 'השליחה לא הושלמה — בדקו ששם, טלפון ואימייל מולאו כראוי ונסו שוב.';
+    } else {
+      banner.className = 'mb-6 rounded-xl px-5 py-4 font-semibold bg-red-50 text-red-800 border border-red-200';
+      banner.textContent = 'אירעה שגיאה בשליחה. נסו שוב, או התקשרו אלינו: 03-508-9553.';
+    }
+    banner.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+
+  /* ---------- Init ---------- */
+  renderPalette(paletteEl, false, '');
+  renderAll();
+})();
+</script>
+
+<section class="bg-white py-12"><div class="max-w-5xl mx-auto px-4"><div class="prose-he">
+<section><h2>למה לבנות את המפסק מראש?</h2><p>מפסק הזכוכית GlassWand הוא מפסק Z-Wave עם 9 לחצני מגע מוארים — כל לחצן יכול להדליק תאורה, להפעיל תריס או להריץ תרחיש שלם. כשאתם מגדירים מראש איזה אייקון יושב על כל לחצן ובאיזה חדר, המתכנת של i-feel מגיע לבית שלכם עם תכנית עבודה מוכנה: הוא יודע בדיוק מה לחווט, מה לתכנת ואיך לקרוא לכל תרחיש. זה מקצר את זמן ההתקנה, מונע אי-הבנות — והבית שלכם עובד מהיום הראשון כמו שדמיינתם.</p><p>המפסק מתאים גם <a href="/wireless-smart-home-existing-apartment/">לדירה קיימת ללא שיפוץ</a> — הוא מתקין בקופסת גוויס 3 מקום רגילה ומתחבר אלחוטית לבקר. להיכרות מעמיקה עם המפסק והמערכת, הורידו את <a href="/catalogs/">הקטלוגים שלנו</a> או קראו על <a href="/smart-home/">פתרונות הבית החכם של i-feel</a>.</p></section>
+</div></div></section>
