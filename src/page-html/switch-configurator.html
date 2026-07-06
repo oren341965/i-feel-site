@@ -26,7 +26,7 @@
 
     <aside class="hidden lg:block sticky top-6 bg-white rounded-2xl border border-brand-100 p-4 max-h-[80vh] overflow-y-auto">
       <h3 class="font-extrabold text-brand-900 mb-1">מאגר האייקונים</h3>
-      <p class="text-xs text-brand-500 mb-3">גררו אייקון אל לחצן במפסק, או לחצו על לחצן ובחרו מהרשימה.</p>
+      <p class="text-xs text-brand-500 mb-3">אלה האייקונים הרשמיים הזמינים למפסק (<a href="/assets/catalogs/glasswand-button-icons.pdf" target="_blank" rel="noopener" class="text-accent-600 hover:underline">דף האייקונים להורדה</a>). גררו אייקון אל לחצן, או לחצו על לחצן ובחרו מהרשימה.</p>
       <div id="palette"></div>
     </aside>
   </div>
@@ -93,41 +93,48 @@
   function svg(inner) {
     return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg">' + inner + '</svg>';
   }
+  function textTile(lines) {
+    var attrs = ' text-anchor="middle" font-size="7" font-weight="700" fill="currentColor" stroke="none" font-family="Heebo,Arial,sans-serif"';
+    if (lines.length === 1) return svg('<text x="12" y="14.5"' + attrs + '>' + lines[0] + '</text>');
+    return svg('<text x="12" y="11"' + attrs + '>' + lines[0] + '</text><text x="12" y="19"' + attrs + '>' + lines[1] + '</text>');
+  }
+  /* The set below mirrors the official GlassWand icon sheet (PVC film) —
+     only icons that physically exist on the sheet appear here. */
   var ICONS = [
-    { id: 'bulb', name: 'תאורה', cat: 'תאורה', svg: svg('<path d="M12 3a6 6 0 0 1 4 10.5c-.6.5-1 1.5-1 2.5h-6c0-1-.4-2-1-2.5A6 6 0 0 1 12 3z"/><path d="M9.5 19h5"/><path d="M10.5 21.5h3"/>') },
-    { id: 'spot', name: 'ספוט / שקוע', cat: 'תאורה', svg: svg('<path d="M3 4h18"/><path d="M9 4v2.5a3 3 0 0 0 6 0V4"/><path d="M12 11v3"/><path d="M8 10l-1.7 2.6"/><path d="M16 10l1.7 2.6"/>') },
-    { id: 'pendant', name: 'גוף תאורה תלוי', cat: 'תאורה', svg: svg('<path d="M12 3v5"/><path d="M7 13a5 5 0 0 1 10 0z"/><path d="M12 13v3"/><circle cx="12" cy="18" r="1.3"/>') },
-    { id: 'wall-lamp', name: 'תאורת קיר', cat: 'תאורה', svg: svg('<path d="M4 3v18"/><path d="M4 10h4"/><circle cx="12" cy="10" r="3.2"/><path d="M12 15v2.5"/><path d="M16 13l2 1.6"/>') },
-    { id: 'table-lamp', name: 'מנורת לילה', cat: 'תאורה', svg: svg('<path d="M8 4h8l2 7H6z"/><path d="M12 11v6"/><path d="M8 20h8"/><path d="M12 17v3"/>') },
-    { id: 'dimmer', name: 'עמעום (דימר)', cat: 'תאורה', svg: svg('<circle cx="12" cy="12" r="4.5"/><path d="M12 3.5v1.5"/><path d="M12 19v1.5"/><path d="M3.5 12h1.5"/><path d="M19 12h1.5"/><path d="M6 6l1 1"/><path d="M17 17l1 1"/>') },
-    { id: 'night-light', name: 'תאורת לילה', cat: 'תאורה', svg: svg('<path d="M20 13.5A8 8 0 1 1 10.5 4 6.5 6.5 0 0 0 20 13.5z"/><path d="M6 4.5l.4 1.1L7.5 6l-1.1.4L6 7.5l-.4-1.1L4.5 6l1.1-.4z"/>') },
-    { id: 'outdoor-light', name: 'תאורת חוץ', cat: 'תאורה', svg: svg('<path d="M12 3v3"/><rect x="9" y="6" width="6" height="9" rx="1"/><path d="M9 19h6"/><path d="M12 15v4"/>') },
-    { id: 'all-on', name: 'הדלקה כללית', cat: 'תאורה', svg: svg('<circle cx="12" cy="12" r="4"/><path d="M12 2.5v2"/><path d="M12 19.5v2"/><path d="M2.5 12h2"/><path d="M19.5 12h2"/><path d="M5 5l1.4 1.4"/><path d="M17.6 17.6L19 19"/><path d="M19 5l-1.4 1.4"/><path d="M6.4 17.6L5 19"/>') },
-    { id: 'all-off', name: 'כיבוי כללי', cat: 'תרחישים', svg: svg('<path d="M12 3v8"/><path d="M7 5.5a7.5 7.5 0 1 0 10 0"/>') },
-    { id: 'shutter-up', name: 'תריס למעלה', cat: 'תריסים ווילונות', svg: svg('<rect x="5" y="3" width="14" height="18" rx="2"/><path d="M5 7h14"/><path d="M5 10h14"/><path d="M12 18v-5"/><path d="M9.5 15.5L12 13l2.5 2.5"/>') },
-    { id: 'shutter-down', name: 'תריס למטה', cat: 'תריסים ווילונות', svg: svg('<rect x="5" y="3" width="14" height="18" rx="2"/><path d="M5 7h14"/><path d="M5 10h14"/><path d="M12 13v5"/><path d="M9.5 15.5L12 18l2.5-2.5"/>') },
-    { id: 'shutter-stop', name: 'תריס — עצירה', cat: 'תריסים ווילונות', svg: svg('<rect x="5" y="3" width="14" height="18" rx="2"/><path d="M5 7h14"/><path d="M5 10h14"/><rect x="10" y="13.5" width="4" height="4"/>') },
-    { id: 'curtain', name: 'וילון', cat: 'תריסים ווילונות', svg: svg('<path d="M3 4h18"/><path d="M7 4c1.2 5 1 11-2.5 16"/><path d="M17 4c-1.2 5-1 11 2.5 16"/><path d="M12 4v5"/>') },
-    { id: 'ac', name: 'מזגן / קירור', cat: 'אקלים', svg: svg('<path d="M12 2.5v19"/><path d="M4 7.5l16 9"/><path d="M20 7.5l-16 9"/><path d="M12 2.5L10 4.5"/><path d="M12 2.5l2 2"/><path d="M12 21.5l-2-2"/><path d="M12 21.5l2-2"/>') },
-    { id: 'heat', name: 'חימום', cat: 'אקלים', svg: svg('<path d="M8 4.5c-1.8 1.8-1.8 3.7 0 5.5s1.8 3.7 0 5.5"/><path d="M12.5 4.5c-1.8 1.8-1.8 3.7 0 5.5s1.8 3.7 0 5.5"/><path d="M17 4.5c-1.8 1.8-1.8 3.7 0 5.5s1.8 3.7 0 5.5"/><path d="M5 20h14"/>') },
-    { id: 'boiler', name: 'דוד מים חמים', cat: 'אקלים', svg: svg('<path d="M12 3s6 7.2 6 11a6 6 0 0 1-12 0c0-3.8 6-11 6-11z"/><path d="M12 10l-1.6 3.2h3.2L12 16.5"/>') },
-    { id: 'fan', name: 'מאוורר', cat: 'אקלים', svg: svg('<circle cx="12" cy="12" r="1.8"/><path d="M12 10.2c0-3 1.4-5.8 3.8-4.9s.2 4.4-3.8 4.9z"/><path d="M13.8 12c3 0 5.8 1.4 4.9 3.8s-4.4.2-4.9-3.8z"/><path d="M12 13.8c0 3-1.4 5.8-3.8 4.9s-.2-4.4 3.8-4.9z"/><path d="M10.2 12c-3 0-5.8-1.4-4.9-3.8s4.4-.2 4.9 3.8z"/>') },
-    { id: 'scene-morning', name: 'תרחיש בוקר', cat: 'תרחישים', svg: svg('<path d="M3 17h18"/><path d="M7 17a5 5 0 0 1 10 0"/><path d="M12 5.5v3"/><path d="M5 10.5L6.7 12"/><path d="M19 10.5L17.3 12"/>') },
-    { id: 'scene-night', name: 'תרחיש לילה', cat: 'תרחישים', svg: svg('<path d="M17 13A6.5 6.5 0 1 1 9.5 5.5 5.5 5.5 0 0 0 17 13z"/><path d="M17.5 4.5h3.5l-3.5 4h3.5"/>') },
-    { id: 'scene-away', name: 'יציאה מהבית', cat: 'תרחישים', svg: svg('<path d="M13 21H5a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h8"/><path d="M13 12h8"/><path d="M18 9l3 3-3 3"/><circle cx="9" cy="12" r="0.9"/>') },
-    { id: 'scene-guests', name: 'תרחיש אורחים', cat: 'תרחישים', svg: svg('<circle cx="9" cy="8" r="3"/><path d="M4 20c0-3 2.2-5 5-5s5 2 5 5"/><circle cx="16.5" cy="9" r="2.4"/><path d="M15.5 15.6c2.7.4 4.4 2 4.4 4.4"/>') },
-    { id: 'scene-cinema', name: 'תרחיש קולנוע', cat: 'תרחישים', svg: svg('<rect x="4" y="4" width="16" height="10" rx="1"/><path d="M10.5 6.8v4.4l3.8-2.2z"/><path d="M12 14v4"/><path d="M8 18h8"/>') },
-    { id: 'tv', name: 'טלוויזיה', cat: 'מדיה וכללי', svg: svg('<rect x="3" y="5" width="18" height="12" rx="2"/><path d="M8 21h8"/><path d="M12 17v4"/>') },
-    { id: 'music', name: 'מוזיקה', cat: 'מדיה וכללי', svg: svg('<path d="M9 18V6l10-2v10"/><circle cx="7" cy="18" r="2"/><circle cx="17" cy="14" r="2"/>') },
-    { id: 'gate', name: 'שער', cat: 'מדיה וכללי', svg: svg('<path d="M4 21V8"/><path d="M20 21V8"/><path d="M4 8a8 8 0 0 1 16 0"/><path d="M8 21v-8"/><path d="M12 21v-9"/><path d="M16 21v-8"/><path d="M4 13h16"/>') },
-    { id: 'door', name: 'דלת כניסה', cat: 'מדיה וכללי', svg: svg('<rect x="6" y="3" width="12" height="18" rx="1"/><circle cx="15" cy="12" r="1"/>') },
-    { id: 'lock', name: 'נעילה', cat: 'מדיה וכללי', svg: svg('<rect x="6" y="11" width="12" height="9" rx="2"/><path d="M9 11V8a3 3 0 0 1 6 0v3"/><path d="M12 14.5v2"/>') },
-    { id: 'alarm', name: 'אזעקה', cat: 'מדיה וכללי', svg: svg('<path d="M18 16v-5a6 6 0 1 0-12 0v5l-2 2h16z"/><path d="M10.5 20.5a1.5 1.5 0 0 0 3 0"/>') },
-    { id: 'irrigation', name: 'השקיה', cat: 'מדיה וכללי', svg: svg('<path d="M9 21h6"/><path d="M12 21v-8"/><path d="M12 12V8.5"/><path d="M8.5 12L6 9.5"/><path d="M15.5 12L18 9.5"/><path d="M9.5 9L8 6"/><path d="M14.5 9L16 6"/>') },
-    { id: 'socket', name: 'שקע מבוקר', cat: 'מדיה וכללי', svg: svg('<rect x="4" y="4" width="16" height="16" rx="3"/><circle cx="9.5" cy="12" r="1"/><circle cx="14.5" cy="12" r="1"/>') },
-    { id: 'intercom', name: 'אינטרקום', cat: 'מדיה וכללי', svg: svg('<rect x="5" y="3" width="14" height="18" rx="2"/><rect x="8" y="6" width="8" height="6"/><circle cx="12" cy="16.5" r="1.5"/>') }
+    { id: 'chandelier', name: 'נברשת', cat: 'תאורה', svg: svg('<path d="M12 3v5"/><path d="M6 8h12"/><path d="M6 8v2"/><path d="M18 8v2"/><path d="M4.5 10a1.5 1.5 0 0 0 3 0"/><path d="M16.5 10a1.5 1.5 0 0 0 3 0"/><path d="M12 8v4"/><path d="M10.5 12a1.5 1.5 0 0 0 3 0"/>') },
+    { id: 'reading-lamp', name: 'מנורת קריאה', cat: 'תאורה', svg: svg('<path d="M5 3v18"/><path d="M5 8h4"/><path d="M9 8l2.5 2"/><path d="M11 9.5l3.5-2.5 2.5 3.5-3.5 2.5z"/><path d="M15 14.5l1 3"/><path d="M17.5 12.5l2.5 1.5"/>') },
+    { id: 'ceiling-light', name: 'צמוד תקרה', cat: 'תאורה', svg: svg('<path d="M4 5h16"/><path d="M7 5c0 3.5 2.2 5.5 5 5.5S17 8.5 17 5"/><path d="M12 13v2"/><path d="M7.5 11.5L6 13"/><path d="M16.5 11.5L18 13"/>') },
+    { id: 'sun', name: 'תאורה — שמש', cat: 'תאורה', svg: svg('<circle cx="12" cy="12" r="3.5"/><path d="M12 3v2.2"/><path d="M12 18.8V21"/><path d="M3 12h2.2"/><path d="M18.8 12H21"/><path d="M5.6 5.6l1.6 1.6"/><path d="M16.8 16.8l1.6 1.6"/><path d="M18.4 5.6l-1.6 1.6"/><path d="M7.2 16.8l-1.6 1.6"/>') },
+    { id: 'lights-off', name: 'כיבוי תאורה', cat: 'תאורה', svg: svg('<circle cx="8" cy="8" r="2.8"/><path d="M8 2.8v1.5"/><path d="M8 11.7v1.5"/><path d="M2.8 8h1.5"/><path d="M11.7 8h1.5"/><path d="M4.3 4.3l1.1 1.1"/><path d="M10.6 10.6l1.1 1.1"/><path d="M11.7 4.3l-1.1 1.1"/><path d="M5.4 10.6l-1.1 1.1"/><text x="15.5" y="20" text-anchor="middle" font-size="6.5" font-weight="700" fill="currentColor" stroke="none" font-family="Arial,sans-serif">OFF</text>') },
+    { id: 'shutter-down', name: 'תריס למטה', cat: 'תריסים ווילונות', svg: svg('<rect x="5" y="4" width="14" height="16" rx="1"/><path d="M5 7.5h14"/><path d="M5 11h14"/><path d="M12 13.5v5"/><path d="M9.8 16.5l2.2 2.2 2.2-2.2"/>') },
+    { id: 'shutter-up', name: 'תריס למעלה', cat: 'תריסים ווילונות', svg: svg('<rect x="5" y="4" width="14" height="16" rx="1"/><path d="M5 7.5h14"/><path d="M5 11h14"/><path d="M12 18.5v-5"/><path d="M9.8 15.5l2.2-2.2 2.2 2.2"/>') },
+    { id: 'roller-down', name: 'וילון גלילה למטה', cat: 'תריסים ווילונות', svg: svg('<rect x="5" y="4" width="14" height="16" rx="1"/><path d="M5 8h14"/><path d="M12 11v6.5"/><path d="M9.8 15.5l2.2 2.2 2.2-2.2"/>') },
+    { id: 'roller-up', name: 'וילון גלילה למעלה', cat: 'תריסים ווילונות', svg: svg('<rect x="5" y="4" width="14" height="16" rx="1"/><path d="M5 8h14"/><path d="M12 17.5V11"/><path d="M9.8 13.2L12 11l2.2 2.2"/>') },
+    { id: 'curtain-open', name: 'וילון — פתיחה', cat: 'תריסים ווילונות', svg: svg('<rect x="4" y="4" width="16" height="16" rx="1"/><path d="M7 4c.7 4 .7 12 0 16"/><path d="M17 4c-.7 4-.7 12 0 16"/><path d="M11 12H8"/><path d="M9.5 10.5L8 12l1.5 1.5"/><path d="M13 12h3"/><path d="M14.5 10.5L16 12l-1.5 1.5"/>') },
+    { id: 'curtain-close', name: 'וילון — סגירה', cat: 'תריסים ווילונות', svg: svg('<rect x="4" y="4" width="16" height="16" rx="1"/><path d="M7 4c.7 4 .7 12 0 16"/><path d="M17 4c-.7 4-.7 12 0 16"/><path d="M8.5 12h3"/><path d="M10 10.5l1.5 1.5-1.5 1.5"/><path d="M15.5 12h-3"/><path d="M14 10.5L12.5 12l1.5 1.5"/>') },
+    { id: 'bed', name: 'מיטה', cat: 'חדרים וריהוט', svg: svg('<path d="M3 18V7"/><path d="M3 13h18v5"/><path d="M3 18h18"/><path d="M5 13v-2a2 2 0 0 1 2-2h3a2 2 0 0 1 2 2v2"/>') },
+    { id: 'wardrobe', name: 'ארון בגדים', cat: 'חדרים וריהוט', svg: svg('<rect x="6" y="3" width="12" height="18" rx="1"/><path d="M12 3v18"/><path d="M10.3 11v2.5"/><path d="M13.7 11v2.5"/>') },
+    { id: 'armchair', name: 'כורסה', cat: 'חדרים וריהוט', svg: svg('<path d="M6 11V6a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v5"/><path d="M6 11a2 2 0 1 0-2 3.4V17a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-2.6A2 2 0 1 0 18 11v2H6z"/><path d="M6 18v2"/><path d="M18 18v2"/>') },
+    { id: 'tv-unit', name: 'פינת טלוויזיה', cat: 'חדרים וריהוט', svg: svg('<rect x="7" y="4" width="10" height="7" rx="1"/><path d="M4 15h16v4H4z"/><path d="M12 15v-4"/>') },
+    { id: 'shelves', name: 'מדפים / ספרייה', cat: 'חדרים וריהוט', svg: svg('<rect x="6" y="3" width="12" height="18" rx="1"/><path d="M6 9h12"/><path d="M6 15h12"/><path d="M10 6v3"/><path d="M14 12v3"/>') },
+    { id: 'coffee', name: 'פינת קפה', cat: 'חדרים וריהוט', svg: svg('<path d="M6 10h10v4.5a4 4 0 0 1-4 4h-2a4 4 0 0 1-4-4z"/><path d="M16 11h1.5a2 2 0 0 1 0 4H16"/><path d="M9.5 4c0 1.3 1 1.7 1 3"/><path d="M13 4c0 1.3 1 1.7 1 3"/>') },
+    { id: 'window', name: 'חלון', cat: 'חדרים וריהוט', svg: svg('<rect x="5" y="4" width="14" height="16" rx="1"/><path d="M12 4v16"/><path d="M10 12h.01"/><path d="M14 12h.01"/>') },
+    { id: 'bathtub', name: 'אמבטיה', cat: 'אמבטיה וכביסה', svg: svg('<path d="M4 12h16v2.5a4 4 0 0 1-4 4H8a4 4 0 0 1-4-4z"/><path d="M6 12V5.5A1.5 1.5 0 0 1 7.5 4c.8 0 1.5.6 1.5 1.5"/><path d="M6 18.5L5 21"/><path d="M18 18.5L19 21"/>') },
+    { id: 'toilet', name: 'שירותים', cat: 'אמבטיה וכביסה', svg: svg('<path d="M8 3h6v5H8z"/><path d="M8 8h11v2a5 5 0 0 1-5 5h-1a5 5 0 0 1-5-5z"/><path d="M11.5 15l-1.5 4h5l-1-4"/>') },
+    { id: 'sink', name: 'כיור', cat: 'אמבטיה וכביסה', svg: svg('<path d="M5 11h14v1.5a5 5 0 0 1-5 5h-4a5 5 0 0 1-5-5z"/><path d="M12 11V6"/><path d="M12 6h3.5"/><path d="M10.5 17.5L9.5 21"/><path d="M13.5 17.5l1 3.5"/>') },
+    { id: 'washer', name: 'מכונת כביסה', cat: 'אמבטיה וכביסה', svg: svg('<rect x="5" y="3" width="14" height="18" rx="2"/><path d="M5 7h14"/><path d="M8 5h.01"/><circle cx="12" cy="14" r="4"/><path d="M9.2 13.2c1 .8 1.8 1.4 2.8 1.4s1.8-.6 2.8-1.4"/>') },
+    { id: 'ac', name: 'מזגן', cat: 'אקלים', svg: svg('<rect x="3" y="6" width="18" height="7" rx="1.5"/><path d="M3 10.5h18"/><path d="M7.5 16c0 1.4-1 1.6-1 3"/><path d="M12 16c0 1.4-1 1.6-1 3"/><path d="M16.5 16c0 1.4-1 1.6-1 3"/>') },
+    { id: 'fan', name: 'מאוורר', cat: 'אקלים', svg: svg('<circle cx="12" cy="9" r="5.5"/><circle cx="12" cy="9" r="1.1"/><path d="M12 7.9V4.6"/><path d="M13 9.6l2.9 1.5"/><path d="M11 9.6L8.1 11.1"/><path d="M12 14.5V19"/><path d="M9 19h6"/>') },
+    { id: 'car', name: 'רכב / חניה', cat: 'כללי', svg: svg('<path d="M5 16l1.3-4a2 2 0 0 1 1.9-1.4h7.6a2 2 0 0 1 1.9 1.4L19 16"/><path d="M4 16h16v3h-2.6"/><path d="M4 16v3h2.6"/><circle cx="8" cy="19" r="1.4"/><circle cx="16" cy="19" r="1.4"/><path d="M9.4 19h5.2"/>') },
+    { id: 'stairs', name: 'מדרגות', cat: 'כללי', svg: svg('<path d="M4 20h4v-4h4v-4h4V8h4V6"/><path d="M4 20h16"/>') },
+    { id: 'door', name: 'דלת', cat: 'כללי', svg: svg('<rect x="7" y="3" width="10" height="18" rx="1"/><path d="M14.5 12h.01"/>') },
+    { id: 'txt-dining', name: 'פינת אוכל (טקסט)', cat: 'שמות בעברית', svg: textTile(['פינת', 'אוכל']) },
+    { id: 'txt-lobby', name: 'מבואה (טקסט)', cat: 'שמות בעברית', svg: textTile(['מבואה']) },
+    { id: 'txt-kitchen', name: 'מטבח (טקסט)', cat: 'שמות בעברית', svg: textTile(['מטבח']) },
+    { id: 'txt-salon', name: 'סלון (טקסט)', cat: 'שמות בעברית', svg: textTile(['סלון']) },
+    { id: 'txt-boiler', name: 'דוד (טקסט)', cat: 'שמות בעברית', svg: textTile(['דוד']) }
   ];
-  var CATS = ['תאורה', 'תריסים ווילונות', 'אקלים', 'תרחישים', 'מדיה וכללי'];
+  var CATS = ['תאורה', 'תריסים ווילונות', 'חדרים וריהוט', 'אמבטיה וכביסה', 'אקלים', 'כללי', 'שמות בעברית'];
   function iconById(id) { for (var i = 0; i < ICONS.length; i++) if (ICONS[i].id === id) return ICONS[i]; return null; }
 
   /* ---------- State ---------- */
@@ -138,6 +145,8 @@
     if (saved && saved.switches && saved.switches.length) state = saved;
   } catch (e) { /* corrupted storage — start fresh */ }
   if (!state.switches.length) state.switches.push({ location: '', cells: [null, null, null, null, null, null, null, null, null] });
+  // Drop icon ids that no longer exist in the official sheet (e.g. saved before an update).
+  state.switches.forEach(function (sw) { sw.cells = sw.cells.map(function (c) { return iconById(c) ? c : null; }); });
 
   function save() { try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch (e) {} }
 
@@ -417,5 +426,5 @@
 </script>
 
 <section class="bg-white py-12"><div class="max-w-5xl mx-auto px-4"><div class="prose-he">
-<section><h2>למה לבנות את המפסק מראש?</h2><p>מפסק הזכוכית GlassWand הוא מפסק Z-Wave עם 9 לחצני מגע מוארים — כל לחצן יכול להדליק תאורה, להפעיל תריס או להריץ תרחיש שלם. כשאתם מגדירים מראש איזה אייקון יושב על כל לחצן ובאיזה חדר, המתכנת של i-feel מגיע לבית שלכם עם תכנית עבודה מוכנה: הוא יודע בדיוק מה לחווט, מה לתכנת ואיך לקרוא לכל תרחיש. זה מקצר את זמן ההתקנה, מונע אי-הבנות — והבית שלכם עובד מהיום הראשון כמו שדמיינתם.</p><p>המפסק מתאים גם <a href="/wireless-smart-home-existing-apartment/">לדירה קיימת ללא שיפוץ</a> — הוא מתקין בקופסת גוויס 3 מקום רגילה ומתחבר אלחוטית לבקר. להיכרות מעמיקה עם המפסק והמערכת, הורידו את <a href="/catalogs/">הקטלוגים שלנו</a> או קראו על <a href="/smart-home/">פתרונות הבית החכם של i-feel</a>.</p></section>
+<section><h2>למה לבנות את המפסק מראש?</h2><p>מפסק הזכוכית GlassWand הוא מפסק Z-Wave עם 9 לחצני מגע מוארים — כל לחצן יכול להדליק תאורה, להפעיל תריס או להריץ תרחיש שלם. כשאתם מגדירים מראש איזה אייקון יושב על כל לחצן ובאיזה חדר, המתכנת של i-feel מגיע לבית שלכם עם תכנית עבודה מוכנה: הוא יודע בדיוק מה לחווט, מה לתכנת ואיך לקרוא לכל תרחיש. זה מקצר את זמן ההתקנה, מונע אי-הבנות — והבית שלכם עובד מהיום הראשון כמו שדמיינתם.</p><p>האייקונים בכלי הזה הם בדיוק האייקונים הזמינים למפסק בפועל — הם מודפסים על גבי פילם ייעודי ומותקנים על לחצני הזכוכית. אפשר להוריד את <a href="/assets/catalogs/glasswand-button-icons.pdf" target="_blank" rel="noopener">דף האייקונים המלא (PDF)</a> גם כקובץ לסימון ידני.</p><p>המפסק מתאים גם <a href="/wireless-smart-home-existing-apartment/">לדירה קיימת ללא שיפוץ</a> — הוא מתקין בקופסת גוויס 3 מקום רגילה ומתחבר אלחוטית לבקר. להיכרות מעמיקה עם המפסק והמערכת, הורידו את <a href="/catalogs/">הקטלוגים שלנו</a> או קראו על <a href="/smart-home/">פתרונות הבית החכם של i-feel</a>.</p></section>
 </div></div></section>
