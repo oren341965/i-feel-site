@@ -74,7 +74,8 @@
 <div id="print-area" class="hidden"></div>
 
 <style>
-  .gw-cell { aspect-ratio: 1; }
+  /* GlassWand is a landscape panel — 130x96mm — so cells are wider than tall */
+  .gw-cell { aspect-ratio: 1.35; }
   .gw-cell.drag-over { outline: 3px dashed #d4a544; outline-offset: -3px; }
   .gw-icon-svg svg { width: 100%; height: 100%; display: block; }
   @media print {
@@ -200,7 +201,7 @@
     card.appendChild(head);
 
     var panel = document.createElement('div');
-    panel.className = 'bg-brand-900 rounded-2xl p-4 max-w-[300px] mx-auto';
+    panel.className = 'bg-brand-900 rounded-2xl p-4 max-w-[340px] mx-auto';
     var grid = document.createElement('div');
     grid.className = 'grid grid-cols-3 gap-2';
     for (var c = 0; c < 9; c++) grid.appendChild(renderCell(sw, si, c));
@@ -362,7 +363,7 @@
       html += '<div style="background:#0f1f36;border-radius:12px;padding:10px;"><div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;">';
       sw.cells.forEach(function (cellId, ci) {
         var icon = cellId ? iconById(cellId) : null;
-        html += '<div style="aspect-ratio:1;border-radius:8px;background:' + (icon ? '#1e3e66' : '#16294a') + ';position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;color:#ecd08a;">';
+        html += '<div style="aspect-ratio:1.35;border-radius:8px;background:' + (icon ? '#1e3e66' : '#16294a') + ';position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;color:#ecd08a;">';
         html += '<span style="position:absolute;top:2px;right:5px;font-size:9px;color:#83a8d1;">' + (ci + 1) + '</span>';
         if (icon) {
           html += '<span style="width:30px;height:30px;display:block;">' + icon.svg + '</span>';
@@ -442,5 +443,5 @@
 </script>
 
 <section class="bg-white py-12"><div class="max-w-5xl mx-auto px-4"><div class="prose-he">
-<section><h2>למה לבנות את המפסק מראש?</h2><p>מפסק הזכוכית GlassWand הוא מפסק Z-Wave עם 9 לחצני מגע מוארים — כל לחצן יכול להדליק תאורה, להפעיל תריס או להריץ תרחיש שלם. כשאתם מגדירים מראש איזה אייקון יושב על כל לחצן ובאיזה חדר, המתכנת של i-feel מגיע לבית שלכם עם תכנית עבודה מוכנה: הוא יודע בדיוק מה לחווט, מה לתכנת ואיך לקרוא לכל תרחיש. זה מקצר את זמן ההתקנה, מונע אי-הבנות — והבית שלכם עובד מהיום הראשון כמו שדמיינתם.</p><p>האייקונים בכלי הזה הם בדיוק האייקונים הזמינים למפסק בפועל — הם מודפסים על גבי פילם ייעודי ומותקנים על לחצני הזכוכית. אפשר להוריד את <a href="/assets/catalogs/glasswand-button-icons.pdf" target="_blank" rel="noopener">דף האייקונים המלא (PDF)</a> גם כקובץ לסימון ידני.</p><p>המפסק מתאים גם <a href="/wireless-smart-home-existing-apartment/">לדירה קיימת ללא שיפוץ</a> — הוא מתקין בקופסת גוויס 3 מקום רגילה ומתחבר אלחוטית לבקר. להיכרות מעמיקה עם המפסק והמערכת, הורידו את <a href="/catalogs/">הקטלוגים שלנו</a> או קראו על <a href="/smart-home/">פתרונות הבית החכם של i-feel</a>. יש לכם מערכת KNX קווית עם מפסקי המגע של סימנס? לזה יש כלי נפרד — <a href="/knx-switch-configurator/">בונה מפסקי KNX (TC4/TC5)</a>.</p></section>
+<section><h2>למה לבנות את המפסק מראש?</h2><p>מפסק הזכוכית GlassWand הוא מפסק Z-Wave עם 9 לחצני מגע מוארים — כל לחצן יכול להדליק תאורה, להפעיל תריס או להריץ תרחיש שלם. כשאתם מגדירים מראש איזה אייקון יושב על כל לחצן ובאיזה חדר, המתכנת של i-feel מגיע לבית שלכם עם תכנית עבודה מוכנה: הוא יודע בדיוק מה לחווט, מה לתכנת ואיך לקרוא לכל תרחיש. זה מקצר את זמן ההתקנה, מונע אי-הבנות — והבית שלכם עובד מהיום הראשון כמו שדמיינתם.</p><p>האייקונים בכלי הזה הם בדיוק האייקונים הזמינים למפסק בפועל — הם מודפסים על גבי פילם ייעודי ומותקנים על לחצני הזכוכית. אפשר להוריד את <a href="/assets/catalogs/glasswand-button-icons.pdf" target="_blank" rel="noopener">דף האייקונים המלא (PDF)</a> גם כקובץ לסימון ידני.</p><p>המפסק מתאים גם <a href="/wireless-smart-home-existing-apartment/">לדירה קיימת ללא שיפוץ</a> — הוא מותקן בקופסת גוויס 3 מקום <strong>עמוקה</strong> (הקופסה הירוקה) ומתחבר אלחוטית לבקר. להיכרות מעמיקה עם המפסק והמערכת, הורידו את <a href="/catalogs/">הקטלוגים שלנו</a> או קראו על <a href="/smart-home/">פתרונות הבית החכם של i-feel</a>. יש לכם מערכת KNX קווית עם מפסקי המגע של סימנס? לזה יש כלי נפרד — <a href="/knx-switch-configurator/">בונה מפסקי KNX (TC4/TC5)</a>.</p></section>
 </div></div></section>
