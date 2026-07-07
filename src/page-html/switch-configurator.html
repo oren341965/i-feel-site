@@ -162,8 +162,13 @@
     if (saved && saved.switches && saved.switches.length) state = saved;
   } catch (e) { /* corrupted storage — start fresh */ }
   if (!state.switches.length) state.switches.push({ location: '', cells: [null, null, null, null, null, null, null, null, null] });
-  // Drop icon ids that no longer exist in the official sheet (e.g. saved before an update).
-  state.switches.forEach(function (sw) { sw.cells = sw.cells.map(function (c) { return iconById(c) ? c : null; }); });
+  // Drop icon ids that no longer exist in the official sheet (e.g. saved before an update),
+  // and default the glass color / corner style for switches saved before those options existed.
+  state.switches.forEach(function (sw) {
+    sw.cells = sw.cells.map(function (c) { return iconById(c) ? c : null; });
+    sw.color = sw.color === 'white' ? 'white' : 'black';
+    sw.corners = sw.corners === 'square' ? 'square' : 'round';
+  });
 
   function save() { try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch (e) {} }
 
@@ -200,8 +205,24 @@
     head.appendChild(loc); head.appendChild(del);
     card.appendChild(head);
 
+    var opts = document.createElement('div');
+    opts.className = 'grid grid-cols-2 gap-2 mb-3';
+    var colorSel = document.createElement('select');
+    colorSel.className = 'w-full rounded-lg border border-brand-200 px-2 py-1.5 text-sm text-brand-900 focus:border-accent-500';
+    colorSel.innerHTML = '<option value="black">זכוכית שחורה</option><option value="white">זכוכית לבנה</option>';
+    colorSel.value = sw.color;
+    colorSel.addEventListener('change', function () { sw.color = colorSel.value; renderAll(); });
+    var cornerSel = document.createElement('select');
+    cornerSel.className = 'w-full rounded-lg border border-brand-200 px-2 py-1.5 text-sm text-brand-900 focus:border-accent-500';
+    cornerSel.innerHTML = '<option value="round">פינות מעוגלות</option><option value="square">פינות מלבניות</option>';
+    cornerSel.value = sw.corners;
+    cornerSel.addEventListener('change', function () { sw.corners = cornerSel.value; renderAll(); });
+    opts.appendChild(colorSel); opts.appendChild(cornerSel);
+    card.appendChild(opts);
+
+    var isWhite = sw.color === 'white';
     var panel = document.createElement('div');
-    panel.className = 'bg-brand-900 rounded-2xl p-4 max-w-[340px] mx-auto';
+    panel.className = (isWhite ? 'bg-gray-100 border-2 border-gray-300' : 'bg-brand-900') + ' p-4 max-w-[340px] mx-auto ' + (sw.corners === 'square' ? 'rounded-sm' : 'rounded-2xl');
     var grid = document.createElement('div');
     grid.className = 'grid grid-cols-3 gap-2';
     for (var c = 0; c < 9; c++) grid.appendChild(renderCell(sw, si, c));
@@ -220,11 +241,15 @@
     cell.type = 'button';
     var iconId = sw.cells[ci];
     var icon = iconId ? iconById(iconId) : null;
-    cell.className = 'gw-cell relative rounded-xl flex flex-col items-center justify-center gap-0.5 transition ' + (icon ? 'bg-brand-700 text-accent-300 hover:bg-brand-600' : 'bg-brand-800 text-brand-500 hover:bg-brand-700 border-2 border-dashed border-brand-600');
+    var isWhite = sw.color === 'white';
+    var corner = sw.corners === 'square' ? 'rounded-sm' : 'rounded-xl';
+    var filledCls = isWhite ? 'bg-white text-brand-700 shadow-sm hover:bg-gray-50 border border-gray-200' : 'bg-brand-700 text-accent-300 hover:bg-brand-600';
+    var emptyCls = isWhite ? 'bg-gray-50 text-gray-400 hover:bg-white border-2 border-dashed border-gray-300' : 'bg-brand-800 text-brand-500 hover:bg-brand-700 border-2 border-dashed border-brand-600';
+    cell.className = 'gw-cell relative ' + corner + ' flex flex-col items-center justify-center gap-0.5 transition ' + (icon ? filledCls : emptyCls);
     cell.setAttribute('data-si', si);
     cell.setAttribute('data-ci', ci);
     var num = document.createElement('span');
-    num.className = 'absolute top-1 right-1.5 text-[10px] font-bold ' + (icon ? 'text-accent-300/70' : 'text-brand-500');
+    num.className = 'absolute top-1 right-1.5 text-[10px] font-bold ' + (icon ? (isWhite ? 'text-brand-300' : 'text-accent-300/70') : (isWhite ? 'text-gray-400' : 'text-brand-500'));
     num.textContent = ci + 1;
     cell.appendChild(num);
     if (icon) {
@@ -233,7 +258,7 @@
       holder.innerHTML = icon.svg;
       cell.appendChild(holder);
       var label = document.createElement('span');
-      label.className = 'text-[9px] leading-tight text-brand-100 px-0.5 text-center';
+      label.className = 'text-[9px] leading-tight px-0.5 text-center ' + (isWhite ? 'text-brand-500' : 'text-brand-100');
       label.textContent = icon.name;
       cell.appendChild(label);
     } else {
@@ -331,14 +356,14 @@
 
   /* ---------- Toolbar ---------- */
   document.getElementById('add-switch').addEventListener('click', function () {
-    state.switches.push({ location: '', cells: [null,null,null,null,null,null,null,null,null] });
+    state.switches.push({ location: '', color: 'black', corners: 'round', cells: [null,null,null,null,null,null,null,null,null] });
     renderAll();
     switchesEl.lastElementChild.scrollIntoView({ behavior: 'smooth', block: 'center' });
     switchesEl.lastElementChild.querySelector('input').focus();
   });
   document.getElementById('clear-all').addEventListener('click', function () {
     if (confirm('לנקות את כל המפסקים ולהתחיל מחדש?')) {
-      state = { switches: [{ location: '', cells: [null,null,null,null,null,null,null,null,null] }] };
+      state = { switches: [{ location: '', color: 'black', corners: 'round', cells: [null,null,null,null,null,null,null,null,null] }] };
       renderAll();
     }
   });
@@ -358,18 +383,24 @@
     html += '<div style="font-size:12px;color:#5285ba;margin-bottom:18px;">מספור הלחצנים: לחצן 1 בפינה הימנית העליונה, הספירה מימין לשמאל, שורה אחר שורה (במבט על המפסק).</div>';
     html += '<div style="display:flex;flex-wrap:wrap;gap:18px;">';
     state.switches.forEach(function (sw, si) {
+      var isWhite = sw.color === 'white';
+      var pr = sw.corners === 'square' ? '2px' : '12px';
+      var cr = sw.corners === 'square' ? '2px' : '8px';
       html += '<div class="print-switch" style="border:1px solid #b4cce5;border-radius:14px;padding:14px;width:300px;">';
-      html += '<div style="font-weight:800;font-size:16px;margin-bottom:10px;text-align:center;border-bottom:1px solid #dae6f2;padding-bottom:6px;">' + (sw.location ? escapeHtml(sw.location) : 'מפסק ' + (si + 1)) + '</div>';
-      html += '<div style="background:#0f1f36;border-radius:12px;padding:10px;"><div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;">';
+      html += '<div style="font-weight:800;font-size:16px;margin-bottom:2px;text-align:center;">' + (sw.location ? escapeHtml(sw.location) : 'מפסק ' + (si + 1)) + '</div>';
+      html += '<div style="font-size:11px;color:#285183;text-align:center;margin-bottom:10px;border-bottom:1px solid #dae6f2;padding-bottom:6px;">' + (isWhite ? 'זכוכית לבנה' : 'זכוכית שחורה') + ' · ' + (sw.corners === 'square' ? 'פינות מלבניות' : 'פינות מעוגלות') + '</div>';
+      html += '<div style="background:' + (isWhite ? '#f3f4f6' : '#0f1f36') + ';' + (isWhite ? 'border:1.5px solid #d1d5db;' : '') + 'border-radius:' + pr + ';padding:10px;"><div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;">';
       sw.cells.forEach(function (cellId, ci) {
         var icon = cellId ? iconById(cellId) : null;
-        html += '<div style="aspect-ratio:1.35;border-radius:8px;background:' + (icon ? '#1e3e66' : '#16294a') + ';position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;color:#ecd08a;">';
-        html += '<span style="position:absolute;top:2px;right:5px;font-size:9px;color:#83a8d1;">' + (ci + 1) + '</span>';
+        var cellBg = isWhite ? (icon ? '#ffffff' : '#e9ecf1') : (icon ? '#1e3e66' : '#16294a');
+        var iconColor = isWhite ? '#1e3e66' : '#ecd08a';
+        html += '<div style="aspect-ratio:1.35;border-radius:' + cr + ';background:' + cellBg + ';' + (isWhite ? 'border:1px solid #d1d5db;' : '') + 'position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;color:' + iconColor + ';">';
+        html += '<span style="position:absolute;top:2px;right:5px;font-size:9px;color:' + (isWhite ? '#9ca3af' : '#83a8d1') + ';">' + (ci + 1) + '</span>';
         if (icon) {
           html += '<span style="width:30px;height:30px;display:block;">' + icon.svg + '</span>';
-          html += '<span style="font-size:8.5px;color:#dae6f2;text-align:center;line-height:1.1;">' + icon.name + '</span>';
+          html += '<span style="font-size:8.5px;color:' + (isWhite ? '#3868a0' : '#dae6f2') + ';text-align:center;line-height:1.1;">' + icon.name + '</span>';
         } else {
-          html += '<span style="font-size:10px;color:#3868a0;">ריק</span>';
+          html += '<span style="font-size:10px;color:' + (isWhite ? '#9ca3af' : '#3868a0') + ';">ריק</span>';
         }
         html += '</div>';
       });
@@ -407,7 +438,7 @@
         if (cellId) { var ic = iconById(cellId); if (ic) cellLines.push('לחצן ' + (ci + 1) + ': ' + ic.name); }
       });
       if (!cellLines.length && !sw.location) return;
-      lines.push('◼ מפסק ' + (si + 1) + (sw.location ? ' — ' + sw.location : '') + ':');
+      lines.push('◼ מפסק ' + (si + 1) + (sw.location ? ' — ' + sw.location : '') + ' [' + (sw.color === 'white' ? 'זכוכית לבנה' : 'זכוכית שחורה') + ', ' + (sw.corners === 'square' ? 'פינות מלבניות' : 'פינות מעוגלות') + ']:');
       lines.push(cellLines.length ? cellLines.join(' | ') : '(ללא אייקונים)');
       lines.push('');
     });
