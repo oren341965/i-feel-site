@@ -215,11 +215,11 @@
     tc4: { label: 'Siemens TC4 (מגע) — עד 6 לחצנים בדף', buttons: 6, set: 'tc', multiPage: true, cellAspect: '1.15' },
     tc5: { label: 'Siemens TC5 (מגע) — עד 8 לחצנים בדף', buttons: 8, set: 'tc', multiPage: true, cellAspect: '1.15' },
     sysm2: { label: 'מפסק לחצנים System M — 2 לחצנים', buttons: 2, set: 'btn', multiPage: false, cellAspect: '0.52', mktWhite: 'MTN617119' },
-    sysm4: { label: 'מפסק לחצנים System M — 4 לחצנים', buttons: 4, set: 'btn', multiPage: false, cellAspect: '1.05', mktWhite: 'MTN617219' },
+    sysm4: { label: 'מפסק לחצנים System M — 4 לחצנים', buttons: 4, set: 'btn', multiPage: false, cellAspect: '1.05', mktWhite: 'MTN617219', mktBlack: 'MTN627614' },
     sysm8: { label: 'מפסק לחצנים System M — 8 לחצנים', buttons: 8, set: 'btn', multiPage: false, cellAspect: '2.1', mktWhite: 'MTN617419' }
   };
   var MAX_PAGES = 8;
-  function mktFor(sw) { return sw.color === 'white' ? (MODELS[sw.model].mktWhite || null) : null; }
+  function mktFor(sw) { return (sw.color === 'white' ? MODELS[sw.model].mktWhite : MODELS[sw.model].mktBlack) || null; }
   function modelSet(model) { return MODELS[model].set === 'btn' ? { icons: BTN_ICONS, cats: BTN_CATS } : { icons: ICONS, cats: CATS }; }
   function inSet(model, id) { var s = modelSet(model).icons; for (var i = 0; i < s.length; i++) if (s[i].id === id) return true; return false; }
   /* A cell holds: null | icon-id string | {t: 'free text'} (custom engraving text). */
