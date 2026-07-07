@@ -12,11 +12,13 @@ export function getStaticPaths() {
 const { article } = Astro.props;
 const canonical = `https://i-feel.co.il/articles/${article.slug}/`;
 const title = `${article.title} | i-feel`;
+const ogImage = article.image ? `https://i-feel.co.il${article.image}` : undefined;
 const jsonLd = JSON.stringify({
   '@context': 'https://schema.org',
   '@type': 'Article',
   headline: article.title,
   description: article.description,
+  ...(ogImage ? { image: ogImage } : {}),
   datePublished: article.updated,
   dateModified: article.updated,
   inLanguage: 'he-IL',
@@ -33,7 +35,7 @@ const jsonLd = JSON.stringify({
   },
 });
 ---
-<BaseLayout title={title} description={article.description} canonical={canonical} ogTitle={article.title} ogDescription={article.description} ogUrl={canonical} jsonLd={jsonLd}>
+<BaseLayout title={title} description={article.description} canonical={canonical} ogTitle={article.title} ogDescription={article.description} ogUrl={canonical} ogImage={ogImage} jsonLd={jsonLd}>
   <article class="bg-white">
     <header class="bg-brand-900 text-white py-14 md:py-18">
       <div class="max-w-4xl mx-auto px-4">
@@ -43,6 +45,19 @@ const jsonLd = JSON.stringify({
         <p class="mt-5 text-lg text-brand-100">{article.description}</p>
       </div>
     </header>
+
+    {article.image && (
+      <figure class="max-w-5xl mx-auto px-4 -mt-8 md:-mt-10">
+        <img
+          src={article.image}
+          alt={article.imageAlt ?? article.title}
+          width="1600"
+          height="1067"
+          loading="eager"
+          class="w-full h-auto rounded-xl shadow-lg object-cover"
+        />
+      </figure>
+    )}
 
     <div class="max-w-4xl mx-auto px-4 py-12">
       <div class="space-y-10">
