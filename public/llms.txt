@@ -68,6 +68,7 @@ i-feel מפרסמת מסמכי תקינה ואישורים בכתובת /license
 - [FAQ](https://i-feel.co.il/שאלות-נפוצות/): שאלות נפוצות עם תשובות מפורטות
 - [Q&A / Answers](https://i-feel.co.il/answers/): תשובות מומחה לשאלות נפוצות — כמה עולה BMS לבניין, KNX מול Control4, Siemens Desigo מול KNX, שירות למערכת קיימת, איך בוחרים אינטגרטור
 - [Switch Configurator](https://i-feel.co.il/switch-configurator/): כלי אונליין לבניית מפסק זכוכית GlassWand — בחירת אייקון לכל אחד מ-9 הלחצנים, סימון מיקום בבית, הדפסה ושליחה לצוות התכנות
+- [KNX Switch Configurator](https://i-feel.co.il/knx-switch-configurator/): כלי אונליין לבניית מפסקי מגע Siemens KNX (TC4 — 6 לחצנים, TC5 — 8) — דפי תאורה/תריסים/תרחישים עם Swipe, אייקון רשמי לכל לחצן כולל Replacement ID לתכנות ב-ETS
 - [Catalogs](https://i-feel.co.il/catalogs/): 18 קטלוגי PDF להורדה — בית חכם אלחוטי (Z-Wave), KNX קווי, Siemens BMS, בנייה רוויה, אדריכלים ומבני ציבור, מלונאות, אודיו וקולנוע, מדריכי התקנה
 - [Articles](https://i-feel.co.il/articles/): מרכז מאמרים מלא עם מדריכים על בית חכם, KNX, עלויות, קווי מול אלחוטי, שבת, BMS, חיסכון באנרגיה, בחירת מערכת BMS, Siemens Desigo, BMS למשרדים, שדרוג בית קיים, אדריכלים ויזמים.
 - [Contact](https://i-feel.co.il/contactus/): טופס יצירת קשר, טלפונים ואימיילים ייעודיים לפי סוג פנייה — מכירות, שירות לקוחות, שדרוגים

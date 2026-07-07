@@ -170,6 +170,12 @@
     <priority>0.8</priority>
   </url>
   <url>
+    <loc>https://i-feel.co.il/knx-switch-configurator/</loc>
+    <lastmod>2026-07-06</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
     <loc>https://i-feel.co.il/contactus/</loc>
     <lastmod>2026-05-23</lastmod>
     <changefreq>monthly</changefreq>

@@ -1,0 +1,522 @@
+<nav class="bg-brand-50 border-b border-brand-100" aria-label="פירורי לחם"><div class="max-w-7xl mx-auto px-4 py-3 text-sm"><a href="/" class="text-brand-600 hover:text-accent-600">דף הבית</a><span class="mx-2 text-brand-400">›</span><a href="/knx-smart-home/" class="text-brand-600 hover:text-accent-600">בית חכם KNX</a><span class="mx-2 text-brand-400">›</span><span class="text-brand-900 font-medium">בניית מפסק KNX</span></div></nav>
+
+<section class="hero-gradient text-white"><div class="max-w-6xl mx-auto px-4 py-14 lg:py-20"><div class="inline-flex items-center gap-2 bg-white/10 backdrop-blur px-4 py-1.5 rounded-full text-sm font-medium mb-6 border border-white/20">כלי תכנון · מפסקי מגע Siemens KNX · TC4 / TC5</div><h1 class="text-4xl md:text-5xl lg:text-6xl font-extrabold leading-tight mb-6">בניית מפסק KNX — דפים ואייקונים למפסקי המגע של סימנס</h1><p class="text-xl text-brand-100 mb-8 max-w-3xl">מפסקי המגע TC4 ו-TC5 של סימנס תומכים בכמה דפים במפסק אחד — מחליקים (Swipe) בין דף תאורה, דף תריסים ודף תרחישים. כאן בונים את המפסק שלכם דף-אחר-דף: מיקום בבית, שם לכל דף, ואייקון לכל לחצן מתוך המאגר הרשמי של סימנס. בסיום — מדפיסים או שולחים אלינו, והמתכנת מקבל הכל מראש.</p><div class="flex flex-wrap gap-3"><a href="#builder" class="bg-accent-500 hover:bg-accent-600 text-white px-6 py-3 rounded-lg font-semibold shadow-lg">התחילו לבנות מפסק</a><a href="/knx-smart-home/" class="bg-white/10 hover:bg-white/20 text-white px-6 py-3 rounded-lg font-semibold border border-white/30">על בית חכם KNX</a></div></div></section>
+
+<section class="bg-white border-b border-brand-100"><div class="max-w-6xl mx-auto px-4 py-10"><div class="grid md:grid-cols-3 gap-6">
+  <div class="bg-brand-50 rounded-2xl p-6 border border-brand-100"><div class="w-10 h-10 rounded-full bg-accent-500 text-white font-extrabold flex items-center justify-center text-lg mb-3">1</div><h2 class="text-lg font-bold text-brand-900 mb-1">בוחרים דגם ומיקום</h2><p class="text-brand-700 text-base leading-relaxed">TC4 — עד 6 לחצנים בדף, TC5 — עד 8. כותבים את המיקום בבית מעל כל מפסק.</p></div>
+  <div class="bg-brand-50 rounded-2xl p-6 border border-brand-100"><div class="w-10 h-10 rounded-full bg-accent-500 text-white font-extrabold flex items-center justify-center text-lg mb-3">2</div><h2 class="text-lg font-bold text-brand-900 mb-1">מוסיפים דפים ואייקונים</h2><p class="text-brand-700 text-base leading-relaxed">למשל: שני דפי תאורה, דף תריסים ודף תרחישים. לכל לחצן בוחרים אייקון מהמאגר הרשמי של סימנס.</p></div>
+  <div class="bg-brand-50 rounded-2xl p-6 border border-brand-100"><div class="w-10 h-10 rounded-full bg-accent-500 text-white font-extrabold flex items-center justify-center text-lg mb-3">3</div><h2 class="text-lg font-bold text-brand-900 mb-1">מדפיסים ושולחים אלינו</h2><p class="text-brand-700 text-base leading-relaxed">שומרים PDF ושולחים בלחיצה — המתכנת מקבל את הפירוט כולל מספר האייקון הרשמי (ID) לתכנות ב-ETS.</p></div>
+</div><p class="text-sm text-brand-500 mt-6">שימו לב: מספר הדפים הסופי בכל מפסק ותצורת הלחצנים נקבעים באפיון יחד עם i-feel ומותאמים לחיווט ולתכנות בפועל.</p></div></section>
+
+<section id="builder" class="bg-brand-50/50 py-10 lg:py-14"><div class="max-w-6xl mx-auto px-4">
+
+  <div id="lead-banner" class="hidden mb-6 rounded-xl px-5 py-4 font-semibold"></div>
+
+  <div class="flex flex-wrap items-center justify-between gap-3 mb-6">
+    <h2 class="text-2xl md:text-3xl font-extrabold text-brand-900">המפסקים שלי</h2>
+    <div class="flex flex-wrap gap-2">
+      <button type="button" id="add-switch" class="bg-brand-700 hover:bg-brand-800 text-white px-5 py-2.5 rounded-lg font-semibold">+ הוספת מפסק</button>
+      <button type="button" id="print-btn" class="bg-accent-500 hover:bg-accent-600 text-white px-5 py-2.5 rounded-lg font-semibold">הדפסה / שמירת PDF</button>
+      <button type="button" id="clear-all" class="bg-white hover:bg-brand-50 text-brand-700 px-4 py-2.5 rounded-lg font-semibold border border-brand-200">ניקוי הכל</button>
+    </div>
+  </div>
+
+  <div class="grid lg:grid-cols-[1fr,300px] gap-8 items-start">
+    <div id="switches" class="grid gap-6 md:grid-cols-2"></div>
+
+    <aside class="hidden lg:block sticky top-6 bg-white rounded-2xl border border-brand-100 p-4 max-h-[80vh] overflow-y-auto">
+      <h3 class="font-extrabold text-brand-900 mb-1">מאגר האייקונים של סימנס</h3>
+      <p class="text-xs text-brand-500 mb-3">האייקונים הרשמיים של מפסקי TC4/TC5 (<a href="/assets/catalogs/siemens-tc-button-icons.pdf" target="_blank" rel="noopener" class="text-accent-600 hover:underline">דף האייקונים להורדה</a>). גררו אל לחצן, או לחצו על לחצן ובחרו.</p>
+      <div id="palette"></div>
+    </aside>
+  </div>
+
+  <div class="mt-12 bg-white rounded-2xl border border-brand-100 p-6 md:p-8">
+    <h2 class="text-2xl md:text-3xl font-extrabold text-brand-900 mb-2">סיימתם? שלחו לנו את התכנון</h2>
+    <p class="text-brand-700 mb-6">התכנון המלא — כל מפסק, הדגם, הדפים והאייקון בכל לחצן (כולל ID לתכנות) — יישלח לצוות התכנות שלנו. מומלץ גם לשמור עותק PDF בכפתור ההדפסה למעלה.</p>
+    <form id="send-form" action="/api/lead.php" method="post" accept-charset="UTF-8" class="grid gap-5">
+      <input type="hidden" name="source_page" value="/knx-switch-configurator/">
+      <input type="hidden" name="redirect_to" value="/knx-switch-configurator/">
+      <input type="hidden" name="lead_type" value="תכנון מפסקי KNX סימנס">
+      <input type="hidden" name="subject" value="תכנון דפים ואייקונים למפסקי TC4/TC5">
+      <textarea name="message" id="spec-message" class="hidden" aria-hidden="true"></textarea>
+      <div class="hidden" aria-hidden="true"><label>Website <input type="text" name="website" tabindex="-1" autocomplete="off"></label></div>
+      <div class="grid md:grid-cols-3 gap-4">
+        <label class="block"><span class="block text-sm font-bold text-brand-900 mb-1">שם מלא <span class="text-accent-600">*</span></span><input required name="name" type="text" autocomplete="name" class="w-full rounded-lg border border-brand-200 px-4 py-3 text-brand-900 focus:border-accent-500 focus:ring-2 focus:ring-accent-500/20" placeholder="שם פרטי ומשפחה"></label>
+        <label class="block"><span class="block text-sm font-bold text-brand-900 mb-1">טלפון <span class="text-accent-600">*</span></span><input required name="phone" type="tel" autocomplete="tel" inputmode="tel" class="w-full rounded-lg border border-brand-200 px-4 py-3 text-brand-900 focus:border-accent-500 focus:ring-2 focus:ring-accent-500/20" placeholder="050-0000000"></label>
+        <label class="block"><span class="block text-sm font-bold text-brand-900 mb-1">אימייל</span><input name="email" type="email" autocomplete="email" class="w-full rounded-lg border border-brand-200 px-4 py-3 text-brand-900 focus:border-accent-500 focus:ring-2 focus:ring-accent-500/20" placeholder="name@example.com"></label>
+      </div>
+      <div class="flex flex-wrap items-center gap-4">
+        <button type="submit" class="bg-accent-500 hover:bg-accent-600 text-white px-8 py-3.5 rounded-lg font-bold text-lg shadow-lg">שליחת התכנון ל-i-feel</button>
+        <span class="text-brand-600 text-sm">או התקשרו: <a href="tel:+972-3-508-9553" class="font-bold text-accent-600 hover:text-accent-500">03-508-9553</a></span>
+      </div>
+    </form>
+  </div>
+
+</div></section>
+
+<!-- Icon picker modal -->
+<div id="picker-overlay" class="hidden fixed inset-0 z-50 bg-brand-900/60 p-4 overflow-y-auto">
+  <div class="max-w-2xl mx-auto my-8 bg-white rounded-2xl shadow-2xl">
+    <div class="flex items-center justify-between gap-3 p-4 border-b border-brand-100">
+      <h3 class="font-extrabold text-brand-900 text-lg">בחירת אייקון <span id="picker-target-label" class="font-medium text-brand-500 text-sm"></span></h3>
+      <button type="button" id="picker-close" class="w-9 h-9 rounded-full bg-brand-50 hover:bg-brand-100 text-brand-700 font-bold text-lg" aria-label="סגירה">✕</button>
+    </div>
+    <div class="p-4">
+      <input type="text" id="picker-search" class="w-full rounded-lg border border-brand-200 px-4 py-2.5 mb-4 text-brand-900 focus:border-accent-500 focus:ring-2 focus:ring-accent-500/20" placeholder="חיפוש: תאורה, תריס, תרחיש...">
+      <button type="button" id="picker-remove" class="hidden w-full mb-4 bg-red-50 hover:bg-red-100 text-red-700 border border-red-200 rounded-lg px-4 py-2.5 font-semibold">הסרת האייקון מהלחצן הזה</button>
+      <div id="picker-icons" class="max-h-[55vh] overflow-y-auto"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Printable sheet (populated by JS, visible only in print) -->
+<div id="print-area" class="hidden"></div>
+
+<style>
+  .knx-cell { aspect-ratio: 1.15; }
+  .knx-cell.drag-over { outline: 3px dashed #d4a544; outline-offset: -3px; }
+  .knx-icon-svg svg { width: 100%; height: 100%; display: block; }
+  @media print {
+    body * { visibility: hidden; }
+    #print-area, #print-area * { visibility: visible; }
+    #print-area { display: block !important; position: absolute; inset: 0; width: 100%; background: white; }
+    .print-switch { break-inside: avoid; page-break-inside: avoid; }
+  }
+</style>
+
+<script>
+(function () {
+  'use strict';
+
+  /* ---------- Siemens TC4/TC5 official icon library (ETS Replacement IDs) ---------- */
+  function svg(inner) {
+    return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg">' + inner + '</svg>';
+  }
+  var ICONS = [
+    { id: 's0', rid: 0, ets: 'Switch/Dim_default', name: 'תאורה — נורה', cat: 'תאורה', svg: svg('<path d="M12 4a5 5 0 0 1 3.3 8.8c-.5.4-.8 1.2-.8 2H9.5c0-.8-.3-1.6-.8-2A5 5 0 0 1 12 4z"/><path d="M10 17.5h4"/><path d="M10.5 20h3"/><path d="M12 1.2v1.5"/><path d="M5.2 4.2l1.1 1.1"/><path d="M18.8 4.2l-1.1 1.1"/>') },
+    { id: 's12', rid: 12, ets: 'Ceiling light', name: 'צמוד תקרה', cat: 'תאורה', svg: svg('<path d="M6 10c0-3.3 2.7-6 6-6s6 2.7 6 6z"/><path d="M4 10h16"/><path d="M8 13.5l-1 2"/><path d="M12 14v2.2"/><path d="M16 13.5l1 2"/>') },
+    { id: 's13', rid: 13, ets: 'Downlight', name: 'שקוע (דאונלייט)', cat: 'תאורה', svg: svg('<ellipse cx="12" cy="8" rx="7" ry="2.5"/><path d="M8 13l-1 2.5"/><path d="M12 13.5v2.5"/><path d="M16 13l1 2.5"/>') },
+    { id: 's14', rid: 14, ets: 'Wall light', name: 'תאורת קיר', cat: 'תאורה', svg: svg('<path d="M19 4v16"/><path d="M19 10h-4.5"/><path d="M7.5 6.5h7l-2 6.5h-3z"/><path d="M11 16v.01"/>') },
+    { id: 's15', rid: 15, ets: 'Spotlight', name: 'ספוט', cat: 'תאורה', svg: svg('<path d="M16 3l5 5"/><path d="M13 5l6 6-4 3.5c-2.6.4-5.9-2.9-5.5-5.5z"/><path d="M10 14.5L6 20"/>') },
+    { id: 's16', rid: 16, ets: 'Chandelier', name: 'נברשת', cat: 'תאורה', svg: svg('<path d="M12 3v4"/><path d="M6.5 13a5.5 5.5 0 0 1 11 0z"/><path d="M9 13v1.5"/><path d="M15 13v1.5"/><path d="M12 13v2.5"/>') },
+    { id: 's3', rid: 3, ets: 'Curtain_default', name: 'וילון', cat: 'תריסים ווילונות', svg: svg('<rect x="4" y="4" width="16" height="16" rx="1"/><path d="M12 4c-1 4-4 6-6.5 6.5"/><path d="M12 4c1 4 4 6 6.5 6.5"/><path d="M12 4v3"/>') },
+    { id: 's4', rid: 4, ets: 'Roller shutter_default', name: 'תריס גלילה', cat: 'תריסים ווילונות', svg: svg('<rect x="5" y="4" width="14" height="16" rx="1"/><path d="M5 7h14"/><path d="M5 10h14"/><path d="M5 13h14"/><path d="M5 16h14"/>') },
+    { id: 's5', rid: 5, ets: 'Venetian blind_default', name: 'תריס ונציאני', cat: 'תריסים ווילונות', svg: svg('<path d="M4 5h16"/><path d="M4 8.5h16"/><path d="M4 12h16"/><path d="M4 15.5h16"/><path d="M4 19h16"/>') },
+    { id: 's22', rid: 22, ets: 'On', name: 'הדלקה (On)', cat: 'מצבים', svg: svg('<circle cx="12" cy="12" r="8"/><path d="M12 8v8"/>') },
+    { id: 's23', rid: 23, ets: 'Off', name: 'כיבוי (Off)', cat: 'מצבים', svg: svg('<circle cx="12" cy="12" r="8"/><path d="M8 12h8"/>') },
+    { id: 's24', rid: 24, ets: 'Occupied 1', name: 'נוכחות בבית 1', cat: 'מצבים', svg: svg('<path d="M4 11l8-6 8 6"/><path d="M6 10v10h12V10"/><circle cx="12" cy="13" r="1.6"/><path d="M9.8 20v-2a2.2 2.2 0 0 1 4.4 0v2"/>') },
+    { id: 's25', rid: 25, ets: 'Unoccupied 1', name: 'יציאה מהבית 1', cat: 'מצבים', svg: svg('<path d="M4 10l7-5 7 5"/><path d="M6 9.5V19h10V9.5"/><circle cx="19.5" cy="13.5" r="1.4"/><path d="M17.8 20v-1.8a1.8 1.8 0 0 1 3.4 0V20"/>') },
+    { id: 's26', rid: 26, ets: 'Occupied 2', name: 'נוכחות בבית 2', cat: 'מצבים', svg: svg('<path d="M4 11l8-6 8 6"/><path d="M6 10v10h12V10"/><circle cx="12" cy="12.5" r="1.8"/><path d="M9 20v-2.5a3 3 0 0 1 6 0V20"/>') },
+    { id: 's27', rid: 27, ets: 'Unoccupied 2', name: 'בית ריק 2', cat: 'מצבים', svg: svg('<path d="M4 11l8-6 8 6"/><path d="M6 10v10h12V10"/>') },
+    { id: 's1', rid: 1, ets: 'Send value_default', name: 'שליחת ערך (כוכב)', cat: 'תרחישים ואווירה', svg: svg('<path d="M12 3l2.5 5.4 5.9.6-4.4 4 1.2 5.8L12 15.9l-5.2 2.9L8 13 3.6 9l5.9-.6z"/>') },
+    { id: 's2', rid: 2, ets: 'Scene control_default', name: 'תרחיש (קלאפר)', cat: 'תרחישים ואווירה', svg: svg('<rect x="4" y="9" width="16" height="10" rx="1"/><path d="M4 9l1.5-4H20l-1.5 4"/><path d="M8.5 5.5L7 9"/><path d="M13 5.3L11.5 9"/><path d="M17.5 5.2L16 9"/>') },
+    { id: 's28', rid: 28, ets: 'Welcome', name: 'ברוכים הבאים', cat: 'תרחישים ואווירה', svg: svg('<path d="M4 8V5a1 1 0 0 1 1-1h3"/><path d="M20 8V5a1 1 0 0 0-1-1h-3"/><path d="M4 16v3a1 1 0 0 0 1 1h3"/><path d="M20 16v3a1 1 0 0 1-1 1h-3"/><path d="M9 10v1"/><path d="M15 10v1"/><path d="M9 14.5c.8.8 1.8 1.2 3 1.2s2.2-.4 3-1.2"/>') },
+    { id: 's29', rid: 29, ets: 'Visiting', name: 'אירוח', cat: 'תרחישים ואווירה', svg: svg('<path d="M3 9.5l4.5-2 4 2"/><path d="M21 9.5l-4.5-2-3 1.5"/><path d="M7.5 13.5l3 3a1.5 1.5 0 0 0 2.1-2.1"/><path d="M10 11.5l3.7 3.7a1.5 1.5 0 0 0 2.1-2.1l-3.3-3.3"/>') },
+    { id: 's30', rid: 30, ets: 'Dinner', name: 'ארוחה', cat: 'תרחישים ואווירה', svg: svg('<path d="M8 3v6"/><path d="M6 3v4"/><path d="M10 3v4"/><path d="M8 9v12"/><path d="M15.5 3c-1.4 1.5-1.9 5-1 7h2v11"/>') },
+    { id: 's31', rid: 31, ets: 'Party', name: 'מסיבה', cat: 'תרחישים ואווירה', svg: svg('<path d="M5 4h14l-7 8z"/><path d="M12 12v7"/><path d="M8.5 21h7"/><circle cx="16.5" cy="5" r="1.2"/>') },
+    { id: 's32', rid: 32, ets: 'Meeting', name: 'ישיבה / פגישה', cat: 'תרחישים ואווירה', svg: svg('<circle cx="8" cy="8" r="1.7"/><circle cx="16" cy="8" r="1.7"/><path d="M5.5 15v-1.3a2.5 2.5 0 0 1 5 0V15"/><path d="M13.5 15v-1.3a2.5 2.5 0 0 1 5 0V15"/><path d="M4 17.5h16"/><path d="M8 17.5V20"/><path d="M16 17.5V20"/>') },
+    { id: 's33', rid: 33, ets: 'Sleeping', name: 'שינה', cat: 'תרחישים ואווירה', svg: svg('<path d="M3 18v-5"/><path d="M3 15.5h18V18"/><circle cx="6.8" cy="13" r="1.5"/><path d="M9.8 15.5v-1.3c0-.9.7-1.7 1.7-1.7h6c1.9 0 3.5 1.3 3.5 3"/>') },
+    { id: 's34', rid: 34, ets: 'Reading', name: 'קריאה', cat: 'תרחישים ואווירה', svg: svg('<path d="M5 4h3v16H5z"/><path d="M9.5 4h3v16h-3z"/><path d="M14 5l3.5-.8L21 19l-3.5.8z"/>') },
+    { id: 's36', rid: 36, ets: 'Cleaning', name: 'ניקיון', cat: 'תרחישים ואווירה', svg: svg('<path d="M5.5 9h13l-1.4 9.5a2 2 0 0 1-2 1.7H8.9a2 2 0 0 1-2-1.7z"/><path d="M7.5 9a4.5 4.5 0 0 1 9 0"/>') },
+    { id: 's35', rid: 35, ets: 'Media', name: 'מדיה (נגן)', cat: 'מדיה', svg: svg('<circle cx="12" cy="12" r="8"/><path d="M10 8.5v7l6-3.5z"/>') },
+    { id: 's37', rid: 37, ets: 'TV', name: 'טלוויזיה', cat: 'מדיה', svg: svg('<rect x="3.5" y="5" width="17" height="11" rx="1.5"/><path d="M9 20h6"/><path d="M12 16v4"/>') },
+    { id: 's38', rid: 38, ets: 'Audio', name: 'אודיו / מוזיקה', cat: 'מדיה', svg: svg('<path d="M9.5 18V5.5L19 4v11"/><circle cx="7.5" cy="18" r="2.2"/><circle cx="17" cy="15" r="2.2"/>') },
+    { id: 's49', rid: 49, ets: 'Projector', name: 'מקרן', cat: 'מדיה', svg: svg('<rect x="3.5" y="9" width="17" height="7" rx="1.5"/><circle cx="8" cy="12.5" r="2"/><path d="M14 12.5h4"/><path d="M6.5 16v2"/><path d="M17.5 16v2"/>') },
+    { id: 's50', rid: 50, ets: 'Multimedia', name: 'מולטימדיה', cat: 'מדיה', svg: svg('<rect x="4" y="4" width="16" height="11" rx="1"/><path d="M10.5 6.8v5.4l4.5-2.7z"/><path d="M4 18.5h16"/>') },
+    { id: 's41', rid: 41, ets: 'Fan', name: 'מאוורר', cat: 'אקלים', svg: svg('<circle cx="12" cy="12" r="1.5"/><path d="M12 10.5C10.8 7 12.3 4.3 14.5 5s.6 4.7-2.5 5.5z"/><path d="M13.5 12c3.5-1.2 6.2.3 5.5 2.5s-4.7.6-5.5-2.5z"/><path d="M10.5 13.5c-1.5 3.3-4.2 4.4-5.7 2.7s1.6-4.5 5.7-2.7z"/>') },
+    { id: 's51', rid: 51, ets: 'Electric heating', name: 'חימום חשמלי', cat: 'אקלים', svg: svg('<rect x="4" y="6" width="16" height="10" rx="1.5"/><path d="M7 9v4"/><path d="M10.3 9v4"/><path d="M13.6 9v4"/><path d="M17 9v4"/><path d="M7 19h.01"/><path d="M10 19h.01"/>') },
+    { id: 's52', rid: 52, ets: 'Air conditioner 1', name: 'מזגן 1 (קירור)', cat: 'אקלים', svg: svg('<rect x="3.5" y="5" width="17" height="6.5" rx="1.5"/><path d="M3.5 9h17"/><path d="M7.5 14.5c0 1.5-1 1.7-1 3.2"/><path d="M12 14.5c0 1.5-1 1.7-1 3.2"/><path d="M16.5 14.5c0 1.5-1 1.7-1 3.2"/>') },
+    { id: 's53', rid: 53, ets: 'Air conditioner 2', name: 'מזגן 2 (חימום)', cat: 'אקלים', svg: svg('<rect x="3.5" y="5" width="17" height="6.5" rx="1.5"/><path d="M3.5 9h17"/><path d="M7 14.5c1 .9 1 1.9 0 2.8"/><path d="M11.5 14.5c1 .9 1 1.9 0 2.8"/><path d="M16 14.5c1 .9 1 1.9 0 2.8"/>') },
+    { id: 's54', rid: 54, ets: 'Fresh air', name: 'אוויר צח', cat: 'אקלים', svg: svg('<path d="M4 11l8-6 8 6"/><path d="M6 10v9h12v-9"/><path d="M9 13.5h3.5a1.5 1.5 0 1 0-1.5-1.5"/><path d="M9 16.5h5a1.5 1.5 0 1 1-1.5 1.5"/>') },
+    { id: 's40', rid: 40, ets: 'Socket (EU)', name: 'שקע', cat: 'כללי', svg: svg('<circle cx="12" cy="12" r="8"/><circle cx="9.5" cy="12" r="1"/><circle cx="14.5" cy="12" r="1"/><path d="M12 4.5V6"/><path d="M12 18v1.5"/>') },
+    { id: 's42', rid: 42, ets: 'Door lock', name: 'נעילת דלת', cat: 'כללי', svg: svg('<path d="M5 21V4a1 1 0 0 1 1-1h8v18"/><path d="M4 21h10"/><rect x="14.5" y="11.5" width="6.5" height="5.5" rx="1"/><path d="M16 11.5V10a1.8 1.8 0 0 1 3.6 0v1.5"/>') },
+    { id: 's43', rid: 43, ets: 'Door access', name: 'בקרת כניסה (כרטיס)', cat: 'כללי', svg: svg('<rect x="4" y="6" width="16" height="12" rx="1.5"/><circle cx="9" cy="12" r="1.8"/><path d="M10.8 12H17"/><path d="M15 12v1.8"/>') },
+    { id: 's44', rid: 44, ets: 'Power supply', name: 'חשמל / ספק כוח', cat: 'כללי', svg: svg('<path d="M9 3v5"/><path d="M15 3v5"/><path d="M6.5 8h11v3a5.5 5.5 0 0 1-11 0z"/><path d="M12 16.5V21"/>') },
+    { id: 's45', rid: 45, ets: 'Window 1', name: 'חלון 1 (נפתח)', cat: 'כללי', svg: svg('<path d="M4 15l9-10 7 5-9 10z"/><path d="M6.5 14.5L15 6"/>') },
+    { id: 's46', rid: 46, ets: 'Window 2', name: 'חלון 2 (כנפיים)', cat: 'כללי', svg: svg('<rect x="8" y="5" width="8" height="14"/><path d="M8 5L4 3.5v16L8 19"/><path d="M16 5l4-1.5v16L16 19"/>') },
+    { id: 's47', rid: 47, ets: 'Alarm', name: 'אזעקה / התראה', cat: 'כללי', svg: svg('<path d="M12 4L21 19H3z"/><path d="M12 10v4"/><path d="M12 16.5v.01"/>') },
+    { id: 's48', rid: 48, ets: 'Timer', name: 'טיימר', cat: 'כללי', svg: svg('<circle cx="12" cy="13" r="7.5"/><path d="M12 13l3-3.5"/><path d="M10 3h4"/><path d="M12 3v2.5"/>') },
+    { id: 's55', rid: 55, ets: 'Setting', name: 'הגדרות', cat: 'כללי', svg: svg('<circle cx="12" cy="12" r="7"/><circle cx="12" cy="12" r="3"/><path d="M12 2.8v2.2"/><path d="M12 19v2.2"/><path d="M2.8 12H5"/><path d="M19 12h2.2"/><path d="M5.5 5.5L7 7"/><path d="M17 17l1.5 1.5"/><path d="M18.5 5.5L17 7"/><path d="M7 17l-1.5 1.5"/>') },
+    { id: 's11', rid: 11, ets: 'No icon, only text', name: 'ללא אייקון — טקסט בלבד', cat: 'כללי', svg: svg('<text x="12" y="10.5" text-anchor="middle" font-size="6.5" font-weight="700" fill="currentColor" stroke="none" font-family="Heebo,Arial,sans-serif">טקסט</text><text x="12" y="18.5" text-anchor="middle" font-size="6.5" font-weight="700" fill="currentColor" stroke="none" font-family="Heebo,Arial,sans-serif">בלבד</text>') }
+  ];
+  var CATS = ['תאורה', 'תריסים ווילונות', 'מצבים', 'תרחישים ואווירה', 'מדיה', 'אקלים', 'כללי'];
+  function iconById(id) { for (var i = 0; i < ICONS.length; i++) if (ICONS[i].id === id) return ICONS[i]; return null; }
+
+  var MODELS = {
+    tc4: { label: 'Siemens TC4 — עד 6 לחצנים בדף', buttons: 6 },
+    tc5: { label: 'Siemens TC5 — עד 8 לחצנים בדף', buttons: 8 }
+  };
+  var MAX_PAGES = 8;
+
+  /* ---------- State ---------- */
+  var STORAGE_KEY = 'ifeel-knx-switch-config-v1';
+  function emptyCells(n) { var a = []; for (var i = 0; i < n; i++) a.push(null); return a; }
+  function newPage(model, name) { return { name: name || '', cells: emptyCells(MODELS[model].buttons) }; }
+  function newSwitch() { return { location: '', model: 'tc5', pages: [newPage('tc5', 'דף 1')], active: 0 }; }
+
+  var state = { switches: [] };
+  try {
+    var saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null');
+    if (saved && saved.switches && saved.switches.length) state = saved;
+  } catch (e) { /* corrupted storage — start fresh */ }
+  if (!state.switches.length) state.switches.push(newSwitch());
+  state.switches.forEach(function (sw) {
+    if (!MODELS[sw.model]) sw.model = 'tc5';
+    if (!sw.pages || !sw.pages.length) sw.pages = [newPage(sw.model, 'דף 1')];
+    sw.active = Math.min(sw.active || 0, sw.pages.length - 1);
+    sw.pages.forEach(function (p) { p.cells = p.cells.slice(0, MODELS[sw.model].buttons).map(function (c) { return iconById(c) ? c : null; }); while (p.cells.length < MODELS[sw.model].buttons) p.cells.push(null); });
+  });
+
+  function save() { try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch (e) {} }
+
+  /* ---------- Rendering ---------- */
+  var switchesEl = document.getElementById('switches');
+  var paletteEl = document.getElementById('palette');
+
+  function renderAll() {
+    switchesEl.innerHTML = '';
+    state.switches.forEach(function (sw, si) { switchesEl.appendChild(renderSwitch(sw, si)); });
+    save();
+  }
+
+  function renderSwitch(sw, si) {
+    var card = document.createElement('div');
+    card.className = 'bg-white rounded-2xl border border-brand-100 shadow-sm p-5';
+
+    var head = document.createElement('div');
+    head.className = 'flex items-center gap-2 mb-3';
+    var loc = document.createElement('input');
+    loc.type = 'text';
+    loc.value = sw.location;
+    loc.placeholder = 'מיקום בבית — למשל: סלון';
+    loc.className = 'flex-1 rounded-lg border border-brand-200 px-3 py-2 font-bold text-brand-900 focus:border-accent-500 focus:ring-2 focus:ring-accent-500/20';
+    loc.addEventListener('input', function () { sw.location = loc.value; save(); });
+    var del = document.createElement('button');
+    del.type = 'button';
+    del.className = 'w-9 h-9 rounded-lg bg-brand-50 hover:bg-red-50 hover:text-red-600 text-brand-500 font-bold';
+    del.title = 'מחיקת המפסק';
+    del.textContent = '✕';
+    del.addEventListener('click', function () {
+      if (confirm('למחוק את המפסק הזה?')) { state.switches.splice(si, 1); if (!state.switches.length) state.switches.push(newSwitch()); renderAll(); }
+    });
+    head.appendChild(loc); head.appendChild(del);
+    card.appendChild(head);
+
+    var modelSel = document.createElement('select');
+    modelSel.className = 'w-full rounded-lg border border-brand-200 px-3 py-2 mb-3 text-brand-900 text-sm focus:border-accent-500';
+    Object.keys(MODELS).forEach(function (mk) {
+      var opt = document.createElement('option');
+      opt.value = mk; opt.textContent = MODELS[mk].label; opt.selected = sw.model === mk;
+      modelSel.appendChild(opt);
+    });
+    modelSel.addEventListener('change', function () {
+      sw.model = modelSel.value;
+      var n = MODELS[sw.model].buttons;
+      sw.pages.forEach(function (p) { p.cells = p.cells.slice(0, n); while (p.cells.length < n) p.cells.push(null); });
+      renderAll();
+    });
+    card.appendChild(modelSel);
+
+    var tabs = document.createElement('div');
+    tabs.className = 'flex flex-wrap items-center gap-1.5 mb-3';
+    sw.pages.forEach(function (p, pi) {
+      var tab = document.createElement('button');
+      tab.type = 'button';
+      tab.className = 'px-3 py-1.5 rounded-lg text-sm font-semibold ' + (pi === sw.active ? 'bg-brand-700 text-white' : 'bg-brand-50 text-brand-700 hover:bg-brand-100 border border-brand-200');
+      tab.textContent = p.name || ('דף ' + (pi + 1));
+      tab.addEventListener('click', function () { sw.active = pi; renderAll(); });
+      tabs.appendChild(tab);
+    });
+    if (sw.pages.length < MAX_PAGES) {
+      var addP = document.createElement('button');
+      addP.type = 'button';
+      addP.className = 'px-3 py-1.5 rounded-lg text-sm font-bold bg-accent-500/10 text-accent-700 hover:bg-accent-500/20 border border-accent-500/30';
+      addP.textContent = '+ דף';
+      addP.title = 'הוספת דף למפסק (Swipe)';
+      addP.addEventListener('click', function () {
+        sw.pages.push(newPage(sw.model, 'דף ' + (sw.pages.length + 1)));
+        sw.active = sw.pages.length - 1;
+        renderAll();
+      });
+      tabs.appendChild(addP);
+    }
+    card.appendChild(tabs);
+
+    var page = sw.pages[sw.active];
+    var pageHead = document.createElement('div');
+    pageHead.className = 'flex items-center gap-2 mb-3';
+    var pname = document.createElement('input');
+    pname.type = 'text';
+    pname.value = page.name;
+    pname.placeholder = 'שם הדף — למשל: תאורה, תריסים, תרחישים';
+    pname.className = 'flex-1 rounded-lg border border-brand-200 px-3 py-1.5 text-sm text-brand-900 focus:border-accent-500';
+    pname.addEventListener('input', function () { page.name = pname.value; save(); });
+    pageHead.appendChild(pname);
+    if (sw.pages.length > 1) {
+      var delP = document.createElement('button');
+      delP.type = 'button';
+      delP.className = 'px-2.5 py-1.5 rounded-lg bg-brand-50 hover:bg-red-50 hover:text-red-600 text-brand-500 text-xs font-bold';
+      delP.textContent = 'מחיקת דף';
+      delP.addEventListener('click', function () {
+        if (confirm('למחוק את הדף הזה מהמפסק?')) { sw.pages.splice(sw.active, 1); sw.active = Math.max(0, sw.active - 1); renderAll(); }
+      });
+      pageHead.appendChild(delP);
+    }
+    card.appendChild(pageHead);
+
+    var panel = document.createElement('div');
+    panel.className = 'bg-brand-900 rounded-2xl p-4 max-w-[260px] mx-auto';
+    var grid = document.createElement('div');
+    grid.className = 'grid grid-cols-2 gap-2';
+    for (var c = 0; c < MODELS[sw.model].buttons; c++) grid.appendChild(renderCell(sw, si, sw.active, c));
+    panel.appendChild(grid);
+    card.appendChild(panel);
+
+    var hint = document.createElement('p');
+    hint.className = 'text-xs text-brand-400 mt-3 text-center';
+    hint.textContent = 'לחצן 1 בפינה הימנית העליונה; הספירה מימין לשמאל, שורה אחר שורה — בכל דף.';
+    card.appendChild(hint);
+    return card;
+  }
+
+  function renderCell(sw, si, pi, ci) {
+    var cell = document.createElement('button');
+    cell.type = 'button';
+    var iconId = sw.pages[pi].cells[ci];
+    var icon = iconId ? iconById(iconId) : null;
+    cell.className = 'knx-cell relative rounded-xl flex flex-col items-center justify-center gap-0.5 transition ' + (icon ? 'bg-brand-700 text-accent-300 hover:bg-brand-600' : 'bg-brand-800 text-brand-500 hover:bg-brand-700 border-2 border-dashed border-brand-600');
+    var num = document.createElement('span');
+    num.className = 'absolute top-1 right-1.5 text-[10px] font-bold ' + (icon ? 'text-accent-300/70' : 'text-brand-500');
+    num.textContent = ci + 1;
+    cell.appendChild(num);
+    if (icon) {
+      var holder = document.createElement('span');
+      holder.className = 'knx-icon-svg w-8 h-8';
+      holder.innerHTML = icon.svg;
+      cell.appendChild(holder);
+      var label = document.createElement('span');
+      label.className = 'text-[9px] leading-tight text-brand-100 px-0.5 text-center';
+      label.textContent = icon.name;
+      cell.appendChild(label);
+    } else {
+      var plus = document.createElement('span');
+      plus.className = 'text-2xl leading-none';
+      plus.textContent = '+';
+      cell.appendChild(plus);
+    }
+    cell.addEventListener('click', function () { openPicker(si, pi, ci); });
+    cell.addEventListener('dragover', function (e) { e.preventDefault(); cell.classList.add('drag-over'); });
+    cell.addEventListener('dragleave', function () { cell.classList.remove('drag-over'); });
+    cell.addEventListener('drop', function (e) {
+      e.preventDefault(); cell.classList.remove('drag-over');
+      var id = e.dataTransfer.getData('text/plain');
+      if (iconById(id)) { state.switches[si].pages[pi].cells[ci] = id; renderAll(); }
+    });
+    return cell;
+  }
+
+  function paletteItem(icon, forModal) {
+    var el = document.createElement('button');
+    el.type = 'button';
+    el.className = 'flex flex-col items-center gap-1 rounded-xl border border-brand-100 hover:border-accent-400 hover:bg-accent-500/5 p-2 text-brand-700';
+    var holder = document.createElement('span');
+    holder.className = 'knx-icon-svg w-8 h-8 text-brand-700';
+    holder.innerHTML = icon.svg;
+    el.appendChild(holder);
+    var label = document.createElement('span');
+    label.className = 'text-[11px] leading-tight text-center';
+    label.textContent = icon.name;
+    el.appendChild(label);
+    var rid = document.createElement('span');
+    rid.className = 'text-[9px] text-brand-400';
+    rid.textContent = 'ID ' + icon.rid;
+    el.appendChild(rid);
+    if (!forModal) {
+      el.draggable = true;
+      el.title = 'גררו אל לחצן במפסק';
+      el.addEventListener('dragstart', function (e) { e.dataTransfer.setData('text/plain', icon.id); });
+      el.addEventListener('click', function () { alert('גררו את האייקון אל לחצן במפסק, או לחצו על לחצן במפסק ובחרו אייקון מהחלון שייפתח.'); });
+    }
+    return el;
+  }
+
+  function renderPalette(container, forModal, filter) {
+    container.innerHTML = '';
+    CATS.forEach(function (cat) {
+      var icons = ICONS.filter(function (ic) {
+        if (ic.cat !== cat) return false;
+        if (filter && ic.name.indexOf(filter) === -1 && ic.ets.toLowerCase().indexOf(filter.toLowerCase()) === -1 && cat.indexOf(filter) === -1) return false;
+        return true;
+      });
+      if (!icons.length) return;
+      var h = document.createElement('div');
+      h.className = 'text-xs font-bold text-brand-500 mt-3 mb-1.5 first:mt-0';
+      h.textContent = cat;
+      container.appendChild(h);
+      var grid = document.createElement('div');
+      grid.className = forModal ? 'grid grid-cols-4 sm:grid-cols-5 gap-2' : 'grid grid-cols-3 gap-2';
+      icons.forEach(function (icon) {
+        var item = paletteItem(icon, forModal);
+        if (forModal) item.addEventListener('click', function () { pickIcon(icon.id); });
+        grid.appendChild(item);
+      });
+      container.appendChild(grid);
+    });
+  }
+
+  /* ---------- Icon picker modal ---------- */
+  var overlay = document.getElementById('picker-overlay');
+  var pickerIcons = document.getElementById('picker-icons');
+  var pickerSearch = document.getElementById('picker-search');
+  var pickerRemove = document.getElementById('picker-remove');
+  var pickerLabel = document.getElementById('picker-target-label');
+  var pickTarget = null;
+
+  function openPicker(si, pi, ci) {
+    pickTarget = { si: si, pi: pi, ci: ci };
+    var sw = state.switches[si];
+    pickerLabel.textContent = '— ' + (sw.location || 'מפסק ' + (si + 1)) + ', ' + (sw.pages[pi].name || 'דף ' + (pi + 1)) + ', לחצן ' + (ci + 1);
+    pickerRemove.classList.toggle('hidden', !sw.pages[pi].cells[ci]);
+    pickerSearch.value = '';
+    renderPalette(pickerIcons, true, '');
+    overlay.classList.remove('hidden');
+    document.body.style.overflow = 'hidden';
+  }
+  function closePicker() { overlay.classList.add('hidden'); document.body.style.overflow = ''; pickTarget = null; }
+  function pickIcon(id) {
+    if (pickTarget) { state.switches[pickTarget.si].pages[pickTarget.pi].cells[pickTarget.ci] = id; renderAll(); }
+    closePicker();
+  }
+  document.getElementById('picker-close').addEventListener('click', closePicker);
+  overlay.addEventListener('click', function (e) { if (e.target === overlay) closePicker(); });
+  pickerSearch.addEventListener('input', function () { renderPalette(pickerIcons, true, pickerSearch.value.trim()); });
+  pickerRemove.addEventListener('click', function () {
+    if (pickTarget) { state.switches[pickTarget.si].pages[pickTarget.pi].cells[pickTarget.ci] = null; renderAll(); }
+    closePicker();
+  });
+
+  /* ---------- Toolbar ---------- */
+  document.getElementById('add-switch').addEventListener('click', function () {
+    state.switches.push(newSwitch());
+    renderAll();
+    switchesEl.lastElementChild.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    switchesEl.lastElementChild.querySelector('input').focus();
+  });
+  document.getElementById('clear-all').addEventListener('click', function () {
+    if (confirm('לנקות את כל המפסקים ולהתחיל מחדש?')) {
+      state = { switches: [newSwitch()] };
+      renderAll();
+    }
+  });
+
+  /* ---------- Print ---------- */
+  document.getElementById('print-btn').addEventListener('click', function () {
+    var area = document.getElementById('print-area');
+    var d = new Date();
+    var dateStr = d.getDate() + '.' + (d.getMonth() + 1) + '.' + d.getFullYear();
+    var nameVal = document.querySelector('#send-form input[name="name"]').value;
+    var phoneVal = document.querySelector('#send-form input[name="phone"]').value;
+    var html = '<div dir="rtl" style="font-family:Heebo,system-ui,sans-serif;color:#0f1f36;padding:24px;">';
+    html += '<div style="display:flex;justify-content:space-between;align-items:center;border-bottom:3px solid #d4a544;padding-bottom:12px;margin-bottom:6px;">';
+    html += '<div><div style="font-size:22px;font-weight:800;">תכנון מפסקי KNX — סימנס TC4/TC5</div>';
+    html += '<div style="font-size:13px;color:#285183;">i-feel בית חכם ובקרת מבנה · 03-508-9553 · i-feel.co.il</div></div>';
+    html += '<div style="font-size:13px;color:#285183;text-align:left;">תאריך: ' + dateStr + (nameVal ? '<br>לקוח: ' + escapeHtml(nameVal) : '') + (phoneVal ? '<br>טלפון: ' + escapeHtml(phoneVal) : '') + '</div></div>';
+    html += '<div style="font-size:12px;color:#5285ba;margin-bottom:18px;">מספור הלחצנים בכל דף: לחצן 1 בפינה הימנית העליונה, מימין לשמאל, שורה אחר שורה. ליד כל אייקון מצוין ה-ID הרשמי לתכנות ב-ETS.</div>';
+    state.switches.forEach(function (sw, si) {
+      html += '<div class="print-switch" style="border:1px solid #b4cce5;border-radius:14px;padding:14px;margin-bottom:16px;">';
+      html += '<div style="font-weight:800;font-size:16px;margin-bottom:2px;">' + (sw.location ? escapeHtml(sw.location) : 'מפסק ' + (si + 1)) + '</div>';
+      html += '<div style="font-size:12px;color:#285183;margin-bottom:10px;">' + MODELS[sw.model].label + ' · ' + sw.pages.length + ' דפים</div>';
+      html += '<div style="display:flex;flex-wrap:wrap;gap:14px;">';
+      sw.pages.forEach(function (p, pi) {
+        html += '<div style="width:220px;">';
+        html += '<div style="font-weight:700;font-size:13px;text-align:center;margin-bottom:6px;border-bottom:1px solid #dae6f2;padding-bottom:4px;">' + (p.name ? escapeHtml(p.name) : 'דף ' + (pi + 1)) + '</div>';
+        html += '<div style="background:#0f1f36;border-radius:10px;padding:8px;"><div style="display:grid;grid-template-columns:repeat(2,1fr);gap:5px;">';
+        p.cells.forEach(function (cellId, ci) {
+          var icon = cellId ? iconById(cellId) : null;
+          html += '<div style="aspect-ratio:1.15;border-radius:7px;background:' + (icon ? '#1e3e66' : '#16294a') + ';position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;color:#ecd08a;">';
+          html += '<span style="position:absolute;top:2px;right:5px;font-size:9px;color:#83a8d1;">' + (ci + 1) + '</span>';
+          if (icon) {
+            html += '<span style="width:26px;height:26px;display:block;">' + icon.svg + '</span>';
+            html += '<span style="font-size:8px;color:#dae6f2;text-align:center;line-height:1.1;">' + icon.name + '</span>';
+          } else {
+            html += '<span style="font-size:10px;color:#3868a0;">ריק</span>';
+          }
+          html += '</div>';
+        });
+        html += '</div></div>';
+        var lines = [];
+        p.cells.forEach(function (cellId, ci) { if (cellId) { var ic = iconById(cellId); if (ic) lines.push((ci + 1) + ' — ' + ic.name + ' (ID ' + ic.rid + ')'); } });
+        if (lines.length) html += '<div style="font-size:10.5px;color:#285183;margin-top:6px;line-height:1.55;">' + lines.join('<br>') + '</div>';
+        html += '</div>';
+      });
+      html += '</div></div>';
+    });
+    html += '<div style="margin-top:8px;font-size:12px;color:#5285ba;border-top:1px solid #dae6f2;padding-top:10px;">את הדף הזה שולחים ל-i-feel — במייל sales@i-feel.co.il או דרך טופס השליחה באתר: i-feel.co.il/knx-switch-configurator/ · טלפון 03-508-9553</div>';
+    html += '</div>';
+    area.innerHTML = html;
+    area.classList.remove('hidden');
+    window.print();
+    setTimeout(function () { area.classList.add('hidden'); }, 500);
+  });
+
+  function escapeHtml(s) {
+    return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  }
+
+  /* ---------- Send form ---------- */
+  document.getElementById('send-form').addEventListener('submit', function (e) {
+    var hasContent = state.switches.some(function (sw) { return sw.pages.some(function (p) { return p.cells.some(function (c) { return c; }); }); });
+    if (!hasContent) {
+      e.preventDefault();
+      alert('עוד לא נבחרו אייקונים. הוסיפו לפחות אייקון אחד למפסק לפני השליחה.');
+      return;
+    }
+    var lines = ['תכנון מפסקי KNX (סימנס TC4/TC5) מתוך בונה המפסקים באתר:', ''];
+    state.switches.forEach(function (sw, si) {
+      var hasAny = sw.pages.some(function (p) { return p.cells.some(function (c) { return c; }); });
+      if (!hasAny && !sw.location) return;
+      lines.push('◼ מפסק ' + (si + 1) + (sw.location ? ' — ' + sw.location : '') + ' [' + (sw.model === 'tc4' ? 'TC4, 6 לחצנים' : 'TC5, 8 לחצנים') + ', ' + sw.pages.length + ' דפים]:');
+      sw.pages.forEach(function (p, pi) {
+        var cellLines = [];
+        p.cells.forEach(function (cellId, ci) {
+          if (cellId) { var ic = iconById(cellId); if (ic) cellLines.push('לחצן ' + (ci + 1) + ': ' + ic.name + ' (' + ic.ets + ', ID ' + ic.rid + ')'); }
+        });
+        lines.push('  דף ' + (pi + 1) + (p.name ? ' "' + p.name + '"' : '') + ': ' + (cellLines.length ? cellLines.join(' | ') : '(ריק)'));
+      });
+      lines.push('');
+    });
+    lines.push('מספור: לחצן 1 = ימני עליון, מימין לשמאל, שורה אחר שורה, בכל דף. ID = Replacement ID לתכנות ב-ETS.');
+    var msg = lines.join('\n');
+    if (msg.length > 3900) msg = msg.slice(0, 3900) + '\n[קוצר — התכנון המלא שמור אצל הלקוח]';
+    document.getElementById('spec-message').value = msg;
+  });
+
+  /* ---------- Success banner (?lead=...) ---------- */
+  var params = new URLSearchParams(location.search);
+  var leadStatus = params.get('lead');
+  if (leadStatus) {
+    var banner = document.getElementById('lead-banner');
+    banner.classList.remove('hidden');
+    if (leadStatus === 'sent' || leadStatus === 'sent-mail') {
+      banner.className = 'mb-6 rounded-xl px-5 py-4 font-semibold bg-green-50 text-green-800 border border-green-200';
+      banner.textContent = 'התכנון נשלח בהצלחה! צוות התכנות של i-feel קיבל את הפירוט המלא וניצור קשר להמשך. אפשר להמשיך לערוך ולשלוח עדכון בכל שלב.';
+    } else if (leadStatus === 'missing' || leadStatus === 'bad-email') {
+      banner.className = 'mb-6 rounded-xl px-5 py-4 font-semibold bg-amber-50 text-amber-800 border border-amber-200';
+      banner.textContent = 'השליחה לא הושלמה — בדקו ששם, טלפון ואימייל מולאו כראוי ונסו שוב.';
+    } else {
+      banner.className = 'mb-6 rounded-xl px-5 py-4 font-semibold bg-red-50 text-red-800 border border-red-200';
+      banner.textContent = 'אירעה שגיאה בשליחה. נסו שוב, או התקשרו אלינו: 03-508-9553.';
+    }
+    banner.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+
+  /* ---------- Init ---------- */
+  renderPalette(paletteEl, false, '');
+  renderAll();
+})();
+</script>
+
+<section class="bg-white py-12"><div class="max-w-5xl mx-auto px-4"><div class="prose-he">
+<section><h2>למה לבנות את מפסק ה-KNX מראש?</h2><p>מפסקי המגע TC4 ו-TC5 של סימנס הם לב הממשק של <a href="/knx-smart-home/">בית חכם KNX</a>: מפסק אחד על הקיר מחליף שורה של מפסקים — עם דפים שמחליקים ביניהם במגע. דף לתאורה (ואם צריך — שניים), דף לתריסים, דף לתרחישים. כל לחצן מקבל אייקון מתוך המאגר הרשמי של סימנס, וכל אייקון כזה מזוהה במספר (Replacement ID) שהמתכנת מזין ב-ETS — תוכנת התכנות של KNX.</p><p>כשאתם בונים את המפסקים כאן מראש, צוות התכנות של i-feel מקבל מסמך עבודה מדויק: איזה דגם בכל חדר, כמה דפים, מה שם כל דף, ואיזו פונקציה על כל לחצן — כולל ה-ID לתכנות. זה מקצר את זמן ההתקנה ומבטיח שהמפסק ייראה ויעבוד בדיוק כמו שתכננתם. אפשר גם להוריד את <a href="/assets/catalogs/siemens-tc-button-icons.pdf" target="_blank" rel="noopener">דף האייקונים המלא (PDF)</a> לסימון ידני.</p><p>יש לכם מערכת אלחוטית (Z-Wave) עם מפסקי זכוכית GlassWand? לזה יש כלי נפרד — <a href="/switch-configurator/">בונה מפסקי GlassWand</a>.</p></section>
+</div></div></section>

@@ -1,0 +1,57 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import content from '../page-html/knx-switch-configurator.html?raw';
+
+const meta = {
+  title: "בניית מפסק KNX אונליין — דפים ואייקונים למפסקי מגע Siemens TC4/TC5 | i-feel",
+  description: "בונים את מפסקי המגע של סימנס: דגם TC4/TC5, דפי תאורה, תריסים ותרחישים, ואייקון רשמי לכל לחצן — שולחים ל-i-feel והמתכנת מקבל הכל מראש. 03-508-9553.",
+  canonical: "https://i-feel.co.il/knx-switch-configurator/",
+  ogTitle: "בניית מפסק KNX אונליין — Siemens TC4/TC5 | i-feel",
+  ogDescription: "כלי חינמי: מרכיבים את מפסקי המגע של סימנס דף-אחר-דף — אייקון רשמי לכל לחצן, כולל ID לתכנות ב-ETS — ושולחים לצוות התכנות של i-feel.",
+  ogUrl: "https://i-feel.co.il/knx-switch-configurator/",
+  ogImage: "https://i-feel.co.il/assets/og-cover.jpg",
+  jsonLd: JSON.stringify({
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": ["LocalBusiness", "HomeAndConstructionBusiness"],
+        "@id": "https://i-feel.co.il/#business",
+        "name": "i-feel",
+        "alternateName": "i-feel מערכות בקרת מבנה ובית חכם",
+        "url": "https://i-feel.co.il/",
+        "logo": "https://i-feel.co.il/assets/ifeel-logo.png",
+        "image": "https://i-feel.co.il/assets/ifeel-logo.png",
+        "telephone": "+972-3-508-9553",
+        "email": "sales@i-feel.co.il",
+        "priceRange": "₪₪₪",
+        "address": { "@type": "PostalAddress", "streetAddress": "אימבר 14", "addressLocality": "פתח תקווה", "addressRegion": "מחוז המרכז", "postalCode": "4951148", "addressCountry": "IL" },
+        "areaServed": { "@type": "Country", "name": "Israel", "sameAs": "https://www.wikidata.org/wiki/Q801" },
+        "sameAs": ["https://www.facebook.com/SmarthomeIsrael", "https://www.instagram.com/ifeelisrael", "https://www.linkedin.com/company/200156"]
+      },
+      {
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          { "@type": "ListItem", "position": 1, "name": "דף הבית", "item": "https://i-feel.co.il/" },
+          { "@type": "ListItem", "position": 2, "name": "בית חכם KNX", "item": "https://i-feel.co.il/knx-smart-home/" },
+          { "@type": "ListItem", "position": 3, "name": "בניית מפסק KNX", "item": "https://i-feel.co.il/knx-switch-configurator/" }
+        ]
+      },
+      {
+        "@type": "WebApplication",
+        "name": "בונה מפסקי KNX — Siemens TC4/TC5",
+        "url": "https://i-feel.co.il/knx-switch-configurator/",
+        "applicationCategory": "DesignApplication",
+        "operatingSystem": "Web",
+        "inLanguage": "he-IL",
+        "isAccessibleForFree": true,
+        "offers": { "@type": "Offer", "price": "0", "priceCurrency": "ILS" },
+        "provider": { "@id": "https://i-feel.co.il/#business" },
+        "description": "כלי אונליין לתכנון מפסקי מגע Siemens KNX: בחירת דגם (TC4 — 6 לחצנים, TC5 — 8), הרכבת דפי תאורה/תריסים/תרחישים ובחירת אייקון רשמי לכל לחצן כולל Replacement ID לתכנות ב-ETS."
+      }
+    ]
+  })
+};
+---
+<BaseLayout {...meta}>
+  <Fragment set:html={content} />
+</BaseLayout>
