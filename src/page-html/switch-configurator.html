@@ -167,7 +167,7 @@
   state.switches.forEach(function (sw) {
     sw.cells = sw.cells.map(function (c) { return iconById(c) ? c : null; });
     sw.color = sw.color === 'white' ? 'white' : 'black';
-    sw.corners = sw.corners === 'square' ? 'square' : 'round';
+    delete sw.corners; // the product line no longer offers rounded corners
   });
 
   function save() { try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch (e) {} }
@@ -206,23 +206,18 @@
     card.appendChild(head);
 
     var opts = document.createElement('div');
-    opts.className = 'grid grid-cols-2 gap-2 mb-3';
+    opts.className = 'mb-3';
     var colorSel = document.createElement('select');
     colorSel.className = 'w-full rounded-lg border border-brand-200 px-2 py-1.5 text-sm text-brand-900 focus:border-accent-500';
     colorSel.innerHTML = '<option value="black">זכוכית שחורה</option><option value="white">זכוכית לבנה</option>';
     colorSel.value = sw.color;
     colorSel.addEventListener('change', function () { sw.color = colorSel.value; renderAll(); });
-    var cornerSel = document.createElement('select');
-    cornerSel.className = 'w-full rounded-lg border border-brand-200 px-2 py-1.5 text-sm text-brand-900 focus:border-accent-500';
-    cornerSel.innerHTML = '<option value="round">פינות מעוגלות</option><option value="square">פינות מלבניות</option>';
-    cornerSel.value = sw.corners;
-    cornerSel.addEventListener('change', function () { sw.corners = cornerSel.value; renderAll(); });
-    opts.appendChild(colorSel); opts.appendChild(cornerSel);
+    opts.appendChild(colorSel);
     card.appendChild(opts);
 
     var isWhite = sw.color === 'white';
     var panel = document.createElement('div');
-    panel.className = (isWhite ? 'bg-gray-100 border-2 border-gray-300' : 'bg-brand-900') + ' p-4 max-w-[340px] mx-auto ' + (sw.corners === 'square' ? 'rounded-sm' : 'rounded-2xl');
+    panel.className = (isWhite ? 'bg-gray-100 border-2 border-gray-300' : 'bg-brand-900') + ' p-4 max-w-[340px] mx-auto rounded-sm';
     var grid = document.createElement('div');
     grid.className = 'grid grid-cols-3 gap-2';
     for (var c = 0; c < 9; c++) grid.appendChild(renderCell(sw, si, c));
@@ -242,7 +237,7 @@
     var iconId = sw.cells[ci];
     var icon = iconId ? iconById(iconId) : null;
     var isWhite = sw.color === 'white';
-    var corner = sw.corners === 'square' ? 'rounded-sm' : 'rounded-xl';
+    var corner = 'rounded-sm';
     var filledCls = isWhite ? 'bg-white text-brand-700 shadow-sm hover:bg-gray-50 border border-gray-200' : 'bg-brand-700 text-accent-300 hover:bg-brand-600';
     var emptyCls = isWhite ? 'bg-gray-50 text-gray-400 hover:bg-white border-2 border-dashed border-gray-300' : 'bg-brand-800 text-brand-500 hover:bg-brand-700 border-2 border-dashed border-brand-600';
     cell.className = 'gw-cell relative ' + corner + ' flex flex-col items-center justify-center gap-0.5 transition ' + (icon ? filledCls : emptyCls);
@@ -356,14 +351,14 @@
 
   /* ---------- Toolbar ---------- */
   document.getElementById('add-switch').addEventListener('click', function () {
-    state.switches.push({ location: '', color: 'black', corners: 'round', cells: [null,null,null,null,null,null,null,null,null] });
+    state.switches.push({ location: '', color: 'black', cells: [null,null,null,null,null,null,null,null,null] });
     renderAll();
     switchesEl.lastElementChild.scrollIntoView({ behavior: 'smooth', block: 'center' });
     switchesEl.lastElementChild.querySelector('input').focus();
   });
   document.getElementById('clear-all').addEventListener('click', function () {
     if (confirm('לנקות את כל המפסקים ולהתחיל מחדש?')) {
-      state = { switches: [{ location: '', color: 'black', corners: 'round', cells: [null,null,null,null,null,null,null,null,null] }] };
+      state = { switches: [{ location: '', color: 'black', cells: [null,null,null,null,null,null,null,null,null] }] };
       renderAll();
     }
   });
@@ -384,11 +379,11 @@
     html += '<div style="display:flex;flex-wrap:wrap;gap:18px;">';
     state.switches.forEach(function (sw, si) {
       var isWhite = sw.color === 'white';
-      var pr = sw.corners === 'square' ? '2px' : '12px';
-      var cr = sw.corners === 'square' ? '2px' : '8px';
+      var pr = '2px';
+      var cr = '2px';
       html += '<div class="print-switch" style="border:1px solid #b4cce5;border-radius:14px;padding:14px;width:300px;">';
       html += '<div style="font-weight:800;font-size:16px;margin-bottom:2px;text-align:center;">' + (sw.location ? escapeHtml(sw.location) : 'מפסק ' + (si + 1)) + '</div>';
-      html += '<div style="font-size:11px;color:#285183;text-align:center;margin-bottom:10px;border-bottom:1px solid #dae6f2;padding-bottom:6px;">' + (isWhite ? 'זכוכית לבנה' : 'זכוכית שחורה') + ' · ' + (sw.corners === 'square' ? 'פינות מלבניות' : 'פינות מעוגלות') + '</div>';
+      html += '<div style="font-size:11px;color:#285183;text-align:center;margin-bottom:10px;border-bottom:1px solid #dae6f2;padding-bottom:6px;">' + (isWhite ? 'זכוכית לבנה' : 'זכוכית שחורה') + '</div>';
       html += '<div style="background:' + (isWhite ? '#f3f4f6' : '#0f1f36') + ';' + (isWhite ? 'border:1.5px solid #d1d5db;' : '') + 'border-radius:' + pr + ';padding:10px;"><div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;">';
       sw.cells.forEach(function (cellId, ci) {
         var icon = cellId ? iconById(cellId) : null;
@@ -438,7 +433,7 @@
         if (cellId) { var ic = iconById(cellId); if (ic) cellLines.push('לחצן ' + (ci + 1) + ': ' + ic.name); }
       });
       if (!cellLines.length && !sw.location) return;
-      lines.push('◼ מפסק ' + (si + 1) + (sw.location ? ' — ' + sw.location : '') + ' [' + (sw.color === 'white' ? 'זכוכית לבנה' : 'זכוכית שחורה') + ', ' + (sw.corners === 'square' ? 'פינות מלבניות' : 'פינות מעוגלות') + ']:');
+      lines.push('◼ מפסק ' + (si + 1) + (sw.location ? ' — ' + sw.location : '') + ' [' + (sw.color === 'white' ? 'זכוכית לבנה' : 'זכוכית שחורה') + ']:');
       lines.push(cellLines.length ? cellLines.join(' | ') : '(ללא אייקונים)');
       lines.push('');
     });
