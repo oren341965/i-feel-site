@@ -370,7 +370,7 @@ export const articles: Article[] = [
     category: 'אבטחה',
     updated: '2026-07-08',
     image: '/assets/articles/smart-home-alarm-system.jpg',
-    imageAlt: 'מסך שליטה חכם של i-feel עם בקרת אזעקה, מצלמות ותרחישים לכל הבית',
+    imageAlt: 'מסך בקרה ואינטרקום חכם עם פאנל מגע מותקנים בקיר — פרויקט בית חכם של i-feel בהרצליה פיתוח',
     related: [
       { label: 'מצלמות אבטחה לבית חכם', href: '/articles/smart-home-security-cameras/' },
       { label: 'הבית החכם — הכול עובד יחד', href: '/articles/smart-home-everything-works-together/' },
