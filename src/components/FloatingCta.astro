@@ -1,0 +1,49 @@
+---
+// Floating context-dependent CTA (homepage-redesign decision 9):
+// the label and target change per page — sales pages get "קבלת ייעוץ",
+// the service center gets "פתיחת קריאת שירות", etc.
+export interface Props {
+  label: string;
+  href: string;
+  event?: string;
+  params?: Record<string, string>;
+  external?: boolean;
+}
+const { label, href, event = 'consultation_click', params = {}, external = false } = Astro.props;
+const paramsJson = JSON.stringify(params);
+---
+<a
+  id="floating-cta"
+  href={href}
+  data-ga-event={event}
+  data-ga-params={paramsJson}
+  target={external ? '_blank' : undefined}
+  rel={external ? 'noopener' : undefined}
+  class="fixed bottom-5 left-5 z-40 bg-accent-500 hover:bg-accent-600 text-white font-bold px-6 py-3.5 rounded-full shadow-xl transition duration-300 opacity-0 pointer-events-none translate-y-3"
+  aria-hidden="true"
+>{label}</a>
+
+<script is:inline>
+(function () {
+  var btn = document.getElementById('floating-cta');
+  if (!btn) return;
+  var shown = false;
+  function y() {
+    var d = document.scrollingElement || document.documentElement;
+    return window.scrollY || d.scrollTop || document.body.scrollTop || 0;
+  }
+  function onScroll() {
+    var s = y() > 500;
+    if (s === shown) return;
+    shown = s;
+    btn.classList.toggle('opacity-0', !s);
+    btn.classList.toggle('pointer-events-none', !s);
+    btn.classList.toggle('translate-y-3', !s);
+    btn.setAttribute('aria-hidden', s ? 'false' : 'true');
+  }
+  // capture:true also catches scrolls of inner scroll containers (some
+  // embeds/preview panes scroll a wrapper element instead of the window)
+  window.addEventListener('scroll', onScroll, { passive: true, capture: true });
+  onScroll();
+})();
+</script>

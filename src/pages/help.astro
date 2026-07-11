@@ -1,0 +1,46 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import FloatingCta from '../components/FloatingCta.astro';
+import content from '../page-html/help.html?raw';
+
+const meta = {
+  title: "מרכז שירות ותמיכה — בית חכם ובקרת מבנה | i-feel",
+  description: "מרכז השירות של i-feel: פתרונות לתקלות נפוצות בבית חכם ובבקרת מבנה, מדריכים לפי מערכת, הדרכות וידאו ופתיחת קריאת שירות למוקד התמיכה.",
+  canonical: "https://i-feel.co.il/help/",
+  ogTitle: "מרכז שירות ותמיכה — בית חכם ובקרת מבנה | i-feel",
+  ogDescription: "תקלה, שאלה או שדרוג? נכוון אתכם לפתרון המהיר ביותר — לפי סוג המערכת שלכם.",
+  ogUrl: "https://i-feel.co.il/help/",
+  ogImage: "https://i-feel.co.il/assets/og-cover.jpg",
+  jsonLd: JSON.stringify({
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          { "@type": "ListItem", "position": 1, "name": "דף הבית", "item": "https://i-feel.co.il/" },
+          { "@type": "ListItem", "position": 2, "name": "מרכז השירות", "item": "https://i-feel.co.il/help/" }
+        ]
+      },
+      {
+        "@type": "WebPage",
+        "@id": "https://i-feel.co.il/help/",
+        "url": "https://i-feel.co.il/help/",
+        "name": "מרכז שירות ותמיכה — בית חכם ובקרת מבנה",
+        "inLanguage": "he-IL",
+        "isPartOf": { "@id": "https://i-feel.co.il/#website" },
+        "about": { "@id": "https://i-feel.co.il/#business" }
+      }
+    ]
+  })
+};
+---
+<BaseLayout {...meta}>
+  <Fragment set:html={content} />
+  <FloatingCta
+    label="פתיחת קריאת שירות"
+    href="https://www.superform.spot-nik.com/form/63cd83d84533621571484d9b"
+    external={true}
+    event="service_request_start"
+    params={{ source_page: '/help/', trigger: 'floating_cta' }}
+  />
+</BaseLayout>

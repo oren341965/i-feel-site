@@ -42,7 +42,9 @@ i-feel מפרסמת מסמכי תקינה ואישורים בכתובת /license
 
 ## Key Pages
 
-- [Home](https://i-feel.co.il/): סקירה כללית ו-CTA
+- [Home](https://i-feel.co.il/): סקירה כללית ו-CTA — שתי דלתות: תכנון פרויקט חדש (/start/) ומרכז השירות (/help/)
+- [Start a New Project](https://i-feel.co.il/start/): דלת הכניסה למי שמתכנן פרויקט חדש — זיהוי קהל (פרטי / יזמי / BMS), איך זה עובד, וטופס ייעוץ
+- [Service Center](https://i-feel.co.il/help/): מרכז השירות והתמיכה — תקלות נפוצות, ניווט לפי מערכת ופעולה, ופתיחת קריאת שירות
 - [About i-feel](https://i-feel.co.il/about-i-feel-smart-building-company/): מי אנחנו — I FEEL היא חברת אינטגרציה ישראלית לבית חכם, בקרת מבנה BMS, KNX, Siemens Desigo ו-DALI. משנת 2008, מעל 9,000 לקוחות, פתח תקווה.
 - [English — Smart Home Israel](https://i-feel.co.il/en/smart-home-israel/): I FEEL is an Israeli smart home and building automation integrator (KNX, Siemens Desigo, DALI).
 - [English — Building Management System Israel](https://i-feel.co.il/en/building-management-system-israel/): BMS integration in Israel — Siemens Desigo, DDC, BACnet, Modbus, KNX.

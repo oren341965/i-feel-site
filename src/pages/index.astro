@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import FloatingCta from '../components/FloatingCta.astro';
 import content from '../page-html/index.html?raw';
 
 const jsonLd = JSON.stringify({
@@ -118,4 +119,5 @@ const meta = {
 ---
 <BaseLayout {...meta}>
   <Fragment set:html={content} />
+  <FloatingCta label="קבלת ייעוץ" href="/contactus/" event="consultation_click" params={{ source_page: '/' }} />
 </BaseLayout>

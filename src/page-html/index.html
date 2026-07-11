@@ -1,477 +1,300 @@
-﻿<!-- HERO -->
-<section class="hero-gradient text-white">
-  <div class="max-w-7xl mx-auto px-4 py-20 lg:py-28">
-    <div class="max-w-3xl">
-      <div class="inline-flex items-center gap-2 bg-white/10 backdrop-blur px-4 py-1.5 rounded-full text-sm font-medium mb-6 border border-white/20">
-        <span class="w-2 h-2 bg-accent-500 rounded-full" aria-hidden="true"></span>
-        תכנון · התקנה · תחזוקה
-      </div>
-      <h1 class="text-4xl md:text-5xl lg:text-6xl font-extrabold leading-tight mb-6">
-        בית חכם, KNX ובקרת מבנה — <span class="text-accent-500">חברה אחת לכל המערכות</span>
-      </h1>
-      <p class="text-xl md:text-2xl text-brand-100 mb-8 max-w-2xl">
-        i-feel מתכננת ומתקינה מערכות בית חכם לדירות ולווילות, בקרת מבנה (BMS) למלונות, משרדים ומבני ציבור, ומערכות אודיו וקולנוע ביתי. שירות בעברית, מפתח תקווה לכל הארץ.
-      </p>
-      <div class="flex flex-wrap gap-3">
-        <a href="#contact" class="bg-accent-500 hover:bg-accent-600 text-white px-7 py-3.5 rounded-lg font-semibold text-lg transition shadow-lg shadow-accent-500/20">
-          קבלו ייעוץ ראשוני
-        </a>
-        <a href="/smart-home/" class="bg-white/10 hover:bg-white/20 backdrop-blur text-white px-7 py-3.5 rounded-lg font-semibold text-lg border border-white/30 transition">
-          המדריך לבית חכם ←
-        </a>
-      </div>
-    </div>
-  </div>
-</section>
+<!-- ============================================================
+     עמוד הבית — מבנה 9 הסקשנים המאושר
+     docs/homepage-redesign-decisions.md · docs/homepage-screen-spec.md
+     ============================================================ -->
 
-<!-- TRUST STRIP — qualitative, verifiable -->
-<section class="bg-brand-50 border-y border-brand-100" aria-label="מה אנחנו עושים בקצרה">
-  <div class="max-w-7xl mx-auto px-4 py-8 grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
-    <div>
-      <div class="text-lg md:text-xl font-extrabold text-brand-700">KNX</div>
-      <div class="text-sm text-brand-600 mt-1">פרוטוקול בית חכם בינלאומי</div>
-    </div>
-    <div>
-      <div class="text-lg md:text-xl font-extrabold text-brand-700">BMS</div>
-      <div class="text-sm text-brand-600 mt-1">בקרת מבנה למלונות ולמשרדים</div>
-    </div>
-    <div>
-      <div class="text-lg md:text-xl font-extrabold text-brand-700">Audio &amp; Cinema</div>
-      <div class="text-sm text-brand-600 mt-1">multi-room וקולנוע Dolby Atmos</div>
-    </div>
-    <div>
-      <div class="text-lg md:text-xl font-extrabold text-brand-700">שירות בעברית</div>
-      <div class="text-sm text-brand-600 mt-1">פתח תקווה · כל הארץ</div>
-    </div>
-  </div>
-</section>
-
-<!-- AUDIENCE GATES -->
-<section class="py-12 lg:py-16 bg-white border-b border-brand-100" aria-label="בחירת מסלול">
-  <div class="max-w-7xl mx-auto px-4">
-    <div class="max-w-3xl mb-8">
-      <h2 class="text-2xl md:text-3xl font-extrabold text-brand-900 mb-3">בחרו את המסלול שמתאים לפרויקט שלכם</h2>
-      <p class="text-brand-700">ארבע כניסות מהירות לפי סוג לקוח, עם דוגמה רלוונטית וקריאה לפעולה ממוקדת.</p>
-    </div>
-    <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
-      <article class="border border-brand-100 rounded-lg p-5 hover:border-accent-500 hover:shadow-md transition">
-        <div class="text-xs font-bold uppercase tracking-wider text-accent-600 mb-2">לקוח פרטי</div>
-        <h3 class="text-lg font-bold text-brand-900 mb-2">וילה או דירה חכמה</h3>
-        <p class="text-sm text-brand-700 mb-4">הוכחה: פרויקטים פרטיים בקיסריה, רעננה, חופית ומכבים-רעות.</p>
-        <a href="/smart-home/" class="text-sm font-bold text-accent-600 hover:underline">תכנון בית חכם</a>
-      </article>
-      <article class="border border-brand-100 rounded-lg p-5 hover:border-accent-500 hover:shadow-md transition">
-        <div class="text-xs font-bold uppercase tracking-wider text-accent-600 mb-2">יזם בנייה</div>
-        <h3 class="text-lg font-bold text-brand-900 mb-2">בנייה רוויה ודיירים</h3>
-        <p class="text-sm text-brand-700 mb-4">הוכחה: מעל עשרה פרויקטים יזמיים בהרצליה, רמת גן, ירושלים ועוד.</p>
-        <a href="/contractor-customer-care/" class="text-sm font-bold text-accent-600 hover:underline">פתרונות ליזמים</a>
-      </article>
-      <article class="border border-brand-100 rounded-lg p-5 hover:border-accent-500 hover:shadow-md transition">
-        <div class="text-xs font-bold uppercase tracking-wider text-accent-600 mb-2">אדריכל / מעצב</div>
-        <h3 class="text-lg font-bold text-brand-900 mb-2">תכנון מוקדם וחומרים</h3>
-        <p class="text-sm text-brand-700 mb-4">הוכחה: ליווי תכנון KNX, תאורה, אודיו ותשתיות בשלב התוכניות.</p>
-        <a href="/architects-smart-home-planning/" class="text-sm font-bold text-accent-600 hover:underline">ליווי לאדריכלים</a>
-      </article>
-      <article class="border border-brand-100 rounded-lg p-5 hover:border-accent-500 hover:shadow-md transition">
-        <div class="text-xs font-bold uppercase tracking-wider text-accent-600 mb-2">BMS</div>
-        <h3 class="text-lg font-bold text-brand-900 mb-2">בקרת מבנה ו-Desigo</h3>
-        <p class="text-sm text-brand-700 mb-4">הוכחה: Amazon Sarona, ברינקס, קמפוס קיסריה ו-D-City.</p>
-        <a href="/structure-control/" class="text-sm font-bold text-accent-600 hover:underline">פרויקט בקרת מבנה</a>
-      </article>
-    </div>
-  </div>
-</section>
-<!-- 1. WHAT I-FEEL DOES -->
-<section id="about" class="py-16 lg:py-20"><div class="max-w-6xl mx-auto px-4"><h2 class="text-3xl md:text-4xl font-extrabold text-brand-900 mb-6">מי אנחנו</h2><div class="text-lg text-brand-800 leading-relaxed space-y-4 max-w-4xl"><p>I Feel פועלת משנת 2008 ומתמחה בתכנון, התקנה ותחזוקה של מערכות בית חכם, KNX ובקרת מבנה BMS בישראל. החברה משרתת מעל 9,000 לקוחות וביצעה אלפי פרויקטים בבתים פרטיים, דירות, פרויקטי יזמים, משרדים, מלונות ומבני ציבור.</p><p><strong>למה לבחור ב-i-feel?</strong> היתרון שלנו הוא שילוב בין תכנון, התקנה, תכנות ושירות שוטף תחת חברה אחת — לא רק עוד מתקין בית חכם, אלא אינטגרטור שמחבר את כל מערכות הבית או המבנה למערכת אחת. אנחנו שולטים בכל שרשרת האספקה (יבוא ציוד Siemens וייצור מערכות אלחוטיות), עובדים עם צוותים פנימיים, ומפעילים מחלקת שירות פנימית. רוצים להבין כמה זה עולה? ראו <a href="/smart-home-price/" class="text-accent-600 font-semibold hover:underline">כמה עולה בית חכם</a>.</p><p>רוצים להבין במה צריך להתחיל? התקשרו <a href="tel:+972-3-508-9553" class="text-accent-600 font-semibold hover:underline">03-508-9553</a> או כתבו ב-<a href="https://wa.me/972533450205?text=שלום%20מאיה%2C%20אשמח%20לייעוץ%20ראשוני%20בנושא%20בית%20חכם%20או%20BMS" class="text-accent-600 font-semibold hover:underline">WhatsApp של מאיה</a>.</p></div><div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-10"><div class="bg-brand-50 border border-brand-100 rounded-lg p-5 text-center"><div class="text-3xl font-extrabold text-brand-700">9,000+</div><div class="text-sm text-brand-600 mt-1">לקוחות</div></div><div class="bg-brand-50 border border-brand-100 rounded-lg p-5 text-center"><div class="text-3xl font-extrabold text-brand-700">4,000+</div><div class="text-sm text-brand-600 mt-1">פרויקטים</div></div><div class="bg-brand-50 border border-brand-100 rounded-lg p-5 text-center"><div class="text-3xl font-extrabold text-brand-700">2008</div><div class="text-sm text-brand-600 mt-1">שנת הקמה</div></div><div class="bg-brand-50 border border-brand-100 rounded-lg p-5 text-center"><div class="text-3xl font-extrabold text-brand-700">180+</div><div class="text-sm text-brand-600 mt-1">פרויקטי בקרת מבנה</div></div></div></div></section>
-
-<!-- 2. SMART HOME FOR VILLAS AND APARTMENTS -->
-<section class="bg-brand-50 py-16 lg:py-20 border-y border-brand-100">
-  <div class="max-w-5xl mx-auto px-4">
-    <h2 class="text-3xl md:text-4xl font-extrabold text-brand-900 mb-6">בית חכם לווילות ולדירות</h2>
-    <p class="text-lg text-brand-800 leading-relaxed mb-8">
-      מערכת בית חכם מאחדת בקרה על תאורה, מיזוג, וילונות, אבטחה ואודיו לפלטפורמה אחת — נשלטת ממסך מגע, מהאפליקציה בנייד או מפיקוד קולי. אנחנו מתכננים מערכות לפי סוג הנכס: וילות חדשות, דירות בבנייה חדשה, ודירות קיימות שעוברות שיפוץ או שדרוג.
+<!-- 1. HERO — static, two equal doors -->
+<section class="relative text-white overflow-hidden" aria-label="פתיח">
+  <img src="/assets/smart-home-ramat-hasharon.jpg" alt="" fetchpriority="high"
+       class="absolute inset-0 w-full h-full object-cover" aria-hidden="true" />
+  <div class="absolute inset-0 bg-brand-900/75" aria-hidden="true"></div>
+  <div class="relative max-w-5xl mx-auto px-4 py-16 lg:py-24 text-center">
+    <h1 class="text-4xl md:text-5xl lg:text-6xl font-extrabold leading-tight mb-4 mx-auto max-w-3xl">
+      מערכות חכמות לבית ולמבנה, <span class="text-accent-500">תחת אחריות אחת</span>
+    </h1>
+    <p class="text-xl md:text-2xl text-brand-100 mb-10 max-w-2xl mx-auto">
+      תכנון, אינטגרציה, תכנות ושירות לאורך שנים — משלב התכנון ועד התחזוקה והשדרוג. בית חכם, בקרת מבנה BMS ו-KNX, משנת 2008.
     </p>
-    <div class="grid md:grid-cols-2 gap-6">
-      <div class="bg-white border border-brand-100 rounded-2xl p-6">
-        <h3 class="text-xl font-bold text-brand-900 mb-3">לווילות פרטיות</h3>
-        <p class="text-brand-700 mb-4">
-          בווילות בנייה חדשה אנחנו ממליצים על פתרון <strong>KNX קווי מלא</strong>: תשתית עמידה לטווח ארוך, אינטגרציה עמוקה עם אזעקה, מצלמות, אודיו multi-room ובקרת אקלים, ויכולת הרחבה לשנים קדימה.
-        </p>
-        <a href="/smart-home-villa/" class="text-accent-600 font-semibold hover:underline">בית חכם לווילה</a> <span class="mx-2 text-brand-400">·</span> <a href="/smart-home/" class="text-accent-600 font-semibold hover:underline">הדף המלא ←</a>
-      </div>
-      <div class="bg-white border border-brand-100 rounded-2xl p-6">
-        <h3 class="text-xl font-bold text-brand-900 mb-3">לדירות מגורים</h3>
-        <p class="text-brand-700 mb-4">
-          לדירות בבנייה חדשה — KNX או פתרון אלחוטי מתקדם, לפי היקף. לדירות קיימות — פתרון אלחוטי שמותקן בלי לפתוח קירות, עם דגש על תאורה, מיזוג ובקרת וילונות.
-        </p>
-        <a href="/wireless-smart-home-existing-apartment/" class="text-accent-600 font-semibold hover:underline">בית חכם אלחוטי לדירה קיימת</a> <span class="mx-2 text-brand-400">·</span> <a href="/smart-home-price/" class="text-accent-600 font-semibold hover:underline">מחירים ←</a>
-      </div>
-    </div>
-  </div>
-</section>
 
-<!-- 3. KNX WIRED -->
-<section class="py-16 lg:py-20">
-  <div class="max-w-5xl mx-auto px-4">
-    <h2 class="text-3xl md:text-4xl font-extrabold text-brand-900 mb-6">בית חכם KNX קווי</h2>
-    <div class="text-lg text-brand-800 leading-relaxed space-y-4">
-      <p>
-        <strong>KNX</strong> הוא פרוטוקול תקן בינלאומי (ISO/IEC 14543-3) הקיים מאז 1990. הוא מיושם על-ידי מאות יצרנים בעולם — בהם ABB, Siemens, Gira ו-Schneider Electric — והוא הבסיס למרבית מערכות הבית החכם המקצועיות באירופה ובישראל.
-      </p>
-      <p>
-        ההתקנה מבוססת על תשתית קווית (זוג כבלים מצומדים) או על IP בבניינים גדולים. היתרון העיקרי הוא <strong>עמידות לטווח ארוך וגמישות עתידית</strong> — אפשר להחליף ולהוסיף מוצרים בין יצרנים שונים בלי להחליף את המערכת. החיסרון: דורש תכנון תשתית לפני הבנייה או פתיחת קירות בשיפוץ.
-      </p>
-      <p>
-        מתי לבחור KNX: בנייה חדשה, שיפוץ עמוק, וכל פרויקט שבו רוצים תשתית שתשרת עשרות שנים בלי החלפה.
-      </p>
-      <p class="text-base">
-        קריאה נוספת:
-        <a href="/knx-smart-home/" class="text-accent-600 font-semibold hover:underline">בית חכם KNX</a> ·
-        <a href="/smart-home/" class="text-accent-600 font-semibold hover:underline">המדריך לבית חכם</a> ·
-        <a href="/right-infrastructure-for-a-smart-home/" class="text-accent-600 font-semibold hover:underline">תכנון התשתית הנכונה</a> ·
-        <a href="/the-winning-synergy/" class="text-accent-600 font-semibold hover:underline">סינרגיה ואינטגרציה</a>
-      </p>
-    </div>
-  </div>
-</section>
-
-<!-- 4. WIRELESS SMART HOME FOR EXISTING APARTMENTS -->
-<section class="bg-brand-50 py-16 lg:py-20 border-y border-brand-100">
-  <div class="max-w-5xl mx-auto px-4">
-    <h2 class="text-3xl md:text-4xl font-extrabold text-brand-900 mb-6">בית חכם אלחוטי לדירות קיימות</h2>
-    <div class="text-lg text-brand-800 leading-relaxed space-y-4">
-      <p>
-        לא בכל פרויקט אפשר לפתוח קירות. עבור דירות קיימות שבהן רוצים לשדרג לבית חכם בלי שיפוץ עמוק, אנחנו עובדים עם פלטפורמות אלחוטיות מקובלות בשוק — <strong>Zigbee, Z-Wave ופתרונות מבוססי Wi-Fi</strong>. ההתקנה אינה דורשת חידוש חיווט, והיא קצרה משמעותית.
-      </p>
-      <p>
-        הפתרונות האלחוטיים מתאימים במיוחד לדירות קטנות עד בינוניות, ולשדרוגים ממוקדים — בקרת תאורה, וילונות, מיזוג ואבטחה. שילוב עם Apple HomeKit, Google Home ו-Alexa אפשרי כשכבת בקרה ראשית או משלימה.
-      </p>
-      <p>
-        מתי לבחור אלחוטי: דירה קיימת ללא שיפוץ עמוק, שדרוגים נקודתיים, או היכרות ראשונית עם עולם הבית החכם לפני השקעה גדולה יותר.
-      </p>
-      <p class="text-base">
-        השוואה מפורטת בין KNX לאלחוטי:
-        <a href="/wireless-smart-home-existing-apartment/" class="text-accent-600 font-semibold hover:underline">בית חכם אלחוטי לדירה קיימת</a> <span class="mx-3 text-brand-400">·</span> <a href="/smart-home/" class="text-accent-600 font-semibold hover:underline">בעמוד הבית החכם המלא ←</a>
-      </p>
-    </div>
-  </div>
-</section>
-
-<!-- 4B. EXISTING CUSTOMERS — SERVICE BAND -->
-<section class="py-16 lg:py-20" aria-label="שירות ללקוחות קיימים">
-  <div class="max-w-5xl mx-auto px-4">
-    <div class="bg-green-50 border-2 border-green-200 rounded-2xl p-6 md:p-10">
-      <span class="inline-block text-xs font-bold uppercase tracking-wider text-green-700 bg-green-100 px-2 py-1 rounded mb-3">ללקוחות קיימים</span>
-      <h2 class="text-3xl md:text-4xl font-extrabold text-brand-900 mb-3">לקוחות קיימים? כל השירות במקום אחד</h2>
-      <p class="text-lg text-brand-800 leading-relaxed mb-6 max-w-3xl">
-        כבר התקנו אצלכם מערכת? אגף השירות שלנו זמין לפתיחת קריאות שירות, אבחון מרחוק, מדריך תקלות נפוצות, מידע על הסכמי תחזוקה ושדרוגים למערכת קיימת.
-      </p>
-      <div class="grid md:grid-cols-3 gap-4 mb-6">
-        <a href="https://www.superform.spot-nik.com/form/63cd83d84533621571484d9b" target="_blank" rel="noopener" class="bg-white border border-green-300 hover:border-green-600 rounded-xl p-5 transition group">
-          <div class="font-bold text-brand-900 mb-1 group-hover:text-green-700">פתיחת קריאת שירות בטופס ↗</div>
-          <p class="text-sm text-brand-700">טופס דיגיטלי — הדרך המומלצת. מנותב ישירות למחלקת השירות.</p>
-        </a>
-        <a href="/service-and-maintenance/" class="bg-white border border-green-200 hover:border-green-500 rounded-xl p-5 transition group">
-          <div class="font-bold text-brand-900 mb-1 group-hover:text-green-700">תקלות נפוצות</div>
-          <p class="text-sm text-brand-700">12 תקלות עם בדיקות ראשוניות שאפשר לעשות לבד — לפני שפותחים קריאה.</p>
-        </a>
-        <a href="/service-and-maintenance/" class="bg-white border border-green-200 hover:border-green-500 rounded-xl p-5 transition group">
-          <div class="font-bold text-brand-900 mb-1 group-hover:text-green-700">WhatsApp / אימייל שירות</div>
-          <p class="text-sm text-brand-700">WhatsApp שירות 053-300-6239 או support@i-feel.co.il.</p>
-        </a>
-      </div>
-      <a href="/service-and-maintenance/" class="inline-block bg-green-600 hover:bg-green-700 text-white px-7 py-3 rounded-lg font-semibold transition shadow-md">
-        מעבר לשירות לקוחות ←
+    <div class="grid sm:grid-cols-2 gap-4 max-w-3xl mx-auto text-right">
+      <a href="/start/"
+         data-ga-event="homepage_new_project_click"
+         data-ga-params='{"source_page":"homepage_hero"}'
+         class="block bg-brand-600 hover:bg-brand-500 rounded-2xl p-6 transition shadow-lg group"
+         aria-label="אני מתכנן פרויקט חדש — בית פרטי, פרויקט יזמי או מבנה">
+        <span class="block text-xl md:text-2xl font-extrabold mb-1 group-hover:translate-x-[-2px] transition">אני מתכנן פרויקט חדש</span>
+        <span class="block text-brand-100 text-sm md:text-base">בית פרטי, פרויקט יזמי או מבנה — נתכנן יחד</span>
+      </a>
+      <a href="/help/"
+         data-ga-event="homepage_existing_system_click"
+         data-ga-params='{"source_page":"homepage_hero"}'
+         class="block bg-brand-800 hover:bg-brand-700 rounded-2xl p-6 transition shadow-lg group"
+         aria-label="כבר יש לי מערכת ואני צריך עזרה — מרכז השירות">
+        <span class="block text-xl md:text-2xl font-extrabold mb-1"><span class="text-accent-500" aria-hidden="true">⚙</span> כבר יש לי מערכת ואני צריך עזרה</span>
+        <span class="block text-brand-100 text-sm md:text-base">תקלה, שאלה או שדרוג — מרכז השירות זמין</span>
       </a>
     </div>
+
+    <p class="text-sm text-brand-200 mt-8">משנת 2008 · מעל 9,000 לקוחות · צוות שירות קבוע</p>
   </div>
 </section>
 
-<!-- 5. BMS -->
-<section class="py-16 lg:py-20">
-  <div class="max-w-5xl mx-auto px-4">
-    <h2 class="text-3xl md:text-4xl font-extrabold text-brand-900 mb-6">בקרת מבנה (BMS) למלונות, משרדים ומבני ציבור</h2>
-    <div class="text-lg text-brand-800 leading-relaxed space-y-4">
-      <p>
-        <strong>בקרת מבנה (Building Management System — BMS)</strong> היא פלטפורמה מרכזית לניהול המערכות הטכניות במבנה: מיזוג, תאורה, חשמל, אבטחה, גילוי אש ובקרת גישה. במלונות, מגדלי משרדים, בתי חולים ומבני ציבור, BMS מתוכנן נכון מאפשר למנהל אחזקה אחד לראות את המבנה כולו ממסך אחד, לטפל בתקלות לפני שהמשתמשים מרגישים בהן, ולחסוך באנרגיה.
-      </p>
-      <p>
-        אנחנו עובדים עם הפלטפורמות המרכזיות בשוק — <strong>Siemens Desigo, KNX ו-BACnet</strong> — ובוחרים את הפתרון לפי היקף המבנה וסוג הציוד הטכני. בפרויקטים מורכבים נשלב בין הפרוטוקולים דרך gateway.
-      </p>
-      <p class="text-base">
-        קריאה נוספת:
-        <a href="/siemens-desigo-bms/" class="text-accent-600 font-semibold hover:underline">Siemens Desigo BMS</a> ·
-        <a href="/structure-control/" class="text-accent-600 font-semibold hover:underline">בקרת מבנה — דף מלא</a> ·
-        <a href="/smart-solutions-business/" class="text-accent-600 font-semibold hover:underline">פתרונות לעסקים</a> ·
-        <a href="/green-building/" class="text-accent-600 font-semibold hover:underline">בנייה ירוקה ותקן 5281</a>
-      </p>
+<!-- 2. VERIFIED PROOF BAR (no logos until written approval — decision 4) -->
+<section class="bg-brand-50 border-y border-brand-100" aria-label="נתוני אמון">
+  <div class="max-w-6xl mx-auto px-4 py-10">
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-6 text-center mb-6">
+      <div><div class="text-3xl font-extrabold text-brand-700">2008</div><div class="text-sm text-brand-600 mt-1">פועלים משנת</div></div>
+      <div><div class="text-3xl font-extrabold text-brand-700">9,000+</div><div class="text-sm text-brand-600 mt-1">לקוחות</div></div>
+      <div><div class="text-3xl font-extrabold text-brand-700">180+</div><div class="text-sm text-brand-600 mt-1">פרויקטי בקרת מבנה</div></div>
+      <div><div class="text-3xl font-extrabold text-brand-700">אלפי</div><div class="text-sm text-brand-600 mt-1">דירות חכמות</div></div>
     </div>
-  </div>
-</section>
-
-<!-- 6. AUDIO & HOME CINEMA -->
-<section class="bg-brand-50 py-16 lg:py-20 border-y border-brand-100">
-  <div class="max-w-5xl mx-auto px-4">
-    <h2 class="text-3xl md:text-4xl font-extrabold text-brand-900 mb-6">אודיו וקולנוע ביתי</h2>
-    <div class="text-lg text-brand-800 leading-relaxed space-y-4">
-      <p>
-        מערכות אודיו ביתיות הן חלק טבעי ממערכת בית חכם מקצועית. אנחנו מתכננים מערכות <strong>multi-room</strong> לכל הבית (FOCAL, Cabasse wireless ופתרונות KNX Audio) שמתחברות לפלטפורמות הסטרימינג הנפוצות, וגם <strong>חדרי קולנוע ביתי</strong> עם תכנון אקוסטי, מקרני Epson 4K ומערכות שמע Dolby Atmos.
-      </p>
-      <p>
-        חדר קולנוע מתוכנן ספציפית לחדר הפיזי — מימדים, חומרי בידוד, מיקום הרמקולים והכיול הסופי — כדי שאיכות התמונה והצליל יהיו אופטימליות. תכנון נכון נעשה לפני הבנייה או לפני השיפוץ.
-      </p>
-      <p class="text-base">
-        ראו עוד:
-        <a href="/audio-and-sound-systems/" class="text-accent-600 font-semibold hover:underline">אודיו וקולנוע ביתי — דף מלא</a> ·
-        <a href="/gallery/חדר-קולנוע-ביתי/" class="text-accent-600 font-semibold hover:underline">דוגמה לחדר קולנוע פרטי</a>
-      </p>
-    </div>
-  </div>
-</section>
-
-<!-- 7. SOLUTIONS FOR REAL ESTATE DEVELOPERS -->
-<section class="py-16 lg:py-20">
-  <div class="max-w-5xl mx-auto px-4">
-    <h2 class="text-3xl md:text-4xl font-extrabold text-brand-900 mb-6">פתרונות ליזמי בנייה</h2>
-    <div class="text-lg text-brand-800 leading-relaxed space-y-4">
-      <p>
-        ליזמי תמ"א 38, פינוי-בינוי ובנייה חדשה אנחנו מציעים <strong>מסלולי תשתית בית חכם</strong> בעלות נמוכה לדירה — כך שהדייר מקבל ערך מוסף בלי שעלות הבנייה תעלה משמעותית. המסלולים נעים מתשתית בסיסית המוכנה להרחבה עתידית, ועד חבילה מלאה לפי דרישת הדייר.
-      </p>
-      <p>
-        אנחנו מלווים את הפרויקט משלב התכנון (סנכרון עם האדריכל ועם הקבלן הראשי), דרך הביצוע (התקנה מסונכרנת ללוח הזמנים של הפרויקט), ועד הדרכת הדייר אחרי המסירה. בכך אנחנו הופכים להיות נקודת השירות של הדיירים — ולא נופלים אצל היזם אחרי המסירה.
-      </p>
-      <p class="text-base">
-        ראו עוד:
-        <a href="/contractor-customer-care/" class="text-accent-600 font-semibold hover:underline">פתרונות ליזמי בנייה — דף מלא</a> ·
-        <a href="/right-infrastructure-for-a-smart-home/" class="text-accent-600 font-semibold hover:underline">תכנון תשתית נכונה</a>
-      </p>
-    </div>
-  </div>
-</section>
-
-<!-- 8. ARCHITECTS -->
-<section class="bg-brand-50 py-16 lg:py-20 border-y border-brand-100">
-  <div class="max-w-5xl mx-auto px-4">
-    <h2 class="text-3xl md:text-4xl font-extrabold text-brand-900 mb-6">ליווי תכנון לאדריכלים</h2>
-    <div class="text-lg text-brand-800 leading-relaxed space-y-4">
-      <p>
-        לאדריכלים שמתכננים פרויקט עם בית חכם, אנחנו מציעים ליווי משלב הסקיצה: <strong>סקירה ארכיטקטונית</strong> עם המלצות לתכנון התשתית, <strong>מפרטים טכניים</strong> מוכנים להעברה לחשמלאי הראשי, ו<strong>חומרי תכנון או קבצים טכניים</strong> לפי הצורך, בהתאם להיקף הפרויקט ולפורמט העבודה שנדרש.
-      </p>
-      <p>
-        המטרה: שלא תצטרכו להתעמק בפרוטוקולי תקשורת, מסלולי כבלים או מפרטי בקרים כדי לתכנן נכון. אנחנו הופכים את החלק הטכני לבלוק בנייה שנכנס בקלות לפרויקט שלכם.
-      </p>
-      <p class="text-base">
-        ראו עוד:
-        <a href="/architects-smart-home-planning/" class="text-accent-600 font-semibold hover:underline">ליווי אדריכלים — דף מלא</a> ·
-        <a href="/the-winning-synergy/" class="text-accent-600 font-semibold hover:underline">הסינרגיה הנכונה</a>
-      </p>
-    </div>
-  </div>
-</section>
-
-<!-- 9. SERVICE AND MAINTENANCE — action-oriented -->
-<section class="py-16 lg:py-20">
-  <div class="max-w-5xl mx-auto px-4">
-    <h2 class="text-3xl md:text-4xl font-extrabold text-brand-900 mb-4">שירות לקוחות ותחזוקה</h2>
-    <p class="text-lg text-brand-800 leading-relaxed mb-6 max-w-3xl">
-      בית חכם הוא מערכת לטווח ארוך. ללקוחות שכבר התקנו אצלם, אגף השירות זמין לפתיחת קריאות שירות, אבחון מרחוק, ביקור טכנאי כשנדרש, והרחבות למערכת קיימת. לכל פרויקט מוצמד מנהל פרויקט שמכיר את ההתקנה לפרטיה.
+    <p class="text-center text-brand-700 max-w-3xl mx-auto">
+      פרויקטים במשרדי חברות טכנולוגיה, מוסדות רפואיים, אצטדיונים ומבנים מסחריים מובילים.
     </p>
-    <div class="flex flex-wrap gap-3 mb-5">
-      <a href="https://wa.me/972533006239" class="bg-green-500 hover:bg-green-600 text-white px-6 py-3 rounded-lg font-bold transition shadow-md">
-        WhatsApp שירות 053-300-6239
-      </a>
-      <a href="tel:+972-53-300-6239" class="bg-accent-500 hover:bg-accent-600 text-white px-6 py-3 rounded-lg font-bold transition shadow-md">
-        חיוג למחלקת שירות
-      </a>
-      <a href="mailto:support@i-feel.co.il" class="bg-white border-2 border-brand-200 hover:border-brand-700 text-brand-900 px-6 py-3 rounded-lg font-bold transition">
-        support@i-feel.co.il
-      </a>
-    </div>
-    <p class="text-base">
-      <a href="/service-and-maintenance/" class="text-accent-600 font-semibold hover:underline">מעבר לעמוד השירות המלא ←</a>
-      <span class="mx-3 text-brand-400">·</span>
-      <a href="/contactus/" class="text-accent-600 font-semibold hover:underline">טופס יצירת קשר</a>
-      <span class="mx-3 text-brand-400">·</span>
-      <a href="/שאלות-נפוצות/" class="text-accent-600 font-semibold hover:underline">שאלות נפוצות</a>
-    </p>
-    <p class="text-xs text-brand-500 mt-3">שעות פעילות: ראשון–חמישי 09:00–18:00. פניות מטופלות בהתאם לעומסים; פניות מחוץ לשעות הפעילות מתועדות ומטופלות בימי העסקים הבאים.</p>
   </div>
 </section>
 
-<!-- 10. PROJECTS & PROOF -->
-<section class="bg-brand-50 py-16 lg:py-20 border-y border-brand-100">
-  <div class="max-w-7xl mx-auto px-4">
-    <div class="max-w-3xl mb-8">
-      <h2 class="text-3xl md:text-4xl font-extrabold text-brand-900 mb-4">פרויקטים — לפי קטגוריה</h2>
-      <p class="text-lg text-brand-800">
-        מעל 20 פרויקטים מובחרים מרחבי הארץ — מאורגנים לפי קטגוריה. בחרו את הקטגוריה הרלוונטית לכם לצפייה בפורטפוליו המלא.
-      </p>
+<!-- 3. THREE SOLUTION TRACKS -->
+<section class="py-16 lg:py-24" aria-label="מסלולי הפתרון">
+  <div class="max-w-6xl mx-auto px-4">
+    <div class="max-w-3xl mb-10">
+      <h2 class="text-3xl md:text-4xl font-extrabold text-brand-900 mb-3">מסלולי הפתרון שלנו</h2>
+      <p class="text-lg text-brand-700">שלושה מסלולים, מתודולוגיה אחת: תכנון נכון מההתחלה, אינטגרציה מלאה, ושירות שנשאר איתכם.</p>
     </div>
-    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
+    <div class="grid md:grid-cols-3 gap-6">
 
-      <a href="/projects/#private" class="group bg-white border border-brand-100 hover:border-accent-500 hover:shadow-lg rounded-2xl p-5 transition">
-        <div class="text-xs font-bold uppercase tracking-wider text-accent-600 mb-2">9 פרויקטים</div>
-        <h3 class="text-lg font-bold text-brand-900 mb-1 group-hover:text-accent-600">לקוחות פרטיים</h3>
-        <p class="text-sm text-brand-700">וילות פרטיות בקיסריה, רעננה, ביתר, חופית, כפר קרע ועוד.</p>
-      </a>
+      <article class="border border-brand-100 rounded-2xl overflow-hidden hover:shadow-lg transition flex flex-col">
+        <img src="/assets/projects/villa-raanana.jpg" alt="בית חכם בווילה פרטית ברעננה — פרויקט של i-feel" class="h-44 w-full object-cover" loading="lazy" />
+        <div class="p-6 flex flex-col flex-1">
+          <h3 class="text-xl font-extrabold text-brand-900 mb-2">בית חכם ללקוחות פרטיים</h3>
+          <p class="text-brand-700 mb-4">תאורה, מיזוג, מוזיקה ואבטחה — בשליטה אחת, מתוכננת סביב איך שאתם חיים.</p>
+          <ul class="text-sm text-brand-700 space-y-1.5 mb-5">
+            <li>· בית חכם KNX קווי אמין, או פתרון אלחוטי לדירה קיימת</li>
+            <li>· תכנון אישי לפי הנכס והתקציב</li>
+            <li>· שירות ושדרוגים לאורך שנים</li>
+          </ul>
+          <a href="/smart-home/"
+             data-ga-event="audience_private_click"
+             data-ga-params='{"audience_type":"private","source_page":"homepage_tracks"}'
+             class="mt-auto text-accent-600 font-bold hover:underline">לתכנון בית חכם ←</a>
+        </div>
+      </article>
 
-      <a href="/projects/#developers" class="group bg-white border border-brand-100 hover:border-accent-500 hover:shadow-lg rounded-2xl p-5 transition">
-        <div class="text-xs font-bold uppercase tracking-wider text-accent-600 mb-2">11 פרויקטים</div>
-        <h3 class="text-lg font-bold text-brand-900 mb-1 group-hover:text-accent-600">יזמי בנייה</h3>
-        <p class="text-sm text-brand-700">בנייה רוויה בהרצליה, גבעתיים, רמת השרון, נהריה, ירושלים ועוד.</p>
-      </a>
+      <article class="border border-brand-100 rounded-2xl overflow-hidden hover:shadow-lg transition flex flex-col">
+        <img src="/assets/projects/kishon-park-herzliya.jpg" alt="פרויקט מגורים יזמי עם תשתית בית חכם — i-feel" class="h-44 w-full object-cover" loading="lazy" />
+        <div class="p-6 flex flex-col flex-1">
+          <h3 class="text-xl font-extrabold text-brand-900 mb-2">פתרונות ליזמים ודיירים</h3>
+          <p class="text-brand-700 mb-4">תשתית חכמה לכל הפרויקט, ודירות חכמות שהדיירים באמת משתמשים בהן.</p>
+          <ul class="text-sm text-brand-700 space-y-1.5 mb-5">
+            <li>· ליווי משלב ההיתר ועד מסירת הדירות</li>
+            <li>· מסלולי תשתית חכמה, דירה חכמה ודירה חכמה מורחבת — מותאמים ליזם</li>
+            <li>· מערך שירות והדרכה לדיירים אחרי המסירה</li>
+          </ul>
+          <a href="/contractor-customer-care/"
+             data-ga-event="audience_developer_click"
+             data-ga-params='{"audience_type":"developer","source_page":"homepage_tracks"}'
+             class="mt-auto text-accent-600 font-bold hover:underline">למסלול היזמים ←</a>
+        </div>
+      </article>
 
-      <a href="/projects/#bms" class="group bg-white border border-brand-100 hover:border-accent-500 hover:shadow-lg rounded-2xl p-5 transition">
-        <div class="text-xs font-bold uppercase tracking-wider text-accent-600 mb-2">מקרה בוחן</div>
-        <h3 class="text-lg font-bold text-brand-900 mb-1 group-hover:text-accent-600">BMS ובקרת מבנה</h3>
-        <p class="text-sm text-brand-700">מערכת KNX בבית חולים הדסה — מקרה בוחן מפורט.</p>
-      </a>
+      <article class="border border-brand-100 rounded-2xl overflow-hidden hover:shadow-lg transition flex flex-col">
+        <img src="/assets/hotel-bms.png" alt="בקרת מבנה BMS למלונות ומבנים — i-feel" class="h-44 w-full object-cover" loading="lazy" />
+        <div class="p-6 flex flex-col flex-1">
+          <h3 class="text-xl font-extrabold text-brand-900 mb-2">בקרת מבנה BMS</h3>
+          <p class="text-brand-700 mb-4">שליטה מלאה באנרגיה, מיזוג ותשתיות של המבנה — ממסך אחד.</p>
+          <ul class="text-sm text-brand-700 space-y-1.5 mb-5">
+            <li>· פתרונות Siemens Desigo, KNX ו-BACnet</li>
+            <li>· חדר בקרה אחד לכל מערכות המבנה</li>
+            <li>· חיסכון מדיד באנרגיה ובתפעול</li>
+          </ul>
+          <a href="/structure-control/"
+             data-ga-event="audience_bms_click"
+             data-ga-params='{"audience_type":"bms","source_page":"homepage_tracks"}'
+             class="mt-auto text-accent-600 font-bold hover:underline">לפתרונות בקרת מבנה ←</a>
+          <a href="/bms-hotels/"
+             data-ga-event="audience_bms_click"
+             data-ga-params='{"audience_type":"bms","system_type":"hotels","source_page":"homepage_tracks"}'
+             class="mt-2 text-sm text-brand-600 font-semibold hover:underline">מלונות ואירוח — מסלול ייעודי ←</a>
+        </div>
+      </article>
 
-      <a href="/projects/#audio" class="group bg-white border border-brand-100 hover:border-accent-500 hover:shadow-lg rounded-2xl p-5 transition">
-        <div class="text-xs font-bold uppercase tracking-wider text-accent-600 mb-2">דף פרויקט</div>
-        <h3 class="text-lg font-bold text-brand-900 mb-1 group-hover:text-accent-600">אודיו וקולנוע</h3>
-        <p class="text-sm text-brand-700">חדר קולנוע ביתי פרטי 7.1.4 Atmos, מקרן Epson, אקוסטיקה.</p>
-      </a>
-
-      <a href="/projects/#intercom" class="group bg-white border border-brand-100 hover:border-accent-500 hover:shadow-lg rounded-2xl p-5 transition">
-        <div class="text-xs font-bold uppercase tracking-wider text-accent-600 mb-2">דף פרויקט</div>
-        <h3 class="text-lg font-bold text-brand-900 mb-1 group-hover:text-accent-600">אינטרקום ותקשורת</h3>
-        <p class="text-sm text-brand-700">אינטרקום חכם IP לבניין מגורים — Hikvision / Akuvox.</p>
-      </a>
-
-      <a href="/projects/" class="group bg-brand-700 hover:bg-brand-800 border border-brand-700 rounded-2xl p-5 transition text-white">
-        <div class="text-xs font-bold uppercase tracking-wider text-accent-500 mb-2">פורטפוליו מלא</div>
-        <h3 class="text-lg font-bold mb-1">כל הפרויקטים ←</h3>
-        <p class="text-sm text-brand-100">23 פרויקטים בכל הקטגוריות — לדף הפרויקטים המלא.</p>
-      </a>
-
-    </div>
-  </div>
-</section>
-
-<!-- 10B. VIDEO PROOF BAND -->
-<section class="py-16 lg:py-20" aria-label="הדרכות וידאו וסרטוני פרויקטים">
-  <div class="max-w-5xl mx-auto px-4">
-    <div class="bg-red-50 border-2 border-red-200 rounded-2xl p-6 md:p-10">
-      <div class="flex items-center gap-3 mb-3">
-        <svg class="w-8 h-8 text-red-600 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
-        <h2 class="text-3xl md:text-4xl font-extrabold text-brand-900">רואים איך זה עובד</h2>
-      </div>
-      <p class="text-lg text-brand-800 leading-relaxed mb-6 max-w-3xl">
-        סרטוני הדרכה, סקירת פרויקטים, הסברים על KNX ו-Home Assistant, חדר ישיבות חכם, וכתבות ב-The Marker וב-Mako. הכל בערוץ ה-YouTube הרשמי שלנו ומוטמע ישירות באתר.
-      </p>
-      <div class="grid md:grid-cols-3 gap-4 mb-6">
-        <a href="/video/" class="bg-white border border-red-200 hover:border-red-500 rounded-xl p-5 transition group">
-          <div class="font-bold text-brand-900 mb-1 group-hover:text-red-700">הדרכות שימוש</div>
-          <p class="text-sm text-brand-700">סרטוני הכרות, מסך מגע WallWand, Home Assistant ועוד — 6 סרטונים מוטמעים.</p>
-        </a>
-        <a href="/video/#projects" class="bg-white border border-red-200 hover:border-red-500 rounded-xl p-5 transition group">
-          <div class="font-bold text-brand-900 mb-1 group-hover:text-red-700">פרויקטים וסרטונים</div>
-          <p class="text-sm text-brand-700">סרטוני פרויקטים — בית גדול עם KNX, חדר ישיבות חכם, ועוד.</p>
-        </a>
-        <a href="https://www.youtube.com/@ifeelsmarthome" target="_blank" rel="noopener" class="bg-white border border-red-200 hover:border-red-500 rounded-xl p-5 transition group">
-          <div class="font-bold text-brand-900 mb-1 group-hover:text-red-700">ערוץ YouTube הרשמי ↗</div>
-          <p class="text-sm text-brand-700">@ifeelsmarthome — מנויים מקבלים עדכון על כל סרטון חדש.</p>
-        </a>
-      </div>
-      <a href="/video/" class="inline-block bg-red-600 hover:bg-red-700 text-white px-7 py-3 rounded-lg font-semibold transition shadow-md">
-        צפייה בהדרכות וידאו ←
-      </a>
     </div>
   </div>
 </section>
 
-<!-- 11. SHORT FAQ -->
-<section class="py-16 lg:py-20">
-  <div class="max-w-4xl mx-auto px-4">
-    <h2 class="text-3xl md:text-4xl font-extrabold text-brand-900 mb-6">שאלות נפוצות</h2>
-    <p class="text-lg text-brand-800 mb-8">חמש השאלות שאנחנו שומעים הכי הרבה. למבחר המלא — לעמוד השאלות הנפוצות.</p>
-    <div class="space-y-3">
-      <details class="bg-brand-50 rounded-lg p-5 cursor-pointer">
-        <summary class="font-bold text-brand-900 text-lg">מה ההבדל בין KNX לפתרון אלחוטי?</summary>
-        <p class="mt-3 text-brand-700 leading-relaxed">KNX הוא פרוטוקול קווי תקני (ISO/IEC 14543-3) שמתאים לבנייה חדשה ולשיפוץ עמוק, ועמיד לטווח ארוך. פתרון אלחוטי (Zigbee, Z-Wave) מתאים לדירה קיימת שבה לא רוצים לפתוח קירות, ומותקן בזמן קצר. הפירוט המלא בעמוד <a href="/smart-home/" class="text-accent-600 hover:underline">בית חכם</a>.</p>
-      </details>
-      <details class="bg-brand-50 rounded-lg p-5 cursor-pointer">
-        <summary class="font-bold text-brand-900 text-lg">כמה זמן לוקח להתקין בית חכם?</summary>
-        <p class="mt-3 text-brand-700 leading-relaxed">תלוי בסוג ההתקנה: בבנייה חדשה עם KNX קווי — בדרך כלל מספר שבועות, משולב בלוח הזמנים של הקבלן. בדירה קיימת עם פתרון אלחוטי — לרוב מספר ימים. אחרי סקר באתר נוכל לתת לוח זמנים מדויק.</p>
-      </details>
-      <details class="bg-brand-50 rounded-lg p-5 cursor-pointer">
-        <summary class="font-bold text-brand-900 text-lg">האם אפשר להתקין בית חכם בדירה קיימת?</summary>
-        <p class="mt-3 text-brand-700 leading-relaxed">כן. בדירה קיימת אנחנו עובדים עם פתרונות אלחוטיים שלא דורשים פתיחת קירות. הבקרה היא מהאפליקציה, ממתגי קיר חכמים, ומפיקודים קוליים (Alexa, Google Home, Apple HomeKit).</p>
-      </details>
-      <details class="bg-brand-50 rounded-lg p-5 cursor-pointer">
-        <summary class="font-bold text-brand-900 text-lg">מה ההבדל בין בית חכם ל-BMS?</summary>
-        <p class="mt-3 text-brand-700 leading-relaxed">בית חכם פונה לדירה או לווילה פרטית — הדגש על חוויית המשתמש ועל אינטגרציה של תאורה, מיזוג, אודיו ואבטחה. BMS פונה למבנה גדול (מלון, מגדל משרדים, בית חולים) — הדגש על ניהול מרכזי, חיסכון אנרגיה, וטיפול בתקלות. עוד ב<a href="/structure-control/" class="text-accent-600 hover:underline">דף בקרת מבנה</a>.</p>
-      </details>
-      <details class="bg-brand-50 rounded-lg p-5 cursor-pointer">
-        <summary class="font-bold text-brand-900 text-lg">האם המערכת תעבוד גם בלי אינטרנט?</summary>
-        <p class="mt-3 text-brand-700 leading-relaxed">מערכת KNX לא תלויה באינטרנט — היא רצה על bus מקומי במבנה. גם בלי אינטרנט תוכלו לשלוט במערכת ממתגי הקיר ומהאפליקציה דרך הרשת המקומית. רק שליטה מרחוק (כשאתם מחוץ לבית) דורשת חיבור אינטרנט פעיל.</p>
-      </details>
+<!-- 4. SELECTED PROJECTS — real photos only -->
+<section class="bg-brand-50 py-16 lg:py-24 border-y border-brand-100" aria-label="פרויקטים נבחרים">
+  <div class="max-w-6xl mx-auto px-4">
+    <h2 class="text-3xl md:text-4xl font-extrabold text-brand-900 mb-10">פרויקטים שאנחנו גאים בהם</h2>
+    <div class="grid sm:grid-cols-2 gap-6">
+
+      <a href="/smart-home-villa/" class="group relative rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition block min-h-[220px]">
+        <img src="/assets/projects/villa-caesarea.jpg" alt="וילה חכמה בקיסריה — מערכת KNX של i-feel" class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition duration-500" loading="lazy" />
+        <div class="absolute inset-0 bg-gradient-to-t from-brand-900/85 to-transparent"></div>
+        <div class="relative p-5 flex flex-col justify-end min-h-[220px]">
+          <span class="text-xs font-bold text-accent-500 mb-1">בית חכם</span>
+          <span class="text-xl font-extrabold text-white">וילה חכמה בקיסריה</span>
+        </div>
+      </a>
+
+      <a href="/contractor-customer-care/projects/" class="group relative rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition block min-h-[220px]">
+        <img src="/assets/projects/metropolis-herzliya.jpg" alt="פרויקט מטרופוליס הרצליה — דירות חכמות לפרויקט יזמי" class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition duration-500" loading="lazy" />
+        <div class="absolute inset-0 bg-gradient-to-t from-brand-900/85 to-transparent"></div>
+        <div class="relative p-5 flex flex-col justify-end min-h-[220px]">
+          <span class="text-xs font-bold text-accent-500 mb-1">יזמים ודיירים</span>
+          <span class="text-xl font-extrabold text-white">מטרופוליס הרצליה</span>
+        </div>
+      </a>
+
+      <a href="/structure-control/caesarea-rail-campus/" class="group relative rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition block min-h-[220px]">
+        <img src="/assets/projects/kesariya-cle.jpg" alt="קמפוס הרכבת בקיסריה — בקרת מבנה BMS של i-feel" class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition duration-500" loading="lazy" />
+        <div class="absolute inset-0 bg-gradient-to-t from-brand-900/85 to-transparent"></div>
+        <div class="relative p-5 flex flex-col justify-end min-h-[220px]">
+          <span class="text-xs font-bold text-accent-500 mb-1">בקרת מבנה BMS</span>
+          <span class="text-xl font-extrabold text-white">קמפוס הרכבת, קיסריה</span>
+        </div>
+      </a>
+
+      <a href="/hadassah-knx-system/" class="group relative rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition block min-h-[220px] bg-brand-800">
+        <div class="relative p-5 flex flex-col justify-end min-h-[220px]">
+          <span class="text-xs font-bold text-accent-500 mb-1">בקרת מבנה BMS · מוסד רפואי</span>
+          <span class="text-xl font-extrabold text-white">מערכת KNX בבית החולים הדסה</span>
+          <span class="text-sm text-brand-200 mt-1">מקרה בוחן מפורט — בקרה במוסד רפואי פעיל</span>
+        </div>
+      </a>
+
     </div>
     <div class="text-center mt-8">
-      <a href="/שאלות-נפוצות/" class="inline-block bg-brand-700 hover:bg-brand-800 text-white px-7 py-3.5 rounded-lg font-semibold transition">
-        לכל השאלות הנפוצות ←
-      </a>
+      <a href="/projects/" class="inline-block bg-brand-700 hover:bg-brand-800 text-white px-7 py-3.5 rounded-lg font-semibold transition">לכל הפרויקטים ←</a>
     </div>
   </div>
 </section>
 
-<!-- 11B. CATALOGS DOWNLOAD BAND -->
-<section class="bg-brand-50 py-16 lg:py-20 border-y border-brand-100" aria-label="קטלוגים להורדה">
-  <div class="max-w-5xl mx-auto px-4">
-    <h2 class="text-3xl md:text-4xl font-extrabold text-brand-900 mb-3">קטלוגים להורדה</h2>
-    <p class="text-lg text-brand-800 leading-relaxed mb-8 max-w-3xl">
-      17 קטלוגי PDF רשמיים — לבית חכם אלחוטי, KNX קווי, BMS וסימנס, פרויקטי בנייה רוויה, מבני ציבור, בתי מלון, חדרי ישיבות ועוד. ללא הרשמה, להורדה ישירה.
+<!-- 5. WHY ONE INTEGRATOR -->
+<section class="py-16 lg:py-24" aria-label="למה אינטגרטור אחד">
+  <div class="max-w-6xl mx-auto px-4">
+    <h2 class="text-3xl md:text-4xl font-extrabold text-brand-900 mb-4">למה אינטגרטור אחד לכל המערכות</h2>
+    <p class="text-lg text-brand-800 leading-relaxed max-w-4xl mb-10">
+      i-feel פועלת משנת 2008 ומתמחה בתכנון, התקנה ותחזוקה של מערכות בית חכם, KNX ובקרת מבנה BMS בישראל.
+      היתרון שלנו הוא שילוב של תכנון, התקנה, תכנות ושירות שוטף תחת חברה אחת — לא עוד מתקין, אלא אינטגרטור
+      שמחבר את כל מערכות הבית או המבנה למערכת אחת. רוצים להבין כמה זה עולה? ראו
+      <a href="/smart-home-price/" class="text-accent-600 font-semibold hover:underline">כמה עולה בית חכם</a>.
     </p>
-    <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-      <a href="/catalogs/#wireless" class="bg-white border-2 border-brand-100 hover:border-accent-500 rounded-xl p-5 transition group">
-        <div class="text-xs text-brand-500 font-semibold mb-1">לקוח פרטי</div>
-        <div class="font-bold text-brand-900 group-hover:text-accent-600">בית חכם אלחוטי</div>
-        <p class="text-xs text-brand-600 mt-1">Z-Wave, GlassWand, Wanderfull Hub</p>
-      </a>
-      <a href="/catalogs/#knx" class="bg-white border-2 border-brand-100 hover:border-accent-500 rounded-xl p-5 transition group">
-        <div class="text-xs text-brand-500 font-semibold mb-1">לקוח פרטי + אדריכל</div>
-        <div class="font-bold text-brand-900 group-hover:text-accent-600">KNX קווי</div>
-        <p class="text-xs text-brand-600 mt-1">קטלוג KNX 2025, TACTEO</p>
-      </a>
-      <a href="/catalogs/#bms" class="bg-white border-2 border-brand-100 hover:border-accent-500 rounded-xl p-5 transition group">
-        <div class="text-xs text-brand-500 font-semibold mb-1">BMS</div>
-        <div class="font-bold text-brand-900 group-hover:text-accent-600">BMS ובקרת מבנה</div>
-        <p class="text-xs text-brand-600 mt-1">Siemens, מלונאות, ארונות תקשורת</p>
-      </a>
-      <a href="/catalogs/#developers" class="bg-white border-2 border-brand-100 hover:border-accent-500 rounded-xl p-5 transition group">
-        <div class="text-xs text-brand-500 font-semibold mb-1">יזם</div>
-        <div class="font-bold text-brand-900 group-hover:text-accent-600">בנייה רוויה ויזמים</div>
-        <p class="text-xs text-brand-600 mt-1">בנייה רוויה, בנייה ירוקה לקבלנים</p>
-      </a>
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+      <div class="bg-brand-50 border border-brand-100 rounded-2xl p-6">
+        <h3 class="text-lg font-extrabold text-brand-900 mb-2">תכנון אחד</h3>
+        <p class="text-sm text-brand-700">כל המערכות מתוכננות יחד מהיום הראשון — לא מתואמות בדיעבד.</p>
+      </div>
+      <div class="bg-brand-50 border border-brand-100 rounded-2xl p-6">
+        <h3 class="text-lg font-extrabold text-brand-900 mb-2">מערכת אחת</h3>
+        <p class="text-sm text-brand-700">תאורה, מיזוג, אבטחה ואודיו מדברים באותה שפה — KNX ותקנים פתוחים.</p>
+      </div>
+      <div class="bg-brand-50 border border-brand-100 rounded-2xl p-6">
+        <h3 class="text-lg font-extrabold text-brand-900 mb-2">אחריות אחת</h3>
+        <p class="text-sm text-brand-700">אין "זה לא אצלנו". כתובת אחת לכל המערכת — מהבקר ועד האפליקציה.</p>
+      </div>
+      <div class="bg-brand-50 border border-brand-100 rounded-2xl p-6">
+        <h3 class="text-lg font-extrabold text-brand-900 mb-2">שירות לאורך שנים</h3>
+        <p class="text-sm text-brand-700">מי שתכנן והתקין הוא מי שמתחזק ומשדרג — עם מחלקת שירות פנימית.</p>
+      </div>
     </div>
-    <a href="/catalogs/" class="inline-block bg-brand-700 hover:bg-brand-800 text-white px-7 py-3 rounded-lg font-semibold transition shadow-md">
-      מעבר לקטלוגים ←
-    </a>
   </div>
 </section>
 
-<!-- CTA -->
-<section id="contact" class="bg-brand-900 text-white py-20">
+<!-- 6. CENTRAL CASE STUDY — D-City / Roxon (swappable to Hadassah per Oren) -->
+<section class="bg-brand-900 text-white py-16 lg:py-24" aria-label="מקרה בוחן">
+  <div class="max-w-6xl mx-auto px-4">
+    <span class="inline-block text-xs font-bold tracking-wider text-accent-500 mb-3">מקרה בוחן</span>
+    <h2 class="text-3xl md:text-4xl font-extrabold mb-8">מלונות D-CITY ו-ROXON — בקרת חדרים חכמה</h2>
+    <img src="/assets/structure-projects/img/image12.png" alt="מלון D-CITY — בקרת חדרים חכמה KNX של i-feel" class="rounded-2xl w-full object-cover max-h-[420px] mb-10" loading="lazy" />
+    <div class="grid md:grid-cols-3 gap-8 mb-8">
+      <div>
+        <h3 class="text-lg font-extrabold text-accent-500 mb-2">האתגר</h3>
+        <p class="text-brand-100 leading-relaxed">מערכת אוטומציה למתחמי מלונאות — D-CITY במעלה אדומים ו-ROXON באילת ובערד — עם דרישות תפעול מיוחדות, כולל עבודה בשבתות ובחגים.</p>
+      </div>
+      <div>
+        <h3 class="text-lg font-extrabold text-accent-500 mb-2">הפתרון</h3>
+        <p class="text-brand-100 leading-relaxed">מערכת KNX מלאה לניהול חדרי המלון, אינטגרציה למערכת המלונאית Silverbyte, קידוד כרטיסי אורחים ותרחישים אוטומטיים לפי סטטוס האורח.</p>
+      </div>
+      <div>
+        <h3 class="text-lg font-extrabold text-accent-500 mb-2">התוצאה</h3>
+        <p class="text-brand-100 leading-relaxed">חוויית אירוח אחידה בכל החדרים, חיסכון משמעותי באנרגיה דרך ניהול תפוסה חכם, ותפעול פשוט יותר לצוותי המלון.</p>
+      </div>
+    </div>
+    <a href="/structure-control/d-city-roxon-hotels/" class="inline-block bg-accent-500 hover:bg-accent-600 text-white px-7 py-3.5 rounded-lg font-bold transition">למקרה הבוחן המלא ←</a>
+  </div>
+</section>
+
+<!-- 7. SERVICE ACROSS THE SYSTEM'S LIFE -->
+<section class="py-16 lg:py-24" aria-label="שירות לאורך חיי המערכת">
+  <div class="max-w-6xl mx-auto px-4">
+    <h2 class="text-3xl md:text-4xl font-extrabold text-brand-900 mb-4">שירות לאורך חיי המערכת</h2>
+    <p class="text-lg text-brand-800 leading-relaxed max-w-3xl mb-10">
+      המערכת שלכם חיה שנים. אנחנו נשארים איתה — הסכמי שירות, מוקד תמיכה, וצוות שמכיר את הפרויקט שלכם מבפנים.
+    </p>
+    <ol class="grid grid-cols-2 md:grid-cols-5 gap-3 mb-10" aria-label="שלבי חיי המערכת">
+      <li class="bg-brand-50 border border-brand-100 rounded-xl p-4 text-center"><span class="block text-2xl font-extrabold text-brand-300">1</span><span class="font-bold text-brand-900">תכנון</span></li>
+      <li class="bg-brand-50 border border-brand-100 rounded-xl p-4 text-center"><span class="block text-2xl font-extrabold text-brand-300">2</span><span class="font-bold text-brand-900">התקנה</span></li>
+      <li class="bg-brand-50 border border-brand-100 rounded-xl p-4 text-center"><span class="block text-2xl font-extrabold text-brand-300">3</span><span class="font-bold text-brand-900">הרצה ומסירה</span></li>
+      <li class="bg-brand-50 border border-brand-100 rounded-xl p-4 text-center"><span class="block text-2xl font-extrabold text-brand-300">4</span><span class="font-bold text-brand-900">תחזוקה</span></li>
+      <li class="bg-brand-50 border border-brand-100 rounded-xl p-4 text-center col-span-2 md:col-span-1"><span class="block text-2xl font-extrabold text-brand-300">5</span><span class="font-bold text-brand-900">שדרוג</span></li>
+    </ol>
+    <div class="flex flex-wrap gap-3">
+      <a href="/help/"
+         data-ga-event="homepage_existing_system_click"
+         data-ga-params='{"source_page":"homepage_service_section"}'
+         class="bg-brand-700 hover:bg-brand-800 text-white px-7 py-3.5 rounded-lg font-semibold transition">למרכז השירות ←</a>
+      <a href="/service-and-maintenance/" class="bg-white border-2 border-brand-200 hover:border-brand-700 text-brand-900 px-7 py-3.5 rounded-lg font-semibold transition">הסכמי שירות ותחזוקה ←</a>
+    </div>
+  </div>
+</section>
+
+<!-- 8. ARCHITECTS & CONSULTANTS BAND -->
+<section class="bg-brand-800 text-white py-12" aria-label="אדריכלים ויועצים">
+  <div class="max-w-6xl mx-auto px-4 flex flex-col md:flex-row md:items-center md:justify-between gap-6">
+    <div>
+      <h2 class="text-2xl md:text-3xl font-extrabold mb-2">אדריכלים, מעצבים ויועצים</h2>
+      <p class="text-brand-100 max-w-2xl">אנחנו הזרוע הטכנית שלכם: תכנון תשתיות, מפרטים טכניים והדמיות — עוד לפני שהקבלן נכנס לשטח.</p>
+    </div>
+    <a href="/architects-smart-home-planning/" class="shrink-0 inline-block bg-white/10 hover:bg-white/20 border border-white/30 text-white px-7 py-3.5 rounded-lg font-semibold transition">לעמוד שותפי התכנון ←</a>
+  </div>
+</section>
+
+<!-- 9. CLOSING CTA — the two doors again, compact -->
+<section class="py-16 lg:py-24" aria-label="קריאה לפעולה מסכמת">
   <div class="max-w-4xl mx-auto px-4 text-center">
-    <h2 class="text-3xl md:text-4xl font-extrabold mb-4">
-      רוצים להתחיל? בואו נדבר.
-    </h2>
-    <p class="text-xl text-brand-200 mb-8 max-w-2xl mx-auto">
-      שיחה ראשונה ללא התחייבות. נבין מה אתם רוצים, נציע פתרון שמתאים לתקציב וללוח הזמנים, ונשלח הצעת מחיר כתובה.
-    </p>
-    <div class="flex flex-wrap justify-center gap-3">
-      <a href="tel:+972-3-508-9553" class="bg-accent-500 hover:bg-accent-600 text-white px-7 py-3.5 rounded-lg font-semibold text-lg transition shadow-lg">
-        03-508-9553
+    <h2 class="text-3xl md:text-4xl font-extrabold text-brand-900 mb-3">לא בטוחים מאיפה להתחיל?</h2>
+    <p class="text-lg text-brand-700 mb-8">בחרו דלת — או פשוט התקשרו, ונכוון אתכם לאיש הנכון.</p>
+    <div class="grid sm:grid-cols-2 gap-4 text-right mb-8">
+      <a href="/start/"
+         data-ga-event="homepage_new_project_click"
+         data-ga-params='{"source_page":"homepage_footer_cta"}'
+         class="block bg-brand-600 hover:bg-brand-500 text-white rounded-2xl p-5 transition shadow-md">
+        <span class="block text-lg font-extrabold">אני מתכנן פרויקט חדש</span>
+        <span class="block text-brand-100 text-sm">נתחיל בפגישת אפיון</span>
       </a>
-      <a href="https://wa.me/972533450205?text=שלום%20מאיה%2C%20אשמח%20לייעוץ%20ראשוני%20בנושא%20בית%20חכם%20או%20BMS" class="bg-green-500 hover:bg-green-600 text-white px-7 py-3.5 rounded-lg font-semibold text-lg transition shadow-lg">
-        WhatsApp
-      </a>
-      <a href="mailto:sales@i-feel.co.il" class="bg-white/10 hover:bg-white/20 backdrop-blur text-white px-7 py-3.5 rounded-lg font-semibold text-lg border border-white/30 transition">
-        sales@i-feel.co.il
+      <a href="/help/"
+         data-ga-event="homepage_existing_system_click"
+         data-ga-params='{"source_page":"homepage_footer_cta"}'
+         class="block bg-brand-800 hover:bg-brand-700 text-white rounded-2xl p-5 transition shadow-md">
+        <span class="block text-lg font-extrabold"><span class="text-accent-500" aria-hidden="true">⚙</span> כבר יש לי מערכת</span>
+        <span class="block text-brand-100 text-sm">למרכז השירות והתמיכה</span>
       </a>
     </div>
-    <p class="text-sm text-brand-300 mt-6">שעות פעילות: ראשון–חמישי 09:00–18:00 · משרדנו: אימבר 14, פתח תקווה</p>
+    <p class="text-brand-800 font-semibold mb-2">
+      מכירות <a href="tel:+972-3-508-9553" class="text-accent-600 hover:underline">03-508-9553</a>
+      <span class="mx-2 text-brand-300">·</span>
+      שירות <a href="tel:+972-53-300-6239" class="text-accent-600 hover:underline">053-300-6239</a>
+    </p>
+    <p class="text-sm text-brand-500 mb-8">שעות פעילות: ראשון–חמישי 09:00–18:00 · אימבר 14, פתח תקווה</p>
+    <p class="text-sm text-brand-600">
+      עוד באתר:
+      <a href="/catalogs/" class="text-accent-600 hover:underline">קטלוגים להורדה</a> ·
+      <a href="/video/" class="text-accent-600 hover:underline">הדרכות וידאו</a> ·
+      <a href="/שאלות-נפוצות/" class="text-accent-600 hover:underline">שאלות נפוצות</a> ·
+      <a href="/articles/" class="text-accent-600 hover:underline">מאמרים</a> ·
+      <a href="/knx-smart-home/" class="text-accent-600 hover:underline">בית חכם KNX</a> ·
+      <a href="/wireless-smart-home-existing-apartment/" class="text-accent-600 hover:underline">בית חכם אלחוטי לדירה קיימת</a>
+    </p>
   </div>
 </section>
-

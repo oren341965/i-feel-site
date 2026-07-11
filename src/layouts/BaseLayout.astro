@@ -95,6 +95,18 @@ const siteIdentityJsonLd = JSON.stringify({
           gtag('event', 'whatsapp_click', { link_url: href, page_path: location.pathname });
         }
       });
+
+      // Declarative GA4 events: any element with data-ga-event fires that event
+      // on click, with optional JSON params in data-ga-params (event names are
+      // fixed in docs/homepage-redesign-decisions.md — do not invent new ones).
+      document.addEventListener('click', function (e) {
+        var el = e.target.closest && e.target.closest('[data-ga-event]');
+        if (!el) return;
+        var params = {};
+        try { params = JSON.parse(el.getAttribute('data-ga-params') || '{}'); } catch (err) {}
+        params.page_path = location.pathname;
+        gtag('event', el.getAttribute('data-ga-event'), params);
+      });
     </script>
   </head>
   <body class="bg-white text-brand-900 antialiased">

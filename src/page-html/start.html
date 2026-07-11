@@ -1,0 +1,170 @@
+<!-- ============================================================
+     דלת 1 — "אני מתכנן פרויקט חדש" (/start/)
+     docs/homepage-screen-spec.md — מסך 2
+     ============================================================ -->
+
+<!-- breadcrumb -->
+<nav class="bg-brand-50 border-b border-brand-100" aria-label="פירורי לחם">
+  <div class="max-w-6xl mx-auto px-4 py-3 text-sm">
+    <a href="/" class="text-brand-600 hover:text-accent-600">דף הבית</a>
+    <span class="mx-2 text-brand-400">›</span>
+    <span class="text-brand-900 font-medium">תכנון פרויקט חדש</span>
+  </div>
+</nav>
+
+<!-- 1. short intro — no giant hero, the user already chose a door -->
+<section class="py-12 lg:py-16" aria-label="פתיח">
+  <div class="max-w-4xl mx-auto px-4 text-center">
+    <h1 class="text-3xl md:text-5xl font-extrabold text-brand-900 mb-4">בואו נתחיל את הפרויקט נכון</h1>
+    <p class="text-lg md:text-xl text-brand-700 max-w-2xl mx-auto">
+      ספרו לנו מי אתם — ונכוון אתכם למסלול, למפרט ולאיש הנכון אצלנו. בית חכם, פרויקט יזמי או בקרת מבנה BMS.
+    </p>
+  </div>
+</section>
+
+<!-- 2. audience self-identification — three main cards -->
+<section class="pb-12 lg:pb-16" aria-label="בחירת מסלול">
+  <div class="max-w-6xl mx-auto px-4">
+    <div class="grid md:grid-cols-3 gap-6">
+
+      <a href="/smart-home/"
+         data-ga-event="audience_private_click"
+         data-ga-params='{"audience_type":"private","source_page":"/start/"}'
+         class="group border border-brand-100 rounded-2xl overflow-hidden hover:shadow-lg hover:border-accent-500 transition block">
+        <img src="/assets/projects/villa-raanana.jpg" alt="בית פרטי חכם — תכנון והתקנה" class="h-40 w-full object-cover" loading="lazy" />
+        <div class="p-6">
+          <h2 class="text-xl font-extrabold text-brand-900 mb-1 group-hover:text-accent-600 transition">בית פרטי או דירה</h2>
+          <p class="text-brand-700 text-sm">בונים, משפצים או משדרגים — נתכנן בית חכם סביב איך שאתם חיים.</p>
+        </div>
+      </a>
+
+      <a href="/contractor-customer-care/"
+         data-ga-event="audience_developer_click"
+         data-ga-params='{"audience_type":"developer","source_page":"/start/"}'
+         class="group border border-brand-100 rounded-2xl overflow-hidden hover:shadow-lg hover:border-accent-500 transition block">
+        <img src="/assets/projects/dense-residential-2.jpg" alt="פרויקט מגורים יזמי — תשתית ודירות חכמות" class="h-40 w-full object-cover" loading="lazy" />
+        <div class="p-6">
+          <h2 class="text-xl font-extrabold text-brand-900 mb-1 group-hover:text-accent-600 transition">פרויקט יזמי</h2>
+          <p class="text-brand-700 text-sm">תשתית חכמה ודירות חכמות לפרויקט מגורים — משלב ההיתר ועד הדיירים.</p>
+        </div>
+      </a>
+
+      <a href="/structure-control/"
+         data-ga-event="audience_bms_click"
+         data-ga-params='{"audience_type":"bms","source_page":"/start/"}'
+         class="group border border-brand-100 rounded-2xl overflow-hidden hover:shadow-lg hover:border-accent-500 transition block">
+        <img src="/assets/hotel-bms.png" alt="בקרת מבנה BMS למשרדים, מלונות ומוסדות" class="h-40 w-full object-cover" loading="lazy" />
+        <div class="p-6">
+          <h2 class="text-xl font-extrabold text-brand-900 mb-1 group-hover:text-accent-600 transition">מבנה מסחרי או ציבורי</h2>
+          <p class="text-brand-700 text-sm">משרדים, מלונות, מוסדות — בקרת מבנה BMS עם Siemens Desigo ו-KNX.</p>
+        </div>
+      </a>
+
+    </div>
+
+    <!-- 3. secondary audiences — text links, not competing cards -->
+    <p class="text-center text-brand-700 mt-8">
+      אדריכל או יועץ? <a href="/architects-smart-home-planning/" class="text-accent-600 font-bold hover:underline">לעמוד שותפי התכנון ←</a>
+      <span class="mx-3 text-brand-300">·</span>
+      מלון או אירוח? <a href="/bms-hotels/" data-ga-event="audience_bms_click" data-ga-params='{"audience_type":"bms","system_type":"hotels","source_page":"/start/"}' class="text-accent-600 font-bold hover:underline">פתרונות למלונות ←</a>
+    </p>
+  </div>
+</section>
+
+<!-- 4. how it works — a real sequence, hence numbered -->
+<section class="bg-brand-50 py-16 border-y border-brand-100" aria-label="איך זה עובד">
+  <div class="max-w-6xl mx-auto px-4">
+    <h2 class="text-2xl md:text-3xl font-extrabold text-brand-900 mb-8 text-center">איך זה עובד</h2>
+    <ol class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+      <li class="bg-white border border-brand-100 rounded-2xl p-6">
+        <span class="block text-3xl font-extrabold text-brand-300 mb-2">1</span>
+        <h3 class="font-extrabold text-brand-900 mb-1">פגישת אפיון</h3>
+        <p class="text-sm text-brand-700">מבינים את הצרכים, הנכס והתקציב — בטלפון או אצלכם.</p>
+      </li>
+      <li class="bg-white border border-brand-100 rounded-2xl p-6">
+        <span class="block text-3xl font-extrabold text-brand-300 mb-2">2</span>
+        <h3 class="font-extrabold text-brand-900 mb-1">תכנון ומפרט</h3>
+        <p class="text-sm text-brand-700">תכנית תשתיות ומפרט טכני מסודר — מתואם עם האדריכל והחשמלאי.</p>
+      </li>
+      <li class="bg-white border border-brand-100 rounded-2xl p-6">
+        <span class="block text-3xl font-extrabold text-brand-300 mb-2">3</span>
+        <h3 class="font-extrabold text-brand-900 mb-1">התקנה ותכנות</h3>
+        <p class="text-sm text-brand-700">התקנה מסונכרנת ללוח הזמנים של הפרויקט, ותכנות מלא של המערכת.</p>
+      </li>
+      <li class="bg-white border border-brand-100 rounded-2xl p-6">
+        <span class="block text-3xl font-extrabold text-brand-300 mb-2">4</span>
+        <h3 class="font-extrabold text-brand-900 mb-1">מסירה ושירות</h3>
+        <p class="text-sm text-brand-700">הדרכה, הרצה, ושירות שנשאר איתכם לאורך חיי המערכת.</p>
+      </li>
+    </ol>
+  </div>
+</section>
+
+<!-- 5. consultation form -->
+<section id="consult" class="py-16 lg:py-24 scroll-mt-24" aria-label="טופס ייעוץ">
+  <div class="max-w-2xl mx-auto px-4">
+    <div class="bg-white rounded-2xl shadow-xl border border-brand-100 p-6 md:p-8">
+      <h2 class="text-xl md:text-2xl font-extrabold text-brand-900 mb-1">מעדיפים שנחזור אליכם?</h2>
+      <p class="text-sm text-brand-600 mb-5">השאירו פרטים — ללא עלות וללא התחייבות.</p>
+
+      <form action="/api/lead.php" method="post" accept-charset="UTF-8" class="grid gap-4">
+        <input type="hidden" name="subject" value="פרויקט חדש — עמוד /start/">
+        <input type="hidden" name="source_page" value="/start/">
+        <input type="hidden" name="redirect_to" value="/start/">
+        <input type="hidden" name="utm_source" value="">
+        <input type="hidden" name="utm_medium" value="">
+        <input type="hidden" name="utm_campaign" value="">
+        <input type="hidden" name="utm_term" value="">
+        <input type="hidden" name="utm_content" value="">
+        <input type="hidden" name="gclid" value="">
+        <div class="hidden" aria-hidden="true">
+          <label>Website <input type="text" name="website" tabindex="-1" autocomplete="off"></label>
+        </div>
+
+        <label class="block">
+          <span class="block text-sm font-bold text-brand-900 mb-1">שם מלא <span class="text-accent-600">*</span></span>
+          <input required name="name" type="text" autocomplete="name" class="w-full rounded-lg border border-brand-200 px-4 py-3 text-brand-900 focus:border-accent-500 focus:ring-2 focus:ring-accent-500/20" placeholder="שם פרטי ומשפחה">
+        </label>
+
+        <label class="block">
+          <span class="block text-sm font-bold text-brand-900 mb-1">טלפון <span class="text-accent-600">*</span></span>
+          <input required name="phone" type="tel" autocomplete="tel" inputmode="tel" dir="ltr" class="w-full rounded-lg border border-brand-200 px-4 py-3 text-brand-900 text-right focus:border-accent-500 focus:ring-2 focus:ring-accent-500/20" placeholder="050-0000000">
+        </label>
+
+        <label class="block">
+          <span class="block text-sm font-bold text-brand-900 mb-1">סוג הפרויקט <span class="text-accent-600">*</span></span>
+          <select required name="lead_type" class="w-full rounded-lg border border-brand-200 px-4 py-3 text-brand-900 focus:border-accent-500 focus:ring-2 focus:ring-accent-500/20 bg-white">
+            <option value="">בחרו מסלול</option>
+            <option value="לקוח פרטי">בית פרטי או דירה</option>
+            <option value="יזם בנייה">פרויקט יזמי</option>
+            <option value="BMS / בקרת מבנה">מבנה מסחרי או ציבורי (BMS)</option>
+            <option value="אדריכל / מעצב">אדריכל / מעצב / יועץ</option>
+            <option value="אחר">אחר</option>
+          </select>
+        </label>
+
+        <label class="block">
+          <span class="block text-sm font-bold text-brand-900 mb-1">כמה מילים על הפרויקט <span class="text-brand-400 font-normal">(לא חובה)</span></span>
+          <textarea name="message" rows="2" class="w-full rounded-lg border border-brand-200 px-4 py-3 text-brand-900 focus:border-accent-500 focus:ring-2 focus:ring-accent-500/20" placeholder="עיר, שלב הבנייה, מה מעניין אתכם"></textarea>
+        </label>
+
+        <button type="submit"
+                data-ga-event="consultation_click"
+                data-ga-params='{"source_page":"/start/"}'
+                class="inline-flex items-center justify-center bg-accent-500 hover:bg-accent-600 text-white px-8 py-4 rounded-lg font-extrabold text-lg transition shadow-md w-full">
+          קבלו שיחת ייעוץ חינם
+        </button>
+
+        <p class="text-xs text-brand-500 text-center">
+          פניות שמתקבלות בשעות הפעילות נענות בדרך כלל באותו יום עסקים. הפרטים משמשים למענה לפנייה בלבד.
+        </p>
+      </form>
+    </div>
+
+    <p class="text-center text-brand-700 mt-6">
+      מעדיפים לדבר? <a href="tel:+972-3-508-9553" class="text-accent-600 font-bold hover:underline">03-508-9553</a>
+      <span class="mx-2 text-brand-300">·</span>
+      <a href="https://wa.me/972533450205?text=שלום%20מאיה%2C%20אני%20מתכנן%20פרויקט%20חדש%20ואשמח%20לייעוץ" class="text-accent-600 font-bold hover:underline">WhatsApp</a>
+    </p>
+  </div>
+</section>

@@ -1,0 +1,283 @@
+<!-- ============================================================
+     דלת 2 — מרכז השירות (/help/)
+     docs/homepage-screen-spec.md — מסך 3
+     סדר מחייב: זיהוי משתמש → תקלות נפוצות → לפי מערכת → לפי פעולה
+     → חיפוש חופשי → פתיחת קריאה (החלטות 7–8)
+     ============================================================ -->
+
+<!-- breadcrumb -->
+<nav class="bg-brand-50 border-b border-brand-100" aria-label="פירורי לחם">
+  <div class="max-w-6xl mx-auto px-4 py-3 text-sm">
+    <a href="/" class="text-brand-600 hover:text-accent-600">דף הבית</a>
+    <span class="mx-2 text-brand-400">›</span>
+    <span class="text-brand-900 font-medium">מרכז השירות</span>
+  </div>
+</nav>
+
+<!-- 1. title + emergency strip -->
+<section class="py-12 lg:py-16" aria-label="פתיח">
+  <div class="max-w-4xl mx-auto px-4 text-center">
+    <h1 class="text-3xl md:text-5xl font-extrabold text-brand-900 mb-4">מרכז השירות של i-feel</h1>
+    <p class="text-lg md:text-xl text-brand-700 max-w-2xl mx-auto mb-8">
+      נכוון אתכם לפתרון המהיר ביותר — לפי סוג המערכת שלכם.
+    </p>
+    <div class="bg-accent-500 text-white rounded-xl px-5 py-3.5 inline-flex flex-wrap items-center justify-center gap-2 font-bold shadow-md">
+      <span>תקלה דחופה?</span>
+      <a href="tel:+972-53-300-6239" class="underline hover:no-underline" dir="ltr">053-300-6239</a>
+      <span class="font-normal text-sm opacity-90">· א׳–ה׳ 09:00–18:00</span>
+    </div>
+  </div>
+</section>
+
+<!-- 2. user identification — mandatory first step (decision 7) -->
+<section class="pb-12" aria-label="זיהוי משתמש">
+  <div class="max-w-4xl mx-auto px-4">
+    <h2 class="text-xl md:text-2xl font-extrabold text-brand-900 mb-4 text-center">קודם כול — מי אתם?</h2>
+    <div class="grid sm:grid-cols-2 gap-4" id="audience-picker">
+      <button type="button" data-audience="tenant"
+              class="audience-btn text-right border-2 border-brand-200 hover:border-brand-600 rounded-2xl p-6 transition bg-white">
+        <span class="block text-lg font-extrabold text-brand-900 mb-1">אני דייר בפרויקט יזמי</span>
+        <span class="block text-sm text-brand-700">קיבלתם דירה חכמה מהיזם — התמיכה לפי הפרויקט שלכם</span>
+      </button>
+      <button type="button" data-audience="private"
+              class="audience-btn text-right border-2 border-brand-200 hover:border-brand-600 rounded-2xl p-6 transition bg-white">
+        <span class="block text-lg font-extrabold text-brand-900 mb-1">אני לקוח פרטי או מנהל מערכת</span>
+        <span class="block text-sm text-brand-700">המערכת הותקנה עבורכם ישירות על ידי i-feel</span>
+      </button>
+    </div>
+    <p id="audience-note" class="hidden text-center text-sm text-brand-700 bg-brand-50 border border-brand-100 rounded-lg px-4 py-3 mt-4"></p>
+  </div>
+</section>
+
+<!-- 3. common faults — the main entrance (decision 8) -->
+<section class="bg-brand-50 py-14 border-y border-brand-100" aria-label="תקלות נפוצות">
+  <div class="max-w-6xl mx-auto px-4">
+    <h2 class="text-2xl md:text-3xl font-extrabold text-brand-900 mb-2">תקלות נפוצות</h2>
+    <p class="text-brand-700 mb-8">בחרו את מה שהכי דומה למה שקורה אצלכם — לרוב יש בדיקה פשוטה שפותרת את זה בלי טכנאי.</p>
+    <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4" id="faults-grid">
+      <a href="/service-and-maintenance/" data-search="מתג לחצן לא מגיב תאורה קיר"
+         data-ga-event="help_article_open" data-ga-params='{"system_type":"switch"}'
+         class="help-card bg-white border border-brand-100 hover:border-accent-500 hover:shadow-md rounded-xl p-5 transition block">
+        <span class="font-bold text-brand-900 block mb-1">מתג לא מגיב</span>
+        <span class="text-sm text-brand-700">לחצן קיר שלא מפעיל תאורה או תריס</span>
+      </a>
+      <a href="/service-and-maintenance/" data-search="תאורה לא נדלקת נכבית אור"
+         data-ga-event="help_article_open" data-ga-params='{"system_type":"lighting"}'
+         class="help-card bg-white border border-brand-100 hover:border-accent-500 hover:shadow-md rounded-xl p-5 transition block">
+        <span class="font-bold text-brand-900 block mb-1">תאורה לא נדלקת או לא נכבית</span>
+        <span class="text-sm text-brand-700">גוף תאורה תקוע במצב דולק או כבוי</span>
+      </a>
+      <a href="/service-and-maintenance/" data-search="מיזוג מזגן לא נשלט טמפרטורה"
+         data-ga-event="help_article_open" data-ga-params='{"system_type":"hvac"}'
+         class="help-card bg-white border border-brand-100 hover:border-accent-500 hover:shadow-md rounded-xl p-5 transition block">
+        <span class="font-bold text-brand-900 block mb-1">המיזוג לא נשלט</span>
+        <span class="text-sm text-brand-700">המזגן לא מגיב לפקודות מהמערכת או מהאפליקציה</span>
+      </a>
+      <a href="/service-and-maintenance/" data-search="אפליקציה חיבור אין תקשורת אינטרנט app"
+         data-ga-event="help_article_open" data-ga-params='{"system_type":"app"}'
+         class="help-card bg-white border border-brand-100 hover:border-accent-500 hover:shadow-md rounded-xl p-5 transition block">
+        <span class="font-bold text-brand-900 block mb-1">אין חיבור לאפליקציה</span>
+        <span class="text-sm text-brand-700">האפליקציה לא מתחברת למערכת או לא מציגה מצב עדכני</span>
+      </a>
+      <a href="/service-and-maintenance/" data-search="אינטרקום וידאו דלת פתיחה צג"
+         data-ga-event="help_article_open" data-ga-params='{"system_type":"intercom"}'
+         class="help-card bg-white border border-brand-100 hover:border-accent-500 hover:shadow-md rounded-xl p-5 transition block">
+        <span class="font-bold text-brand-900 block mb-1">אינטרקום או וידאו</span>
+        <span class="text-sm text-brand-700">הצג לא מציג, אין צלצול או שהדלת לא נפתחת</span>
+      </a>
+      <a href="/service-and-maintenance/" data-search="הפסקת חשמל חזרה איפוס לוח"
+         data-ga-event="help_article_open" data-ga-params='{"system_type":"power"}'
+         class="help-card bg-white border border-brand-100 hover:border-accent-500 hover:shadow-md rounded-xl p-5 transition block">
+        <span class="font-bold text-brand-900 block mb-1">אחרי הפסקת חשמל</span>
+        <span class="text-sm text-brand-700">המערכת מתנהגת מוזר מאז שחזר החשמל</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- 4. by system -->
+<section class="py-12" aria-label="בחירה לפי מערכת">
+  <div class="max-w-6xl mx-auto px-4">
+    <h2 class="text-xl md:text-2xl font-extrabold text-brand-900 mb-5">לפי מערכת</h2>
+    <div class="flex flex-wrap gap-3" id="systems-row">
+      <a href="/smart-lighting/" data-search="תאורה אור דימר DALI"
+         data-ga-event="help_article_open" data-ga-params='{"system_type":"lighting"}'
+         class="help-card bg-white border border-brand-200 hover:border-accent-500 rounded-full px-5 py-2.5 text-sm font-semibold text-brand-900 transition">תאורה</a>
+      <a href="/service-and-maintenance/" data-search="מיזוג אקלים מזגן VRF"
+         data-ga-event="help_article_open" data-ga-params='{"system_type":"hvac"}'
+         class="help-card bg-white border border-brand-200 hover:border-accent-500 rounded-full px-5 py-2.5 text-sm font-semibold text-brand-900 transition">מיזוג</a>
+      <a href="/service-and-maintenance/" data-search="תריסים וילונות הצללה"
+         data-ga-event="help_article_open" data-ga-params='{"system_type":"shading"}'
+         class="help-card bg-white border border-brand-200 hover:border-accent-500 rounded-full px-5 py-2.5 text-sm font-semibold text-brand-900 transition">תריסים ווילונות</a>
+      <a href="/audio-and-sound-systems/" data-search="אודיו מוזיקה רמקולים קולנוע"
+         data-ga-event="help_article_open" data-ga-params='{"system_type":"audio"}'
+         class="help-card bg-white border border-brand-200 hover:border-accent-500 rounded-full px-5 py-2.5 text-sm font-semibold text-brand-900 transition">אודיו וקולנוע</a>
+      <a href="/service-and-maintenance/" data-search="אינטרקום דלת כניסה"
+         data-ga-event="help_article_open" data-ga-params='{"system_type":"intercom"}'
+         class="help-card bg-white border border-brand-200 hover:border-accent-500 rounded-full px-5 py-2.5 text-sm font-semibold text-brand-900 transition">אינטרקום</a>
+      <a href="/service-and-maintenance/" data-search="אבטחה אזעקה מצלמות"
+         data-ga-event="help_article_open" data-ga-params='{"system_type":"security"}'
+         class="help-card bg-white border border-brand-200 hover:border-accent-500 rounded-full px-5 py-2.5 text-sm font-semibold text-brand-900 transition">אבטחה ומצלמות</a>
+      <a href="/knx-smart-home/" data-search="KNX לוח חשמל בקר"
+         data-ga-event="help_article_open" data-ga-params='{"system_type":"knx"}'
+         class="help-card bg-white border border-brand-200 hover:border-accent-500 rounded-full px-5 py-2.5 text-sm font-semibold text-brand-900 transition">KNX ולוח החשמל</a>
+    </div>
+  </div>
+</section>
+
+<!-- 5. by action -->
+<section class="py-12 bg-brand-50 border-y border-brand-100" aria-label="בחירה לפי פעולה">
+  <div class="max-w-6xl mx-auto px-4">
+    <h2 class="text-xl md:text-2xl font-extrabold text-brand-900 mb-5">אני רוצה ל…</h2>
+    <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <a href="https://wa.me/972533006239?text=שלום%2C%20אשמח%20להוסיף%20תרחיש%20למערכת%20שלי"
+         data-search="תרחיש סצנה אוטומציה תזמון"
+         class="help-card bg-white border border-brand-100 hover:border-accent-500 hover:shadow-md rounded-xl p-5 transition block">
+        <span class="font-bold text-brand-900 block mb-1">להוסיף תרחיש</span>
+        <span class="text-sm text-brand-700">סצנת בוקר, יציאה מהבית, שבת — נגדיר יחד</span>
+      </a>
+      <a href="/video/" data-search="אפליקציה חיבור הדרכה שימוש"
+         data-ga-event="help_video_play" data-ga-params='{"system_type":"app"}'
+         class="help-card bg-white border border-brand-100 hover:border-accent-500 hover:shadow-md rounded-xl p-5 transition block">
+        <span class="font-bold text-brand-900 block mb-1">לחבר את האפליקציה</span>
+        <span class="text-sm text-brand-700">סרטוני הדרכה קצרים לחיבור ולשימוש יומיומי</span>
+      </a>
+      <a href="/smart-home-system-upgrade/"
+         data-search="שדרוג הרחבה מערכת ישנה חדש"
+         data-ga-event="upgrade_interest" data-ga-params='{"source_page":"/help/"}'
+         class="help-card bg-white border border-brand-100 hover:border-accent-500 hover:shadow-md rounded-xl p-5 transition block">
+        <span class="font-bold text-brand-900 block mb-1">לשדרג את המערכת</span>
+        <span class="text-sm text-brand-700">המערכת עובדת אבל הגיע הזמן לקדם אותה</span>
+      </a>
+      <a href="https://wa.me/972533006239?text=שלום%2C%20אשמח%20לתאם%20הדרכה%20על%20המערכת"
+         data-search="הדרכה לימוד שימוש"
+         class="help-card bg-white border border-brand-100 hover:border-accent-500 hover:shadow-md rounded-xl p-5 transition block">
+        <span class="font-bold text-brand-900 block mb-1">להזמין הדרכה</span>
+        <span class="text-sm text-brand-700 block">הדרכה אישית על המערכת — לכם או לצוות</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- 6. free search — last in the hierarchy (decision 8) -->
+<section class="py-12" aria-label="חיפוש">
+  <div class="max-w-3xl mx-auto px-4">
+    <h2 class="text-xl md:text-2xl font-extrabold text-brand-900 mb-4">לא מצאתם? חפשו</h2>
+    <form id="help-search-form" class="flex gap-2" role="search">
+      <input type="search" id="help-search-input"
+             class="flex-1 rounded-full border-2 border-brand-200 px-5 py-3 text-brand-900 focus:border-accent-500 focus:ring-2 focus:ring-accent-500/20"
+             placeholder="לדוגמה: המתג בסלון לא מגיב" aria-label="חיפוש במרכז העזרה">
+      <button type="submit" class="bg-brand-700 hover:bg-brand-800 text-white px-6 py-3 rounded-full font-bold transition">חיפוש</button>
+    </form>
+    <p id="search-result-note" class="hidden text-sm text-brand-700 bg-brand-50 border border-brand-100 rounded-lg px-4 py-3 mt-4"></p>
+  </div>
+</section>
+
+<!-- 7. open a service request -->
+<section id="service-request" class="bg-brand-900 text-white py-16 scroll-mt-24" aria-label="פתיחת קריאת שירות">
+  <div class="max-w-4xl mx-auto px-4 text-center">
+    <h2 class="text-2xl md:text-3xl font-extrabold mb-3">לא מצאתם פתרון? נפתח קריאה.</h2>
+    <p class="text-brand-100 mb-8 max-w-2xl mx-auto">
+      תארו את התקלה, ציינו כתובת או שם פרויקט — והקריאה תנותב ישירות למחלקת השירות.
+      פניות בשעות הפעילות נענות בדרך כלל באותו יום עסקים.
+    </p>
+    <div class="flex flex-wrap justify-center gap-3 mb-6">
+      <a href="https://www.superform.spot-nik.com/form/63cd83d84533621571484d9b" target="_blank" rel="noopener"
+         data-ga-event="service_request_start" data-ga-params='{"source_page":"/help/"}'
+         class="bg-accent-500 hover:bg-accent-600 text-white px-8 py-4 rounded-lg font-extrabold text-lg transition shadow-lg">
+        פתיחת קריאת שירות בטופס ↗
+      </a>
+      <a href="https://wa.me/972533006239?text=שלום%2C%20אשמח%20לפתוח%20קריאת%20שירות"
+         class="bg-green-500 hover:bg-green-600 text-white px-8 py-4 rounded-lg font-bold text-lg transition shadow-lg">
+        WhatsApp שירות
+      </a>
+    </div>
+    <p class="text-brand-200 text-sm">
+      או: <a href="tel:+972-53-300-6239" class="underline hover:no-underline" dir="ltr">053-300-6239</a>
+      <span class="mx-2">·</span>
+      <a href="mailto:support@i-feel.co.il" class="underline hover:no-underline">support@i-feel.co.il</a>
+      <span class="mx-2">·</span>
+      <a href="/service-and-maintenance/" class="underline hover:no-underline">מדריך התקלות המלא והסכמי שירות</a>
+    </p>
+  </div>
+</section>
+
+<script>
+(function () {
+  /* --- audience identification (decision 7) --- */
+  var KEY = 'ifeel_help_audience';
+  var note = document.getElementById('audience-note');
+  var notes = {
+    tenant: 'דיירים בפרויקט יזמי: בפתיחת קריאה ציינו את שם הפרויקט ומספר הדירה — כך נגיע ישר להגדרות של הדירה שלכם.',
+    private: 'לקוחות פרטיים ומנהלי מערכת: כדאי להכין את שם המערכת (KNX / אלחוטי) — זה מזרז את האבחון.'
+  };
+  function selectAudience(a, silent) {
+    if (!notes[a]) return;
+    try { localStorage.setItem(KEY, a); } catch (e) {}
+    document.querySelectorAll('.audience-btn').forEach(function (b) {
+      var on = b.getAttribute('data-audience') === a;
+      b.classList.toggle('border-brand-700', on);
+      b.classList.toggle('bg-brand-50', on);
+      b.classList.toggle('border-brand-200', !on);
+      b.setAttribute('aria-pressed', on ? 'true' : 'false');
+    });
+    if (note) { note.textContent = notes[a]; note.classList.remove('hidden'); }
+    // stamp the audience on all subsequent GA4 events on this page
+    document.querySelectorAll('[data-ga-params]').forEach(function (el) {
+      try {
+        var p = JSON.parse(el.getAttribute('data-ga-params') || '{}');
+        p.audience_type = a;
+        el.setAttribute('data-ga-params', JSON.stringify(p));
+      } catch (e) {}
+    });
+    if (!silent && window.gtag) gtag('event', 'help_audience_select', { audience_type: a, page_path: '/help/' });
+  }
+  document.querySelectorAll('.audience-btn').forEach(function (b) {
+    b.addEventListener('click', function () { selectAudience(b.getAttribute('data-audience')); });
+  });
+
+  /* --- QR / deep-link entry: /help/?p=<project>&u=tenant --- */
+  var qs = new URLSearchParams(location.search);
+  var project = qs.get('p');
+  var u = qs.get('u');
+  if (project && window.gtag) {
+    gtag('event', 'qr_project_open', { project_name: project, page_path: '/help/' });
+  }
+  if (u && notes[u]) {
+    selectAudience(u, true);
+  } else {
+    try { var saved = localStorage.getItem(KEY); if (saved) selectAudience(saved, true); } catch (e) {}
+  }
+
+  /* --- free search: client-side filter over the help cards (decision 8) --- */
+  var form = document.getElementById('help-search-form');
+  var input = document.getElementById('help-search-input');
+  var resultNote = document.getElementById('search-result-note');
+  if (form && input) {
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      var q = (input.value || '').trim();
+      if (!q) return;
+      if (window.gtag) gtag('event', 'help_search', { search_term: q, page_path: '/help/' });
+      var terms = q.split(/\s+/);
+      var matches = [];
+      document.querySelectorAll('.help-card').forEach(function (card) {
+        var hay = (card.getAttribute('data-search') || '') + ' ' + card.textContent;
+        var hit = terms.some(function (t) { return t.length > 1 && hay.indexOf(t) !== -1; });
+        card.classList.toggle('ring-2', hit);
+        card.classList.toggle('ring-accent-500', hit);
+        if (hit) matches.push(card);
+      });
+      if (resultNote) {
+        resultNote.classList.remove('hidden');
+        if (matches.length) {
+          resultNote.textContent = 'נמצאו ' + matches.length + ' נושאים מתאימים — הם מסומנים בעמוד.';
+          matches[0].scrollIntoView({ behavior: 'smooth', block: 'center' });
+        } else {
+          resultNote.innerHTML = 'לא נמצא נושא מתאים — הדרך המהירה עכשיו היא <a href="#service-request" class="font-bold text-accent-600 underline">לפתוח קריאת שירות</a>.';
+        }
+      }
+    });
+  }
+})();
+</script>
