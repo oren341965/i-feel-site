@@ -15,7 +15,7 @@ description: "העלאת אתר i-feel.co.il לאוויר בצורה בטוחה 
 
 | מה | ערך |
 |----|-----|
-| ריפו קנוני | GitHub `oren341965/i-feel-site` (branch `main`) — clone במשרד: `C:\Users\USER\i-feel-site`; clone בבית (salee): `C:\Users\salee\Documents\i-feel-site` |
+| ריפו קנוני | GitHub `oren341965/i-feel-site` (branch `main`) — clone במשרד: `C:\Users\User\ifeel-site-work` (אומת 2026-07-15); clone בבית (salee): `C:\Users\salee\Documents\i-feel-site` |
 | GitHub | `oren341965/i-feel-site` |
 | Build | `npm run build` → פלט ב-`dist\` |
 | שרת | JetServer (cPanel), host `185.56.74.12`, יעד `public_html/` |
