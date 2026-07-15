@@ -1,48 +1,24 @@
-# ✅ בוצע (2026-07-15, מהמחשב במשרד): llms.txt החדש באוויר
+# ✅ הושלם (2026-07-15, מהמחשב במשרד): האתר החי סונכרן במלואו עם הריפו
 
-- הועלה ב-FTP ואומת: `https://i-feel.co.il/llms.txt` מחזיר 200 ומתחיל ב-`# i-feel — מערכות בית חכם ובקרת מבנה`.
-- **תג `live` לא הוזז בכוונה**: אין תג live במחשב המשרד (נשאר במחשב הביתי ולא נדחף), ובדיקת האוויר העלתה שהאתר החי מפגר הרבה מעבר ל-llms.txt — `/start/`, `/help/` ו-18 דפי מקרי הבוחן מחזירים 404. סימון HEAD כ-live היה מסמן בטעות ~190 קומיטים כפרוסים.
-- **המשימה הבאה (באישור אורן): העלאה מלאה של `dist\` מהמשרד**, ואחריה `git tag -f live HEAD` + ‏`git push origin live --force`.
+## מה בוצע
 
----
+1. **יישוב הריפו** — קומיט מקומי תקוע (18 דפי מקרי בוחן BMS מ-7/6) עבר rebase על main, קונפליקט ב-page-18.html נפתר (23 כרטיסי מקרי בוחן), נדחף.
+2. **llms.txt החדש** (344822a) הועלה ואומת.
+3. **משיכה מהחי לפני deploy** — דף `/smart-home-support/` וחוק ה-QR redirect (`smart-apartment-from-developer` → `smart-home-support`, נוסף ישירות בשרת ב-9/7) נמשכו לריפו כדי שלא יאבדו.
+4. **העלאה מלאה additive של `dist\`** — 425/425 קבצים, 0 כשלים. שום דבר לא נמחק בשרת.
+5. **תג `live` הוצב על HEAD (1dfe1fc) ונדחף ל-GitHub** — שני המחשבים חולקים כעת נקודת ייחוס אחת.
 
-## (המשימה המקורית, לתיעוד)
+## אימות חי (הכל 200 אלא אם צוין)
 
-## מה קרה
+- `/`, `/start/`, `/help/` — עיצוב הבית החדש חי.
+- 18 דפי מקרי בוחן (hot-cinema, rapid-offices, ...) — 200, תוכן נכון.
+- `/structure-control/` — 23 כרטיסי מקרי בוחן.
+- `/structure-control/projects/` — גלריה = 84.
+- דף הבית — תג Google Ads (AW-18038181913) חי.
+- `/smart-home-support/` — 200; `/smart-apartment-from-developer/` → 301 ליעד.
+- sitemap / robots / llms — 200. www → non-www — 301.
 
-- `public/llms.txt` הוחלף בגרסה חדשה שאורן אישר (קומיט `344822a`). הקישורים נוקו מעטיפות Gmail.
-- build ירוק (111 דפים), `dist\llms.txt` עבר את כל בדיקות הקדם-העלאה.
-- **ההעלאה לא בוצעה** — FTP חסום מהמחשב הביתי (חומת האש של JetServer חוסמת פורט 21 מ-IP ביתי/סלולרי; אומת פעמיים כולל דרך hotspot).
+## נשאר לאורן
 
-## מה לעשות מהמחשב במשרד
-
-```powershell
-cd C:\Users\USER\i-feel-site
-git pull origin main
-npm run build
-```
-
-ואז העלאה כירורגית של קובץ אחד בלבד לפי סקיל `deploy-ifeel` (עכשיו בריפו, `.claude/skills/deploy-ifeel/`):
-
-```powershell
-# שליפת סיסמה מ-FileZilla (בלי להדפיס) + העלאה:
-curl.exe -sS --user "ifeelco:$pass" -T "dist\llms.txt" "ftp://185.56.74.12/public_html/llms.txt"
-```
-
-## אימות
-
-`https://i-feel.co.il/llms.txt` מחזיר 200 ומתחיל ב:
-
-```
-# i-feel — מערכות בית חכם ובקרת מבנה (Smart Home & BMS Integration, Israel)
-```
-
-(הגרסה הישנה מתחילה ב-`# i-feel.co.il` — אם רואים אותה, ההעלאה לא נקלטה; לזכור שיש cache של LiteSpeed, לנסות שוב אחרי דקה.)
-
-## אחרי האימות
-
-```powershell
-git tag -f live HEAD
-```
-
-ולמחוק את הקובץ הזה (או לסמן כבוצע).
+- **דפים חדשים → Google Search Console → URL Inspection → Request Indexing**, במיוחד: `/start/`, `/help/`, ו-18 דפי `/structure-control/<slug>/`.
+- הערה ל-SEO: דפי מקרי הבוחן החדשים מצהירים `canonical` על `www.i-feel.co.il` בעוד www עושה 301 ל-non-www. עובד, אבל canonical שמצביע ל-URL שמפנה מחדש אינו אידאלי — שווה ליישר בתבנית בהמשך.
