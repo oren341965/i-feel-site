@@ -1,6 +1,6 @@
 # i-feel — מערכות בית חכם ובקרת מבנה (Smart Home & BMS Integration, Israel)
 
-> i-feel Ltd. is an Israeli smart home and Building Management Systems (BMS) integrator, operating since 2008 from Petah Tikva. 9,000+ active clients, 4,000+ completed projects. Full in-house value chain: design and planning, installation with internal teams, manufacturing and import, and ongoing service. Flagship BMS projects include Amazon Sarona (Tel Aviv), Brinks Bnei Brak, Caesarea Rail Campus, Teddy Stadium and Hadassah hospital towers. Technologies: Siemens Desigo, KNX, DALI, BACnet, Modbus, DDC, Zigbee, Z-Wave, LoRa/LoRaWAN.
+> i-feel Ltd. is an Israeli smart home and Building Management Systems (BMS) integrator, operating since 2008 from Petah Tikva. 9,000+ active clients, 4,000+ completed projects. Full in-house value chain: design and planning, installation with internal teams, manufacturing and import, and ongoing service. Flagship BMS projects include Amazon Sarona (Tel Aviv), Brinks Bnei Brak, Caesarea Rail Campus, Teddy Stadium and Hadassah Netivot. Technologies: Siemens Desigo, KNX, DALI, BACnet, Modbus, DDC, Zigbee, Z-Wave, LoRa/LoRaWAN.
 
 i-feel היא חברת אינטגרציה ישראלית הפועלת משנת 2008, עם מעל 9,000 לקוחות פעילים ומעל 4,000 פרויקטים שהושלמו. החברה מחברת את כל מערכות הבית והמבנה — תאורה, תריסים, מיזוג, אודיו, מצלמות, אינטרקום ואבטחה — למערכת אחת, עם צוותי תכנון, התקנה ושירות פנימיים ושליטה מלאה בשרשרת האספקה (ייצור ויבוא).
 
