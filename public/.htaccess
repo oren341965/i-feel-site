@@ -42,6 +42,8 @@
   RewriteRule ^how-to-choose-a-company/?$ /answers/choosing-smart-home-integrator/ [R=301,L]
   # CountRite consolidation — canonical project page is /projects/countrite-technologies/.
   RewriteRule ^structure-control/countrite-technologies/?$ /projects/countrite-technologies/ [R=301,L]
+  # Merged into the tenant support hub (2026-07-09). QR codes point to the old slug — keep them working.
+  RewriteRule ^smart-apartment-from-developer/?$ /smart-home-support/ [R=301,L]
 
   # Newsletter project pages — interim redirect until full project pages are built.
   # (Ofir Bunker / Beit Elazari — content exists in email + Drive; remove these when the real pages ship.)
