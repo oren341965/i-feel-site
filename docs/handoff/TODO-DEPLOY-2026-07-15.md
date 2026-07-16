@@ -1,24 +1,39 @@
-# ✅ הושלם (2026-07-15, מהמחשב במשרד): האתר החי סונכרן במלואו עם הריפו
+# ⏳ להעלאה מהמשרד (2026-07-16): קומיט 93e2ab6 + 525e2c8
 
-## מה בוצע
+## מה מחכה באוויר (2 קומיטים שטרם עלו מעבר לתג live)
 
-1. **יישוב הריפו** — קומיט מקומי תקוע (18 דפי מקרי בוחן BMS מ-7/6) עבר rebase על main, קונפליקט ב-page-18.html נפתר (23 כרטיסי מקרי בוחן), נדחף.
-2. **llms.txt החדש** (344822a) הועלה ואומת.
-3. **משיכה מהחי לפני deploy** — דף `/smart-home-support/` וחוק ה-QR redirect (`smart-apartment-from-developer` → `smart-home-support`, נוסף ישירות בשרת ב-9/7) נמשכו לריפו כדי שלא יאבדו.
-4. **העלאה מלאה additive של `dist\`** — 425/425 קבצים, 0 כשלים. שום דבר לא נמחק בשרת.
-5. **תג `live` הוצב על HEAD (1dfe1fc) ונדחף ל-GitHub** — שני המחשבים חולקים כעת נקודת ייחוס אחת.
+תג `live` נמצא על `1dfe1fc`. מאז נוספו:
+1. **`93e2ab6`** — פס 8 לוגואי לקוחות (מונוכרום) בדף הבית + תיקון המשפט האנגלי ב-llms.txt.
+2. **`525e2c8`** — תיקון ניסוח הדסה: "הדסה נתיבות" (מוסד רפואי) במקום "בית חולים הדסה"/"מגדל אשפוז", ב-11 קבצים. **החלטת אורן 2026-07-16.**
 
-## אימות חי (הכל 200 אלא אם צוין)
+> ⚠️ אל תערוך את הדסה מחדש — התיקון כבר נעשה בבית ונדחף (525e2c8). רק למשוך ולהעלות.
 
-- `/`, `/start/`, `/help/` — עיצוב הבית החדש חי.
-- 18 דפי מקרי בוחן (hot-cinema, rapid-offices, ...) — 200, תוכן נכון.
-- `/structure-control/` — 23 כרטיסי מקרי בוחן.
-- `/structure-control/projects/` — גלריה = 84.
-- דף הבית — תג Google Ads (AW-18038181913) חי.
-- `/smart-home-support/` — 200; `/smart-apartment-from-developer/` → 301 ליעד.
-- sitemap / robots / llms — 200. www → non-www — 301.
+## איך להעלות (מהמחשב במשרד)
 
-## נשאר לאורן
+```powershell
+cd C:\Users\User\ifeel-site-work
+git pull origin main          # מביא 93e2ab6 + 525e2c8
+npm run build                 # 129 דפים, ירוק
+```
 
-- **דפים חדשים → Google Search Console → URL Inspection → Request Indexing**, במיוחד: `/start/`, `/help/`, ו-18 דפי `/structure-control/<slug>/`.
-- הערה ל-SEO: דפי מקרי הבוחן החדשים מצהירים `canonical` על `www.i-feel.co.il` בעוד www עושה 301 ל-non-www. עובד, אבל canonical שמצביע ל-URL שמפנה מחדש אינו אידאלי — שווה ליישר בתבנית בהמשך.
+**המלצה: העלאה מלאה additive של `dist\` שוב** (כמו ב-15/7, 425 קבצים) — הכי בטוח, תופס את שני הקומיטים בלי לנחש מיפוי page-html→dist. שום דבר לא נמחק בשרת.
+לחלופין, מי שרוצה כירורגי: `git diff --name-only live HEAD` ותרגם לפי הסקיל.
+
+## אימות חי (curl, לא WebFetch)
+
+- `https://i-feel.co.il/llms.txt` — מכיל "הדסה נתיבות", **לא** "מגדל אשפוז".
+- `https://i-feel.co.il/hadassah-knx-system/` — כותרת "מערכת KNX בהדסה נתיבות", אין "בית חולים הדסה".
+- `https://i-feel.co.il/` — כרטיסיית "מערכת KNX בהדסה נתיבות" + פס 8 לוגואים.
+- `https://i-feel.co.il/bms-hospitals/` — הקישור אומר "הדסה נתיבות".
+- בדיקת שלילה: `curl ... | grep "בית חולים הדסה\|מגדל אשפוז"` → אמור להיות ריק בכל הדפים.
+
+## סגירה
+
+```powershell
+git tag -f live HEAD
+git push origin live --force
+```
+
+## נשאר לאורן (GSC)
+
+בקשת אינדוקס ב-Google Search Console → URL Inspection → Request Indexing עבור: `/start/`, `/help/`, 18 דפי `/structure-control/<slug>/`, ו-`/hadassah-knx-system/` (השתנה).
