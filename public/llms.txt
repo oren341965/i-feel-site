@@ -20,7 +20,7 @@ i-feel היא חברת אינטגרציה ישראלית הפועלת משנת 2
 - [Brinks בני ברק](https://i-feel.co.il/structure-control/brinks-bnei-brak/): בקרת מבנה בסביבה ביטחונית עם Siemens Desigo ו-KNX.
 - [קמפוס רכבת קיסריה](https://i-feel.co.il/structure-control/caesarea-rail-campus/): BMS מרכזי לתאורה, אקלים ואנרגיה בקנה מידה גדול.
 - [מלונות D-CITY / ROXON](https://i-feel.co.il/structure-control/d-city-roxon-hotels/): בקרת חדרים GRMS משולבת PMS.
-- [מערכת KNX בהדסה](https://i-feel.co.il/hadassah-knx-system/): חיישני תנועה לבקרת תאורה ומיזוג במגדל אשפוז.
+- [מערכת KNX בהדסה נתיבות](https://i-feel.co.il/hadassah-knx-system/): חיישני תנועה לבקרת תאורה ומיזוג במרכז רפואי.
 - [גלריית פרויקטי BMS](https://i-feel.co.il/structure-control/projects/): 24 פרויקטים נבחרים עם פירוט.
 - [כל הפרויקטים](https://i-feel.co.il/projects/)
 

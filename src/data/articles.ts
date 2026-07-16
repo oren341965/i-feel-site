@@ -490,7 +490,7 @@ export const articles: Article[] = [
     updated: '2026-06-07',
     related: [
       { label: 'קטלוג KNX 2025', href: '/assets/catalogs/knx-catalog-2025.pdf' },
-      { label: 'מערכת KNX בהדסה', href: '/hadassah-knx-system/' },
+      { label: 'מערכת KNX בהדסה נתיבות', href: '/hadassah-knx-system/' },
     ],
     sections: [
       {
