@@ -1,6 +1,23 @@
-# ✅ הושלם (2026-07-16): האתר החי מסונכרן במלואו עם הריפו
+# ⏳ משימה פתוחה אחת: העלאת ה-sitemap המתוקן (קומיט `86f5214`)
 
-**אין משימות פתוחות בקובץ הזה.** תג `live` = `d6a9d6c` = origin/main HEAD → **0 קומיטים ממתינים**.
+**מה קרה:** בבדיקת GSC ב-16/7 התגלה ש-18 דפי מקרי הבוחן חיים באתר אך **מעולם לא נוספו ל-sitemap הידני**. תוקן ונדחף בקומיט `86f5214` (106 → 124 כתובות, XML אומת, כל כתובת מצביעה על דף קיים ב-dist).
+
+**מה לעשות מהמחשב במשרד:**
+```powershell
+cd C:\Users\User\ifeel-site-work
+git pull origin main
+npm run build
+# להעלות קובץ אחד: dist\sitemap.xml → /public_html/sitemap.xml
+git tag -f live HEAD ; git push origin live --force
+```
+אימות: `curl https://i-feel.co.il/sitemap.xml | grep -c '<loc>'` → צריך להחזיר **124** (כרגע 106).
+אחרי ההעלאה: ב-GSC → Sitemaps → להגיש מחדש `sitemap.xml` כדי שגוגל יקרא את הגרסה החדשה.
+
+---
+
+## ✅ הושלם (2026-07-16): האתר החי מסונכרן עם הריפו (למעט ה-sitemap שלמעלה)
+
+תג `live` = `d6a9d6c`. הדיפלוי של התוכן הושלם ואומת.
 
 ## מה נפרס (מהמחשב במשרד)
 
@@ -31,9 +48,14 @@
 4. **מחיקת דף / שינוי `.htaccess` = אישור מפורש של אורן**, לא פרשנות של סשן.
 5. אחרי דיפלוי: `git tag -f live HEAD` + `git push origin live --force` — כדי ששני המחשבים יחלקו נקודת ייחוס.
 
-## נשאר לאורן (ידני, GSC)
+## ✅ GSC — בוצע 2026-07-16
 
-Google Search Console → URL Inspection → Request Indexing עבור:
-- `/start/`, `/help/`
-- 18 דפי `/structure-control/<slug>/` (הכי חשוב ל-SEO של "בקרת מבנה")
-- `/hadassah-knx-system/` (הכותרת השתנתה)
+**נכס מאומת:** `https://i-feel.co.il/` (URL-prefix). הנכס `sc-domain:` **אינו** נגיש — אל תשתמש בו.
+
+**ממצא:** רוב הדפים החדשים כבר מאונדקסים — גוגל גילה אותם דרך קישורים פנימיים, עוד לפני שנכנסו ל-sitemap. אומת: `/start/` ו-`/structure-control/hot-cinema/` = "URL is on Google".
+
+**נשלחו 5 בקשות Request Indexing** — לדפים שהתוכן שלהם השתנה בתיקון הדסה (גוגל עדיין מגיש את הגרסה עם הטענה השגויה):
+`/` · `/hadassah-knx-system/` · `/bms-hospitals/` · `/projects/` · `/structure-control/projects/`
+כולם קיבלו "Indexing requested — added to a priority crawl queue". סריקה מחדש בדרך כלל תוך ימים ספורים.
+
+**מגבלה לידיעה:** ~10-12 בקשות אינדוקס ליום לנכס. לכן ה-sitemap הוא הכלי הנכון לגילוי המוני, ו-Request Indexing נשמר לדפים דחופים/שהשתנו.
