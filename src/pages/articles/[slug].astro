@@ -13,7 +13,7 @@ const { article } = Astro.props;
 const canonical = `https://i-feel.co.il/articles/${article.slug}/`;
 const title = `${article.title} | i-feel`;
 const ogImage = article.image ? `https://i-feel.co.il${article.image}` : undefined;
-const jsonLd = JSON.stringify({
+const articleSchema = {
   '@context': 'https://schema.org',
   '@type': 'Article',
   headline: article.title,
@@ -33,9 +33,22 @@ const jsonLd = JSON.stringify({
     name: 'i-feel',
     url: 'https://i-feel.co.il/',
   },
-});
+  ...(article.video ? {
+    video: {
+      '@type': 'VideoObject',
+      name: article.video.title,
+      description: article.video.description,
+      uploadDate: article.video.uploadDate,
+      thumbnailUrl: `https://i.ytimg.com/vi/${article.video.id}/hqdefault.jpg`,
+      contentUrl: `https://www.youtube.com/watch?v=${article.video.id}`,
+      embedUrl: `https://www.youtube-nocookie.com/embed/${article.video.id}`,
+      inLanguage: 'he-IL',
+    },
+  } : {}),
+};
+const jsonLd = JSON.stringify(articleSchema);
 ---
-<BaseLayout title={title} description={article.description} canonical={canonical} ogTitle={article.title} ogDescription={article.description} ogUrl={canonical} ogImage={ogImage} jsonLd={jsonLd}>
+<BaseLayout title={title} description={article.description} canonical={canonical} ogTitle={article.title} ogDescription={article.description} ogUrl={canonical} ogImage={ogImage} jsonLd={jsonLd} robots={article.noindex ? 'noindex, nofollow, noarchive' : undefined}>
   <article class="bg-white">
     <header class="bg-brand-900 text-white py-14 md:py-18">
       <div class="max-w-4xl mx-auto px-4">
@@ -60,6 +73,112 @@ const jsonLd = JSON.stringify({
     )}
 
     <div class="max-w-4xl mx-auto px-4 py-12">
+      {article.video && (
+        <section class="mb-12" aria-labelledby="article-video-title">
+          <h2 id="article-video-title" class="text-3xl font-bold text-brand-900 mb-4">{article.video.title}</h2>
+          <p class="text-lg leading-8 text-brand-700 mb-5">{article.video.description}</p>
+          <div class="relative w-full overflow-hidden rounded-2xl bg-brand-100 shadow-sm" style="aspect-ratio: 16 / 9;">
+            <iframe
+              class="absolute inset-0 h-full w-full"
+              loading="lazy"
+              src={`https://www.youtube-nocookie.com/embed/${article.video.id}`}
+              title={article.video.title}
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowfullscreen
+            ></iframe>
+          </div>
+        </section>
+      )}
+
+      {article.controlScreens && article.controlScreens.length > 0 && (
+        <section class="mb-14" aria-labelledby="control-screens-title">
+          <div class="max-w-3xl mb-6">
+            <p class="text-sm font-bold tracking-wide text-accent-600 mb-2">ממשק מותאם לכל פרויקט</p>
+            <h2 id="control-screens-title" class="text-3xl font-bold text-brand-900 mb-3">כך יכולים להיראות מסכי השליטה</h2>
+            <p class="text-lg leading-8 text-brand-700">המחשות אנונימיות למסך משפחתי, מסך אבטחה ומסך שבת וחירום. הנתונים, השמות והפעולות מותאמים בפועל לציוד ולהרשאות של כל בית.</p>
+          </div>
+          <div class="grid gap-5 lg:grid-cols-3">
+            {article.controlScreens.map((screen) => (
+              <article class="overflow-hidden rounded-2xl border border-brand-800 bg-brand-900 text-white shadow-lg">
+                <div class="flex items-center justify-between border-b border-white/10 px-5 py-4">
+                  <div>
+                    <h3 class="font-bold text-lg">{screen.title}</h3>
+                    <p class="mt-1 text-xs text-brand-200">{screen.subtitle}</p>
+                  </div>
+                  <span class="rounded-full bg-emerald-400/15 px-3 py-1 text-xs font-bold text-emerald-300">{screen.status}</span>
+                </div>
+                <div class="grid grid-cols-2 gap-3 p-4">
+                  {screen.cards.map((card) => (
+                    <div class="min-h-28 rounded-xl border border-white/10 bg-white/5 p-4">
+                      <p class="text-xs font-semibold text-brand-200">{card.label}</p>
+                      <p class="mt-3 text-xl font-extrabold text-white">{card.value}</p>
+                      <p class="mt-2 text-xs leading-5 text-brand-300">{card.detail}</p>
+                    </div>
+                  ))}
+                </div>
+              </article>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {article.capabilityGroups && article.capabilityGroups.length > 0 && (
+        <section class="mb-14" aria-labelledby="capability-map-title">
+          <h2 id="capability-map-title" class="text-3xl font-bold text-brand-900 mb-3">מפת היכולות של המערכת</h2>
+          <p class="text-lg leading-8 text-brand-700 mb-6">הרשימה מרכזת את היכולות שנמצאו בתיעוד SmartSphere, בחומרי הפרויקטים ובמערכת. כל יכולת מאושרת לפרויקט רק לאחר בדיקת דגם, ממשק, הרשאות ותלות בענן.</p>
+          <div class="overflow-x-auto rounded-2xl border border-brand-100 shadow-sm">
+            <table class="w-full min-w-[760px] border-collapse text-right">
+              <thead class="bg-brand-900 text-white">
+                <tr>
+                  <th scope="col" class="px-5 py-4 text-sm font-bold">תחום</th>
+                  <th scope="col" class="px-5 py-4 text-sm font-bold">יכולות וחיבורים</th>
+                  <th scope="col" class="px-5 py-4 text-sm font-bold">מה חשוב לדעת</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-brand-100 bg-white">
+                {article.capabilityGroups.map((group) => (
+                  <tr class="align-top hover:bg-brand-50/60">
+                    <th scope="row" class="w-44 px-5 py-4 font-bold text-brand-900">{group.category}</th>
+                    <td class="px-5 py-4 leading-7 text-brand-700">{group.capabilities}</td>
+                    <td class="px-5 py-4 leading-7 text-brand-600">{group.notes}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </section>
+      )}
+
+      {article.applianceExamples && article.applianceExamples.length > 0 && (
+        <section class="mb-14" aria-labelledby="appliance-examples-title">
+          <h2 id="appliance-examples-title" class="text-3xl font-bold text-brand-900 mb-3">דוגמאות למוצרי חשמל שמתחברים ל-Home Assistant</h2>
+          <p class="text-lg leading-8 text-brand-700 mb-6">הדוגמאות מבוססות על דף המלצות שהוכן ללקוח ביוני 2026. התאימות נקבעת לפי מספר הדגם המדויק, אזור השיווק וגרסת התוכנה — לא לפי שם המותג בלבד.</p>
+          <div class="overflow-x-auto rounded-2xl border border-brand-100 shadow-sm">
+            <table class="w-full min-w-[920px] border-collapse text-right">
+              <thead class="bg-accent-600 text-white">
+                <tr>
+                  <th scope="col" class="px-5 py-4 text-sm font-bold">סוג מוצר</th>
+                  <th scope="col" class="px-5 py-4 text-sm font-bold">דוגמאות</th>
+                  <th scope="col" class="px-5 py-4 text-sm font-bold">חיבור מומלץ</th>
+                  <th scope="col" class="px-5 py-4 text-sm font-bold">היקף שליטה ומגבלות</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-brand-100 bg-white">
+                {article.applianceExamples.map((item) => (
+                  <tr class="align-top hover:bg-accent-50/50">
+                    <th scope="row" class="w-44 px-5 py-4 font-bold text-brand-900">{item.product}</th>
+                    <td class="px-5 py-4 leading-7 text-brand-700">{item.examples}</td>
+                    <td class="px-5 py-4 leading-7 text-brand-700">{item.connection}</td>
+                    <td class="px-5 py-4 leading-7 text-brand-600">{item.scope}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          <p class="mt-4 rounded-xl border-r-4 border-amber-500 bg-amber-50 px-5 py-4 leading-7 text-amber-950"><strong>בטיחות:</strong> מכשירי חימום, בישול, אש ומנועים אינם מיועדים להפעלה אוטומטית או מרחוק ללא תכנון מתאים והשגחה. לעיתים החיבור הנכון הוא ניטור או כיבוי בלבד.</p>
+        </section>
+      )}
+
       <div class="space-y-10">
         {article.sections.map((section) => (
           <section>
