@@ -1,0 +1,75 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import content from '../page-html/akuvox-mega-city-70.html?raw';
+import '../styles/mega-guides.css';
+
+const canonical = 'https://i-feel.co.il/akuvox-mega-city-70/';
+const title = 'אינטרקום בניין MEGA CITY 70 — הנחיות ליזמים | i-feel';
+const description = 'מדריך תשתית ליזמים ויועצי חשמל עבור Akuvox MEGA CITY 70 בבניין מגורים: ארכיטקטורת IP, עמוד CAT6, הכנת כניסה, דירות, PoE וקו אינטרנט.';
+
+const jsonLd = JSON.stringify({
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': ['LocalBusiness', 'HomeAndConstructionBusiness'],
+      '@id': 'https://i-feel.co.il/#business',
+      name: 'i-feel',
+      url: 'https://i-feel.co.il/',
+      telephone: '+972-3-508-9553',
+      email: 'sales@i-feel.co.il',
+      address: {
+        '@type': 'PostalAddress',
+        streetAddress: 'אימבר 14',
+        addressLocality: 'פתח תקווה',
+        postalCode: '4951148',
+        addressCountry: 'IL'
+      },
+      areaServed: { '@type': 'Country', name: 'Israel' }
+    },
+    {
+      '@type': 'BreadcrumbList',
+      itemListElement: [
+        { '@type': 'ListItem', position: 1, name: 'דף הבית', item: 'https://i-feel.co.il/' },
+        { '@type': 'ListItem', position: 2, name: 'ליזמי בנייה', item: 'https://i-feel.co.il/contractor-customer-care/' },
+        { '@type': 'ListItem', position: 3, name: 'Akuvox MEGA CITY 70', item: canonical }
+      ]
+    },
+    {
+      '@type': 'Service',
+      name: 'אינטרקום בניין Akuvox MEGA CITY 70 לפרויקטים רבי־דירות',
+      serviceType: 'תכנון והתקנת אינטרקום IP לבנייה רוויה',
+      provider: { '@id': 'https://i-feel.co.il/#business' },
+      areaServed: { '@type': 'Country', name: 'Israel' },
+      audience: [
+        { '@type': 'Audience', audienceType: 'יזמי בנייה' },
+        { '@type': 'Audience', audienceType: 'יועצי חשמל' }
+      ],
+      description
+    },
+    {
+      '@type': 'TechArticle',
+      headline: 'הנחיות תשתית ליזמים — אינטרקום בניין Akuvox MEGA CITY 70',
+      description,
+      image: 'https://i-feel.co.il/assets/akuvox/mega-city-70-front.png',
+      inLanguage: 'he-IL',
+      datePublished: '2026-07-20',
+      dateModified: '2026-07-20',
+      author: { '@id': 'https://i-feel.co.il/#business' },
+      publisher: { '@id': 'https://i-feel.co.il/#business' },
+      mainEntityOfPage: canonical
+    }
+  ]
+});
+---
+<BaseLayout
+  title={title}
+  description={description}
+  canonical={canonical}
+  ogTitle={title}
+  ogDescription={description}
+  ogUrl={canonical}
+  ogImage="https://i-feel.co.il/assets/akuvox/mega-city-70-front.png"
+  jsonLd={jsonLd}
+>
+  <Fragment set:html={content} />
+</BaseLayout>

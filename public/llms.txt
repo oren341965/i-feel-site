@@ -33,6 +33,9 @@ i-feel היא חברת אינטגרציה ישראלית הפועלת משנת 2
 - [בקרת תאורה DALI](https://i-feel.co.il/structure-control/dali-lighting-control/)
 - [BMS למשרדים](https://i-feel.co.il/bms-offices/) · [BMS למלונות](https://i-feel.co.il/bms-hotels/) · [BMS למבני ציבור](https://i-feel.co.il/bms-public-buildings/) · [BMS לבתי חולים](https://i-feel.co.il/bms-hospitals/)
 - [בנייה ירוקה ותקן 5281](https://i-feel.co.il/green-building/)
+- [Akuvox MEGA 250 — מדריך תשתית לווילה](https://i-feel.co.il/akuvox-mega-250/): הכנת רשת, PoE, מנעול ושער לבתים פרטיים.
+- [Akuvox MEGA CITY 50 — אינטרקום זיהוי פנים לווילה](https://i-feel.co.il/akuvox-mega-city-50/): תשתית, מידות והכנות התקנה לבתים פרטיים.
+- [Akuvox MEGA CITY 70 — הנחיות ליזמים](https://i-feel.co.il/akuvox-mega-city-70/): ארכיטקטורת אינטרקום IP, עמוד CAT6 והכנות לבניינים רבי־דירות.
 - [מאמרים](https://i-feel.co.il/articles/) · [שאלות נפוצות](https://i-feel.co.il/answers/)
 
 ## למה i-feel
