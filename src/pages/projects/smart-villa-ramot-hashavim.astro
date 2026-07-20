@@ -1,0 +1,111 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+const url = 'https://i-feel.co.il/projects/smart-villa-ramot-hashavim/';
+const hero = '/projects/smart-villa-ramot-hashavim/ramot-hashavim-facade.jpg';
+const meta = {
+  title: 'בית חכם ברמות השבים | Control4, DALI, SpeakerCraft | i-feel',
+  description: 'פרויקט בית פרטי חכם ברמות השבים: Control4, עמעום תאורה DALI ו-TRIAC, רמקולי סלע SpeakerCraft עם סאבוופר שקוע בדשא, מצלמות אנליטיקה לזיהוי ילדים ליד הבריכה ורשת HPE Aruba — תכנון ואינטגרציה של i-feel.',
+  canonical: url,
+  ogTitle: 'בית חכם ברמות השבים — Control4, DALI, SpeakerCraft | i-feel',
+  ogDescription: 'בית פרטי עם אינטגרציה מלאה: שליטה, תאורה מעומעמת, אודיו חוץ, אבטחה אנליטית ורשת מנוהלת במערכת אחת.',
+  ogUrl: url,
+  ogImage: 'https://i-feel.co.il' + hero,
+  jsonLd: JSON.stringify({
+    '@context': 'https://schema.org',
+    '@graph': [
+      { '@type': ['LocalBusiness','HomeAndConstructionBusiness'], '@id': 'https://i-feel.co.il/#business', name: 'i-feel', url: 'https://i-feel.co.il/', logo: 'https://i-feel.co.il/assets/ifeel-logo.png', telephone: '+972-3-508-9553', email: 'sales@i-feel.co.il', address: { '@type':'PostalAddress', streetAddress:'אימבר 14', addressLocality:'פתח תקווה', postalCode:'4951148', addressCountry:'IL' }, areaServed: { '@type':'Country', name:'Israel' }, sameAs: ['https://www.facebook.com/SmarthomeIsrael','https://www.instagram.com/ifeelisrael','https://www.linkedin.com/company/200156'] },
+      { '@type': 'BreadcrumbList', itemListElement: [
+        { '@type':'ListItem', position:1, name:'דף הבית', item:'https://i-feel.co.il/' },
+        { '@type':'ListItem', position:2, name:'פרויקטים', item:'https://i-feel.co.il/projects/' },
+        { '@type':'ListItem', position:3, name:'בית חכם ברמות השבים', item:url } ] },
+      { '@type': 'CreativeWork', name: 'בית חכם ברמות השבים — פרויקט אינטגרציה של i-feel', about: ['בית חכם','Control4','DALI','SpeakerCraft','מצלמות אנליטיקה','רשת ביתית'], creator: { '@id':'https://i-feel.co.il/#business' }, locationCreated: { '@type':'Place', name:'רמות השבים, ישראל' }, image: 'https://i-feel.co.il' + hero },
+      { '@type': 'Article', headline: 'בית חכם ברמות השבים — מקרה בוחן', image: 'https://i-feel.co.il' + hero, author: { '@id':'https://i-feel.co.il/#business' }, publisher: { '@id':'https://i-feel.co.il/#business' }, mainEntityOfPage: url },
+      { '@type': 'FAQPage', mainEntity: [
+        { '@type':'Question', name:'איך שומרת המערכת על בטיחות הילדים ליד הבריכה?', acceptedAnswer:{ '@type':'Answer', text:'הבית מוקף מצלמות אנליטיקה מיוחדות שמזהות קרבה של ילדים קטנים לבריכה ושולחות התראה מיידית להורים — שכבת בטיחות אקטיבית שעובדת 24/7.' } },
+        { '@type':'Question', name:'מה מיוחד במערכת האודיו החיצונית?', acceptedAnswer:{ '@type':'Answer', text:'בגינה הותקנו רמקולי סלע ייעודיים של SpeakerCraft שמשתלבים בנוף, יחד עם סאבוופר שקוע בדשא — סאונד מלא בחוץ בלי לפגוע בעיצוב הגינה.' } },
+        { '@type':'Question', name:'איך מעומעמת התאורה בבית?', acceptedAnswer:{ '@type':'Answer', text:'גופי התאורה מעומעמים בשילוב של פרוטוקול DALI ועמעום TRIAC — כל גוף תאורה מקבל את שיטת העמעום המתאימה לו, לעקומת עמעום חלקה ואחידה.' } },
+        { '@type':'Question', name:'מה היה האתגר בארון התקשורת?', acceptedAnswer:{ '@type':'Answer', text:'עומק הארון היה קטן מהרגיל, ולכן שוטח כל הציוד והוצמד לקיר — תהליך מורכב שאפשר לחבר את כלל הציוד בארון רדוד בלי לוותר על אף רכיב.' } } ] }
+    ]
+  })
+};
+const gallery = [
+  { src: '/projects/smart-villa-ramot-hashavim/ramot-hashavim-living-room.jpg', alt: 'סלון עם תקרה כפולה וגופי תאורה תלויים מעומעמים DALI ו-TRIAC — בית חכם ברמות השבים', cap: 'הסלון — גופי התאורה מעומעמים בשילוב DALI ו-TRIAC' },
+  { src: '/projects/smart-villa-ramot-hashavim/ramot-hashavim-pool.jpg', alt: 'בריכת שחייה עם גדר זכוכית ומצלמות אנליטיקה לזיהוי ילדים — בית חכם ברמות השבים', cap: 'הבריכה — מצלמות אנליטיקה מזהות קרבת ילדים ושולחות התראה להורים' },
+  { src: '/projects/smart-villa-ramot-hashavim/ramot-hashavim-garden.jpg', alt: 'גינה עם דשא ורמקולי סלע SpeakerCraft — בית חכם ברמות השבים', cap: 'הגינה — רמקולי סלע SpeakerCraft עם סאבוופר שקוע בדשא' },
+  { src: '/projects/smart-villa-ramot-hashavim/ramot-hashavim-touch-panel.jpg', alt: 'מסך מגע שליטה בחדר שינה הורים — תאורה, תריסים, מיזוג ואבטחה — בית חכם ברמות השבים', cap: 'מסך מגע בחדר ההורים — תאורה, תריסים, מיזוג, אבטחה ומצלמות' },
+  { src: '/projects/smart-villa-ramot-hashavim/ramot-hashavim-master-bedroom.jpg', alt: 'חדר שינה הורים עם תקרה קונסטרוקטיבית ובקרת חדר — בית חכם ברמות השבים', cap: 'חדר שינה הורים — שליטה מלאה בתאורה, תריסים ומיזוג' },
+  { src: '/projects/smart-villa-ramot-hashavim/ramot-hashavim-patio.jpg', alt: 'מרפסת מקורה עם מטבח חוץ ורמקולי חוץ — בית חכם ברמות השבים', cap: 'המרפסת המקורה — מטבח חוץ ורמקולי חוץ' },
+  { src: '/projects/smart-villa-ramot-hashavim/ramot-hashavim-facade-detail.jpg', alt: 'חזית עם תריסים חשמליים וגופי תאורת חוץ — בית חכם ברמות השבים', cap: 'תריסים חשמליים ותאורת חוץ בכל חזיתות הבית' },
+  { src: '/projects/smart-villa-ramot-hashavim/ramot-hashavim-intercom.jpg', alt: 'עמדת אינטרקום עם קודן בכניסה לבית — בית חכם ברמות השבים', cap: 'עמדת אינטרקום ובקרת גישה בכניסה' },
+  { src: '/projects/smart-villa-ramot-hashavim/ramot-hashavim-network-closet.jpg', alt: 'ארון תקשורת רדוד עם ציוד שטוח צמוד לקיר — מתגי HPE Aruba Instant On ופאנלים — בית חכם ברמות השבים', cap: 'ארון התקשורת הרדוד — כל הציוד שוטח והוצמד לקיר' },
+  { src: '/projects/smart-villa-ramot-hashavim/ramot-hashavim-rack.jpg', alt: 'מסד תקשורת עם מתגים, פאנלים ומערכת הקלטה — בית חכם ברמות השבים', cap: 'מסד התקשורת — רשת, מצלמות והקלטה' },
+];
+---
+<BaseLayout {...meta}>
+  <article dir="rtl">
+    <nav class="bg-brand-50 border-b border-brand-100" aria-label="פירורי לחם"><div class="max-w-7xl mx-auto px-4 py-3 text-sm"><a href="/" class="text-brand-600 hover:text-accent-600">דף הבית</a><span class="mx-2 text-brand-400">›</span><a href="/projects/" class="text-brand-600 hover:text-accent-600">פרויקטים</a><span class="mx-2 text-brand-400">›</span><span class="text-brand-900 font-medium">בית חכם ברמות השבים</span></div></nav>
+
+    <header class="relative min-h-[58vh] md:min-h-[68vh] flex items-end">
+      <img src={hero} alt="בית פרטי חכם ברמות השבים — פרויקט אינטגרציה של i-feel" class="absolute inset-0 w-full h-full object-cover" />
+      <div class="absolute inset-0 bg-gradient-to-t from-brand-900 via-brand-900/70 to-brand-900/20"></div>
+      <div class="relative max-w-6xl mx-auto px-4 py-12 md:py-16 w-full text-white">
+        <p class="inline-block bg-accent-500 rounded-full px-4 py-1.5 text-sm font-bold mb-5">מקרה בוחן · בית פרטי</p>
+        <h1 class="text-4xl md:text-6xl font-extrabold leading-tight max-w-4xl">בית חכם ברמות השבים — שליטה, תאורה, אודיו ובטיחות במערכת אחת</h1>
+        <p class="text-xl text-brand-100 mt-5 max-w-3xl">בית פרטי שבו עמעום תאורה מדויק, אודיו שמוסתר בגינה, מצלמות שמגינות על הילדים ורשת מנוהלת — כולם עובדים יחד תחת ממשק אחד.</p>
+      </div>
+    </header>
+
+    <section class="bg-brand-900 text-white"><div class="max-w-6xl mx-auto px-4 py-8 grid grid-cols-2 lg:grid-cols-4 gap-4">
+      <div class="bg-white/5 border border-white/10 rounded-2xl p-5"><div class="text-sm text-brand-300">סוג נכס</div><div class="font-bold text-lg mt-1">בית פרטי</div></div>
+      <div class="bg-white/5 border border-white/10 rounded-2xl p-5"><div class="text-sm text-brand-300">מיקום</div><div class="font-bold text-lg mt-1">רמות השבים</div></div>
+      <div class="bg-white/5 border border-white/10 rounded-2xl p-5"><div class="text-sm text-brand-300">תאורה</div><div class="font-bold text-lg mt-1">DALI · TRIAC</div></div>
+      <div class="bg-white/5 border border-white/10 rounded-2xl p-5"><div class="text-sm text-brand-300">אודיו חוץ</div><div class="font-bold text-lg mt-1">SpeakerCraft</div></div>
+    </div></section>
+
+    <div class="max-w-4xl mx-auto px-4 py-12 lg:py-16"><div class="prose-he">
+      <section id="intro"><h2>מה i-feel תכננה וביצעה</h2><p>i-feel תכננה והקימה בבית פרטי ברמות השבים מערכת בית חכם מלאה ומשולבת — בהיקף זהה לפרויקט פנטהאוז יוקרתי שביצענו, מותאם לבית פרטי עם גינה ובריכה: פלטפורמת <a href="/brands-and-technologies/">Control4</a> עם מסכי מגע בחדרים, עמעום תאורה בשילוב DALI ו-TRIAC, אודיו חוץ עם רמקולי סלע של SpeakerCraft, מצלמות אנליטיקה, אינטרקום ובקרת גישה, ורשת תקשורת מנוהלת של HPE Aruba Instant On.</p></section>
+
+      <section id="challenge"><h2>האתגר: ארון תקשורת בעומק לא סטנדרטי</h2><p>באחד משלבי הפרויקט התגלתה בעיה של עומק בארון התקשורת — הציוד פשוט לא נכנס בעומק הקיים. במקום לוותר על ציוד או לפגוע בעיצוב, שיטחנו את כל הציוד והצמדנו אותו לקיר: מתגים, פאנלים, בקרים ונקודות גישה נפרסו על מישור אחד. זה תהליך מורכב וקשה שדורש תכנון קפדני של כל כבל — אבל הוא אפשר לחבר את כלל הציוד בלי להתפשר.</p></section>
+
+      <section id="systems"><h2>המערכות שהותקנו</h2>
+      <ul>
+        <li><strong>פלטפורמת שליטה:</strong> Control4 עם מסכי מגע בחדרים — תאורה, תריסים, מיזוג, אבטחה ומצלמות בממשק אחד.</li>
+        <li><strong>עמעום תאורה:</strong> גופי התאורה מעומעמים בשילוב פרוטוקול <a href="/structure-control/dali-lighting-control/">DALI</a> ועמעום TRIAC — לכל גוף תאורה שיטת העמעום המתאימה לו.</li>
+        <li><strong>אודיו חוץ:</strong> רמקולי סלע ייעודיים של SpeakerCraft בגינה עם סאבוופר שקוע בדשא — סאונד מלא בלי לראות רמקול.</li>
+        <li><strong>בטיחות ילדים:</strong> הבית מוקף מצלמות אנליטיקה מיוחדות שמזהות קרבה של ילדים קטנים לבריכה ושולחות התראה להורים.</li>
+        <li><strong>אינטרקום ובקרת גישה:</strong> עמדת אינטרקום עם קודן בכניסה, משולבת במערכת הבית.</li>
+        <li><strong>רשת תקשורת:</strong> מתגים מנוהלים HPE Aruba Instant On, נקודות גישה ותשתית מסודרת. ראו <a href="/communication-networks/">רשתות תקשורת</a>.</li>
+      </ul></section>
+
+      <section id="gallery-heading"><h2>תמונות מהפרויקט</h2></section>
+    </div>
+
+    <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-2 mb-10">
+      {gallery.map((g) => (
+        <figure class="bg-white border border-brand-100 rounded-xl overflow-hidden shadow-sm">
+          <div class="aspect-[4/3] bg-brand-100"><img src={g.src} alt={g.alt} class="w-full h-full object-cover" loading="lazy" /></div>
+          <figcaption class="p-3 text-sm text-brand-700">{g.cap}</figcaption>
+        </figure>
+      ))}
+    </div>
+
+    <div class="prose-he">
+      <section id="integration"><h2>עבודת האינטגרציה של i-feel</h2><p>i-feel תכננה את ארכיטקטורת הבקרה, החשמל והרשת, התקינה ותכנתה את כל המערכות וחיברה ביניהן — כך שהתאורה, האודיו, המצלמות והאינטרקום עובדים כמערכת אחת. העבודה כללה פתרון אתגרי שטח כמו ארון התקשורת הרדוד, תיאום מול בעלי מקצוע, תכנות תרחישים והגדרת רשת מנוהלת. הכול תחת קורת גג אחת — תכנון, התקנה, תכנות ו<a href="/service-and-maintenance/">שירות</a>.</p></section>
+
+      <section id="result"><h2>התוצאה ללקוח</h2><p>הלקוח קיבל בית שבו הנוחות והבטיחות מובנות: תאורה עם עמעום חלק בכל הבית, מוזיקה בגינה בלי רמקולים גלויים, התראה מיידית אם ילד מתקרב לבריכה, ושליטה בכל המערכות ממסך אחד או מהנייד. במקום אוסף מוצרים — מערכת אחת מתוכננת, אמינה ומתוחזקת.</p></section>
+
+      <section id="faq"><h2>שאלות ותשובות</h2>
+        <details><summary>איך עובדת ההגנה על ילדים ליד הבריכה?</summary><p>מצלמות אנליטיקה מיוחדות סביב הבית מזהות קרבה של ילדים קטנים לבריכה ושולחות התראה מיידית להורים — שכבת בטיחות שעובדת כל הזמן, בלי תלות בהשגחה רציפה.</p></details>
+        <details><summary>מה זה רמקולי סלע?</summary><p>רמקולים חיצוניים של SpeakerCraft בצורת סלע שמשתלבים בגינה, יחד עם סאבוופר שקוע בדשא — סאונד איכותי בחוץ בלי לפגוע בעיצוב. ראו <a href="/audio-and-sound-systems/">אודיו וקולנוע ביתי</a>.</p></details>
+        <details><summary>למה משלבים DALI ו-TRIAC?</summary><p>לכל סוג גוף תאורה יש שיטת עמעום מיטבית: DALI לגופים דיגיטליים ו-TRIAC לגופים קונבנציונליים. השילוב נותן עקומת עמעום חלקה בכל הבית. ראו <a href="/answers/what-is-dali/">מה זה DALI</a>.</p></details>
+        <details><summary>אפשר מערכת דומה בבית שלי?</summary><p>כן. אחרי אפיון קצר נתאים את היקף המערכות והמותגים לנכס ולתקציב. ראו <a href="/smart-home/">בית חכם</a> ו<a href="/smart-home-price/">כמה עולה בית חכם</a>.</p></details>
+      </section>
+    </div></div>
+
+    <section id="contact" class="bg-brand-900 text-white py-16"><div class="max-w-4xl mx-auto px-4 text-center">
+      <h2 class="text-3xl md:text-4xl font-extrabold mb-4">רוצים בית חכם מתוכנן נכון?</h2>
+      <p class="text-xl text-brand-200 mb-8">נבצע אפיון, נמליץ על המערכות והמותגים המתאימים וניתן טווח תקציב ראשוני.</p>
+      <div class="flex flex-wrap justify-center gap-3"><a href="tel:+972-3-508-9553" class="bg-accent-500 hover:bg-accent-600 text-white px-7 py-3.5 rounded-lg font-semibold text-lg">03-508-9553</a><a href="/contactus/" class="bg-white/10 text-white px-7 py-3.5 rounded-lg font-semibold border border-white/30">לתיאום פגישה</a></div>
+    </div></section>
+  </article>
+</BaseLayout>
