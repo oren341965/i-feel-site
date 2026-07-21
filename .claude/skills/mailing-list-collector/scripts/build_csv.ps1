@@ -1,4 +1,4 @@
-# build_csv.ps1 — mailing-list-collector (i-feel)
+﻿# build_csv.ps1 — mailing-list-collector (i-feel)
 #
 # קלט:  קובץ JSON עם רשימת אנשי קשר (ראה SKILL.md לפורמט)
 # פלט:  CSV מוכן לייבוא ל-Smoove, UTF-8 עם BOM
