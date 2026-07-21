@@ -1,0 +1,293 @@
+<dialog
+  id="site-search-dialog"
+  class="site-search-dialog fixed inset-0 m-auto w-[min(94vw,760px)] max-h-[min(88vh,760px)] overflow-hidden rounded-2xl bg-white p-0 text-right text-brand-900 shadow-2xl"
+  aria-labelledby="site-search-title"
+>
+    <div class="flex max-h-[min(88vh,760px)] flex-col">
+      <div class="border-b border-brand-100 bg-brand-50 px-4 py-4 sm:px-6">
+        <div class="mb-3 flex items-center justify-between gap-4">
+          <div>
+            <h2 id="site-search-title" class="text-xl font-extrabold text-brand-900">חיפוש באתר</h2>
+            <p class="mt-1 text-sm text-brand-600">אפשר לחפש נושא, מערכת, מוצר, מדריך או פרויקט</p>
+          </div>
+          <button
+            id="site-search-close"
+            type="button"
+            class="shrink-0 rounded-lg p-2 text-brand-600 hover:bg-white hover:text-brand-900"
+            aria-label="סגירת החיפוש"
+          >
+            <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 6l12 12M18 6 6 18" />
+            </svg>
+          </button>
+        </div>
+
+        <form id="site-search-form" role="search" class="relative">
+          <label for="site-search-input" class="sr-only">מה תרצו למצוא?</label>
+          <input
+            id="site-search-input"
+            type="search"
+            inputmode="search"
+            enterkeyhint="search"
+            autocomplete="off"
+            placeholder="לדוגמה: בקרת מיזוג אוויר במלון"
+            class="w-full rounded-xl border border-brand-200 bg-white py-3.5 pe-14 ps-4 text-base outline-none transition placeholder:text-brand-400 focus:border-accent-500 focus:ring-2 focus:ring-accent-500/20"
+          />
+          <button
+            type="submit"
+            class="absolute inset-y-1.5 end-1.5 grid w-11 place-items-center rounded-lg bg-accent-500 text-white transition hover:bg-accent-600"
+            aria-label="חיפוש"
+          >
+            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m21 21-4.35-4.35m1.35-5.4A6.75 6.75 0 1 1 4.5 11.25a6.75 6.75 0 0 1 13.5 0Z" />
+            </svg>
+          </button>
+        </form>
+      </div>
+
+      <div class="min-h-48 flex-1 overflow-y-auto px-4 py-5 sm:px-6">
+        <p id="site-search-status" class="text-sm text-brand-600" role="status" aria-live="polite">
+          הקלידו לפחות שתי אותיות כדי להתחיל לחפש.
+        </p>
+        <ol id="site-search-results" class="mt-4 space-y-3" aria-label="תוצאות חיפוש"></ol>
+      </div>
+    </div>
+</dialog>
+
+<style>
+  .site-search-dialog::backdrop {
+    background: rgb(15 31 54 / 72%);
+    backdrop-filter: blur(3px);
+  }
+
+  .site-search-dialog[open] { animation: search-dialog-in 160ms ease-out; }
+  .site-search-dialog mark {
+    border-radius: 0.2rem;
+    background: #f7e7bb;
+    color: inherit;
+    padding-inline: 0.08rem;
+  }
+
+  @keyframes search-dialog-in {
+    from { opacity: 0; transform: translateY(-0.5rem) scale(0.985); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .site-search-dialog[open] { animation: none; }
+  }
+</style>
+
+<script>
+  type SearchRecord = {
+    url: string;
+    title: string;
+    description: string;
+    headings: string;
+    body: string;
+  };
+
+  type PreparedRecord = SearchRecord & {
+    normalizedTitle: string;
+    normalizedDescription: string;
+    normalizedHeadings: string;
+    normalizedBody: string;
+  };
+
+  const openButton = document.querySelector<HTMLButtonElement>('#site-search-open');
+  const closeButton = document.querySelector<HTMLButtonElement>('#site-search-close');
+  const dialog = document.querySelector<HTMLDialogElement>('#site-search-dialog');
+  const form = document.querySelector<HTMLFormElement>('#site-search-form');
+  const input = document.querySelector<HTMLInputElement>('#site-search-input');
+  const status = document.querySelector<HTMLElement>('#site-search-status');
+  const results = document.querySelector<HTMLOListElement>('#site-search-results');
+
+  let indexPromise: Promise<PreparedRecord[]> | undefined;
+  let debounceTimer: number | undefined;
+
+  const normalize = (value: string) => value
+    .normalize('NFKD')
+    .toLocaleLowerCase('he')
+    .replace(/[\u0591-\u05c7]/g, '')
+    .replace(/[ךםןףץ]/g, (letter) => ({ ך: 'כ', ם: 'מ', ן: 'נ', ף: 'פ', ץ: 'צ' })[letter] || letter)
+    .replace(/[^\p{L}\p{N}]+/gu, ' ')
+    .trim();
+
+  const getTermVariants = (term: string) => {
+    const variants = new Set([term]);
+    if (!/[\u0590-\u05ff]/.test(term)) return [...variants];
+
+    // Hebrew search should tolerate common one-letter prefixes and construct-state endings.
+    if (term.length > 3 && /^[ובכלמשה]/.test(term)) variants.add(term.slice(1));
+    for (const variant of [...variants]) {
+      if (variant.length > 4 && variant.endsWith('ימ')) variants.add(variant.slice(0, -2));
+      if (variant.length > 4 && variant.endsWith('ות')) variants.add(variant.slice(0, -2));
+      if (variant.length > 3 && variant.endsWith('ת')) variants.add(`${variant.slice(0, -1)}ה`);
+      if (variant.length > 3 && variant.endsWith('ה')) variants.add(`${variant.slice(0, -1)}ת`);
+    }
+    return [...variants].filter((variant) => variant.length > 1);
+  };
+
+  const loadIndex = () => {
+    if (!indexPromise) {
+      indexPromise = fetch('/search-index.json')
+        .then((response) => {
+          if (!response.ok) throw new Error(`Search index returned ${response.status}`);
+          return response.json() as Promise<SearchRecord[]>;
+        })
+        .then((records) => records.map((record) => ({
+          ...record,
+          normalizedTitle: normalize(record.title),
+          normalizedDescription: normalize(record.description),
+          normalizedHeadings: normalize(record.headings),
+          normalizedBody: normalize(record.body),
+        })));
+    }
+    return indexPromise;
+  };
+
+  const appendHighlighted = (element: HTMLElement, text: string, terms: string[]) => {
+    if (!terms.length) {
+      element.textContent = text;
+      return;
+    }
+
+    const escaped = terms
+      .filter(Boolean)
+      .sort((a, b) => b.length - a.length)
+      .map((term) => term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
+    const matcher = new RegExp(`(${escaped.join('|')})`, 'giu');
+    let cursor = 0;
+
+    for (const match of text.matchAll(matcher)) {
+      const position = match.index ?? 0;
+      element.append(document.createTextNode(text.slice(cursor, position)));
+      const mark = document.createElement('mark');
+      mark.textContent = match[0];
+      element.append(mark);
+      cursor = position + match[0].length;
+    }
+
+    element.append(document.createTextNode(text.slice(cursor)));
+  };
+
+  const makeSnippet = (record: SearchRecord, query: string, terms: string[]) => {
+    const text = record.body || record.description;
+    const lowerText = text.toLocaleLowerCase('he');
+    const candidates = [query, ...terms].filter(Boolean).map((term) => term.toLocaleLowerCase('he'));
+    let position = candidates.reduce((best, term) => {
+      const found = lowerText.indexOf(term);
+      return found >= 0 && (best < 0 || found < best) ? found : best;
+    }, -1);
+
+    if (position < 0) position = 0;
+    const start = Math.max(0, position - 90);
+    const end = Math.min(text.length, position + 210);
+    return `${start ? '…' : ''}${text.slice(start, end).trim()}${end < text.length ? '…' : ''}`;
+  };
+
+  const scoreRecord = (record: PreparedRecord, normalizedQuery: string, termGroups: string[][]) => {
+    let score = 0;
+    let matchedTerms = 0;
+
+    if (record.normalizedTitle.includes(normalizedQuery)) score += 90;
+    if (record.normalizedHeadings.includes(normalizedQuery)) score += 55;
+    if (record.normalizedDescription.includes(normalizedQuery)) score += 35;
+    if (record.normalizedBody.includes(normalizedQuery)) score += 14;
+
+    for (const variants of termGroups) {
+      let matched = false;
+      if (variants.some((term) => record.normalizedTitle.includes(term))) { score += 32; matched = true; }
+      if (variants.some((term) => record.normalizedHeadings.includes(term))) { score += 20; matched = true; }
+      if (variants.some((term) => record.normalizedDescription.includes(term))) { score += 12; matched = true; }
+      if (variants.some((term) => record.normalizedBody.includes(term))) { score += 3; matched = true; }
+      if (matched) matchedTerms += 1;
+    }
+
+    const requiredMatches = termGroups.length <= 4 ? termGroups.length : Math.ceil(termGroups.length * 0.7);
+    return matchedTerms >= requiredMatches ? score + matchedTerms * 4 : 0;
+  };
+
+  const renderResults = (matches: Array<{ record: SearchRecord; score: number }>, query: string, terms: string[]) => {
+    if (!results || !status) return;
+    results.replaceChildren();
+
+    if (!matches.length) {
+      status.textContent = `לא נמצאו תוצאות עבור „${query}”. נסו מונח קצר או כללי יותר.`;
+      return;
+    }
+
+    status.textContent = `נמצאו ${matches.length} תוצאות מובילות עבור „${query}”.`;
+    for (const { record } of matches) {
+      const item = document.createElement('li');
+      const link = document.createElement('a');
+      link.href = record.url;
+      link.className = 'group block rounded-xl border border-brand-100 p-4 transition hover:border-accent-400 hover:bg-brand-50 hover:shadow-sm focus:outline-none focus:ring-2 focus:ring-accent-500';
+
+      const title = document.createElement('h3');
+      title.className = 'text-lg font-bold text-brand-900 transition group-hover:text-accent-700';
+      appendHighlighted(title, record.title, terms);
+
+      const snippet = document.createElement('p');
+      snippet.className = 'mt-1.5 line-clamp-2 text-sm leading-6 text-brand-600';
+      appendHighlighted(snippet, makeSnippet(record, query, terms), terms);
+
+      const path = document.createElement('span');
+      path.className = 'mt-2 block text-xs font-medium text-accent-700';
+      path.dir = 'ltr';
+      path.textContent = record.url;
+
+      link.append(title, snippet, path);
+      item.append(link);
+      results.append(item);
+    }
+  };
+
+  const search = async () => {
+    if (!input || !status || !results) return;
+    const query = input.value.trim();
+    const normalizedQuery = normalize(query);
+    const terms = [...new Set(normalizedQuery.split(' ').filter((term) => term.length > 1))];
+    const termGroups = terms.map(getTermVariants);
+
+    if (normalizedQuery.length < 2 || !terms.length) {
+      results.replaceChildren();
+      status.textContent = 'הקלידו לפחות שתי אותיות כדי להתחיל לחפש.';
+      return;
+    }
+
+    status.textContent = 'מחפש…';
+    try {
+      const records = await loadIndex();
+      const matches = records
+        .map((record) => ({ record, score: scoreRecord(record, normalizedQuery, termGroups) }))
+        .filter(({ score }) => score > 0)
+        .sort((left, right) => right.score - left.score || left.record.title.localeCompare(right.record.title, 'he'))
+        .slice(0, 10);
+      renderResults(matches, query, query.split(/\s+/).filter((term) => term.length > 1));
+    } catch (error) {
+      console.error(error);
+      status.textContent = 'לא הצלחנו לטעון את החיפוש. נסו שוב בעוד רגע.';
+    }
+  };
+
+  openButton?.addEventListener('click', () => {
+    if (!dialog) return;
+    dialog.showModal();
+    loadIndex().catch(() => undefined);
+    window.requestAnimationFrame(() => input?.focus());
+  });
+
+  closeButton?.addEventListener('click', () => dialog?.close());
+  form?.addEventListener('submit', (event) => {
+    event.preventDefault();
+    search();
+  });
+  input?.addEventListener('input', () => {
+    window.clearTimeout(debounceTimer);
+    debounceTimer = window.setTimeout(search, 140);
+  });
+  dialog?.addEventListener('click', (event) => {
+    if (event.target === dialog) dialog.close();
+  });
+</script>
