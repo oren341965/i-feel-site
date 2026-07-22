@@ -25,12 +25,39 @@ const {
   ogTitle = title,
   ogDescription = description,
   ogUrl = canonical,
-  ogImage = 'https://i-feel.co.il/assets/og-cover.jpg',
+  ogImage: requestedOgImage = '',
   jsonLd = '',
   robots = '',
   lang = 'he',
   dir = 'rtl'
 } = Astro.props;
+
+const canonicalPath = decodeURIComponent(new URL(canonical).pathname);
+
+function stablePathHash(value: string) {
+  let hash = 2166136261;
+  for (let index = 0; index < value.length; index += 1) {
+    hash ^= value.charCodeAt(index);
+    hash = Math.imul(hash, 16777619);
+  }
+  return (hash >>> 0).toString(16).padStart(8, '0');
+}
+
+function generatedOgImageUrl(pathname: string) {
+  const readable = pathname
+    .toLowerCase()
+    .replace(/[^a-z0-9/]+/g, '-')
+    .split('/')
+    .filter(Boolean)
+    .join('-')
+    .replace(/-+/g, '-')
+    .slice(0, 54) || 'page';
+  return `https://i-feel.co.il/assets/og/pages/${readable}-${stablePathHash(pathname)}.jpg`;
+}
+
+const usesLegacyGenericImage = !requestedOgImage || /\/assets\/og-cover\.jpg(?:$|\?)/.test(requestedOgImage);
+const ogImage = usesLegacyGenericImage ? generatedOgImageUrl(canonicalPath) : requestedOgImage;
+const ogType = canonicalPath.startsWith('/articles/') && canonicalPath !== '/articles/' ? 'article' : 'website';
 
 const siteIdentityJsonLd = JSON.stringify({
   '@context': 'https://schema.org',
@@ -57,7 +84,7 @@ const siteIdentityJsonLd = JSON.stringify({
     {description && <meta name="description" content={description} />}
     {robots && <meta name="robots" content={robots} />}
     <link rel="canonical" href={canonical} />
-    <meta property="og:type" content="website" />
+    <meta property="og:type" content={ogType} />
     <meta property="og:url" content={ogUrl} />
     <meta property="og:title" content={ogTitle} />
     {ogDescription && <meta property="og:description" content={ogDescription} />}
