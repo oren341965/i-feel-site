@@ -3,7 +3,7 @@ import path from 'node:path';
 
 const root = process.cwd();
 const articleSource = await readFile(path.join(root, 'src/data/articles.ts'), 'utf8');
-const starts = [...articleSource.matchAll(/\n  \{\n    slug: '([^']+)'/g)];
+const starts = [...articleSource.matchAll(/\r?\n  \{\r?\n    slug: '([^']+)'/g)];
 const publicDates = [];
 
 for (let index = 0; index < starts.length; index += 1) {
