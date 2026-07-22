@@ -93,7 +93,8 @@ ILGBC ו-D-CITY נשמרים כחלופות מקומיות אם אחד משני 
 
 ## תור אינדוקס לאחר פריסה
 
-1. https://i-feel.co.il/articles/bms-retrofit-existing-building/
-2. https://i-feel.co.il/structure-control/
-3. https://i-feel.co.il/
-4. https://i-feel.co.il/sitemap.xml — לשליחה מחדש רק אם GSC מציג שגיאה או תאריך קריאה ישן.
+1. https://i-feel.co.il/articles/ddc-in-bms/ — המאמר הקיים על DDC, BMS ו-LoRaWAN שטרם אונדקס.
+2. https://i-feel.co.il/articles/bms-retrofit-existing-building/
+3. https://i-feel.co.il/structure-control/
+4. https://i-feel.co.il/
+5. https://i-feel.co.il/sitemap.xml — לשליחה מחדש רק אם GSC מציג שגיאה או תאריך קריאה ישן.
