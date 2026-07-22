@@ -51,6 +51,17 @@ const jsonLd = {
         'LoRaWAN',
         'ניהול אנרגיה',
       ],
+      hasCredential: {
+        '@type': 'EducationalOccupationalCredential',
+        name: 'Siemens Solution Partner — Building Automation',
+        credentialCategory: 'Manufacturer partner certification',
+        recognizedBy: {
+          '@type': 'Organization',
+          name: 'Siemens',
+        },
+        validThrough: '2026-12-31',
+        url: 'https://i-feel.co.il/license/',
+      },
     },
     {
       '@type': 'Service',
@@ -119,6 +130,14 @@ const jsonLd = {
           acceptedAnswer: {
             '@type': 'Answer',
             text: 'כן. i-feel מטמיעה ומבצעת אינטגרציה של פתרונות Siemens Desigo בפרויקטי BMS, לצד KNX, BACnet, Modbus ובקרי DDC לפי דרישות הפרויקט.',
+          },
+        },
+        {
+          '@type': 'Question',
+          name: 'כמה עולה מערכת בקרת מבנה?',
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: 'אין מחיר אחד למערכת בקרת מבנה. העלות נגזרת מגודל המבנה, ממספר נקודות הבקרה ומהמערכות שמשולבות. טווח ההשקעה הראשוני במבנה מסחרי נע בדרך כלל מעשרות אלפי שקלים למבנה קטן ועד מאות אלפי שקלים למבנה גדול ומורכב. המחיר המדויק נקבע פר-פרויקט לאחר סקר באתר ואפיון.',
           },
         },
         {
