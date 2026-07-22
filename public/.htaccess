@@ -16,17 +16,19 @@
   RewriteRule ^talking-about-us/?$ /video/#press [R=301,L,NE]
 
   # WordPress magazine sections. Do not redirect /articles/; it is a live page.
-  RewriteRule ^podcast/?$ / [R=301,L]
+  # podcast/talk-about-design pointed at the homepage, which Google reads as a soft 404 (2026-07-22).
+  RewriteRule ^podcast/?$ /video/#press [R=301,L,NE]
   RewriteRule ^category/articles/?$ /articles/ [R=301,L]
   RewriteRule ^category/articles/page/[0-9]+/?$ /articles/ [R=301,L]
   RewriteRule ^category/magazine/?$ /articles/ [R=301,L]
-  RewriteRule ^talk-about-design/?$ / [R=301,L]
+  RewriteRule ^talk-about-design/?$ /articles/design-your-smart-switches/ [R=301,L]
   # /blog/ is a duplicate of /articles/ (same article list, canonical already = /articles/). Consolidate.
   RewriteRule ^blog/?$ /articles/ [R=301,L]
 
   # High-value legacy SEO routes still visible in Google.
   RewriteRule ^home-automation/?$ /smart-home/ [R=301,L]
-  RewriteRule ^about-us/?$ / [R=301,L]
+  # /about-us/ pointed at the homepage (soft 404). The About page is an E-E-A-T asset (2026-07-22).
+  RewriteRule ^about-us/?$ /about-i-feel-smart-building-company/ [R=301,L]
   RewriteRule ^hadassah-knx-system/ifeel-blog/?$ /hadassah-knx-system/ [R=301,L]
   # Old BMS article still ranking ~#6 for "בקרת מבנה BMS" — recover it to the hub (was 404).
   RewriteRule ^בקרת-מבנה-לבניינים-ומשרדים-מה-זה-bms-ולמה/?$ /structure-control/ [R=301,L,NE]
@@ -40,6 +42,19 @@
   RewriteRule ^בית-חכם-אלחוטי-או-קווי-מדריך-השוואה-מלא/?$ /knx-vs-wireless/ [R=301,L,NE]
   RewriteRule ^בקרת-מבנה-bms-המדריך-המלא-2026/?$ /structure-control/ [R=301,L,NE]
   RewriteRule ^how-to-choose-a-company/?$ /answers/choosing-smart-home-integrator/ [R=301,L]
+  # Migration audit 2026-07-22: old sitemap URLs still indexed that returned 404.
+  # Full findings: ifeel-BMS projects/migration-audit-301-fixes-2026-07-21.md
+  RewriteRule ^בית-חכם/?$ /smart-home/ [R=301,L,NE]
+  RewriteRule ^מי-צריך-בית-חכם/?$ /smart-home/ [R=301,L,NE]
+  RewriteRule ^כמה-עולה-בית-חכם-בישראל-מדריך-מחירים-מל/?$ /smart-home-price/ [R=301,L,NE]
+  RewriteRule ^מערכת-בית-חכם-אלחוטית-מבוססת-z-wave/?$ /knx-vs-wireless/ [R=301,L,NE]
+  RewriteRule ^בית-חכם-אלחוטי-קטלוגים-2/?$ /catalogs/ [R=301,L,NE]
+  RewriteRule ^מערכת-שליטה-ללקוחות-מסורתיים-ניהול-שב/?$ /articles/smart-home-for-shabbat/ [R=301,L,NE]
+  RewriteRule ^לא-רק-צובעים-בירוק-שיכון-ובינוי-נדלן/?$ /green-building/ [R=301,L,NE]
+  RewriteRule ^שניידר-אלקטריק/?$ /brands-and-technologies/ [R=301,L,NE]
+  RewriteRule ^siemens-משיקה-את-logo-9-הדור-החדש-לבקר-האוטומציה-2/?$ /smart-home/ [R=301,L,NE]
+  RewriteRule ^no-internet/?$ /articles/smart-home-without-internet/ [R=301,L]
+  RewriteRule ^smart-home-maximum-security/?$ /articles/smart-home-alarm-system/ [R=301,L]
   # CountRite consolidation — canonical project page is /projects/countrite-technologies/.
   RewriteRule ^structure-control/countrite-technologies/?$ /projects/countrite-technologies/ [R=301,L]
   # Merged into the tenant support hub (2026-07-09). QR codes point to the old slug — keep them working.
@@ -287,14 +302,14 @@
   RewriteRule ^wired-smart-home/?$ /smart-home/ [R=301,L]
   RewriteRule ^wireless-smart-home/?$ /smart-home/ [R=301,L]
   RewriteRule ^lp/?$ /contactus/ [R=301,L]
-  RewriteRule ^partners/?$ / [R=301,L]
+  RewriteRule ^partners/?$ /brands-and-technologies/ [R=301,L]
   RewriteRule ^risco/?$ /communication-networks/ [R=301,L]
   RewriteRule ^thank-you-page/?$ - [G]
   RewriteRule ^shop/?$ - [G]
   RewriteRule ^checkout/?$ - [G]
   RewriteRule ^my-account/?$ - [G]
   RewriteRule ^servicecall/?$ /service-and-maintenance/ [R=301,L]
-  RewriteRule ^legend/?$ / [R=301,L]
+  RewriteRule ^legend/?$ - [G]
   RewriteRule ^jobs/?$ /contactus/ [R=301,L]
   RewriteRule ^cloud/?$ /service-and-maintenance/ [R=301,L]
   RewriteRule ^cloud-servise/?$ /service-and-maintenance/ [R=301,L]
@@ -353,22 +368,23 @@
   RewriteRule ^category/building-management/?$ /articles/ [R=301,L]
   RewriteRule ^שגיאה-404-1/?$ - [G]
   RewriteRule ^שגיאה-404-2/?$ - [G]
-  RewriteRule ^low-voltage-2/?$ - [G]
+  # These five were 410 Gone but have live equivalents — 410 destroys equity permanently (2026-07-22).
+  RewriteRule ^low-voltage-2/?$ /communication-networks/ [R=301,L]
   RewriteRule ^9923-2/?$ - [G]
-  RewriteRule ^hotels-2/?$ - [G]
+  RewriteRule ^hotels-2/?$ /bms-hotels/ [R=301,L]
   RewriteRule ^עמוד-הבית-2/?$ - [G]
-  RewriteRule ^construction-developers-2/?$ - [G]
+  RewriteRule ^construction-developers-2/?$ /contractor-customer-care/ [R=301,L]
   RewriteRule ^satisfactionform1/?$ - [G]
   RewriteRule ^satisfactionform2/?$ - [G]
   RewriteRule ^end/?$ - [G]
   RewriteRule ^monday/?$ - [G]
   RewriteRule ^yemen/?$ - [G]
-  RewriteRule ^wired-smart-home-2/?$ - [G]
+  RewriteRule ^wired-smart-home-2/?$ /knx-smart-home/ [R=301,L]
   RewriteRule ^בקרת-מבנה-קטלוגים-2/?$ - [G]
   RewriteRule ^h-2/?$ - [G]
   RewriteRule ^pr/?$ - [G]
   RewriteRule ^kidron-2/?$ - [G]
-  RewriteRule ^quote-2/?$ - [G]
+  RewriteRule ^quote-2/?$ /contactus/ [R=301,L]
   RewriteRule ^17210-2/?$ - [G]
 
 </IfModule>
