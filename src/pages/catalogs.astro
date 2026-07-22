@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import content from '../page-html/page-05.html?raw';
+import KnxAdvisorCta from '../components/KnxAdvisorCta.astro';
 
 const jsonLd = {
   "@context": "https://schema.org",
@@ -63,4 +64,5 @@ const meta = {
 ---
 <BaseLayout {...meta}>
   <Fragment set:html={content} />
+  <KnxAdvisorCta />
 </BaseLayout>

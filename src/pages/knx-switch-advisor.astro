@@ -1,0 +1,287 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import '../styles/knx-advisor.css';
+
+const title = 'איזה מפסק KNX מתאים לבית? יועץ חשמל חכם | I Feel';
+const description = 'כלי אינטראקטיבי לבחירת מפסקי KNX ומערכת חשמל חכם לפי חדר, תאורה, תריסים, מיזוג, חימום, אודיו, תרחישים והתקנה בקו אפס.';
+const canonical = 'https://i-feel.co.il/knx-switch-advisor/';
+
+const faqs = [
+  ['מה ההבדל בין Siemens TC4 ל-TC5?', 'TC4 הוא מסך 4 אינץ׳ קומפקטי לחדרים ולנקודות עם שטח תצוגה קטן יותר. TC5 הוא מסך 5 אינץ׳ ומציג יותר מידע ופעולות, ולכן מתאים במיוחד לאזורים מרכזיים. ההתאמה הסופית תלויה בכמות הפעולות, במערכות ובתכנון.'],
+  ['כמה מפסקים צריך בחדר?', 'בדרך כלל מתחילים בנקודה בכניסה. בחדר שינה מוסיפים נקודה ליד המיטה, ובחדר הורים נהוג לשקול נקודה בכל צד של המיטה ובאזורים צמודים. הכלי מתאים את ההצעה למבנה החדר.'],
+  ['האם מפסק KNX יכול לשלוט במזגן?', 'כן, בכפוף לסוג המזגן, לממשק התקשורת ולתכנון KNX. במערכת VRF נדרש בדרך כלל מתאם תקשורת מתאים ותיאום עם איש המיזוג.'],
+  ['האם TC4 או TC5 יכולים להחליף תרמוסטט?', 'בחלק מהמערכות כן, בכפוף לתאימות, לבקרת הטמפרטורה ולמתאם התקשורת. אין לוותר על תרמוסטט לפני אימות מול מתכנן KNX ואיש המיזוג.'],
+  ['מה חשוב לדעת על VRF?', 'מסך מתאים גם כאשר יש מעט פעולות, משום שהוא מרכז את בקרת המיזוג. נדרש מתאם תקשורת, ובדרך כלל נבחנת אינטגרציה מסוג CoolMaster KNX שהמתאם עבורה מתואם עם איש המיזוג.'],
+  ['איך משלבים חימום תת רצפתי?', 'עם מתאם מתאים ניתן לשלב הפעלה ובקרת טמפרטורה. ללא מתאם ניתן לתכנן נקודות קיצון להפעלה וכיבוי, בעוד שינוי הטמפרטורה נשאר ביחידת החימום.'],
+  ['מה נחשב פעולה במפסק?', 'תאורה, דימר, מזגן, דוד או תרחיש נספרים בדרך כלל כפעולה אחת. תריס, וילון או צלון כלוא נספרים כשתי פעולות - פתיחה וסגירה.'],
+  ['מהי התקנה בקו אפס?', 'מתאם ייעודי מאפשר להתקין את המפסק בקו אחיד עם הקיר למראה שטוח. יש לתכנן זאת לפני השלמת הקיר ולתאם קופסה, עומק וחומר גמר.'],
+  ['האם אפשר לשנות את פעולות המפסק בעתיד?', 'כן. מתקין KNX מורשה יכול לשנות תפקידי לחצנים ותרחישים, בכפוף ליכולות הדגם ולתשתית. במסך דינמי הגמישות גבוהה במיוחד.'],
+  ['מה מומלץ בחדר ילדים?', 'ליד המיטה מומלצים בדרך כלל לחצנים פשוטים ועמידים עם מעט פעולות ותרחישים ברורים. מסך בכניסה נשקל כאשר נדרשת שליטת מיזוג או ריבוי מערכות.'],
+  ['איזה מפסק מתאים ליד בריכה או באזור חשוף למים?', 'אין להשתמש שם במסך פנימי רגיל. הכלי יציע מתאם Siemens PBI בתוך מפסק קפיצי חיצוני מוגן מים שאותו מספק החשמלאי, לאחר תיאום הקופסה וההתקנה.'],
+  ['מהו PBI?', 'PBI הוא מתאם KNX פנימי שמותקן מאחורי מפסק קפיצי חיצוני. הוא אינו מפסק מוגן מים בפני עצמו, ואין להסיק ממנו דרגת IP.'],
+  ['מי מספק את המפסק החיצוני?', 'המפסק הקפיצי החיצוני המוגן מים מסופק על ידי החשמלאי. יש לתאם מראש קופסה, עומק, כבילה ומקום למתאם PBI.'],
+  ['האם ההמלצה מחליפה תכנון מקצועי?', 'לא. התוצאה היא אפיון ראשוני בלבד. ההתאמה הסופית נקבעת לאחר בדיקת תוכניות ותיאום עם I Feel, החשמלאי, איש המיזוג והאדריכל.']
+];
+
+const jsonLd = JSON.stringify({
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'WebApplication',
+      '@id': `${canonical}#application`,
+      name: 'יועץ מערכת חשמל חכם ומפסקי KNX',
+      url: canonical,
+      applicationCategory: 'UtilitiesApplication',
+      operatingSystem: 'Any',
+      browserRequirements: 'Requires JavaScript',
+      inLanguage: 'he-IL',
+      isAccessibleForFree: true,
+      description
+    },
+    {
+      '@type': 'BreadcrumbList',
+      itemListElement: [
+        { '@type': 'ListItem', position: 1, name: 'דף הבית', item: 'https://i-feel.co.il/' },
+        { '@type': 'ListItem', position: 2, name: 'בית חכם KNX', item: 'https://i-feel.co.il/knx-smart-home/' },
+        { '@type': 'ListItem', position: 3, name: 'יועץ מפסקי KNX', item: canonical }
+      ]
+    },
+    {
+      '@type': 'FAQPage',
+      mainEntity: faqs.map(([question, answer]) => ({
+        '@type': 'Question',
+        name: question,
+        acceptedAnswer: { '@type': 'Answer', text: answer }
+      }))
+    }
+  ]
+});
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  canonical={canonical}
+  ogTitle="יועץ מערכת חשמל חכם ומפסקי KNX | I Feel"
+  ogDescription={description}
+  ogUrl={canonical}
+  ogImage="https://i-feel.co.il/assets/smart-home-ramat-hasharon.jpg"
+  jsonLd={jsonLd}
+>
+  <div class="advisor-page">
+    <section class="advisor-hero" aria-labelledby="advisor-title">
+      <div class="advisor-shell">
+        <span class="advisor-eyebrow">⚡ יועץ KNX אינטראקטיבי · ללא התחייבות</span>
+        <h1 id="advisor-title">איזה מפסק ומערכת חשמל חכם מתאימים לכל חדר בבית?</h1>
+        <p>ענו על כמה שאלות קצרות וקבלו המלצה למיקום המפסקים, מספר הפעולות, שליטה בתאורה, תריסים, מיזוג, חימום, אודיו והתקנה בקו אפס.</p>
+        <div class="advisor-hero-actions">
+          <a class="advisor-btn advisor-btn-primary" href="#start-advisor" data-track="advisor_hero_start">מתחילים לתכנן</a>
+          <a class="advisor-btn advisor-btn-secondary" href="#how-it-works">איך זה עובד?</a>
+        </div>
+      </div>
+    </section>
+
+    <section id="start-advisor" class="advisor-intro" aria-labelledby="start-title">
+      <div class="advisor-shell">
+        <div class="advisor-section-head">
+          <h2 id="start-title">מה תרצו לתכנן?</h2>
+          <p>בחרו נקודת התחלה. אפשר לחזור, לערוך, להוסיף ולשכפל חדרים בכל שלב. הטיוטה נשמרת רק בדפדפן הזה.</p>
+        </div>
+        <div class="advisor-mode-grid" id="advisor-mode-grid">
+          <button class="advisor-choice" type="button" data-mode="whole-home" aria-pressed="false"><span class="advisor-choice-icon" aria-hidden="true">🏠</span><strong>תכנון בית שלם</strong><small>חלוקה לקומות, חדרים ונקודות שליטה</small></button>
+          <button class="advisor-choice" type="button" data-mode="floor" aria-pressed="false"><span class="advisor-choice-icon" aria-hidden="true">🏢</span><strong>תכנון קומה</strong><small>מיקוד בקומה אחת ובהיקף מוגדר</small></button>
+          <button class="advisor-choice" type="button" data-mode="room" aria-pressed="false"><span class="advisor-choice-icon" aria-hidden="true">🛋️</span><strong>בחירת פתרון לחדר אחד</strong><small>המלצה מהירה לחדר או אזור אחד</small></button>
+          <button class="advisor-choice" type="button" data-mode="existing-list" aria-pressed="false"><span class="advisor-choice-icon" aria-hidden="true">📋</span><strong>יש לי רשימת מפסקים קיימת</strong><small>מיפוי הרשימה לחדרים ולפעולות</small></button>
+          <button class="advisor-choice" type="button" data-mode="upgrade" aria-pressed="false"><span class="advisor-choice-icon" aria-hidden="true">↗️</span><strong>שדרוג מערכת KNX קיימת</strong><small>החלפה או הרחבה של נקודות קיימות</small></button>
+          <button class="advisor-choice" type="button" data-mode="guided" aria-pressed="false"><span class="advisor-choice-icon" aria-hidden="true">🧭</span><strong>אני עדיין לא יודע מה אני צריך</strong><small>נסביר כל אפשרות ונבנה יחד את הדרישות</small></button>
+        </div>
+        <div id="resume-draft" class="advisor-actions" hidden>
+          <button class="advisor-btn advisor-btn-ghost" type="button" id="resume-draft-button">המשך מהטיוטה השמורה</button>
+          <button class="advisor-btn advisor-btn-sm advisor-btn-danger" type="button" id="discard-draft-button">מחיקת הטיוטה</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="advisor-wizard-wrap" id="advisor-wizard-wrap" hidden aria-label="שאלון תכנון KNX">
+      <div class="advisor-shell">
+        <div class="advisor-wizard">
+          <div class="advisor-wizard-top">
+            <div class="advisor-progress-meta">
+              <span id="advisor-step-label">שלב 1 מתוך 5</span>
+              <span class="advisor-draft-state" id="advisor-draft-state" aria-live="polite">● הטיוטה נשמרת אוטומטית</span>
+            </div>
+            <div class="advisor-progress-track" role="progressbar" aria-label="התקדמות בשאלון" aria-valuemin="1" aria-valuemax="5" aria-valuenow="1">
+              <div class="advisor-progress-bar" id="advisor-progress-bar"></div>
+            </div>
+          </div>
+
+          <form id="advisor-form" novalidate>
+            <section class="advisor-panel" data-step="1">
+              <div class="advisor-panel-title"><h2>ספרו לנו על הפרויקט</h2><p>שלוש החלטות קצרות יעזרו לנו להתאים את התהליך.</p></div>
+              <div class="advisor-question-stack">
+                <fieldset class="advisor-question"><legend>1. סוג הנכס והעבודה</legend><div class="advisor-field-grid">
+                  <div class="advisor-field"><label for="property-type">סוג הנכס</label><select id="property-type" data-project="property" required><option value="private-home">בית פרטי</option><option value="apartment">דירה</option><option value="penthouse">פנטהאוז</option><option value="office">משרד</option><option value="hotel">מלון</option><option value="public">מבנה ציבור</option><option value="other">אחר</option></select></div>
+                  <div class="advisor-field"><label for="work-type">סוג העבודה</label><select id="work-type" data-project="work" required><option value="new">בנייה חדשה</option><option value="renovation">שיפוץ עמוק</option><option value="upgrade">שדרוג KNX קיים</option><option value="switch-replacement">החלפת מפסקים</option><option value="undecided">עדיין לא החלטתי</option></select></div>
+                </div></fieldset>
+                <fieldset class="advisor-question"><legend>2. מה היקף התכנון?</legend><div class="advisor-field-grid">
+                  <div class="advisor-field"><label for="project-scope">היקף</label><select id="project-scope" data-project="scope" required><option value="whole-home">בית שלם</option><option value="floor">קומה</option><option value="room">חדר</option><option value="existing-list">רשימת נקודות קיימת</option></select></div>
+                  <div class="advisor-field"><label for="floor-count">מספר קומות</label><input id="floor-count" data-project="floors" type="number" min="1" max="20" value="1" inputmode="numeric" /></div>
+                </div></fieldset>
+                <fieldset class="advisor-question"><legend>3. איזה מידע כבר יש לכם?</legend><div class="advisor-check-grid">
+                  <label class="advisor-check"><input type="checkbox" value="architectural" data-plan />תוכנית אדריכלית</label><label class="advisor-check"><input type="checkbox" value="electrical" data-plan />תוכנית חשמל</label><label class="advisor-check"><input type="checkbox" value="rooms" data-plan />רשימת חדרים</label><label class="advisor-check"><input type="checkbox" value="switches" data-plan />רשימת מפסקים</label><label class="advisor-check"><input type="checkbox" value="none" data-plan />אין תוכניות עדיין</label>
+                </div></fieldset>
+                <div class="advisor-info-box"><span aria-hidden="true">💡</span><div><strong>מה KNX מאפשרת?</strong><br />כל מפסק יכול לשלוט ביותר מפעולה אחת - תאורה, תריסים, מיזוג, חימום ותרחישים. מתקין KNX מורשה יכול לשנות פעולות בעתיד, בכפוף ליכולות המוצר והמערכת.</div></div>
+              </div>
+            </section>
+
+            <section class="advisor-panel" data-step="2" hidden>
+              <div class="advisor-panel-title"><h2>עיצוב, שימוש והתקנה</h2><p>נתחיל מהחוויה הרצויה, ורק בהמשך נתרגם אותה למשפחת מוצרים.</p></div>
+              <div class="advisor-question-stack">
+                <fieldset class="advisor-question"><legend>1. איזה סגנון מתאים לבית?</legend><div class="advisor-field-grid">
+                  <div class="advisor-field"><label for="design-style">סגנון</label><select id="design-style" data-design="style"><option value="modern">מודרני ונקי</option><option value="minimal">מינימליסטי</option><option value="classic">קלאסי</option><option value="industrial">תעשייתי</option><option value="warm">חם וטבעי</option><option value="unsure">עדיין לא ידוע</option></select></div>
+                  <div class="advisor-field"><label for="interface-preference">ממשק מועדף</label><select id="interface-preference" data-design="interface"><option value="mixed">שילוב מסכים ולחצנים</option><option value="screen">מסך</option><option value="buttons">לחצנים</option><option value="unsure">לא בטוח</option></select></div>
+                  <div class="advisor-field"><label for="material-preference">חומר וגמר</label><select id="material-preference" data-design="material"><option value="glass">זכוכית</option><option value="metal">מתכת</option><option value="standard">מראה רגיל</option><option value="mixed">שילוב</option><option value="unsure">לא ידוע</option></select></div>
+                </div></fieldset>
+                <fieldset class="advisor-question"><legend>2. איך תרצו לזהות פעולות?</legend><div class="advisor-field-grid">
+                  <div class="advisor-field"><label for="color-preference">צבע מועדף</label><select id="color-preference" data-design="color"><option value="white">לבן</option><option value="black">שחור</option><option value="metal">מתכתי</option><option value="custom">צבע או גמר מיוחד</option><option value="unsure">טרם נבחר</option></select></div>
+                  <div class="advisor-field"><label for="label-preference">סימון הפעולות</label><select id="label-preference" data-design="labels"><option value="icons">אייקונים</option><option value="text">טקסט</option><option value="mixed">שילוב</option><option value="dynamic">מסך דינמי</option></select></div>
+                </div></fieldset>
+                <fieldset class="advisor-question"><legend>3. האם תרצו מפסקים בקו אפס עם הקיר?</legend><div class="advisor-field-grid">
+                  <div class="advisor-field"><label for="flush-line">מראה שטוח</label><select id="flush-line" data-design="flushLine"><option value="no">לא</option><option value="yes">כן</option><option value="considering">רוצה לבדוק</option></select></div>
+                  <div class="advisor-field"><label for="wall-type">סוג הקיר או החיפוי</label><select id="wall-type" data-design="wallType"><option value="plaster">טיח</option><option value="drywall">גבס</option><option value="woodwork">נגרות</option><option value="stone">שיש או אבן</option><option value="unknown">לא ידוע</option></select></div>
+                  <div class="advisor-field"><label for="wall-finished">מצב הקיר</label><select id="wall-finished" data-design="wallFinished"><option value="not-finished">טרם הושלם</option><option value="finished">הקיר כבר הושלם</option><option value="unknown">לא ידוע</option></select></div>
+                </div><p class="advisor-help">I Feel מייצרת מתאם ייעודי להתקנת המפסק בקו אפס עם הקיר. מתאים בעיקר לטיח וגבס; בנגרות נדרשת דוגמה ותיאום, ובשיש או אבן בדרך כלל לא מומלץ.</p></fieldset>
+              </div>
+            </section>
+
+            <section class="advisor-panel" data-step="3" hidden>
+              <div class="advisor-panel-title"><h2>החדרים והאזורים בפרויקט</h2><p>אפשר להוסיף, לשכפל, למחוק ולערוך חדרים. בחדר אחד נתחיל עם כרטיס יחיד.</p></div>
+              <div class="advisor-room-layout">
+                <aside class="advisor-room-sidebar" aria-label="רשימת חדרים"><div class="advisor-room-list" id="room-list"></div><button class="advisor-btn advisor-btn-primary advisor-btn-sm" type="button" id="add-room">＋ הוספת חדר</button></aside>
+                <div class="advisor-question-stack">
+                  <fieldset class="advisor-question"><legend>1. זיהוי החדר</legend><div class="advisor-field-grid">
+                    <div class="advisor-field"><label for="room-name">שם החדר</label><input id="room-name" type="text" maxlength="60" placeholder="לדוגמה: חדר הורים" /></div>
+                    <div class="advisor-field"><label for="room-type">סוג החדר</label><select id="room-type"><option value="entrance">כניסה</option><option value="living">סלון</option><option value="kitchen">מטבח</option><option value="dining">פינת אוכל</option><option value="corridor">מסדרון</option><option value="master">חדר הורים</option><option value="children">ילדים</option><option value="bedroom">חדר שינה</option><option value="office">משרד</option><option value="bathroom">רחצה ושירותים</option><option value="guest-toilet">שירותי אורחים</option><option value="wardrobe">חדר ארונות</option><option value="safe-room">ממ״ד</option><option value="cinema">קולנוע</option><option value="basement">מרתף</option><option value="balcony">מרפסת</option><option value="garden">גינה</option><option value="pool">בריכה</option><option value="pergola">פרגולה</option><option value="service">שירות</option><option value="other">אחר</option></select></div>
+                    <div class="advisor-field"><label for="room-floor">קומה</label><input id="room-floor" type="number" min="-5" max="20" value="1" inputmode="numeric" /></div>
+                  </div></fieldset>
+                  <fieldset class="advisor-question"><legend>2. גודל ושימוש</legend><div class="advisor-field-grid">
+                    <div class="advisor-field"><label for="room-size">גודל משוער במ״ר</label><input id="room-size" type="number" min="1" max="1000" value="18" inputmode="decimal" /></div>
+                    <div class="advisor-field"><label for="room-users">מספר משתמשים קבועים</label><input id="room-users" type="number" min="0" max="50" value="1" inputmode="numeric" /></div>
+                    <div class="advisor-field"><label for="room-bed-sides">נקודות ליד המיטה</label><select id="room-bed-sides"><option value="0">ללא</option><option value="1">צד אחד</option><option value="2">שני צדדים</option></select></div>
+                  </div></fieldset>
+                  <fieldset class="advisor-question"><legend>3. מה צמוד או כלול בחדר?</legend><div class="advisor-check-grid" id="room-feature-grid">
+                    <label class="advisor-check"><input type="checkbox" value="balcony" />מרפסת או גינה</label><label class="advisor-check"><input type="checkbox" value="wardrobe" />חדר ארונות</label><label class="advisor-check"><input type="checkbox" value="bathroom" />רחצה ושירותים צמודים</label><label class="advisor-check"><input type="checkbox" value="child" />חדר ילדים</label><label class="advisor-check"><input type="checkbox" value="age-over-12" />גיל מעל 12</label><label class="advisor-check"><input type="checkbox" value="exposed" />אזור חשוף למים או חוץ</label>
+                  </div></fieldset>
+                  <div class="advisor-room-toolbar"><button class="advisor-btn advisor-btn-ghost advisor-btn-sm" id="duplicate-room" type="button">שכפול החדר</button><button class="advisor-btn advisor-btn-danger advisor-btn-sm" id="delete-room" type="button">מחיקת החדר</button></div>
+                </div>
+              </div>
+            </section>
+
+            <section class="advisor-panel" data-step="4" hidden>
+              <div class="advisor-panel-title"><h2>מה תרצו להפעיל בכל חדר?</h2><p>בחרו חדר, סמנו מערכות וכמויות. הספירה נעשית לפי פעולות ולא לפי שמות מוצרים.</p></div>
+              <div class="advisor-room-list" id="system-room-list" role="tablist" aria-label="בחירת חדר להגדרת מערכות"></div>
+              <div class="advisor-question-stack">
+                <fieldset class="advisor-question"><legend>1. מיזוג וחימום</legend><div class="advisor-field-grid">
+                  <div class="advisor-field"><label for="ac-type">סוג המיזוג</label><select id="ac-type"><option value="none">ללא מיזוג</option><option value="vrf">VRF / VRV</option><option value="regular">מזגן רגיל</option><option value="mini-central">מיני מרכזי</option><option value="other">אחר</option><option value="unknown">לא ידוע</option></select></div>
+                  <div class="advisor-field"><label for="ac-control">רמת השליטה</label><select id="ac-control"><option value="on-off">הפעלה וכיבוי</option><option value="temperature">טמפרטורה ומצבים</option><option value="full">שליטה מלאה ככל שניתן</option><option value="unknown">טרם הוגדר</option></select></div>
+                  <div class="advisor-field"><label for="thermostat-choice">תרמוסטט נפרד</label><select id="thermostat-choice"><option value="no">לא נדרש</option><option value="keep">להשאיר לצד המסך</option><option value="unknown">טרם הוחלט</option></select></div>
+                  <div class="advisor-field"><label for="floor-heating">חימום תת רצפתי</label><select id="floor-heating"><option value="none">ללא</option><option value="on-off">הפעלה וכיבוי</option><option value="temperature">כולל שינוי טמפרטורה</option><option value="unknown">לא ידוע</option></select></div>
+                </div><p class="advisor-help">ב-VRF מסך יכול להחליף תרמוסטט בכפוף לתאימות ולמתאם תקשורת. CoolMaster KNX נבחן בדרך כלל, והמתאם צריך להיות מתואם עם איש המיזוג.</p></fieldset>
+                <fieldset class="advisor-question"><legend>2. מערכות ופעולות</legend><div class="advisor-actions-grid" id="actions-grid"></div><p class="advisor-help">תאורה, דימר או תרחיש = פעולה אחת. תריס, וילון או צלון כלוא = שתי פעולות. אין שימוש בלחיצה כפולה או בלחיצה קצרה/ארוכה לפעולות שאינן קשורות.</p></fieldset>
+                <fieldset class="advisor-question"><legend>3. תרחישים רצויים בחדר</legend><div class="advisor-check-grid" id="scenario-grid"></div></fieldset>
+              </div>
+            </section>
+
+            <section class="advisor-panel" data-step="5" hidden>
+              <div class="advisor-panel-title"><h2>מוכנים לקבל המלצה</h2><p>אפשר לחזור ולערוך כל תשובה. ההמלצה מוצגת מיד ואינה דורשת השארת פרטים.</p></div>
+              <div class="advisor-question-stack">
+                <div class="advisor-info-box"><span aria-hidden="true">✓</span><div><strong id="review-title">הפרויקט מוכן לחישוב</strong><br /><span id="review-copy"></span></div></div>
+                <div class="advisor-warning-box advisor-info-box"><span aria-hidden="true">ℹ️</span><div>המנוע בודק אוטומטית מיזוג VRF, אודיו, כמות פעולות, נקודות מיטה, אזורי חוץ, PBI וקו אפס. מידע שחסר יסומן במפורש לאימות מקצועי.</div></div>
+              </div>
+            </section>
+
+            <div class="advisor-panel advisor-actions" id="wizard-actions">
+              <button class="advisor-btn advisor-btn-ghost" type="button" id="previous-step" hidden>השלב הקודם</button>
+              <button class="advisor-btn advisor-btn-primary" type="button" id="next-step">המשך</button>
+              <button class="advisor-btn advisor-btn-primary" type="button" id="show-results" hidden>הצגת ההמלצה שלי</button>
+              <button class="advisor-btn advisor-btn-danger advisor-btn-sm" type="button" id="restart-advisor">התחלה מחדש</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <section class="advisor-results" id="advisor-results" hidden aria-labelledby="results-title">
+      <div class="advisor-shell">
+        <div class="advisor-section-head"><h2 id="results-title">המלצת התכנון הראשונית שלכם</h2><p>מיקומים, פעולות ומשפחות מוצרים לפי החדרים שהוגדרו.</p></div>
+        <div class="advisor-result-actions advisor-actions">
+          <button class="advisor-btn advisor-btn-primary" type="button" id="print-summary">הדפסה / שמירה כ-PDF</button>
+          <button class="advisor-btn advisor-btn-secondary" type="button" id="download-summary">הורדת סיכום</button>
+          <button class="advisor-btn advisor-btn-ghost" type="button" id="edit-answers">עריכת התשובות</button>
+        </div>
+        <div class="advisor-result-summary" id="result-stats"></div>
+        <div class="advisor-result-grid" id="recommendation-list"></div>
+
+        <section aria-labelledby="home-summary-title">
+          <div class="advisor-section-head"><h2 id="home-summary-title">סיכום הבית</h2><p>כמויות ומידע מרוכז להעברה לאדריכל, לחשמלאי ולאיש המיזוג.</p></div>
+          <div id="quantity-summary"></div>
+          <div class="advisor-table-wrap"><table class="advisor-table"><thead><tr><th>קומה</th><th>חדר</th><th>מיקום</th><th>פעולות</th><th>מערכות</th><th>המלצה</th><th>קו אפס</th><th>הערות</th></tr></thead><tbody id="summary-table-body"></tbody></table></div>
+        </section>
+
+        <section aria-labelledby="checks-title" style="margin-top:2.5rem">
+          <div class="advisor-section-head"><h2 id="checks-title">בדיקות ותיאומים</h2><p>נושאים שכדאי לפתור לפני הזמנה או סגירת קירות.</p></div>
+          <div class="advisor-validation" id="validation-list"></div>
+        </section>
+
+        <div class="advisor-disclaimer"><strong>הסתייגות חשובה:</strong> ההמלצה היא ראשונית ואינה מחליפה תכנון KNX מקצועי, בדיקת תוכניות ותיאום עם החשמלאי, איש המיזוג והאדריכל. ההתאמה הסופית של המפסקים, המתאמים, הקופסאות והתכנות תיקבע לאחר בדיקה מקצועית של I Feel.</div>
+
+        <section class="advisor-contact" id="lead-form" aria-labelledby="lead-title">
+          <h2 id="lead-title">קבלת בדיקה מקצועית והצעת מחיר מ-I Feel</h2>
+          <p>התוצאה כבר שלכם. אם תרצו, שלחו עכשיו את הסיכום לבדיקה מקצועית. דבר לא יישלח ללא הסכמה מפורשת.</p>
+          <form id="advisor-lead-form" action="/api/lead.php" method="post" accept-charset="UTF-8">
+            <input type="hidden" name="lead_type" value="יועץ מפסקי KNX" />
+            <input type="hidden" name="subject" value="בדיקת תכנון מיועץ מפסקי KNX" />
+            <input type="hidden" name="source_page" value="/knx-switch-advisor/" />
+            <input type="hidden" name="redirect_to" value="/knx-switch-advisor/" />
+            <input type="hidden" name="message" id="lead-message" value="" />
+            <div class="advisor-honeypot" aria-hidden="true"><label for="lead-website">אתר</label><input id="lead-website" name="website" type="text" tabindex="-1" autocomplete="off" /></div>
+            <div class="advisor-field-grid">
+              <div class="advisor-field"><label for="lead-name">שם מלא *</label><input id="lead-name" name="name" type="text" maxlength="120" autocomplete="name" required /></div>
+              <div class="advisor-field"><label for="lead-phone">טלפון *</label><input id="lead-phone" name="phone" type="tel" maxlength="30" autocomplete="tel" inputmode="tel" required /></div>
+              <div class="advisor-field"><label for="lead-email">דואר אלקטרוני</label><input id="lead-email" name="email" type="email" maxlength="160" autocomplete="email" /></div>
+              <div class="advisor-field"><label for="lead-city">עיר</label><input id="lead-city" type="text" maxlength="80" autocomplete="address-level2" /></div>
+              <div class="advisor-field"><label for="lead-plans">תוכניות זמינות</label><select id="lead-plans"><option value="ללא תוכניות כרגע">ללא תוכניות כרגע</option><option value="תוכנית אדריכלית">תוכנית אדריכלית</option><option value="תוכנית חשמל">תוכנית חשמל</option><option value="תוכנית אדריכלית וחשמל">תוכנית אדריכלית וחשמל</option><option value="אעביר לאחר השיחה">אעביר לאחר השיחה</option></select></div>
+              <div class="advisor-field"><label for="lead-notes">הערות</label><textarea id="lead-notes" maxlength="900" placeholder="שלב הפרויקט, שאלות או מידע חשוב"></textarea></div>
+            </div>
+            <label class="advisor-check" style="margin-top:1rem"><input id="lead-consent" type="checkbox" required />אני מאשר/ת להעביר ל-I Feel את פרטי הקשר ואת סיכום היועץ לצורך בדיקה וחזרה אליי. *</label>
+            <div class="advisor-actions">
+              <button class="advisor-btn advisor-btn-primary" type="submit">שליחת הסיכום ל-I Feel</button>
+              <a class="advisor-btn advisor-btn-secondary" href="https://wa.me/972533450205?text=שלום%20מאיה%2C%20אשמח%20לקבוע%20פגישת%20ייעוץ%20KNX" target="_blank" rel="noopener" data-track="advisor_meeting">קביעת פגישה עם מומחה KNX</a>
+            </div>
+            <div id="lead-status" class="advisor-form-status" hidden role="status"></div>
+          </form>
+        </section>
+
+        <div class="advisor-resource-links" aria-label="קישורים להמשך">
+          <a href="/knx-switch-configurator/" data-track="advisor_to_configurator">בחירת אייקונים וגמרים בקונפיגורטור</a>
+          <a href="/switch-configurator/" data-track="advisor_to_configurator">קונפיגורטור מפסקים נוסף</a>
+          <a href="/catalogs/">קטלוגים ומדריכי TC4/TC5</a>
+          <a href="/knx-smart-home/">מדריך בית חכם KNX</a>
+        </div>
+      </div>
+    </section>
+
+    <section id="how-it-works" class="advisor-faq" aria-labelledby="faq-title">
+      <div class="advisor-shell">
+        <div class="advisor-section-head"><h2 id="faq-title">שאלות נפוצות לפני שמתחילים</h2><p>תשובות קצרות בשפה פשוטה. ההמלצה בתוך הכלי תהיה מותאמת לחדרים שלכם.</p></div>
+        <div class="advisor-faq-grid">
+          {faqs.map(([question, answer]) => <details><summary>{question}</summary><p>{answer}</p></details>)}
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    import '../scripts/knx-advisor';
+  </script>
+</BaseLayout>

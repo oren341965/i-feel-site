@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import content from '../page-html/knx-smart-home.html?raw';
+import KnxAdvisorCta from '../components/KnxAdvisorCta.astro';
 
 const meta = {
   title: "בית חכם KNX בישראל | הסטנדרט הקווי המוביל | i-feel",
@@ -50,4 +51,5 @@ const meta = {
 ---
 <BaseLayout {...meta}>
   <Fragment set:html={content} />
+  <KnxAdvisorCta />
 </BaseLayout>

@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import content from '../page-html/knx-switch-configurator.html?raw';
+import KnxAdvisorCta from '../components/KnxAdvisorCta.astro';
 
 const meta = {
   title: "בניית מפסק KNX אונליין — מפסקי מגע Siemens TC4/TC5 ומפסקי לחצנים | i-feel",
@@ -54,4 +55,5 @@ const meta = {
 ---
 <BaseLayout {...meta}>
   <Fragment set:html={content} />
+  <KnxAdvisorCta compact />
 </BaseLayout>
