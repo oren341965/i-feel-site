@@ -1,4 +1,6 @@
 .mega-guide {
+  max-width: 100%;
+  overflow-x: hidden;
   --paper: #f5f7f9;
   --card: #ffffff;
   --ink: #1c2733;
@@ -158,6 +160,14 @@
 
 .mega-guide figure {
   margin: 22px 0;
+  max-width: 100%;
+}
+
+.mega-guide img,
+.mega-guide svg {
+  display: block;
+  max-width: 100%;
+  height: auto;
 }
 
 .mega-guide .photos-grid {
@@ -434,14 +444,6 @@
 
   .mega-guide .stats {
     grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .mega-guide figure {
-    overflow-x: auto;
-  }
-
-  .mega-guide figure svg {
-    min-width: 720px;
   }
 
   .mega-guide .site-cta {
