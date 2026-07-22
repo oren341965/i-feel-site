@@ -33,6 +33,7 @@ interface RoomState {
   acControl: string;
   thermostat: string;
   floorHeating: string;
+  preferredProduct?: string;
   actions: NumberMap;
   scenarios: string[];
 }
@@ -46,6 +47,17 @@ interface AdvisorState {
   design: DesignState;
   rooms: RoomState[];
   updatedAt: string;
+}
+
+interface BuilderSelection {
+  roomType: string;
+  roomName: string;
+  actions: NumberMap;
+  scenarios: string[];
+  acType: string;
+  floorHeating: string;
+  exterior: boolean;
+  preferredProduct: string;
 }
 
 interface PositionRecommendation {
@@ -116,6 +128,13 @@ const BEDROOM_TYPES = new Set(['master', 'children', 'bedroom']);
 const PUBLIC_TYPES = new Set(['entrance', 'living', 'kitchen', 'dining', 'office', 'cinema', 'basement']);
 const EXTERIOR_TYPES = new Set(['balcony', 'garden', 'pool', 'pergola']);
 
+const PRODUCT_RESOURCES = {
+  tc4: { image: '/assets/knx-advisor/siemens-tc4.webp', alt: 'Siemens Touch Control TC4', catalog: '/assets/catalogs/siemens-touch-control-tc4-tc5-he.pdf#page=3', catalogLabel: 'מדריך TC4' },
+  tc5: { image: '/assets/knx-advisor/siemens-tc5.webp', alt: 'Siemens Touch Control TC5', catalog: '/assets/catalogs/siemens-touch-control-tc4-tc5-he.pdf#page=4', catalogLabel: 'מדריך TC5' },
+  tacteo: { image: '/assets/knx-advisor/abb-tacteo-preview.webp', alt: 'דוגמאות לחצני ABB Tacteo KNX', catalog: '/assets/catalogs/tacteo-catalog.pdf', catalogLabel: 'קטלוג לחצני KNX' },
+  pbi: { image: '/assets/knx-advisor/siemens-pbi-up220.webp', alt: 'Siemens Push Button Interface UP 220', catalog: 'https://cache.industry.siemens.com/dl/files/531/109818531/att_1136419/v1/A6V10416506.pdf', catalogLabel: 'דף Siemens PBI' }
+} as const;
+
 function createRoom(index = 0, type = 'living'): RoomState {
   const isBedroom = BEDROOM_TYPES.has(type);
   return {
@@ -131,6 +150,7 @@ function createRoom(index = 0, type = 'living'): RoomState {
     acControl: 'on-off',
     thermostat: 'unknown',
     floorHeating: 'none',
+    preferredProduct: '',
     actions: { lighting: 1, scene: 1 },
     scenarios: type === 'entrance' ? ['כיבוי כללי', 'יציאה', 'כניסה', 'אירוח'] : ['כיבוי חדר']
   };
@@ -299,6 +319,7 @@ function renderSystems(): void {
   setSelectValue('floor-heating', room.floorHeating);
   renderActions();
   renderScenarios();
+  renderRoomCoach();
 }
 
 function renderActions(): void {
@@ -319,6 +340,7 @@ function renderActions(): void {
       else delete room.actions[id];
       if (id === 'audio' && input.checked) track('advisor_audio_selected', { room_type: room.type });
       renderActions();
+      renderRoomCoach();
       saveState();
     });
   });
@@ -330,6 +352,7 @@ function changeActionCount(id: string, delta: number): void {
   const room = currentRoom();
   room.actions[id] = Math.min(20, Math.max(1, (room.actions[id] || 1) + delta));
   renderActions();
+  renderRoomCoach();
   saveState();
 }
 
@@ -341,6 +364,7 @@ function renderScenarios(): void {
     room.scenarios = qsa<HTMLInputElement>('input:checked', grid).map((item) => item.value);
     room.actions.scene = Math.max(1, room.scenarios.length || 0);
     if (!room.scenarios.length) delete room.actions.scene;
+    renderRoomCoach();
     saveState();
   }));
 }
@@ -398,6 +422,7 @@ function needsScreen(room: RoomState, operations: number): boolean {
 function recommend(room: RoomState, location: string, operations: number, exterior: boolean): PositionRecommendation {
   const systems = actionLabels(room);
   const isBedside = location.includes('המיטה');
+  const preferred = isBedside ? '' : (room.preferredProduct || '');
   let family = '';
   let manufacturer = 'Siemens';
   let model = '';
@@ -407,42 +432,44 @@ function recommend(room: RoomState, location: string, operations: number, exteri
   let verify = '';
   let alternatives: Array<{ title: string; copy: string }> = [];
 
-  if (exterior) {
+  if (exterior || preferred === 'pbi') {
     const fourButton = operations > 2;
     family = fourButton ? 'PBI 4 לחצנים' : 'PBI 2 לחצנים';
     model = fourButton ? '5WG1220-2DB31' : '5WG1220-2AB21';
-    reason = `נקודת חוץ עם ${operations} פעולות דורשת מתאם פנימי ומפסק קפיצי חיצוני מוגן מים.`;
-    advantages = 'פתרון KNX מתאים לנקודה חיצונית בלי להציב מסך פנימי באזור חשוף.';
+    reason = exterior ? `נקודת חוץ עם ${operations} פעולות דורשת מתאם פנימי ומפסק קפיצי חיצוני מוגן מים.` : `נבחר מתאם PBI כדי לחבר ל-KNX מפסק קפיצי רגיל עם ${operations} פעולות.`;
+    advantages = exterior ? 'פתרון KNX מתאים לנקודה חיצונית בלי להציב מסך פנימי באזור חשוף.' : 'מאפשר לשמור חזית מסדרת חשמל רגילה ולהעביר את הלחיצות ל-KNX.';
     limitations = 'PBI הוא מתאם בלבד ואינו מפסק מוגן מים. מעל ארבע פעולות יש לפצל או להעביר פעולות לנקודה פנימית.';
     verify = 'המפסק החיצוני, דרגת האטימות, הקופסה, העומק והכבילה מול החשמלאי.';
     alternatives = operations > 4 ? [{ title: 'פיצול לשני מפסקים חיצוניים', copy: 'נדרש כאשר חייבים יותר מארבע פעולות בחוץ.' }] : [];
-  } else if (isBedside && (room.type === 'children' || room.features.includes('child'))) {
+  } else if (preferred === 'tacteo' || (isBedside && (room.type === 'children' || room.features.includes('child')))) {
     family = 'לחצן KNX';
-    model = 'לחצן פשוט ועמיד';
-    reason = 'ליד מיטת ילד עדיפים מעט פעולות ותרחישים ברורים.';
+    manufacturer = preferred === 'tacteo' ? 'ABB' : 'לבחירה לפי דגם';
+    model = preferred === 'tacteo' ? 'ABB Tacteo KNX' : 'לחצן פשוט ועמיד';
+    reason = preferred === 'tacteo' ? `${operations} פעולות יומיומיות יכולות להישאר גלויות ונגישות בלי מעבר בין מסכים.` : 'ליד מיטת ילד עדיפים מעט פעולות ותרחישים ברורים.';
     advantages = 'שימוש ישיר, עמיד ופשוט בלילה.';
     limitations = 'אייקון קבוע מגביל את הגמישות העיצובית לאחר שינוי פעולות.';
     verify = 'דגם מדויק, מספר לחצנים, קופסה, גמר ואייקונים.';
     alternatives = [{ title: 'Eelectron או MDT', copy: 'חלופת לחצנים שיש לבחור לפי מספר הפעולות והגמר.' }];
-  } else if (operations > 8 || (PUBLIC_TYPES.has(room.type) && operations >= 7)) {
+  } else if (preferred === 'tc5' || (preferred !== 'tc4' && (operations > 8 || (PUBLIC_TYPES.has(room.type) && operations >= 7)))) {
     family = 'TC5';
     model = 'Siemens Touch Control TC5';
-    reason = `${operations} פעולות באזור ${PUBLIC_TYPES.has(room.type) ? 'מרכזי' : 'עמוס'} מצדיקות שטח מסך גדול יותר.`;
+    reason = preferred === 'tc5' ? `TC5 נבחר כדי להציג ${operations} פעולות עם יותר שטח ומידע גלוי.` : `${operations} פעולות באזור ${PUBLIC_TYPES.has(room.type) ? 'מרכזי' : 'עמוס'} מצדיקות שטח מסך גדול יותר.`;
     advantages = 'מסך 5 אינץ׳, יותר מידע ופעולות בכל מסך וגמישות גבוהה לשינויים.';
     limitations = 'דורש תכנון הזנה, קופסה ותכנות; ההתאמה לכל מערכת נבדקת בנפרד.';
     verify = 'דגם מדויק, אוריינטציה, קופסת התקנה, הזנה ותאימות מיזוג.';
     alternatives = [{ title: 'מסך KNX של Eelectron או MDT', copy: 'חלופה אפשרית לאחר אימות פונקציות, מידות וקופסה.' }];
-  } else if (needsScreen(room, operations)) {
+  } else if (preferred === 'tc4' || needsScreen(room, operations)) {
     family = 'TC4';
     model = 'Siemens Touch Control TC4';
-    reason = room.acType === 'vrf' ? 'VRF דורש ממשק מסך ותיאום מתאם תקשורת, גם כאשר מספר הפעולות קטן.' : room.actions.audio ? 'אודיו מוגדר במסך ייעודי ולכן נדרש TC4 או TC5.' : `${operations} פעולות מתאימות למסך קומפקטי ודינמי.`;
+    reason = preferred === 'tc4' ? `TC4 נבחר כדי לרכז ${operations} פעולות בממשק קומפקטי ודינמי.` : room.acType === 'vrf' ? 'VRF דורש ממשק מסך ותיאום מתאם תקשורת, גם כאשר מספר הפעולות קטן.' : room.actions.audio ? 'אודיו מוגדר במסך ייעודי ולכן נדרש TC4 או TC5.' : `${operations} פעולות מתאימות למסך קומפקטי ודינמי.`;
     advantages = 'מסך 4 אינץ׳ קומפקטי לשליטה מרוכזת ולשינוי עתידי של תצוגות ותרחישים.';
     limitations = 'מציג פחות מידע בכל מסך לעומת TC5 ולכן דורש יותר מעבר בין מסכים.';
     verify = 'דגם מדויק, קופסה, הזנה, תצורת ETS ותאימות למיזוג או לחימום.';
     alternatives = operations >= 7 ? [{ title: 'Siemens TC5', copy: 'חלופה עם שטח מסך גדול יותר כאשר רוצים פחות מעבר בין מסכים.' }] : [{ title: 'מסך KNX של Eelectron או MDT', copy: 'חלופה אפשרית לאחר אימות פונקציות, מידות וקופסה.' }];
   } else {
     family = 'לחצן KNX';
-    model = 'משפחת לחצני Siemens';
+    manufacturer = 'לבחירה לפי הגמר';
+    model = 'לחצן KNX מותאם למספר הפעולות';
     reason = `${operations} פעולות מתאימות בדרך כלל למפסק לחצנים ישיר.`;
     advantages = 'הפעלה מהירה, ברורה וגמישות תכנותית גבוהה.';
     limitations = 'אייקונים קבועים מגבילים את השינוי העיצובי אם מחליפים תפקידים בעתיד.';
@@ -461,7 +488,8 @@ function recommend(room: RoomState, location: string, operations: number, exteri
 
   const electricianNote = exterior
     ? 'המפסק הקפיצי החיצוני המוגן מים יסופק על ידי החשמלאי. יש לתאם מראש את הקופסה, עומק ההתקנה, הכבילה והמקום למתאם PBI.'
-    : family.startsWith('TC') ? 'לתאם קופסה, עומק, KNX והזנת עזר לפני סגירת הקיר.' : 'לתאם קופסה, קו KNX, מספר לחצנים וסימון לפני ההזמנה.';
+    : family.startsWith('PBI') ? 'לתאם קופסה עמוקה, מפסק קפיצי, קו KNX ומקום למתאם PBI מאחורי החזית.'
+      : family.startsWith('TC') ? 'לתאם קופסה, עומק, KNX והזנת עזר לפני סגירת הקיר.' : 'לתאם קופסה, קו KNX, מספר לחצנים וסימון לפני ההזמנה.';
   const hvacNote = room.acType === 'vrf' ? 'נדרש מתאם תקשורת. CoolMaster KNX מועדף בדרך כלל, והמתאם צריך להגיע בתיאום עם איש המיזוג.' : room.acType !== 'none' ? 'יש לאמת את סוג הממשק ורמת השליטה מול איש המיזוג.' : 'ללא דרישת מיזוג שהוגדרה.';
 
   return { room, location, operations, systems, exterior, family, manufacturer, model, reason, advantages, limitations, verify, alternatives, electricianNote, hvacNote };
@@ -517,9 +545,56 @@ function quantityMap(recommendations: PositionRecommendation[]): NumberMap {
   return counts;
 }
 
+function resourceFor(item: PositionRecommendation): (typeof PRODUCT_RESOURCES)[keyof typeof PRODUCT_RESOURCES] {
+  if (item.family === 'TC5') return PRODUCT_RESOURCES.tc5;
+  if (item.family === 'TC4') return PRODUCT_RESOURCES.tc4;
+  if (item.family.startsWith('PBI')) return PRODUCT_RESOURCES.pbi;
+  return PRODUCT_RESOURCES.tacteo;
+}
+
+function actionInteraction(id: string): string {
+  const descriptions: StringMap = {
+    lighting: 'לחיצה: הדלקה / כיבוי',
+    dimmer: 'מסך: מחוון · לחצן: לחיצה ארוכה',
+    shutter: 'פתיחה + סגירה', curtain: 'פתיחה + סגירה', blind24: 'עלייה + ירידה',
+    hvac: 'דף מיזוג לפי הממשק', heating: 'הפעלה או טמפרטורה לפי המתאם', audio: 'דף אודיו ייעודי',
+    scene: 'לחיצה אחת מפעילה תרחיש', boiler: 'הפעלה / כיבוי', vent: 'הפעלה / כיבוי', fan: 'הפעלה / כיבוי'
+  };
+  return descriptions[id] || 'לחיצה מפעילה את הפונקציה';
+}
+
+function contentItems(item: PositionRecommendation): string {
+  const entries = Object.entries(item.room.actions).filter(([, count]) => count > 0);
+  if (!entries.length) return '<span class="advisor-chip">ללא תוכן שהוגדר</span>';
+  return entries.map(([id, count], index) => {
+    const action = ACTION_BY_ID[id as keyof typeof ACTION_BY_ID];
+    const label = action?.label || id;
+    const amount = count > 1 ? ` × ${count}` : '';
+    return `<div class="advisor-rec-function"><span>${index + 1}</span><div><strong>${escapeHtml(label)}${amount}</strong><small>${escapeHtml(actionInteraction(id))}</small></div></div>`;
+  }).join('');
+}
+
 function deviceVisual(item: PositionRecommendation): string {
-  const screenClass = ['TC4', 'TC5'].includes(item.family) ? ' screen' : '';
-  return `<div class="advisor-device-badge${screenClass}"><span>${escapeHtml(item.family)}</span><small>${escapeHtml(item.manufacturer)}</small></div>`;
+  const resource = resourceFor(item);
+  return `<img src="${resource.image}" alt="${escapeHtml(resource.alt)}" width="900" height="900" loading="lazy" />`;
+}
+
+function renderRoomCoach(): void {
+  const root = document.querySelector<HTMLElement>('#room-product-coach');
+  if (!root || !state.rooms.length) return;
+  const room = currentRoom();
+  const position = positionsForRoom(room)[0];
+  const item = recommend(room, position.location, position.operations, position.exterior);
+  const resource = resourceFor(item);
+  const mainActions = Object.keys(room.actions).filter((id) => room.actions[id] > 0).slice(0, 5).map((id) => ACTION_BY_ID[id as keyof typeof ACTION_BY_ID]?.label || id);
+  root.innerHTML = `
+    <div class="advisor-room-coach-head"><strong>כך הבחירה נראית כרגע: ${escapeHtml(item.model)}</strong><span>${item.operations} פעולות</span></div>
+    <div class="advisor-room-coach-body">
+      <img src="${resource.image}" alt="${escapeHtml(resource.alt)}" width="900" height="900" loading="lazy" />
+      <div><p><strong>למה?</strong> ${escapeHtml(item.reason)}</p><p><strong>מה יהיה עליו?</strong> ${escapeHtml(mainActions.join(', ') || 'עדיין לא נבחר תוכן')}.</p>
+      <ul><li>${escapeHtml(item.advantages)}</li><li><strong>לפני הזמנה:</strong> ${escapeHtml(item.verify)}</li></ul>
+      <div class="advisor-product-actions"><a class="advisor-text-link" href="${resource.catalog}" target="_blank" rel="noopener">${escapeHtml(resource.catalogLabel)} ←</a><a class="advisor-text-link" href="#switch-lab">פתיחת הבונה החזותי ←</a></div></div>
+    </div>`;
 }
 
 function renderResults(): void {
@@ -539,16 +614,18 @@ function renderResults(): void {
     <article class="advisor-recommendation">
       <div class="advisor-rec-head"><h3>קומה ${escapeHtml(item.room.floor)} · ${escapeHtml(item.room.name)}</h3><span>${escapeHtml(item.location)}</span></div>
       <div class="advisor-rec-body">
-        <div class="advisor-device-visual" role="img" aria-label="המחשה סכמטית של משפחת ${escapeHtml(item.family)}">${deviceVisual(item)}</div>
+        <div class="advisor-device-visual">${deviceVisual(item)}</div>
         <div>
           <div class="advisor-rec-meta"><span class="advisor-chip">${item.operations} פעולות</span>${item.systems.map((system) => `<span class="advisor-chip">${escapeHtml(system)}</span>`).join('')}</div>
           <h3 class="advisor-rec-title">${escapeHtml(item.model)} · המלצת I Feel</h3>
           <p class="advisor-rec-copy">${escapeHtml(item.reason)}</p>
+          <div class="advisor-rec-functions"><div class="advisor-rec-functions-head"><strong>מה הלקוח יקבל על המפסק?</strong><span>מפת תוכן ראשונית</span></div><div class="advisor-rec-functions-grid">${contentItems(item)}</div></div>
           <div class="advisor-alternatives">
             <div class="advisor-alt"><strong>1. ${escapeHtml(item.model)}</strong><small><b>יתרון:</b> ${escapeHtml(item.advantages)}<br /><b>מגבלה:</b> ${escapeHtml(item.limitations)}<br /><b>לאימות:</b> ${escapeHtml(item.verify)}</small></div>
             ${item.alternatives.map((alternative, alternativeIndex) => `<div class="advisor-alt"><strong>${alternativeIndex + 2}. ${escapeHtml(alternative.title)}</strong><small>${escapeHtml(alternative.copy)}</small></div>`).join('')}
           </div>
           <p class="advisor-help"><strong>לחשמלאי:</strong> ${escapeHtml(item.electricianNote)}<br /><strong>לאיש המיזוג:</strong> ${escapeHtml(item.hvacNote)}</p>
+          <div class="advisor-product-actions"><a class="advisor-btn advisor-btn-secondary advisor-btn-sm" href="${resourceFor(item).catalog}" target="_blank" rel="noopener">${escapeHtml(resourceFor(item).catalogLabel)}</a><a class="advisor-btn advisor-btn-ghost advisor-btn-sm" href="#switch-lab">עריכת תוכן בבונה החזותי</a></div>
         </div>
       </div>
     </article>`).join('');
@@ -667,6 +744,34 @@ function previousStep(): void {
 function init(): void {
   const saved = loadSavedState();
   if (saved) qs<HTMLElement>('#resume-draft').hidden = false;
+  window.addEventListener('advisor:use-builder', (event) => {
+    const detail = (event as CustomEvent<BuilderSelection>).detail;
+    if (!detail) return;
+    state = initialState('room');
+    const room = state.rooms[0];
+    room.type = detail.roomType;
+    room.name = detail.roomName;
+    room.actions = { ...detail.actions };
+    room.scenarios = [...detail.scenarios];
+    room.acType = detail.acType;
+    room.acControl = detail.actions.hvac ? 'temperature' : 'on-off';
+    room.floorHeating = detail.floorHeating;
+    room.preferredProduct = detail.preferredProduct;
+    room.features = detail.exterior ? ['exposed'] : detail.roomType === 'children' ? ['child'] : [];
+    room.users = ['master', 'children', 'bedroom'].includes(detail.roomType) ? 2 : 1;
+    room.bedSides = detail.roomType === 'master' ? 2 : detail.roomType === 'children' ? 1 : 0;
+    state.design.interface = ['tc4', 'tc5'].includes(detail.preferredProduct) ? 'screen' : 'buttons';
+    state.design.labels = ['tc4', 'tc5'].includes(detail.preferredProduct) ? 'dynamic' : 'icons';
+    state.step = 4;
+    restoreStaticFields();
+    renderRoomList();
+    renderRoomEditor();
+    renderSystems();
+    renderProgress();
+    qs<HTMLElement>('#advisor-wizard-wrap').hidden = false;
+    qs<HTMLElement>('#advisor-wizard-wrap').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    saveState(false);
+  });
   qsa<HTMLButtonElement>('[data-mode]').forEach((button) => button.addEventListener('click', () => {
     qsa<HTMLButtonElement>('[data-mode]').forEach((item) => item.setAttribute('aria-pressed', String(item === button)));
     startAdvisor(button.dataset.mode || 'guided');
@@ -681,9 +786,9 @@ function init(): void {
   }));
 
   ['room-name', 'room-type', 'room-floor', 'room-size', 'room-users', 'room-bed-sides'].forEach((id) => {
-    qs<HTMLInputElement | HTMLSelectElement>(`#${id}`).addEventListener('change', () => { syncRoomEditor(); renderRoomList(); saveState(); });
+    qs<HTMLInputElement | HTMLSelectElement>(`#${id}`).addEventListener('change', () => { syncRoomEditor(); renderRoomList(); renderRoomCoach(); saveState(); });
   });
-  qsa<HTMLInputElement>('#room-feature-grid input').forEach((input) => input.addEventListener('change', () => { syncRoomEditor(); saveState(); }));
+  qsa<HTMLInputElement>('#room-feature-grid input').forEach((input) => input.addEventListener('change', () => { syncRoomEditor(); renderRoomCoach(); saveState(); }));
 
   qs<HTMLButtonElement>('#add-room').addEventListener('click', () => {
     syncRoomEditor();
@@ -710,7 +815,7 @@ function init(): void {
 
   ['ac-type', 'ac-control', 'thermostat-choice', 'floor-heating'].forEach((id) => {
     qs<HTMLSelectElement>(`#${id}`).addEventListener('change', () => {
-      syncSystems(); renderActions(); saveState();
+      syncSystems(); renderActions(); renderRoomCoach(); saveState();
       if (id === 'ac-type') track('advisor_hvac_selected', { type: currentRoom().acType });
     });
   });

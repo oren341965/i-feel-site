@@ -71,12 +71,243 @@ const jsonLd = JSON.stringify({
   <div class="advisor-page">
     <section class="advisor-hero" aria-labelledby="advisor-title">
       <div class="advisor-shell">
-        <span class="advisor-eyebrow">⚡ יועץ KNX אינטראקטיבי · ללא התחייבות</span>
-        <h1 id="advisor-title">איזה מפסק ומערכת חשמל חכם מתאימים לכל חדר בבית?</h1>
-        <p>ענו על כמה שאלות קצרות וקבלו המלצה למיקום המפסקים, מספר הפעולות, שליטה בתאורה, תריסים, מיזוג, חימום, אודיו והתקנה בקו אפס.</p>
+        <span class="advisor-eyebrow">⚡ מרכז בחירה והדגמה למפסקי KNX</span>
+        <h1 id="advisor-title">רואים מה כל מפסק עושה, בונים את התוכן ורק אז בוחרים</h1>
+        <p>הכירו את TC4, TC5, לחצני KNX ומתאמי PBI, נסו דוגמאות אמיתיות לפי חדר ובנו על המסך את הפעולות שתרצו לקבל. ליד כל מוצר תמצאו הסבר, תמונה, יתרונות, מגבלות וקטלוג.</p>
         <div class="advisor-hero-actions">
-          <a class="advisor-btn advisor-btn-primary" href="#start-advisor" data-track="advisor_hero_start">מתחילים לתכנן</a>
-          <a class="advisor-btn advisor-btn-secondary" href="#how-it-works">איך זה עובד?</a>
+          <a class="advisor-btn advisor-btn-primary" href="#switch-lab" data-track="advisor_hero_builder">בואו נבנה מפסק</a>
+          <a class="advisor-btn advisor-btn-secondary" href="#product-guide" data-track="advisor_hero_products">הכירו את הדגמים</a>
+          <a class="advisor-btn advisor-btn-ghost advisor-btn-on-dark" href="#start-advisor" data-track="advisor_hero_start">לתכנון בית שלם</a>
+        </div>
+      </div>
+    </section>
+
+    <nav class="advisor-journeys" aria-label="בחירת מסלול מהיר">
+      <div class="advisor-shell advisor-journey-grid">
+        <a href="#product-guide"><span>1</span><strong>להבין מה מקבלים</strong><small>השוואת מוצרים פשוטה עם תמונות וקטלוגים</small></a>
+        <a href="#switch-lab"><span>2</span><strong>לבנות מפסק לדוגמה</strong><small>בחירת חדר, פעולות ותצוגה חיה של התוכן</small></a>
+        <a href="#start-advisor"><span>3</span><strong>לתכנן את כל הבית</strong><small>חדרים, מיקומים, כמויות ותיאומים לביצוע</small></a>
+      </div>
+    </nav>
+
+    <section class="advisor-products" id="product-guide" aria-labelledby="product-guide-title">
+      <div class="advisor-shell">
+        <div class="advisor-section-head advisor-section-head-wide">
+          <span class="advisor-kicker">לפני שבוחרים - מבינים</span>
+          <h2 id="product-guide-title">מה כל סוג מפסק נותן לכם בפועל?</h2>
+          <p>הבחירה אינה רק לפי מספר לחצנים. צריך להבין האם נדרשת תצוגה משתנה, שליטה במיזוג, פעולה מהירה בחושך, עמידות באזור חוץ או התאמה לעיצוב הקיר.</p>
+        </div>
+
+        <div class="advisor-product-grid">
+          <article class="advisor-product-card" data-product-card="tc4">
+            <div class="advisor-product-image"><img src="/assets/knx-advisor/siemens-tc4.webp" alt="Siemens Touch Control TC4 בגוון לבן" width="900" height="900" loading="lazy" /></div>
+            <div class="advisor-product-content">
+              <div class="advisor-product-title"><div><span>מסך מגע 4 אינץ׳</span><h3>Siemens TC4</h3></div><span class="advisor-product-fit">קומפקטי וגמיש</span></div>
+              <p><strong>מה הוא מבצע?</strong> מרכז תאורה, תריסים, תרחישים, טמפרטורה, אוורור ומידע מהמערכת בדפי תצוגה שנקבעים בתכנון ETS.</p>
+              <ul>
+                <li><b>מתאים במיוחד:</b> חדרי שינה, משרד, מטבח או סלון עם כמות בינונית של פעולות.</li>
+                <li><b>מה הלקוח מקבל:</b> מסך צבעוני, דפי פונקציה, אייקונים ותוכן שניתן לתכנת ולעדכן.</li>
+                <li><b>חשוב לדעת:</b> נדרשים קופסת התקנה, KNX והזנת עזר; התאמת מיזוג נבדקת בנפרד.</li>
+              </ul>
+              <div class="advisor-product-actions">
+                <a class="advisor-btn advisor-btn-primary advisor-btn-sm" href="/assets/catalogs/siemens-touch-control-tc4-tc5-he.pdf#page=3" target="_blank" rel="noopener" data-track="advisor_catalog_tc4">פתיחת מדריך TC4</a>
+                <a class="advisor-text-link" href="#switch-lab" data-lab-product="tc4">לבניית תוכן לדוגמה ←</a>
+              </div>
+            </div>
+          </article>
+
+          <article class="advisor-product-card" data-product-card="tc5">
+            <div class="advisor-product-image advisor-product-image-tall"><img src="/assets/knx-advisor/siemens-tc5.webp" alt="Siemens Touch Control TC5 בגוון לבן" width="700" height="1200" loading="lazy" /></div>
+            <div class="advisor-product-content">
+              <div class="advisor-product-title"><div><span>מסך מגע 5 אינץ׳</span><h3>Siemens TC5</h3></div><span class="advisor-product-fit advisor-product-fit-orange">יותר מידע</span></div>
+              <p><strong>מה הוא מבצע?</strong> אותן משפחות שליטה של TC4, עם שטח תצוגה גדול יותר ועד 15 דפי פונקציה המוגדרים ב-ETS, בהתקנה אנכית או אופקית.</p>
+              <ul>
+                <li><b>מתאים במיוחד:</b> כניסה, סלון גדול, חדר קולנוע או אזור מרכזי עם הרבה מערכות.</li>
+                <li><b>מה הלקוח מקבל:</b> יותר פעולות ומידע גלוי בכל מסך ופחות מעבר בין דפים.</li>
+                <li><b>חשוב לדעת:</b> מסך גדול אינו בהכרח טוב יותר בחדר פשוט; הוא דורש מקום ותכנון מתאים.</li>
+              </ul>
+              <div class="advisor-product-actions">
+                <a class="advisor-btn advisor-btn-primary advisor-btn-sm" href="/assets/catalogs/siemens-touch-control-tc4-tc5-he.pdf#page=4" target="_blank" rel="noopener" data-track="advisor_catalog_tc5">פתיחת מדריך TC5</a>
+                <a class="advisor-text-link" href="#switch-lab" data-lab-product="tc5">לבניית תוכן לדוגמה ←</a>
+              </div>
+            </div>
+          </article>
+
+          <article class="advisor-product-card" data-product-card="tacteo">
+            <div class="advisor-product-image advisor-product-image-wide"><img src="/assets/knx-advisor/abb-tacteo-preview.webp" alt="דוגמאות לחצני מגע ABB Tacteo KNX בצבעים ובפריסות שונות" width="1000" height="562" loading="lazy" /></div>
+            <div class="advisor-product-content">
+              <div class="advisor-product-title"><div><span>לחצן מגע KNX</span><h3>ABB Tacteo</h3></div><span class="advisor-product-fit">ישיר ועיצובי</span></div>
+              <p><strong>מה הוא מבצע?</strong> פעולות קבועות ונגישות כמו תאורה, דימר, תריס, תרחיש וטמפרטורה - בלי להיכנס לדפי מסך.</p>
+              <ul>
+                <li><b>מתאים במיוחד:</b> נקודות ליד מיטה, מסדרונות וחדרים שבהם רוצים פעולה מיידית וברורה.</li>
+                <li><b>מה הלקוח מקבל:</b> חזית זכוכית מותאמת, אייקונים ופריסה לפי מספר ערוצי הדגם שנבחר.</li>
+                <li><b>חשוב לדעת:</b> התוכן פחות דינמי ממסך; שינוי עתידי יכול לדרוש עדכון סימון או חזית.</li>
+              </ul>
+              <div class="advisor-product-actions">
+                <a class="advisor-btn advisor-btn-primary advisor-btn-sm" href="/assets/catalogs/tacteo-catalog.pdf" target="_blank" rel="noopener" data-track="advisor_catalog_tacteo">פתיחת קטלוג Tacteo</a>
+                <a class="advisor-text-link" href="#switch-lab" data-lab-product="tacteo">לבניית לחצנים לדוגמה ←</a>
+              </div>
+            </div>
+          </article>
+
+          <article class="advisor-product-card" data-product-card="pbi">
+            <div class="advisor-product-image advisor-product-image-wide"><img src="/assets/knx-advisor/siemens-pbi-up220.webp" alt="מתאם Siemens KNX Push Button Interface UP 220" width="800" height="430" loading="lazy" /></div>
+            <div class="advisor-product-content">
+              <div class="advisor-product-title"><div><span>מתאם מאחורי מפסק</span><h3>Siemens PBI</h3></div><span class="advisor-product-fit advisor-product-fit-dark">לחוץ ולמפסק רגיל</span></div>
+              <p><strong>מה הוא מבצע?</strong> מחבר ל-KNX מפסק קפיצי רגיל או מוגן מים. קיימת גרסת 2 ערוצים וגרסת 4 ערוצים לפעולות כמו תאורה, דימר, תריס או תרחיש.</p>
+              <ul>
+                <li><b>מתאים במיוחד:</b> מרפסת, גינה, ליד בריכה או כאשר רוצים לשמור חזית מפסק מסדרה רגילה.</li>
+                <li><b>מה הלקוח מקבל:</b> מתאם פנימי; המפסק החיצוני עצמו מסופק ומתואם עם החשמלאי.</li>
+                <li><b>חשוב לדעת:</b> ה-PBI אינו מפסק מוגן מים ואינו קובע את דרגת האטימות של החזית.</li>
+              </ul>
+              <div class="advisor-product-actions">
+                <a class="advisor-btn advisor-btn-primary advisor-btn-sm" href="https://cache.industry.siemens.com/dl/files/531/109818531/att_1136419/v1/A6V10416506.pdf" target="_blank" rel="noopener" data-track="advisor_catalog_pbi">פתיחת דף Siemens PBI</a>
+                <a class="advisor-text-link" href="#switch-lab" data-lab-product="pbi">לבניית נקודת חוץ לדוגמה ←</a>
+              </div>
+            </div>
+          </article>
+        </div>
+
+        <div class="advisor-family-section" aria-labelledby="alternative-families-title">
+          <div class="advisor-family-heading">
+            <div><span class="advisor-kicker">חלופות אמיתיות, לא רשימת שמות</span><h3 id="alternative-families-title">מה נותנות משפחות המפסקים הנוספות?</h3></div>
+            <p>המוצר המדויק נבחר רק אחרי שסוגרים את מספר הפעולות, הגמר והקופסה. כאן אפשר להבין מראש מה אופי השימוש של כל משפחה ולפתוח את חומר היצרן.</p>
+          </div>
+
+          <div class="advisor-family-grid">
+            <article class="advisor-family-card">
+              <img src="/assets/knx-advisor/siemens-buttons-preview.webp" alt="דוגמאות לחצני KNX של Siemens מתוך קטלוג I Feel" width="1100" height="778" loading="lazy" />
+              <div><span>פעולות קבועות וברורות</span><h4>לחצני KNX של Siemens</h4>
+                <p><b>מה מקבלים:</b> לחצני מגע בגרסאות שונות לפי הדגם, נוריות מצב ואפשרות לסימון — בלי לעבור בין דפי מסך.</p>
+                <p><b>כדאי כאשר:</b> יש מעט פעולות יומיומיות ורוצים שימוש ישיר בחדר, במסדרון או ליד המיטה.</p>
+                <p><b>בודקים לפני הזמנה:</b> מספר לחצנים, דגם, אייקונים, צבע וקופסת התקנה.</p>
+                <a href="/assets/catalogs/knx-catalog-2025.pdf#page=15" target="_blank" rel="noopener">לצפייה בדגמים בקטלוג ←</a>
+              </div>
+            </article>
+
+            <article class="advisor-family-card">
+              <img src="/assets/knx-advisor/eelectron-catalog-preview.webp" alt="דוגמאות מפסקי זכוכית Eelectron 9025 מתוך קטלוג I Feel" width="1100" height="778" loading="lazy" />
+              <div><span>זכוכית ופריסות מגוונות</span><h4>Eelectron 9025</h4>
+                <p><b>מה מקבלים:</b> חזית מגע מזכוכית ופריסת לחצנים לפי הדגם, לפעולות כמו תאורה, עמעום, תריסים ותרחישים.</p>
+                <p><b>כדאי כאשר:</b> רוצים מפסק עיצובי עם פעולות גלויות, בלי ממשק של מסך מלא.</p>
+                <p><b>בודקים לפני הזמנה:</b> מק״ט, מספר ערוצים, סימון, צבע, חיווי ותאימות לקופסה.</p>
+                <a href="/assets/catalogs/knx-catalog-2025.pdf#page=5" target="_blank" rel="noopener">לפתיחת עמוד Eelectron ←</a>
+              </div>
+            </article>
+
+            <article class="advisor-family-card">
+              <img src="/assets/knx-advisor/mdt-catalog-preview.webp" alt="דוגמאות מפסקי KNX של MDT מתוך קטלוג I Feel" width="1100" height="778" loading="lazy" />
+              <div><span>לחצנים, חיווי ודגמים עם תצוגה</span><h4>MDT Glass Push Button</h4>
+                <p><b>מה מקבלים:</b> משפחות לחצני זכוכית או פלסטיק במגוון פריסות; בחלק מהדגמים יש חיווי צבעוני, טקסט או חיישן טמפרטורה.</p>
+                <p><b>כדאי כאשר:</b> צריך חלופת KNX גמישה לפעולות קבועות או לתצוגת סטטוס בחדר.</p>
+                <p><b>בודקים לפני הזמנה:</b> סדרה מדויקת, מספר אזורי מגע, סימון, חיישנים וקופסה.</p>
+                <a href="/assets/catalogs/knx-catalog-2025.pdf#page=14" target="_blank" rel="noopener">לפתיחת עמוד MDT ←</a>
+              </div>
+            </article>
+
+            <article class="advisor-family-card advisor-family-card-marked">
+              <div class="advisor-family-mark advisor-family-mark-schneider" aria-hidden="true"><small>SpaceLogic KNX</small><strong>Schneider Electric</strong><span>Push-button Pro T</span></div>
+              <div><span>לחצן מגע עם חיווי</span><h4>Schneider Push-button Pro T</h4>
+                <p><b>מה מקבלים:</b> מיפוי של אזורי לחיצה, חיווי צבעוני ובהירות, חיישן טמפרטורה ומצב קירבה ללא מגע — לפי דגם ותכנות.</p>
+                <p><b>כדאי כאשר:</b> רוצים שפה עיצובית של Schneider ופעולות יומיומיות עם חיווי ברור.</p>
+                <p><b>בודקים לפני הזמנה:</b> מסגרת, גוון, דגם, מספר אזורי מגע, ETS וקופסת התקנה.</p>
+                <a href="https://www.se.com/mk/en/download/document/MTN6185_03_04_60_HWadd_EN/" target="_blank" rel="noopener">לדף המסמך הרשמי ←</a>
+              </div>
+            </article>
+
+            <article class="advisor-family-card advisor-family-card-marked">
+              <div class="advisor-family-mark advisor-family-mark-abb" aria-hidden="true"><small>ABB i-bus KNX</small><strong>PEONIA</strong><span>Design range</span></div>
+              <div><span>לחצן KNX בשפה עיצובית קלאסית</span><h4>ABB PEONIA</h4>
+                <p><b>מה מקבלים:</b> הפעלה ישירה ללא דפי מסך; במשפחה המתועדת משולבים מצמד BUS וחיישן טמפרטורה.</p>
+                <p><b>כדאי כאשר:</b> רוצים לשלב לחצן KNX בקו העיצוב של ABB ובחדר עם פעולות קבועות.</p>
+                <p><b>בודקים לפני הזמנה:</b> דגם, מספר לחצנים, מסגרת, צבע, סימון ופונקציות זמינות.</p>
+                <a href="https://smartsocieties.abb.com/r/9AKK107492A3188.pdf" target="_blank" rel="noopener">לקטלוג ABB הרשמי ←</a>
+              </div>
+            </article>
+          </div>
+          <p class="advisor-family-note">שמות המשפחות כאן אינם מק״ט להזמנה. אחרי בניית התוכן בוחרים דגם מדויק ומאמתים קופסה, הזנה, צבע, סימון ויכולות ETS.</p>
+        </div>
+
+        <div class="advisor-comparison" aria-label="השוואה מהירה בין סוגי המפסקים">
+          <div><strong>רוצים פעולה מיידית?</strong><span>לחצן KNX</span></div>
+          <div><strong>צריך מיזוג או תוכן משתנה?</strong><span>TC4</span></div>
+          <div><strong>יש הרבה מערכות באזור מרכזי?</strong><span>TC5</span></div>
+          <div><strong>הנקודה בחוץ או מאחורי מפסק רגיל?</strong><span>PBI</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="advisor-lab" id="switch-lab" aria-labelledby="switch-lab-title">
+      <div class="advisor-shell">
+        <div class="advisor-section-head advisor-section-head-wide">
+          <span class="advisor-kicker">כלי התנסות - התוצאה משתנה מיד</span>
+          <h2 id="switch-lab-title">בנו את תוכן המפסק לפני שמחליטים</h2>
+          <p>בחרו חדר ודוגמה מוכנה, הוסיפו או הסירו פעולות וראו איזה מוצר מומלץ, איך התוכן מסודר ומה כדאי לשנות.</p>
+        </div>
+
+        <div class="advisor-lab-layout">
+          <div class="advisor-lab-controls">
+            <fieldset class="advisor-lab-group">
+              <legend>1. התחילו מדוגמה לחדר</legend>
+              <div class="advisor-preset-grid" id="lab-presets">
+                <button type="button" data-lab-preset="living" aria-pressed="true">🛋️ סלון</button>
+                <button type="button" data-lab-preset="master">🛏️ חדר הורים</button>
+                <button type="button" data-lab-preset="children">🧸 חדר ילדים</button>
+                <button type="button" data-lab-preset="entrance">🚪 כניסה</button>
+                <button type="button" data-lab-preset="kitchen">🍽️ מטבח</button>
+                <button type="button" data-lab-preset="outdoor">🌿 חוץ</button>
+              </div>
+            </fieldset>
+
+            <fieldset class="advisor-lab-group">
+              <legend>2. תנו לכלי להמליץ או בחרו מוצר לבדיקה</legend>
+              <div class="advisor-preset-grid advisor-product-picker" id="lab-products">
+                <button type="button" data-lab-product-choice="auto" aria-pressed="true">✨ המלצה חכמה</button>
+                <button type="button" data-lab-product-choice="tacteo">לחצן KNX</button>
+                <button type="button" data-lab-product-choice="tc4">TC4</button>
+                <button type="button" data-lab-product-choice="tc5">TC5</button>
+                <button type="button" data-lab-product-choice="pbi">PBI</button>
+              </div>
+            </fieldset>
+
+            <fieldset class="advisor-lab-group">
+              <legend>3. מה תרצו שיהיה על המפסק?</legend>
+              <p class="advisor-help">כל כרטיס מסביר מה הלקוח יפעיל בפועל. תריס או וילון תופסים בדרך כלל שתי פעולות: פתיחה וסגירה.</p>
+              <div class="advisor-lab-actions" id="lab-actions"></div>
+            </fieldset>
+
+            <div class="advisor-lab-tip"><span aria-hidden="true">💡</span><div><strong>העצה של I Feel</strong><p id="lab-advice">בחרו פעולות כדי לקבל המלצה.</p></div></div>
+          </div>
+
+          <div class="advisor-lab-preview" aria-live="polite">
+            <div class="advisor-lab-result-head">
+              <div><span>ההמלצה כרגע</span><h3 id="lab-product-name">Siemens TC4</h3></div>
+              <span class="advisor-lab-count" id="lab-operation-count">0 פעולות</span>
+            </div>
+            <div class="advisor-lab-product-photo"><img id="lab-product-photo" src="/assets/knx-advisor/siemens-tc4.webp" alt="" width="900" height="900" /></div>
+            <div class="advisor-live-device" id="lab-device-preview" aria-label="הדמיית תוכן המפסק"></div>
+            <div class="advisor-content-map">
+              <div class="advisor-content-map-head"><h4>מה יהיה על המפסק?</h4><span>תוכן מוצע - אפשר לערוך</span></div>
+              <ol id="lab-content-list"></ol>
+            </div>
+            <div class="advisor-lab-reason" id="lab-reason"></div>
+            <div class="advisor-lab-footer">
+              <a class="advisor-btn advisor-btn-secondary advisor-btn-sm" id="lab-catalog-link" href="/assets/catalogs/siemens-touch-control-tc4-tc5-he.pdf#page=3" target="_blank" rel="noopener">למדריך המוצר</a>
+              <button class="advisor-btn advisor-btn-primary advisor-btn-sm" id="lab-use-in-advisor" type="button">המשך עם הבחירה לתכנון</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="advisor-catalog-shelf" aria-labelledby="catalog-shelf-title">
+      <div class="advisor-shell">
+        <div class="advisor-section-head"><h2 id="catalog-shelf-title">קטלוגים וחומר להיכרות</h2><p>כל קובץ נפתח בחלון חדש, כדי שתוכלו להשוות ולחזור לכלי בלי לאבד את הבחירה.</p></div>
+        <div class="advisor-catalog-grid">
+          <a href="/assets/catalogs/siemens-touch-control-tc4-tc5-he.pdf" target="_blank" rel="noopener"><img src="/assets/knx-advisor/tc4-tc5-catalog-preview.webp" alt="תצוגה מקדימה של מדריך Siemens TC4 ו-TC5" loading="lazy" /><span><strong>מדריך TC4 / TC5 בעברית</strong><small>מוצרים, מידות, יכולות ודוגמאות תוכן</small></span></a>
+          <a href="/assets/catalogs/siemens-tc-button-icons.pdf" target="_blank" rel="noopener"><img src="/assets/knx-advisor/siemens-icons-preview.webp" alt="תצוגה מקדימה של דף האייקונים למפסקי Siemens" loading="lazy" /><span><strong>דף אייקונים בעברית</strong><small>תאורה, תריסים, תרחישים, מיזוג ואודיו</small></span></a>
+          <a href="/assets/catalogs/tacteo-catalog.pdf" target="_blank" rel="noopener"><img src="/assets/knx-advisor/abb-tacteo-preview.webp" alt="תצוגה מקדימה של קטלוג ABB Tacteo" loading="lazy" /><span><strong>קטלוג ABB Tacteo KNX</strong><small>צבעים, פריסות, לחצנים ותרמוסטטים</small></span></a>
+          <a href="/assets/catalogs/knx-catalog-2025.pdf" target="_blank" rel="noopener"><div class="advisor-catalog-placeholder"><span>KNX</span><b>2025</b></div><span><strong>קטלוג KNX המלא</strong><small>סקירת מערכות ומוצרים לתכנון מתקדם</small></span></a>
         </div>
       </div>
     </section>
@@ -189,6 +420,7 @@ const jsonLd = JSON.stringify({
                 </div><p class="advisor-help">ב-VRF מסך יכול להחליף תרמוסטט בכפוף לתאימות ולמתאם תקשורת. CoolMaster KNX נבחן בדרך כלל, והמתאם צריך להיות מתואם עם איש המיזוג.</p></fieldset>
                 <fieldset class="advisor-question"><legend>2. מערכות ופעולות</legend><div class="advisor-actions-grid" id="actions-grid"></div><p class="advisor-help">תאורה, דימר או תרחיש = פעולה אחת. תריס, וילון או צלון כלוא = שתי פעולות. אין שימוש בלחיצה כפולה או בלחיצה קצרה/ארוכה לפעולות שאינן קשורות.</p></fieldset>
                 <fieldset class="advisor-question"><legend>3. תרחישים רצויים בחדר</legend><div class="advisor-check-grid" id="scenario-grid"></div></fieldset>
+                <div class="advisor-room-coach" id="room-product-coach" aria-live="polite"></div>
               </div>
             </section>
 
@@ -283,5 +515,6 @@ const jsonLd = JSON.stringify({
 
   <script>
     import '../scripts/knx-advisor';
+    import '../scripts/knx-switch-lab';
   </script>
 </BaseLayout>
