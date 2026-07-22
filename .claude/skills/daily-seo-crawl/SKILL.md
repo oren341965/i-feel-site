@@ -44,19 +44,24 @@ description: "סקיל יומי שמקדם את i-feel.co.il למקום #1 בג�
 
 ### 2. סריקה ממוקדת (30-60 שניות)
 
+> **קנוני = ללא `www`.** כל הכתובות בסקיל הזה הן `https://i-feel.co.il/...`. ה-`www` מפנה 301 ל-non-www (הגירה הושלמה 21/07/2026) — אל תשתמש בו ואל תדווח עליו כחסם. ראה "מלכודות ידועות".
+
 **תמיד — דף הבית**:
-`web_fetch https://www.i-feel.co.il/`
+`web_fetch https://i-feel.co.il/`
 
-**תמיד — הפוסט האחרון**:
-`web_fetch https://www.i-feel.co.il/post-sitemap.xml` → מצא את `<url>` עם ה-`<lastmod>` הכי חדש → `web_fetch` לפוסט עצמו.
+**תמיד — המאמר האחרון**:
+`web_fetch https://i-feel.co.il/sitemap.xml` → מצא את ה-`<url>` תחת `/articles/` עם ה-`<lastmod>` הכי חדש → `web_fetch` למאמר עצמו.
+(אין `post-sitemap.xml` — האתר סטטי (Astro), sitemap יחיד ידני.)
 
-**במצב `deep` בלבד — 5 דפים קריטיים**:
+**במצב `deep` בלבד — 4 דפים קריטיים**:
 ```
-/smart-home/              (לקוחות פרטיים)
-/construction-developers-2/  (יזמים)
-/structure-control/       (BMS)
-/quote-2/                 (המרה)
+/smart-home/                  (לקוחות פרטיים)
+/structure-control/           (BMS — עמוד העוגן ל"בקרת מבנה")
+/contractor-customer-care/    (יזמים/קבלנים)
+/contactus/                   (המרה)
 ```
+> עודכן 21/07/2026: `/construction-developers-2/` ו-`/quote-2/` הוחלפו — שניהם מתו בהגירה (410).
+> לפני שמוסיפים דף לרשימה — לוודא שהוא מחזיר 200 בפועל.
 
 לכל דף — בדוק:
 - HTTP status (צריך 200)
@@ -74,7 +79,7 @@ description: "סקיל יומי שמקדם את i-feel.co.il למקום #1 בג�
 קריאה אחת ל-PSI API לדף הבית, mobile בלבד (במצב `deep` גם desktop):
 
 ```
-https://www.googleapis.com/pagespeedonline/v5/runPagespeed?url=https://www.i-feel.co.il/&strategy=mobile
+https://www.googleapis.com/pagespeedonline/v5/runPagespeed?url=https://i-feel.co.il/&strategy=mobile
 ```
 
 שלוף רק 4 ערכים: Performance score, LCP, CLS, TBT. **ציין בדוח רק** אם:
@@ -87,7 +92,7 @@ https://www.googleapis.com/pagespeedonline/v5/runPagespeed?url=https://www.i-fee
 ### 4. אימות הפוסט היומי (20 שניות)
 הפוסט נוצר ע"י סקיל נפרד (`daily-article-publisher`). כאן רק מאמתים שעלה תקין:
 
-- ✅ Featured image מוצג (חיפוש `<img>` עם `wp-post-image` class או `<meta property="og:image">`)
+- ✅ Featured image מוצג (`<meta property="og:image">` — ולוודא שהיא **ייעודית**, לא `og-cover.jpg` הגנרי)
 - ✅ Word count ≥ 1,500
 - ✅ Article או BlogPosting schema ב-JSON-LD
 - ✅ Meta description קיים
@@ -174,7 +179,7 @@ https://www.googleapis.com/pagespeedonline/v5/runPagespeed?url=https://www.i-fee
 - **משימות היום**: מקסימום 5. אם יש יותר, השאר את 5 הקריטיים ביותר ושלח את השאר ל-Monday כ-backlog.
 - **לא לכלול**: טבלאות של מטריקות שעברו, פרטי PSI מלאים, הסברי why. אורן יודע למה CLS חשוב.
 - **לא להסביר**: "CLS זה Cumulative Layout Shift..." — לא. רק הערך והפעולה.
-- **אחראי**: אביחי = webmaster/Cloudflare/WP, אורן = אסטרטגיה ותוכן, שגיב = בקרת מבנה/יזמים, אורה = תכנון, קיריל = BMS. אם לא ברור — "לתיוג".
+- **אחראי**: **אין webmaster חיצוני — אורן אחראי על האתר** (טכני, תוכן ואסטרטגיה). כל משימה טכנית היא של אורן, מתבצעת דרך הריפו + `deploy-ifeel`. שאר הצוות רלוונטי רק לתוכן מקצועי: שגיב = בקרת מבנה/יזמים, אורה = תכנון, קיריל = BMS. אם לא ברור — אורן.
 
 ## כללי סיווג חומרה
 
@@ -199,11 +204,12 @@ https://www.googleapis.com/pagespeedonline/v5/runPagespeed?url=https://www.i-fee
 
 ## תיקונים אוטומטיים
 
+> **האתר סטטי (Astro), לא WordPress.** אין WordPress MCP ואין Yoast. כל תיקון = עריכה בריפו `C:\Users\User\i-feel-site` (branch `main`) → build → העלאה דרך הסקיל `deploy-ifeel`. תמיד `git pull origin main` לפני עריכה. אל תערוך עותקים מחוץ לריפו.
+
 **רשאי לתקן ישירות** (ללא אישור נוסף, אחרי שהצעת ואורן אמר "תתקן"):
-- הוספת meta description לפוסט בודד דרך WordPress MCP
-- הוספת alt ל-תמונה בודדת חסרה
-- Ping לגוגל דרך `https://www.google.com/ping?sitemap=...`
-- עדכון Yoast focus keyword של פוסט
+- הוספת/תיקון meta description בדף בודד
+- הוספת alt לתמונה בודדת חסרה
+- הוספת דף חסר ל-`public/sitemap.xml` (ה-sitemap ידני!)
 
 **אסור לתקן ללא אישור מפורש**:
 - שינוי `<title>` או `<h1>`
@@ -214,7 +220,7 @@ https://www.googleapis.com/pagespeedonline/v5/runPagespeed?url=https://www.i-fee
 
 ## Post-fix propagation (אחרי תיקון)
 אם הוחל שינוי באתר:
-1. Cloudflare — הצע לאורן "אביחי יכול לעשות Purge Everything?"
+1. להעלות דרך הסקיל `deploy-ifeel` (FTP ידני — אין דיפלוי אוטומטי), ואז `verify-live` לבדיקת עשן.
 2. Facebook OG debugger — אם שונו og: tags, הצג את הלינק: `https://developers.facebook.com/tools/debug/?q={url}`
 3. GSC — הצג: `https://search.google.com/search-console` → URL Inspection → Request Indexing
 4. אחרי 60 שניות — `web_fetch` עם cache-bust (`?cb={timestamp}`) כדי לאמת.
@@ -236,7 +242,7 @@ https://www.googleapis.com/pagespeedonline/v5/runPagespeed?url=https://www.i-fee
 - ידני → הדוח נשלח בשיחה
 
 **משימות Monday**:
-- 🔴 שנדרש תיקון ע"י מישהו שאינו אורן → פתח item בלוח 3011387201 (שירות) או 2732725207 (פרויקטים) לפי ההקשר, קבוצה "SEO", יעד: +2 ימים.
+- כברירת מחדל המשימות הן של אורן ונשארות בדוח. פתח item ב-Monday רק אם המשימה דורשת תוכן מקצועי משגיב/אורה/קיריל → לוח 3011387201 (שירות) או 2732725207 (פרויקטים), קבוצה "SEO", יעד: +2 ימים.
 - 🟡 → backlog שבועי (לא משימה יומית).
 
 ## טיפול בשגיאות
@@ -244,14 +250,36 @@ https://www.googleapis.com/pagespeedonline/v5/runPagespeed?url=https://www.i-fee
 | תסמין | פעולה |
 |-------|-------|
 | `web_fetch` 5xx בדף הבית | 2 ניסיונות במרווח 10 שניות. אם נכשל → דווח "❌ האתר לא זמין" כפריט 🔴 #1 ועצור. |
-| `web_fetch` 403 | סביר Cloudflare WAF. דווח לאורן ובקש לבדוק עם אביחי. |
+| `web_fetch` 403 | סביר WAF/LiteSpeed בשרת (JetServer cPanel). דווח לאורן כפריט 🔴. |
 | PSI API quota exceeded | דלג על סעיף Core Web Vitals. ציין בדוח: "PSI לא זמין". |
 | `conversation_search` ללא תוצאות | ריצת bootstrap. ציין בתחתית: "בייסליין חדש — אין השוואה." |
 | Google Search Console MCP לא זמין | fallback ל-`web_search` כמתואר. ציין: "מיקומים משוערים." |
 | Monday MCP לא זמין | משימות 🔴 נרשמות ב-section נפרד בדוח תחת "לפתוח ידנית ב-Monday". |
 
+## מלכודות ידועות — לקרוא לפני שמכריזים על "חסם טכני"
+
+**כלל הזהב: אל תכריז על חסם טכני בלי לבדוק קוד סטטוס HTTP בפועל.**
+מה שגוגל מציג ב-SERP הוא *תמונת עבר*, לא מצב השרת. דוח שמסיק "יש בעיית 301" מתוך תוצאות חיפוש — טועה.
+לפני כל טענה על הפניות/סטטוס, לבצע בקשה אמיתית ולקרוא את הקוד. אם אין כלי HTTP זמין — לכתוב בדוח "לא אומת", לא להכריז.
+
+**1. הגירת www הושלמה (21/07/2026) — לא לדווח עליה יותר.**
+`www.i-feel.co.il/*` מחזיר 301 ל-`i-feel.co.il/*` (LiteSpeed, לא Netlify). אומת על כל הדפים.
+העובדה שגוגל עדיין מציג כתובות `www` בתוצאות היא **פיגור עיבוד רגיל** שמתנקז מעצמו תוך שבועות — **זה לא חסם ולא דורש פעולה.**
+דוח של 20/07 הכריז על זה כחסם ראשי במשך 6 ימים והפנה את כל המהלך ההתקפי לכיוון שגוי. לא לחזור על זה.
+
+**2. עברית ב-`Location` — מקור לתוצאות 404 מזויפות.**
+השרת מחזיר כותרת `Location` עם עברית ב-UTF-8 גולמי. כלים רבים (.NET/PowerShell) מפענחים כותרות כ-Latin-1 → הכתובת נהרסת → מעקב אחריה מחזיר 404 שגוי.
+באודיט של 21/07 זה ייצר **54 ממצאי 404 מזויפים**. הפתרון: להמיר את המחרוזת בחזרה לבייטים ולפענח כ-UTF-8 לפני שעוקבים.
+קידוד אחוזים (`%d7` מול `%D7`) **אינו** רגיש לאותיות — זו לא הבעיה.
+
+**3. תקלות הגירה פתוחות** — הרשימה המלאה עם מיפוי 301 מוכן:
+`ifeel-BMS projects/migration-audit-301-fixes-2026-07-21.md` (22 הפניות לתיקון; מתוכן 🔴 `/בית-חכם/` מחזיר 404 והוא מאונדקס בגוגל).
+לפני שמדווחים על דף שבור — לבדוק אם הוא כבר ברשימה שם.
+
 ## קבצים קשורים
-- `daily-article-publisher` — יוצר את הפוסט שהסקיל הזה מאמת
+- `deploy-ifeel` — כל תיקון שמגיע לשרת עובר דרכו
+- `verify-live` — בדיקת עשן אחרי תיקון
+- `new-page` — יצירת דף חדש (כולל עדכון sitemap ידני)
 - `morning-briefing-ifeel` — מפעיל את הסקיל כחלק מהבריפינג של 06:00
 
 ## הפרשים מ-2.0 ל-3.0
@@ -273,7 +301,7 @@ https://www.googleapis.com/pagespeedonline/v5/runPagespeed?url=https://www.i-fee
 **העיקרון**: הסקיל הישן ענה על השאלה "מה המצב?". הסקיל החדש עונה על השאלה "**מה המהלך הבא להגיע ל-#1?**"
 
 ## הערות תחזוקה
-- לעדכן את רשימת 5 הדפים הקריטיים כשנוצר דף חדש שמשמעותי (למשל דף Retrofit חדש)
+- לעדכן את רשימת הדפים הקריטיים כשנוצר דף חדש שמשמעותי — **ולוודא שכל דף ברשימה מחזיר 200 בפועל** (בעבר הרשימה הכילה שני דפים מתים במשך חודשים)
 - לעדכן מילות הדגל אם משתנה מיקוד אסטרטגי
 - סף PSI (5 נקודות / 0.5 CLS) — ניתן לכוונון אם אורן רוצה רגישות שונה
 - אם המעבר ל-GSC API יצליח — לבטל את ה-web_search fallback במיקומי מילות מפתח
