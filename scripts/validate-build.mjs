@@ -33,14 +33,16 @@ for (const htmlPath of htmlFiles) {
   const html = await readFile(htmlPath, 'utf8');
   const relative = path.relative(distRoot, htmlPath);
   const isNotFoundPage = relative === '404.html';
+  const robots = attrContent(html, 'meta', 'robots');
+  const skipsSearchIndexing = isNotFoundPage || /\bnoindex\b/i.test(robots);
   const title = html.match(/<title>([^<]+)<\/title>/i)?.[1] ?? '';
   const canonical = attrContent(html, 'link', 'canonical');
   const ogImage = attrContent(html, 'meta', 'og:image');
 
   if (!title) errors.push(`${relative}: missing title`);
-  if (!isNotFoundPage && !canonical) errors.push(`${relative}: missing canonical`);
-  if (!isNotFoundPage && !ogImage) errors.push(`${relative}: missing og:image`);
-  if (!isNotFoundPage && ogImage.includes('/assets/og-cover.jpg')) errors.push(`${relative}: legacy generic og:image`);
+  if (!skipsSearchIndexing && !canonical) errors.push(`${relative}: missing canonical`);
+  if (!skipsSearchIndexing && !ogImage) errors.push(`${relative}: missing og:image`);
+  if (!skipsSearchIndexing && ogImage.includes('/assets/og-cover.jpg')) errors.push(`${relative}: legacy generic og:image`);
   if (ogImage) ogImages.add(ogImage);
 
   if (ogImage.startsWith('https://i-feel.co.il/') || ogImage.startsWith('https://www.i-feel.co.il/')) {
