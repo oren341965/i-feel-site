@@ -10,6 +10,7 @@ export type Article = {
   imageAlt?: string;
   imageWidth?: number;
   imageHeight?: number;
+  imageCrop?: boolean;
   video?: {
     id: string;
     title: string;
@@ -885,12 +886,18 @@ export const articles: Article[] = [
   {
     slug: 'what-is-knx',
     title: 'מה זה KNX ולמה הוא חשוב בבית חכם',
-    description: 'הסבר פשוט על תקן KNX, יתרונותיו בפרויקטי בית חכם, ומתי נכון לבחור בו.',
+    description: 'הסבר פשוט על תקן KNX, יתרונותיו בפרויקטי בית חכם ודוגמה מצולמת לגלאי נוכחות שמפעיל תאורה לפי תנועה ורמת LUX.',
     category: 'KNX',
-    updated: '2026-06-07',
+    updated: '2026-07-23',
+    image: '/projects/knx-smart-home-central-moshav/02-knx-outdoor-presence-detector-close.jpg',
+    imageAlt: 'גלאי נוכחות KNX חיצוני המותקן בבית פרטי ומפעיל תאורה לפי תנועה ורמת LUX',
+    imageWidth: 900,
+    imageHeight: 1600,
+    imageCrop: true,
     related: [
       { label: 'קטלוג KNX 2025', href: '/assets/catalogs/knx-catalog-2025.pdf' },
       { label: 'מערכת KNX בהדסה נתיבות', href: '/hadassah-knx-system/' },
+      { label: 'פרויקט KNX מצולם במושב במרכז', href: '/projects/knx-smart-home-central-moshav/' },
     ],
     sections: [
       {
@@ -899,6 +906,17 @@ export const articles: Article[] = [
           'KNX הוא תקן בינלאומי לבקרת מבנים ובתים חכמים. הוא מאפשר למוצרים של יצרנים שונים לעבוד יחד תחת שפה משותפת.',
           'בבית חכם KNX ניתן לשלוט בתאורה, תריסים, מיזוג, חיישנים, תרחישים וממשקים שונים בצורה יציבה ומתועדת.',
         ],
+      },
+      {
+        heading: 'דוגמה מהשטח: גלאי נוכחות KNX חיצוני לתאורה',
+        body: [
+          'בפרויקט בית חכם במושב במרכז הותקנו גלאי נוכחות KNX בחצר ובפרגולה. הגלאי אינו מדליק את האור רק בגלל שמישהו עבר: הוא בודק שני תנאים יחד — זוהתה תנועה, ורמת התאורה הנמדדת נמוכה מסף ה-LUX שהוגדר.',
+          'רק כאשר שני התנאים מתקיימים נשלחת פקודת הדלקה. בצהריים, כאשר יש מספיק אור טבעי, תנועה לבדה אינה מדליקה את התאורה. בתכנות קובעים לכל אזור את סף ה-LUX, משך ההדלקה והמעגלים שיופעלו.',
+        ],
+        cta: {
+          label: 'לכל תמונות ההתקנה והציוד בפרויקט',
+          href: '/projects/knx-smart-home-central-moshav/',
+        },
       },
       {
         heading: 'למה זה משנה ללקוח',

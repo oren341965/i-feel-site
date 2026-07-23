@@ -530,6 +530,12 @@
     <priority>0.6</priority>
   </url>
   <url>
+    <loc>https://i-feel.co.il/projects/knx-smart-home-central-moshav/</loc>
+    <lastmod>2026-07-23</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://i-feel.co.il/structure-control/brinks-bnei-brak/</loc>
     <lastmod>2026-06-24</lastmod>
     <changefreq>monthly</changefreq>

@@ -15,4 +15,23 @@ const meta = {
 ---
 <BaseLayout {...meta}>
   <Fragment set:html={content} />
+  <section class="bg-brand-50 border-y border-brand-100 py-12 lg:py-16" aria-labelledby="aruba-ap27-installation-title">
+    <div class="max-w-6xl mx-auto px-4 grid lg:grid-cols-2 gap-8 items-center">
+      <figure class="overflow-hidden rounded-2xl border border-brand-100 bg-white shadow-sm">
+        <img
+          src="/projects/knx-smart-home-central-moshav/01-aruba-ap27-courtyard.jpg"
+          alt="נקודת גישה חיצונית Aruba AP27 המותקנת בחצר בית פרטי"
+          class="w-full max-h-[34rem] object-cover"
+          loading="lazy"
+        />
+        <figcaption class="p-4 text-sm text-brand-700">Aruba AP27 מותקנת בחצר — כיסוי WiFi חיצוני כחלק מתשתית הבית החכם.</figcaption>
+      </figure>
+      <div>
+        <p class="text-sm font-extrabold text-accent-600">ציוד תקשורת בשטח</p>
+        <h2 id="aruba-ap27-installation-title" class="mt-2 text-3xl md:text-4xl font-extrabold text-brand-900">נקודת גישה חיצונית Aruba AP27 בבית פרטי</h2>
+        <p class="mt-4 text-lg leading-8 text-brand-700">רשת הבית אינה מסתיימת בדלת. בפרויקט בית חכם במושב במרכז הותקנה נקודת גישה חיצונית Aruba AP27 כדי לספק כיסוי יציב בחצר ובאזורי הישיבה, כחלק מאותה תשתית שמשרתת את הבקרה, האינטרקום ומערכות ה‑IP.</p>
+        <a href="/projects/knx-smart-home-central-moshav/" class="inline-flex mt-6 items-center justify-center bg-accent-500 hover:bg-accent-600 text-white px-6 py-3 rounded-lg font-bold shadow-sm">לפרויקט המצולם ולכל הציוד ←</a>
+      </div>
+    </div>
+  </section>
 </BaseLayout>

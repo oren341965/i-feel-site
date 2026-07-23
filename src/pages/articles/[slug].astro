@@ -67,7 +67,10 @@ const jsonLd = JSON.stringify(articleSchema);
           width={article.imageWidth ?? 1600}
           height={article.imageHeight ?? 1067}
           loading="eager"
-          class="w-full h-auto rounded-xl shadow-lg object-cover"
+          class:list={[
+            "w-full h-auto rounded-xl shadow-lg object-cover",
+            article.imageCrop && "max-h-[34rem]",
+          ]}
         />
       </figure>
     )}

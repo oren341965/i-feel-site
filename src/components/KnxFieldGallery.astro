@@ -1,0 +1,88 @@
+---
+const { compact = false } = Astro.props;
+
+const projectBase = '/projects/knx-smart-home-central-moshav';
+const photos = [
+  {
+    src: `${projectBase}/02-knx-outdoor-presence-detector-close.jpg`,
+    alt: 'גלאי נוכחות KNX חיצוני המותקן מתחת לפרגולה בבית פרטי',
+    title: 'גלאי נוכחות KNX חיצוני',
+    copy: 'מזהה תנועה ומודד את רמת האור באזור לפני הפעלת התאורה.',
+  },
+  {
+    src: `${projectBase}/05-knx-touch-panel-kitchen.jpg`,
+    alt: 'מסך מגע לשליטה במערכת בית חכם KNX במטבח',
+    title: 'מסך שליטה מרכזי',
+    copy: 'גישה נוחה לתאורה, תריסים, מיזוג ותרחישים ממסך אחד.',
+  },
+  {
+    src: `${projectBase}/10-knx-control-station-hvac.jpg`,
+    alt: 'בקר מיזוג, מסך מגע ומפסק KNX ליד הכניסה לבית',
+    title: 'מיזוג ומפסקי KNX',
+    copy: 'בקרים וממשקים מתאימים לכל פעולה ולכל אזור בבית.',
+  },
+  {
+    src: `${projectBase}/11-akuvox-ip-intercom.jpg`,
+    alt: 'אינטרקום IP של Akuvox עם קודן וקורא קרבה',
+    title: 'אינטרקום ובקרת כניסה',
+    copy: 'עמדת Akuvox עם מצלמה, קודן וקורא קרבה בכניסה.',
+  },
+  {
+    src: `${projectBase}/01-aruba-ap27-courtyard.jpg`,
+    alt: 'נקודת גישה חיצונית Aruba AP27 המותקנת בחצר בית פרטי',
+    title: 'רשת WiFi חיצונית',
+    copy: 'נקודת גישה Aruba AP27 מספקת כיסוי רשת יציב גם בחצר.',
+  },
+  {
+    src: `${projectBase}/14-knx-ceiling-presence-detector.jpg`,
+    alt: 'גלאי נוכחות שקוע בתקרה בתוך בית חכם',
+    title: 'גלאי נוכחות פנימי',
+    copy: 'התקנה שקועה ודיסקרטית להפעלה אוטומטית לפי תנאי האזור.',
+  },
+];
+---
+
+<section class:list={['bg-brand-50 border-y border-brand-100', compact ? 'py-10' : 'py-14 lg:py-16']} aria-labelledby="knx-field-gallery-title">
+  <div class="max-w-6xl mx-auto px-4">
+    <div class="max-w-4xl">
+      <p class="text-sm font-extrabold tracking-wide text-accent-600 mb-2">התקנה אמיתית בבית פרטי</p>
+      <h2 id="knx-field-gallery-title" class="text-3xl md:text-4xl font-extrabold text-brand-900">כך נראה ציוד KNX כשהוא מותקן בבית</h2>
+      <p class="mt-4 text-lg leading-8 text-brand-700">תמונות מפרויקט בית חכם במושב במרכז: גלאים, מסכי שליטה, מיזוג, אינטרקום ורשת Aruba — כל רכיב מוצג במקום שבו הוא עובד בפועל.</p>
+    </div>
+
+    <aside class="mt-7 rounded-2xl border border-accent-500/40 bg-white p-5 md:p-7 shadow-sm" aria-labelledby="knx-detector-logic-title">
+      <div class="grid lg:grid-cols-[1fr_auto] gap-6 items-center">
+        <div>
+          <h3 id="knx-detector-logic-title" class="text-2xl font-extrabold text-brand-900">גלאי חוץ שמדליק אור רק כשבאמת צריך</h3>
+          <p class="mt-3 text-lg leading-8 text-brand-700">הפקודה להדלקת התאורה נשלחת רק כאשר מתקיימים <strong class="text-brand-900">שני תנאים יחד</strong>: הגלאי מזהה תנועה, ובאותו רגע רמת התאורה הנמדדת נמוכה מסף ה‑LUX שהוגדר. בצהריים, כאשר יש מספיק אור טבעי, תנועה לבדה לא תדליק את התאורה.</p>
+          <p class="mt-3 text-sm leading-6 text-brand-600">סף ה‑LUX, משך ההדלקה והאזור הנשלט נקבעים בתכנות לפי השטח והשימוש.</p>
+        </div>
+        <div class="grid grid-cols-[1fr_auto_1fr_auto_1fr] items-center gap-2 text-center" aria-label="תנועה וגם רמת אור נמוכה שווה הדלקת תאורה">
+          <div class="rounded-xl bg-brand-900 px-3 py-4 text-white"><span class="block text-xs text-brand-200">תנאי 1</span><strong class="block mt-1">תנועה</strong></div>
+          <span class="text-xl font-extrabold text-accent-600">+</span>
+          <div class="rounded-xl bg-brand-900 px-3 py-4 text-white"><span class="block text-xs text-brand-200">תנאי 2</span><strong class="block mt-1">LUX נמוך</strong></div>
+          <span class="text-xl font-extrabold text-accent-600">=</span>
+          <div class="rounded-xl bg-accent-500 px-3 py-4 text-white"><span class="block text-xs text-white/80">תוצאה</span><strong class="block mt-1">האור נדלק</strong></div>
+        </div>
+      </div>
+    </aside>
+
+    <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-5 mt-8">
+      {photos.map((photo) => (
+        <figure class="overflow-hidden rounded-2xl border border-brand-100 bg-white shadow-sm">
+          <div class="aspect-[4/3] bg-brand-100">
+            <img src={photo.src} alt={photo.alt} class="h-full w-full object-cover" loading="lazy" />
+          </div>
+          <figcaption class="p-4">
+            <h3 class="font-extrabold text-brand-900">{photo.title}</h3>
+            <p class="mt-1 text-sm leading-6 text-brand-700">{photo.copy}</p>
+          </figcaption>
+        </figure>
+      ))}
+    </div>
+
+    <div class="mt-8">
+      <a href={`${projectBase}/`} class="inline-flex items-center justify-center rounded-lg bg-accent-500 px-6 py-3 font-bold text-white shadow-sm transition hover:bg-accent-600">לכל התמונות והציוד בפרויקט ←</a>
+    </div>
+  </div>
+</section>
