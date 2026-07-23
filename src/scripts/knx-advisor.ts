@@ -129,8 +129,8 @@ const PUBLIC_TYPES = new Set(['entrance', 'living', 'kitchen', 'dining', 'office
 const EXTERIOR_TYPES = new Set(['balcony', 'garden', 'pool', 'pergola']);
 
 const PRODUCT_RESOURCES = {
-  tc4: { image: '/assets/knx-advisor/siemens-tc4.webp', alt: 'Siemens Touch Control TC4', catalog: '/assets/catalogs/siemens-touch-control-tc4-tc5-he.pdf#page=3', catalogLabel: 'מדריך TC4' },
-  tc5: { image: '/assets/knx-advisor/siemens-tc5.webp', alt: 'Siemens Touch Control TC5', catalog: '/assets/catalogs/siemens-touch-control-tc4-tc5-he.pdf#page=4', catalogLabel: 'מדריך TC5' },
+  tc4: { image: '/assets/knx-advisor/siemens-tc4.webp', alt: 'מפסק KNX מסוג מסך Siemens TC4', catalog: '/assets/catalogs/siemens-touch-control-tc4-tc5-he.pdf#page=3', catalogLabel: 'מדריך TC4' },
+  tc5: { image: '/assets/knx-advisor/siemens-tc5-official.jpg', alt: 'מפסק KNX מסוג מסך Siemens TC5', catalog: '/assets/catalogs/siemens-touch-control-tc4-tc5-he.pdf#page=4', catalogLabel: 'מדריך TC5' },
   tacteo: { image: '/assets/knx-advisor/abb-tacteo-preview.webp', alt: 'דוגמאות לחצני ABB Tacteo KNX', catalog: '/assets/catalogs/tacteo-catalog.pdf', catalogLabel: 'קטלוג לחצני KNX' },
   pbi: { image: '/assets/knx-advisor/siemens-pbi-up220.webp', alt: 'Siemens Push Button Interface UP 220', catalog: 'https://cache.industry.siemens.com/dl/files/531/109818531/att_1136419/v1/A6V10416506.pdf', catalogLabel: 'דף Siemens PBI' }
 } as const;
@@ -436,10 +436,10 @@ function recommend(room: RoomState, location: string, operations: number, exteri
     const fourButton = operations > 2;
     family = fourButton ? 'PBI 4 לחצנים' : 'PBI 2 לחצנים';
     model = fourButton ? '5WG1220-2DB31' : '5WG1220-2AB21';
-    reason = exterior ? `נקודת חוץ עם ${operations} פעולות דורשת מתאם פנימי ומפסק קפיצי חיצוני מוגן מים.` : `נבחר מתאם PBI כדי לחבר ל-KNX מפסק קפיצי רגיל עם ${operations} פעולות.`;
-    advantages = exterior ? 'פתרון KNX מתאים לנקודה חיצונית בלי להציב מסך פנימי באזור חשוף.' : 'מאפשר לשמור חזית מסדרת חשמל רגילה ולהעביר את הלחיצות ל-KNX.';
-    limitations = 'PBI הוא מתאם בלבד ואינו מפסק מוגן מים. מעל ארבע פעולות יש לפצל או להעביר פעולות לנקודה פנימית.';
-    verify = 'המפסק החיצוני, דרגת האטימות, הקופסה, העומק והכבילה מול החשמלאי.';
+    reason = exterior ? `נקודת חוץ עם ${operations} פעולות דורשת מתאם PBI פנימי מאחורי מפסק קפיצי מוגן מים.` : `נבחר מתאם PBI פנימי כדי לחבר ל-KNX מפסק קפיצי עם ${operations} פעולות.`;
+    advantages = exterior ? 'פתרון KNX מתאים לנקודת חוץ בלי להציב מפסק KNX מסוג מסך באזור חשוף.' : 'מאפשר לשמור חזית מסדרת חשמל רגילה ולהעביר את הלחיצות ל-KNX.';
+    limitations = 'PBI הוא מתאם KNX פנימי בלבד. בחוץ נדרש להוסיף מפסק קפיצי מוגן מים; אין להסיק מה-PBI דרגת IP. מעל ארבע פעולות יש לפצל את הנקודה.';
+    verify = 'המפסק המוגן מים, דרגת האטימות, הקופסה, העומק והכבילה מול החשמלאי.';
     alternatives = operations > 4 ? [{ title: 'פיצול לשני מפסקים חיצוניים', copy: 'נדרש כאשר חייבים יותר מארבע פעולות בחוץ.' }] : [];
   } else if (preferred === 'tacteo' || (isBedside && (room.type === 'children' || room.features.includes('child')))) {
     family = 'לחצן KNX';
@@ -452,7 +452,7 @@ function recommend(room: RoomState, location: string, operations: number, exteri
     alternatives = [{ title: 'Eelectron או MDT', copy: 'חלופת לחצנים שיש לבחור לפי מספר הפעולות והגמר.' }];
   } else if (preferred === 'tc5' || (preferred !== 'tc4' && (operations > 8 || (PUBLIC_TYPES.has(room.type) && operations >= 7)))) {
     family = 'TC5';
-    model = 'Siemens Touch Control TC5';
+    model = 'מפסק KNX מסוג מסך — Siemens TC5';
     reason = preferred === 'tc5' ? `TC5 נבחר כדי להציג ${operations} פעולות עם יותר שטח ומידע גלוי.` : `${operations} פעולות באזור ${PUBLIC_TYPES.has(room.type) ? 'מרכזי' : 'עמוס'} מצדיקות שטח מסך גדול יותר.`;
     advantages = 'מסך 5 אינץ׳, יותר מידע ופעולות בכל מסך וגמישות גבוהה לשינויים.';
     limitations = 'דורש תכנון הזנה, קופסה ותכנות; ההתאמה לכל מערכת נבדקת בנפרד.';
@@ -460,8 +460,8 @@ function recommend(room: RoomState, location: string, operations: number, exteri
     alternatives = [{ title: 'מסך KNX של Eelectron או MDT', copy: 'חלופה אפשרית לאחר אימות פונקציות, מידות וקופסה.' }];
   } else if (preferred === 'tc4' || needsScreen(room, operations)) {
     family = 'TC4';
-    model = 'Siemens Touch Control TC4';
-    reason = preferred === 'tc4' ? `TC4 נבחר כדי לרכז ${operations} פעולות בממשק קומפקטי ודינמי.` : room.acType === 'vrf' ? 'VRF דורש ממשק מסך ותיאום מתאם תקשורת, גם כאשר מספר הפעולות קטן.' : room.actions.audio ? 'אודיו מוגדר במסך ייעודי ולכן נדרש TC4 או TC5.' : `${operations} פעולות מתאימות למסך קומפקטי ודינמי.`;
+    model = 'מפסק KNX מסוג מסך — Siemens TC4';
+    reason = preferred === 'tc4' ? `TC4 נבחר כדי לרכז ${operations} פעולות בממשק קומפקטי ודינמי.` : room.acType === 'vrf' ? 'שליטה ב-VRF ממסך KNX דורשת מתאם תקשורת מתאים ותיאום מראש עם איש המיזוג.' : room.actions.audio ? 'אודיו מוגדר בדף מסך ייעודי ולכן נדרש TC4 או TC5.' : `${operations} פעולות מתאימות למסך קומפקטי ודינמי.`;
     advantages = 'מסך 4 אינץ׳ קומפקטי לשליטה מרוכזת ולשינוי עתידי של תצוגות ותרחישים.';
     limitations = 'מציג פחות מידע בכל מסך לעומת TC5 ולכן דורש יותר מעבר בין מסכים.';
     verify = 'דגם מדויק, קופסה, הזנה, תצורת ETS ותאימות למיזוג או לחימום.';
@@ -487,10 +487,10 @@ function recommend(room: RoomState, location: string, operations: number, exteri
   alternatives = alternatives.slice(0, 2);
 
   const electricianNote = exterior
-    ? 'המפסק הקפיצי החיצוני המוגן מים יסופק על ידי החשמלאי. יש לתאם מראש את הקופסה, עומק ההתקנה, הכבילה והמקום למתאם PBI.'
+    ? 'המפסק הקפיצי המוגן מים בנקודת החוץ יסופק על ידי החשמלאי. יש לתאם מראש את הקופסה, עומק ההתקנה, הכבילה והמקום למתאם PBI.'
     : family.startsWith('PBI') ? 'לתאם קופסה עמוקה, מפסק קפיצי, קו KNX ומקום למתאם PBI מאחורי החזית.'
       : family.startsWith('TC') ? 'לתאם קופסה, עומק, KNX והזנת עזר לפני סגירת הקיר.' : 'לתאם קופסה, קו KNX, מספר לחצנים וסימון לפני ההזמנה.';
-  const hvacNote = room.acType === 'vrf' ? 'נדרש מתאם תקשורת. CoolMaster KNX מועדף בדרך כלל, והמתאם צריך להגיע בתיאום עם איש המיזוג.' : room.acType !== 'none' ? 'יש לאמת את סוג הממשק ורמת השליטה מול איש המיזוג.' : 'ללא דרישת מיזוג שהוגדרה.';
+  const hvacNote = room.acType === 'vrf' ? 'נדרש מתאם תקשורת בין KNX למערכת המיזוג. CoolMaster KNX הוא אחת האפשרויות שנבדקות; סוג המתאם והתאימות נקבעים עם איש המיזוג.' : room.acType !== 'none' ? 'יש לאמת את סוג הממשק ורמת השליטה מול איש המיזוג.' : 'ללא דרישת מיזוג שהוגדרה.';
 
   return { room, location, operations, systems, exterior, family, manufacturer, model, reason, advantages, limitations, verify, alternatives, electricianNote, hvacNote };
 }

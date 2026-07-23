@@ -154,6 +154,8 @@
 .advisor-products { padding: 7rem 0 5rem; background: #fff; }
 .advisor-section-head-wide { max-width: 900px; }
 .advisor-kicker { display: block; margin-bottom: .55rem; color: var(--advisor-mint); font-size: .92rem; font-weight: 800; letter-spacing: .02em; }
+.advisor-scale-note { display: flex; align-items: center; gap: .55rem; margin-bottom: 1rem; padding: .75rem 1rem; border: 1px solid #b9e2df; border-radius: .8rem; background: #eaf6f5; color: #315b59; line-height: 1.5; }
+.advisor-scale-note strong { flex: 0 0 auto; color: var(--advisor-navy); }
 .advisor-product-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
 
 .advisor-product-card {
@@ -177,7 +179,9 @@
 }
 
 .advisor-product-image img { width: 100%; max-height: 330px; object-fit: contain; }
-.advisor-product-image-tall img { max-width: 170px; max-height: 350px; }
+.advisor-product-image-device { grid-template-rows: minmax(0, 1fr) auto; gap: .7rem; }
+.advisor-product-image-device img { width: 150px; max-width: 100%; height: auto; max-height: 330px; object-fit: contain; }
+.advisor-product-dimensions { display: inline-flex; justify-content: center; padding: .38rem .55rem; border: 1px solid var(--advisor-line); border-radius: 999px; background: #fff; color: var(--advisor-navy); font-size: .76rem; font-weight: 800; text-align: center; }
 .advisor-product-image-wide img { max-height: 250px; }
 .advisor-product-content { min-width: 0; padding: 1.3rem; }
 .advisor-product-title { display: flex; align-items: flex-start; justify-content: space-between; gap: .8rem; margin-bottom: .8rem; }
@@ -549,7 +553,10 @@
   .advisor-product-card { grid-template-columns: 1fr; }
   .advisor-product-image { min-height: 230px; border-inline-end: 0; border-bottom: 1px solid var(--advisor-line); }
   .advisor-product-image img { max-height: 220px; }
+  .advisor-product-image-device { min-height: 330px; }
+  .advisor-product-image-device img { width: 130px; max-height: 280px; }
   .advisor-product-image-wide img { max-height: 190px; }
+  .advisor-scale-note { align-items: flex-start; flex-direction: column; gap: .2rem; }
   .advisor-product-title { align-items: flex-start; }
   .advisor-product-actions .advisor-btn { width: 100%; }
   .advisor-family-heading { grid-template-columns: 1fr; gap: .65rem; }

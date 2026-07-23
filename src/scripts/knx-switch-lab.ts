@@ -50,18 +50,18 @@ const PRESETS: Record<string, { label: string; roomType: string; actions: string
 
 const PRODUCTS: Record<LabProductId, LabProduct> = {
   tc4: {
-    name: 'Siemens Touch Control TC4',
+    name: 'מפסק KNX מסוג מסך — Siemens TC4',
     image: '/assets/knx-advisor/siemens-tc4.webp',
-    imageAlt: 'Siemens Touch Control TC4',
+    imageAlt: 'מפסק KNX מסוג מסך Siemens TC4',
     catalog: '/assets/catalogs/siemens-touch-control-tc4-tc5-he.pdf#page=3',
     catalogLabel: 'למדריך TC4',
     previewClass: '',
     visibleTiles: 6
   },
   tc5: {
-    name: 'Siemens Touch Control TC5',
-    image: '/assets/knx-advisor/siemens-tc5.webp',
-    imageAlt: 'Siemens Touch Control TC5',
+    name: 'מפסק KNX מסוג מסך — Siemens TC5',
+    image: '/assets/knx-advisor/siemens-tc5-official.jpg',
+    imageAlt: 'מפסק KNX מסוג מסך Siemens TC5',
     catalog: '/assets/catalogs/siemens-touch-control-tc4-tc5-he.pdf#page=4',
     catalogLabel: 'למדריך TC5',
     previewClass: 'is-tc5',
@@ -77,9 +77,9 @@ const PRODUCTS: Record<LabProductId, LabProduct> = {
     visibleTiles: 4
   },
   pbi: {
-    name: 'Siemens PBI UP 220',
+    name: 'מתאם KNX פנימי — Siemens PBI UP 220',
     image: '/assets/knx-advisor/siemens-pbi-up220.webp',
-    imageAlt: 'Siemens Push Button Interface UP 220',
+    imageAlt: 'מתאם KNX פנימי Siemens PBI UP 220',
     catalog: 'https://cache.industry.siemens.com/dl/files/531/109818531/att_1136419/v1/A6V10416506.pdf',
     catalogLabel: 'לדף Siemens PBI',
     previewClass: 'is-pbi',
@@ -135,8 +135,8 @@ function recommendationCopy(productId: LabProductId): { reason: string; advice: 
     const model = count > 2 ? '4 ערוצים (5WG1220-2DB31)' : '2 ערוצים (5WG1220-2AB21)';
     const overflow = count > 4 ? ' יש יותר מארבע פעולות, ולכן צריך לפצל לשתי נקודות או להעביר חלק מהשליטה פנימה.' : '';
     return {
-      reason: `${manualPrefix}מתאם PBI ${model} מחבר מפסק קפיצי רגיל ל-KNX. הוא מתאים במיוחד לחוץ או כאשר רוצים לשמור חזית מסדרת חשמל רגילה.${overflow}`,
-      advice: count > 4 ? 'אל תנסו לדחוס יותר מארבע פעולות למפסק החיצוני. השאירו בחוץ רק תאורה ותרחיש שימושי, ואת שאר השליטה רכזו במסך פנימי.' : 'באזור חוץ כדאי לשמור על מעט פעולות גדולות וברורות. המפסק המוגן והקופסה מגיעים מהחשמלאי; ה-PBI עצמו מותקן מאחור.'
+      reason: `${manualPrefix}PBI ${model} הוא מתאם KNX פנימי שמותקן מאחורי מפסק קפיצי ומחבר את הלחיצות לקו KNX. הוא אינו מפסק בפני עצמו.${overflow}`,
+      advice: count > 4 ? 'אל תנסו לדחוס יותר מארבע פעולות בנקודת החוץ. השאירו במפסק המוגן מים רק תאורה ותרחיש שימושי, ואת שאר השליטה רכזו במסך פנימי.' : 'בהתקנה בחוץ יש להוסיף מפסק קפיצי מוגן מים שאותו מספק החשמלאי. ה-PBI מותקן מאחור, אינו מפסק מוגן מים ואין להסיק ממנו דרגת IP.'
     };
   }
   if (productId === 'tacteo') {
@@ -147,12 +147,12 @@ function recommendationCopy(productId: LabProductId): { reason: string; advice: 
   }
   if (productId === 'tc5') {
     return {
-      reason: `${manualPrefix}TC5 מתאים כאשר רוצים לראות יותר מידע ופעולות בכל מסך, או כאשר זהו אזור מרכזי עם ריבוי מערכות. הוא מציע מסך 5 אינץ׳ ועד 15 דפי פונקציה המוגדרים ב-ETS.`,
+      reason: `${manualPrefix}מפסק KNX מסוג מסך TC5 מתאים כאשר רוצים לראות יותר מידע ופעולות בכל מסך, או כאשר זהו אזור מרכזי עם ריבוי מערכות. הוא מציע מסך 5 אינץ׳ ועד 15 דפי פונקציה המוגדרים ב-ETS.`,
       advice: count <= 5 && !hasClimate && !hasAudio ? 'למפרט קטן TC5 עלול להיות גדול מהנדרש. בדקו אם TC4 או לחצן KNX יתנו חוויה פשוטה וחסכונית יותר במקום הזה.' : 'רכזו במסך הבית רק את 4-6 הפעולות היומיומיות. פעולות נדירות יותר כדאי להעביר לדפים נוספים כדי שהמסך הראשי יישאר ברור.'
     };
   }
   return {
-    reason: `${manualPrefix}TC4 מרכז ${count} פעולות בממשק קומפקטי. הוא מתאים במיוחד כאשר יש מיזוג, אודיו או צורך לשנות את תוכן המפסק בעתיד.`,
+    reason: `${manualPrefix}מפסק KNX מסוג מסך TC4 מרכז ${count} פעולות בממשק קומפקטי. הוא מתאים במיוחד כאשר יש מיזוג, אודיו או צורך לשנות את תוכן המפסק בעתיד.`,
     advice: count > 8 ? 'יש כאן הרבה תוכן למסך קומפקטי. שקלו TC5 כדי להפחית מעבר בין דפים, או פצלו בין מסך בכניסה ללחצן פשוט בנקודה נוספת.' : 'הציגו במסך הראשון את הפעולות היומיומיות, והעבירו תרחישים או מידע משני לדפים נוספים. כך המשתמש לא מחפש פעולה בסיסית.'
   };
 }

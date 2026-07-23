@@ -7,19 +7,19 @@ const description = 'כלי אינטראקטיבי לבחירת מפסקי KNX �
 const canonical = 'https://i-feel.co.il/knx-switch-advisor/';
 
 const faqs = [
-  ['מה ההבדל בין Siemens TC4 ל-TC5?', 'TC4 הוא מסך 4 אינץ׳ קומפקטי לחדרים ולנקודות עם שטח תצוגה קטן יותר. TC5 הוא מסך 5 אינץ׳ ומציג יותר מידע ופעולות, ולכן מתאים במיוחד לאזורים מרכזיים. ההתאמה הסופית תלויה בכמות הפעולות, במערכות ובתכנון.'],
+  ['מה ההבדל בין מפסק KNX מסוג מסך Siemens TC4 ל-TC5?', 'TC4 הוא מפסק KNX מסוג מסך בגודל 4 אינץ׳ ובמידות 86×86 מ״מ. TC5 הוא מפסק KNX מסוג מסך בגודל 5 אינץ׳ ובמידות 86×148.8 מ״מ, ולכן הוא גבוה יותר ומציג יותר מידע ופעולות. ההתאמה הסופית תלויה בכמות הפעולות, במערכות ובתכנון.'],
   ['כמה מפסקים צריך בחדר?', 'בדרך כלל מתחילים בנקודה בכניסה. בחדר שינה מוסיפים נקודה ליד המיטה, ובחדר הורים נהוג לשקול נקודה בכל צד של המיטה ובאזורים צמודים. הכלי מתאים את ההצעה למבנה החדר.'],
   ['האם מפסק KNX יכול לשלוט במזגן?', 'כן, בכפוף לסוג המזגן, לממשק התקשורת ולתכנון KNX. במערכת VRF נדרש בדרך כלל מתאם תקשורת מתאים ותיאום עם איש המיזוג.'],
   ['האם TC4 או TC5 יכולים להחליף תרמוסטט?', 'בחלק מהמערכות כן, בכפוף לתאימות, לבקרת הטמפרטורה ולמתאם התקשורת. אין לוותר על תרמוסטט לפני אימות מול מתכנן KNX ואיש המיזוג.'],
-  ['מה חשוב לדעת על VRF?', 'מסך מתאים גם כאשר יש מעט פעולות, משום שהוא מרכז את בקרת המיזוג. נדרש מתאם תקשורת, ובדרך כלל נבחנת אינטגרציה מסוג CoolMaster KNX שהמתאם עבורה מתואם עם איש המיזוג.'],
+  ['מה חשוב לדעת על VRF?', 'כדי לשלוט במערכת VRF ממפסק KNX מסוג מסך נדרש מתאם תקשורת בין KNX למערכת המיזוג. CoolMaster KNX הוא אחת האפשרויות שנבדקות, אך סוג המתאם והתאימות נקבעים מראש יחד עם איש המיזוג.'],
   ['איך משלבים חימום תת רצפתי?', 'עם מתאם מתאים ניתן לשלב הפעלה ובקרת טמפרטורה. ללא מתאם ניתן לתכנן נקודות קיצון להפעלה וכיבוי, בעוד שינוי הטמפרטורה נשאר ביחידת החימום.'],
   ['מה נחשב פעולה במפסק?', 'תאורה, דימר, מזגן, דוד או תרחיש נספרים בדרך כלל כפעולה אחת. תריס, וילון או צלון כלוא נספרים כשתי פעולות - פתיחה וסגירה.'],
   ['מהי התקנה בקו אפס?', 'מתאם ייעודי מאפשר להתקין את המפסק בקו אחיד עם הקיר למראה שטוח. יש לתכנן זאת לפני השלמת הקיר ולתאם קופסה, עומק וחומר גמר.'],
   ['האם אפשר לשנות את פעולות המפסק בעתיד?', 'כן. מתקין KNX מורשה יכול לשנות תפקידי לחצנים ותרחישים, בכפוף ליכולות הדגם ולתשתית. במסך דינמי הגמישות גבוהה במיוחד.'],
   ['מה מומלץ בחדר ילדים?', 'ליד המיטה מומלצים בדרך כלל לחצנים פשוטים ועמידים עם מעט פעולות ותרחישים ברורים. מסך בכניסה נשקל כאשר נדרשת שליטת מיזוג או ריבוי מערכות.'],
-  ['איזה מפסק מתאים ליד בריכה או באזור חשוף למים?', 'אין להשתמש שם במסך פנימי רגיל. הכלי יציע מתאם Siemens PBI בתוך מפסק קפיצי חיצוני מוגן מים שאותו מספק החשמלאי, לאחר תיאום הקופסה וההתקנה.'],
-  ['מהו PBI?', 'PBI הוא מתאם KNX פנימי שמותקן מאחורי מפסק קפיצי חיצוני. הוא אינו מפסק מוגן מים בפני עצמו, ואין להסיק ממנו דרגת IP.'],
-  ['מי מספק את המפסק החיצוני?', 'המפסק הקפיצי החיצוני המוגן מים מסופק על ידי החשמלאי. יש לתאם מראש קופסה, עומק, כבילה ומקום למתאם PBI.'],
+  ['איזה מפסק מתאים ליד בריכה או באזור חשוף למים?', 'אין להשתמש שם במפסק KNX מסוג מסך שמיועד לפנים. מתקינים מתאם Siemens PBI מאחורי מפסק קפיצי מוגן מים שאותו מספק החשמלאי, לאחר תיאום הקופסה וההתקנה.'],
+  ['מהו PBI?', 'PBI הוא מתאם KNX פנימי שמותקן מאחורי מפסק קפיצי. כאשר מתקינים את הנקודה בחוץ, יש להוסיף מפסק קפיצי מוגן מים. ה-PBI עצמו אינו מפסק מוגן מים, ואין להסיק ממנו דרגת IP.'],
+  ['מי מספק את המפסק המוגן מים?', 'המפסק הקפיצי המוגן מים מסופק על ידי החשמלאי. יש לתאם מראש קופסה, עומק, כבילה ומקום למתאם PBI.'],
   ['האם ההמלצה מחליפה תכנון מקצועי?', 'לא. התוצאה היא אפיון ראשוני בלבד. ההתאמה הסופית נקבעת לאחר בדיקת תוכניות ותיאום עם I Feel, החשמלאי, איש המיזוג והאדריכל.']
 ];
 
@@ -73,7 +73,7 @@ const jsonLd = JSON.stringify({
       <div class="advisor-shell">
         <span class="advisor-eyebrow">⚡ מרכז בחירה והדגמה למפסקי KNX</span>
         <h1 id="advisor-title">רואים מה כל מפסק עושה, בונים את התוכן ורק אז בוחרים</h1>
-        <p>הכירו את TC4, TC5, לחצני KNX ומתאמי PBI, נסו דוגמאות אמיתיות לפי חדר ובנו על המסך את הפעולות שתרצו לקבל. ליד כל מוצר תמצאו הסבר, תמונה, יתרונות, מגבלות וקטלוג.</p>
+        <p>הכירו מפסקי KNX מסוג מסך TC4 ו-TC5, לחצני KNX ומתאמי PBI, נסו דוגמאות אמיתיות לפי חדר ובנו על המסך את הפעולות שתרצו לקבל. ליד כל מוצר תמצאו הסבר, תמונה, יתרונות, מגבלות וקטלוג.</p>
         <div class="advisor-hero-actions">
           <a class="advisor-btn advisor-btn-primary" href="#switch-lab" data-track="advisor_hero_builder">בואו נבנה מפסק</a>
           <a class="advisor-btn advisor-btn-secondary" href="#product-guide" data-track="advisor_hero_products">הכירו את הדגמים</a>
@@ -98,11 +98,19 @@ const jsonLd = JSON.stringify({
           <p>הבחירה אינה רק לפי מספר לחצנים. צריך להבין האם נדרשת תצוגה משתנה, שליטה במיזוג, פעולה מהירה בחושך, עמידות באזור חוץ או התאמה לעיצוב הקיר.</p>
         </div>
 
+        <div class="advisor-scale-note">
+          <strong>השוואת גודל אמיתית:</strong>
+          <span>שני המוצרים מוצגים באותו רוחב של 86 מ״מ. TC4 מרובע בגובה 86 מ״מ; TC5 גבוה יותר — 148.8 מ״מ.</span>
+        </div>
+
         <div class="advisor-product-grid">
           <article class="advisor-product-card" data-product-card="tc4">
-            <div class="advisor-product-image"><img src="/assets/knx-advisor/siemens-tc4.webp" alt="Siemens Touch Control TC4 בגוון לבן" width="900" height="900" loading="lazy" /></div>
+            <div class="advisor-product-image advisor-product-image-device">
+              <img src="/assets/knx-advisor/siemens-tc4.webp" alt="מפסק KNX מסוג מסך Siemens TC4" width="900" height="1069" loading="lazy" />
+              <span class="advisor-product-dimensions">מידות החזית: <bdi dir="ltr">86 × 86 mm</bdi></span>
+            </div>
             <div class="advisor-product-content">
-              <div class="advisor-product-title"><div><span>מסך מגע 4 אינץ׳</span><h3>Siemens TC4</h3></div><span class="advisor-product-fit">קומפקטי וגמיש</span></div>
+              <div class="advisor-product-title"><div><span>4 אינץ׳ · מסך מגע צבעוני</span><h3>מפסק KNX מסוג מסך — Siemens TC4</h3></div><span class="advisor-product-fit">קומפקטי וגמיש</span></div>
               <p><strong>מה הוא מבצע?</strong> מרכז תאורה, תריסים, תרחישים, טמפרטורה, אוורור ומידע מהמערכת בדפי תצוגה שנקבעים בתכנון ETS.</p>
               <ul>
                 <li><b>מתאים במיוחד:</b> חדרי שינה, משרד, מטבח או סלון עם כמות בינונית של פעולות.</li>
@@ -110,16 +118,20 @@ const jsonLd = JSON.stringify({
                 <li><b>חשוב לדעת:</b> נדרשים קופסת התקנה, KNX והזנת עזר; התאמת מיזוג נבדקת בנפרד.</li>
               </ul>
               <div class="advisor-product-actions">
-                <a class="advisor-btn advisor-btn-primary advisor-btn-sm" href="/assets/catalogs/siemens-touch-control-tc4-tc5-he.pdf#page=3" target="_blank" rel="noopener" data-track="advisor_catalog_tc4">פתיחת מדריך TC4</a>
+                <a class="advisor-btn advisor-btn-primary advisor-btn-sm" href="/assets/catalogs/siemens-touch-control-tc4-tc5-he.pdf#page=3" target="_blank" rel="noopener" data-track="advisor_catalog_tc4">מדריך TC4 בעברית (PDF)</a>
+                <a class="advisor-text-link" href="https://sid.siemens.com/v/u/A6V15589527" target="_blank" rel="noopener">מפרט Siemens הרשמי</a>
                 <a class="advisor-text-link" href="#switch-lab" data-lab-product="tc4">לבניית תוכן לדוגמה ←</a>
               </div>
             </div>
           </article>
 
           <article class="advisor-product-card" data-product-card="tc5">
-            <div class="advisor-product-image advisor-product-image-tall"><img src="/assets/knx-advisor/siemens-tc5.webp" alt="Siemens Touch Control TC5 בגוון לבן" width="700" height="1200" loading="lazy" /></div>
+            <div class="advisor-product-image advisor-product-image-device">
+              <img src="/assets/knx-advisor/siemens-tc5-official.jpg" alt="מפסק KNX מסוג מסך Siemens TC5" width="572" height="1181" loading="lazy" />
+              <span class="advisor-product-dimensions">מידות החזית: <bdi dir="ltr">86 × 148.8 mm</bdi></span>
+            </div>
             <div class="advisor-product-content">
-              <div class="advisor-product-title"><div><span>מסך מגע 5 אינץ׳</span><h3>Siemens TC5</h3></div><span class="advisor-product-fit advisor-product-fit-orange">יותר מידע</span></div>
+              <div class="advisor-product-title"><div><span>5 אינץ׳ · מסך מגע צבעוני</span><h3>מפסק KNX מסוג מסך — Siemens TC5</h3></div><span class="advisor-product-fit advisor-product-fit-orange">גדול יותר</span></div>
               <p><strong>מה הוא מבצע?</strong> אותן משפחות שליטה של TC4, עם שטח תצוגה גדול יותר ועד 15 דפי פונקציה המוגדרים ב-ETS, בהתקנה אנכית או אופקית.</p>
               <ul>
                 <li><b>מתאים במיוחד:</b> כניסה, סלון גדול, חדר קולנוע או אזור מרכזי עם הרבה מערכות.</li>
@@ -127,7 +139,8 @@ const jsonLd = JSON.stringify({
                 <li><b>חשוב לדעת:</b> מסך גדול אינו בהכרח טוב יותר בחדר פשוט; הוא דורש מקום ותכנון מתאים.</li>
               </ul>
               <div class="advisor-product-actions">
-                <a class="advisor-btn advisor-btn-primary advisor-btn-sm" href="/assets/catalogs/siemens-touch-control-tc4-tc5-he.pdf#page=4" target="_blank" rel="noopener" data-track="advisor_catalog_tc5">פתיחת מדריך TC5</a>
+                <a class="advisor-btn advisor-btn-primary advisor-btn-sm" href="/assets/catalogs/siemens-touch-control-tc4-tc5-he.pdf#page=4" target="_blank" rel="noopener" data-track="advisor_catalog_tc5">מדריך TC5 בעברית (PDF)</a>
+                <a class="advisor-text-link" href="https://sid.siemens.com/v/u/A6V13357279" target="_blank" rel="noopener">מפרט Siemens הרשמי</a>
                 <a class="advisor-text-link" href="#switch-lab" data-lab-product="tc5">לבניית תוכן לדוגמה ←</a>
               </div>
             </div>
@@ -153,12 +166,12 @@ const jsonLd = JSON.stringify({
           <article class="advisor-product-card" data-product-card="pbi">
             <div class="advisor-product-image advisor-product-image-wide"><img src="/assets/knx-advisor/siemens-pbi-up220.webp" alt="מתאם Siemens KNX Push Button Interface UP 220" width="800" height="430" loading="lazy" /></div>
             <div class="advisor-product-content">
-              <div class="advisor-product-title"><div><span>מתאם מאחורי מפסק</span><h3>Siemens PBI</h3></div><span class="advisor-product-fit advisor-product-fit-dark">לחוץ ולמפסק רגיל</span></div>
-              <p><strong>מה הוא מבצע?</strong> מחבר ל-KNX מפסק קפיצי רגיל או מוגן מים. קיימת גרסת 2 ערוצים וגרסת 4 ערוצים לפעולות כמו תאורה, דימר, תריס או תרחיש.</p>
+              <div class="advisor-product-title"><div><span>מתאם KNX פנימי מאחורי מפסק</span><h3>Siemens PBI</h3></div><span class="advisor-product-fit advisor-product-fit-dark">מתאם — לא מפסק</span></div>
+              <p><strong>מה הוא מבצע?</strong> PBI הוא מתאם KNX פנימי שמותקן מאחורי מפסק קפיצי ומחבר את הלחיצות לקו KNX. קיימת גרסת 2 ערוצים וגרסת 4 ערוצים.</p>
               <ul>
-                <li><b>מתאים במיוחד:</b> מרפסת, גינה, ליד בריכה או כאשר רוצים לשמור חזית מפסק מסדרה רגילה.</li>
-                <li><b>מה הלקוח מקבל:</b> מתאם פנימי; המפסק החיצוני עצמו מסופק ומתואם עם החשמלאי.</li>
-                <li><b>חשוב לדעת:</b> ה-PBI אינו מפסק מוגן מים ואינו קובע את דרגת האטימות של החזית.</li>
+                <li><b>מתאים במיוחד:</b> כאשר רוצים להשתמש במפסק קפיצי מסדרת חשמל רגילה, בפנים או בחוץ.</li>
+                <li><b>מה הלקוח מקבל:</b> מתאם פנימי שמותקן מאחורי המפסק הקפיצי. המפסק עצמו מסופק ומתואם עם החשמלאי.</li>
+                <li><b>בחוץ:</b> נדרש להוסיף מפסק קפיצי מוגן מים. ה‑PBI עצמו אינו מפסק מוגן מים, ואין להסיק ממנו דרגת IP.</li>
               </ul>
               <div class="advisor-product-actions">
                 <a class="advisor-btn advisor-btn-primary advisor-btn-sm" href="https://cache.industry.siemens.com/dl/files/531/109818531/att_1136419/v1/A6V10416506.pdf" target="_blank" rel="noopener" data-track="advisor_catalog_pbi">פתיחת דף Siemens PBI</a>
@@ -238,7 +251,7 @@ const jsonLd = JSON.stringify({
                 <p><b>מה מקבלים:</b> הפעלה ישירה ללא דפי מסך; במשפחה המתועדת משולבים מצמד BUS וחיישן טמפרטורה.</p>
                 <p><b>כדאי כאשר:</b> רוצים לשלב לחצן KNX בקו העיצוב של ABB ובחדר עם פעולות קבועות.</p>
                 <p><b>בודקים לפני הזמנה:</b> דגם, מספר לחצנים, מסגרת, צבע, סימון ופונקציות זמינות.</p>
-                <a href="https://smartsocieties.abb.com/r/9AKK107492A3188.pdf" target="_blank" rel="noopener">לקטלוג ABB הרשמי ←</a>
+                <a href="https://landscapes.abb.com/r/9AKK107492A3188.pdf" target="_blank" rel="noopener">לקטלוג ABB הרשמי ←</a>
               </div>
             </article>
           </div>
@@ -247,9 +260,9 @@ const jsonLd = JSON.stringify({
 
         <div class="advisor-comparison" aria-label="השוואה מהירה בין סוגי המפסקים">
           <div><strong>רוצים פעולה מיידית?</strong><span>לחצן KNX</span></div>
-          <div><strong>צריך מיזוג או תוכן משתנה?</strong><span>TC4</span></div>
-          <div><strong>יש הרבה מערכות באזור מרכזי?</strong><span>TC5</span></div>
-          <div><strong>הנקודה בחוץ או מאחורי מפסק רגיל?</strong><span>PBI</span></div>
+          <div><strong>צריך מיזוג או תוכן משתנה?</strong><span>מפסק KNX מסוג מסך TC4</span></div>
+          <div><strong>יש הרבה מערכות באזור מרכזי?</strong><span>מפסק KNX מסוג מסך TC5</span></div>
+          <div><strong>הנקודה בחוץ או מאחורי מפסק רגיל?</strong><span>מתאם PBI</span></div>
         </div>
       </div>
     </section>
@@ -281,9 +294,9 @@ const jsonLd = JSON.stringify({
               <div class="advisor-preset-grid advisor-product-picker" id="lab-products">
                 <button type="button" data-lab-product-choice="auto" aria-pressed="true">✨ המלצה חכמה</button>
                 <button type="button" data-lab-product-choice="tacteo">לחצן KNX</button>
-                <button type="button" data-lab-product-choice="tc4">TC4</button>
-                <button type="button" data-lab-product-choice="tc5">TC5</button>
-                <button type="button" data-lab-product-choice="pbi">PBI</button>
+                <button type="button" data-lab-product-choice="tc4">מסך KNX TC4</button>
+                <button type="button" data-lab-product-choice="tc5">מסך KNX TC5</button>
+                <button type="button" data-lab-product-choice="pbi">מתאם PBI</button>
               </div>
             </fieldset>
 
@@ -298,7 +311,7 @@ const jsonLd = JSON.stringify({
 
           <div class="advisor-lab-preview" aria-live="polite">
             <div class="advisor-lab-result-head">
-              <div><span>ההמלצה כרגע</span><h3 id="lab-product-name">Siemens TC4</h3></div>
+              <div><span>ההמלצה כרגע</span><h3 id="lab-product-name">מפסק KNX מסוג מסך — Siemens TC4</h3></div>
               <span class="advisor-lab-count" id="lab-operation-count">0 פעולות</span>
             </div>
             <div class="advisor-lab-product-photo"><img id="lab-product-photo" src="/assets/knx-advisor/siemens-tc4.webp" alt="" width="900" height="900" /></div>
@@ -434,7 +447,7 @@ const jsonLd = JSON.stringify({
                   <div class="advisor-field"><label for="ac-control">רמת השליטה</label><select id="ac-control"><option value="on-off">הפעלה וכיבוי</option><option value="temperature">טמפרטורה ומצבים</option><option value="full">שליטה מלאה ככל שניתן</option><option value="unknown">טרם הוגדר</option></select></div>
                   <div class="advisor-field"><label for="thermostat-choice">תרמוסטט נפרד</label><select id="thermostat-choice"><option value="no">לא נדרש</option><option value="keep">להשאיר לצד המסך</option><option value="unknown">טרם הוחלט</option></select></div>
                   <div class="advisor-field"><label for="floor-heating">חימום תת רצפתי</label><select id="floor-heating"><option value="none">ללא</option><option value="on-off">הפעלה וכיבוי</option><option value="temperature">כולל שינוי טמפרטורה</option><option value="unknown">לא ידוע</option></select></div>
-                </div><p class="advisor-help">ב-VRF מסך יכול להחליף תרמוסטט בכפוף לתאימות ולמתאם תקשורת. CoolMaster KNX נבחן בדרך כלל, והמתאם צריך להיות מתואם עם איש המיזוג.</p></fieldset>
+                </div><p class="advisor-help">במערכת VRF נדרש מתאם תקשורת בין KNX למערכת המיזוג. CoolMaster KNX הוא אחת האפשרויות שנבדקות, אך סוג המתאם והתאימות נקבעים מראש יחד עם איש המיזוג.</p></fieldset>
                 <fieldset class="advisor-question"><legend>2. מערכות ופעולות</legend><div class="advisor-actions-grid" id="actions-grid"></div><p class="advisor-help">תאורה, דימר או תרחיש = פעולה אחת. תריס, וילון או צלון כלוא = שתי פעולות. אין שימוש בלחיצה כפולה או בלחיצה קצרה/ארוכה לפעולות שאינן קשורות.</p></fieldset>
                 <fieldset class="advisor-question"><legend>3. תרחישים רצויים בחדר</legend><div class="advisor-check-grid" id="scenario-grid"></div></fieldset>
                 <div class="advisor-room-coach" id="room-product-coach" aria-live="polite"></div>
