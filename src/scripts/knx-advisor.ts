@@ -482,7 +482,7 @@ function recommend(room: RoomState, location: string, operations: number, exteri
     alternatives.push({ title: 'ABB TACTEO או ABB PEONIA', copy: 'חלופה עיצובית לצבעים וגמרים; יש לאמת דגם, פעולות וקופסה.' });
   }
   if (family === 'לחצן KNX' && !decorative && alternatives.length < 2 && operations >= 3) {
-    alternatives.push({ title: 'Schneider Electric או ABB', copy: 'חלופה מתאימה רק לאחר בחירת מספר הפעולות והגמר המדויקים.' });
+    alternatives.push({ title: 'Schneider Electric System M או ABB', copy: 'ב‑System M בוחרים לחצן פיזי של 2, 4 או 8 פעולות, בלבן או באנתרציט, לאחר התאמת המסגרת והסימון.' });
   }
   alternatives = alternatives.slice(0, 2);
 
