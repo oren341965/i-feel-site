@@ -37,3 +37,6 @@ preview-server.mjs
 start-preview.cmd
 *.err
 public/api/config.php
+
+# Per-machine local dev config (each machine has its own cwd/path)
+.claude/launch.json
