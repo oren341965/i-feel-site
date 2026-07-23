@@ -2,64 +2,84 @@ User-agent: *
 Allow: /
 Disallow: /old/
 Disallow: /shopengine-template/
+Disallow: /staff-expenses/
 
 # AI crawlers explicitly allowed for llms.txt and AI Overview coverage
 User-agent: GPTBot
 Allow: /
+Disallow: /staff-expenses/
 
 User-agent: ChatGPT-User
 Allow: /
+Disallow: /staff-expenses/
 
 User-agent: OAI-SearchBot
 Allow: /
+Disallow: /staff-expenses/
 
 User-agent: ClaudeBot
 Allow: /
+Disallow: /staff-expenses/
 
 User-agent: Claude-SearchBot
 Allow: /
+Disallow: /staff-expenses/
 
 User-agent: Claude-Web
 Allow: /
+Disallow: /staff-expenses/
 
 User-agent: Claude-User
 Allow: /
+Disallow: /staff-expenses/
 
 User-agent: anthropic-ai
 Allow: /
+Disallow: /staff-expenses/
 
 User-agent: PerplexityBot
 Allow: /
+Disallow: /staff-expenses/
 
 User-agent: Perplexity-User
 Allow: /
+Disallow: /staff-expenses/
 
 User-agent: Google-Extended
 Allow: /
+Disallow: /staff-expenses/
 
 User-agent: GoogleOther
 Allow: /
+Disallow: /staff-expenses/
 
 User-agent: Bingbot
 Allow: /
+Disallow: /staff-expenses/
 
 User-agent: Applebot-Extended
 Allow: /
+Disallow: /staff-expenses/
 
 User-agent: meta-externalagent
 Allow: /
+Disallow: /staff-expenses/
 
 User-agent: cohere-ai
 Allow: /
+Disallow: /staff-expenses/
 
 User-agent: CCBot
 Allow: /
+Disallow: /staff-expenses/
 
 User-agent: Bytespider
 Allow: /
+Disallow: /staff-expenses/
 
 User-agent: Diffbot
 Allow: /
+Disallow: /staff-expenses/
 
 # Sitemap location
 Sitemap: https://i-feel.co.il/sitemap.xml
