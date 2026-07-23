@@ -53,7 +53,16 @@ try {
         portal_render_email_entry();
     }
 
+    $verifiedEmail = portal_normalize_company_email((string) ($user['email'] ?? ''));
+    if ($verifiedEmail !== null && ($user['username'] ?? '') === 'employee') {
+        $user['display_name'] = $verifiedEmail;
+        $_SESSION['portal_user']['display_name'] = $verifiedEmail;
+    }
+
     if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
+        if (portal_post('action', 60) === 'submit_report' && $verifiedEmail !== null) {
+            $_POST['employee_email'] = $verifiedEmail;
+        }
         portal_handle_post($user);
     }
 
