@@ -1,12 +1,8 @@
-Options -Indexes
 DirectoryIndex index.php
 
-<IfModule mod_rewrite.c>
-  RewriteEngine On
-  RewriteCond %{HTTPS} !=on
-  RewriteCond %{HTTP_HOST} !^(localhost|127\.0\.0\.1)(:[0-9]+)?$ [NC]
-  RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [R=302,L,NE]
-</IfModule>
+# Temporary safe mode while the employee portal is being diagnosed.
+# HTTPS is already enforced by the main site. Do not redirect here because
+# reverse-proxy TLS termination can otherwise create a redirect loop.
 
 <IfModule mod_authz_core.c>
   <FilesMatch "^(?:_|\.).*|.*\.(?:json|log|sqlite|bak|ini|env)$">
@@ -27,5 +23,3 @@ DirectoryIndex index.php
   Header always set X-Frame-Options "DENY"
   Header always set Referrer-Policy "no-referrer"
 </IfModule>
-
-LimitRequestBody 67108864
