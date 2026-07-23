@@ -133,9 +133,8 @@ npm run build
 
 ## שלב 8 — מסירה
 
-1. Commit + push ל-`main` (או branch אם העבודה גדולה). הערה: commit message עם מרכאות
-   כפולות בעברית שובר here-string ב-PowerShell 5.1 — השתמש בכמה דגלי `-m` פשוטים.
-2. אמור לאורן להריץ **/deploy-ifeel** (או הרץ אותו אם אורן כבר אישר להעלות).
+1. פרסם work branch ו-Draft PR דרך `scripts/workstations/publish-work.ps1`. אין push ישיר ל-`main`.
+2. הפעל את **/deploy-ifeel**: המתן ל-`Validate site`, הצג סיכום ועצור לפני merge.
 3. אחרי שהדף חי — תן לאורן את השורה המוכנה:
    > Google Search Console → URL Inspection → `https://i-feel.co.il/<slug>/` → Request Indexing
 4. הזכר שהדף החדש הוא מועמד לפוסט ברשתות (יש pipeline ב-`D:\Claude\ifeel-social\`) — רק אם רלוונטי.

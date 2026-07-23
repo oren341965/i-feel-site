@@ -48,11 +48,14 @@ define('EXPENSE_PORTAL_ADMIN_EMAILS', [
 
 ## פריסה
 
-אין דיפלוי אוטומטי. לאחר `git pull` במחשב המשרד:
+הפריסה עוברת רק במסלול המשותף:
 
-1. להריץ `npm run build`.
-2. להעלות את כל התוכן של `dist/staff-expenses/` אל `public_html/staff-expenses/`.
-3. להעלות את `dist/robots.txt`.
-4. להזין כתובת `@i-feel.co.il`, לוודא שקוד מתקבל בדוא״ל ושכתובת חיצונית נדחית.
-5. לוודא שהעלאת מסמך שומרת אותו מחוץ ל-`public_html` ושקובץ ניתן להורדה רק מחשבון מנהל.
-6. לעדכן את תג `live` לפי נוהל הפריסה הקיים.
+1. work branch ו-Draft PR דרך `scripts/workstations/publish-work.ps1`.
+2. check ירוק בשם `Validate site`.
+3. merge מאושר ל-`main`.
+4. GitHub Actions מעביר את `dist` המאומת ל-runner של מחשב המשרד.
+5. `Deploy production` מעלה ב-FTPS ללא מחיקות ומריץ verify-live.
+6. לאחר הפריסה מזינים כתובת `@i-feel.co.il`, מוודאים שקוד מתקבל ושכתובת חיצונית נדחית.
+7. מוודאים שהעלאת מסמך שומרת אותו מחוץ ל-`public_html` ושהורדה דורשת חשבון מנהל.
+
+אין לבצע העלאה ידנית של `staff-expenses` מהמחשב.

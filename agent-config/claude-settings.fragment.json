@@ -1,0 +1,23 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(powershell * scripts/workstations/new-work.ps1:*)",
+      "Bash(powershell * scripts/workstations/publish-work.ps1:*)",
+      "Bash(powershell * scripts/workstations/sync-workstation.ps1:*)"
+    ],
+    "ask": [
+      "Bash(git push:*)",
+      "Bash(gh pr merge:*)",
+      "Bash(gh api:*)"
+    ],
+    "deny": [
+      "Bash(git push --force:*)",
+      "Bash(git push -f:*)",
+      "Bash(git push * main:*)",
+      "Bash(ftp:*)",
+      "Bash(curl * --upload-file:*)",
+      "Bash(curl * -T:*)"
+    ]
+  }
+}
+

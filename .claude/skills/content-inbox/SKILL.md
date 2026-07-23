@@ -54,7 +54,9 @@ gh pr checkout <N>        # מתוך C:\Users\USER\i-feel-site
 1. מזג את ה-PR:
    ```powershell
    gh pr merge <N> --repo oren341965/i-feel-site --squash --admin
-   git checkout main; git pull origin main
+   git switch main
+   git pull --ff-only origin main
+   .\scripts\workstations\new-work.ps1 -Slug process-content-inbox
    ```
 2. שלב את התוכן לפי ההחלטה:
    - דף חדש → הפעל את הצ'קליסט המלא של **/new-page** (כולל sitemap ידני!).
@@ -65,7 +67,8 @@ gh pr checkout <N>        # מתוך C:\Users\USER\i-feel-site
    טענות אמון מאושרות בלבד (מאז 2008, ‏9,000+ לקוחות, ‏180+ פרויקטי BMS), בלי הבטחות מחיר חדשות.
 3. **סדר את ה-inbox**: העבר את קבצי המקור שטופלו ל-`content-inbox/processed/YYYY-MM/`
    (git mv, לא מחיקה — המקור של קרן נשמר תמיד), עם commit שמתאר מה נעשה בכל קובץ.
-4. Build (`npm run build`) → הרץ **/deploy-ifeel** או אמור לאורן להריץ.
+4. פרסם work branch ו-Draft PR דרך `publish-work.ps1 -AllowDeletion` (העברת המקור
+   ל-`processed` היא rename מאושר), ואז המשך לפי **/deploy-ifeel**.
 
 ## שלב 4 — משוב לקרן (דרך אורן)
 

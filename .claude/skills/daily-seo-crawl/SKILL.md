@@ -206,7 +206,9 @@ https://www.googleapis.com/pagespeedonline/v5/runPagespeed?url=https://i-feel.co
 
 ## תיקונים אוטומטיים
 
-> **האתר סטטי (Astro), לא WordPress.** אין WordPress MCP ואין Yoast. כל תיקון = עריכה בריפו `C:\Users\User\i-feel-site` (branch `main`) → build → העלאה דרך הסקיל `deploy-ifeel`. תמיד `git pull origin main` לפני עריכה. אל תערוך עותקים מחוץ לריפו.
+> **האתר סטטי (Astro), לא WordPress.** אין WordPress MCP ואין Yoast. כל תיקון =
+> work branch חדש מה-`origin/main` → build → Draft PR → הסקיל `deploy-ifeel`.
+> אין עריכה ישירה של `main` ואין העלאת FTP ידנית.
 
 **רשאי לתקן ישירות** (ללא אישור נוסף, אחרי שהצעת ואורן אמר "תתקן"):
 - הוספת/תיקון meta description בדף בודד
@@ -222,7 +224,7 @@ https://www.googleapis.com/pagespeedonline/v5/runPagespeed?url=https://i-feel.co
 
 ## Post-fix propagation (אחרי תיקון)
 אם הוחל שינוי באתר:
-1. להעלות דרך הסקיל `deploy-ifeel` (FTP ידני — אין דיפלוי אוטומטי), ואז `verify-live` לבדיקת עשן.
+1. לפרסם Draft PR דרך `publish-work.ps1`, להמשיך לפי `deploy-ifeel`, ואז `verify-live`.
 2. Facebook OG debugger — אם שונו og: tags, הצג את הלינק: `https://developers.facebook.com/tools/debug/?q={url}`
 3. GSC — הצג: `https://search.google.com/search-console` → URL Inspection → Request Indexing
 4. אחרי 60 שניות — `web_fetch` עם cache-bust (`?cb={timestamp}`) כדי לאמת.

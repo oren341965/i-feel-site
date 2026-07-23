@@ -7,7 +7,7 @@
 #
 # Dot-source this file, then compose the functions per image:
 #   . "$PSScriptRoot\process-images.ps1"
-#   $b = Load-Image (Select-BySize "C:\Users\User\Downloads" 281493)
+#   $b = Load-Image (Select-BySize (Join-Path $env:USERPROFILE "Downloads") 281493)
 #   Pixelate $b 1300 930 145 70          # license plate / face region (original px)
 #   $c = Crop-Bmp $b 0 0 $b.Width 1200   # cut construction debris at the bottom
 #   Save-Resized $c "C:\...\public\projects\smart-villa-slug\slug-facade.jpg"

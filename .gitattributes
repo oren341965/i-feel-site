@@ -1,2 +1,12 @@
 # Keep PDF assets byte-for-byte intact across platforms.
 *.pdf binary
+
+# Large source media is shared through GitHub LFS so both workstations receive
+# identical files without inflating normal Git history.
+*.mp4 filter=lfs diff=lfs merge=lfs -text
+*.mov filter=lfs diff=lfs merge=lfs -text
+*.avi filter=lfs diff=lfs merge=lfs -text
+*.mkv filter=lfs diff=lfs merge=lfs -text
+*.psd filter=lfs diff=lfs merge=lfs -text
+*.ai filter=lfs diff=lfs merge=lfs -text
+*.indd filter=lfs diff=lfs merge=lfs -text

@@ -11,8 +11,8 @@ description: "העלאת מאמר (מקרה בוחן) על בית פרטי שה�
 פלט = דף `/projects/smart-villa-[slug]/` חי ומאומת + כרטיס בגלריית הבתים הפרטיים +
 טיוטת מייל לקרן להפצה. **בלי להמציא עובדות, בלי לחשוף פרטיות, בלי לשבור את האתר.**
 
-הריפו הקנוני במחשב הזה: `C:\Users\USER\i-feel-site`. **קודם `git pull origin main`** —
-סשנים אחרים דוחפים לריפו במקביל. דף לדוגמה שמשמש תבנית:
+הריפו הקנוני הוא `oren341965/i-feel-site`. בתחילת משימה יוצרים work branch ייחודי
+דרך `scripts/workstations/new-work.ps1`; אין עבודה ישירה על `main`. דף לדוגמה:
 `src/pages/projects/smart-villa-ramot-hashavim.astro` (או `smart-villa-caesarea.astro`).
 
 ## שלב 0 — איסוף עובדות מאורן
@@ -92,24 +92,17 @@ description: "העלאת מאמר (מקרה בוחן) על בית פרטי שה�
 3. אופציונלי: שורת קישור מדפים רלוונטיים נוספים (כמו שנעשה לקיסריה
    ב-`public/structure-control/projects/index.html`).
 
-## שלב 6 — Build + Deploy (הלקח הקריטי)
+## שלב 6 — Build + Pull Request
 
 ```powershell
 cd C:\Users\USER\i-feel-site
 npm run build
 ```
 
-Commit + push (זהות git: `Oren Levy` / `oren@i-feel.co.il`; ייתכן צורך ב-pull --rebase).
-ההעלאה עצמה לפי הצ'קליסט של **/deploy-ifeel** (FTP כירורגי, בלי מחיקות). מה שמעלים:
-
-- `dist/projects/smart-villa-[slug]/index.html`
-- כל התמונות `dist/projects/smart-villa-[slug]/*.jpg`
-- `dist/projects/private-homes/index.html` (הגלריה שעודכנה)
-- `dist/sitemap.xml`
-- **קובצי `dist/_astro/*.css` חדשים!** — לקח מתקלה אמיתית (07/2026): דף חדש גורם
-  ל-build לייצר קובצי CSS עם hash חדש. הדף הועלה בלי ה-CSS, נטען עירום מעיצוב,
-  ואורן דיווח "הדף לא עולה". לפני סיום — משווים אילו `/_astro/` הדף החי מפנה אליהם
-  ומוודאים שכולם מחזירים 200; מה שחסר מעלים.
+פרסם work branch ו-Draft PR דרך `scripts/workstations/publish-work.ps1`.
+הפעל את **/deploy-ifeel** והמתן ל-`Validate site`. לאחר merge מאושר, GitHub מעביר
+את כל `dist` כ-artifact אחד ל-runner של מחשב המשרד. כך קובצי `/_astro/` החדשים
+נכללים תמיד ואין העלאה חלקית של HTML ללא CSS.
 
 ## שלב 7 — אימות באוויר
 
@@ -123,7 +116,7 @@ Commit + push (זהות git: `Oren Levy` / `oren@i-feel.co.il`; ייתכן צו�
 
 ## שלב 8 — סגירה
 
-1. `git tag -f live HEAD` (נקודת הייחוס לדיפלוי הבא).
+1. תעד את commit SHA וודא ש-`Deploy production` ירוק.
 2. תזכורת לאורן: **GSC → URL Inspection → Request Indexing** לדף החדש.
 3. **טיוטת מייל לקרן** (kerenelboher@gmail.com, עותק לאורן) דרך Gmail create_draft:
    קישור למאמר + תקציר + הערה שהתמונות מתאימות לרשתות ולניוזלטר. טיוטה בלבד —
