@@ -27,6 +27,7 @@ require_once $repositoryRoot . '/public/staff-expenses/_bootstrap.php';
 require_once $repositoryRoot . '/public/staff-expenses/_ui.php';
 require_once $repositoryRoot . '/public/staff-expenses/_email_auth.php';
 require_once $repositoryRoot . '/public/staff-expenses/_employees.php';
+require_once $repositoryRoot . '/public/staff-expenses/_vehicles.php';
 require_once $repositoryRoot . '/public/staff-expenses/_labels.php';
 require_once $repositoryRoot . '/public/staff-expenses/_records.php';
 require_once $repositoryRoot . '/public/staff-expenses/_notifications.php';
@@ -83,6 +84,52 @@ try {
         'Birthday banner would display in the wrong month.'
     );
     $giftYear = (int) date('Y');
+    portal_test_expect(
+        portal_normalize_vehicle_plate('123-45-678') === '12345678'
+        && portal_format_vehicle_plate('12345678') === '123-45-678',
+        'Vehicle plate normalization failed.'
+    );
+    $vehicleRows = implode("\n", [
+        "דוא״ל עובד\tמספר רכב\tיצרן ודגם\tשנתון\tתוקף טסט\tתוקף ביטוח\tחברת ביטוח\tמספר פוליסה\tהערות",
+        "worker@i-feel.co.il\t123-45-678\tTest Car\t2024\t13/08/{$giftYear}\t{$giftYear}-08-13\tTest Insurance\tPOLICY-1\tTest only",
+    ]);
+    portal_test_expect(portal_import_vehicle_directory($vehicleRows) === 1, 'Vehicle directory import count is wrong.');
+    $employeeVehicles = portal_vehicles_for_employee($directoryEmployee);
+    portal_test_expect(
+        count($employeeVehicles) === 1
+        && ($employeeVehicles[0]['plate'] ?? '') === '12345678',
+        'Employee vehicle assignment failed.'
+    );
+    portal_test_expect(
+        portal_vehicles_for_employee(['email' => 'other@i-feel.co.il']) === [],
+        'Employee vehicle lookup exposed another employee vehicle.'
+    );
+    $sentVehicleEmails = [];
+    $vehicleMailer = static function (
+        string $recipient,
+        string $subject,
+        string $body,
+        array $attachments
+    ) use (&$sentVehicleEmails): bool {
+        $sentVehicleEmails[] = compact('recipient', 'subject', 'body', 'attachments');
+        return true;
+    };
+    $vehicleReminder = portal_process_vehicle_notifications(
+        new DateTimeImmutable($giftYear . '-07-14 08:00:00', new DateTimeZone('Asia/Jerusalem')),
+        $vehicleMailer
+    );
+    portal_test_expect(
+        ($vehicleReminder['reminders_sent'] ?? 0) === 2
+        && ($vehicleReminder['emails_sent'] ?? 0) === 4
+        && ($sentVehicleEmails[0]['recipient'] ?? '') === 'worker@i-feel.co.il'
+        && ($sentVehicleEmails[1]['recipient'] ?? '') === 'oren@i-feel.co.il',
+        'Vehicle reminders were not sent to the employee and Oren.'
+    );
+    portal_process_vehicle_notifications(
+        new DateTimeImmutable($giftYear . '-07-14 10:00:00', new DateTimeZone('Asia/Jerusalem')),
+        $vehicleMailer
+    );
+    portal_test_expect(count($sentVehicleEmails) === 4, 'Vehicle reminders were sent more than once.');
     portal_save_birthday_gift(
         'worker@i-feel.co.il',
         $giftYear,

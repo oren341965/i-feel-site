@@ -5,6 +5,7 @@ require_once __DIR__ . '/_bootstrap.php';
 require_once __DIR__ . '/_ui.php';
 require_once __DIR__ . '/_email_auth.php';
 require_once __DIR__ . '/_employees.php';
+require_once __DIR__ . '/_vehicles.php';
 require_once __DIR__ . '/_records.php';
 require_once __DIR__ . '/_labels.php';
 require_once __DIR__ . '/_notifications.php';
@@ -137,7 +138,7 @@ try {
     if (($user['role'] ?? '') !== 'admin' && !in_array($tab, ['new', 'history'], true)) {
         $tab = 'new';
     }
-    if (!in_array($tab, ['new', 'history', 'reports', 'employees'], true)) {
+    if (!in_array($tab, ['new', 'history', 'reports', 'employees', 'vehicles'], true)) {
         $tab = 'new';
     }
 
@@ -146,11 +147,13 @@ try {
         'history' => 'ההוצאות שלי',
         'reports' => 'דיווחים',
         'employees' => 'פרטי עובדים וימי הולדת',
+        'vehicles' => 'רכבי עובדים',
         default => 'דיווח חדש',
     };
     portal_page_start($pageTitle, $user);
     portal_nav($tab, $user);
     portal_render_birthday_banner($user);
+    portal_render_employee_vehicle_card($user);
 
     if ($tab === 'new') {
         portal_render_new_form($user, $flash);
@@ -158,6 +161,8 @@ try {
         portal_render_employee_history($user, $flash);
     } elseif ($tab === 'employees') {
         portal_render_employee_directory_admin($flash);
+    } elseif ($tab === 'vehicles') {
+        portal_render_vehicle_admin($flash);
     } else {
         $view = trim((string) ($_GET['view'] ?? ''));
         if ($view !== '') {

@@ -88,6 +88,7 @@ function portal_nav(string $tab, array $user): void
         <?php if (($user['role'] ?? '') === 'admin'): ?>
             <a href="<?= portal_h(portal_url(['tab' => 'reports'])) ?>" class="tab<?= $tab === 'reports' ? ' is-active' : '' ?>">דיווחים ומסמכים</a>
             <a href="<?= portal_h(portal_url(['tab' => 'employees'])) ?>" class="tab<?= $tab === 'employees' ? ' is-active' : '' ?>">עובדים וימי הולדת</a>
+            <a href="<?= portal_h(portal_url(['tab' => 'vehicles'])) ?>" class="tab<?= $tab === 'vehicles' ? ' is-active' : '' ?>">רכבי עובדים</a>
         <?php endif; ?>
     </nav>
     <?php

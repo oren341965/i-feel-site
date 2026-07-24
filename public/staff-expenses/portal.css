@@ -182,6 +182,22 @@ input[readonly] { background: #f3f5f8; }
 .birthday-gift code { direction: ltr; display: inline-block; width: fit-content; padding: 7px 11px; border: 1px dashed #c78a19; border-radius: 8px; background: #fff; color: #633c00; font-size: 1rem; font-weight: 900; letter-spacing: .06em; }
 .birthday-gift__actions { display: flex !important; grid-auto-flow: column; justify-content: start; gap: 8px !important; margin-top: 2px; }
 .birthday-banner__gift-note { margin-top: 5px; font-weight: 700; }
+.vehicle-panel { margin: 0 0 22px; padding: 20px; border: 1px solid #bfd7ea; border-radius: 16px; background: linear-gradient(135deg, #f7fbff, #edf7ff); box-shadow: 0 10px 28px rgba(23, 105, 170, .08); }
+.vehicle-panel__heading { display: flex; align-items: center; gap: 12px; margin-bottom: 15px; }
+.vehicle-panel__heading h2, .vehicle-panel__heading p { margin: 0; }
+.vehicle-panel__icon { font-size: 2rem; }
+.vehicle-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 13px; }
+.vehicle-card { display: grid; gap: 13px; padding: 16px; border: 1px solid #d7e6f2; border-radius: 13px; background: #fff; }
+.vehicle-card__title { display: flex; align-items: start; justify-content: space-between; gap: 14px; }
+.vehicle-card__title div { display: grid; gap: 3px; }
+.vehicle-card__title strong { font-size: 1.05rem; }
+.vehicle-card__title span, .vehicle-card__meta { color: var(--muted); font-size: .87rem; }
+.vehicle-card__title > b { direction: ltr; padding: 7px 10px; border: 1px solid #b6c9da; border-radius: 7px; background: #f8fafc; letter-spacing: .05em; white-space: nowrap; }
+.vehicle-deadlines { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 9px; }
+.vehicle-deadline { display: grid; gap: 5px; align-content: start; padding: 11px; border-radius: 10px; background: #f4f7fb; }
+.vehicle-deadline > span:first-child { color: var(--muted); font-size: .8rem; }
+.vehicle-deadline .status { width: fit-content; }
+.vehicle-card__meta { margin: 0; }
 .gift-admin-card { margin-top: 18px; }
 
 .filter-bar { display: flex; align-items: end; gap: 12px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; margin-bottom: 16px; }
@@ -281,4 +297,8 @@ input[readonly] { background: #f3f5f8; }
     .birthday-banner__confetti { display: none; }
     .birthday-gift__actions { grid-auto-flow: row; grid-template-columns: 1fr; }
     .birthday-gift__actions .button { width: 100%; }
+    .vehicle-panel { padding: 15px; }
+    .vehicle-card__title { align-items: stretch; flex-direction: column; }
+    .vehicle-card__title > b { width: fit-content; }
+    .vehicle-deadlines { grid-template-columns: 1fr; }
 }
