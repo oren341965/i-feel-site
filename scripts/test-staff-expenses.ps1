@@ -191,7 +191,9 @@ try {
     $html = Get-Content -Raw -Encoding utf8 $responseBody
     Assert-PortalTest ($html -match 'name="action" value="submit_report"') "Employee report form was not rendered."
     Assert-PortalTest ($html -match 'href="[^"]*tab=history[^"]*"') "Employee history navigation was not rendered."
+    Assert-PortalTest ($html -match 'href="[^"]*tab=profile[^"]*"') "Permanent profile and vehicle navigation was not rendered."
     Assert-PortalTest ($html -match 'name="employee_email"[^>]*value="worker@i-feel\.co\.il"[^>]*readonly') "Verified email was not prefilled as read-only."
+    Assert-PortalTest ($html -match 'name="employee_phone"[^>]*required') "Permanent employee phone was not required."
     Assert-PortalTest ($html -notmatch 'name="department"') "Department field was not removed."
     Assert-PortalTest ($html -match 'id="camera-receipts"[^>]*capture="environment"') "Mobile receipt camera input is missing."
     Assert-PortalTest ($html -match '<option value="purchases">') "Travel purchases category is missing."
@@ -225,6 +227,35 @@ try {
     Assert-PortalTest ($vehicleRecord.email_notification.status -eq "sent") "Expense email notification was not recorded."
     Assert-PortalTest ($vehicleRecord.email_notification.recipients -contains "account@i-feel.co.il") "Accounting recipient is missing."
     Assert-PortalTest ($vehicleRecord.email_notification.recipients -contains "oren@i-feel.co.il") "Oren recipient is missing."
+    $employeeDirectoryFile = Join-Path $storagePath "security\\employees.json"
+    $employeeDirectory = Get-Content -Raw -Encoding utf8 $employeeDirectoryFile | ConvertFrom-Json
+    Assert-PortalTest ($employeeDirectory.'worker@i-feel.co.il'.phone -eq "050-000-0000") "Employee phone was not saved permanently."
+
+    Invoke-PortalCurl "-o", $responseBody, "-b", $employeeCookies, "$baseUrl/staff-expenses/?tab=profile" | Out-Null
+    $html = Get-Content -Raw -Encoding utf8 $responseBody
+    Assert-PortalTest ($html -match 'name="action" value="save_employee_profile"') "Permanent employee profile form was not rendered."
+    Assert-PortalTest ($html -match 'name="action" value="save_employee_vehicle"') "Employee vehicle form was not rendered."
+    $csrf = Get-CsrfFromHtml $html
+    $headers = Invoke-PortalCurl `
+        "-D", "-", `
+        "-o", $responseBody, `
+        "-b", $employeeCookies, `
+        "-c", $employeeCookies, `
+        "--data-urlencode", "csrf=$csrf", `
+        "--data-urlencode", "action=save_employee_vehicle", `
+        "--data-urlencode", "profile_vehicle_plate=123-45-678", `
+        "--data-urlencode", "profile_vehicle_model=Test Car", `
+        "--data-urlencode", "profile_vehicle_year=2025", `
+        "--data-urlencode", "profile_vehicle_test_due=2027-05-26", `
+        "--data-urlencode", "profile_vehicle_insurance_due=2027-06-30", `
+        "--data-urlencode", "profile_vehicle_insurance_company=Test Insurance", `
+        "--data-urlencode", "profile_vehicle_policy=POLICY-123", `
+        "$baseUrl/staff-expenses/"
+    Assert-PortalTest ($headers -match "HTTP/1\.1 303") "Employee vehicle profile was not saved."
+    $vehicleDirectoryFile = Join-Path $storagePath "security\\vehicles.json"
+    $vehicleDirectory = Get-Content -Raw -Encoding utf8 $vehicleDirectoryFile | ConvertFrom-Json
+    Assert-PortalTest ($vehicleDirectory.'12345678'.test_due_date -eq "2027-05-26") "Annual vehicle test date was not stored."
+    Assert-PortalTest ($vehicleDirectory.'12345678'.compulsory_insurance_due_date -eq "2027-06-30") "Annual vehicle insurance date was not stored."
 
     Invoke-PortalCurl "-o", $responseBody, "-b", $employeeCookies, "$baseUrl/staff-expenses/?tab=history" | Out-Null
     $html = Get-Content -Raw -Encoding utf8 $responseBody
@@ -241,7 +272,11 @@ try {
     Invoke-PortalCurl "-o", $responseBody, "-b", $employeeCookies, "$baseUrl/staff-expenses/?tab=new" | Out-Null
     $html = Get-Content -Raw -Encoding utf8 $responseBody
     Assert-PortalTest ($html -match 'name="employee_name"[^>]*value="Integration Worker"') "Employee name was not remembered."
-    Assert-PortalTest ($html -match 'name="employee_phone"[^>]*value="050-0000000"') "Employee phone was not remembered."
+    Assert-PortalTest ($html -match 'name="employee_phone"[^>]*value="050-000-0000"') "Employee phone was not remembered permanently."
+    Assert-PortalTest ($html -match 'name="vehicle_plate"[^>]*value="123-45-678"') "Saved vehicle plate was not prefilled in the expense form."
+    Assert-PortalTest ($html -match 'name="vehicle_model"[^>]*value="Test Car"') "Saved vehicle model was not prefilled in the expense form."
+    Assert-PortalTest ($html -notmatch 'name="profile_vehicle_test_due"') "Annual vehicle test date leaked into the monthly expense form."
+    Assert-PortalTest ($html -notmatch 'name="profile_vehicle_insurance_due"') "Annual vehicle insurance date leaked into the monthly expense form."
     $csrf = Get-CsrfFromHtml $html
     $headers = Invoke-PortalCurl `
         "-D", "-", `
@@ -252,6 +287,7 @@ try {
         "-F", "action=submit_report", `
         "-F", "report_type=travel", `
         "-F", "employee_name=Integration Worker", `
+        "-F", "employee_phone=050-000-0000", `
         "-F", "departure_date=2026-07-20", `
         "-F", "return_date=2026-07-24", `
         "-F", "destination=Berlin", `
