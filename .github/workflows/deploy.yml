@@ -53,8 +53,6 @@ jobs:
     name: Deploy production
     if: github.event_name != 'pull_request'
     needs: validate
-    env:
-      NODE_OPTIONS: --use-system-ca
     runs-on:
       - self-hosted
       - windows
@@ -83,6 +81,8 @@ jobs:
 
       - name: Download validated site artifact
         uses: actions/download-artifact@v4
+        env:
+          NODE_OPTIONS: --use-system-ca
         with:
           name: site-dist-${{ github.sha }}
           path: dist
