@@ -5,6 +5,8 @@ const IFEEL_PORTAL_EMAIL_DOMAIN = 'i-feel.co.il';
 const IFEEL_PORTAL_EMAIL_CODE_TTL = 600;
 const IFEEL_PORTAL_EMAIL_CODE_MAX_ATTEMPTS = 5;
 const IFEEL_PORTAL_EMAIL_CODE_RESEND_SECONDS = 60;
+const IFEEL_PORTAL_EMAIL_SEND_WINDOW = 900;
+const IFEEL_PORTAL_EMAIL_SEND_MAX = 5;
 
 function portal_company_email_domain(): string
 {
@@ -100,6 +102,244 @@ function portal_email_subject(string $subject): string
     return '=?UTF-8?B?' . base64_encode($subject) . '?=';
 }
 
+function portal_smtp_config(): ?array
+{
+    $config = null;
+    if (defined('EXPENSE_PORTAL_SMTP') && is_array(constant('EXPENSE_PORTAL_SMTP'))) {
+        $config = constant('EXPENSE_PORTAL_SMTP');
+    }
+    if (!is_array($config)) {
+        $json = trim((string) getenv('EXPENSE_PORTAL_SMTP_JSON'));
+        $decoded = $json === '' ? null : json_decode($json, true);
+        $config = is_array($decoded) ? $decoded : null;
+    }
+    if (!is_array($config)) {
+        return null;
+    }
+
+    $host = strtolower(trim((string) ($config['host'] ?? '')));
+    $username = trim((string) ($config['username'] ?? ''));
+    $password = (string) ($config['password'] ?? '');
+    $encryption = strtolower(trim((string) ($config['encryption'] ?? 'starttls')));
+    $port = (int) ($config['port'] ?? ($encryption === 'tls' ? 465 : 587));
+    $timeout = max(3, min(30, (int) ($config['timeout'] ?? 10)));
+
+    if (
+        $host === ''
+        || (!filter_var($host, FILTER_VALIDATE_IP) && !preg_match('/^[a-z0-9.-]+$/', $host))
+        || $port < 1
+        || $port > 65535
+        || !in_array($encryption, ['starttls', 'tls'], true)
+        || $username === ''
+        || $password === ''
+    ) {
+        return null;
+    }
+
+    return [
+        'host' => $host,
+        'port' => $port,
+        'encryption' => $encryption,
+        'username' => $username,
+        'password' => $password,
+        'timeout' => $timeout,
+    ];
+}
+
+function portal_mail_transport_mode(): string
+{
+    $mode = '';
+    if (defined('EXPENSE_PORTAL_MAIL_TRANSPORT')) {
+        $mode = strtolower(trim((string) constant('EXPENSE_PORTAL_MAIL_TRANSPORT')));
+    }
+    if ($mode === '') {
+        $mode = strtolower(trim((string) getenv('EXPENSE_PORTAL_MAIL_TRANSPORT')));
+    }
+    if ($mode === '') {
+        return portal_smtp_config() === null ? 'mail' : 'smtp';
+    }
+    return in_array($mode, ['mail', 'smtp'], true) ? $mode : 'unavailable';
+}
+
+function portal_mail_transport_available(): bool
+{
+    $mode = portal_mail_transport_mode();
+    if ($mode === 'smtp') {
+        $config = portal_smtp_config();
+        return $config !== null
+            && function_exists('stream_socket_client')
+            && function_exists('stream_socket_enable_crypto')
+            && extension_loaded('openssl');
+    }
+    return $mode === 'mail' && function_exists('mail');
+}
+
+function portal_smtp_read($stream, array $expectedCodes): string
+{
+    $response = '';
+    for ($lineCount = 0; $lineCount < 50; $lineCount++) {
+        $line = fgets($stream, 4096);
+        if ($line === false) {
+            throw new RuntimeException('SMTP server closed the connection unexpectedly.');
+        }
+        $response .= $line;
+        if (preg_match('/^(\d{3})\s/', $line, $match)) {
+            $code = (int) $match[1];
+            if (!in_array($code, $expectedCodes, true)) {
+                throw new RuntimeException('SMTP server rejected a command with status ' . $code . '.');
+            }
+            return $response;
+        }
+    }
+    throw new RuntimeException('SMTP response was too long.');
+}
+
+function portal_smtp_write($stream, string $command): void
+{
+    $bytes = fwrite($stream, $command . "\r\n");
+    if ($bytes === false || $bytes !== strlen($command) + 2) {
+        throw new RuntimeException('SMTP command could not be sent.');
+    }
+}
+
+function portal_smtp_command($stream, string $command, array $expectedCodes): string
+{
+    portal_smtp_write($stream, $command);
+    return portal_smtp_read($stream, $expectedCodes);
+}
+
+function portal_smtp_send(string $email, string $subject, string $body, string $sender): bool
+{
+    $config = portal_smtp_config();
+    if ($config === null) {
+        throw new RuntimeException('Authenticated SMTP is not configured.');
+    }
+
+    $scheme = $config['encryption'] === 'tls' ? 'tls' : 'tcp';
+    $remote = $scheme . '://' . $config['host'] . ':' . $config['port'];
+    $context = stream_context_create([
+        'ssl' => [
+            'verify_peer' => true,
+            'verify_peer_name' => true,
+            'peer_name' => $config['host'],
+            'allow_self_signed' => false,
+        ],
+    ]);
+
+    $errorNumber = 0;
+    $errorMessage = '';
+    $stream = @stream_socket_client(
+        $remote,
+        $errorNumber,
+        $errorMessage,
+        $config['timeout'],
+        STREAM_CLIENT_CONNECT,
+        $context
+    );
+    if (!is_resource($stream)) {
+        throw new RuntimeException('SMTP connection failed with status ' . $errorNumber . '.');
+    }
+
+    stream_set_timeout($stream, $config['timeout']);
+    try {
+        portal_smtp_read($stream, [220]);
+        portal_smtp_command($stream, 'EHLO i-feel.co.il', [250]);
+
+        if ($config['encryption'] === 'starttls') {
+            portal_smtp_command($stream, 'STARTTLS', [220]);
+            $cryptoEnabled = stream_socket_enable_crypto($stream, true, STREAM_CRYPTO_METHOD_TLS_CLIENT);
+            if ($cryptoEnabled !== true) {
+                throw new RuntimeException('SMTP TLS negotiation failed.');
+            }
+            portal_smtp_command($stream, 'EHLO i-feel.co.il', [250]);
+        }
+
+        portal_smtp_command($stream, 'AUTH LOGIN', [334]);
+        portal_smtp_command($stream, base64_encode($config['username']), [334]);
+        portal_smtp_command($stream, base64_encode($config['password']), [235]);
+        portal_smtp_command($stream, 'MAIL FROM:<' . $sender . '>', [250]);
+        portal_smtp_command($stream, 'RCPT TO:<' . $email . '>', [250, 251]);
+        portal_smtp_command($stream, 'DATA', [354]);
+
+        $headers = [
+            'Date: ' . date(DATE_RFC2822),
+            'Message-ID: <' . bin2hex(random_bytes(16)) . '@i-feel.co.il>',
+            'From: I Feel <' . $sender . '>',
+            'To: <' . $email . '>',
+            'Subject: ' . $subject,
+            'MIME-Version: 1.0',
+            'Content-Type: text/plain; charset=UTF-8',
+            'Content-Transfer-Encoding: 8bit',
+            'X-Mailer: I Feel Staff Expenses Portal',
+        ];
+        $normalizedBody = str_replace(["\r\n", "\r"], "\n", $body);
+        $normalizedBody = preg_replace('/^\./m', '..', $normalizedBody) ?? $normalizedBody;
+        $message = implode("\r\n", $headers)
+            . "\r\n\r\n"
+            . str_replace("\n", "\r\n", $normalizedBody);
+        portal_smtp_write($stream, $message . "\r\n.");
+        portal_smtp_read($stream, [250]);
+        portal_smtp_command($stream, 'QUIT', [221]);
+        return true;
+    } finally {
+        fclose($stream);
+    }
+}
+
+function portal_email_send_limit_file(string $email): string
+{
+    return portal_storage_root()
+        . DIRECTORY_SEPARATOR
+        . 'security'
+        . DIRECTORY_SEPARATOR
+        . 'email-send-'
+        . hash('sha256', portal_client_ip())
+        . '-'
+        . hash('sha256', $email)
+        . '.json';
+}
+
+function portal_email_send_retry_after(string $email): int
+{
+    $data = portal_json_read(portal_email_send_limit_file($email));
+    $now = time();
+    $windowStart = (int) ($data['window_start'] ?? 0);
+    if ($windowStart <= 0 || $now - $windowStart >= IFEEL_PORTAL_EMAIL_SEND_WINDOW) {
+        return 0;
+    }
+
+    $blockedUntil = (int) ($data['blocked_until'] ?? 0);
+    $lastSent = (int) ($data['last_sent'] ?? 0);
+    return max(
+        0,
+        $blockedUntil - $now,
+        IFEEL_PORTAL_EMAIL_CODE_RESEND_SECONDS - ($now - $lastSent)
+    );
+}
+
+function portal_record_email_send_attempt(string $email): void
+{
+    $path = portal_email_send_limit_file($email);
+    $data = portal_json_read($path);
+    $now = time();
+    $windowStart = (int) ($data['window_start'] ?? $now);
+    $count = (int) ($data['count'] ?? 0);
+    if ($now - $windowStart >= IFEEL_PORTAL_EMAIL_SEND_WINDOW) {
+        $windowStart = $now;
+        $count = 0;
+    }
+    $count++;
+
+    portal_json_write($path, [
+        'window_start' => $windowStart,
+        'count' => $count,
+        'last_sent' => $now,
+        'blocked_until' => $count >= IFEEL_PORTAL_EMAIL_SEND_MAX
+            ? $windowStart + IFEEL_PORTAL_EMAIL_SEND_WINDOW
+            : 0,
+    ]);
+}
+
 function portal_send_email_code(string $email, string $code): bool
 {
     $sender = '';
@@ -126,6 +366,13 @@ function portal_send_email_code(string $email, string $code): bool
         '',
         'I Feel',
     ]);
+    if (portal_mail_transport_mode() === 'smtp') {
+        return portal_smtp_send($email, $subject, $body, $sender);
+    }
+    if (portal_mail_transport_mode() !== 'mail' || !function_exists('mail')) {
+        return false;
+    }
+
     $headers = [
         'From: I Feel <' . $sender . '>',
         'Reply-To: ' . $sender,
@@ -152,6 +399,11 @@ function portal_request_email_code(string $input): string
         throw new RuntimeException('הגישה מותרת רק באמצעות כתובת דוא״ל המסתיימת ב-@' . portal_company_email_domain() . '.');
     }
 
+    $retryAfter = portal_email_send_retry_after($email);
+    if ($retryAfter > 0) {
+        throw new RuntimeException('קוד כבר נשלח לאחרונה. ניתן לבקש קוד חדש בעוד כ-' . max(1, $retryAfter) . ' שניות.');
+    }
+
     $existing = portal_email_challenge();
     if (is_array($existing)
         && hash_equals((string) ($existing['email'] ?? ''), $email)
@@ -161,6 +413,7 @@ function portal_request_email_code(string $input): string
     }
 
     $code = str_pad((string) random_int(0, 999999), 6, '0', STR_PAD_LEFT);
+    portal_record_email_send_attempt($email);
     $_SESSION['portal_email_challenge'] = [
         'email' => $email,
         'code_hash' => password_hash($code, PASSWORD_DEFAULT),
@@ -170,7 +423,13 @@ function portal_request_email_code(string $input): string
         'attempts' => 0,
     ];
 
-    if (!portal_send_email_code($email, $code)) {
+    try {
+        $delivered = portal_send_email_code($email, $code);
+    } catch (Throwable $deliveryError) {
+        error_log('[i-feel staff expenses email] ' . $deliveryError->getMessage());
+        $delivered = false;
+    }
+    if (!$delivered) {
         portal_clear_email_challenge();
         portal_audit('email_code_delivery_failed', ['email_hash' => hash('sha256', $email)]);
         throw new RuntimeException('לא ניתן היה לשלוח את קוד הכניסה. יש לנסות שוב או לפנות למנהל המערכת.');

@@ -1,7 +1,6 @@
 DirectoryIndex index.php
 
-# Temporary safe mode while the employee portal is being diagnosed.
-# HTTPS is already enforced by the main site. Do not redirect here because
+# HTTPS is enforced by the main site. Do not redirect again in this directory:
 # reverse-proxy TLS termination can otherwise create a redirect loop.
 
 <IfModule mod_authz_core.c>
@@ -23,3 +22,5 @@ DirectoryIndex index.php
   Header always set X-Frame-Options "DENY"
   Header always set Referrer-Policy "no-referrer"
 </IfModule>
+
+LimitRequestBody 67108864
