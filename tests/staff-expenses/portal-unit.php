@@ -82,6 +82,56 @@ try {
         !portal_employee_has_birthday_this_month($directoryEmployee, 8),
         'Birthday banner would display in the wrong month.'
     );
+    $giftYear = (int) date('Y');
+    portal_save_birthday_gift(
+        'worker@i-feel.co.il',
+        $giftYear,
+        'Test Gift',
+        'A personal birthday message',
+        'TEST-COUPON',
+        'https://example.com/redeem',
+        []
+    );
+    $savedGift = portal_birthday_gift('worker@i-feel.co.il', $giftYear);
+    portal_test_expect(
+        ($savedGift['coupon_code'] ?? '') === 'TEST-COUPON',
+        'Birthday gift coupon was not stored.'
+    );
+    $sentBirthdayEmails = [];
+    $testBirthdayMailer = static function (
+        string $recipient,
+        string $subject,
+        string $body,
+        array $attachments
+    ) use (&$sentBirthdayEmails): bool {
+        $sentBirthdayEmails[] = compact('recipient', 'subject', 'body', 'attachments');
+        return true;
+    };
+    $reminderResult = portal_process_birthday_notifications(
+        new DateTimeImmutable($giftYear . '-07-14 08:00:00', new DateTimeZone('Asia/Jerusalem')),
+        $testBirthdayMailer
+    );
+    portal_test_expect(
+        ($reminderResult['reminders_sent'] ?? 0) === 1
+        && ($sentBirthdayEmails[0]['recipient'] ?? '') === 'oren@i-feel.co.il'
+        && str_contains((string) ($sentBirthdayEmails[0]['body'] ?? ''), 'TEST-COUPON'),
+        'The day-before birthday reminder was not sent to Oren.'
+    );
+    portal_process_birthday_notifications(
+        new DateTimeImmutable($giftYear . '-07-14 10:00:00', new DateTimeZone('Asia/Jerusalem')),
+        $testBirthdayMailer
+    );
+    portal_test_expect(count($sentBirthdayEmails) === 1, 'Birthday reminder was sent more than once.');
+    $greetingResult = portal_process_birthday_notifications(
+        new DateTimeImmutable($giftYear . '-07-15 08:00:00', new DateTimeZone('Asia/Jerusalem')),
+        $testBirthdayMailer
+    );
+    portal_test_expect(
+        ($greetingResult['greetings_sent'] ?? 0) === 1
+        && ($sentBirthdayEmails[1]['recipient'] ?? '') === 'worker@i-feel.co.il'
+        && str_contains((string) ($sentBirthdayEmails[1]['body'] ?? ''), 'TEST-COUPON'),
+        'Birthday greeting and gift were not sent to the employee.'
+    );
 
     portal_test_expect(portal_ini_bytes('12M') === 12 * 1024 * 1024, '12M parsing failed.');
     portal_test_expect(portal_ini_bytes('1G') === 1024 * 1024 * 1024, '1G parsing failed.');

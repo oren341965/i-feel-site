@@ -129,6 +129,9 @@ try {
     if ($action === 'export') {
         portal_handle_export($user);
     }
+    if ($action === 'gift_download') {
+        portal_handle_birthday_gift_download($user);
+    }
 
     $tab = trim((string) ($_GET['tab'] ?? 'new'));
     if (($user['role'] ?? '') !== 'admin' && !in_array($tab, ['new', 'history'], true)) {

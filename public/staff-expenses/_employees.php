@@ -142,6 +142,256 @@ function portal_employee_has_birthday_this_month(array $user, ?int $month = null
     return (int) $entry['birth_month'] === $currentMonth;
 }
 
+function portal_birthday_gifts_file(): string
+{
+    return portal_storage_root() . DIRECTORY_SEPARATOR . 'security' . DIRECTORY_SEPARATOR . 'birthday-gifts.json';
+}
+
+function portal_birthday_gifts(): array
+{
+    return portal_json_read(portal_birthday_gifts_file());
+}
+
+function portal_birthday_gift(string $email, int $year): ?array
+{
+    $email = portal_normalize_company_email($email) ?? '';
+    if ($email === '' || $year < 2026 || $year > 2100) {
+        return null;
+    }
+    $gift = portal_birthday_gifts()[(string) $year][$email] ?? null;
+    return is_array($gift) ? $gift : null;
+}
+
+function portal_birthday_gift_dir(string $email, int $year): string
+{
+    return portal_storage_root()
+        . DIRECTORY_SEPARATOR
+        . 'birthday-gifts'
+        . DIRECTORY_SEPARATOR
+        . $year
+        . DIRECTORY_SEPARATOR
+        . hash('sha256', strtolower($email));
+}
+
+function portal_save_birthday_gift(
+    string $email,
+    int $year,
+    string $title,
+    string $message,
+    string $couponCode,
+    string $redemptionUrl,
+    array $file
+): void {
+    $email = portal_normalize_company_email($email) ?? '';
+    $employee = portal_employee_directory()[$email] ?? null;
+    if (!is_array($employee) || (int) ($employee['birth_month'] ?? 0) === 0) {
+        throw new RuntimeException('יש לבחור עובד עם תאריך יום הולדת שמור.');
+    }
+    if ($year < (int) date('Y') || $year > (int) date('Y') + 2) {
+        throw new RuntimeException('שנת המתנה אינה תקינה.');
+    }
+    if ($title === '') {
+        throw new RuntimeException('יש להזין כותרת למתנה.');
+    }
+    if ($redemptionUrl !== '') {
+        $validatedUrl = filter_var($redemptionUrl, FILTER_VALIDATE_URL);
+        if ($validatedUrl === false || strtolower((string) parse_url($redemptionUrl, PHP_URL_SCHEME)) !== 'https') {
+            throw new RuntimeException('קישור המימוש חייב להיות כתובת HTTPS תקינה.');
+        }
+    }
+
+    $existing = portal_birthday_gift($email, $year);
+    $attachments = portal_save_uploads(portal_birthday_gift_dir($email, $year), $file);
+    $attachment = $attachments[0] ?? ($existing['attachment'] ?? null);
+    if ($couponCode === '' && $redemptionUrl === '' && !is_array($attachment)) {
+        throw new RuntimeException('יש להזין קוד קופון, קישור מימוש או לצרף קובץ מתנה.');
+    }
+
+    $gifts = portal_birthday_gifts();
+    $gifts[(string) $year][$email] = [
+        'title' => portal_substr($title, 0, 160),
+        'message' => portal_substr($message, 0, 1200),
+        'coupon_code' => portal_substr($couponCode, 0, 160),
+        'redemption_url' => portal_substr($redemptionUrl, 0, 500),
+        'attachment' => is_array($attachment) ? $attachment : null,
+        'updated_at' => gmdate('c'),
+        'updated_by' => (string) ($_SESSION['portal_user']['email'] ?? $_SESSION['portal_user']['username'] ?? 'system'),
+    ];
+    portal_json_write(portal_birthday_gifts_file(), $gifts);
+}
+
+function portal_birthday_gift_attachment(string $email, int $year, array $gift): ?array
+{
+    $attachment = $gift['attachment'] ?? null;
+    if (!is_array($attachment)) {
+        return null;
+    }
+    $storageName = basename((string) ($attachment['storage_name'] ?? ''));
+    if ($storageName === '' || $storageName !== (string) ($attachment['storage_name'] ?? '')) {
+        return null;
+    }
+    $path = portal_birthday_gift_dir($email, $year)
+        . DIRECTORY_SEPARATOR
+        . 'files'
+        . DIRECTORY_SEPARATOR
+        . $storageName;
+    if (!is_file($path)) {
+        return null;
+    }
+    return [
+        'path' => $path,
+        'name' => (string) ($attachment['original_name'] ?? 'birthday-gift'),
+        'mime' => (string) ($attachment['mime'] ?? 'application/octet-stream'),
+        'size' => (int) ($attachment['size'] ?? filesize($path)),
+    ];
+}
+
+function portal_birthday_notification_state_file(): string
+{
+    return portal_storage_root() . DIRECTORY_SEPARATOR . 'security' . DIRECTORY_SEPARATOR . 'birthday-notifications.json';
+}
+
+function portal_birthday_date_matches(array $employee, DateTimeImmutable $date): bool
+{
+    return (int) ($employee['birth_day'] ?? 0) === (int) $date->format('j')
+        && (int) ($employee['birth_month'] ?? 0) === (int) $date->format('n');
+}
+
+function portal_birthday_gift_email_body(array $employee, array $gift): string
+{
+    $lines = [
+        'שלום ' . (string) ($employee['name'] ?? '') . ',',
+        '',
+        'מזל טוב ליום הולדתך! 🎉',
+        'כל צוות I Feel מאחל לך יום שמח, בריאות, הצלחה והרבה רגעים טובים.',
+        '',
+        'מחכה לך מתנה אישית באזור העובדים:',
+        'https://i-feel.co.il/staff-expenses/',
+        '',
+        (string) ($gift['title'] ?? 'מתנת יום הולדת'),
+    ];
+    if (trim((string) ($gift['message'] ?? '')) !== '') {
+        $lines[] = (string) $gift['message'];
+    }
+    if (trim((string) ($gift['coupon_code'] ?? '')) !== '') {
+        $lines[] = 'קוד קופון: ' . (string) $gift['coupon_code'];
+    }
+    if (trim((string) ($gift['redemption_url'] ?? '')) !== '') {
+        $lines[] = 'קישור למימוש: ' . (string) $gift['redemption_url'];
+    }
+    $lines[] = '';
+    $lines[] = 'באהבה,';
+    $lines[] = 'כל צוות I Feel';
+    return implode("\r\n", $lines);
+}
+
+function portal_process_birthday_notifications(
+    DateTimeImmutable $now,
+    ?callable $mailer = null
+): array {
+    $mailer ??= static fn(string $email, string $subject, string $body, array $attachments): bool =>
+        portal_send_mail_with_attachments($email, $subject, $body, $attachments);
+    $localNow = $now->setTimezone(new DateTimeZone('Asia/Jerusalem'));
+    $tomorrow = $localNow->modify('+1 day');
+    $year = (int) $localNow->format('Y');
+    $state = portal_json_read(portal_birthday_notification_state_file());
+    $result = ['reminders_sent' => 0, 'greetings_sent' => 0, 'missing_gifts' => 0, 'failed' => 0];
+    $changed = false;
+
+    foreach (portal_employee_directory() as $email => $employee) {
+        if (portal_birthday_date_matches($employee, $tomorrow)) {
+            $token = 'reminder:' . $tomorrow->format('Y') . ':' . $email;
+            if (!isset($state[$token])) {
+                $gift = portal_birthday_gift($email, (int) $tomorrow->format('Y'));
+                $giftStatus = $gift === null
+                    ? 'עדיין לא הוגדרה מתנה. יש להיכנס למסך "עובדים וימי הולדת" ולהעלות קופון.'
+                    : 'המתנה כבר מוכנה במערכת.';
+                $bodyLines = [
+                    'אורן שלום,',
+                    '',
+                    'מחר יום ההולדת של ' . (string) ($employee['name'] ?? '') . '.',
+                    $giftStatus,
+                    '',
+                    'ניהול המתנה:',
+                    'https://i-feel.co.il/staff-expenses/?tab=employees',
+                ];
+                if ($gift !== null) {
+                    $bodyLines[] = '';
+                    $bodyLines[] = 'העתק הברכה והמתנה המתוכננות למחר:';
+                    $bodyLines[] = '--------------------------------';
+                    $bodyLines[] = portal_birthday_gift_email_body($employee, $gift);
+                }
+                $bodyLines[] = '';
+                $bodyLines[] = 'I Feel';
+                $body = implode("\r\n", $bodyLines);
+                if ($mailer('oren@' . portal_company_email_domain(), 'תזכורת: יום הולדת מחר - ' . (string) ($employee['name'] ?? ''), $body, [])) {
+                    $state[$token] = gmdate('c');
+                    $result['reminders_sent']++;
+                    $changed = true;
+                } else {
+                    $result['failed']++;
+                }
+            }
+        }
+
+        if (!portal_birthday_date_matches($employee, $localNow)) {
+            continue;
+        }
+        $token = 'greeting:' . $year . ':' . $email;
+        if (isset($state[$token])) {
+            continue;
+        }
+        $gift = portal_birthday_gift($email, $year);
+        if ($gift === null) {
+            $result['missing_gifts']++;
+            continue;
+        }
+        $attachment = portal_birthday_gift_attachment($email, $year, $gift);
+        $attachments = $attachment === null ? [] : [$attachment];
+        if ($mailer(
+            $email,
+            'מזל טוב ליום ההולדת מכל צוות I Feel 🎉',
+            portal_birthday_gift_email_body($employee, $gift),
+            $attachments
+        )) {
+            $state[$token] = gmdate('c');
+            $result['greetings_sent']++;
+            $changed = true;
+        } else {
+            $result['failed']++;
+        }
+    }
+
+    if ($changed) {
+        portal_json_write(portal_birthday_notification_state_file(), $state);
+    }
+    return $result;
+}
+
+function portal_handle_birthday_gift_download(array $user): never
+{
+    $email = portal_normalize_company_email((string) ($_GET['gift_email'] ?? '')) ?? '';
+    $year = filter_var($_GET['gift_year'] ?? null, FILTER_VALIDATE_INT, ['options' => ['min_range' => 2026, 'max_range' => 2100]]);
+    $viewerEmail = portal_normalize_company_email((string) ($user['email'] ?? '')) ?? '';
+    if ($email === '' || $year === false || (($user['role'] ?? '') !== 'admin' && !hash_equals($viewerEmail, $email))) {
+        http_response_code(403);
+        exit('Forbidden');
+    }
+    $gift = portal_birthday_gift($email, (int) $year);
+    $attachment = $gift === null ? null : portal_birthday_gift_attachment($email, (int) $year, $gift);
+    if ($attachment === null) {
+        http_response_code(404);
+        exit('Not found');
+    }
+    $ascii = preg_replace('/[^A-Za-z0-9._-]/', '_', $attachment['name']) ?: 'birthday-gift';
+    header('Content-Type: ' . $attachment['mime']);
+    header('Content-Length: ' . $attachment['size']);
+    header('Content-Disposition: attachment; filename="' . $ascii . '"; filename*=UTF-8\'\'' . rawurlencode($attachment['name']));
+    portal_audit('birthday_gift_downloaded', ['email_hash' => hash('sha256', $email), 'year' => (int) $year]);
+    readfile($attachment['path']);
+    exit;
+}
+
 function portal_render_birthday_banner(array $user): void
 {
     if (!portal_employee_has_birthday_this_month($user)) {
@@ -150,12 +400,27 @@ function portal_render_birthday_banner(array $user): void
     $entry = portal_employee_directory_entry($user);
     $name = trim((string) ($entry['name'] ?? ''));
     $firstName = preg_split('/\s+/u', $name)[0] ?? $name;
+    $year = (int) (new DateTimeImmutable('now', new DateTimeZone('Asia/Jerusalem')))->format('Y');
+    $gift = portal_birthday_gift((string) ($entry['email'] ?? ''), $year);
     ?>
     <section class="birthday-banner" role="status" aria-label="ברכת יום הולדת">
         <span class="birthday-banner__icon" aria-hidden="true">🎉</span>
         <div>
             <strong>מזל טוב, <?= portal_h($firstName) ?>!</strong>
             <span>זה חודש יום ההולדת שלך. כל צוות I Feel מאחל לך חודש שמח, בריאות והצלחה.</span>
+            <?php if ($gift !== null): ?>
+                <div class="birthday-gift">
+                    <b>🎁 <?= portal_h($gift['title'] ?? 'מתנת יום הולדת') ?></b>
+                    <?php if (($gift['message'] ?? '') !== ''): ?><span><?= nl2br(portal_h($gift['message'])) ?></span><?php endif; ?>
+                    <?php if (($gift['coupon_code'] ?? '') !== ''): ?><code><?= portal_h($gift['coupon_code']) ?></code><?php endif; ?>
+                    <div class="birthday-gift__actions">
+                        <?php if (($gift['redemption_url'] ?? '') !== ''): ?><a class="button button--small button--primary" href="<?= portal_h($gift['redemption_url']) ?>" rel="noopener noreferrer">מימוש המתנה</a><?php endif; ?>
+                        <?php if (is_array($gift['attachment'] ?? null)): ?><a class="button button--small button--secondary" href="<?= portal_h(portal_url(['action' => 'gift_download', 'gift_email' => $entry['email'], 'gift_year' => $year])) ?>">הורדת הקופון</a><?php endif; ?>
+                    </div>
+                </div>
+            <?php else: ?>
+                <span class="birthday-banner__gift-note">המתנה האישית שלך תופיע כאן ביום ההולדת.</span>
+            <?php endif; ?>
         </div>
         <span class="birthday-banner__confetti" aria-hidden="true">🎂</span>
     </section>
@@ -181,17 +446,19 @@ function portal_render_employee_directory_admin(?array $flash): void
             <h2>עובדים במערכת</h2>
             <div class="table-wrap">
                 <table class="records-table">
-                    <thead><tr><th>שם מלא</th><th>דוא"ל</th><th>טלפון</th><th>יום הולדת</th></tr></thead>
+                    <thead><tr><th>שם מלא</th><th>דוא"ל</th><th>טלפון</th><th>יום הולדת</th><th>מתנה <?= (int) date('Y') ?></th></tr></thead>
                     <tbody>
                     <?php if ($employees === []): ?>
-                        <tr><td colspan="4" class="empty-cell">עדיין לא נשמרו פרטי עובדים.</td></tr>
+                        <tr><td colspan="5" class="empty-cell">עדיין לא נשמרו פרטי עובדים.</td></tr>
                     <?php else: ?>
                         <?php foreach ($employees as $employee): ?>
+                            <?php $currentGift = portal_birthday_gift($employee['email'], (int) date('Y')); ?>
                             <tr>
                                 <td><strong><?= portal_h($employee['name']) ?></strong></td>
                                 <td><code><?= portal_h($employee['email']) ?></code></td>
                                 <td><?= portal_h($employee['phone']) ?></td>
                                 <td><?= (int) $employee['birth_day'] > 0 ? portal_h($employee['birth_day'] . '/' . $employee['birth_month']) : 'לא נמסר' ?></td>
+                                <td><span class="status <?= $currentGift !== null ? 'status--approved' : 'status--missing' ?>"><?= $currentGift !== null ? 'מוכנה' : 'חסרה' ?></span></td>
                             </tr>
                         <?php endforeach; ?>
                     <?php endif; ?>
@@ -214,5 +481,52 @@ function portal_render_employee_directory_admin(?array $flash): void
             </form>
         </section>
     </div>
+
+    <section class="detail-card gift-admin-card">
+        <h2>🎁 העלאת מתנת יום הולדת</h2>
+        <p class="muted-text">המתנה תוצג רק לעובד המתאים באזור האישי שלו. ביום ההולדת היא תישלח אליו גם בדוא"ל בשם כל צוות I Feel.</p>
+        <form method="post" enctype="multipart/form-data" class="field-grid field-grid--2">
+            <input type="hidden" name="csrf" value="<?= portal_h(portal_csrf_token()) ?>">
+            <input type="hidden" name="action" value="save_birthday_gift">
+            <input type="hidden" name="MAX_FILE_SIZE" value="<?= IFEEL_PORTAL_MAX_FILE_BYTES ?>">
+            <label class="field">
+                <span>עובד/ת <b>*</b></span>
+                <select name="gift_employee_email" required>
+                    <option value="">בחירה</option>
+                    <?php foreach ($employees as $employee): ?>
+                        <?php if ((int) ($employee['birth_month'] ?? 0) > 0): ?>
+                            <option value="<?= portal_h($employee['email']) ?>"><?= portal_h($employee['name'] . ' — ' . $employee['birth_day'] . '/' . $employee['birth_month']) ?></option>
+                        <?php endif; ?>
+                    <?php endforeach; ?>
+                </select>
+            </label>
+            <label class="field">
+                <span>שנת המתנה <b>*</b></span>
+                <input type="number" name="gift_year" min="<?= (int) date('Y') ?>" max="<?= (int) date('Y') + 2 ?>" value="<?= (int) date('Y') ?>" required>
+            </label>
+            <label class="field field--full">
+                <span>כותרת המתנה <b>*</b></span>
+                <input type="text" name="gift_title" maxlength="160" required placeholder="לדוגמה: ארוחת בוקר זוגית">
+            </label>
+            <label class="field field--full">
+                <span>ברכה אישית</span>
+                <textarea name="gift_message" rows="3" maxlength="1200" placeholder="הודעה שתופיע לעובד ותישלח בדוא״ל"></textarea>
+            </label>
+            <label class="field">
+                <span>קוד קופון</span>
+                <input type="text" name="gift_coupon_code" maxlength="160" autocomplete="off">
+            </label>
+            <label class="field">
+                <span>קישור למימוש</span>
+                <input type="url" name="gift_redemption_url" maxlength="500" placeholder="https://">
+            </label>
+            <label class="field field--full">
+                <span>קובץ קופון — PDF או תמונה</span>
+                <input type="file" name="gift_attachment" accept=".pdf,.jpg,.jpeg,.png,.webp,.heic,.heif,.avif,application/pdf,image/*">
+            </label>
+            <p class="form-note field--full">יש להזין לפחות קוד קופון, קישור מימוש או קובץ מתנה. עדכון חוזר אינו מוחק קבצים קודמים מהשרת.</p>
+            <div class="field--full"><button type="submit" class="button button--primary">שמירת המתנה לעובד</button></div>
+        </form>
+    </section>
     <?php
 }

@@ -178,6 +178,11 @@ input[readonly] { background: #f3f5f8; }
 .birthday-banner div { display: grid; gap: 3px; }
 .birthday-banner strong { font-size: 1.15rem; }
 .birthday-banner span:not(.birthday-banner__icon):not(.birthday-banner__confetti) { font-size: .91rem; }
+.birthday-banner .birthday-gift { position: relative; z-index: 1; margin-top: 11px; padding: 13px 15px; border: 1px solid rgba(132, 83, 0, .18); border-radius: 12px; background: rgba(255, 255, 255, .72); gap: 8px; }
+.birthday-gift code { direction: ltr; display: inline-block; width: fit-content; padding: 7px 11px; border: 1px dashed #c78a19; border-radius: 8px; background: #fff; color: #633c00; font-size: 1rem; font-weight: 900; letter-spacing: .06em; }
+.birthday-gift__actions { display: flex !important; grid-auto-flow: column; justify-content: start; gap: 8px !important; margin-top: 2px; }
+.birthday-banner__gift-note { margin-top: 5px; font-weight: 700; }
+.gift-admin-card { margin-top: 18px; }
 
 .filter-bar { display: flex; align-items: end; gap: 12px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; margin-bottom: 16px; }
 .filter-bar input, .filter-bar select { padding: 9px 10px; min-width: 150px; }
@@ -274,4 +279,6 @@ input[readonly] { background: #f3f5f8; }
     .history-card__summary { grid-column: 1 / -1; grid-row: 2; text-align: right; border-top: 1px solid var(--border); padding-top: 10px; }
     .birthday-banner { grid-template-columns: auto minmax(0, 1fr); padding: 16px; }
     .birthday-banner__confetti { display: none; }
+    .birthday-gift__actions { grid-auto-flow: row; grid-template-columns: 1fr; }
+    .birthday-gift__actions .button { width: 100%; }
 }

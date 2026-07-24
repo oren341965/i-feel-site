@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-const IFEEL_PORTAL_VERSION = '1.1.0';
+const IFEEL_PORTAL_VERSION = '1.2.0';
 const IFEEL_PORTAL_SESSION = 'ifeel_staff_expenses';
 const IFEEL_PORTAL_IDLE_TIMEOUT = 3600;
 const IFEEL_PORTAL_MAX_FILES = 20;
