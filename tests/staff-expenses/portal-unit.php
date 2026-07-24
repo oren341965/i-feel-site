@@ -84,6 +84,17 @@ try {
         !portal_employee_has_birthday_this_month($directoryEmployee, 8),
         'Birthday banner would display in the wrong month.'
     );
+    $savedEmployeeProfile = portal_save_employee_profile(
+        ['email' => 'worker@i-feel.co.il'],
+        'Updated Worker',
+        '+972 54-777-8899'
+    );
+    portal_test_expect(
+        ($savedEmployeeProfile['phone'] ?? '') === '054-777-8899'
+        && ($savedEmployeeProfile['birth_day'] ?? 0) === 15
+        && ($savedEmployeeProfile['birth_month'] ?? 0) === 7,
+        'Permanent employee profile did not normalize the phone or preserve the birthday.'
+    );
     $giftYear = (int) date('Y');
     portal_test_expect(
         portal_normalize_vehicle_plate('123-45-678') === '12345678'
@@ -144,6 +155,26 @@ try {
         && ($sourceVehicle['comprehensive_insurance_due_date'] ?? '') === '2027-06-20'
         && ($sourceVehicle['current_km'] ?? '') === '141174',
         'Google Sheet vehicle fields were not mapped correctly: ' . json_encode($sourceVehicle, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES)
+    );
+    $selfUpdatedVehicle = portal_save_employee_vehicle(
+        ['email' => 'worker@i-feel.co.il'],
+        [
+            'existing_plate' => '12345678',
+            'plate' => '123-45-678',
+            'make_model' => 'Test Car Updated',
+            'year' => '2025',
+            'test_due_date' => '2028-05-26',
+            'insurance_due_date' => '2028-06-30',
+            'insurance_company' => 'Updated Insurance',
+            'policy_number' => 'UPDATED-1',
+            'notes' => 'Annual self-service update',
+        ]
+    );
+    portal_test_expect(
+        ($selfUpdatedVehicle['test_due_date'] ?? '') === '2028-05-26'
+        && ($selfUpdatedVehicle['compulsory_insurance_due_date'] ?? '') === '2028-06-30'
+        && ($selfUpdatedVehicle['employee_email'] ?? '') === 'worker@i-feel.co.il',
+        'Employee annual vehicle update was not saved.'
     );
     portal_save_birthday_gift(
         'worker@i-feel.co.il',
@@ -311,8 +342,8 @@ try {
     portal_test_expect(count($employeeRecords) === 1, 'Employee history exposed another employee record.');
     portal_test_expect(($employeeRecords[0]['id'] ?? '') === $ownRecordId, 'Employee history omitted the employee record.');
     $employeeProfile = portal_employee_profile($employee);
-    portal_test_expect(($employeeProfile['name'] ?? '') === 'Test Worker', 'Employee directory name did not take precedence.');
-    portal_test_expect(($employeeProfile['phone'] ?? '') === '054-111-2233', 'Employee directory phone did not take precedence.');
+    portal_test_expect(($employeeProfile['name'] ?? '') === 'Updated Worker', 'Permanent employee profile name did not take precedence.');
+    portal_test_expect(($employeeProfile['phone'] ?? '') === '054-777-8899', 'Permanent employee profile phone did not take precedence.');
 
     unset($_SESSION['portal_user']);
     $_SESSION['portal_email_challenge'] = [

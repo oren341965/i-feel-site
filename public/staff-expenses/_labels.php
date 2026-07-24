@@ -85,6 +85,7 @@ function portal_nav(string $tab, array $user): void
     <nav class="tabs" aria-label="ניווט אזור עובדים">
         <a href="<?= portal_h(portal_url(['tab' => 'new'])) ?>" class="tab<?= $tab === 'new' ? ' is-active' : '' ?>">דיווח חדש</a>
         <a href="<?= portal_h(portal_url(['tab' => 'history'])) ?>" class="tab<?= $tab === 'history' ? ' is-active' : '' ?>">ההוצאות שלי</a>
+        <a href="<?= portal_h(portal_url(['tab' => 'profile'])) ?>" class="tab<?= $tab === 'profile' ? ' is-active' : '' ?>">הפרטים והרכב שלי</a>
         <a href="<?= portal_h(portal_url(['tab' => 'work'])) ?>" class="tab<?= $tab === 'work' ? ' is-active' : '' ?>">סיום עבודה</a>
         <?php if (($user['role'] ?? '') === 'admin'): ?>
             <a href="<?= portal_h(portal_url(['tab' => 'reports'])) ?>" class="tab<?= $tab === 'reports' ? ' is-active' : '' ?>">דיווחים ומסמכים</a>

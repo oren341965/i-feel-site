@@ -11,6 +11,7 @@ require_once __DIR__ . '/_labels.php';
 require_once __DIR__ . '/_notifications.php';
 require_once __DIR__ . '/_work_reports.php';
 require_once __DIR__ . '/_history.php';
+require_once __DIR__ . '/_profile.php';
 require_once __DIR__ . '/_form.php';
 require_once __DIR__ . '/_admin.php';
 require_once __DIR__ . '/_readiness.php';
@@ -159,10 +160,10 @@ try {
     }
 
     $tab = trim((string) ($_GET['tab'] ?? 'new'));
-    if (($user['role'] ?? '') !== 'admin' && !in_array($tab, ['new', 'history', 'work'], true)) {
+    if (($user['role'] ?? '') !== 'admin' && !in_array($tab, ['new', 'history', 'work', 'profile'], true)) {
         $tab = 'new';
     }
-    if (!in_array($tab, ['new', 'history', 'work', 'work_stats', 'reports', 'employees', 'vehicles'], true)) {
+    if (!in_array($tab, ['new', 'history', 'work', 'profile', 'work_stats', 'reports', 'employees', 'vehicles'], true)) {
         $tab = 'new';
     }
 
@@ -172,6 +173,7 @@ try {
         'reports' => 'דיווחים',
         'employees' => 'פרטי עובדים וימי הולדת',
         'vehicles' => 'רכבי עובדים',
+        'profile' => 'הפרטים והרכב שלי',
         'work' => 'סיום התקנה או שירות',
         'work_stats' => 'סטטיסטיקת עבודות',
         default => 'דיווח חדש',
@@ -179,7 +181,7 @@ try {
     portal_page_start($pageTitle, $user);
     portal_nav($tab, $user);
     portal_render_birthday_banner($user);
-    portal_render_employee_vehicle_card($user);
+    portal_render_profile_completion_notice($user, $tab);
 
     if ($tab === 'new') {
         portal_render_new_form($user, $flash);
@@ -189,6 +191,8 @@ try {
         portal_render_employee_directory_admin($flash);
     } elseif ($tab === 'vehicles') {
         portal_render_vehicle_admin($flash);
+    } elseif ($tab === 'profile') {
+        portal_render_employee_profile_page($user, $flash);
     } elseif ($tab === 'work') {
         portal_render_work_report_form($user, $flash);
     } elseif ($tab === 'work_stats') {

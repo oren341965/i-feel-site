@@ -238,7 +238,40 @@ function portal_handle_post(array $user): never
         portal_redirect();
     }
 
+    if ($action === 'save_employee_profile') {
+        portal_save_employee_profile(
+            $user,
+            portal_post('profile_name', 120),
+            portal_post('profile_phone', 30)
+        );
+        portal_flash_set('success', 'השם ומספר הטלפון נשמרו בפרופיל הקבוע.');
+        portal_redirect(['tab' => 'profile']);
+    }
+
+    if ($action === 'save_employee_vehicle') {
+        portal_save_employee_vehicle($user, [
+            'existing_plate' => portal_post('existing_plate', 20),
+            'plate' => portal_post('profile_vehicle_plate', 20),
+            'make_model' => portal_post('profile_vehicle_model', 160),
+            'year' => portal_post('profile_vehicle_year', 4),
+            'test_due_date' => portal_post('profile_vehicle_test_due', 10),
+            'insurance_due_date' => portal_post('profile_vehicle_insurance_due', 10),
+            'insurance_company' => portal_post('profile_vehicle_insurance_company', 160),
+            'policy_number' => portal_post('profile_vehicle_policy', 160),
+            'notes' => portal_post('profile_vehicle_notes', 600),
+        ]);
+        portal_flash_set('success', 'פרטי הרכב נשמרו. את מועדי הטסט והביטוח יש לעדכן רק בחידוש השנתי.');
+        portal_redirect(['tab' => 'profile']);
+    }
+
     if ($action === 'submit_report') {
+        $savedProfile = portal_save_employee_profile(
+            $user,
+            portal_post('employee_name', 120),
+            portal_post('employee_phone', 30)
+        );
+        $_POST['employee_name'] = $savedProfile['name'];
+        $_POST['employee_phone'] = $savedProfile['phone'];
         $record = portal_build_record($user);
         $emailSent = false;
         try {
