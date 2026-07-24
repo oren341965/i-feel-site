@@ -7,6 +7,9 @@ const IFEEL_PORTAL_EMAIL_CODE_MAX_ATTEMPTS = 5;
 const IFEEL_PORTAL_EMAIL_CODE_RESEND_SECONDS = 60;
 const IFEEL_PORTAL_EMAIL_SEND_WINDOW = 900;
 const IFEEL_PORTAL_EMAIL_SEND_MAX = 5;
+const IFEEL_PORTAL_MAGIC_LINK_TTL = 600;
+const IFEEL_PORTAL_REMEMBER_TTL = 30 * 24 * 60 * 60;
+const IFEEL_PORTAL_REMEMBER_COOKIE = 'ifeel_staff_remember';
 
 function portal_company_email_domain(): string
 {
@@ -92,6 +95,200 @@ function portal_email_challenge(): ?array
 function portal_clear_email_challenge(): void
 {
     unset($_SESSION['portal_email_challenge']);
+}
+
+function portal_public_origin(): string
+{
+    $configured = '';
+    if (defined('EXPENSE_PORTAL_PUBLIC_ORIGIN')) {
+        $configured = rtrim(trim((string) constant('EXPENSE_PORTAL_PUBLIC_ORIGIN')), '/');
+    }
+    if ($configured === '') {
+        $configured = rtrim(trim((string) getenv('EXPENSE_PORTAL_PUBLIC_ORIGIN')), '/');
+    }
+    if ($configured !== '' && preg_match('#^https://[a-z0-9.-]+(?::\d+)?$#i', $configured)) {
+        return $configured;
+    }
+
+    if (portal_is_localhost()) {
+        $host = strtolower(trim((string) ($_SERVER['HTTP_HOST'] ?? 'localhost')));
+        if (preg_match('/^(?:localhost|127\.0\.0\.1)(?::\d+)?$/', $host)) {
+            return 'http://' . $host;
+        }
+    }
+
+    return 'https://i-feel.co.il';
+}
+
+function portal_magic_link_file(string $token): string
+{
+    return portal_storage_root()
+        . DIRECTORY_SEPARATOR
+        . 'security'
+        . DIRECTORY_SEPARATOR
+        . 'magic-link-'
+        . hash('sha256', $token)
+        . '.json';
+}
+
+function portal_create_magic_link(string $email): array
+{
+    $token = bin2hex(random_bytes(32));
+    $path = portal_magic_link_file($token);
+    portal_json_write($path, [
+        'email' => $email,
+        'created_at' => time(),
+        'expires_at' => time() + IFEEL_PORTAL_MAGIC_LINK_TTL,
+    ]);
+
+    return [
+        'url' => portal_public_origin() . portal_url(['login_token' => $token]),
+        'path' => $path,
+    ];
+}
+
+function portal_consume_magic_link(string $token): string
+{
+    $token = strtolower(trim($token));
+    if (!preg_match('/^[a-f0-9]{64}$/', $token)) {
+        throw new RuntimeException('קישור הכניסה אינו תקין. יש לבקש קישור חדש.');
+    }
+
+    $path = portal_magic_link_file($token);
+    if (!is_file($path)) {
+        throw new RuntimeException('קישור הכניסה כבר נוצל או שאינו תקף. יש לבקש קישור חדש.');
+    }
+
+    $claimedPath = $path . '.claimed-' . bin2hex(random_bytes(6));
+    if (!@rename($path, $claimedPath)) {
+        throw new RuntimeException('קישור הכניסה כבר נוצל. יש לבקש קישור חדש.');
+    }
+
+    try {
+        $record = portal_json_read($claimedPath);
+    } finally {
+        @unlink($claimedPath);
+    }
+
+    $email = portal_normalize_company_email((string) ($record['email'] ?? ''));
+    if ($email === null || (int) ($record['expires_at'] ?? 0) < time()) {
+        throw new RuntimeException('תוקף קישור הכניסה פג. יש לבקש קישור חדש.');
+    }
+
+    return $email;
+}
+
+function portal_remember_file(string $token): string
+{
+    return portal_storage_root()
+        . DIRECTORY_SEPARATOR
+        . 'security'
+        . DIRECTORY_SEPARATOR
+        . 'remember-'
+        . hash('sha256', $token)
+        . '.json';
+}
+
+function portal_set_remember_cookie(string $value, int $expiresAt): void
+{
+    setcookie(IFEEL_PORTAL_REMEMBER_COOKIE, $value, [
+        'expires' => $expiresAt,
+        'path' => '/staff-expenses/',
+        'secure' => portal_cookie_secure(),
+        'httponly' => true,
+        'samesite' => 'Lax',
+    ]);
+
+    if ($value === '') {
+        unset($_COOKIE[IFEEL_PORTAL_REMEMBER_COOKIE]);
+    } else {
+        $_COOKIE[IFEEL_PORTAL_REMEMBER_COOKIE] = $value;
+    }
+}
+
+function portal_create_remembered_login(string $email): void
+{
+    $token = bin2hex(random_bytes(32));
+    $expiresAt = time() + IFEEL_PORTAL_REMEMBER_TTL;
+    portal_json_write(portal_remember_file($token), [
+        'email' => $email,
+        'created_at' => time(),
+        'expires_at' => $expiresAt,
+    ]);
+    portal_set_remember_cookie($token, $expiresAt);
+}
+
+function portal_revoke_remembered_login(): void
+{
+    $token = strtolower(trim((string) ($_COOKIE[IFEEL_PORTAL_REMEMBER_COOKIE] ?? '')));
+    if (preg_match('/^[a-f0-9]{64}$/', $token)) {
+        @unlink(portal_remember_file($token));
+    }
+    portal_set_remember_cookie('', time() - 42000);
+}
+
+function portal_complete_email_login(string $email, string $authMethod, bool $remember = true): array
+{
+    $email = portal_normalize_company_email($email);
+    if ($email === null) {
+        throw new RuntimeException('כתובת הדוא״ל אינה מורשית.');
+    }
+
+    $isAdmin = in_array($email, portal_email_admins(), true);
+    $username = $isAdmin ? 'oren' : 'employee';
+    $accounts = portal_users();
+    $account = $accounts[$username] ?? null;
+    if (!is_array($account) || !(bool) ($account['active'] ?? false)) {
+        throw new RuntimeException('הגישה לכתובת זו הושבתה. יש לפנות למנהל המערכת.');
+    }
+
+    portal_clear_login_failures();
+    session_regenerate_id(true);
+    $_SESSION['portal_user'] = [
+        'username' => $username,
+        'display_name' => $isAdmin ? (string) ($account['display_name'] ?? 'אורן לוי') : $email,
+        'role' => $isAdmin ? 'admin' : 'employee',
+        'email' => $email,
+        'auth_method' => $authMethod,
+        'logged_in_at' => time(),
+        'last_activity' => time(),
+    ];
+    portal_clear_email_challenge();
+    unset($_SESSION['portal_csrf']);
+    portal_csrf_token();
+    if ($remember) {
+        portal_revoke_remembered_login();
+        portal_create_remembered_login($email);
+    }
+    portal_audit('email_login_success', [
+        'email_hash' => hash('sha256', $email),
+        'role' => $isAdmin ? 'admin' : 'employee',
+        'auth_method' => $authMethod,
+    ]);
+    return $_SESSION['portal_user'];
+}
+
+function portal_restore_remembered_login(): ?array
+{
+    $token = strtolower(trim((string) ($_COOKIE[IFEEL_PORTAL_REMEMBER_COOKIE] ?? '')));
+    if (!preg_match('/^[a-f0-9]{64}$/', $token)) {
+        return null;
+    }
+
+    $path = portal_remember_file($token);
+    $record = portal_json_read($path);
+    $email = portal_normalize_company_email((string) ($record['email'] ?? ''));
+    if ($email === null || (int) ($record['expires_at'] ?? 0) < time()) {
+        @unlink($path);
+        portal_set_remember_cookie('', time() - 42000);
+        return null;
+    }
+
+    // Rotate persistent credentials whenever they are used to restore a session.
+    @unlink($path);
+    $user = portal_complete_email_login($email, 'remembered_device', false);
+    portal_create_remembered_login($email);
+    return $user;
 }
 
 function portal_email_subject(string $subject): string
@@ -222,9 +419,29 @@ function portal_mail_sender(): string
         : 'no-reply@' . portal_company_email_domain();
 }
 
-function portal_mail_payload(string $body, array $attachments = []): array
+function portal_mail_payload(string $body, array $attachments = [], ?string $htmlBody = null): array
 {
     $normalizedBody = str_replace(["\r\n", "\r"], "\n", $body);
+    if ($attachments === [] && $htmlBody !== null) {
+        $boundary = '=_ifeel_alt_' . bin2hex(random_bytes(16));
+        return [
+            'headers' => ['Content-Type: multipart/alternative; boundary="' . $boundary . '"'],
+            'body' => implode("\r\n", [
+                '--' . $boundary,
+                'Content-Type: text/plain; charset=UTF-8',
+                'Content-Transfer-Encoding: 8bit',
+                '',
+                str_replace("\n", "\r\n", $normalizedBody),
+                '--' . $boundary,
+                'Content-Type: text/html; charset=UTF-8',
+                'Content-Transfer-Encoding: 8bit',
+                '',
+                str_replace(["\r\n", "\r"], "\n", $htmlBody),
+                '--' . $boundary . '--',
+                '',
+            ]),
+        ];
+    }
     if ($attachments === []) {
         return [
             'headers' => [
@@ -275,7 +492,14 @@ function portal_mail_payload(string $body, array $attachments = []): array
     ];
 }
 
-function portal_smtp_send(string $email, string $subject, string $body, string $sender, array $attachments = []): bool
+function portal_smtp_send(
+    string $email,
+    string $subject,
+    string $body,
+    string $sender,
+    array $attachments = [],
+    ?string $htmlBody = null
+): bool
 {
     $config = portal_smtp_config();
     if ($config === null) {
@@ -328,7 +552,7 @@ function portal_smtp_send(string $email, string $subject, string $body, string $
         portal_smtp_command($stream, 'RCPT TO:<' . $email . '>', [250, 251]);
         portal_smtp_command($stream, 'DATA', [354]);
 
-        $payload = portal_mail_payload($body, $attachments);
+        $payload = portal_mail_payload($body, $attachments, $htmlBody);
         $headers = [
             'Date: ' . date(DATE_RFC2822),
             'Message-ID: <' . bin2hex(random_bytes(16)) . '@i-feel.co.il>',
@@ -406,40 +630,59 @@ function portal_record_email_send_attempt(string $email): void
     ]);
 }
 
-function portal_send_email_code(string $email, string $code): bool
+function portal_send_email_code(string $email, string $code, string $magicLink): bool
 {
     $sender = portal_mail_sender();
 
-    $subject = portal_email_subject('קוד כניסה לאזור עובדי I Feel');
+    $subject = portal_email_subject('קישור כניסה לאזור עובדי I Feel');
     $body = implode("\r\n", [
         'שלום,',
         '',
-        'קוד הכניסה שלך לאזור דיווח ההוצאות של I Feel הוא:',
+        'לכניסה מהירה לאזור דיווח ההוצאות של I Feel יש ללחוץ על הקישור:',
+        '',
+        $magicLink,
+        '',
+        'אין צורך להעתיק קוד. הקישור תקף ל-10 דקות ולשימוש פעם אחת בלבד.',
+        '',
+        'אם הקישור אינו נפתח, אפשר לחזור למסך הכניסה ולהקליד את הקוד החלופי:',
         '',
         $code,
         '',
-        'הקוד תקף ל-10 דקות וניתן לשימוש פעם אחת בלבד.',
+        'לאחר הכניסה המכשיר ייזכר למשך 30 יום, עד להתנתקות יזומה.',
         'אם לא ביקשת את הקוד, אין צורך לבצע פעולה.',
         '',
         'I Feel',
     ]);
+    $safeLink = portal_h($magicLink);
+    $safeCode = portal_h($code);
+    $htmlBody = '<!doctype html><html lang="he" dir="rtl"><body style="margin:0;background:#f4f7fb;font-family:Arial,sans-serif;color:#10233f">'
+        . '<div style="max-width:560px;margin:24px auto;background:#fff;border:1px solid #dbe4ef;border-radius:18px;padding:32px;text-align:right">'
+        . '<h1 style="font-size:24px;margin:0 0 16px">כניסה לאזור עובדי I Feel</h1>'
+        . '<p style="font-size:16px;line-height:1.6">לחיצה אחת תכניס אותך ישירות לאזור דיווח ההוצאות.</p>'
+        . '<p style="text-align:center;margin:28px 0"><a href="' . $safeLink . '" style="display:inline-block;background:#1769aa;color:#fff;text-decoration:none;font-weight:bold;padding:14px 24px;border-radius:10px">כניסה לאזור העובדים</a></p>'
+        . '<p style="font-size:14px;line-height:1.6;color:#52657d">הקישור תקף ל־10 דקות ולשימוש פעם אחת בלבד. לאחר הכניסה המכשיר ייזכר למשך 30 יום.</p>'
+        . '<hr style="border:0;border-top:1px solid #e3e9f0;margin:24px 0">'
+        . '<p style="font-size:14px;line-height:1.6;color:#52657d">אם הקישור אינו נפתח, אפשר לחזור למסך הכניסה ולהקליד את הקוד החלופי:</p>'
+        . '<p dir="ltr" style="font-size:28px;font-weight:bold;letter-spacing:6px;text-align:center">' . $safeCode . '</p>'
+        . '<p style="font-size:13px;color:#6b7b90">אם לא ביקשת כניסה, אין צורך לבצע פעולה.</p>'
+        . '</div></body></html>';
     if (portal_mail_transport_mode() === 'smtp') {
-        return portal_smtp_send($email, $subject, $body, $sender);
+        return portal_smtp_send($email, $subject, $body, $sender, [], $htmlBody);
     }
     if (portal_mail_transport_mode() !== 'mail' || !function_exists('mail')) {
         return false;
     }
 
+    $payload = portal_mail_payload($body, [], $htmlBody);
     $headers = [
         'From: I Feel <' . $sender . '>',
         'Reply-To: ' . $sender,
         'MIME-Version: 1.0',
-        'Content-Type: text/plain; charset=UTF-8',
-        'Content-Transfer-Encoding: 8bit',
         'X-Mailer: I Feel Staff Expenses Portal',
     ];
+    $headers = array_merge($headers, $payload['headers']);
 
-    return mail($email, $subject, $body, implode("\r\n", $headers));
+    return mail($email, $subject, (string) $payload['body'], implode("\r\n", $headers));
 }
 
 function portal_send_mail_with_attachments(
@@ -507,14 +750,16 @@ function portal_request_email_code(string $input): string
         'expires_at' => time() + IFEEL_PORTAL_EMAIL_CODE_TTL,
         'attempts' => 0,
     ];
+    $magicLink = portal_create_magic_link($email);
 
     try {
-        $delivered = portal_send_email_code($email, $code);
+        $delivered = portal_send_email_code($email, $code, (string) $magicLink['url']);
     } catch (Throwable $deliveryError) {
         error_log('[i-feel staff expenses email] ' . $deliveryError->getMessage());
         $delivered = false;
     }
     if (!$delivered) {
+        @unlink((string) $magicLink['path']);
         portal_clear_email_challenge();
         portal_audit('email_code_delivery_failed', ['email_hash' => hash('sha256', $email)]);
         throw new RuntimeException('לא ניתן היה לשלוח את קוד הכניסה. יש לנסות שוב או לפנות למנהל המערכת.');
@@ -555,32 +800,7 @@ function portal_verify_email_code(string $input): array
         throw new RuntimeException('קוד הכניסה שגוי. נותרו ' . (IFEEL_PORTAL_EMAIL_CODE_MAX_ATTEMPTS - $challenge['attempts']) . ' ניסיונות.');
     }
 
-    $email = (string) $challenge['email'];
-    $isAdmin = in_array($email, portal_email_admins(), true);
-    $username = $isAdmin ? 'oren' : 'employee';
-    $accounts = portal_users();
-    $account = $accounts[$username] ?? null;
-    if (!is_array($account) || !(bool) ($account['active'] ?? false)) {
-        portal_clear_email_challenge();
-        throw new RuntimeException('הגישה לכתובת זו הושבתה. יש לפנות למנהל המערכת.');
-    }
-
-    portal_clear_login_failures();
-    session_regenerate_id(true);
-    $_SESSION['portal_user'] = [
-        'username' => $username,
-        'display_name' => $isAdmin ? (string) ($account['display_name'] ?? 'אורן לוי') : $email,
-        'role' => $isAdmin ? 'admin' : 'employee',
-        'email' => $email,
-        'auth_method' => 'company_email_code',
-        'logged_in_at' => time(),
-        'last_activity' => time(),
-    ];
-    portal_clear_email_challenge();
-    unset($_SESSION['portal_csrf']);
-    portal_csrf_token();
-    portal_audit('email_login_success', ['email_hash' => hash('sha256', $email), 'role' => $isAdmin ? 'admin' : 'employee']);
-    return $_SESSION['portal_user'];
+    return portal_complete_email_login((string) $challenge['email'], 'company_email_code');
 }
 
 function portal_render_email_entry(?string $error = null, string $email = ''): never
@@ -592,7 +812,7 @@ function portal_render_email_entry(?string $error = null, string $email = ''): n
         <img src="/assets/ifeel-logo.png" alt="I Feel" class="login-logo">
         <div class="security-mark" aria-hidden="true">●</div>
         <h1>כניסה לאזור העובדים</h1>
-        <p>יש להזין כתובת דוא״ל ארגונית של I Feel. קוד חד-פעמי יישלח לתיבת הדואר ורק לאחר אימותו תיפתח הגישה לדוח.</p>
+        <p>יש להזין כתובת דוא״ל ארגונית של I Feel. יישלח אליה קישור כניסה מהיר, ללא צורך בהעתקת קוד.</p>
         <?php if ($error !== null): ?>
             <div class="alert alert--error" role="alert"><?= portal_h($error) ?></div>
         <?php endif; ?>
@@ -606,9 +826,9 @@ function portal_render_email_entry(?string $error = null, string $email = ''): n
                 <span>דוא״ל I Feel</span>
                 <input type="email" name="email" autocomplete="email" required maxlength="160" dir="ltr" placeholder="name@<?= portal_h(portal_company_email_domain()) ?>" value="<?= portal_h($email) ?>" <?= $blocked > 0 ? 'disabled' : '' ?>>
             </label>
-            <button type="submit" class="button button--primary button--wide" <?= $blocked > 0 ? 'disabled' : '' ?>>שליחת קוד כניסה</button>
+            <button type="submit" class="button button--primary button--wide" <?= $blocked > 0 ? 'disabled' : '' ?>>שליחת קישור כניסה</button>
         </form>
-        <p class="login-note">כתובות שאינן מסתיימות ב-@<?= portal_h(portal_company_email_domain()) ?> אינן מקבלות גישה. הזנת כתובת בלבד אינה מספיקה: חובה לאמת את הקוד שנשלח אליה.</p>
+        <p class="login-note">הקישור תקף ל־10 דקות ולשימוש פעם אחת בלבד. לאחר הכניסה המכשיר ייזכר למשך 30 יום. קוד בן 6 ספרות מצורף כחלופה.</p>
     </section>
     <?php
     portal_page_end();
@@ -630,7 +850,8 @@ function portal_render_email_code(?string $error = null): never
         <img src="/assets/ifeel-logo.png" alt="I Feel" class="login-logo">
         <div class="security-mark" aria-hidden="true">●</div>
         <h1>אימות כתובת הדוא״ל</h1>
-        <p>קוד בן 6 ספרות נשלח אל <strong dir="ltr"><?= portal_h($email) ?></strong>. הקוד תקף לעוד כ-<?= (int) ceil($remaining / 60) ?> דקות.</p>
+        <p>קישור כניסה נשלח אל <strong dir="ltr"><?= portal_h($email) ?></strong>. אפשר ללחוץ עליו ישירות מתוך Gmail, בלי לחזור למסך הזה.</p>
+        <p class="login-note">אם הקישור אינו נפתח, אפשר להקליד את הקוד החלופי בן 6 הספרות. הקוד תקף לעוד כ-<?= (int) ceil($remaining / 60) ?> דקות.</p>
         <?php if ($error !== null): ?>
             <div class="alert alert--error" role="alert"><?= portal_h($error) ?></div>
         <?php endif; ?>

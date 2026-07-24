@@ -5,6 +5,8 @@ function portal_render_new_form(array $user, ?array $flash): void
 {
     $today = date('Y-m-d');
     $profile = portal_employee_profile($user);
+    $employeeVehicles = portal_vehicles_for_employee($user);
+    $primaryVehicle = $employeeVehicles[0] ?? [];
     portal_render_flash($flash);
     ?>
     <section class="page-heading">
@@ -28,7 +30,7 @@ function portal_render_new_form(array $user, ?array $flash): void
         <section class="form-card">
             <div class="form-card__header">
                 <span class="step">1</span>
-                <div><h2>מי מדווח ומה סוג ההוצאה?</h2><p>הדוא״ל מזוהה מהכניסה. השם והטלפון נשמרים מהדיווח האחרון כדי לחסוך הקלדה.</p></div>
+                <div><h2>מי מדווח ומה סוג ההוצאה?</h2><p>הדוא״ל מזוהה מהכניסה. השם והטלפון נשמרים בפרופיל הקבוע וממולאים אוטומטית.</p></div>
             </div>
             <div class="field-grid field-grid--2">
                 <label class="field field--full">
@@ -48,8 +50,8 @@ function portal_render_new_form(array $user, ?array $flash): void
                     <input type="email" name="employee_email" maxlength="160" autocomplete="email" value="<?= portal_h($profile['email']) ?>" readonly>
                 </label>
                 <label class="field">
-                    <span>טלפון</span>
-                    <input type="tel" name="employee_phone" maxlength="60" autocomplete="tel" inputmode="tel" value="<?= portal_h($profile['phone']) ?>">
+                    <span>טלפון <b>*</b></span>
+                    <input type="tel" name="employee_phone" required maxlength="30" autocomplete="tel" inputmode="tel" value="<?= portal_h($profile['phone']) ?>">
                 </label>
             </div>
         </section>
@@ -57,7 +59,7 @@ function portal_render_new_form(array $user, ?array $flash): void
         <section class="form-card report-section" data-report-section="vehicle">
             <div class="form-card__header">
                 <span class="step">2</span>
-                <div><h2>נסיעות והוצאות רכב בארץ</h2><p>מתאים לדלק, טיפולים, חניה, אגרות, מוניות, תחבורה ציבורית והשכרת רכב. מספר רכב נדרש רק אם הוא רלוונטי להוצאה.</p></div>
+                <div><h2>נסיעות והוצאות רכב בארץ</h2><p>מתאים לדלק, טיפולים, חניה, אגרות, מוניות, תחבורה ציבורית והשכרת רכב. פרטי הרכב הקבועים ממולאים אוטומטית; תאריכי טסט וביטוח מתעדכנים פעם בשנה במסך <a href="<?= portal_h(portal_url(['tab' => 'profile'])) ?>">הפרטים והרכב שלי</a>.</p></div>
             </div>
             <div class="field-grid field-grid--3">
                 <label class="field">
@@ -83,15 +85,15 @@ function portal_render_new_form(array $user, ?array $flash): void
                 </label>
                 <label class="field">
                     <span>מספר רכב — אם רלוונטי</span>
-                    <input type="text" name="vehicle_plate" maxlength="40" placeholder="לדוגמה: 00-000-00">
+                    <input type="text" name="vehicle_plate" maxlength="40" placeholder="לדוגמה: 00-000-00" value="<?= portal_h(portal_format_vehicle_plate((string) ($primaryVehicle['plate'] ?? ''))) ?>">
                 </label>
                 <label class="field">
                     <span>דגם / תיאור הרכב</span>
-                    <input type="text" name="vehicle_model" maxlength="120" placeholder="לדוגמה: סקודה אוקטביה">
+                    <input type="text" name="vehicle_model" maxlength="120" placeholder="לדוגמה: סקודה אוקטביה" value="<?= portal_h($primaryVehicle['make_model'] ?? '') ?>">
                 </label>
                 <label class="field">
                     <span>נהג/ת</span>
-                    <input type="text" name="vehicle_driver" maxlength="120">
+                    <input type="text" name="vehicle_driver" maxlength="120" value="<?= portal_h($profile['name']) ?>">
                 </label>
                 <label class="field">
                     <span>קילומטראז׳</span>

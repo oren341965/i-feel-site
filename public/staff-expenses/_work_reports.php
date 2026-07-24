@@ -1,6 +1,11 @@
 <?php
 declare(strict_types=1);
 
+function portal_installation_form_url(): string
+{
+    return 'https://www.superform.spot-nik.com/form/63cd90e88ff7b62b2d669d62';
+}
+
 function portal_work_report_recipient(): string
 {
     $configured = portal_normalize_company_email(trim((string) getenv('EXPENSE_PORTAL_WORK_REPORT_RECIPIENT')));

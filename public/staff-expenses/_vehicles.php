@@ -167,14 +167,8 @@ function portal_parse_vehicle_directory_text(string $text): array
         if ($plate === null) {
             throw new RuntimeException('שורה ' . $row . ': מספר הרכב חייב להכיל 7 או 8 ספרות.');
         }
-        if ($makeModel === '') {
-            throw new RuntimeException('שורה ' . $row . ': חובה להזין יצרן ודגם.');
-        }
         if ($year !== 0 && ($year < 1980 || $year > (int) date('Y') + 1)) {
             throw new RuntimeException('שורה ' . $row . ': שנת הרכב אינה תקינה.');
-        }
-        if (!$sourceFormat && $testDueDate === '' && $insuranceDueDate === '') {
-            throw new RuntimeException('שורה ' . $row . ': יש להזין לפחות תאריך טסט או תאריך חידוש ביטוח.');
         }
 
         $entries[$plate] = [
@@ -231,6 +225,74 @@ function portal_vehicles_for_employee(array $user): array
         portal_vehicle_directory(),
         static fn(array $vehicle): bool => hash_equals($email, (string) ($vehicle['employee_email'] ?? ''))
     ));
+}
+
+function portal_save_employee_vehicle(array $user, array $input): array
+{
+    $email = portal_normalize_company_email((string) ($user['email'] ?? ''));
+    if ($email === null) {
+        throw new RuntimeException('לא נמצאה כתובת דוא״ל מאומתת לעובד.');
+    }
+
+    $existingPlate = portal_normalize_vehicle_plate((string) ($input['existing_plate'] ?? ''));
+    $plate = portal_normalize_vehicle_plate((string) ($input['plate'] ?? ''));
+    $makeModel = trim((string) ($input['make_model'] ?? ''));
+    $yearRaw = trim((string) ($input['year'] ?? ''));
+    $year = $yearRaw === '' ? 0 : (int) $yearRaw;
+    $testDueDate = portal_normalize_vehicle_date((string) ($input['test_due_date'] ?? ''), 1);
+    $insuranceDueDate = portal_normalize_vehicle_date((string) ($input['insurance_due_date'] ?? ''), 1);
+
+    if ($plate === null) {
+        throw new RuntimeException('מספר הרכב חייב להכיל 7 או 8 ספרות.');
+    }
+    if ($makeModel === '') {
+        throw new RuntimeException('יש להזין יצרן ודגם של הרכב.');
+    }
+    if ($year !== 0 && ($year < 1980 || $year > (int) date('Y') + 1)) {
+        throw new RuntimeException('שנת הרכב אינה תקינה.');
+    }
+    if ($testDueDate === '' || $insuranceDueDate === '') {
+        throw new RuntimeException('יש להזין תאריך טסט ותאריך חידוש ביטוח.');
+    }
+
+    $vehicles = portal_vehicle_directory();
+    if ($existingPlate !== null) {
+        $existing = $vehicles[$existingPlate] ?? null;
+        if (!is_array($existing) || !hash_equals($email, (string) ($existing['employee_email'] ?? ''))) {
+            throw new RuntimeException('הרכב המבוקש אינו משויך לחשבון העובד המחובר.');
+        }
+        if (!hash_equals($existingPlate, $plate)) {
+            throw new RuntimeException('לא ניתן לשנות מספר רכב קיים. יש לפנות לאורן במקרה של החלפת רכב.');
+        }
+    } elseif (isset($vehicles[$plate])) {
+        throw new RuntimeException('מספר הרכב כבר קיים במערכת ומשויך לעובד אחר.');
+    }
+
+    $existing = $vehicles[$plate] ?? [];
+    $vehicles[$plate] = array_merge($existing, [
+        'plate' => $plate,
+        'employee_email' => $email,
+        'make_model' => portal_substr($makeModel, 0, 160),
+        'year' => $year,
+        'test_due_date' => $testDueDate,
+        'test_due_label' => $testDueDate,
+        'test_status' => '',
+        'insurance_due_date' => $insuranceDueDate,
+        'compulsory_insurance_due_date' => $insuranceDueDate,
+        'compulsory_insurance_due_label' => $insuranceDueDate,
+        'compulsory_insurance_status' => '',
+        'insurance_company' => portal_substr(trim((string) ($input['insurance_company'] ?? '')), 0, 160),
+        'policy_number' => portal_substr(trim((string) ($input['policy_number'] ?? '')), 0, 160),
+        'notes' => portal_substr(trim((string) ($input['notes'] ?? '')), 0, 600),
+        'last_update' => date('Y-m-d'),
+        'updated_at' => gmdate('c'),
+    ]);
+    portal_json_write(portal_vehicle_directory_file(), $vehicles);
+    portal_audit('employee_vehicle_saved', [
+        'email_hash' => hash('sha256', $email),
+        'plate_hash' => hash('sha256', $plate),
+    ]);
+    return $vehicles[$plate];
 }
 
 function portal_vehicle_deadline_status(string $date, ?DateTimeImmutable $now = null): array
@@ -456,7 +518,7 @@ function portal_render_vehicle_admin(?array $flash): void
 
     <section class="detail-card">
         <h2>ייבוא או עדכון רכבים</h2>
-        <p>אפשר להדביק ישירות את עמודות A–V מהגיליון "תקינות רכבים", או להשתמש בתבנית המצומצמת. לפני הייבוא, העובד חייב להופיע במסך "עובדים וימי הולדת".</p>
+            <p>אפשר להדביק ישירות את עמודות A–V מהגיליון "תקינות רכבים", או להשתמש בתבנית המצומצמת. לפני הייבוא, העובד חייב להופיע במסך "עובדים וימי הולדת". לשיוך ראשוני מספיקים דוא"ל העובד ומספר הרכב; את הדגם, הטסט והביטוח העובד יכול להשלים לאחר הכניסה.</p>
         <form method="post" class="form-grid">
             <input type="hidden" name="csrf" value="<?= portal_h(portal_csrf_token()) ?>">
             <input type="hidden" name="action" value="import_vehicle_directory">
@@ -464,7 +526,7 @@ function portal_render_vehicle_admin(?array $flash): void
                 <span>נתוני רכבים</span>
                 <textarea name="vehicle_directory_text" rows="9" maxlength="60000" required placeholder="דוא״ל עובד	מספר רכב	יצרן ודגם	שנתון	תוקף טסט	תוקף ביטוח	חברת ביטוח	מספר פוליסה	הערות"></textarea>
             </label>
-            <p class="form-note field--full">המערכת מזהה אוטומטית את מבנה הגיליון הקיים. בתבנית המצומצמת העמודות הן: דוא"ל עובד, מספר רכב, יצרן ודגם, שנתון, תוקף טסט, תוקף ביטוח, חברת ביטוח, מספר פוליסה והערות.</p>
+            <p class="form-note field--full">המערכת מזהה אוטומטית את מבנה הגיליון הקיים. בתבנית המצומצמת רק דוא"ל העובד ומספר הרכב הם חובה. יתר העמודות הן: יצרן ודגם, שנתון, תוקף טסט, תוקף ביטוח, חברת ביטוח, מספר פוליסה והערות.</p>
             <div class="field--full"><button type="submit" class="button button--primary">שמירת הרכבים</button></div>
         </form>
     </section>

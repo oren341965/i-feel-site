@@ -123,6 +123,38 @@ function portal_import_employee_directory(string $text): int
     return count($incoming);
 }
 
+function portal_save_employee_profile(array $user, string $name, string $phone): array
+{
+    $email = portal_normalize_company_email((string) ($user['email'] ?? ''));
+    $name = trim($name);
+    $normalizedPhone = portal_normalize_israeli_mobile($phone);
+    if ($email === null) {
+        throw new RuntimeException('לא נמצאה כתובת דוא״ל מאומתת לעובד.');
+    }
+    if ($name === '') {
+        throw new RuntimeException('יש להזין שם מלא.');
+    }
+    if ($normalizedPhone === null) {
+        throw new RuntimeException('יש להזין מספר טלפון נייד ישראלי תקין.');
+    }
+
+    $employees = portal_employee_directory();
+    $existing = $employees[$email] ?? [];
+    $employees[$email] = [
+        'name' => portal_substr($name, 0, 120),
+        'email' => $email,
+        'phone' => $normalizedPhone,
+        'birth_day' => (int) ($existing['birth_day'] ?? 0),
+        'birth_month' => (int) ($existing['birth_month'] ?? 0),
+        'updated_at' => gmdate('c'),
+    ];
+    portal_json_write(portal_employee_directory_file(), $employees);
+
+    $_SESSION['portal_user']['display_name'] = $employees[$email]['name'];
+    portal_audit('employee_profile_saved', ['email_hash' => hash('sha256', $email)]);
+    return $employees[$email];
+}
+
 function portal_employee_directory_entry(array $user): ?array
 {
     $email = portal_normalize_company_email((string) ($user['email'] ?? ''));

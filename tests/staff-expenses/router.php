@@ -12,6 +12,7 @@ if (
 $path = parse_url((string) ($_SERVER['REQUEST_URI'] ?? '/'), PHP_URL_PATH);
 if (!in_array($path, [
     '/staff-expenses/__test-challenge',
+    '/staff-expenses/__test-magic-link',
     '/staff-expenses/__test-login',
 ], true)) {
     return false;
@@ -42,6 +43,18 @@ if ($path === '/staff-expenses/__test-challenge') {
         'attempts' => 0,
     ];
     echo json_encode(['ok' => true, 'csrf' => portal_csrf_token()]);
+    exit;
+}
+
+if ($path === '/staff-expenses/__test-magic-link') {
+    $email = portal_normalize_company_email((string) ($_GET['email'] ?? 'worker@i-feel.co.il'));
+    if ($email === null) {
+        http_response_code(400);
+        echo json_encode(['ok' => false]);
+        exit;
+    }
+    $magicLink = portal_create_magic_link($email);
+    echo json_encode(['ok' => true, 'url' => $magicLink['url']]);
     exit;
 }
 

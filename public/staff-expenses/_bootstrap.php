@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-const IFEEL_PORTAL_VERSION = '1.4.0';
+const IFEEL_PORTAL_VERSION = '1.5.0';
 const IFEEL_PORTAL_SESSION = 'ifeel_staff_expenses';
 const IFEEL_PORTAL_IDLE_TIMEOUT = 3600;
 const IFEEL_PORTAL_MAX_FILES = 20;
@@ -472,6 +472,9 @@ function portal_login(string $username, string $password): bool
 
 function portal_logout(): void
 {
+    if (function_exists('portal_revoke_remembered_login')) {
+        portal_revoke_remembered_login();
+    }
     $_SESSION = [];
     if (ini_get('session.use_cookies')) {
         $params = session_get_cookie_params();

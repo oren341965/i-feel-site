@@ -6,11 +6,13 @@ require_once __DIR__ . '/_ui.php';
 require_once __DIR__ . '/_email_auth.php';
 require_once __DIR__ . '/_employees.php';
 require_once __DIR__ . '/_vehicles.php';
+require_once __DIR__ . '/_vehicle_portal.php';
 require_once __DIR__ . '/_records.php';
 require_once __DIR__ . '/_labels.php';
 require_once __DIR__ . '/_notifications.php';
 require_once __DIR__ . '/_work_reports.php';
 require_once __DIR__ . '/_history.php';
+require_once __DIR__ . '/_profile.php';
 require_once __DIR__ . '/_form.php';
 require_once __DIR__ . '/_admin.php';
 require_once __DIR__ . '/_readiness.php';
@@ -61,7 +63,27 @@ try {
         portal_render_maintenance_page($requestId);
     }
 
+    $loginToken = $_GET['login_token'] ?? '';
+    if (!is_array($loginToken) && trim((string) $loginToken) !== '') {
+        try {
+            $magicEmail = portal_consume_magic_link((string) $loginToken);
+            portal_complete_email_login($magicEmail, 'company_email_magic_link');
+            portal_redirect(['tab' => 'new']);
+        } catch (Throwable $magicLinkError) {
+            portal_render_email_entry($magicLinkError->getMessage());
+        }
+    }
+
     $user = portal_current_user();
+    if ($user === null) {
+        try {
+            $user = portal_restore_remembered_login();
+        } catch (Throwable $rememberError) {
+            error_log('[i-feel staff expenses remember] restore_failed');
+            portal_revoke_remembered_login();
+            $user = null;
+        }
+    }
 
     if ($user === null) {
         if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
@@ -139,11 +161,14 @@ try {
     }
 
     $tab = trim((string) ($_GET['tab'] ?? 'new'));
-    if (($user['role'] ?? '') !== 'admin' && !in_array($tab, ['new', 'history', 'work'], true)) {
+    if (($user['role'] ?? '') !== 'admin' && !in_array($tab, ['new', 'history', 'work', 'profile', 'my_vehicle'], true)) {
         $tab = 'new';
     }
-    if (!in_array($tab, ['new', 'history', 'work', 'work_stats', 'reports', 'employees', 'vehicles'], true)) {
+    if (!in_array($tab, ['new', 'history', 'work', 'profile', 'my_vehicle', 'work_stats', 'reports', 'employees', 'vehicles'], true)) {
         $tab = 'new';
+    }
+    if ($tab === 'my_vehicle' && portal_vehicles_for_employee($user) === []) {
+        $tab = 'profile';
     }
 
     $flash = portal_flash_take();
@@ -152,6 +177,8 @@ try {
         'reports' => 'דיווחים',
         'employees' => 'פרטי עובדים וימי הולדת',
         'vehicles' => 'רכבי עובדים',
+        'profile' => 'הפרטים והרכב שלי',
+        'my_vehicle' => 'הרכב שלי',
         'work' => 'סיום התקנה או שירות',
         'work_stats' => 'סטטיסטיקת עבודות',
         default => 'דיווח חדש',
@@ -159,7 +186,7 @@ try {
     portal_page_start($pageTitle, $user);
     portal_nav($tab, $user);
     portal_render_birthday_banner($user);
-    portal_render_employee_vehicle_card($user);
+    portal_render_profile_completion_notice($user, $tab);
 
     if ($tab === 'new') {
         portal_render_new_form($user, $flash);
@@ -169,6 +196,10 @@ try {
         portal_render_employee_directory_admin($flash);
     } elseif ($tab === 'vehicles') {
         portal_render_vehicle_admin($flash);
+    } elseif ($tab === 'profile') {
+        portal_render_employee_profile_page($user, $flash);
+    } elseif ($tab === 'my_vehicle') {
+        portal_render_my_vehicle_page($user, $flash);
     } elseif ($tab === 'work') {
         portal_render_work_report_form($user, $flash);
     } elseif ($tab === 'work_stats') {
