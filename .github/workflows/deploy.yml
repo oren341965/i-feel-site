@@ -72,7 +72,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 24
           cache: npm
 
       - name: Install deployment dependencies
@@ -90,6 +90,7 @@ jobs:
       - name: Upload dist through persistent explicit FTPS
         shell: cmd
         env:
+          NODE_OPTIONS: --use-system-ca
           IFEEL_FTP_SERVER: ${{ secrets.IFEEL_FTP_SERVER || secrets.FTP_SERVER }}
           IFEEL_FTP_USERNAME: ${{ secrets.IFEEL_FTP_USERNAME || secrets.FTP_USERNAME }}
           IFEEL_FTP_PASSWORD: ${{ secrets.IFEEL_FTP_PASSWORD || secrets.FTP_PASSWORD }}
