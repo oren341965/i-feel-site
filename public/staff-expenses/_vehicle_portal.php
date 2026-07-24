@@ -221,7 +221,7 @@ function portal_render_my_vehicle_page(array $user, ?array $flash): void
     <?php foreach ($vehicles as $vehicle): ?>
         <?php $latest = portal_vehicle_latest_monthly((string) $vehicle['plate']); $status = portal_vehicle_overall_status($vehicle, $latest); ?>
         <section class="vehicle-hero">
-            <div><p class="eyebrow"><?= portal_h(portal_employee_profile($user)['name']) ?></p><h2><?= portal_h($vehicle['make_model']) ?></h2><b dir="ltr"><?= portal_h(portal_format_vehicle_plate($vehicle['plate'])) ?></b></div>
+            <div><p class="eyebrow"><?= portal_h(portal_employee_profile($user)['name']) ?></p><h2><?= portal_h($vehicle['make_model'] ?: 'פרטי הדגם טרם הושלמו') ?></h2><b dir="ltr"><?= portal_h(portal_format_vehicle_plate($vehicle['plate'])) ?></b></div>
             <span class="status <?= portal_h($status['class']) ?>"><?= portal_h($status['label']) ?></span>
             <div class="vehicle-hero__stats"><span>טסט<strong><?= portal_h($vehicle['test_due_date'] ?: 'חסר') ?></strong></span><span>ביטוח חובה<strong><?= portal_h($vehicle['compulsory_insurance_due_date'] ?: 'חסר') ?></strong></span><span>ק״מ אחרון<strong><?= portal_h($vehicle['current_km'] ?: 'טרם דווח') ?></strong></span><span>עדכון אחרון<strong><?= portal_h($vehicle['last_update'] ?: 'טרם דווח') ?></strong></span></div>
         </section>

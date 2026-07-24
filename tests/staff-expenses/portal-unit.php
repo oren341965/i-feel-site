@@ -117,6 +117,20 @@ try {
         portal_vehicles_for_employee(['email' => 'other@i-feel.co.il']) === [],
         'Employee vehicle lookup exposed another employee vehicle.'
     );
+    $minimalVehicleRows = implode("\n", [
+        "דוא״ל עובד\tמספר רכב",
+        "worker@i-feel.co.il\t876-54-321",
+    ]);
+    $minimalVehicleAssignment = portal_parse_vehicle_directory_text($minimalVehicleRows);
+    portal_test_expect(
+        count($minimalVehicleAssignment) === 1
+        && ($minimalVehicleAssignment['87654321']['employee_email'] ?? '') === 'worker@i-feel.co.il',
+        'Email and plate should be sufficient for an initial vehicle assignment.'
+    );
+    portal_test_expect(
+        portal_installation_form_url() === 'https://www.superform.spot-nik.com/form/63cd90e88ff7b62b2d669d62',
+        'Monday installation form URL is incorrect.'
+    );
     $sentVehicleEmails = [];
     $vehicleMailer = static function (
         string $recipient,

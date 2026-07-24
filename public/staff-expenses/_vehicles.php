@@ -167,14 +167,8 @@ function portal_parse_vehicle_directory_text(string $text): array
         if ($plate === null) {
             throw new RuntimeException('שורה ' . $row . ': מספר הרכב חייב להכיל 7 או 8 ספרות.');
         }
-        if ($makeModel === '') {
-            throw new RuntimeException('שורה ' . $row . ': חובה להזין יצרן ודגם.');
-        }
         if ($year !== 0 && ($year < 1980 || $year > (int) date('Y') + 1)) {
             throw new RuntimeException('שורה ' . $row . ': שנת הרכב אינה תקינה.');
-        }
-        if (!$sourceFormat && $testDueDate === '' && $insuranceDueDate === '') {
-            throw new RuntimeException('שורה ' . $row . ': יש להזין לפחות תאריך טסט או תאריך חידוש ביטוח.');
         }
 
         $entries[$plate] = [
@@ -524,7 +518,7 @@ function portal_render_vehicle_admin(?array $flash): void
 
     <section class="detail-card">
         <h2>ייבוא או עדכון רכבים</h2>
-        <p>אפשר להדביק ישירות את עמודות A–V מהגיליון "תקינות רכבים", או להשתמש בתבנית המצומצמת. לפני הייבוא, העובד חייב להופיע במסך "עובדים וימי הולדת".</p>
+            <p>אפשר להדביק ישירות את עמודות A–V מהגיליון "תקינות רכבים", או להשתמש בתבנית המצומצמת. לפני הייבוא, העובד חייב להופיע במסך "עובדים וימי הולדת". לשיוך ראשוני מספיקים דוא"ל העובד ומספר הרכב; את הדגם, הטסט והביטוח העובד יכול להשלים לאחר הכניסה.</p>
         <form method="post" class="form-grid">
             <input type="hidden" name="csrf" value="<?= portal_h(portal_csrf_token()) ?>">
             <input type="hidden" name="action" value="import_vehicle_directory">
@@ -532,7 +526,7 @@ function portal_render_vehicle_admin(?array $flash): void
                 <span>נתוני רכבים</span>
                 <textarea name="vehicle_directory_text" rows="9" maxlength="60000" required placeholder="דוא״ל עובד	מספר רכב	יצרן ודגם	שנתון	תוקף טסט	תוקף ביטוח	חברת ביטוח	מספר פוליסה	הערות"></textarea>
             </label>
-            <p class="form-note field--full">המערכת מזהה אוטומטית את מבנה הגיליון הקיים. בתבנית המצומצמת העמודות הן: דוא"ל עובד, מספר רכב, יצרן ודגם, שנתון, תוקף טסט, תוקף ביטוח, חברת ביטוח, מספר פוליסה והערות.</p>
+            <p class="form-note field--full">המערכת מזהה אוטומטית את מבנה הגיליון הקיים. בתבנית המצומצמת רק דוא"ל העובד ומספר הרכב הם חובה. יתר העמודות הן: יצרן ודגם, שנתון, תוקף טסט, תוקף ביטוח, חברת ביטוח, מספר פוליסה והערות.</p>
             <div class="field--full"><button type="submit" class="button button--primary">שמירת הרכבים</button></div>
         </form>
     </section>

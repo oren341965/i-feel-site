@@ -192,6 +192,7 @@ try {
     Assert-PortalTest ($html -match 'name="action" value="submit_report"') "Employee report form was not rendered."
     Assert-PortalTest ($html -match 'href="[^"]*tab=history[^"]*"') "Employee history navigation was not rendered."
     Assert-PortalTest ($html -match 'href="[^"]*tab=profile[^"]*"') "Permanent profile and vehicle navigation was not rendered."
+    Assert-PortalTest ($html -match 'href="https://www\.superform\.spot-nik\.com/form/63cd90e88ff7b62b2d669d62"') "Monday installation form link was not rendered."
     Assert-PortalTest ($html -match 'name="employee_email"[^>]*value="worker@i-feel\.co\.il"[^>]*readonly') "Verified email was not prefilled as read-only."
     Assert-PortalTest ($html -match 'name="employee_phone"[^>]*required') "Permanent employee phone was not required."
     Assert-PortalTest ($html -notmatch 'name="department"') "Department field was not removed."
