@@ -30,6 +30,9 @@ function portal_normalize_vehicle_date(string $value, int $row): string
     if ($value === '') {
         return '';
     }
+    if (preg_match('/^(\d{1,2})([\/.])(\d{1,2})\2(\d{2})$/', $value, $shortYear)) {
+        $value = $shortYear[1] . $shortYear[2] . $shortYear[3] . $shortYear[2] . '20' . $shortYear[4];
+    }
 
     foreach (['Y-m-d', 'd/m/Y', 'd.m.Y'] as $format) {
         $date = DateTimeImmutable::createFromFormat('!' . $format, $value, new DateTimeZone('Asia/Jerusalem'));
@@ -39,6 +42,15 @@ function portal_normalize_vehicle_date(string $value, int $row): string
         }
     }
     throw new RuntimeException('שורה ' . $row . ': תאריך הטסט או הביטוח אינו תקין. יש להשתמש בפורמט DD/MM/YYYY או YYYY-MM-DD.');
+}
+
+function portal_vehicle_source_date(string $value): string
+{
+    try {
+        return portal_normalize_vehicle_date($value, 0);
+    } catch (Throwable) {
+        return '';
+    }
 }
 
 function portal_vehicle_directory(): array
@@ -59,10 +71,23 @@ function portal_vehicle_directory(): array
             'employee_email' => $email,
             'make_model' => trim((string) ($entry['make_model'] ?? '')),
             'year' => (int) ($entry['year'] ?? 0),
+            'license_due_date' => trim((string) ($entry['license_due_date'] ?? '')),
+            'license_due_label' => trim((string) ($entry['license_due_label'] ?? '')),
+            'license_status' => trim((string) ($entry['license_status'] ?? '')),
             'test_due_date' => trim((string) ($entry['test_due_date'] ?? '')),
+            'test_due_label' => trim((string) ($entry['test_due_label'] ?? '')),
+            'test_status' => trim((string) ($entry['test_status'] ?? '')),
             'insurance_due_date' => trim((string) ($entry['insurance_due_date'] ?? '')),
+            'compulsory_insurance_due_date' => trim((string) ($entry['compulsory_insurance_due_date'] ?? $entry['insurance_due_date'] ?? '')),
+            'compulsory_insurance_due_label' => trim((string) ($entry['compulsory_insurance_due_label'] ?? '')),
+            'compulsory_insurance_status' => trim((string) ($entry['compulsory_insurance_status'] ?? '')),
+            'comprehensive_insurance_due_date' => trim((string) ($entry['comprehensive_insurance_due_date'] ?? '')),
+            'comprehensive_insurance_due_label' => trim((string) ($entry['comprehensive_insurance_due_label'] ?? '')),
+            'comprehensive_insurance_status' => trim((string) ($entry['comprehensive_insurance_status'] ?? '')),
             'insurance_company' => trim((string) ($entry['insurance_company'] ?? '')),
             'policy_number' => trim((string) ($entry['policy_number'] ?? '')),
+            'current_km' => trim((string) ($entry['current_km'] ?? '')),
+            'last_update' => trim((string) ($entry['last_update'] ?? '')),
             'notes' => trim((string) ($entry['notes'] ?? '')),
             'updated_at' => (string) ($entry['updated_at'] ?? ''),
         ];
@@ -81,6 +106,7 @@ function portal_parse_vehicle_directory_text(string $text): array
     $employees = portal_employee_directory();
     $entries = [];
     $lines = preg_split('/\R/u', $text) ?: [];
+    $sourceFormat = false;
     foreach ($lines as $lineNumber => $line) {
         if (trim($line) === '') {
             continue;
@@ -89,6 +115,10 @@ function portal_parse_vehicle_directory_text(string $text): array
         $columns = array_map('trim', str_getcsv($line, $delimiter, '"', ''));
         $first = portal_lower((string) ($columns[0] ?? ''));
         $second = portal_lower((string) ($columns[1] ?? ''));
+        if ($lineNumber === 0 && trim($first) === 'שם' && trim($second) === 'אימייל') {
+            $sourceFormat = true;
+            continue;
+        }
         if ($lineNumber === 0 && (
             str_contains($first, 'email')
             || str_contains($first, 'דוא')
@@ -100,13 +130,36 @@ function portal_parse_vehicle_directory_text(string $text): array
         }
 
         $row = $lineNumber + 1;
-        $email = portal_normalize_company_email((string) ($columns[0] ?? ''));
-        $plate = portal_normalize_vehicle_plate((string) ($columns[1] ?? ''));
-        $makeModel = trim((string) ($columns[2] ?? ''));
-        $yearRaw = trim((string) ($columns[3] ?? ''));
-        $year = $yearRaw === '' ? 0 : (int) $yearRaw;
-        $testDueDate = portal_normalize_vehicle_date((string) ($columns[4] ?? ''), $row);
-        $insuranceDueDate = portal_normalize_vehicle_date((string) ($columns[5] ?? ''), $row);
+        if ($sourceFormat) {
+            $email = portal_normalize_company_email((string) ($columns[1] ?? ''));
+            $plate = portal_normalize_vehicle_plate((string) ($columns[3] ?? ''));
+            $makeModel = trim((string) ($columns[2] ?? ''));
+            $year = preg_match('/\b(19|20)\d{2}\b/', $makeModel, $yearMatch) ? (int) $yearMatch[0] : 0;
+            $licenseDueLabel = trim((string) ($columns[5] ?? ''));
+            $testDueLabel = trim((string) ($columns[8] ?? ''));
+            $compulsoryDueLabel = trim((string) ($columns[10] ?? ''));
+            $comprehensiveDueLabel = trim((string) ($columns[12] ?? ''));
+            $licenseDueDate = portal_vehicle_source_date($licenseDueLabel);
+            $testDueDate = portal_vehicle_source_date($testDueLabel);
+            $compulsoryDueDate = portal_vehicle_source_date($compulsoryDueLabel);
+            $comprehensiveDueDate = portal_vehicle_source_date($comprehensiveDueLabel);
+            $insuranceDueDate = $compulsoryDueDate;
+        } else {
+            $email = portal_normalize_company_email((string) ($columns[0] ?? ''));
+            $plate = portal_normalize_vehicle_plate((string) ($columns[1] ?? ''));
+            $makeModel = trim((string) ($columns[2] ?? ''));
+            $yearRaw = trim((string) ($columns[3] ?? ''));
+            $year = $yearRaw === '' ? 0 : (int) $yearRaw;
+            $licenseDueLabel = '';
+            $testDueLabel = trim((string) ($columns[4] ?? ''));
+            $compulsoryDueLabel = trim((string) ($columns[5] ?? ''));
+            $comprehensiveDueLabel = '';
+            $licenseDueDate = '';
+            $testDueDate = portal_normalize_vehicle_date($testDueLabel, $row);
+            $compulsoryDueDate = portal_normalize_vehicle_date($compulsoryDueLabel, $row);
+            $comprehensiveDueDate = '';
+            $insuranceDueDate = $compulsoryDueDate;
+        }
 
         if ($email === null || !isset($employees[$email])) {
             throw new RuntimeException('שורה ' . $row . ': דוא"ל העובד אינו קיים בספר העובדים.');
@@ -120,7 +173,7 @@ function portal_parse_vehicle_directory_text(string $text): array
         if ($year !== 0 && ($year < 1980 || $year > (int) date('Y') + 1)) {
             throw new RuntimeException('שורה ' . $row . ': שנת הרכב אינה תקינה.');
         }
-        if ($testDueDate === '' && $insuranceDueDate === '') {
+        if (!$sourceFormat && $testDueDate === '' && $insuranceDueDate === '') {
             throw new RuntimeException('שורה ' . $row . ': יש להזין לפחות תאריך טסט או תאריך חידוש ביטוח.');
         }
 
@@ -129,11 +182,24 @@ function portal_parse_vehicle_directory_text(string $text): array
             'employee_email' => $email,
             'make_model' => portal_substr($makeModel, 0, 160),
             'year' => $year,
+            'license_due_date' => $licenseDueDate,
+            'license_due_label' => $licenseDueLabel,
+            'license_status' => $sourceFormat ? portal_substr((string) ($columns[4] ?? ''), 0, 60) : '',
             'test_due_date' => $testDueDate,
+            'test_due_label' => $testDueLabel,
+            'test_status' => $sourceFormat ? portal_substr((string) ($columns[7] ?? ''), 0, 60) : '',
             'insurance_due_date' => $insuranceDueDate,
-            'insurance_company' => portal_substr((string) ($columns[6] ?? ''), 0, 160),
-            'policy_number' => portal_substr((string) ($columns[7] ?? ''), 0, 160),
-            'notes' => portal_substr((string) ($columns[8] ?? ''), 0, 600),
+            'compulsory_insurance_due_date' => $compulsoryDueDate,
+            'compulsory_insurance_due_label' => $compulsoryDueLabel,
+            'compulsory_insurance_status' => $sourceFormat ? portal_substr((string) ($columns[9] ?? ''), 0, 60) : '',
+            'comprehensive_insurance_due_date' => $comprehensiveDueDate,
+            'comprehensive_insurance_due_label' => $comprehensiveDueLabel,
+            'comprehensive_insurance_status' => $sourceFormat ? portal_substr((string) ($columns[11] ?? ''), 0, 60) : '',
+            'insurance_company' => $sourceFormat ? '' : portal_substr((string) ($columns[6] ?? ''), 0, 160),
+            'policy_number' => $sourceFormat ? '' : portal_substr((string) ($columns[7] ?? ''), 0, 160),
+            'current_km' => $sourceFormat ? portal_substr((string) ($columns[17] ?? ''), 0, 30) : '',
+            'last_update' => $sourceFormat ? portal_substr((string) ($columns[19] ?? ''), 0, 30) : '',
+            'notes' => portal_substr((string) ($columns[$sourceFormat ? 18 : 8] ?? ''), 0, 600),
             'updated_at' => gmdate('c'),
         ];
     }
@@ -189,6 +255,18 @@ function portal_vehicle_deadline_status(string $date, ?DateTimeImmutable $now = 
     return ['label' => 'בתוקף', 'class' => 'status--approved', 'days' => $days];
 }
 
+function portal_vehicle_source_status(string $sourceStatus): array
+{
+    $sourceStatus = trim($sourceStatus);
+    if ($sourceStatus === '') {
+        return ['label' => 'חסר תאריך מדויק', 'class' => 'status--review', 'days' => null];
+    }
+    if (str_contains($sourceStatus, 'לא תקף')) {
+        return ['label' => $sourceStatus, 'class' => 'status--missing', 'days' => null];
+    }
+    return ['label' => $sourceStatus, 'class' => 'status--approved', 'days' => null];
+}
+
 function portal_vehicle_notification_state_file(): string
 {
     return portal_storage_root() . DIRECTORY_SEPARATOR . 'security' . DIRECTORY_SEPARATOR . 'vehicle-notifications.json';
@@ -214,7 +292,12 @@ function portal_process_vehicle_notifications(
         if (!is_array($employee)) {
             continue;
         }
-        foreach (['test_due_date' => 'טסט שנתי', 'insurance_due_date' => 'חידוש ביטוח'] as $field => $label) {
+        foreach ([
+            'license_due_date' => 'חידוש רישיון',
+            'test_due_date' => 'טסט שנתי',
+            'compulsory_insurance_due_date' => 'חידוש ביטוח חובה',
+            'comprehensive_insurance_due_date' => 'חידוש ביטוח מקיף',
+        ] as $field => $label) {
             $date = (string) ($vehicle[$field] ?? '');
             if ($date === '') {
                 continue;
@@ -270,13 +353,21 @@ function portal_process_vehicle_notifications(
     return $result;
 }
 
-function portal_render_vehicle_deadline(string $label, string $date): void
+function portal_render_vehicle_deadline(
+    string $label,
+    string $date,
+    string $displayLabel = '',
+    string $sourceStatus = ''
+): void
 {
-    $status = portal_vehicle_deadline_status($date);
+    $status = $date !== '' ? portal_vehicle_deadline_status($date) : portal_vehicle_source_status($sourceStatus);
+    $displayDate = $date !== ''
+        ? (new DateTimeImmutable($date))->format('d/m/Y')
+        : ($displayLabel !== '' ? $displayLabel : 'לא הוזן');
     ?>
     <div class="vehicle-deadline">
         <span><?= portal_h($label) ?></span>
-        <strong><?= $date === '' ? 'לא הוזן' : portal_h((new DateTimeImmutable($date))->format('d/m/Y')) ?></strong>
+        <strong><?= portal_h($displayDate) ?></strong>
         <span class="status <?= portal_h($status['class']) ?>"><?= portal_h($status['label']) ?></span>
     </div>
     <?php
@@ -302,9 +393,13 @@ function portal_render_employee_vehicle_card(array $user): void
                         <b dir="ltr"><?= portal_h(portal_format_vehicle_plate($vehicle['plate'])) ?></b>
                     </div>
                     <div class="vehicle-deadlines">
-                        <?php portal_render_vehicle_deadline('טסט שנתי', $vehicle['test_due_date']); ?>
-                        <?php portal_render_vehicle_deadline('חידוש ביטוח', $vehicle['insurance_due_date']); ?>
+                        <?php portal_render_vehicle_deadline('רישיון', $vehicle['license_due_date'], $vehicle['license_due_label'], $vehicle['license_status']); ?>
+                        <?php portal_render_vehicle_deadline('טסט שנתי', $vehicle['test_due_date'], $vehicle['test_due_label'], $vehicle['test_status']); ?>
+                        <?php portal_render_vehicle_deadline('ביטוח חובה', $vehicle['compulsory_insurance_due_date'], $vehicle['compulsory_insurance_due_label'], $vehicle['compulsory_insurance_status']); ?>
+                        <?php portal_render_vehicle_deadline('ביטוח מקיף', $vehicle['comprehensive_insurance_due_date'], $vehicle['comprehensive_insurance_due_label'], $vehicle['comprehensive_insurance_status']); ?>
                     </div>
+                    <?php if ($vehicle['current_km'] !== ''): ?><p class="vehicle-card__meta">קילומטראז' בעדכון האחרון: <b><?= portal_h(number_format((float) preg_replace('/[^\d.]/', '', $vehicle['current_km']))) ?></b></p><?php endif; ?>
+                    <?php if ($vehicle['last_update'] !== ''): ?><p class="vehicle-card__meta">עדכון אחרון: <?= portal_h($vehicle['last_update']) ?></p><?php endif; ?>
                     <?php if ($vehicle['insurance_company'] !== '' || $vehicle['policy_number'] !== ''): ?>
                         <p class="vehicle-card__meta">ביטוח: <?= portal_h(trim($vehicle['insurance_company'] . ($vehicle['policy_number'] !== '' ? ' · פוליסה ' . $vehicle['policy_number'] : ''))) ?></p>
                     <?php endif; ?>
@@ -335,22 +430,22 @@ function portal_render_vehicle_admin(?array $flash): void
         <h2>רכבים במערכת</h2>
         <div class="table-wrap">
             <table class="records-table">
-                <thead><tr><th>עובד</th><th>רכב</th><th>מספר</th><th>טסט</th><th>ביטוח</th><th>חברת ביטוח / פוליסה</th></tr></thead>
+                <thead><tr><th>עובד</th><th>רכב</th><th>מספר</th><th>רישיון</th><th>טסט</th><th>ביטוח חובה</th><th>ביטוח מקיף</th><th>ק"מ / עדכון</th></tr></thead>
                 <tbody>
                 <?php if ($vehicles === []): ?>
-                    <tr><td colspan="6" class="empty-cell">עדיין לא נשמרו רכבים.</td></tr>
+                    <tr><td colspan="8" class="empty-cell">עדיין לא נשמרו רכבים.</td></tr>
                 <?php else: ?>
                     <?php foreach ($vehicles as $vehicle): ?>
                         <?php $employee = $employees[$vehicle['employee_email']] ?? ['name' => '', 'email' => $vehicle['employee_email']]; ?>
-                        <?php $testStatus = portal_vehicle_deadline_status($vehicle['test_due_date']); ?>
-                        <?php $insuranceStatus = portal_vehicle_deadline_status($vehicle['insurance_due_date']); ?>
                         <tr>
                             <td><strong><?= portal_h($employee['name']) ?></strong><small><?= portal_h($employee['email']) ?></small></td>
                             <td><?= portal_h($vehicle['make_model']) ?><?= (int) $vehicle['year'] > 0 ? ' · ' . (int) $vehicle['year'] : '' ?></td>
                             <td dir="ltr"><?= portal_h(portal_format_vehicle_plate($vehicle['plate'])) ?></td>
-                            <td><?= $vehicle['test_due_date'] === '' ? '—' : portal_h((new DateTimeImmutable($vehicle['test_due_date']))->format('d/m/Y')) ?><br><span class="status <?= portal_h($testStatus['class']) ?>"><?= portal_h($testStatus['label']) ?></span></td>
-                            <td><?= $vehicle['insurance_due_date'] === '' ? '—' : portal_h((new DateTimeImmutable($vehicle['insurance_due_date']))->format('d/m/Y')) ?><br><span class="status <?= portal_h($insuranceStatus['class']) ?>"><?= portal_h($insuranceStatus['label']) ?></span></td>
-                            <td><?= portal_h(trim($vehicle['insurance_company'] . ($vehicle['policy_number'] !== '' ? ' · ' . $vehicle['policy_number'] : ''))) ?: '—' ?></td>
+                            <td><?php portal_render_vehicle_deadline('רישיון', $vehicle['license_due_date'], $vehicle['license_due_label'], $vehicle['license_status']); ?></td>
+                            <td><?php portal_render_vehicle_deadline('טסט', $vehicle['test_due_date'], $vehicle['test_due_label'], $vehicle['test_status']); ?></td>
+                            <td><?php portal_render_vehicle_deadline('חובה', $vehicle['compulsory_insurance_due_date'], $vehicle['compulsory_insurance_due_label'], $vehicle['compulsory_insurance_status']); ?></td>
+                            <td><?php portal_render_vehicle_deadline('מקיף', $vehicle['comprehensive_insurance_due_date'], $vehicle['comprehensive_insurance_due_label'], $vehicle['comprehensive_insurance_status']); ?></td>
+                            <td><?= $vehicle['current_km'] !== '' ? portal_h($vehicle['current_km']) . ' ק"מ' : '—' ?><?= $vehicle['last_update'] !== '' ? '<br><small>' . portal_h($vehicle['last_update']) . '</small>' : '' ?></td>
                         </tr>
                     <?php endforeach; ?>
                 <?php endif; ?>
@@ -361,7 +456,7 @@ function portal_render_vehicle_admin(?array $flash): void
 
     <section class="detail-card">
         <h2>ייבוא או עדכון רכבים</h2>
-        <p>יש להדביק נתונים מ־Excel או Google Sheets. לפני הייבוא, העובד חייב להופיע במסך "עובדים וימי הולדת".</p>
+        <p>אפשר להדביק ישירות את עמודות A–V מהגיליון "תקינות רכבים", או להשתמש בתבנית המצומצמת. לפני הייבוא, העובד חייב להופיע במסך "עובדים וימי הולדת".</p>
         <form method="post" class="form-grid">
             <input type="hidden" name="csrf" value="<?= portal_h(portal_csrf_token()) ?>">
             <input type="hidden" name="action" value="import_vehicle_directory">
@@ -369,14 +464,14 @@ function portal_render_vehicle_admin(?array $flash): void
                 <span>נתוני רכבים</span>
                 <textarea name="vehicle_directory_text" rows="9" maxlength="60000" required placeholder="דוא״ל עובד	מספר רכב	יצרן ודגם	שנתון	תוקף טסט	תוקף ביטוח	חברת ביטוח	מספר פוליסה	הערות"></textarea>
             </label>
-            <p class="form-note field--full">עמודות: דוא"ל עובד, מספר רכב, יצרן ודגם, שנתון, תוקף טסט, תוקף ביטוח, חברת ביטוח, מספר פוליסה והערות. תאריכים בפורמט DD/MM/YYYY.</p>
+            <p class="form-note field--full">המערכת מזהה אוטומטית את מבנה הגיליון הקיים. בתבנית המצומצמת העמודות הן: דוא"ל עובד, מספר רכב, יצרן ודגם, שנתון, תוקף טסט, תוקף ביטוח, חברת ביטוח, מספר פוליסה והערות.</p>
             <div class="field--full"><button type="submit" class="button button--primary">שמירת הרכבים</button></div>
         </form>
     </section>
 
     <section class="detail-card">
         <h2>מועדי תזכורת אוטומטיים</h2>
-        <p>העובד ואורן יקבלו דוא"ל 30, 14, 7 ויום אחד לפני המועד, ביום המועד, וכן יום, שבוע וחודש לאחר מועד שחלף. כל תזכורת נשלחת פעם אחת בלבד.</p>
+        <p>העובד ואורן יקבלו דוא"ל על רישיון, טסט, ביטוח חובה וביטוח מקיף — 30, 14, 7 ויום אחד לפני המועד, ביום המועד, וכן יום, שבוע וחודש לאחר מועד שחלף. תזכורת נשלחת רק כאשר בגיליון קיים תאריך מלא ומדויק.</p>
     </section>
     <?php
 }

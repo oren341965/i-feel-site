@@ -193,7 +193,9 @@ input[readonly] { background: #f3f5f8; }
 .vehicle-card__title strong { font-size: 1.05rem; }
 .vehicle-card__title span, .vehicle-card__meta { color: var(--muted); font-size: .87rem; }
 .vehicle-card__title > b { direction: ltr; padding: 7px 10px; border: 1px solid #b6c9da; border-radius: 7px; background: #f8fafc; letter-spacing: .05em; white-space: nowrap; }
-.vehicle-deadlines { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 9px; }
+.vehicle-deadlines { display: grid; grid-template-columns: repeat(auto-fit, minmax(135px, 1fr)); gap: 9px; }
+.records-table .vehicle-deadline { min-width: 125px; padding: 8px; }
+.records-table .vehicle-deadline > span:first-child { display: none; }
 .vehicle-deadline { display: grid; gap: 5px; align-content: start; padding: 11px; border-radius: 10px; background: #f4f7fb; }
 .vehicle-deadline > span:first-child { color: var(--muted); font-size: .8rem; }
 .vehicle-deadline .status { width: fit-content; }

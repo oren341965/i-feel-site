@@ -130,6 +130,20 @@ try {
         $vehicleMailer
     );
     portal_test_expect(count($sentVehicleEmails) === 4, 'Vehicle reminders were sent more than once.');
+    $sourceVehicleRows = implode("\n", [
+        "שם\tאימייל\tרכב\tמספר רכב\tרישיון תקף\tתוקף רישיון\tמספר רישיון\tטסט תקף\tתוקף טסט\tביטוח חובה תקף\tתוקף ביטוח חובה\tביטוח מקיף תקף\tתוקף ביטוח מקיף\tחשבוניות הוגשו\tחודש חשבוניות\tסכום חשבוניות\tפירוט חשבוניות\tק\"מ נוכחי\tהערות\tעדכון אחרון\tחודש מילוי\tתזכורת נשלחה",
+        "Test Worker\tworker@i-feel.co.il\tTest Car 2024\t123-45-678\tתקף\t15.08.2031\t1234567\tתקף\t26/05/27\tלא תקף\t30.06.26\tתקף\t20.6.27\tכן\t\t\t\t141174\tTest note\t13/07/2026\t7/2026\t",
+    ]);
+    portal_test_expect(portal_import_vehicle_directory($sourceVehicleRows) === 1, 'Google Sheet vehicle format was not imported.');
+    $sourceVehicle = portal_vehicles_for_employee($directoryEmployee)[0] ?? [];
+    portal_test_expect(
+        ($sourceVehicle['license_due_date'] ?? '') === '2031-08-15'
+        && ($sourceVehicle['test_due_date'] ?? '') === '2027-05-26'
+        && ($sourceVehicle['compulsory_insurance_due_date'] ?? '') === '2026-06-30'
+        && ($sourceVehicle['comprehensive_insurance_due_date'] ?? '') === '2027-06-20'
+        && ($sourceVehicle['current_km'] ?? '') === '141174',
+        'Google Sheet vehicle fields were not mapped correctly: ' . json_encode($sourceVehicle, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES)
+    );
     portal_save_birthday_gift(
         'worker@i-feel.co.il',
         $giftYear,
