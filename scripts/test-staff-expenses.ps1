@@ -162,6 +162,11 @@ try {
     Invoke-PortalCurl "-o", $responseBody, "-b", $employeeCookies, "$baseUrl/staff-expenses/?tab=new" | Out-Null
     $html = Get-Content -Raw -Encoding utf8 $responseBody
     Assert-PortalTest ($html -match 'name="action" value="submit_report"') "Employee report form was not rendered."
+    Assert-PortalTest ($html -match 'href="[^"]*tab=history[^"]*"') "Employee history navigation was not rendered."
+    Assert-PortalTest ($html -match 'name="employee_email"[^>]*value="worker@i-feel\.co\.il"[^>]*readonly') "Verified email was not prefilled as read-only."
+    Assert-PortalTest ($html -notmatch 'name="department"') "Department field was not removed."
+    Assert-PortalTest ($html -match 'id="camera-receipts"[^>]*capture="environment"') "Mobile receipt camera input is missing."
+    Assert-PortalTest ($html -match '<option value="purchases">') "Travel purchases category is missing."
     $csrf = Get-CsrfFromHtml $html
 
     $headers = Invoke-PortalCurl `
@@ -173,10 +178,10 @@ try {
         "-F", "action=submit_report", `
         "-F", "report_type=vehicle", `
         "-F", "employee_name=Integration Worker", `
+        "-F", "employee_phone=050-0000000", `
         "-F", "employee_email=tampered@example.com", `
         "-F", "vehicle_expense_date=2026-07-24", `
-        "-F", "vehicle_category=fuel", `
-        "-F", "vehicle_plate=00-000-00", `
+        "-F", "vehicle_category=transport", `
         "-F", "vehicle_amount=123.45", `
         "-F", "vehicle_currency=ILS", `
         "-F", "attachments[]=@$fixture;type=application/pdf", `
@@ -188,6 +193,15 @@ try {
     $vehicleRecord = Get-Content -Raw -Encoding utf8 $metadataFiles[0].FullName | ConvertFrom-Json
     Assert-PortalTest ($vehicleRecord.employee.email -eq "worker@i-feel.co.il") "Verified email was not bound to the report."
     Assert-PortalTest ($vehicleRecord.attachments.Count -eq 1) "Vehicle receipt was not stored."
+    Assert-PortalTest ([string]::IsNullOrEmpty($vehicleRecord.details.vehicle_plate)) "Vehicle number unexpectedly became mandatory."
+    Assert-PortalTest ($vehicleRecord.email_notification.status -eq "sent") "Expense email notification was not recorded."
+    Assert-PortalTest ($vehicleRecord.email_notification.recipients -contains "account@i-feel.co.il") "Accounting recipient is missing."
+    Assert-PortalTest ($vehicleRecord.email_notification.recipients -contains "oren@i-feel.co.il") "Oren recipient is missing."
+
+    Invoke-PortalCurl "-o", $responseBody, "-b", $employeeCookies, "$baseUrl/staff-expenses/?tab=history" | Out-Null
+    $html = Get-Content -Raw -Encoding utf8 $responseBody
+    Assert-PortalTest ($html -match [regex]::Escape($vehicleRecord.id)) "Employee history omitted the submitted report."
+    Assert-PortalTest ($html -notmatch 'action=download') "Employee history exposed a document download action."
 
     $downloadStatus = Invoke-PortalCurl `
         "-o", $responseBody, `
@@ -197,7 +211,10 @@ try {
     Assert-PortalTest ($downloadStatus -eq "403") "Employee was allowed to download a stored document."
 
     Invoke-PortalCurl "-o", $responseBody, "-b", $employeeCookies, "$baseUrl/staff-expenses/?tab=new" | Out-Null
-    $csrf = Get-CsrfFromHtml (Get-Content -Raw -Encoding utf8 $responseBody)
+    $html = Get-Content -Raw -Encoding utf8 $responseBody
+    Assert-PortalTest ($html -match 'name="employee_name"[^>]*value="Integration Worker"') "Employee name was not remembered."
+    Assert-PortalTest ($html -match 'name="employee_phone"[^>]*value="050-0000000"') "Employee phone was not remembered."
+    $csrf = Get-CsrfFromHtml $html
     $headers = Invoke-PortalCurl `
         "-D", "-", `
         "-o", $responseBody, `
@@ -211,7 +228,7 @@ try {
         "-F", "return_date=2026-07-24", `
         "-F", "destination=Berlin", `
         "-F", "trip_purpose=Integration test", `
-        "-F", "travel_item_category[]=flight", `
+        "-F", "travel_item_category[]=purchases", `
         "-F", "travel_item_date[]=2026-07-20", `
         "-F", "travel_item_vendor[]=Test Airline", `
         "-F", "travel_item_amount[]=500", `
@@ -230,6 +247,7 @@ try {
         Select-Object -First 1
     Assert-PortalTest ($null -ne $travelRecord) "Travel report metadata was not found."
     Assert-PortalTest ($travelRecord.attachments.Count -eq 2) "Travel report did not preserve both attachments."
+    Assert-PortalTest ($travelRecord.expense_items[0].category -eq "purchases") "Travel purchases category was not preserved."
 
     $publicPath = [IO.Path]::GetFullPath((Join-Path $repositoryRoot "public"))
     foreach ($metadataFile in $metadataFiles) {

@@ -84,13 +84,17 @@
     });
 
     const fileInput = document.getElementById('attachments');
+    const cameraInput = document.getElementById('camera-receipts');
+    const fileInputs = [fileInput, cameraInput].filter(Boolean);
     const selectedFiles = document.getElementById('selected-files');
-    const uploadZone = document.querySelector('.upload-zone');
+    const uploadZone = document.querySelector('label[for="attachments"]');
+
+    const allSelectedFiles = () => fileInputs.flatMap((input) => Array.from(input.files || []));
 
     const renderFiles = () => {
-        if (!fileInput || !selectedFiles) return;
+        if (!selectedFiles) return;
         selectedFiles.innerHTML = '';
-        const files = Array.from(fileInput.files || []);
+        const files = allSelectedFiles();
         if (!files.length) return;
         files.forEach((file) => {
             const item = document.createElement('div');
@@ -104,7 +108,7 @@
         });
     };
 
-    fileInput?.addEventListener('change', renderFiles);
+    fileInputs.forEach((input) => input.addEventListener('change', renderFiles));
     ['dragenter', 'dragover'].forEach((eventName) => uploadZone?.addEventListener(eventName, (event) => {
         event.preventDefault();
         uploadZone.classList.add('is-dragging');
@@ -133,17 +137,18 @@
     const form = document.getElementById('report-form');
     const submitButton = document.getElementById('submit-report');
     form?.addEventListener('submit', (event) => {
-        if (fileInput && fileInput.files.length > 20) {
+        const files = allSelectedFiles();
+        if (files.length > 20) {
             event.preventDefault();
             window.alert('ניתן לצרף עד 20 קבצים בכל דיווח.');
             return;
         }
-        if (fileInput && Array.from(fileInput.files).some((file) => file.size > 12 * 1024 * 1024)) {
+        if (files.some((file) => file.size > 12 * 1024 * 1024)) {
             event.preventDefault();
             window.alert('כל קובץ חייב להיות קטן מ-12MB.');
             return;
         }
-        if (fileInput && !fileInput.files.length && !(noReceipt?.checked)) {
+        if (!files.length && !(noReceipt?.checked)) {
             event.preventDefault();
             window.alert('חובה לצרף קבלה או חשבונית, או לסמן שאין מסמך ולציין סיבה.');
             return;

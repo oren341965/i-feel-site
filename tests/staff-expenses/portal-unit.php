@@ -28,6 +28,8 @@ require_once $repositoryRoot . '/public/staff-expenses/_ui.php';
 require_once $repositoryRoot . '/public/staff-expenses/_email_auth.php';
 require_once $repositoryRoot . '/public/staff-expenses/_labels.php';
 require_once $repositoryRoot . '/public/staff-expenses/_records.php';
+require_once $repositoryRoot . '/public/staff-expenses/_notifications.php';
+require_once $repositoryRoot . '/public/staff-expenses/_history.php';
 require_once $repositoryRoot . '/public/staff-expenses/_readiness.php';
 
 try {
@@ -87,6 +89,27 @@ try {
     portal_test_expect(($employee['role'] ?? '') === 'employee', 'Employee role was not assigned.');
     portal_test_expect(($employee['email'] ?? '') === 'worker@i-feel.co.il', 'Verified email was not bound.');
 
+    $ownRecordId = portal_new_record_id();
+    portal_ensure_directory(portal_record_dir($ownRecordId));
+    portal_save_record([
+        'id' => $ownRecordId,
+        'employee' => ['name' => 'Worker Name', 'email' => 'worker@i-feel.co.il', 'phone' => '050-0000000'],
+        'created_at' => '2026-07-24T10:00:00Z',
+    ]);
+    $otherRecordId = portal_new_record_id();
+    portal_ensure_directory(portal_record_dir($otherRecordId));
+    portal_save_record([
+        'id' => $otherRecordId,
+        'employee' => ['name' => 'Other Worker', 'email' => 'other@i-feel.co.il', 'phone' => '050-1111111'],
+        'created_at' => '2026-07-24T09:00:00Z',
+    ]);
+    $employeeRecords = portal_records_for_employee($employee);
+    portal_test_expect(count($employeeRecords) === 1, 'Employee history exposed another employee record.');
+    portal_test_expect(($employeeRecords[0]['id'] ?? '') === $ownRecordId, 'Employee history omitted the employee record.');
+    $employeeProfile = portal_employee_profile($employee);
+    portal_test_expect(($employeeProfile['name'] ?? '') === 'Worker Name', 'Employee name was not remembered.');
+    portal_test_expect(($employeeProfile['phone'] ?? '') === '050-0000000', 'Employee phone was not remembered.');
+
     unset($_SESSION['portal_user']);
     $_SESSION['portal_email_challenge'] = [
         'email' => 'oren@i-feel.co.il',
@@ -108,6 +131,31 @@ try {
     portal_test_expect(portal_csv_value('=2+2') === "'=2+2", 'CSV formula was not neutralized.');
     portal_test_expect(portal_csv_value('  @SUM(A1)') === "'  @SUM(A1)", 'CSV formula with whitespace was not neutralized.');
     portal_test_expect(portal_csv_value('ordinary text') === 'ordinary text', 'Safe CSV text was modified.');
+    $notificationRecipients = portal_expense_notification_recipients();
+    portal_test_expect(
+        in_array('account@i-feel.co.il', $notificationRecipients, true)
+        && in_array('oren@i-feel.co.il', $notificationRecipients, true),
+        'Expense notification recipients are incomplete.'
+    );
+    $mimePayload = portal_mail_payload('Receipt attached', [[
+        'path' => $repositoryRoot . '/tests/staff-expenses/fixtures/receipt.pdf',
+        'name' => 'receipt.pdf',
+        'mime' => 'application/pdf',
+        'size' => 100,
+    ]]);
+    portal_test_expect(
+        str_contains(implode("\n", $mimePayload['headers']), 'multipart/mixed')
+        && str_contains($mimePayload['body'], 'Content-Type: application/pdf')
+        && str_contains($mimePayload['body'], 'filename="receipt.pdf"'),
+        'PDF attachment MIME payload was not generated.'
+    );
+    portal_test_expect(
+        count(portal_attachment_batches([
+            ['size' => 12 * 1024 * 1024],
+            ['size' => 12 * 1024 * 1024],
+        ])) === 2,
+        'Large email attachments were not split into safe batches.'
+    );
 
     $readiness = portal_readiness_report();
     portal_test_expect(

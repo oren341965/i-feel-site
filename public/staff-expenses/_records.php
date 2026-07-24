@@ -16,7 +16,8 @@ function portal_parse_travel_items(): array
 
     $allowedCategories = [
         'flight', 'hotel', 'meals', 'car_rental', 'local_transport', 'parking',
-        'communications', 'insurance_visa', 'conference', 'other',
+        'communications', 'insurance_visa', 'conference', 'purchases', 'baggage',
+        'tips', 'other',
     ];
     $allowedCurrencies = ['ILS', 'USD', 'EUR', 'GBP'];
     $items = [];
@@ -80,7 +81,6 @@ function portal_build_record(array $user): array
 
     $employee = [
         'name' => $employeeName,
-        'department' => portal_post('department', 120),
         'email' => portal_post('employee_email', 160),
         'phone' => portal_post('employee_phone', 60),
     ];
@@ -156,8 +156,12 @@ function portal_build_record(array $user): array
         if ($type === 'vehicle') {
             $category = portal_post('vehicle_category', 60);
             $plate = portal_post('vehicle_plate', 40);
-            if ($category === '' || $plate === '') {
-                throw new RuntimeException('בדיווח רכב חובה לבחור סוג הוצאה ולהזין מספר רכב.');
+            $allowedVehicleCategories = [
+                'fuel', 'service', 'repair', 'parking', 'toll', 'insurance',
+                'licensing', 'washing', 'rental', 'transport', 'other',
+            ];
+            if (!in_array($category, $allowedVehicleCategories, true)) {
+                throw new RuntimeException('בדיווח נסיעה או רכב חובה לבחור סוג הוצאה תקין.');
             }
             $details = $base + [
                 'vehicle_category' => $category,
@@ -236,8 +240,37 @@ function portal_handle_post(array $user): never
 
     if ($action === 'submit_report') {
         $record = portal_build_record($user);
-        portal_flash_set('success', 'הדיווח נשמר בהצלחה. מספר הדיווח: ' . $record['id']);
-        portal_redirect(['submitted' => $record['id']]);
+        $emailSent = false;
+        try {
+            $emailSent = portal_notify_expense_submission($record);
+        } catch (Throwable $notificationError) {
+            error_log('[i-feel staff expenses notification] record=' . $record['id'] . ' send_failed');
+        }
+        $record['email_notification'] = [
+            'recipients' => portal_expense_notification_recipients(),
+            'status' => $emailSent ? 'sent' : 'failed',
+            'updated_at' => gmdate('c'),
+        ];
+        $record['updated_at'] = $record['email_notification']['updated_at'];
+        $record['history'][] = [
+            'at' => $record['updated_at'],
+            'by' => 'system',
+            'action' => $emailSent ? 'email_sent' : 'email_failed',
+            'status' => (string) ($record['status'] ?? 'new'),
+        ];
+        portal_save_record($record);
+        portal_audit($emailSent ? 'record_email_sent' : 'record_email_failed', [
+            'record_id' => $record['id'],
+            'recipients' => portal_expense_notification_recipients(),
+        ]);
+        portal_flash_set(
+            $emailSent ? 'success' : 'error',
+            ($emailSent
+                ? 'הדיווח נשמר והמסמכים נשלחו להנהלת החשבונות ולאורן. '
+                : 'הדיווח נשמר, אך שליחת המסמכים בדוא״ל נכשלה ויש לטפל בכך ידנית. ')
+            . 'מספר הדיווח: ' . $record['id']
+        );
+        portal_redirect(['tab' => 'history', 'submitted' => $record['id']]);
     }
 
     if ($action === 'update_record') {
@@ -379,7 +412,7 @@ function portal_handle_export(array $user): never
         exit;
     }
     portal_csv_row($out, [
-        'מספר דיווח', 'סוג דיווח', 'סטטוס', 'שם עובד', 'מחלקה', 'תאריך דיווח',
+        'מספר דיווח', 'סוג דיווח', 'סטטוס', 'שם עובד', 'תאריך דיווח',
         'קטגוריה', 'ספק', 'סכום', 'מטבע', 'יעד / מספר רכב', 'מטרת נסיעה / תיאור',
         'מספר קבצים', 'נשלח על ידי', 'נוצר בתאריך', 'הערת מנהל',
     ]);
@@ -392,7 +425,6 @@ function portal_handle_export(array $user): never
             portal_report_type_label((string) ($record['type'] ?? '')),
             portal_status_label((string) ($record['status'] ?? 'new')),
             (string) ($employee['name'] ?? ''),
-            (string) ($employee['department'] ?? ''),
             (string) ($record['report_date'] ?? ''),
         ];
         if (($record['type'] ?? '') === 'travel' && is_array($record['expense_items'] ?? null)) {

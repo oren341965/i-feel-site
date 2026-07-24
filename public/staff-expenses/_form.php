@@ -4,6 +4,7 @@ declare(strict_types=1);
 function portal_render_new_form(array $user, ?array $flash): void
 {
     $today = date('Y-m-d');
+    $profile = portal_employee_profile($user);
     portal_render_flash($flash);
     ?>
     <section class="page-heading">
@@ -27,7 +28,7 @@ function portal_render_new_form(array $user, ?array $flash): void
         <section class="form-card">
             <div class="form-card__header">
                 <span class="step">1</span>
-                <div><h2>מי מדווח ומה סוג ההוצאה?</h2><p>הפרטים ישמשו לזיהוי ולאישור ההוצאה.</p></div>
+                <div><h2>מי מדווח ומה סוג ההוצאה?</h2><p>הדוא״ל מזוהה מהכניסה. השם והטלפון נשמרים מהדיווח האחרון כדי לחסוך הקלדה.</p></div>
             </div>
             <div class="field-grid field-grid--2">
                 <label class="field field--full">
@@ -40,19 +41,15 @@ function portal_render_new_form(array $user, ?array $flash): void
                 </label>
                 <label class="field">
                     <span>שם העובד/ת <b>*</b></span>
-                    <input type="text" name="employee_name" required maxlength="120" autocomplete="name" value="<?= portal_h(($user['username'] ?? '') === 'employee' ? '' : ($user['display_name'] ?? '')) ?>">
-                </label>
-                <label class="field">
-                    <span>מחלקה</span>
-                    <input type="text" name="department" maxlength="120" placeholder="לדוגמה: פרויקטים, שירות, מכירות">
+                    <input type="text" name="employee_name" required maxlength="120" autocomplete="name" value="<?= portal_h($profile['name']) ?>">
                 </label>
                 <label class="field">
                     <span>דוא״ל</span>
-                    <input type="email" name="employee_email" maxlength="160" autocomplete="email">
+                    <input type="email" name="employee_email" maxlength="160" autocomplete="email" value="<?= portal_h($profile['email']) ?>" readonly>
                 </label>
                 <label class="field">
                     <span>טלפון</span>
-                    <input type="tel" name="employee_phone" maxlength="60" autocomplete="tel">
+                    <input type="tel" name="employee_phone" maxlength="60" autocomplete="tel" inputmode="tel" value="<?= portal_h($profile['phone']) ?>">
                 </label>
             </div>
         </section>
@@ -60,7 +57,7 @@ function portal_render_new_form(array $user, ?array $flash): void
         <section class="form-card report-section" data-report-section="vehicle">
             <div class="form-card__header">
                 <span class="step">2</span>
-                <div><h2>פרטי הוצאת רכב או נסיעה בארץ</h2><p>מתאים לדלק, טיפולים, תיקונים, חניה, אגרות, מוניות והשכרת רכב.</p></div>
+                <div><h2>נסיעות והוצאות רכב בארץ</h2><p>מתאים לדלק, טיפולים, חניה, אגרות, מוניות, תחבורה ציבורית והשכרת רכב. מספר רכב נדרש רק אם הוא רלוונטי להוצאה.</p></div>
             </div>
             <div class="field-grid field-grid--3">
                 <label class="field">
@@ -85,8 +82,8 @@ function portal_render_new_form(array $user, ?array $flash): void
                     </select>
                 </label>
                 <label class="field">
-                    <span>מספר רכב <b>*</b></span>
-                    <input type="text" name="vehicle_plate" maxlength="40" data-required="true" placeholder="00-000-00">
+                    <span>מספר רכב — אם רלוונטי</span>
+                    <input type="text" name="vehicle_plate" maxlength="40" placeholder="לדוגמה: 00-000-00">
                 </label>
                 <label class="field">
                     <span>דגם / תיאור הרכב</span>
@@ -184,34 +181,37 @@ function portal_render_new_form(array $user, ?array $flash): void
             </div>
 
             <div class="subsection-heading">
-                <div><h3>פירוט הוצאות הנסיעה</h3><p>הוסיפו שורה לכל הוצאה. הסכומים מחושבים בנפרד לפי מטבע.</p></div>
-                <button type="button" class="button button--secondary button--small" id="add-travel-row">הוספת שורה</button>
+                <div><h3>כל הוצאות הנסיעה</h3><p>הוסיפו כל כרטיס טיסה, מלון, מסעדה, מונית, רכישה או הוצאה אחרת כשורה נפרדת.</p></div>
+                <button type="button" class="button button--secondary button--small" id="add-travel-row">+ הוספת הוצאה</button>
+            </div>
+            <div class="expense-category-guide" aria-label="סוגי הוצאות זמינים">
+                <span>✈️ טיסות</span><span>🏨 מלונות</span><span>🍽️ מסעדות</span><span>🚕 מוניות</span><span>🛍️ רכישות</span><span>＋ כל הוצאה אחרת</span>
             </div>
             <div class="table-wrap">
                 <table class="expense-table">
                     <thead><tr><th>סוג הוצאה</th><th>תאריך</th><th>ספק</th><th>סכום</th><th>מטבע</th><th>הערה</th><th></th></tr></thead>
                     <tbody id="travel-items">
                         <tr class="travel-item-row">
-                            <td><select name="travel_item_category[]"><option value="">בחירה</option><option value="flight">טיסות וכרטיסי טיסה</option><option value="hotel">מלון / לינה</option><option value="meals">אוכל וארוחות</option><option value="car_rental">השכרת רכב</option><option value="local_transport">מוניות / תחבורה / נסיעות</option><option value="parking">חניה</option><option value="communications">תקשורת / סלולר</option><option value="insurance_visa">ביטוח / אשרה</option><option value="conference">כנס / תערוכה</option><option value="other">אחר</option></select></td>
-                            <td><input type="date" name="travel_item_date[]"></td>
-                            <td><input type="text" name="travel_item_vendor[]" maxlength="160"></td>
-                            <td><input type="number" name="travel_item_amount[]" min="0.01" step="0.01" inputmode="decimal"></td>
-                            <td><select name="travel_item_currency[]"><option value="ILS">ש״ח</option><option value="USD">דולר</option><option value="EUR">אירו</option><option value="GBP">ליש״ט</option></select></td>
-                            <td><input type="text" name="travel_item_note[]" maxlength="500"></td>
-                            <td><button type="button" class="icon-button remove-travel-row" aria-label="מחיקת שורה">×</button></td>
+                            <td data-label="סוג הוצאה"><select name="travel_item_category[]"><option value="">בחירת סוג הוצאה</option><option value="flight">טיסות וכרטיסי טיסה</option><option value="hotel">מלון / לינה</option><option value="meals">מסעדות, אוכל וארוחות</option><option value="local_transport">מוניות / תחבורה / נסיעות</option><option value="purchases">רכישות וקניות</option><option value="car_rental">השכרת רכב</option><option value="parking">חניה</option><option value="baggage">כבודה ותוספות טיסה</option><option value="communications">תקשורת / סלולר</option><option value="insurance_visa">ביטוח / אשרה</option><option value="conference">כנס / תערוכה</option><option value="tips">טיפים ושירות</option><option value="other">אחר</option></select></td>
+                            <td data-label="תאריך"><input type="date" name="travel_item_date[]"></td>
+                            <td data-label="ספק"><input type="text" name="travel_item_vendor[]" maxlength="160" placeholder="שם העסק"></td>
+                            <td data-label="סכום"><input type="number" name="travel_item_amount[]" min="0.01" step="0.01" inputmode="decimal" placeholder="0.00"></td>
+                            <td data-label="מטבע"><select name="travel_item_currency[]"><option value="ILS">ש״ח</option><option value="USD">דולר</option><option value="EUR">אירו</option><option value="GBP">ליש״ט</option></select></td>
+                            <td data-label="הערה"><input type="text" name="travel_item_note[]" maxlength="500" placeholder="פרטים נוספים"></td>
+                            <td data-label=""><button type="button" class="icon-button remove-travel-row" aria-label="מחיקת הוצאה">×</button></td>
                         </tr>
                     </tbody>
                 </table>
             </div>
             <template id="travel-row-template">
                 <tr class="travel-item-row">
-                    <td><select name="travel_item_category[]"><option value="">בחירה</option><option value="flight">טיסות וכרטיסי טיסה</option><option value="hotel">מלון / לינה</option><option value="meals">אוכל וארוחות</option><option value="car_rental">השכרת רכב</option><option value="local_transport">מוניות / תחבורה / נסיעות</option><option value="parking">חניה</option><option value="communications">תקשורת / סלולר</option><option value="insurance_visa">ביטוח / אשרה</option><option value="conference">כנס / תערוכה</option><option value="other">אחר</option></select></td>
-                    <td><input type="date" name="travel_item_date[]"></td>
-                    <td><input type="text" name="travel_item_vendor[]" maxlength="160"></td>
-                    <td><input type="number" name="travel_item_amount[]" min="0.01" step="0.01" inputmode="decimal"></td>
-                    <td><select name="travel_item_currency[]"><option value="ILS">ש״ח</option><option value="USD">דולר</option><option value="EUR">אירו</option><option value="GBP">ליש״ט</option></select></td>
-                    <td><input type="text" name="travel_item_note[]" maxlength="500"></td>
-                    <td><button type="button" class="icon-button remove-travel-row" aria-label="מחיקת שורה">×</button></td>
+                    <td data-label="סוג הוצאה"><select name="travel_item_category[]"><option value="">בחירת סוג הוצאה</option><option value="flight">טיסות וכרטיסי טיסה</option><option value="hotel">מלון / לינה</option><option value="meals">מסעדות, אוכל וארוחות</option><option value="local_transport">מוניות / תחבורה / נסיעות</option><option value="purchases">רכישות וקניות</option><option value="car_rental">השכרת רכב</option><option value="parking">חניה</option><option value="baggage">כבודה ותוספות טיסה</option><option value="communications">תקשורת / סלולר</option><option value="insurance_visa">ביטוח / אשרה</option><option value="conference">כנס / תערוכה</option><option value="tips">טיפים ושירות</option><option value="other">אחר</option></select></td>
+                    <td data-label="תאריך"><input type="date" name="travel_item_date[]"></td>
+                    <td data-label="ספק"><input type="text" name="travel_item_vendor[]" maxlength="160" placeholder="שם העסק"></td>
+                    <td data-label="סכום"><input type="number" name="travel_item_amount[]" min="0.01" step="0.01" inputmode="decimal" placeholder="0.00"></td>
+                    <td data-label="מטבע"><select name="travel_item_currency[]"><option value="ILS">ש״ח</option><option value="USD">דולר</option><option value="EUR">אירו</option><option value="GBP">ליש״ט</option></select></td>
+                    <td data-label="הערה"><input type="text" name="travel_item_note[]" maxlength="500" placeholder="פרטים נוספים"></td>
+                    <td data-label=""><button type="button" class="icon-button remove-travel-row" aria-label="מחיקת הוצאה">×</button></td>
                 </tr>
             </template>
             <div class="totals-box" id="travel-totals" aria-live="polite">סה״כ לפי מטבע: טרם הוזנו סכומים</div>
@@ -238,13 +238,22 @@ function portal_render_new_form(array $user, ?array $flash): void
         <section class="form-card">
             <div class="form-card__header">
                 <span class="step">3</span>
-                <div><h2>קבלות, חשבוניות ומסמכים</h2><p>PDF או תמונה. ניתן לצרף עד 20 קבצים, עד 12MB לקובץ ועד 60MB לדיווח.</p></div>
+                <div><h2>צילום קבלה וצירוף מסמכים</h2><p>אפשר לצלם קבלה מיד מהטלפון או לבחור תמונות ו־PDF קיימים. עד 20 קבצים, 12MB לקובץ ו־60MB לדיווח.</p></div>
             </div>
-            <label class="upload-zone" for="attachments">
-                <strong>לחצו לבחירת קבצים</strong>
-                <span>קבלות, חשבוניות, כרטיסי טיסה, אישורי הזמנה ומסמכי מלון או רכב</span>
-                <input id="attachments" type="file" name="attachments[]" multiple accept=".pdf,.jpg,.jpeg,.png,.webp,.heic,.heif,.avif,application/pdf,image/jpeg,image/png,image/webp,image/heic,image/heif,image/avif">
-            </label>
+            <div class="receipt-actions">
+                <label class="receipt-action receipt-action--camera" for="camera-receipts">
+                    <span class="receipt-action__icon" aria-hidden="true">📷</span>
+                    <strong>צילום קבלה</strong>
+                    <span>פתיחת המצלמה האחורית בטלפון</span>
+                    <input id="camera-receipts" class="receipt-input" type="file" name="attachments[]" multiple accept="image/*" capture="environment">
+                </label>
+                <label class="receipt-action" for="attachments">
+                    <span class="receipt-action__icon" aria-hidden="true">📎</span>
+                    <strong>בחירת קבצים</strong>
+                    <span>תמונות, PDF, כרטיסי טיסה ומסמכים</span>
+                    <input id="attachments" class="receipt-input" type="file" name="attachments[]" multiple accept=".pdf,.jpg,.jpeg,.png,.webp,.heic,.heif,.avif,application/pdf,image/jpeg,image/png,image/webp,image/heic,image/heif,image/avif">
+                </label>
+            </div>
             <div id="selected-files" class="selected-files" aria-live="polite"></div>
             <div class="field-grid field-grid--2 upload-notes">
                 <label class="field field--full"><span>הסבר למסמכים המצורפים</span><textarea name="attachment_notes" rows="2" maxlength="1000" placeholder="לדוגמה: כרטיסי טיסה, חשבונית מלון וקבלות אוכל"></textarea></label>
