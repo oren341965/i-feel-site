@@ -71,6 +71,8 @@ jobs:
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
+        env:
+          NODE_OPTIONS: --use-system-ca
         with:
           node-version: 24
           cache: npm
