@@ -202,6 +202,65 @@ try {
         'Test storage unexpectedly resolves inside the public document root.'
     );
 
+    $magicLink = portal_create_magic_link('worker@i-feel.co.il');
+    parse_str((string) parse_url((string) $magicLink['url'], PHP_URL_QUERY), $magicQuery);
+    $magicToken = (string) ($magicQuery['login_token'] ?? '');
+    portal_test_expect(
+        strlen($magicToken) === 64 && str_starts_with((string) $magicLink['url'], 'http://localhost:8080/staff-expenses/'),
+        'Magic-link URL was not generated safely.'
+    );
+    portal_test_expect(
+        portal_consume_magic_link($magicToken) === 'worker@i-feel.co.il',
+        'Valid magic link was not accepted.'
+    );
+    try {
+        portal_consume_magic_link($magicToken);
+        throw new RuntimeException('A magic link was accepted twice.');
+    } catch (RuntimeException $error) {
+        portal_test_expect($error->getMessage() !== 'A magic link was accepted twice.', $error->getMessage());
+    }
+
+    $expiredMagicLink = portal_create_magic_link('worker@i-feel.co.il');
+    parse_str((string) parse_url((string) $expiredMagicLink['url'], PHP_URL_QUERY), $expiredMagicQuery);
+    $expiredMagicToken = (string) ($expiredMagicQuery['login_token'] ?? '');
+    portal_json_write((string) $expiredMagicLink['path'], [
+        'email' => 'worker@i-feel.co.il',
+        'created_at' => time() - 700,
+        'expires_at' => time() - 1,
+    ]);
+    try {
+        portal_consume_magic_link($expiredMagicToken);
+        throw new RuntimeException('An expired magic link was accepted.');
+    } catch (RuntimeException $error) {
+        portal_test_expect($error->getMessage() !== 'An expired magic link was accepted.', $error->getMessage());
+    }
+
+    portal_create_remembered_login('worker@i-feel.co.il');
+    $firstRememberToken = (string) ($_COOKIE[IFEEL_PORTAL_REMEMBER_COOKIE] ?? '');
+    portal_test_expect(
+        strlen($firstRememberToken) === 64 && is_file(portal_remember_file($firstRememberToken)),
+        'Remembered-device credential was not stored.'
+    );
+    unset($_SESSION['portal_user']);
+    $rememberedUser = portal_restore_remembered_login();
+    $rotatedRememberToken = (string) ($_COOKIE[IFEEL_PORTAL_REMEMBER_COOKIE] ?? '');
+    portal_test_expect(
+        ($rememberedUser['email'] ?? '') === 'worker@i-feel.co.il'
+        && $rotatedRememberToken !== $firstRememberToken
+        && !is_file(portal_remember_file($firstRememberToken))
+        && is_file(portal_remember_file($rotatedRememberToken)),
+        'Remembered-device session was not restored and rotated.'
+    );
+    portal_logout();
+    portal_test_expect(
+        !isset($_COOKIE[IFEEL_PORTAL_REMEMBER_COOKIE])
+        && !is_file(portal_remember_file($rotatedRememberToken)),
+        'Logout did not revoke the remembered-device credential.'
+    );
+    if (session_status() !== PHP_SESSION_ACTIVE) {
+        session_start();
+    }
+
     $knownCode = '123456';
     $_SESSION['portal_email_challenge'] = [
         'email' => 'worker@i-feel.co.il',
@@ -309,6 +368,17 @@ try {
         && str_contains($mimePayload['body'], 'Content-Type: application/pdf')
         && str_contains($mimePayload['body'], 'filename="receipt.pdf"'),
         'PDF attachment MIME payload was not generated.'
+    );
+    $loginMailPayload = portal_mail_payload(
+        'Open https://i-feel.co.il/staff-expenses/?login_token=test',
+        [],
+        '<p><a href="https://i-feel.co.il/staff-expenses/?login_token=test">Login</a></p>'
+    );
+    portal_test_expect(
+        str_contains(implode("\n", $loginMailPayload['headers']), 'multipart/alternative')
+        && str_contains($loginMailPayload['body'], 'Content-Type: text/html')
+        && str_contains($loginMailPayload['body'], 'login_token=test'),
+        'Magic-link email did not include HTML and plain-text alternatives.'
     );
     portal_test_expect(
         count(portal_attachment_batches([

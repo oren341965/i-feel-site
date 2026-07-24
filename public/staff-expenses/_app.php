@@ -61,7 +61,27 @@ try {
         portal_render_maintenance_page($requestId);
     }
 
+    $loginToken = $_GET['login_token'] ?? '';
+    if (!is_array($loginToken) && trim((string) $loginToken) !== '') {
+        try {
+            $magicEmail = portal_consume_magic_link((string) $loginToken);
+            portal_complete_email_login($magicEmail, 'company_email_magic_link');
+            portal_redirect(['tab' => 'new']);
+        } catch (Throwable $magicLinkError) {
+            portal_render_email_entry($magicLinkError->getMessage());
+        }
+    }
+
     $user = portal_current_user();
+    if ($user === null) {
+        try {
+            $user = portal_restore_remembered_login();
+        } catch (Throwable $rememberError) {
+            error_log('[i-feel staff expenses remember] restore_failed');
+            portal_revoke_remembered_login();
+            $user = null;
+        }
+    }
 
     if ($user === null) {
         if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
