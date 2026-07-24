@@ -1,135 +1,115 @@
 ---
 name: deploy-ifeel
-description: "העלאת אתר i-feel.co.il לאוויר בצורה בטוחה — build, בדיקות קדם-העלאה, העלאת FTP כירורגית ואימות שהאתר חי ותקין. השתמש בסקיל הזה בכל פעם שאורן כותב: 'תעלה לאתר', 'תעלה את השינויים', 'דיפלוי', 'deploy', 'תעשה build ותעלה', 'FTP', 'תעלה לאוויר', 'תפרסם את הדף', 'תבדוק שהאתר באוויר', 'האם השינוי עלה', 'verify live', 'תעלה את ה-dist'. גם בסוף כל עבודה על קוד האתר כשמגיע שלב ההעלאה — אל תעלה קבצים לשרת בלי לעבור את הצ'קליסט של הסקיל הזה. אין לאתר דיפלוי אוטומטי (GitHub Actions חסום ע\"י השרת) — כל העלאה היא ידנית, ורק מהמחשב במשרד (FTP חסום מ-IP ביתי)."
+description: "פריסת i-feel.co.il במסלול הבטוח והיחיד: work branch → build ובדיקות → Draft PR → merge מאושר ל-main → GitHub Actions → office self-hosted runner → FTPS ל-JetServer → verify-live. השתמש בכל בקשת העלאה, deploy, פרסום דף, build-and-publish או בדיקה אם שינוי עלה. אין לבצע FTP/cPanel ידני מתוך Claude או Codex."
 ---
 
-> **בעלות ואחריות על האתר:** אורן הוא בעל האתר והמטפל היחיד ב־i-feel.co.il. לשייך לאורן בלבד כל משימת אתר — קוד, תוכן, SEO, Cloudflare, אחסון ופריסה.
+# Deploy i-feel — GitHub הוא שער הפריסה היחיד
 
-# Deploy i-feel.co.il — build → בדיקות → FTP → אימות
+## עיקרון
 
-## למה הסקיל הזה קיים
-
-בעבר היו כמה תקלות דיפלוי: `dist/` לא מסונכרן עם מה שחי באוויר, קבצים הועלו לפני בדיקות,
-ומספרי טלפון ישנים דלפו לאתר. הסקיל הזה קיים כדי שכל העלאה תעבור את אותו מסלול בדוק.
-אל תדלג על שלבים גם אם ההעלאה נראית "קטנה" — רוב התקלות קרו דווקא בהעלאות קטנות.
-
-## עובדות קבועות
-
-| מה | ערך |
-|----|-----|
-| ריפו קנוני | GitHub `oren341965/i-feel-site` (branch `main`) — clone במשרד: `C:\Users\User\ifeel-site-work` (אומת 2026-07-15); clone בבית (salee): `C:\Users\salee\Documents\i-feel-site` |
-| GitHub | `oren341965/i-feel-site` |
-| Build | `npm run build` → פלט ב-`dist\` |
-| שרת | JetServer (cPanel), host `185.56.74.12`, יעד `public_html/` |
-| משתמש FTP | `ifeelco` |
-| סיסמת FTP | שמורה ב-`%APPDATA%\FileZilla\recentservers.xml` (מקודדת base64 בתג `<Pass>`) |
-| אתר חי | `https://i-feel.co.il/` |
-| טלפון תקני | `03-508-9553` (בפורמט בינלאומי: `+972-3-508-9553`) |
-
-**אזהרות:**
-- **FTP עובד רק מהמחשב במשרד.** אומת 2026-07-15: חומת האש של JetServer חוסמת את פורטי הניהול (21/22/990/2083) מ-IP ביתי/סלולרי. מהמחשב הביתי (salee) עושים רק edit + build + git push; את ההעלאה עצמה מריצים מהמשרד אחרי `git pull`. אל תבזבז זמן על ניסיונות FTP מהבית.
-- `D:\Claude\i-feel-site` הוא clone ישן ולא מסונכרן — **אסור לגעת בו**. עובדים רק על ה-clones שברשימה למעלה.
-- `.github/workflows/deploy.yml` קיים אבל **לא עובד** (השרת חוסם IP של GitHub). אל תסמוך עליו ואל תגיד לאורן "זה יעלה לבד".
-- לעולם אל תדפיס את סיסמת ה-FTP לצ'אט, ללוג או לקובץ.
-
-## שלב 0 — בדיקות בטיחות בריפו
-
-```powershell
-cd C:\Users\USER\i-feel-site
-git status
-git branch --show-current
+```text
+Work branch → Pull Request → checks → approved merge → GitHub artifact
+→ office runner → FTPS → live verification
 ```
 
-- אם יש שינויים לא-committed שאינם חלק מהעבודה הנוכחית — עצור ושאל את אורן מה הם.
-- אם לא נמצאים על `main` — עצור. מיזוג ל-main קודם, דיפלוי אחר כך.
-- `git pull origin main` לפני build, כדי לא לדרוס עבודה שנעשתה בסשן אחר.
+- שני המחשבים מעלים רק ל-GitHub.
+- אין דחיפה ישירה ל-`main`.
+- אין FTP, SFTP או cPanel ידני מתוך הסוכן.
+- רק artifact שנבנה ונבדק ב-GitHub נשלח לשרת.
+- הפריסה אינה מוחקת קבצים בשרת.
 
-## שלב 1 — Build
+## שלב 1 — בדיקת worktree
+
+```powershell
+git status
+git branch --show-current
+git remote get-url origin
+```
+
+חובה:
+
+- origin הוא `oren341965/i-feel-site`;
+- הענף מתחיל ב-`work/`;
+- אין detached HEAD;
+- אין שינויים לא מוסברים ממשימה אחרת.
+
+אם נמצאים על `main`, אין לערוך או לפרסם. מתחילים משימה חדשה:
+
+```powershell
+.\scripts\workstations\new-work.ps1 -Slug <short-slug>
+```
+
+## שלב 2 — build ובדיקות
 
 ```powershell
 npm run build
 ```
 
-Build אדום = עוצרים. אין העלאה חלקית של build שנכשל, אף פעם.
+Build אדום עוצר את הפריסה. אין העלאה חלקית ואין עקיפה.
 
-## שלב 2 — בדיקות קדם-העלאה על dist\
+בדוק גם:
 
-הרץ את כולן לפני שנוגעים ב-FTP:
+- `public/sitemap.xml` כולל דפים חדשים;
+- אין `TODO`, placeholder או מספר טלפון ישן;
+- נכסי התמונות קיימים;
+- `public/api/config.php` לא נוסף ל-Git;
+- אין secrets או credentials בשינויים.
 
-1. **Sitemap מול דפים**: כל `<loc>` ב-`dist\sitemap.xml` חייב להתאים לקובץ קיים ב-`dist\`
-   (למשל `https://i-feel.co.il/smart-home/` → `dist\smart-home\index.html`). ולהפך — דף חדש
-   שנוצר בעבודה הזו חייב להופיע ב-sitemap (ה-sitemap ידני! `public/sitemap.xml`).
-2. **טלפונים**: חפש בקבצים ששונו את `03-508-9553`. מספרים אסורים שאסור שיופיעו: `053-348`,
-   מספרים ישנים אחרים. `Grep` על dist של הדפים ששונו.
-3. **קבצי תשתית קיימים ב-dist**: `sitemap.xml`, `robots.txt`, `llms.txt`, `.htaccess`, `CNAME`.
-   שים לב: קובץ האימות של GSC (`google4e1be352b6edf7cc.html`) חי **רק בשרת** ולא בריפו —
-   הוא לא אמור להופיע ב-dist, ואסור למחוק אותו מהשרת לעולם.
-4. **קישורים פנימיים**: בדפים ששונו/נוצרו — ודא שכל `href` פנימי מצביע על נתיב שקיים ב-`dist\`.
-5. **אין placeholders**: חפש `TODO`, `PLACEHOLDER`, `lorem`, `G-XXXXXXXXXX` בדפים ששונו.
-
-נכשלה בדיקה → מתקנים במקור (`src/`), בונים מחדש, ובודקים שוב. לא מעלים "ונתקן אחר כך".
-
-## שלב 3 — אילו קבצים מעלים
-
-הדיפלוי הוא **כירורגי**: מעלים רק את מה שהשתנה, לא את כל `dist\`.
-
-- קיים tag בשם `live` שמסמן את ה-commit האחרון שהועלה (הוקם 2026-07-03 עם העלאה מלאה):
-  ```powershell
-  git diff --name-only live HEAD
-  ```
-  תרגם כל קובץ מקור לפלט שלו: `src/pages/foo.astro` או `src/page-html/foo.html` → `dist\foo\index.html`;
-  `public/X` → `dist\X`; שינוי ב-`BaseLayout.astro`/`Header.astro`/`Footer.astro`/`src/data/*` → **כל דפי ה-HTML השתנו** (העלאת כל דפי ה-HTML).
-- אם ה-tag ‏`live` נעלם — אמור לאורן שאין נקודת ייחוס, והצע העלאה מלאה של `dist\` (בטוח יותר מניחוש).
-
-הצג לאורן את רשימת הקבצים לפני ההעלאה.
-
-## שלב 4 — העלאה ב-FTP (curl)
-
-שליפת סיסמה בלי להדפיס אותה:
+## שלב 3 — פרסום ענף ו-Draft PR
 
 ```powershell
-[xml]$fz = Get-Content "$env:APPDATA\FileZilla\recentservers.xml"
-$server = $fz.FileZilla3.RecentServers.Server | Where-Object { $_.User -eq 'ifeelco' } | Select-Object -First 1
-$pass = [Text.Encoding]::UTF8.GetString([Convert]::FromBase64String($server.Pass.'#text'))
+.\scripts\workstations\publish-work.ps1 `
+  -CommitMessage "<message>" `
+  -PrTitle "<title>"
 ```
 
-העלאת כל קובץ (שמור על מבנה התיקיות של dist; לנתיבים בעברית קודד כל מקטע עם `[Uri]::EscapeDataString`):
+הסקריפט חוסם main, force push, מחיקות לא מאושרות וקבצים גדולים שאינם ב-LFS;
+מריץ build, מבצע commit ו-rebase על `origin/main`, דוחף את ענף העבודה ופותח Draft PR.
 
-```powershell
-curl.exe -sS --user "ifeelco:$pass" -T "dist\<path>\index.html" "ftp://185.56.74.12/public_html/<path>/index.html" --ftp-create-dirs
-```
+העלאת ענף העבודה מותרת. merge ל-`main` דורש אישור מפורש.
 
-כללים:
-- **לעולם לא מוחקים קבצים בשרת.** אם צריך להסיר דף — 301 ב-`.htaccess`, לא מחיקה, ורק באישור אורן.
-- קבצים רגישים שמעלים רק אם שונו בכוונה ובאישור: `.htaccess`, `api/lead.php` (endpoint של לידים ל-Monday!), `google4e1be352b6edf7cc.html`.
-- העלאה נכשלת (timeout / 530) → נסה שוב פעם אחת; נכשל שוב → עצור ודווח, אל תמשיך חצי-דיפלוי בשקט.
+## שלב 4 — GitHub
 
-## שלב 5 — אימות שהאתר חי ותקין
+ב-PR:
 
-מיד אחרי ההעלאה, בדוק דרך `curl.exe` של ה-URL-ים החיים (לא WebFetch — הוא מוחק תגי script):
+1. המתן ל-check בשם `Validate site`.
+2. אם נכשל — בדוק את Actions ותקן בענף. אין לעקוף check.
+3. הצג לאורן סיכום קבצים, תוצאת build וסיכון.
+4. עצור לפני merge וקבל אישור.
 
-1. `https://i-feel.co.il/` — סטטוס 200, הדף נטען.
-2. כל דף ששונה/נוצר — סטטוס 200 **וגם** שהתוכן החדש באמת שם (חפש מחרוזת ייחודית מהשינוי — כותרת חדשה, טלפון, קישור). זה מה שתופס העלאות שלא נקלטו.
-3. `https://i-feel.co.il/sitemap.xml` — כולל את הדפים החדשים.
-4. `https://i-feel.co.il/robots.txt` ו-`/llms.txt` — 200.
-5. אם שונו redirects — בדוק שה-URL הישן מחזיר 301 ליעד הנכון.
+לאחר merge:
 
-יש cache בשרת (LiteSpeed) — אם רואים תוכן ישן, נסה שוב אחרי דקה לפני שמכריזים על תקלה.
+- GitHub בונה שוב את ה-commit של `main`;
+- נוצר artifact בשם `site-dist-<SHA>`;
+- runner במחשב המשרד עם label ‏`ifeel-deploy` מוריד אותו;
+- `scripts/deploy/ftps-upload.ps1` מעלה נכסים לפני HTML;
+- אין מחיקות מרחוק;
+- `scripts/deploy/verify-live.ps1` מריץ בדיקת עשן.
 
-## שלב 6 — סגירה
+אם runner המשרד offline, העבודה נשארת בתור. אין לעבור לפריסה ידנית.
 
-1. עדכן את נקודת הייחוס לדיפלוי הבא:
-   ```powershell
-   git tag -f live HEAD
-   ```
-2. דווח לאורן: מה הועלה (רשימת דפים), מה אומת, ומה נשאר לו — בעיקר:
-   **דף חדש? → Google Search Console → URL Inspection → Request Indexing** עבור ה-URL המלא.
-3. אם ההעלאה כללה שינוי מהותי — הצע commit + push ל-GitHub אם עוד לא נעשה, כדי שהריפו ישקף את מה שחי.
+## שלב 5 — אימות
 
-## אל-תעשה (סיכום)
+אחרי ש-`Deploy production` ירוק:
 
-- אל תעלה בלי build ירוק ובלי שלב 2 מלא.
-- אל תדפיס סיסמה. אל תשמור אותה בקובץ.
-- אל תמחק שום דבר ב-public_html.
-- אל תעבוד על D:\Claude\i-feel-site.
-- אל תבטיח "GitHub יעלה את זה" — אין דיפלוי אוטומטי.
+1. הרץ את הסקיל `verify-live`.
+2. בדוק את ה-URL-ים ששונו, לא רק את דף הבית.
+3. ודא שכל נכסי `/_astro/` שהדפים מפנים אליהם מחזירים 200.
+4. דווח את commit SHA ואת קישור ה-Action/PR.
+
+## תקלות
+
+- check נכשל → מתקנים בענף ומעדכנים את אותו PR.
+- conflict → `git fetch origin` ואז `git rebase origin/main`; לעולם לא force push.
+- runner offline → מחזירים את השירות במחשב המשרד; לא מעלים ידנית.
+- FTPS נכשל → בודקים secrets, GeoIP וחיבור runner; לא חושפים סיסמה.
+- verify-live נכשל → עוצרים, מתעדים את ה-URL והסטטוס, ומכינים תיקון חדש דרך PR.
+
+## גבולות
+
+- אין להדפיס secrets.
+- אין לשנות GitHub secrets או runner בלי אישור.
+- אין למחוק קבצים בשרת.
+- אין `git push --force`.
+- אין merge ל-`main` בלי אישור.
+- אין להבטיח שהאתר עלה לפני ש-Action הפריסה ו-verify-live ירוקים.

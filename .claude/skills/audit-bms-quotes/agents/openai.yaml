@@ -1,0 +1,4 @@
+interface:
+  display_name: "בדיקת הצעות מחיר BMS"
+  short_description: "בדיקת עלויות, שעות ורווחיות במכרזי BMS"
+  default_prompt: "Use $audit-bms-quotes to audit this BMS tender quotation, quantify risks, and recommend whether to submit it."

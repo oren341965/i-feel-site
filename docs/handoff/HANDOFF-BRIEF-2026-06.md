@@ -1,4 +1,7 @@
 # בריף מסירה ל-Claude Code (המחשב עם קוד המקור)
+> **ארכיון היסטורי בלבד.** ההוראות במסמך זה הוחלפו על-ידי `docs/agent-workflow.md`.
+> אין ליצור ריפו חדש, לפרוס ל-Netlify או לבצע push ישיר ל-`main` לפי המסמך הישן.
+
 > הדבק את כל מה שמתחת לקו ל-Claude Code על המחשב השני.
 
 ---
@@ -8,7 +11,7 @@
 אתה Claude Code על המחשב שבו נמצא קוד המקור של אתר i-feel.co.il. בצע את המשימה הבאה מקצה לקצה, ושאל אותי (המשתמש) רק כשצריך אישור או פרט חסר.
 
 ## הקשר טכני
-- במחשב הזה יש פרויקט **Astro** של אתר i-feel.co.il, ככל הנראה בנתיב `C:\Users\User\ifeel-BMS projects\ifeel-astro\`. אם לא שם — חפש תיקייה שמכילה `astro.config.mjs` ו-`package.json` עם תלות ב-`astro`.
+- במחשב הזה יש פרויקט **Astro** של אתר i-feel.co.il, ככל הנראה בנתיב `C:\Users\<USER>\ifeel-BMS projects\ifeel-astro\`. אם לא שם — חפש תיקייה שמכילה `astro.config.mjs` ו-`package.json` עם תלות ב-`astro`.
 - האתר החי מתארח על **Netlify** (פרויקט `silly-khapse-df4e92`, דומיין `www.i-feel.co.il`), כרגע בשיטת **Netlify Drop** ידנית. DNS ב-Cloudflare.
 - מבנה: components משותפים (`Header.astro`, `Footer.astro`, `ContactForm.astro`), `src/data/site.ts`, `src/pages/*.astro`, `public/_redirects`.
 

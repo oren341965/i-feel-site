@@ -1,20 +1,24 @@
-name: Build site
+name: Validate and deploy site
 
 on:
-  push:
+  pull_request:
     branches:
       - main
-  pull_request:
+  push:
     branches:
       - main
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 concurrency:
-  group: site-build-${{ github.ref }}
+  group: site-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
-  build:
+  validate:
+    name: Validate site
     runs-on: ubuntu-latest
 
     steps:
@@ -28,10 +32,58 @@ jobs:
           cache: npm
 
       - name: Install dependencies
-        run: npm install --legacy-peer-deps
+        run: npm ci --legacy-peer-deps
 
       - name: Lint secure staff portal PHP
         run: find public/staff-expenses -maxdepth 1 -type f -name '*.php' -print0 | xargs -0 -n1 php -l
 
-      - name: Build Astro site
+      - name: Build and validate Astro site
         run: npm run build
+
+      - name: Upload validated site artifact
+        if: github.event_name != 'pull_request'
+        uses: actions/upload-artifact@v4
+        with:
+          name: site-dist-${{ github.sha }}
+          path: dist/
+          if-no-files-found: error
+          retention-days: 3
+
+  deploy:
+    name: Deploy production
+    if: github.event_name != 'pull_request'
+    needs: validate
+    runs-on:
+      - self-hosted
+      - windows
+      - x64
+      - ifeel-deploy
+    environment:
+      name: production
+      url: https://i-feel.co.il/
+    concurrency:
+      group: ifeel-production
+      cancel-in-progress: false
+
+    steps:
+      - name: Checkout deployment scripts
+        uses: actions/checkout@v4
+
+      - name: Download validated site artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: site-dist-${{ github.sha }}
+          path: dist
+
+      - name: Upload dist through explicit FTPS
+        shell: powershell
+        env:
+          IFEEL_FTP_SERVER: ${{ secrets.IFEEL_FTP_SERVER || secrets.FTP_SERVER }}
+          IFEEL_FTP_USERNAME: ${{ secrets.IFEEL_FTP_USERNAME || secrets.FTP_USERNAME }}
+          IFEEL_FTP_PASSWORD: ${{ secrets.IFEEL_FTP_PASSWORD || secrets.FTP_PASSWORD }}
+          IFEEL_FTP_SERVER_DIR: ${{ secrets.IFEEL_FTP_SERVER_DIR || secrets.FTP_SERVER_DIR }}
+        run: .\scripts\deploy\ftps-upload.ps1 -DistPath .\dist
+
+      - name: Verify live site
+        shell: powershell
+        run: .\scripts\deploy\verify-live.ps1 -BaseUrl https://i-feel.co.il

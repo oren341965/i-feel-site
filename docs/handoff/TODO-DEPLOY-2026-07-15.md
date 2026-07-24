@@ -1,10 +1,13 @@
 # ⏳ משימה פתוחה אחת: העלאת ה-sitemap המתוקן (קומיט `86f5214`)
 
+> **ארכיון היסטורי בלבד.** אין להריץ את פקודות ה-FTP, ה-reset או ה-force-push
+> שבמסמך זה. נוהל הפריסה הפעיל נמצא ב-`docs/agent-workflow.md`.
+
 **מה קרה:** בבדיקת GSC ב-16/7 התגלה ש-18 דפי מקרי הבוחן חיים באתר אך **מעולם לא נוספו ל-sitemap הידני**. תוקן ונדחף בקומיט `86f5214` (106 → 124 כתובות, XML אומת, כל כתובת מצביעה על דף קיים ב-dist).
 
 **מה לעשות מהמחשב במשרד:**
 ```powershell
-cd C:\Users\User\ifeel-site-work
+cd C:\Users\<USER>\i-feel-site-work
 git pull origin main
 npm run build
 # להעלות קובץ אחד: dist\sitemap.xml → /public_html/sitemap.xml

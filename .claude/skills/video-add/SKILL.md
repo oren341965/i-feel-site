@@ -10,7 +10,8 @@ description: "שרשרת מלאה של הוספת סרטון הדרכה/תמיכ
 מטרה: קלט = קובץ וידאו (או סרטון שכבר ב-YouTube) + נושא מהרשימה. פלט = סרטון חי ב-YouTube
 ומוטמע בכל המקומות הנכונים באתר, מאומת ובאוויר. **מהיר, מסודר, בלי לשכוח שלב.**
 
-הריפו (מחשב הבית): `C:\Users\salee\Documents\i-feel-site`. **קודם `git pull origin main`.**
+עובדים מה-clone הקנוני בכל מחשב. בתחילת משימה יוצרים work branch חדש דרך
+`scripts/workstations/new-work.ps1`; אין עבודה ישירה על `main`.
 
 ## מפת השטח — איפה סרטון "חי" באתר
 
@@ -105,10 +106,9 @@ npm run build
 ## שלב 6 — עדכון הרשימה, commit ומסירה
 
 1. ב-`docs/video-plan.md` — העבר את השורה מ"חסר" ל"בוצע" עם ה-`VIDEO_ID` ודף-הנושא.
-2. Commit ברור (`video: add "<נושא>" (<VIDEO_ID>) to /video/ + <דף-נושא>`) + `git push`.
-3. הרץ **/deploy-ifeel** (או אמור לאורן להריץ מהמחשב במשרד — FTP חסום מהבית).
-   דיפלוי = פרסום חי, דורש אישור.
-4. אחרי הדיפלוי — **/verify-live** לבדיקת עשן.
+2. פרסם work branch ו-Draft PR דרך `publish-work.ps1` עם commit ברור.
+3. הרץ **/deploy-ifeel**. merge ל-`main` ופרסום חי דורשים אישור.
+4. אחרי ש-GitHub Action ‏`Deploy production` ירוק — **/verify-live** לבדיקת עשן.
 5. **בקשת אינדוקס ב-Google Search Console** (פעולה ידנית של אורן — צעד חשוב לתוצאה עשירה):
    בדיקת URL של `https://i-feel.co.il/video/` → "בקשת הוספה לאינדקס", כדי שה-VideoObject
    החדש ייקלט כ-video rich result (הסרטון יופיע בחיפושי גוגל, לא רק ביוטיוב). אם נוצר גם

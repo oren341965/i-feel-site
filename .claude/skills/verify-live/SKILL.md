@@ -1,6 +1,6 @@
 ---
 name: verify-live
-description: "בדיקת עשן מהירה (2-3 דקות) של האתר החי i-feel.co.il — סטטוסים, sitemap מול דפים, טלפון תקני, תג GA4, קובץ אימות GSC, מחרוזות אסורות, וסנכרון בין הריפו למה שבאוויר. השתמש בסקיל בכל פעם שאורן: שואל 'האתר תקין?', 'תבדוק שהאתר באוויר', 'הכל עובד באתר?', 'תוודא שההעלאה נקלטה', 'verify live', 'בדיקת עשן', 'בדיקת אתר מלאה', 'משהו נשבר?'; אחרי כל העלאת FTP (ידנית או דרך /deploy-ifeel); אחרי שינוי DNS/שרת/cPanel; או כשמישהו מדווח שמשהו לא עובד באתר. הסקיל קורא בלבד — לא משנה שום דבר בשרת או בריפו, אז אפשר להריץ אותו בכל רגע בלי חשש."
+description: "בדיקת עשן מהירה של i-feel.co.il — סטטוסים, sitemap, טלפון, GA4/GSC, מחרוזות אסורות וסנכרון בין origin/main לבין פריסת GitHub Actions האחרונה. השתמש אחרי Deploy production, שינוי DNS/שרת או דיווח תקלה. הסקיל קורא בלבד."
 ---
 
 > **בעלות ואחריות על האתר:** אורן הוא בעל האתר והמטפל היחיד ב־i-feel.co.il. לשייך לאורן בלבד כל משימת אתר — קוד, תוכן, SEO, Cloudflare, אחסון ופריסה.
@@ -62,11 +62,12 @@ $code = curl.exe -s -o NUL -w "%{http_code}" 'https://i-feel.co.il/llms.txt'   #
 ### 5. סנכרון ריפו ↔ אוויר
 ```powershell
 git -C C:\Users\USER\i-feel-site fetch origin
-git -C C:\Users\USER\i-feel-site log --oneline live..origin/main
+gh run list --repo oren341965/i-feel-site --workflow deploy.yml --branch main --status success --limit 1 --json databaseId,headSha,conclusion,updatedAt,url
+git -C C:\Users\USER\i-feel-site rev-parse origin/main
 ```
-- אם יש קומיטים בין tag ‏`live` ל-main — יש עבודה שנדחפה ל-GitHub אבל **לא הועלתה לשרת**.
-  לדווח את הרשימה ולהציע להריץ /deploy-ifeel.
-- אם ה-tag ‏`live` לא קיים — לציין שאין נקודת ייחוס (הוקם לראשונה 2026-07-03; אם נעלם — משהו השתבש).
+- ה-`headSha` של הריצה הירוקה האחרונה חייב להיות זהה ל-`origin/main`.
+- אם אינו זהה, יש commit ב-main שטרם נפרס או שפריסתו נכשלה/ממתינה ל-runner.
+- דווח את run URL ואת שני ה-SHA-ים. אין לעבור להעלאה ידנית.
 
 ### 6. דפי מפתח (מדגם קבוע)
 סטטוס 200 + הטלפון התקני בכל אחד:
@@ -85,7 +86,7 @@ git -C C:\Users\USER\i-feel-site log --oneline live..origin/main
 ✅ דף הבית: טלפון + GA4 + Ads + Schema
 ✅ מחרוזות אסורות: נקי
 ✅ Sitemap: זהה לריפו, מדגם 6/6 תקין
-⚠️ סנכרון: 2 קומיטים ב-main שלא הועלו לשרת (רשימה...)
+⚠️ סנכרון: origin/main שונה מה-Deploy production הירוק האחרון
 ✅ דפי מפתח: 5/5
 ```
 
