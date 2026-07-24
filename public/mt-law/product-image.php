@@ -44,6 +44,7 @@ SVG;
 $cachePath = rtrim(sys_get_temp_dir(), DIRECTORY_SEPARATOR)
     . DIRECTORY_SEPARATOR
     . 'ifeel-argon-tt-mk2-earth-grey.webp';
+$cacheTypePath = $cachePath . '.type';
 
 if (
     is_file($cachePath)
@@ -53,8 +54,9 @@ if (
     && (int) filemtime($cachePath) >= time() - MTLAW_TURNTABLE_CACHE_SECONDS
 ) {
     $cached = file_get_contents($cachePath);
-    if (is_string($cached) && $cached !== '') {
-        mtlaw_product_image_output($cached, 'image/webp');
+    $cachedType = is_file($cacheTypePath) ? trim((string) file_get_contents($cacheTypePath)) : 'image/webp';
+    if (is_string($cached) && $cached !== '' && str_starts_with($cachedType, 'image/')) {
+        mtlaw_product_image_output($cached, $cachedType);
     }
 }
 
@@ -75,7 +77,7 @@ $options = [
     CURLOPT_TIMEOUT => 18,
     CURLOPT_USERAGENT => 'I Feel Smart Home product image cache/1.0',
     CURLOPT_HTTPHEADER => [
-        'Accept: image/avif,image/webp,image/*,*/*;q=0.8',
+        'Accept: image/webp,image/*,*/*;q=0.8',
         'Accept-Language: he-IL,he;q=0.9,en;q=0.7',
     ],
 ];
@@ -106,12 +108,14 @@ if (
     error_log('[i-feel mt-law product image] Could not refresh TRES image: HTTP ' . $status . ' ' . $error);
     if (is_file($cachePath)) {
         $stale = file_get_contents($cachePath);
-        if (is_string($stale) && $stale !== '') {
-            mtlaw_product_image_output($stale, 'image/webp');
+        $staleType = is_file($cacheTypePath) ? trim((string) file_get_contents($cacheTypePath)) : 'image/webp';
+        if (is_string($stale) && $stale !== '' && str_starts_with($staleType, 'image/')) {
+            mtlaw_product_image_output($stale, $staleType);
         }
     }
     mtlaw_product_image_fallback();
 }
 
 @file_put_contents($cachePath, $body, LOCK_EX);
-mtlaw_product_image_output($body, str_contains($contentType, 'webp') ? 'image/webp' : $contentType);
+@file_put_contents($cacheTypePath, $contentType, LOCK_EX);
+mtlaw_product_image_output($body, $contentType);
