@@ -13,6 +13,8 @@ $storagePath = Join-Path $testRoot "private-expenses"
 $stdoutPath = Join-Path $testRoot "php-stdout.log"
 $stderrPath = Join-Path $testRoot "php-stderr.log"
 $employeeCookies = Join-Path $testRoot "employee-cookies.txt"
+$magicCookies = Join-Path $testRoot "magic-cookies.txt"
+$replayCookies = Join-Path $testRoot "magic-replay-cookies.txt"
 $adminCookies = Join-Path $testRoot "admin-cookies.txt"
 $responseBody = Join-Path $testRoot "response-body.txt"
 $fixture = Join-Path $repositoryRoot "tests\staff-expenses\fixtures\receipt.pdf"
@@ -129,6 +131,32 @@ try {
         "$baseUrl/staff-expenses/" | Out-Null
     $html = Get-Content -Raw -Encoding utf8 $responseBody
     Assert-PortalTest (($html -match "alert--error") -and ($html -match "worker@gmail\.com")) "External Gmail address was not rejected."
+
+    Invoke-PortalCurl `
+        "-o", $responseBody, `
+        "$baseUrl/staff-expenses/__test-magic-link?email=worker%40i-feel.co.il" | Out-Null
+    $magicChallenge = Get-Content -Raw -Encoding utf8 $responseBody | ConvertFrom-Json
+    Assert-PortalTest ($magicChallenge.url -match "login_token=[a-f0-9]{64}") "Test magic link was not generated."
+
+    $headers = Invoke-PortalCurl `
+        "-D", "-", `
+        "-o", $responseBody, `
+        "-c", $magicCookies, `
+        $magicChallenge.url
+    Assert-PortalTest ($headers -match "HTTP/1\.1 303") "Magic link did not open a session in a new browser context."
+    Assert-PortalTest ($headers -match "(?im)^Location: [^\r\n]*tab=new") "Magic link did not redirect to the new-expense form."
+    Assert-PortalTest ($headers -match "(?im)^Set-Cookie: ifeel_staff_remember=[a-f0-9]{64}") "Magic link did not remember the device."
+
+    Invoke-PortalCurl "-o", $responseBody, "-b", $magicCookies, "$baseUrl/staff-expenses/?tab=new" | Out-Null
+    $html = Get-Content -Raw -Encoding utf8 $responseBody
+    Assert-PortalTest ($html -match 'name="action" value="submit_report"') "Magic-link session did not render the expense form."
+
+    Invoke-PortalCurl `
+        "-o", $responseBody, `
+        "-c", $replayCookies, `
+        $magicChallenge.url | Out-Null
+    $html = Get-Content -Raw -Encoding utf8 $responseBody
+    Assert-PortalTest (($html -match "alert--error") -and ($html -match 'name="action" value="request_email_code"')) "Magic link was accepted more than once."
 
     Invoke-PortalCurl `
         "-o", $responseBody, `
