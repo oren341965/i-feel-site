@@ -200,6 +200,15 @@ input[readonly] { background: #f3f5f8; }
 .vehicle-deadline > span:first-child { color: var(--muted); font-size: .8rem; }
 .vehicle-deadline .status { width: fit-content; }
 .vehicle-card__meta { margin: 0; }
+.tab--vehicle { background: #eef8f2; color: #17653a; border-color: #b8dfc8; }
+.vehicle-hero { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 18px; margin-bottom: 18px; padding: 24px; border: 1px solid #b8dfc8; border-radius: 18px; background: linear-gradient(135deg, #f7fff9, #edf8ff); box-shadow: var(--shadow); }
+.vehicle-hero h2 { margin: 2px 0 8px; font-size: 1.5rem; }
+.vehicle-hero__stats { grid-column: 1 / -1; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; }
+.vehicle-hero__stats span { display: grid; gap: 4px; padding: 12px; border: 1px solid var(--border); border-radius: 10px; background: #fff; color: var(--muted); font-size: .82rem; }
+.vehicle-hero__stats strong { color: var(--text); font-size: .95rem; }
+.unsafe-warning { padding: 14px; border: 2px solid #d92d20; border-radius: 12px; background: #fff1f0; color: #b42318; font-weight: 900; }
+.document-list { display: grid; gap: 9px; }
+.document-list > div { display: grid; grid-template-columns: 1fr 2fr 1fr; gap: 12px; padding: 12px; border: 1px solid var(--border); border-radius: 10px; }
 .profile-notice { display: flex; align-items: center; justify-content: space-between; gap: 14px; }
 .profile-layout { display: grid; grid-template-columns: minmax(300px, .75fr) minmax(0, 1.25fr); gap: 18px; align-items: start; }
 .profile-layout .form-card { margin-bottom: 18px; }
@@ -309,6 +318,9 @@ input[readonly] { background: #f3f5f8; }
     .vehicle-card__title { align-items: stretch; flex-direction: column; }
     .vehicle-card__title > b { width: fit-content; }
     .vehicle-deadlines { grid-template-columns: 1fr; }
+    .vehicle-hero { grid-template-columns: 1fr; padding: 18px; }
+    .vehicle-hero__stats { grid-column: auto; grid-template-columns: 1fr 1fr; }
+    .document-list > div { grid-template-columns: 1fr; }
     .profile-notice { align-items: stretch; flex-direction: column; }
     .profile-notice .button { width: 100%; }
 }

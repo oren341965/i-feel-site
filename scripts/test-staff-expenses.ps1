@@ -256,6 +256,33 @@ try {
     $vehicleDirectory = Get-Content -Raw -Encoding utf8 $vehicleDirectoryFile | ConvertFrom-Json
     Assert-PortalTest ($vehicleDirectory.'12345678'.test_due_date -eq "2027-05-26") "Annual vehicle test date was not stored."
     Assert-PortalTest ($vehicleDirectory.'12345678'.compulsory_insurance_due_date -eq "2027-06-30") "Annual vehicle insurance date was not stored."
+    Invoke-PortalCurl "-o", $responseBody, "-b", $employeeCookies, "$baseUrl/staff-expenses/?tab=my_vehicle" | Out-Null
+    $html = Get-Content -Raw -Encoding utf8 $responseBody
+    Assert-PortalTest ($html -match 'name="action" value="submit_vehicle_monthly"') "Monthly vehicle form was not rendered."
+    Assert-PortalTest ($html -match 'href="[^"]*tab=my_vehicle[^"]*"') "My vehicle navigation button was not rendered for an assigned driver."
+    Assert-PortalTest ($html -match 'vehicle-documents-card') "Secure vehicle documents area was not rendered."
+    $csrf = Get-CsrfFromHtml $html
+    $headers = Invoke-PortalCurl `
+        "-D", "-", `
+        "-o", $responseBody, `
+        "-b", $employeeCookies, `
+        "-c", $employeeCookies, `
+        "--data-urlencode", "csrf=$csrf", `
+        "--data-urlencode", "action=submit_vehicle_monthly", `
+        "--data-urlencode", "monthly_vehicle_plate=12345678", `
+        "--data-urlencode", "monthly_odometer=123456", `
+        "--data-urlencode", "monthly_treatment=none", `
+        "--data-urlencode", "monthly_tires=ok", `
+        "--data-urlencode", "monthly_general_status=ok", `
+        "$baseUrl/staff-expenses/"
+    Assert-PortalTest ($headers -match "HTTP/1\.1 303") "Monthly vehicle report was not accepted."
+    $monthlyFile = Join-Path $storagePath "security\\vehicle-monthly.json"
+    $monthlyReports = Get-Content -Raw -Encoding utf8 $monthlyFile | ConvertFrom-Json
+    $currentMonth = Get-Date -Format "yyyy-MM"
+    $monthProperty = $monthlyReports.'12345678'.PSObject.Properties[$currentMonth]
+    Assert-PortalTest ($null -ne $monthProperty) "Monthly report was not stored for the current month."
+    $monthVersions = @($monthProperty.Value)
+    Assert-PortalTest ($monthVersions[0].odometer -eq 123456) "Monthly odometer was not stored."
 
     Invoke-PortalCurl "-o", $responseBody, "-b", $employeeCookies, "$baseUrl/staff-expenses/?tab=history" | Out-Null
     $html = Get-Content -Raw -Encoding utf8 $responseBody

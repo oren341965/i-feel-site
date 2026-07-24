@@ -10,6 +10,7 @@ require_once __DIR__ . '/_bootstrap.php';
 require_once __DIR__ . '/_email_auth.php';
 require_once __DIR__ . '/_employees.php';
 require_once __DIR__ . '/_vehicles.php';
+require_once __DIR__ . '/_vehicle_portal.php';
 
 try {
     $lockPath = portal_storage_root() . DIRECTORY_SEPARATOR . 'security' . DIRECTORY_SEPARATOR . 'notification-cron.lock';
@@ -23,11 +24,12 @@ try {
     $result = [
         'birthdays' => portal_process_birthday_notifications($now),
         'vehicles' => portal_process_vehicle_notifications($now),
+        'vehicle_monthly' => portal_process_vehicle_monthly_reminders($now),
     ];
     fwrite(STDOUT, json_encode($result, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) . PHP_EOL);
     flock($lock, LOCK_UN);
     fclose($lock);
-    exit((($result['birthdays']['failed'] ?? 0) + ($result['vehicles']['failed'] ?? 0)) > 0 ? 1 : 0);
+    exit((($result['birthdays']['failed'] ?? 0) + ($result['vehicles']['failed'] ?? 0) + ($result['vehicle_monthly']['failed'] ?? 0)) > 0 ? 1 : 0);
 } catch (Throwable $error) {
     error_log('[i-feel portal notification cron] ' . $error->getMessage());
     fwrite(STDERR, "Portal notifications failed.\n");

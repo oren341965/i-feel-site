@@ -6,6 +6,7 @@ require_once __DIR__ . '/_ui.php';
 require_once __DIR__ . '/_email_auth.php';
 require_once __DIR__ . '/_employees.php';
 require_once __DIR__ . '/_vehicles.php';
+require_once __DIR__ . '/_vehicle_portal.php';
 require_once __DIR__ . '/_records.php';
 require_once __DIR__ . '/_labels.php';
 require_once __DIR__ . '/_notifications.php';
@@ -160,11 +161,14 @@ try {
     }
 
     $tab = trim((string) ($_GET['tab'] ?? 'new'));
-    if (($user['role'] ?? '') !== 'admin' && !in_array($tab, ['new', 'history', 'work', 'profile'], true)) {
+    if (($user['role'] ?? '') !== 'admin' && !in_array($tab, ['new', 'history', 'work', 'profile', 'my_vehicle'], true)) {
         $tab = 'new';
     }
-    if (!in_array($tab, ['new', 'history', 'work', 'profile', 'work_stats', 'reports', 'employees', 'vehicles'], true)) {
+    if (!in_array($tab, ['new', 'history', 'work', 'profile', 'my_vehicle', 'work_stats', 'reports', 'employees', 'vehicles'], true)) {
         $tab = 'new';
+    }
+    if ($tab === 'my_vehicle' && portal_vehicles_for_employee($user) === []) {
+        $tab = 'profile';
     }
 
     $flash = portal_flash_take();
@@ -174,6 +178,7 @@ try {
         'employees' => 'פרטי עובדים וימי הולדת',
         'vehicles' => 'רכבי עובדים',
         'profile' => 'הפרטים והרכב שלי',
+        'my_vehicle' => 'הרכב שלי',
         'work' => 'סיום התקנה או שירות',
         'work_stats' => 'סטטיסטיקת עבודות',
         default => 'דיווח חדש',
@@ -193,6 +198,8 @@ try {
         portal_render_vehicle_admin($flash);
     } elseif ($tab === 'profile') {
         portal_render_employee_profile_page($user, $flash);
+    } elseif ($tab === 'my_vehicle') {
+        portal_render_my_vehicle_page($user, $flash);
     } elseif ($tab === 'work') {
         portal_render_work_report_form($user, $flash);
     } elseif ($tab === 'work_stats') {

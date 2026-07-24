@@ -28,6 +28,7 @@ require_once $repositoryRoot . '/public/staff-expenses/_ui.php';
 require_once $repositoryRoot . '/public/staff-expenses/_email_auth.php';
 require_once $repositoryRoot . '/public/staff-expenses/_employees.php';
 require_once $repositoryRoot . '/public/staff-expenses/_vehicles.php';
+require_once $repositoryRoot . '/public/staff-expenses/_vehicle_portal.php';
 require_once $repositoryRoot . '/public/staff-expenses/_labels.php';
 require_once $repositoryRoot . '/public/staff-expenses/_records.php';
 require_once $repositoryRoot . '/public/staff-expenses/_notifications.php';
@@ -175,6 +176,20 @@ try {
         && ($selfUpdatedVehicle['compulsory_insurance_due_date'] ?? '') === '2028-06-30'
         && ($selfUpdatedVehicle['employee_email'] ?? '') === 'worker@i-feel.co.il',
         'Employee annual vehicle update was not saved.'
+    );
+    $monthlyReminderEmails = [];
+    $monthlyMailer = static function (string $recipient, string $subject, string $body, array $attachments) use (&$monthlyReminderEmails): bool {
+        $monthlyReminderEmails[] = compact('recipient', 'subject', 'body', 'attachments');
+        return true;
+    };
+    $monthlyReminder = portal_process_vehicle_monthly_reminders(
+        new DateTimeImmutable('2026-07-02 08:00:00', new DateTimeZone('Asia/Jerusalem')),
+        $monthlyMailer
+    );
+    portal_test_expect(
+        ($monthlyReminder['sent'] ?? 0) === 1
+        && ($monthlyReminderEmails[0]['recipient'] ?? '') === 'worker@i-feel.co.il',
+        'Monthly vehicle reminder was not sent to the assigned employee.'
     );
     portal_save_birthday_gift(
         'worker@i-feel.co.il',

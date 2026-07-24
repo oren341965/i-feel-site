@@ -264,6 +264,10 @@ function portal_handle_post(array $user): never
         portal_redirect(['tab' => 'profile']);
     }
 
+    if ($action === 'submit_vehicle_monthly') {
+        portal_handle_vehicle_monthly_submission($user);
+    }
+
     if ($action === 'submit_report') {
         $savedProfile = portal_save_employee_profile(
             $user,
