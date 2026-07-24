@@ -100,6 +100,118 @@ function portal_email_subject(string $subject): string
     return '=?UTF-8?B?' . base64_encode($subject) . '?=';
 }
 
+function portal_email_setting(string $name, string $default = ''): string
+{
+    if (defined($name)) {
+        $value = trim((string) constant($name));
+        if ($value !== '') {
+            return $value;
+        }
+    }
+    $value = trim((string) getenv($name));
+    return $value !== '' ? $value : $default;
+}
+
+function portal_smtp_read($socket): string
+{
+    $response = '';
+    do {
+        $line = fgets($socket, 4096);
+        if ($line === false) {
+            throw new RuntimeException('SMTP connection closed unexpectedly.');
+        }
+        $response .= $line;
+    } while (strlen($line) >= 4 && $line[3] === '-');
+    return $response;
+}
+
+function portal_smtp_expect($socket, array $codes): string
+{
+    $response = portal_smtp_read($socket);
+    $code = (int) substr($response, 0, 3);
+    if (!in_array($code, $codes, true)) {
+        throw new RuntimeException('SMTP server rejected the request (code ' . $code . ').');
+    }
+    return $response;
+}
+
+function portal_smtp_command($socket, string $command, array $codes): string
+{
+    if (fwrite($socket, $command . "\r\n") === false) {
+        throw new RuntimeException('Unable to write to SMTP server.');
+    }
+    return portal_smtp_expect($socket, $codes);
+}
+
+function portal_smtp_send(string $recipient, string $subject, string $body, array $headers): bool
+{
+    $host = portal_email_setting('EXPENSE_PORTAL_SMTP_HOST');
+    if ($host === '') {
+        return false;
+    }
+
+    $port = (int) portal_email_setting('EXPENSE_PORTAL_SMTP_PORT', '587');
+    $security = strtolower(portal_email_setting('EXPENSE_PORTAL_SMTP_SECURITY', 'tls'));
+    $username = portal_email_setting('EXPENSE_PORTAL_SMTP_USERNAME');
+    $password = portal_email_setting('EXPENSE_PORTAL_SMTP_PASSWORD');
+    $timeout = max(5, min(30, (int) portal_email_setting('EXPENSE_PORTAL_SMTP_TIMEOUT', '15')));
+    if ($port < 1 || $port > 65535 || !in_array($security, ['tls', 'ssl', 'none'], true)) {
+        throw new RuntimeException('Invalid SMTP configuration.');
+    }
+
+    $transport = $security === 'ssl' ? 'ssl://' : 'tcp://';
+    $socket = @stream_socket_client(
+        $transport . $host . ':' . $port,
+        $errorNumber,
+        $errorMessage,
+        $timeout,
+        STREAM_CLIENT_CONNECT
+    );
+    if (!is_resource($socket)) {
+        throw new RuntimeException('Unable to connect to SMTP server (' . $errorNumber . ').');
+    }
+
+    try {
+        stream_set_timeout($socket, $timeout);
+        portal_smtp_expect($socket, [220]);
+        $serverName = preg_replace('/[^A-Za-z0-9.-]/', '', portal_company_email_domain()) ?: 'localhost';
+        portal_smtp_command($socket, 'EHLO ' . $serverName, [250]);
+
+        if ($security === 'tls') {
+            portal_smtp_command($socket, 'STARTTLS', [220]);
+            if (!stream_socket_enable_crypto($socket, true, STREAM_CRYPTO_METHOD_TLS_CLIENT)) {
+                throw new RuntimeException('Unable to establish encrypted SMTP connection.');
+            }
+            portal_smtp_command($socket, 'EHLO ' . $serverName, [250]);
+        }
+
+        if ($username !== '') {
+            if ($password === '') {
+                throw new RuntimeException('SMTP password is missing.');
+            }
+            portal_smtp_command($socket, 'AUTH LOGIN', [334]);
+            portal_smtp_command($socket, base64_encode($username), [334]);
+            portal_smtp_command($socket, base64_encode($password), [235]);
+        }
+
+        $sender = portal_email_setting('EXPENSE_PORTAL_FROM_EMAIL', 'no-reply@' . portal_company_email_domain());
+        portal_smtp_command($socket, 'MAIL FROM:<' . $sender . '>', [250]);
+        portal_smtp_command($socket, 'RCPT TO:<' . $recipient . '>', [250, 251]);
+        portal_smtp_command($socket, 'DATA', [354]);
+
+        $message = implode("\r\n", $headers)
+            . "\r\nSubject: " . $subject
+            . "\r\nTo: <" . $recipient . ">"
+            . "\r\n\r\n" . $body;
+        $message = preg_replace('/(?m)^\./', '..', $message) ?? $message;
+        portal_smtp_command($socket, $message . "\r\n.", [250]);
+        portal_smtp_command($socket, 'QUIT', [221]);
+        return true;
+    } finally {
+        fclose($socket);
+    }
+}
+
 function portal_send_email_code(string $email, string $code): bool
 {
     $sender = '';
@@ -135,7 +247,16 @@ function portal_send_email_code(string $email, string $code): bool
         'X-Mailer: I Feel Staff Expenses Portal',
     ];
 
-    return mail($email, $subject, $body, implode("\r\n", $headers));
+    if (portal_email_setting('EXPENSE_PORTAL_SMTP_HOST') !== '') {
+        try {
+            return portal_smtp_send($email, $subject, $body, $headers);
+        } catch (Throwable $error) {
+            error_log('Staff expenses SMTP delivery failed: ' . $error->getMessage());
+            return false;
+        }
+    }
+
+    return function_exists('mail') && mail($email, $subject, $body, implode("\r\n", $headers));
 }
 
 function portal_request_email_code(string $input): string
