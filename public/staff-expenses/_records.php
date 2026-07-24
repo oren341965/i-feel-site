@@ -339,6 +339,46 @@ function portal_handle_post(array $user): never
         portal_redirect(['tab' => 'users']);
     }
 
+    if ($action === 'import_employee_directory') {
+        portal_require_admin();
+        $count = portal_import_employee_directory(portal_post('employee_directory_text', 30000));
+        portal_audit('employee_directory_imported', ['count' => $count]);
+        portal_flash_set('success', 'פרטי ' . $count . ' עובדים נשמרו בהצלחה.');
+        portal_redirect(['tab' => 'employees']);
+    }
+
+    if ($action === 'import_vehicle_directory') {
+        portal_require_admin();
+        $count = portal_import_vehicle_directory(portal_post('vehicle_directory_text', 60000));
+        portal_audit('vehicle_directory_imported', ['count' => $count]);
+        portal_flash_set('success', 'פרטי ' . $count . ' רכבים נשמרו בהצלחה.');
+        portal_redirect(['tab' => 'vehicles']);
+    }
+
+    if ($action === 'save_birthday_gift') {
+        portal_require_admin();
+        $yearRaw = portal_post('gift_year', 4);
+        if (!ctype_digit($yearRaw)) {
+            throw new RuntimeException('שנת המתנה אינה תקינה.');
+        }
+        $email = portal_post('gift_employee_email', 160);
+        portal_save_birthday_gift(
+            $email,
+            (int) $yearRaw,
+            portal_post('gift_title', 160),
+            portal_post('gift_message', 1200),
+            portal_post('gift_coupon_code', 160),
+            portal_post('gift_redemption_url', 500),
+            $_FILES['gift_attachment'] ?? []
+        );
+        portal_audit('birthday_gift_saved', [
+            'email_hash' => hash('sha256', strtolower($email)),
+            'year' => (int) $yearRaw,
+        ]);
+        portal_flash_set('success', 'מתנת יום ההולדת נשמרה באזור האישי של העובד.');
+        portal_redirect(['tab' => 'employees']);
+    }
+
     throw new RuntimeException('הפעולה המבוקשת אינה מוכרת.');
 }
 

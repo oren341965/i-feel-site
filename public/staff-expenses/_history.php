@@ -25,12 +25,16 @@ function portal_records_for_employee(array $user): array
 function portal_employee_profile(array $user): array
 {
     $email = portal_employee_email($user);
+    $directoryEntry = portal_employee_directory_entry($user);
     $displayName = trim((string) ($user['display_name'] ?? ''));
     $profile = [
-        'name' => $displayName !== $email ? $displayName : '',
+        'name' => trim((string) ($directoryEntry['name'] ?? '')),
         'email' => $email,
-        'phone' => '',
+        'phone' => trim((string) ($directoryEntry['phone'] ?? '')),
     ];
+    if ($profile['name'] === '' && $displayName !== $email) {
+        $profile['name'] = $displayName;
+    }
 
     foreach (portal_records_for_employee($user) as $record) {
         $employee = is_array($record['employee'] ?? null) ? $record['employee'] : [];

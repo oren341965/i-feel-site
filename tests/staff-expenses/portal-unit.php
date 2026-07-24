@@ -26,9 +26,12 @@ $_SERVER['REMOTE_ADDR'] = '127.0.0.1';
 require_once $repositoryRoot . '/public/staff-expenses/_bootstrap.php';
 require_once $repositoryRoot . '/public/staff-expenses/_ui.php';
 require_once $repositoryRoot . '/public/staff-expenses/_email_auth.php';
+require_once $repositoryRoot . '/public/staff-expenses/_employees.php';
+require_once $repositoryRoot . '/public/staff-expenses/_vehicles.php';
 require_once $repositoryRoot . '/public/staff-expenses/_labels.php';
 require_once $repositoryRoot . '/public/staff-expenses/_records.php';
 require_once $repositoryRoot . '/public/staff-expenses/_notifications.php';
+require_once $repositoryRoot . '/public/staff-expenses/_work_reports.php';
 require_once $repositoryRoot . '/public/staff-expenses/_history.php';
 require_once $repositoryRoot . '/public/staff-expenses/_readiness.php';
 
@@ -48,6 +51,148 @@ try {
     portal_test_expect(
         in_array('oren@i-feel.co.il', portal_email_admins(), true),
         'Default admin email is missing.'
+    );
+    portal_test_expect(
+        portal_normalize_israeli_mobile('+972 54-565-1060') === '054-565-1060',
+        'International Israeli mobile normalization failed.'
+    );
+    portal_test_expect(
+        portal_normalize_israeli_mobile('542292103') === '054-229-2103',
+        'Nine digit Israeli mobile normalization failed.'
+    );
+    portal_test_expect(
+        portal_normalize_israeli_mobile('03-508-9553') === null,
+        'A landline was accepted as an employee mobile.'
+    );
+
+    $directoryRows = implode("\n", [
+        "שם מלא\tדואר אלקטרוני\tטלפון\tיום לידה\tחודש לידה",
+        "Test Worker\tworker@i-feel.co.il\t+972 54-111-2233\t15\t7",
+        "No Birthday\tother@i-feel.co.il\t0523334455\t\t",
+    ]);
+    portal_test_expect(portal_import_employee_directory($directoryRows) === 2, 'Employee directory import count is wrong.');
+    $directoryEmployee = ['email' => 'worker@i-feel.co.il', 'display_name' => 'worker@i-feel.co.il'];
+    portal_test_expect(
+        portal_employee_directory_entry($directoryEmployee)['phone'] === '054-111-2233',
+        'Employee phone was not loaded from private directory.'
+    );
+    portal_test_expect(
+        portal_employee_has_birthday_this_month($directoryEmployee, 7),
+        'Birthday month was not detected.'
+    );
+    portal_test_expect(
+        !portal_employee_has_birthday_this_month($directoryEmployee, 8),
+        'Birthday banner would display in the wrong month.'
+    );
+    $giftYear = (int) date('Y');
+    portal_test_expect(
+        portal_normalize_vehicle_plate('123-45-678') === '12345678'
+        && portal_format_vehicle_plate('12345678') === '123-45-678',
+        'Vehicle plate normalization failed.'
+    );
+    $vehicleRows = implode("\n", [
+        "דוא״ל עובד\tמספר רכב\tיצרן ודגם\tשנתון\tתוקף טסט\tתוקף ביטוח\tחברת ביטוח\tמספר פוליסה\tהערות",
+        "worker@i-feel.co.il\t123-45-678\tTest Car\t2024\t13/08/{$giftYear}\t{$giftYear}-08-13\tTest Insurance\tPOLICY-1\tTest only",
+    ]);
+    portal_test_expect(portal_import_vehicle_directory($vehicleRows) === 1, 'Vehicle directory import count is wrong.');
+    $employeeVehicles = portal_vehicles_for_employee($directoryEmployee);
+    portal_test_expect(
+        count($employeeVehicles) === 1
+        && ($employeeVehicles[0]['plate'] ?? '') === '12345678',
+        'Employee vehicle assignment failed.'
+    );
+    portal_test_expect(
+        portal_vehicles_for_employee(['email' => 'other@i-feel.co.il']) === [],
+        'Employee vehicle lookup exposed another employee vehicle.'
+    );
+    $sentVehicleEmails = [];
+    $vehicleMailer = static function (
+        string $recipient,
+        string $subject,
+        string $body,
+        array $attachments
+    ) use (&$sentVehicleEmails): bool {
+        $sentVehicleEmails[] = compact('recipient', 'subject', 'body', 'attachments');
+        return true;
+    };
+    $vehicleReminder = portal_process_vehicle_notifications(
+        new DateTimeImmutable($giftYear . '-07-14 08:00:00', new DateTimeZone('Asia/Jerusalem')),
+        $vehicleMailer
+    );
+    portal_test_expect(
+        ($vehicleReminder['reminders_sent'] ?? 0) === 2
+        && ($vehicleReminder['emails_sent'] ?? 0) === 4
+        && ($sentVehicleEmails[0]['recipient'] ?? '') === 'worker@i-feel.co.il'
+        && ($sentVehicleEmails[1]['recipient'] ?? '') === 'oren@i-feel.co.il',
+        'Vehicle reminders were not sent to the employee and Oren.'
+    );
+    portal_process_vehicle_notifications(
+        new DateTimeImmutable($giftYear . '-07-14 10:00:00', new DateTimeZone('Asia/Jerusalem')),
+        $vehicleMailer
+    );
+    portal_test_expect(count($sentVehicleEmails) === 4, 'Vehicle reminders were sent more than once.');
+    $sourceVehicleRows = implode("\n", [
+        "שם\tאימייל\tרכב\tמספר רכב\tרישיון תקף\tתוקף רישיון\tמספר רישיון\tטסט תקף\tתוקף טסט\tביטוח חובה תקף\tתוקף ביטוח חובה\tביטוח מקיף תקף\tתוקף ביטוח מקיף\tחשבוניות הוגשו\tחודש חשבוניות\tסכום חשבוניות\tפירוט חשבוניות\tק\"מ נוכחי\tהערות\tעדכון אחרון\tחודש מילוי\tתזכורת נשלחה",
+        "Test Worker\tworker@i-feel.co.il\tTest Car 2024\t123-45-678\tתקף\t15.08.2031\t1234567\tתקף\t26/05/27\tלא תקף\t30.06.26\tתקף\t20.6.27\tכן\t\t\t\t141174\tTest note\t13/07/2026\t7/2026\t",
+    ]);
+    portal_test_expect(portal_import_vehicle_directory($sourceVehicleRows) === 1, 'Google Sheet vehicle format was not imported.');
+    $sourceVehicle = portal_vehicles_for_employee($directoryEmployee)[0] ?? [];
+    portal_test_expect(
+        ($sourceVehicle['license_due_date'] ?? '') === '2031-08-15'
+        && ($sourceVehicle['test_due_date'] ?? '') === '2027-05-26'
+        && ($sourceVehicle['compulsory_insurance_due_date'] ?? '') === '2026-06-30'
+        && ($sourceVehicle['comprehensive_insurance_due_date'] ?? '') === '2027-06-20'
+        && ($sourceVehicle['current_km'] ?? '') === '141174',
+        'Google Sheet vehicle fields were not mapped correctly: ' . json_encode($sourceVehicle, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES)
+    );
+    portal_save_birthday_gift(
+        'worker@i-feel.co.il',
+        $giftYear,
+        'Test Gift',
+        'A personal birthday message',
+        'TEST-COUPON',
+        'https://example.com/redeem',
+        []
+    );
+    $savedGift = portal_birthday_gift('worker@i-feel.co.il', $giftYear);
+    portal_test_expect(
+        ($savedGift['coupon_code'] ?? '') === 'TEST-COUPON',
+        'Birthday gift coupon was not stored.'
+    );
+    $sentBirthdayEmails = [];
+    $testBirthdayMailer = static function (
+        string $recipient,
+        string $subject,
+        string $body,
+        array $attachments
+    ) use (&$sentBirthdayEmails): bool {
+        $sentBirthdayEmails[] = compact('recipient', 'subject', 'body', 'attachments');
+        return true;
+    };
+    $reminderResult = portal_process_birthday_notifications(
+        new DateTimeImmutable($giftYear . '-07-14 08:00:00', new DateTimeZone('Asia/Jerusalem')),
+        $testBirthdayMailer
+    );
+    portal_test_expect(
+        ($reminderResult['reminders_sent'] ?? 0) === 1
+        && ($sentBirthdayEmails[0]['recipient'] ?? '') === 'oren@i-feel.co.il'
+        && str_contains((string) ($sentBirthdayEmails[0]['body'] ?? ''), 'TEST-COUPON'),
+        'The day-before birthday reminder was not sent to Oren.'
+    );
+    portal_process_birthday_notifications(
+        new DateTimeImmutable($giftYear . '-07-14 10:00:00', new DateTimeZone('Asia/Jerusalem')),
+        $testBirthdayMailer
+    );
+    portal_test_expect(count($sentBirthdayEmails) === 1, 'Birthday reminder was sent more than once.');
+    $greetingResult = portal_process_birthday_notifications(
+        new DateTimeImmutable($giftYear . '-07-15 08:00:00', new DateTimeZone('Asia/Jerusalem')),
+        $testBirthdayMailer
+    );
+    portal_test_expect(
+        ($greetingResult['greetings_sent'] ?? 0) === 1
+        && ($sentBirthdayEmails[1]['recipient'] ?? '') === 'worker@i-feel.co.il'
+        && str_contains((string) ($sentBirthdayEmails[1]['body'] ?? ''), 'TEST-COUPON'),
+        'Birthday greeting and gift were not sent to the employee.'
     );
 
     portal_test_expect(portal_ini_bytes('12M') === 12 * 1024 * 1024, '12M parsing failed.');
@@ -107,8 +252,8 @@ try {
     portal_test_expect(count($employeeRecords) === 1, 'Employee history exposed another employee record.');
     portal_test_expect(($employeeRecords[0]['id'] ?? '') === $ownRecordId, 'Employee history omitted the employee record.');
     $employeeProfile = portal_employee_profile($employee);
-    portal_test_expect(($employeeProfile['name'] ?? '') === 'Worker Name', 'Employee name was not remembered.');
-    portal_test_expect(($employeeProfile['phone'] ?? '') === '050-0000000', 'Employee phone was not remembered.');
+    portal_test_expect(($employeeProfile['name'] ?? '') === 'Test Worker', 'Employee directory name did not take precedence.');
+    portal_test_expect(($employeeProfile['phone'] ?? '') === '054-111-2233', 'Employee directory phone did not take precedence.');
 
     unset($_SESSION['portal_user']);
     $_SESSION['portal_email_challenge'] = [
@@ -136,6 +281,22 @@ try {
         in_array('account@i-feel.co.il', $notificationRecipients, true)
         && in_array('oren@i-feel.co.il', $notificationRecipients, true),
         'Expense notification recipients are incomplete.'
+    );
+    portal_test_expect(
+        portal_work_report_recipient() === 'myhome@i-feel.co.il',
+        'Work report recipient is not MyHome.'
+    );
+    $workStats = portal_work_report_stats([
+        ['type' => 'installation', 'outcome' => 'completed', 'employee' => ['name' => 'Test Worker', 'email' => 'worker@i-feel.co.il'], 'attachments' => [[], []]],
+        ['type' => 'service', 'outcome' => 'follow_up', 'employee' => ['name' => 'Test Worker', 'email' => 'worker@i-feel.co.il'], 'attachments' => [[]]],
+    ]);
+    portal_test_expect(
+        ($workStats['worker@i-feel.co.il']['total'] ?? 0) === 2
+        && ($workStats['worker@i-feel.co.il']['installations'] ?? 0) === 1
+        && ($workStats['worker@i-feel.co.il']['service'] ?? 0) === 1
+        && ($workStats['worker@i-feel.co.il']['follow_up'] ?? 0) === 1
+        && ($workStats['worker@i-feel.co.il']['attachments'] ?? 0) === 3,
+        'Work report statistics are wrong.'
     );
     $mimePayload = portal_mail_payload('Receipt attached', [[
         'path' => $repositoryRoot . '/tests/staff-expenses/fixtures/receipt.pdf',

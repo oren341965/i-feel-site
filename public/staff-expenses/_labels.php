@@ -85,8 +85,12 @@ function portal_nav(string $tab, array $user): void
     <nav class="tabs" aria-label="ניווט אזור עובדים">
         <a href="<?= portal_h(portal_url(['tab' => 'new'])) ?>" class="tab<?= $tab === 'new' ? ' is-active' : '' ?>">דיווח חדש</a>
         <a href="<?= portal_h(portal_url(['tab' => 'history'])) ?>" class="tab<?= $tab === 'history' ? ' is-active' : '' ?>">ההוצאות שלי</a>
+        <a href="<?= portal_h(portal_url(['tab' => 'work'])) ?>" class="tab<?= $tab === 'work' ? ' is-active' : '' ?>">סיום עבודה</a>
         <?php if (($user['role'] ?? '') === 'admin'): ?>
             <a href="<?= portal_h(portal_url(['tab' => 'reports'])) ?>" class="tab<?= $tab === 'reports' ? ' is-active' : '' ?>">דיווחים ומסמכים</a>
+            <a href="<?= portal_h(portal_url(['tab' => 'employees'])) ?>" class="tab<?= $tab === 'employees' ? ' is-active' : '' ?>">עובדים וימי הולדת</a>
+            <a href="<?= portal_h(portal_url(['tab' => 'vehicles'])) ?>" class="tab<?= $tab === 'vehicles' ? ' is-active' : '' ?>">רכבי עובדים</a>
+            <a href="<?= portal_h(portal_url(['tab' => 'work_stats'])) ?>" class="tab<?= $tab === 'work_stats' ? ' is-active' : '' ?>">סטטיסטיקת עבודות</a>
         <?php endif; ?>
     </nav>
     <?php
