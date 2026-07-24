@@ -1,9 +1,6 @@
 name: Validate and deploy site
 
 on:
-  pull_request:
-    branches:
-      - main
   push:
     branches:
       - main
@@ -41,7 +38,6 @@ jobs:
         run: npm run build
 
       - name: Upload validated site artifact
-        if: github.event_name != 'pull_request'
         uses: actions/upload-artifact@v4
         with:
           name: site-dist-${{ github.sha }}
@@ -51,7 +47,6 @@ jobs:
 
   deploy:
     name: Deploy production
-    if: github.event_name != 'pull_request'
     needs: validate
     runs-on:
       - self-hosted
@@ -101,4 +96,4 @@ jobs:
 
       - name: Verify live site
         shell: powershell -NoProfile -ExecutionPolicy Bypass -File {0}
-        run: .\scripts\deploy\verify-live.ps1 -BaseUrl https://i-feel.co.il
+        run: .\scripts\deploy\verify-live.ps1 -BaseUrl https://i-feel.co.il/
