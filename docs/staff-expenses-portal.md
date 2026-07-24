@@ -42,9 +42,14 @@ define('EXPENSE_PORTAL_FROM_EMAIL', 'no-reply@i-feel.co.il');
 define('EXPENSE_PORTAL_ADMIN_EMAILS', [
     'oren@i-feel.co.il',
 ]);
+define('EXPENSE_PORTAL_SMTP_HOST', 'smtp.example.com');
+define('EXPENSE_PORTAL_SMTP_PORT', 587);
+define('EXPENSE_PORTAL_SMTP_SECURITY', 'tls'); // tls, ssl or none
+define('EXPENSE_PORTAL_SMTP_USERNAME', 'no-reply@i-feel.co.il');
+define('EXPENSE_PORTAL_SMTP_PASSWORD', 'server-only-secret');
 ```
 
-יש לוודא שפונקציית `mail()` של PHP פעילה ב-JetServer ושדואר מהכתובת `no-reply@i-feel.co.il` מורשה להישלח. יש לכלול את תיקיית `private_expenses` בגיבוי האחסון.
+מומלץ להגדיר SMTP מאומת. הסיסמה נשמרת רק ב-`public_html/api/config.php` שעל השרת ואינה נכנסת ל-Git. אם `EXPENSE_PORTAL_SMTP_HOST` אינו מוגדר, המערכת חוזרת ל-`mail()` לצורך תאימות. יש לכלול את תיקיית `private_expenses` בגיבוי האחסון.
 
 ## פריסה
 
