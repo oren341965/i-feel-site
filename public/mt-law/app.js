@@ -1,6 +1,119 @@
 (() => {
   'use strict';
 
+  function createPhotoFigure({ src, alt, caption = '', variant = '' }) {
+    const figure = document.createElement('figure');
+    figure.className = `real-photo-frame${variant ? ` ${variant}` : ''}`;
+
+    const image = document.createElement('img');
+    image.className = 'real-photo';
+    image.src = src;
+    image.alt = alt;
+    image.loading = 'lazy';
+    image.decoding = 'async';
+    figure.appendChild(image);
+
+    if (caption) {
+      const figcaption = document.createElement('figcaption');
+      figcaption.className = 'photo-caption';
+      figcaption.textContent = caption;
+      figure.appendChild(figcaption);
+    }
+
+    return figure;
+  }
+
+  function prependPhoto(card, photo) {
+    if (!card || card.dataset.photoEnhanced === 'true') return;
+    card.dataset.photoEnhanced = 'true';
+    card.classList.add('card-with-photo');
+    card.prepend(createPhotoFigure(photo));
+  }
+
+  function enhanceWithRealPhotos() {
+    if (!document.getElementById('mtlaw-real-photos-css')) {
+      const stylesheet = document.createElement('link');
+      stylesheet.id = 'mtlaw-real-photos-css';
+      stylesheet.rel = 'stylesheet';
+      stylesheet.href = '/mt-law/real-photos.css?v=1';
+      document.head.appendChild(stylesheet);
+    }
+
+    const hero = document.querySelector('.hero');
+    if (hero && hero.dataset.photoEnhanced !== 'true') {
+      hero.dataset.photoEnhanced = 'true';
+      hero.classList.add('hero--real-photo');
+      const credit = document.createElement('span');
+      credit.className = 'hero-photo-credit';
+      credit.textContent = 'צילום מפרויקט בית חכם של I Feel';
+      hero.appendChild(credit);
+    }
+
+    const aboutPhotos = [
+      {
+        src: '/assets/projects/villa-caesarea.jpg',
+        alt: 'וילה בקיסריה עם מערכת בית חכם של I Feel',
+      },
+      {
+        src: '/projects/knx-smart-home-central-moshav/08-smart-kitchen-knx.jpg',
+        alt: 'מטבח חכם עם תאורה וגלאי במערכת KNX של I Feel',
+      },
+      {
+        src: '/projects/knx-smart-home-central-moshav/05-knx-touch-panel-kitchen.jpg',
+        alt: 'מסך מגע KNX מותקן במטבח בפרויקט של I Feel',
+      },
+    ];
+    document.querySelectorAll('#about .info-tile').forEach((card, index) => {
+      const photo = aboutPhotos[index];
+      if (photo) prependPhoto(card, photo);
+    });
+
+    const turntableArt = document.querySelector('.turntable-art');
+    if (turntableArt) {
+      turntableArt.replaceWith(createPhotoFigure({
+        src: '/mt-law/product-image.php?v=1',
+        alt: 'פטיפון Argon Audio TT MK2 בגוון Earth Grey',
+        caption: 'תמונת מוצר אמיתית באדיבות TRES',
+        variant: 'gift-photo-frame gift-photo-frame--product',
+      }));
+    }
+
+    const tc4Art = document.querySelector('.tc4-art');
+    if (tc4Art) {
+      tc4Art.replaceWith(createPhotoFigure({
+        src: '/projects/knx-smart-home-central-moshav/07-knx-touch-panel-display.jpg',
+        alt: 'תצוגת מסך מגע KNX בפרויקט בית חכם של I Feel',
+        caption: 'מסך מגע מותקן בפרויקט I Feel. דגם המתנה הוא Siemens TC4',
+        variant: 'gift-photo-frame gift-photo-frame--installation',
+      }));
+    }
+
+    const systemPhotos = [
+      {
+        src: '/projects/knx-smart-home-central-moshav/09-smart-living-room-knx.jpg',
+        alt: 'סלון חכם עם תאורה ותריסים בשליטת KNX של I Feel',
+      },
+      {
+        src: '/projects/knx-smart-home-central-moshav/12-knx-detector-outdoor-siren.jpg',
+        alt: 'גלאי נוכחות חיצוני וצופר אזעקה בפרויקט בית חכם של I Feel',
+      },
+      {
+        src: '/projects/knx-smart-home-central-moshav/15-outdoor-security-camera.jpg',
+        alt: 'מצלמת אבטחה חיצונית המותקנת בגינה בפרויקט של I Feel',
+      },
+      {
+        src: '/projects/knx-smart-home-central-moshav/06-knx-touch-panel-wide.jpg',
+        alt: 'מסך שליטה מרכזי בבית חכם KNX של I Feel',
+      },
+    ];
+    document.querySelectorAll('#systems .system-card').forEach((card, index) => {
+      const photo = systemPhotos[index];
+      if (photo) prependPhoto(card, photo);
+    });
+  }
+
+  enhanceWithRealPhotos();
+
   const form = document.getElementById('project-form');
   if (!form) return;
 
@@ -24,8 +137,6 @@
   const tc4Option = document.getElementById('gift-tc4-option');
   const giftRadios = Array.from(form.querySelectorAll('[name="gift_choice"]'));
   const eligibilityText = document.getElementById('eligibility-text');
-  const alarmSystem = form.querySelector('[name="systems[]"][value="alarm"]');
-  const cameraSystem = form.querySelector('[name="systems[]"][value="cameras"]');
 
   function setGiftVisibility(turntableEligible, tc4Eligible) {
     const both = turntableEligible && tc4Eligible;
