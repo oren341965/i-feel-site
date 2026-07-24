@@ -49,7 +49,7 @@ function portal_render_reports(?array $flash): void
                 <tr>
                     <td><code><?= portal_h($record['id'] ?? '') ?></code></td>
                     <td><?= portal_h($record['report_date'] ?? '') ?></td>
-                    <td><strong><?= portal_h($record['employee']['name'] ?? '') ?></strong><small><?= portal_h($record['employee']['department'] ?? '') ?></small></td>
+                    <td><strong><?= portal_h($record['employee']['name'] ?? '') ?></strong><small><?= portal_h($record['employee']['email'] ?? '') ?></small></td>
                     <td><?= portal_h(portal_report_type_label((string) ($record['type'] ?? ''))) ?></td>
                     <td><?= portal_h(portal_format_totals($record)) ?></td>
                     <td><?= count($record['attachments'] ?? []) ?></td>
@@ -83,7 +83,7 @@ function portal_render_record_detail(array $record, ?array $flash): void
         <div class="total-card"><span>סה״כ מדווח</span><strong><?= portal_h(portal_format_totals($record)) ?></strong></div>
     </section>
 
-    <section class="detail-card"><h2>פרטי העובד/ת</h2><div class="detail-grid"><?php detail_row('שם', $record['employee']['name'] ?? ''); detail_row('מחלקה', $record['employee']['department'] ?? ''); detail_row('דוא״ל', $record['employee']['email'] ?? ''); detail_row('טלפון', $record['employee']['phone'] ?? ''); ?></div></section>
+    <section class="detail-card"><h2>פרטי העובד/ת</h2><div class="detail-grid"><?php detail_row('שם', $record['employee']['name'] ?? ''); detail_row('דוא״ל', $record['employee']['email'] ?? ''); detail_row('טלפון', $record['employee']['phone'] ?? ''); ?></div></section>
 
     <section class="detail-card"><h2>פרטי הדיווח</h2><div class="detail-grid">
         <?php if (($record['type'] ?? '') === 'travel'): ?>

@@ -28,6 +28,7 @@ require_once $repositoryRoot . '/public/staff-expenses/_ui.php';
 require_once $repositoryRoot . '/public/staff-expenses/_email_auth.php';
 require_once $repositoryRoot . '/public/staff-expenses/_labels.php';
 require_once $repositoryRoot . '/public/staff-expenses/_records.php';
+require_once $repositoryRoot . '/public/staff-expenses/_history.php';
 require_once $repositoryRoot . '/public/staff-expenses/_readiness.php';
 
 try {
@@ -86,6 +87,27 @@ try {
     $employee = portal_verify_email_code($knownCode);
     portal_test_expect(($employee['role'] ?? '') === 'employee', 'Employee role was not assigned.');
     portal_test_expect(($employee['email'] ?? '') === 'worker@i-feel.co.il', 'Verified email was not bound.');
+
+    $ownRecordId = portal_new_record_id();
+    portal_ensure_directory(portal_record_dir($ownRecordId));
+    portal_save_record([
+        'id' => $ownRecordId,
+        'employee' => ['name' => 'Worker Name', 'email' => 'worker@i-feel.co.il', 'phone' => '050-0000000'],
+        'created_at' => '2026-07-24T10:00:00Z',
+    ]);
+    $otherRecordId = portal_new_record_id();
+    portal_ensure_directory(portal_record_dir($otherRecordId));
+    portal_save_record([
+        'id' => $otherRecordId,
+        'employee' => ['name' => 'Other Worker', 'email' => 'other@i-feel.co.il', 'phone' => '050-1111111'],
+        'created_at' => '2026-07-24T09:00:00Z',
+    ]);
+    $employeeRecords = portal_records_for_employee($employee);
+    portal_test_expect(count($employeeRecords) === 1, 'Employee history exposed another employee record.');
+    portal_test_expect(($employeeRecords[0]['id'] ?? '') === $ownRecordId, 'Employee history omitted the employee record.');
+    $employeeProfile = portal_employee_profile($employee);
+    portal_test_expect(($employeeProfile['name'] ?? '') === 'Worker Name', 'Employee name was not remembered.');
+    portal_test_expect(($employeeProfile['phone'] ?? '') === '050-0000000', 'Employee phone was not remembered.');
 
     unset($_SESSION['portal_user']);
     $_SESSION['portal_email_challenge'] = [

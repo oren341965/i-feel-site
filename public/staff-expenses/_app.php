@@ -6,6 +6,7 @@ require_once __DIR__ . '/_ui.php';
 require_once __DIR__ . '/_email_auth.php';
 require_once __DIR__ . '/_records.php';
 require_once __DIR__ . '/_labels.php';
+require_once __DIR__ . '/_history.php';
 require_once __DIR__ . '/_form.php';
 require_once __DIR__ . '/_admin.php';
 require_once __DIR__ . '/_readiness.php';
@@ -121,19 +122,26 @@ try {
     }
 
     $tab = trim((string) ($_GET['tab'] ?? 'new'));
-    if (($user['role'] ?? '') !== 'admin' && $tab !== 'new') {
+    if (($user['role'] ?? '') !== 'admin' && !in_array($tab, ['new', 'history'], true)) {
         $tab = 'new';
     }
-    if (!in_array($tab, ['new', 'reports'], true)) {
+    if (!in_array($tab, ['new', 'history', 'reports'], true)) {
         $tab = 'new';
     }
 
     $flash = portal_flash_take();
-    portal_page_start($tab === 'new' ? 'דיווח חדש' : 'דיווחים', $user);
+    $pageTitle = match ($tab) {
+        'history' => 'ההוצאות שלי',
+        'reports' => 'דיווחים',
+        default => 'דיווח חדש',
+    };
+    portal_page_start($pageTitle, $user);
     portal_nav($tab, $user);
 
     if ($tab === 'new') {
         portal_render_new_form($user, $flash);
+    } elseif ($tab === 'history') {
+        portal_render_employee_history($user, $flash);
     } else {
         $view = trim((string) ($_GET['view'] ?? ''));
         if ($view !== '') {

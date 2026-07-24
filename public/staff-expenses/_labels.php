@@ -37,6 +37,9 @@ function travel_category_label(string $value): string
         'communications' => 'תקשורת / סלולר',
         'insurance_visa' => 'ביטוח / אשרה',
         'conference' => 'כנס / תערוכה',
+        'purchases' => 'רכישות וקניות',
+        'baggage' => 'כבודה ותוספות טיסה',
+        'tips' => 'טיפים ושירות',
         'other' => 'אחר',
         default => $value,
     };
@@ -81,6 +84,7 @@ function portal_nav(string $tab, array $user): void
     ?>
     <nav class="tabs" aria-label="ניווט אזור עובדים">
         <a href="<?= portal_h(portal_url(['tab' => 'new'])) ?>" class="tab<?= $tab === 'new' ? ' is-active' : '' ?>">דיווח חדש</a>
+        <a href="<?= portal_h(portal_url(['tab' => 'history'])) ?>" class="tab<?= $tab === 'history' ? ' is-active' : '' ?>">ההוצאות שלי</a>
         <?php if (($user['role'] ?? '') === 'admin'): ?>
             <a href="<?= portal_h(portal_url(['tab' => 'reports'])) ?>" class="tab<?= $tab === 'reports' ? ' is-active' : '' ?>">דיווחים ומסמכים</a>
         <?php endif; ?>
