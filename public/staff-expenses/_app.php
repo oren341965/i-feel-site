@@ -4,6 +4,7 @@ declare(strict_types=1);
 require_once __DIR__ . '/_bootstrap.php';
 require_once __DIR__ . '/_ui.php';
 require_once __DIR__ . '/_email_auth.php';
+require_once __DIR__ . '/_employees.php';
 require_once __DIR__ . '/_records.php';
 require_once __DIR__ . '/_labels.php';
 require_once __DIR__ . '/_notifications.php';
@@ -102,9 +103,16 @@ try {
     }
 
     $verifiedEmail = portal_normalize_company_email((string) ($user['email'] ?? ''));
-    if ($verifiedEmail !== null && ($user['username'] ?? '') === 'employee') {
-        $user['display_name'] = $verifiedEmail;
-        $_SESSION['portal_user']['display_name'] = $verifiedEmail;
+    if ($verifiedEmail !== null) {
+        $directoryEntry = portal_employee_directory_entry($user);
+        $displayName = trim((string) ($directoryEntry['name'] ?? ''));
+        if ($displayName === '' && ($user['username'] ?? '') === 'employee') {
+            $displayName = $verifiedEmail;
+        }
+        if ($displayName !== '') {
+            $user['display_name'] = $displayName;
+            $_SESSION['portal_user']['display_name'] = $displayName;
+        }
     }
 
     if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
@@ -126,7 +134,7 @@ try {
     if (($user['role'] ?? '') !== 'admin' && !in_array($tab, ['new', 'history'], true)) {
         $tab = 'new';
     }
-    if (!in_array($tab, ['new', 'history', 'reports'], true)) {
+    if (!in_array($tab, ['new', 'history', 'reports', 'employees'], true)) {
         $tab = 'new';
     }
 
@@ -134,15 +142,19 @@ try {
     $pageTitle = match ($tab) {
         'history' => 'ההוצאות שלי',
         'reports' => 'דיווחים',
+        'employees' => 'פרטי עובדים וימי הולדת',
         default => 'דיווח חדש',
     };
     portal_page_start($pageTitle, $user);
     portal_nav($tab, $user);
+    portal_render_birthday_banner($user);
 
     if ($tab === 'new') {
         portal_render_new_form($user, $flash);
     } elseif ($tab === 'history') {
         portal_render_employee_history($user, $flash);
+    } elseif ($tab === 'employees') {
+        portal_render_employee_directory_admin($flash);
     } else {
         $view = trim((string) ($_GET['view'] ?? ''));
         if ($view !== '') {

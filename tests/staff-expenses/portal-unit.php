@@ -26,6 +26,7 @@ $_SERVER['REMOTE_ADDR'] = '127.0.0.1';
 require_once $repositoryRoot . '/public/staff-expenses/_bootstrap.php';
 require_once $repositoryRoot . '/public/staff-expenses/_ui.php';
 require_once $repositoryRoot . '/public/staff-expenses/_email_auth.php';
+require_once $repositoryRoot . '/public/staff-expenses/_employees.php';
 require_once $repositoryRoot . '/public/staff-expenses/_labels.php';
 require_once $repositoryRoot . '/public/staff-expenses/_records.php';
 require_once $repositoryRoot . '/public/staff-expenses/_notifications.php';
@@ -48,6 +49,38 @@ try {
     portal_test_expect(
         in_array('oren@i-feel.co.il', portal_email_admins(), true),
         'Default admin email is missing.'
+    );
+    portal_test_expect(
+        portal_normalize_israeli_mobile('+972 54-565-1060') === '054-565-1060',
+        'International Israeli mobile normalization failed.'
+    );
+    portal_test_expect(
+        portal_normalize_israeli_mobile('542292103') === '054-229-2103',
+        'Nine digit Israeli mobile normalization failed.'
+    );
+    portal_test_expect(
+        portal_normalize_israeli_mobile('03-508-9553') === null,
+        'A landline was accepted as an employee mobile.'
+    );
+
+    $directoryRows = implode("\n", [
+        "שם מלא\tדואר אלקטרוני\tטלפון\tיום לידה\tחודש לידה",
+        "Test Worker\tworker@i-feel.co.il\t+972 54-111-2233\t15\t7",
+        "No Birthday\tother@i-feel.co.il\t0523334455\t\t",
+    ]);
+    portal_test_expect(portal_import_employee_directory($directoryRows) === 2, 'Employee directory import count is wrong.');
+    $directoryEmployee = ['email' => 'worker@i-feel.co.il', 'display_name' => 'worker@i-feel.co.il'];
+    portal_test_expect(
+        portal_employee_directory_entry($directoryEmployee)['phone'] === '054-111-2233',
+        'Employee phone was not loaded from private directory.'
+    );
+    portal_test_expect(
+        portal_employee_has_birthday_this_month($directoryEmployee, 7),
+        'Birthday month was not detected.'
+    );
+    portal_test_expect(
+        !portal_employee_has_birthday_this_month($directoryEmployee, 8),
+        'Birthday banner would display in the wrong month.'
     );
 
     portal_test_expect(portal_ini_bytes('12M') === 12 * 1024 * 1024, '12M parsing failed.');
@@ -107,8 +140,8 @@ try {
     portal_test_expect(count($employeeRecords) === 1, 'Employee history exposed another employee record.');
     portal_test_expect(($employeeRecords[0]['id'] ?? '') === $ownRecordId, 'Employee history omitted the employee record.');
     $employeeProfile = portal_employee_profile($employee);
-    portal_test_expect(($employeeProfile['name'] ?? '') === 'Worker Name', 'Employee name was not remembered.');
-    portal_test_expect(($employeeProfile['phone'] ?? '') === '050-0000000', 'Employee phone was not remembered.');
+    portal_test_expect(($employeeProfile['name'] ?? '') === 'Test Worker', 'Employee directory name did not take precedence.');
+    portal_test_expect(($employeeProfile['phone'] ?? '') === '054-111-2233', 'Employee directory phone did not take precedence.');
 
     unset($_SESSION['portal_user']);
     $_SESSION['portal_email_challenge'] = [

@@ -339,6 +339,14 @@ function portal_handle_post(array $user): never
         portal_redirect(['tab' => 'users']);
     }
 
+    if ($action === 'import_employee_directory') {
+        portal_require_admin();
+        $count = portal_import_employee_directory(portal_post('employee_directory_text', 30000));
+        portal_audit('employee_directory_imported', ['count' => $count]);
+        portal_flash_set('success', 'פרטי ' . $count . ' עובדים נשמרו בהצלחה.');
+        portal_redirect(['tab' => 'employees']);
+    }
+
     throw new RuntimeException('הפעולה המבוקשת אינה מוכרת.');
 }
 

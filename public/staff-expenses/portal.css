@@ -172,6 +172,13 @@ input[readonly] { background: #f3f5f8; }
 .alert--error { background: var(--danger-soft); color: var(--danger); border-color: #f3c2bd; }
 .alert--info { background: var(--primary-soft); color: var(--primary-dark); border-color: #c7e1f1; }
 
+.birthday-banner { position: relative; overflow: hidden; display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 16px; margin: 0 0 22px; padding: 18px 22px; border: 1px solid #f3cf66; border-radius: 16px; background: linear-gradient(135deg, #fff9db 0%, #fff2c2 55%, #ffe3ec 100%); color: #633c00; box-shadow: 0 10px 30px rgba(146, 93, 0, .1); }
+.birthday-banner::after { content: ""; position: absolute; inset: 0; pointer-events: none; background-image: radial-gradient(circle at 15% 25%, rgba(255,255,255,.8) 0 3px, transparent 4px), radial-gradient(circle at 82% 32%, rgba(255,255,255,.75) 0 4px, transparent 5px); }
+.birthday-banner__icon, .birthday-banner__confetti { font-size: 2rem; line-height: 1; }
+.birthday-banner div { display: grid; gap: 3px; }
+.birthday-banner strong { font-size: 1.15rem; }
+.birthday-banner span:not(.birthday-banner__icon):not(.birthday-banner__confetti) { font-size: .91rem; }
+
 .filter-bar { display: flex; align-items: end; gap: 12px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; margin-bottom: 16px; }
 .filter-bar input, .filter-bar select { padding: 9px 10px; min-width: 150px; }
 .filter-grow { flex: 1; }
@@ -265,4 +272,6 @@ input[readonly] { background: #f3f5f8; }
     .expense-table input, .expense-table select, .expense-table td:first-child select { min-width: 0; width: 100%; }
     .history-card { grid-template-columns: 1fr auto; gap: 12px; }
     .history-card__summary { grid-column: 1 / -1; grid-row: 2; text-align: right; border-top: 1px solid var(--border); padding-top: 10px; }
+    .birthday-banner { grid-template-columns: auto minmax(0, 1fr); padding: 16px; }
+    .birthday-banner__confetti { display: none; }
 }
