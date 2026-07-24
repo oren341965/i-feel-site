@@ -82,7 +82,7 @@ Build אדום עוצר את הפריסה. אין העלאה חלקית ואין
 - GitHub בונה שוב את ה-commit של `main`;
 - נוצר artifact בשם `site-dist-<SHA>`;
 - runner במחשב המשרד עם label ‏`ifeel-deploy` מוריד אותו;
-- `scripts/deploy/ftps-upload.ps1` מעלה נכסים לפני HTML;
+- `scripts/deploy/ftps-upload.mjs` מעלה נכסים לפני HTML בחיבור FTPS רציף;
 - אין מחיקות מרחוק;
 - `scripts/deploy/verify-live.ps1` מריץ בדיקת עשן.
 

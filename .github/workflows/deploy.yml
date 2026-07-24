@@ -53,6 +53,8 @@ jobs:
     name: Deploy production
     if: github.event_name != 'pull_request'
     needs: validate
+    env:
+      NODE_OPTIONS: --use-system-ca
     runs-on:
       - self-hosted
       - windows
@@ -69,21 +71,31 @@ jobs:
       - name: Checkout deployment scripts
         uses: actions/checkout@v4
 
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install deployment dependencies
+        shell: cmd
+        run: npm ci --legacy-peer-deps --ignore-scripts
+
       - name: Download validated site artifact
         uses: actions/download-artifact@v4
         with:
           name: site-dist-${{ github.sha }}
           path: dist
 
-      - name: Upload dist through explicit FTPS
-        shell: powershell
+      - name: Upload dist through persistent explicit FTPS
+        shell: cmd
         env:
           IFEEL_FTP_SERVER: ${{ secrets.IFEEL_FTP_SERVER || secrets.FTP_SERVER }}
           IFEEL_FTP_USERNAME: ${{ secrets.IFEEL_FTP_USERNAME || secrets.FTP_USERNAME }}
           IFEEL_FTP_PASSWORD: ${{ secrets.IFEEL_FTP_PASSWORD || secrets.FTP_PASSWORD }}
           IFEEL_FTP_SERVER_DIR: ${{ secrets.IFEEL_FTP_SERVER_DIR || secrets.FTP_SERVER_DIR }}
-        run: .\scripts\deploy\ftps-upload.ps1 -DistPath .\dist
+        run: node scripts\deploy\ftps-upload.mjs dist
 
       - name: Verify live site
-        shell: powershell
+        shell: powershell -NoProfile -ExecutionPolicy Bypass -File {0}
         run: .\scripts\deploy\verify-live.ps1 -BaseUrl https://i-feel.co.il
