@@ -347,6 +347,23 @@ function portal_handle_download(array $user): never
     exit;
 }
 
+function portal_csv_value(mixed $value): string
+{
+    $text = (string) $value;
+    if (preg_match('/^[\x00-\x20]*[=+\-@]/u', $text)) {
+        return "'" . $text;
+    }
+    return $text;
+}
+
+function portal_csv_row($stream, array $values): void
+{
+    $safeValues = array_map('portal_csv_value', $values);
+    if (fputcsv($stream, $safeValues) === false) {
+        throw new RuntimeException('לא ניתן היה להשלים את יצוא קובץ ה-CSV.');
+    }
+}
+
 function portal_handle_export(array $user): never
 {
     if (($user['role'] ?? '') !== 'admin') {
@@ -361,7 +378,7 @@ function portal_handle_export(array $user): never
     if ($out === false) {
         exit;
     }
-    fputcsv($out, [
+    portal_csv_row($out, [
         'מספר דיווח', 'סוג דיווח', 'סטטוס', 'שם עובד', 'מחלקה', 'תאריך דיווח',
         'קטגוריה', 'ספק', 'סכום', 'מטבע', 'יעד / מספר רכב', 'מטרת נסיעה / תיאור',
         'מספר קבצים', 'נשלח על ידי', 'נוצר בתאריך', 'הערת מנהל',
@@ -380,7 +397,7 @@ function portal_handle_export(array $user): never
         ];
         if (($record['type'] ?? '') === 'travel' && is_array($record['expense_items'] ?? null)) {
             foreach ($record['expense_items'] as $item) {
-                fputcsv($out, array_merge($common, [
+                portal_csv_row($out, array_merge($common, [
                     travel_category_label((string) ($item['category'] ?? '')),
                     (string) ($item['vendor'] ?? ''),
                     (string) ($item['amount'] ?? ''),
@@ -400,7 +417,7 @@ function portal_handle_export(array $user): never
             $target = ($record['type'] ?? '') === 'vehicle'
                 ? (string) ($details['vehicle_plate'] ?? '')
                 : (string) ($details['project_customer'] ?? '');
-            fputcsv($out, array_merge($common, [
+            portal_csv_row($out, array_merge($common, [
                 $category,
                 (string) ($details['supplier'] ?? ''),
                 (string) ($details['amount'] ?? ''),

@@ -28,11 +28,20 @@ function portal_is_localhost(): bool
     return $host === 'localhost' || str_starts_with($host, 'localhost:') || str_starts_with($host, '127.0.0.1');
 }
 
-if (!portal_is_https() && !portal_is_localhost() && PHP_SAPI !== 'cli') {
-    $host = preg_replace('/[^A-Za-z0-9.\-:]/', '', (string) ($_SERVER['HTTP_HOST'] ?? 'i-feel.co.il')) ?: 'i-feel.co.il';
-    $uri = (string) ($_SERVER['REQUEST_URI'] ?? '/staff-expenses/');
-    header('Location: https://' . $host . $uri, true, 302);
-    exit;
+function portal_cookie_secure(): bool
+{
+    if (portal_is_localhost()) {
+        return false;
+    }
+    if (defined('EXPENSE_PORTAL_SECURE_COOKIES')) {
+        return (bool) constant('EXPENSE_PORTAL_SECURE_COOKIES');
+    }
+
+    // The main site owns the canonical HTTP-to-HTTPS redirect. Do not repeat
+    // that redirect in this sub-application: TLS can terminate before PHP and
+    // make an application-level redirect loop. Production cookies remain
+    // Secure even when the hosting proxy does not expose its TLS state to PHP.
+    return true;
 }
 
 function portal_nonce(): string
@@ -68,7 +77,7 @@ session_name(IFEEL_PORTAL_SESSION);
 session_set_cookie_params([
     'lifetime' => 0,
     'path' => '/staff-expenses/',
-    'secure' => portal_is_https(),
+    'secure' => portal_cookie_secure(),
     'httponly' => true,
     'samesite' => 'Strict',
 ]);
@@ -164,6 +173,41 @@ function portal_storage_path(): string
     return dirname(__DIR__, 2) . DIRECTORY_SEPARATOR . 'private_expenses';
 }
 
+function portal_comparable_path(string $path): string
+{
+    $resolved = realpath($path);
+    if ($resolved === false) {
+        $parent = realpath(dirname($path));
+        $resolved = $parent === false
+            ? $path
+            : $parent . DIRECTORY_SEPARATOR . basename($path);
+    }
+    $resolved = rtrim(str_replace('\\', '/', $resolved), '/');
+    return DIRECTORY_SEPARATOR === '\\' ? strtolower($resolved) : $resolved;
+}
+
+function portal_path_is_within(string $path, string $parent): bool
+{
+    $path = portal_comparable_path($path);
+    $parent = portal_comparable_path($parent);
+    return $path === $parent || str_starts_with($path, $parent . '/');
+}
+
+function portal_assert_private_storage(string $path): void
+{
+    $webRoots = [dirname(__DIR__)];
+    $documentRoot = trim((string) ($_SERVER['DOCUMENT_ROOT'] ?? ''));
+    if ($documentRoot !== '') {
+        $webRoots[] = $documentRoot;
+    }
+
+    foreach (array_unique($webRoots) as $webRoot) {
+        if ($webRoot !== '' && portal_path_is_within($path, $webRoot)) {
+            throw new RuntimeException('תיקיית אחסון הדיווחים חייבת להיות מחוץ לתיקייה הציבורית של האתר.');
+        }
+    }
+}
+
 function portal_ensure_directory(string $path, int $mode = 0700): void
 {
     if (is_dir($path)) {
@@ -183,7 +227,9 @@ function portal_storage_root(): string
     }
 
     $root = portal_storage_path();
+    portal_assert_private_storage($root);
     portal_ensure_directory($root);
+    portal_assert_private_storage($root);
     foreach (['records', 'security'] as $subdir) {
         portal_ensure_directory($root . DIRECTORY_SEPARATOR . $subdir);
     }
