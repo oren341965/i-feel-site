@@ -9,6 +9,7 @@ require_once __DIR__ . '/_vehicles.php';
 require_once __DIR__ . '/_records.php';
 require_once __DIR__ . '/_labels.php';
 require_once __DIR__ . '/_notifications.php';
+require_once __DIR__ . '/_work_reports.php';
 require_once __DIR__ . '/_history.php';
 require_once __DIR__ . '/_form.php';
 require_once __DIR__ . '/_admin.php';
@@ -120,6 +121,9 @@ try {
         if (portal_post('action', 60) === 'submit_report' && $verifiedEmail !== null) {
             $_POST['employee_email'] = $verifiedEmail;
         }
+        if (portal_post('action', 60) === 'submit_work_report') {
+            portal_handle_work_report_post($user);
+        }
         portal_handle_post($user);
     }
 
@@ -135,10 +139,10 @@ try {
     }
 
     $tab = trim((string) ($_GET['tab'] ?? 'new'));
-    if (($user['role'] ?? '') !== 'admin' && !in_array($tab, ['new', 'history'], true)) {
+    if (($user['role'] ?? '') !== 'admin' && !in_array($tab, ['new', 'history', 'work'], true)) {
         $tab = 'new';
     }
-    if (!in_array($tab, ['new', 'history', 'reports', 'employees', 'vehicles'], true)) {
+    if (!in_array($tab, ['new', 'history', 'work', 'work_stats', 'reports', 'employees', 'vehicles'], true)) {
         $tab = 'new';
     }
 
@@ -148,6 +152,8 @@ try {
         'reports' => 'דיווחים',
         'employees' => 'פרטי עובדים וימי הולדת',
         'vehicles' => 'רכבי עובדים',
+        'work' => 'סיום התקנה או שירות',
+        'work_stats' => 'סטטיסטיקת עבודות',
         default => 'דיווח חדש',
     };
     portal_page_start($pageTitle, $user);
@@ -163,6 +169,10 @@ try {
         portal_render_employee_directory_admin($flash);
     } elseif ($tab === 'vehicles') {
         portal_render_vehicle_admin($flash);
+    } elseif ($tab === 'work') {
+        portal_render_work_report_form($user, $flash);
+    } elseif ($tab === 'work_stats') {
+        portal_render_work_report_stats($flash);
     } else {
         $view = trim((string) ($_GET['view'] ?? ''));
         if ($view !== '') {

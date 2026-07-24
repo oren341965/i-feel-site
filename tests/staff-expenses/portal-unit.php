@@ -31,6 +31,7 @@ require_once $repositoryRoot . '/public/staff-expenses/_vehicles.php';
 require_once $repositoryRoot . '/public/staff-expenses/_labels.php';
 require_once $repositoryRoot . '/public/staff-expenses/_records.php';
 require_once $repositoryRoot . '/public/staff-expenses/_notifications.php';
+require_once $repositoryRoot . '/public/staff-expenses/_work_reports.php';
 require_once $repositoryRoot . '/public/staff-expenses/_history.php';
 require_once $repositoryRoot . '/public/staff-expenses/_readiness.php';
 
@@ -280,6 +281,22 @@ try {
         in_array('account@i-feel.co.il', $notificationRecipients, true)
         && in_array('oren@i-feel.co.il', $notificationRecipients, true),
         'Expense notification recipients are incomplete.'
+    );
+    portal_test_expect(
+        portal_work_report_recipient() === 'myhome@i-feel.co.il',
+        'Work report recipient is not MyHome.'
+    );
+    $workStats = portal_work_report_stats([
+        ['type' => 'installation', 'outcome' => 'completed', 'employee' => ['name' => 'Test Worker', 'email' => 'worker@i-feel.co.il'], 'attachments' => [[], []]],
+        ['type' => 'service', 'outcome' => 'follow_up', 'employee' => ['name' => 'Test Worker', 'email' => 'worker@i-feel.co.il'], 'attachments' => [[]]],
+    ]);
+    portal_test_expect(
+        ($workStats['worker@i-feel.co.il']['total'] ?? 0) === 2
+        && ($workStats['worker@i-feel.co.il']['installations'] ?? 0) === 1
+        && ($workStats['worker@i-feel.co.il']['service'] ?? 0) === 1
+        && ($workStats['worker@i-feel.co.il']['follow_up'] ?? 0) === 1
+        && ($workStats['worker@i-feel.co.il']['attachments'] ?? 0) === 3,
+        'Work report statistics are wrong.'
     );
     $mimePayload = portal_mail_payload('Receipt attached', [[
         'path' => $repositoryRoot . '/tests/staff-expenses/fixtures/receipt.pdf',
