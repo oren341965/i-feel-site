@@ -6,6 +6,7 @@ require_once __DIR__ . '/_ui.php';
 require_once __DIR__ . '/_email_auth.php';
 require_once __DIR__ . '/_records.php';
 require_once __DIR__ . '/_labels.php';
+require_once __DIR__ . '/_notifications.php';
 require_once __DIR__ . '/_history.php';
 require_once __DIR__ . '/_form.php';
 require_once __DIR__ . '/_admin.php';

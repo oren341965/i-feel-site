@@ -28,6 +28,7 @@ require_once $repositoryRoot . '/public/staff-expenses/_ui.php';
 require_once $repositoryRoot . '/public/staff-expenses/_email_auth.php';
 require_once $repositoryRoot . '/public/staff-expenses/_labels.php';
 require_once $repositoryRoot . '/public/staff-expenses/_records.php';
+require_once $repositoryRoot . '/public/staff-expenses/_notifications.php';
 require_once $repositoryRoot . '/public/staff-expenses/_history.php';
 require_once $repositoryRoot . '/public/staff-expenses/_readiness.php';
 
@@ -130,6 +131,31 @@ try {
     portal_test_expect(portal_csv_value('=2+2') === "'=2+2", 'CSV formula was not neutralized.');
     portal_test_expect(portal_csv_value('  @SUM(A1)') === "'  @SUM(A1)", 'CSV formula with whitespace was not neutralized.');
     portal_test_expect(portal_csv_value('ordinary text') === 'ordinary text', 'Safe CSV text was modified.');
+    $notificationRecipients = portal_expense_notification_recipients();
+    portal_test_expect(
+        in_array('account@i-feel.co.il', $notificationRecipients, true)
+        && in_array('oren@i-feel.co.il', $notificationRecipients, true),
+        'Expense notification recipients are incomplete.'
+    );
+    $mimePayload = portal_mail_payload('Receipt attached', [[
+        'path' => $repositoryRoot . '/tests/staff-expenses/fixtures/receipt.pdf',
+        'name' => 'receipt.pdf',
+        'mime' => 'application/pdf',
+        'size' => 100,
+    ]]);
+    portal_test_expect(
+        str_contains(implode("\n", $mimePayload['headers']), 'multipart/mixed')
+        && str_contains($mimePayload['body'], 'Content-Type: application/pdf')
+        && str_contains($mimePayload['body'], 'filename="receipt.pdf"'),
+        'PDF attachment MIME payload was not generated.'
+    );
+    portal_test_expect(
+        count(portal_attachment_batches([
+            ['size' => 12 * 1024 * 1024],
+            ['size' => 12 * 1024 * 1024],
+        ])) === 2,
+        'Large email attachments were not split into safe batches.'
+    );
 
     $readiness = portal_readiness_report();
     portal_test_expect(

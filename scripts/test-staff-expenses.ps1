@@ -194,6 +194,9 @@ try {
     Assert-PortalTest ($vehicleRecord.employee.email -eq "worker@i-feel.co.il") "Verified email was not bound to the report."
     Assert-PortalTest ($vehicleRecord.attachments.Count -eq 1) "Vehicle receipt was not stored."
     Assert-PortalTest ([string]::IsNullOrEmpty($vehicleRecord.details.vehicle_plate)) "Vehicle number unexpectedly became mandatory."
+    Assert-PortalTest ($vehicleRecord.email_notification.status -eq "sent") "Expense email notification was not recorded."
+    Assert-PortalTest ($vehicleRecord.email_notification.recipients -contains "account@i-feel.co.il") "Accounting recipient is missing."
+    Assert-PortalTest ($vehicleRecord.email_notification.recipients -contains "oren@i-feel.co.il") "Oren recipient is missing."
 
     Invoke-PortalCurl "-o", $responseBody, "-b", $employeeCookies, "$baseUrl/staff-expenses/?tab=history" | Out-Null
     $html = Get-Content -Raw -Encoding utf8 $responseBody

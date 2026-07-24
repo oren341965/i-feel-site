@@ -208,7 +208,74 @@ function portal_smtp_command($stream, string $command, array $expectedCodes): st
     return portal_smtp_read($stream, $expectedCodes);
 }
 
-function portal_smtp_send(string $email, string $subject, string $body, string $sender): bool
+function portal_mail_sender(): string
+{
+    $sender = '';
+    if (defined('EXPENSE_PORTAL_FROM_EMAIL')) {
+        $sender = trim((string) constant('EXPENSE_PORTAL_FROM_EMAIL'));
+    }
+    if ($sender === '') {
+        $sender = trim((string) getenv('EXPENSE_PORTAL_FROM_EMAIL'));
+    }
+    return filter_var($sender, FILTER_VALIDATE_EMAIL) !== false
+        ? $sender
+        : 'no-reply@' . portal_company_email_domain();
+}
+
+function portal_mail_payload(string $body, array $attachments = []): array
+{
+    $normalizedBody = str_replace(["\r\n", "\r"], "\n", $body);
+    if ($attachments === []) {
+        return [
+            'headers' => [
+                'Content-Type: text/plain; charset=UTF-8',
+                'Content-Transfer-Encoding: 8bit',
+            ],
+            'body' => str_replace("\n", "\r\n", $normalizedBody),
+        ];
+    }
+
+    $boundary = '=_ifeel_' . bin2hex(random_bytes(16));
+    $parts = [
+        '--' . $boundary,
+        'Content-Type: text/plain; charset=UTF-8',
+        'Content-Transfer-Encoding: 8bit',
+        '',
+        str_replace("\n", "\r\n", $normalizedBody),
+    ];
+    foreach ($attachments as $attachment) {
+        $path = (string) ($attachment['path'] ?? '');
+        if (!is_file($path)) {
+            throw new RuntimeException('An email attachment is missing.');
+        }
+        $contents = file_get_contents($path);
+        if ($contents === false) {
+            throw new RuntimeException('An email attachment could not be read.');
+        }
+        $originalName = str_replace(["\r", "\n"], '', (string) ($attachment['name'] ?? 'document'));
+        $asciiName = preg_replace('/[^A-Za-z0-9._-]/', '_', $originalName) ?: 'document';
+        $mime = preg_replace('/[^A-Za-z0-9.+\/-]/', '', (string) ($attachment['mime'] ?? 'application/octet-stream'))
+            ?: 'application/octet-stream';
+        array_push(
+            $parts,
+            '--' . $boundary,
+            'Content-Type: ' . $mime . '; name="' . $asciiName . '"',
+            'Content-Transfer-Encoding: base64',
+            'Content-Disposition: attachment; filename="' . $asciiName . '"; filename*=UTF-8\'\'' . rawurlencode($originalName),
+            '',
+            rtrim(chunk_split(base64_encode($contents), 76, "\r\n")),
+        );
+    }
+    $parts[] = '--' . $boundary . '--';
+    $parts[] = '';
+
+    return [
+        'headers' => ['Content-Type: multipart/mixed; boundary="' . $boundary . '"'],
+        'body' => implode("\r\n", $parts),
+    ];
+}
+
+function portal_smtp_send(string $email, string $subject, string $body, string $sender, array $attachments = []): bool
 {
     $config = portal_smtp_config();
     if ($config === null) {
@@ -261,6 +328,7 @@ function portal_smtp_send(string $email, string $subject, string $body, string $
         portal_smtp_command($stream, 'RCPT TO:<' . $email . '>', [250, 251]);
         portal_smtp_command($stream, 'DATA', [354]);
 
+        $payload = portal_mail_payload($body, $attachments);
         $headers = [
             'Date: ' . date(DATE_RFC2822),
             'Message-ID: <' . bin2hex(random_bytes(16)) . '@i-feel.co.il>',
@@ -268,15 +336,13 @@ function portal_smtp_send(string $email, string $subject, string $body, string $
             'To: <' . $email . '>',
             'Subject: ' . $subject,
             'MIME-Version: 1.0',
-            'Content-Type: text/plain; charset=UTF-8',
-            'Content-Transfer-Encoding: 8bit',
             'X-Mailer: I Feel Staff Expenses Portal',
         ];
-        $normalizedBody = str_replace(["\r\n", "\r"], "\n", $body);
-        $normalizedBody = preg_replace('/^\./m', '..', $normalizedBody) ?? $normalizedBody;
+        $headers = array_merge($headers, $payload['headers']);
+        $messageBody = preg_replace('/^\./m', '..', (string) $payload['body']) ?? (string) $payload['body'];
         $message = implode("\r\n", $headers)
             . "\r\n\r\n"
-            . str_replace("\n", "\r\n", $normalizedBody);
+            . $messageBody;
         portal_smtp_write($stream, $message . "\r\n.");
         portal_smtp_read($stream, [250]);
         portal_smtp_command($stream, 'QUIT', [221]);
@@ -342,16 +408,7 @@ function portal_record_email_send_attempt(string $email): void
 
 function portal_send_email_code(string $email, string $code): bool
 {
-    $sender = '';
-    if (defined('EXPENSE_PORTAL_FROM_EMAIL')) {
-        $sender = trim((string) constant('EXPENSE_PORTAL_FROM_EMAIL'));
-    }
-    if ($sender === '') {
-        $sender = trim((string) getenv('EXPENSE_PORTAL_FROM_EMAIL'));
-    }
-    if (filter_var($sender, FILTER_VALIDATE_EMAIL) === false) {
-        $sender = 'no-reply@' . portal_company_email_domain();
-    }
+    $sender = portal_mail_sender();
 
     $subject = portal_email_subject('קוד כניסה לאזור עובדי I Feel');
     $body = implode("\r\n", [
@@ -383,6 +440,34 @@ function portal_send_email_code(string $email, string $code): bool
     ];
 
     return mail($email, $subject, $body, implode("\r\n", $headers));
+}
+
+function portal_send_mail_with_attachments(
+    string $email,
+    string $subject,
+    string $body,
+    array $attachments = []
+): bool {
+    if (filter_var($email, FILTER_VALIDATE_EMAIL) === false) {
+        return false;
+    }
+    $sender = portal_mail_sender();
+    $encodedSubject = portal_email_subject($subject);
+    if (portal_mail_transport_mode() === 'smtp') {
+        return portal_smtp_send($email, $encodedSubject, $body, $sender, $attachments);
+    }
+    if (portal_mail_transport_mode() !== 'mail' || !function_exists('mail')) {
+        return false;
+    }
+
+    $payload = portal_mail_payload($body, $attachments);
+    $headers = array_merge([
+        'From: I Feel <' . $sender . '>',
+        'Reply-To: ' . $sender,
+        'MIME-Version: 1.0',
+        'X-Mailer: I Feel Staff Expenses Portal',
+    ], $payload['headers']);
+    return mail($email, $encodedSubject, (string) $payload['body'], implode("\r\n", $headers));
 }
 
 function portal_request_email_code(string $input): string

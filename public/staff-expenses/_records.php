@@ -240,7 +240,36 @@ function portal_handle_post(array $user): never
 
     if ($action === 'submit_report') {
         $record = portal_build_record($user);
-        portal_flash_set('success', 'הדיווח נשמר בהצלחה. מספר הדיווח: ' . $record['id']);
+        $emailSent = false;
+        try {
+            $emailSent = portal_notify_expense_submission($record);
+        } catch (Throwable $notificationError) {
+            error_log('[i-feel staff expenses notification] record=' . $record['id'] . ' send_failed');
+        }
+        $record['email_notification'] = [
+            'recipients' => portal_expense_notification_recipients(),
+            'status' => $emailSent ? 'sent' : 'failed',
+            'updated_at' => gmdate('c'),
+        ];
+        $record['updated_at'] = $record['email_notification']['updated_at'];
+        $record['history'][] = [
+            'at' => $record['updated_at'],
+            'by' => 'system',
+            'action' => $emailSent ? 'email_sent' : 'email_failed',
+            'status' => (string) ($record['status'] ?? 'new'),
+        ];
+        portal_save_record($record);
+        portal_audit($emailSent ? 'record_email_sent' : 'record_email_failed', [
+            'record_id' => $record['id'],
+            'recipients' => portal_expense_notification_recipients(),
+        ]);
+        portal_flash_set(
+            $emailSent ? 'success' : 'error',
+            ($emailSent
+                ? 'הדיווח נשמר והמסמכים נשלחו להנהלת החשבונות ולאורן. '
+                : 'הדיווח נשמר, אך שליחת המסמכים בדוא״ל נכשלה ויש לטפל בכך ידנית. ')
+            . 'מספר הדיווח: ' . $record['id']
+        );
         portal_redirect(['tab' => 'history', 'submitted' => $record['id']]);
     }
 
