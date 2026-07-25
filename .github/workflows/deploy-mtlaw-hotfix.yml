@@ -80,9 +80,14 @@ jobs:
           grep -Fq 'data-mtlaw-enhancement="turntable-print-image"' mtlaw-hotfix/mt-law/index.php
           grep -Fq 'data-mtlaw-enhancement="turntable-card-image"' mtlaw-hotfix/mt-law/index.php
           grep -Fq 'data-mtlaw-enhancement="tc4-card-image"' mtlaw-hotfix/mt-law/index.php
+          grep -Fq '/assets/knx-advisor/siemens-tc4.webp' mtlaw-hotfix/mt-law/index.php
           grep -Fq 'data-mtlaw-enhancement="tc4-resources"' mtlaw-hotfix/mt-law/index.php
           grep -Fq '/assets/catalogs/siemens-touch-control-tc4-tc5-he.pdf' mtlaw-hotfix/mt-law/index.php
           grep -Fq '/mt-law/product-image.php?v=3' mtlaw-hotfix/mt-law/index.php
+          if grep -Fq '/07-knx-touch-panel-display.jpg' mtlaw-hotfix/mt-law/index.php; then
+            echo 'The TC5 project image is still used for the TC4 gift.' >&2
+            exit 1
+          fi
           if grep -Fq 'name="marketing_opt_in" value="yes" required' mtlaw-hotfix/mt-law/_gate_view.php; then
             echo 'The mailing consent checkbox is still required.' >&2
             exit 1
@@ -169,6 +174,9 @@ jobs:
     name: Verify live MT-Law entry, POST and media
     needs: deploy
     runs-on: ubuntu-latest
+    concurrency:
+      group: ifeel-production
+      cancel-in-progress: false
 
     steps:
       - name: Check live entry, direct gate, optional consent and turntable image
