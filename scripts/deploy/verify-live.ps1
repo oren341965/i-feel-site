@@ -116,7 +116,6 @@ function Invoke-MtLawPostRouteCheck {
         --data-urlencode "csrf=$csrf" `
         --data-urlencode "action=request_code" `
         --data-urlencode "email=routing-check@example.com" `
-        --data-urlencode "marketing_opt_in=yes" `
         $postUrl
 
     if ($LASTEXITCODE -ne 0) {
@@ -162,13 +161,17 @@ try {
         'name="marketing_opt_in"',
         'name="email"',
         'action="/mt-law/gate.php"',
-        'name="marketing_opt_in" value="yes" required'
+        'name="marketing_opt_in" value="yes"',
+        'הבחירה אינה תנאי'
     )) {
         if ($gateBody.IndexOf($marker, [StringComparison]::Ordinal) -lt 0) {
             throw "missing-marker=$marker url=$base/mt-law/gate.php"
         }
     }
-    Write-Host "OK MT-Law direct gate, required consent and content markers"
+    if ($gateBody.IndexOf('name="marketing_opt_in" value="yes" required', [StringComparison]::Ordinal) -ge 0) {
+        throw "mailing-consent-is-required url=$base/mt-law/gate.php"
+    }
+    Write-Host "OK MT-Law direct gate, optional consent and content markers"
 
     Invoke-MtLawPostRouteCheck -GateBody $gateBody -CookieJar $cookiePath -OutputPath $postBodyPath
 }

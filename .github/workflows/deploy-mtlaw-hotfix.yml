@@ -69,7 +69,12 @@ jobs:
           test -f mtlaw-hotfix/mt-law/_bootstrap.php
           test -f mtlaw-hotfix/mt-law/_gate_view.php
           grep -Fq 'action="/mt-law/gate.php"' mtlaw-hotfix/mt-law/_gate_view.php
-          grep -Fq 'name="marketing_opt_in" value="yes" required' mtlaw-hotfix/mt-law/_gate_view.php
+          grep -Fq 'name="marketing_opt_in" value="yes"' mtlaw-hotfix/mt-law/_gate_view.php
+          grep -Fq 'הבחירה אינה תנאי' mtlaw-hotfix/mt-law/_gate_view.php
+          if grep -Fq 'name="marketing_opt_in" value="yes" required' mtlaw-hotfix/mt-law/_gate_view.php; then
+            echo 'The mailing consent checkbox is still required.' >&2
+            exit 1
+          fi
           if grep -Eq '\bmixed[[:space:]]+\$' mtlaw-hotfix/mt-law/_bootstrap.php; then
             echo 'PHP 8 mixed parameter type remains in the focused artifact.' >&2
             exit 1
@@ -149,7 +154,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Check live entry, direct gate and consent enforcement
+      - name: Check live entry, direct gate and optional consent
         shell: bash
         run: |
           set -euo pipefail
@@ -214,15 +219,19 @@ jobs:
           for marker in \
             'id="gate-title"' \
             'action="/mt-law/gate.php"' \
-            'name="marketing_opt_in" value="yes" required' \
+            'name="marketing_opt_in" value="yes"' \
+            'הבחירה אינה תנאי' \
             'ניתן לבטל את ההרשמה בכל עת' \
             '/mt-law/mt-law-logo.svg'; do
             grep -Fq "$marker" "$work/entry.html" || fail_response "entry-missing-${marker}" 200 "$work/entry.html"
           done
+          if grep -Fq 'name="marketing_opt_in" value="yes" required' "$work/entry.html"; then
+            fail_response 'mailing-consent-is-required' 200 "$work/entry.html"
+          fi
           if grep -Fq 'action="/mt-law/"' "$work/entry.html"; then
             fail_response 'unsafe-directory-post-target' 200 "$work/entry.html"
           fi
-          echo 'OK entry page, direct actions and consent wording'
+          echo 'OK entry page, direct actions and optional consent wording'
 
           get_page 'direct-gate' "${base}/mt-law/gate.php" "$work/gate.html"
           grep -Fq 'id="gate-title"' "$work/gate.html" || fail_response 'direct-gate-marker' 200 "$work/gate.html"
@@ -236,25 +245,14 @@ jobs:
           )"
           [[ -n "$csrf" ]] || fail_response 'missing-csrf' 200 "$work/gate.html"
 
-          post_page 'consent-required' "$work/consent.html" \
-            "csrf=${csrf}" \
-            'action=request_code' \
-            'email=routing-check@mt-law.co.il'
-          grep -Fq 'כדי לקבל קוד כניסה יש לאשר קבלת עדכונים והטבות' "$work/consent.html" \
-            || fail_response 'consent-not-enforced' 200 "$work/consent.html"
-          grep -Fq 'ניתן לבטל את ההרשמה בכל עת' "$work/consent.html" \
-            || fail_response 'unsubscribe-wording-missing' 200 "$work/consent.html"
-          echo 'OK consent is required before OTP sending'
-
           post_page 'direct-post-route' "$work/post.html" \
             "csrf=${csrf}" \
             'action=request_code' \
-            'email=routing-check@example.com' \
-            'marketing_opt_in=yes'
+            'email=routing-check@example.com'
           grep -Fq 'id="gate-title"' "$work/post.html" || fail_response 'post-gate-marker' 200 "$work/post.html"
           grep -Fq 'הכניסה פתוחה רק לכתובות דואר' "$work/post.html" \
             || fail_response 'post-routing-response' 200 "$work/post.html"
-          echo 'OK direct POST returns the portal without 404 or 500'
+          echo 'OK unchecked optional consent reaches direct POST without 404 or 500'
           echo 'MT-Law live verification succeeded.'
 
   report:

@@ -103,16 +103,20 @@ try {
     foreach ($marker in @(
         'id="gate-title"',
         'action="/mt-law/gate.php"',
-        'name="marketing_opt_in" value="yes" required',
+        'name="marketing_opt_in" value="yes"',
+        'הבחירה אינה תנאי',
         'ניתן לבטל את ההרשמה בכל עת',
         '/mt-law/mt-law-logo.svg'
     )) {
         Require-Marker -Body $rootBody -Marker $marker -Label 'MT-Law entry URL'
     }
+    if ($rootBody.IndexOf('name="marketing_opt_in" value="yes" required', [StringComparison]::Ordinal) -ge 0) {
+        throw 'MT-Law entry URL still requires mailing consent.'
+    }
     if ($rootBody.IndexOf('action="/mt-law/"', [StringComparison]::Ordinal) -ge 0) {
         throw 'MT-Law entry URL still contains a directory POST target.'
     }
-    Write-Host 'OK MT-Law entry URL and mandatory consent markers'
+    Write-Host 'OK MT-Law entry URL and optional consent markers'
 
     $gatePath = Join-Path $work "gate.html"
     $gateStatus = Invoke-MtLawRequest -Method GET -Url "$base/mt-law/gate.php" -OutputPath $gatePath
@@ -126,24 +130,11 @@ try {
     }
     $csrf = $csrfMatch.Groups[1].Value
 
-    $consentPath = Join-Path $work "consent-required.html"
-    $consentStatus = Invoke-MtLawRequest -Method POST -Url "$base/mt-law/gate.php" -OutputPath $consentPath -FormData @(
-        "csrf=$csrf",
-        'action=request_code',
-        'email=routing-check@mt-law.co.il'
-    )
-    $consentBody = Read-Utf8Body $consentPath
-    Require-Http200 -Status $consentStatus -Label 'MT-Law consent enforcement POST' -Body $consentBody
-    Require-Marker -Body $consentBody -Marker 'כדי לקבל קוד כניסה יש לאשר קבלת עדכונים והטבות' -Label 'MT-Law consent enforcement POST'
-    Require-Marker -Body $consentBody -Marker 'ניתן לבטל את ההרשמה בכל עת' -Label 'MT-Law consent enforcement POST'
-    Write-Host 'OK mandatory mailing consent is enforced before OTP sending'
-
     $routePath = Join-Path $work "direct-post.html"
     $routeStatus = Invoke-MtLawRequest -Method POST -Url "$base/mt-law/gate.php" -OutputPath $routePath -FormData @(
         "csrf=$csrf",
         'action=request_code',
-        'email=routing-check@example.com',
-        'marketing_opt_in=yes'
+        'email=routing-check@example.com'
     )
     $routeBody = Read-Utf8Body $routePath
     Require-Http200 -Status $routeStatus -Label 'MT-Law direct POST route' -Body $routeBody
@@ -151,7 +142,7 @@ try {
     Require-Marker -Body $routeBody -Marker 'הכניסה פתוחה רק לכתובות דואר' -Label 'MT-Law direct POST route'
     Write-Host 'OK direct gate POST returns the portal instead of 404 or 500'
 
-    Write-Host 'MT-Law live access, direct POST and consent verification succeeded.'
+    Write-Host 'MT-Law live access, direct POST and optional consent verification succeeded.'
 }
 finally {
     Remove-Item -LiteralPath $work -Recurse -Force -ErrorAction SilentlyContinue
