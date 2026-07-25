@@ -4,8 +4,10 @@ DirectoryIndex gate.php
 <IfModule mod_rewrite.c>
   RewriteEngine On
 
-  # Route both GET and POST requests for /mt-law/ explicitly to the secure gate.
-  # Some shared-hosting configurations do not apply DirectoryIndex consistently to POST.
+  # Apache may not apply DirectoryIndex to POST requests on shared hosting.
+  # Route only the empty-directory POST target to the secure gate; GET keeps
+  # using DirectoryIndex, avoiding an internal redirect loop.
+  RewriteCond %{REQUEST_METHOD} =POST
   RewriteRule ^$ gate.php [L,QSA]
 
   RewriteCond %{THE_REQUEST} \s/+mt-law/index\.php(?:[?\s]) [NC]
