@@ -96,6 +96,13 @@ function Invoke-MtLawPostRouteCheck {
         throw "mt-law-post-check-missing-csrf url=$base/mt-law/gate.php"
     }
     $csrf = $csrfMatch.Groups[1].Value
+    $cookieLines = Get-Content -LiteralPath $CookieJar
+    if (-not ($cookieLines -match 'ifeel_mt_law_csrf')) {
+        throw "mt-law-post-check-missing-csrf-cookie url=$base/mt-law/gate.php"
+    }
+    $cookieLines |
+        Where-Object { $_ -notmatch 'ifeel_mt_law_access' } |
+        Set-Content -LiteralPath $CookieJar -Encoding ASCII
     $postUrl = Add-CacheBust "$base/mt-law/gate.php"
 
     Write-Host "CHECK method=POST url=$base/mt-law/gate.php"
@@ -140,6 +147,7 @@ $targets = @(
     "$base/customer-benefits/",
     "$base/mt-law/",
     "$base/mt-law/gate.php",
+    "$base/mt-law/product-image.php",
     "$base/mt-law/gate.css",
     "$base/mt-law/mt-law-logo.svg"
 )
@@ -161,7 +169,10 @@ try {
         'name="marketing_opt_in"',
         'name="email"',
         'action="/mt-law/gate.php"',
-        'name="marketing_opt_in" value="yes"'
+        'name="marketing_opt_in" value="yes"',
+        '/projects/knx-smart-home-central-moshav/11-akuvox-ip-intercom.jpg',
+        '/assets/articles/smart-home-security-cameras.jpg',
+        '/assets/knx-advisor/siemens-tc4.webp'
     )) {
         if ($gateBody.IndexOf($marker, [StringComparison]::Ordinal) -lt 0) {
             throw "missing-marker=$marker url=$base/mt-law/gate.php"
@@ -170,7 +181,7 @@ try {
     if ($gateBody.IndexOf('name="marketing_opt_in" value="yes" required', [StringComparison]::Ordinal) -ge 0) {
         throw "mailing-consent-is-required url=$base/mt-law/gate.php"
     }
-    Write-Host "OK MT-Law direct gate, optional consent and content markers"
+    Write-Host "OK MT-Law direct gate, intercom and optional consent markers"
 
     Invoke-MtLawPostRouteCheck -GateBody $gateBody -CookieJar $cookiePath -OutputPath $postBodyPath
 }

@@ -73,6 +73,10 @@ jobs:
           grep -Fq 'action="/mt-law/gate.php"' mtlaw-hotfix/mt-law/_gate_view.php
           grep -Fq 'name="marketing_opt_in" value="yes"' mtlaw-hotfix/mt-law/_gate_view.php
           grep -Fq 'הבחירה אינה תנאי' mtlaw-hotfix/mt-law/_gate_view.php
+          grep -Fq 'MTLAW_CSRF_COOKIE' mtlaw-hotfix/mt-law/_bootstrap.php
+          grep -Fq '/11-akuvox-ip-intercom.jpg' mtlaw-hotfix/mt-law/_gate_view.php
+          grep -Fq '/assets/articles/smart-home-security-cameras.jpg' mtlaw-hotfix/mt-law/_gate_view.php
+          grep -Fq '/assets/knx-advisor/siemens-tc4.webp' mtlaw-hotfix/mt-law/_gate_view.php
           grep -Fq 'data-mtlaw-enhancement="turntable-print-image"' mtlaw-hotfix/mt-law/index.php
           grep -Fq 'data-mtlaw-enhancement="turntable-card-image"' mtlaw-hotfix/mt-law/index.php
           grep -Fq 'data-mtlaw-enhancement="tc4-card-image"' mtlaw-hotfix/mt-law/index.php
@@ -235,6 +239,9 @@ jobs:
             'name="marketing_opt_in" value="yes"' \
             'הבחירה אינה תנאי' \
             'ניתן לבטל את ההרשמה בכל עת' \
+            '/projects/knx-smart-home-central-moshav/11-akuvox-ip-intercom.jpg' \
+            '/assets/articles/smart-home-security-cameras.jpg' \
+            '/assets/knx-advisor/siemens-tc4.webp' \
             '/mt-law/mt-law-logo.svg'; do
             grep -Fq "$marker" "$work/entry.html" || fail_response "entry-missing-${marker}" 200 "$work/entry.html"
           done
@@ -257,6 +264,9 @@ jobs:
           PY
           )"
           [[ -n "$csrf" ]] || fail_response 'missing-csrf' 200 "$work/gate.html"
+          grep -Fq $'\tifeel_mt_law_csrf\t' "$cookie" || fail_response 'missing-csrf-cookie' 200 "$work/gate.html"
+          grep -v $'\tifeel_mt_law_access\t' "$cookie" > "$work/cookies-csrf-only.txt"
+          mv "$work/cookies-csrf-only.txt" "$cookie"
 
           post_page 'direct-post-route' "$work/post.html" \
             "csrf=${csrf}" \

@@ -49,6 +49,26 @@ auth_assert_true(strpos($gateController, 'if (!$marketingOptIn)') === false, 'Th
 auth_assert_true(strpos($gateController, '$_SESSION[\'mtlaw_gate_marketing_opt_in\'] = $marketingOptIn;') !== false, 'The server must preserve the user\'s actual mailing choice.');
 auth_assert_true(strpos($gateController, '/mt-law/gate.php?access=verified') !== false, 'Successful verification must redirect directly to gate.php.');
 
+$cookieCsrf = str_repeat('a', 48);
+$_SESSION['mtlaw_csrf'] = str_repeat('b', 48);
+$_COOKIE[MTLAW_CSRF_COOKIE] = $cookieCsrf;
+$_POST['csrf'] = $cookieCsrf;
+mtlaw_verify_csrf();
+
+$invalidCsrfRejected = false;
+$_POST['csrf'] = str_repeat('c', 48);
+try {
+    mtlaw_verify_csrf();
+} catch (RuntimeException $exception) {
+    $invalidCsrfRejected = true;
+}
+auth_assert_true($invalidCsrfRejected, 'A token that matches neither the session nor the CSRF cookie must be rejected.');
+
+$portalSource = file_get_contents(dirname(__DIR__, 2) . '/public/mt-law/index.php');
+$bootstrapSource = file_get_contents(dirname(__DIR__, 2) . '/public/mt-law/_bootstrap.php');
+auth_assert_true(is_string($portalSource) && strpos($portalSource, 'value="intercom"') !== false, 'The project form must offer intercom as a selectable system.');
+auth_assert_true(is_string($bootstrapSource) && strpos($bootstrapSource, '\'intercom\' => \'אינטרקום\'') !== false, 'The lead processor must label intercom selections.');
+
 mtlaw_logout();
 if (session_status() === PHP_SESSION_ACTIVE) {
     session_write_close();

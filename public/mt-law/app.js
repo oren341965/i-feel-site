@@ -71,7 +71,7 @@
     const turntableArt = document.querySelector('.turntable-art');
     if (turntableArt) {
       turntableArt.replaceWith(createPhotoFigure({
-        src: '/mt-law/product-image.php?v=1',
+        src: '/mt-law/product-image.php?v=3',
         alt: 'פטיפון Argon Audio TT MK2 בגוון Earth Grey',
         caption: 'תמונת מוצר אמיתית באדיבות TRES',
         variant: 'gift-photo-frame gift-photo-frame--product',
@@ -81,10 +81,10 @@
     const tc4Art = document.querySelector('.tc4-art');
     if (tc4Art) {
       tc4Art.replaceWith(createPhotoFigure({
-        src: '/projects/knx-smart-home-central-moshav/07-knx-touch-panel-display.jpg',
-        alt: 'תצוגת מסך מגע KNX בפרויקט בית חכם של I Feel',
-        caption: 'מסך מגע מותקן בפרויקט I Feel. דגם המתנה הוא Siemens TC4',
-        variant: 'gift-photo-frame gift-photo-frame--installation',
+        src: '/assets/knx-advisor/siemens-tc4.webp',
+        alt: 'מסך המגע Siemens Touch Control TC4',
+        caption: 'תמונת המוצר Siemens Touch Control TC4',
+        variant: 'gift-photo-frame gift-photo-frame--product',
       }));
     }
 
@@ -98,8 +98,12 @@
         alt: 'גלאי נוכחות חיצוני וצופר אזעקה בפרויקט בית חכם של I Feel',
       },
       {
-        src: '/projects/knx-smart-home-central-moshav/15-outdoor-security-camera.jpg',
-        alt: 'מצלמת אבטחה חיצונית המותקנת בגינה בפרויקט של I Feel',
+        src: '/assets/articles/smart-home-security-cameras.jpg',
+        alt: 'מצלמות אבטחה חיצוניות בבית פרטי בפרויקט I Feel',
+      },
+      {
+        src: '/projects/knx-smart-home-central-moshav/11-akuvox-ip-intercom.jpg',
+        alt: 'אינטרקום IP של Akuvox המותקן בפרויקט בית חכם של I Feel',
       },
       {
         src: '/projects/knx-smart-home-central-moshav/06-knx-touch-panel-wide.jpg',
