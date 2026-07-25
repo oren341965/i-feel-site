@@ -71,7 +71,7 @@
     const turntableArt = document.querySelector('.turntable-art');
     if (turntableArt) {
       turntableArt.replaceWith(createPhotoFigure({
-        src: '/mt-law/product-image.php?v=1',
+        src: '/mt-law/product-image.php?v=3',
         alt: 'פטיפון Argon Audio TT MK2 בגוון Earth Grey',
         caption: 'תמונת מוצר אמיתית באדיבות TRES',
         variant: 'gift-photo-frame gift-photo-frame--product',
