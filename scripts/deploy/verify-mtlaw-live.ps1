@@ -124,6 +124,13 @@ try {
     Require-Http200 -Status $gateStatus -Label 'MT-Law direct gate' -Body $gateBody
     Require-Marker -Body $gateBody -Marker 'id="gate-title"' -Label 'MT-Law direct gate'
 
+    $turntableImagePath = Join-Path $work "turntable-image.bin"
+    $turntableImageStatus = Invoke-MtLawRequest -Method GET -Url "$base/mt-law/product-image.php" -OutputPath $turntableImagePath
+    Require-Http200 -Status $turntableImageStatus -Label 'MT-Law turntable image' -Body ''
+    if ((Get-Item -LiteralPath $turntableImagePath).Length -le 1024) {
+        throw 'MT-Law turntable image response is unexpectedly small.'
+    }
+
     $csrfMatch = [regex]::Match($gateBody, 'name="csrf"\s+value="([^"]+)"')
     if (-not $csrfMatch.Success) {
         throw 'MT-Law direct gate did not provide a CSRF token.'
