@@ -58,6 +58,12 @@ jobs:
           php-version: '7.4'
           coverage: none
 
+      - name: Patch MT-Law source for PHP 7.4
+        run: node scripts/deploy/patch-mtlaw-php74.mjs public/mt-law/_bootstrap.php
+
+      - name: Confirm MT-Law PHP runtime
+        run: php -v
+
       - name: Lint MT-Law portal
         run: find public/mt-law -maxdepth 1 -type f -name '*.php' -print0 | xargs -0 -n1 php -l
 
@@ -66,6 +72,15 @@ jobs:
 
       - name: Build and validate Astro site
         run: npm run build
+
+      - name: Verify patched MT-Law file is in dist
+        run: |
+          test -f dist/mt-law/_bootstrap.php
+          if grep -Eq '\bmixed[[:space:]]+\$' dist/mt-law/_bootstrap.php; then
+            echo 'PHP 8 mixed parameter type remains in dist/mt-law/_bootstrap.php.' >&2
+            exit 1
+          fi
+          echo 'MT-Law bootstrap in dist is PHP 7.4 compatible.'
 
       - name: Verify protected deployment files exist
         run: |
