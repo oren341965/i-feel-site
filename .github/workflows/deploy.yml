@@ -67,8 +67,10 @@ jobs:
       - name: Lint MT-Law portal
         run: find public/mt-law -maxdepth 1 -type f -name '*.php' -print0 | xargs -0 -n1 php -l
 
-      - name: Test MT-Law consent registry
-        run: php tests/mt-law/gate-unit.php
+      - name: Test MT-Law consent and authentication
+        run: |
+          php tests/mt-law/gate-unit.php
+          php tests/mt-law/auth-unit.php
 
       - name: Build and validate Astro site
         run: npm run build
