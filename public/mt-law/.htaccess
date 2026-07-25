@@ -7,7 +7,7 @@ DirectoryIndex gate.php
   # Apache may not apply DirectoryIndex to POST requests on shared hosting.
   # Route only the empty-directory POST target to the secure gate; GET keeps
   # using DirectoryIndex, avoiding an internal redirect loop.
-  RewriteCond %{REQUEST_METHOD} =POST
+  RewriteCond %{REQUEST_METHOD} ^POST$ [NC]
   RewriteRule ^$ gate.php [L,QSA]
 
   RewriteCond %{THE_REQUEST} \s/+mt-law/index\.php(?:[?\s]) [NC]
