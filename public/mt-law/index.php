@@ -439,6 +439,6 @@ mtlaw_header($user, $csrf);
 </main>
 
 <footer class="footer shell">I Feel Smart Home, עמוד פנימי שאינו מופיע בתפריטי האתר ואינו מיועד לאינדוקס</footer>
-<?php if ($user !== null): ?><script src="/mt-law/app.js?v=20260725-4" defer></script><?php endif; ?>
+<?php if ($user !== null): ?><script src="/mt-law/app.js?v=20260725-5" defer></script><?php endif; ?>
 </body>
 </html>
