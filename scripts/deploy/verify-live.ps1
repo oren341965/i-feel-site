@@ -93,12 +93,12 @@ function Invoke-MtLawPostRouteCheck {
 
     $csrfMatch = [regex]::Match($GateBody, 'name="csrf"\s+value="([^"]+)"')
     if (-not $csrfMatch.Success) {
-        throw "mt-law-post-check-missing-csrf url=$base/mt-law/"
+        throw "mt-law-post-check-missing-csrf url=$base/mt-law/gate.php"
     }
     $csrf = $csrfMatch.Groups[1].Value
-    $postUrl = Add-CacheBust "$base/mt-law/"
+    $postUrl = Add-CacheBust "$base/mt-law/gate.php"
 
-    Write-Host "CHECK method=POST url=$base/mt-law/"
+    Write-Host "CHECK method=POST url=$base/mt-law/gate.php"
     $status = & $curl.Source `
         --silent `
         --show-error `
@@ -116,20 +116,21 @@ function Invoke-MtLawPostRouteCheck {
         --data-urlencode "csrf=$csrf" `
         --data-urlencode "action=request_code" `
         --data-urlencode "email=routing-check@example.com" `
+        --data-urlencode "marketing_opt_in=yes" `
         $postUrl
 
     if ($LASTEXITCODE -ne 0) {
-        throw "mt-law-post-request-failed exit=$LASTEXITCODE http=$status url=$base/mt-law/"
+        throw "mt-law-post-request-failed exit=$LASTEXITCODE http=$status url=$base/mt-law/gate.php"
     }
     if ([int]$status -lt 200 -or [int]$status -ge 400) {
-        throw "mt-law-post-unexpected-http=$status url=$base/mt-law/"
+        throw "mt-law-post-unexpected-http=$status url=$base/mt-law/gate.php"
     }
 
     $postBody = Get-Content -Raw -LiteralPath $OutputPath
     if ($postBody.IndexOf('id="gate-title"', [StringComparison]::Ordinal) -lt 0) {
-        throw "mt-law-post-missing-gate-marker url=$base/mt-law/"
+        throw "mt-law-post-missing-gate-marker url=$base/mt-law/gate.php"
     }
-    Write-Host "OK $status POST $base/mt-law/"
+    Write-Host "OK $status POST $base/mt-law/gate.php"
 }
 
 $targets = @(
@@ -153,14 +154,21 @@ $gateBodyPath = Join-Path $env:TEMP ("ifeel-mt-law-gate-" + [guid]::NewGuid().To
 $postBodyPath = Join-Path $env:TEMP ("ifeel-mt-law-post-" + [guid]::NewGuid().ToString("N") + ".html")
 $cookiePath = Join-Path $env:TEMP ("ifeel-mt-law-cookie-" + [guid]::NewGuid().ToString("N") + ".txt")
 try {
-    Invoke-LiveRequest -Url "$base/mt-law/" -OutputPath $gateBodyPath -CookieJar $cookiePath | Out-Null
+    Invoke-LiveRequest -Url "$base/mt-law/gate.php" -OutputPath $gateBodyPath -CookieJar $cookiePath | Out-Null
     $gateBody = Get-Content -Raw -LiteralPath $gateBodyPath
-    foreach ($marker in @('id="gate-title"', '/mt-law/mt-law-logo.svg', 'name="marketing_opt_in"', 'name="email"')) {
+    foreach ($marker in @(
+        'id="gate-title"',
+        '/mt-law/mt-law-logo.svg',
+        'name="marketing_opt_in"',
+        'name="email"',
+        'action="/mt-law/gate.php"',
+        'name="marketing_opt_in" value="yes" required'
+    )) {
         if ($gateBody.IndexOf($marker, [StringComparison]::Ordinal) -lt 0) {
-            throw "missing-marker=$marker url=$base/mt-law/"
+            throw "missing-marker=$marker url=$base/mt-law/gate.php"
         }
     }
-    Write-Host "OK MT-Law WOW gate content markers"
+    Write-Host "OK MT-Law direct gate, required consent and content markers"
 
     Invoke-MtLawPostRouteCheck -GateBody $gateBody -CookieJar $cookiePath -OutputPath $postBodyPath
 }
