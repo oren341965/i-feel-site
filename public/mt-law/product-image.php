@@ -26,6 +26,11 @@ function mtlaw_product_image_output(string $body, string $contentType): void
     exit;
 }
 
+function mtlaw_product_image_is_image_type(string $contentType): bool
+{
+    return strpos(strtolower(trim($contentType)), 'image/') === 0;
+}
+
 function mtlaw_product_image_fallback(): void
 {
     $svg = <<<'SVG'
@@ -55,7 +60,7 @@ if (
 ) {
     $cached = file_get_contents($cachePath);
     $cachedType = is_file($cacheTypePath) ? trim((string) file_get_contents($cacheTypePath)) : 'image/webp';
-    if (is_string($cached) && $cached !== '' && str_starts_with($cachedType, 'image/')) {
+    if (is_string($cached) && $cached !== '' && mtlaw_product_image_is_image_type($cachedType)) {
         mtlaw_product_image_output($cached, $cachedType);
     }
 }
@@ -75,7 +80,7 @@ $options = [
     CURLOPT_MAXREDIRS => 3,
     CURLOPT_CONNECTTIMEOUT => 6,
     CURLOPT_TIMEOUT => 18,
-    CURLOPT_USERAGENT => 'I Feel Smart Home product image cache/1.0',
+    CURLOPT_USERAGENT => 'I Feel Smart Home product image cache/1.1',
     CURLOPT_HTTPHEADER => [
         'Accept: image/webp,image/*,*/*;q=0.8',
         'Accept-Language: he-IL,he;q=0.9,en;q=0.7',
@@ -101,7 +106,7 @@ if (
     || $error !== ''
     || $status < 200
     || $status >= 300
-    || !str_starts_with($contentType, 'image/')
+    || !mtlaw_product_image_is_image_type($contentType)
     || strlen($body) < 1024
     || strlen($body) > MTLAW_TURNTABLE_MAX_BYTES
 ) {
@@ -109,7 +114,7 @@ if (
     if (is_file($cachePath)) {
         $stale = file_get_contents($cachePath);
         $staleType = is_file($cacheTypePath) ? trim((string) file_get_contents($cacheTypePath)) : 'image/webp';
-        if (is_string($stale) && $stale !== '' && str_starts_with($staleType, 'image/')) {
+        if (is_string($stale) && $stale !== '' && mtlaw_product_image_is_image_type($staleType)) {
             mtlaw_product_image_output($stale, $staleType);
         }
     }
