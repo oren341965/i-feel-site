@@ -138,6 +138,65 @@
   const giftRadios = Array.from(form.querySelectorAll('[name="gift_choice"]'));
   const eligibilityText = document.getElementById('eligibility-text');
 
+  function enhancePropertyAddressField() {
+    const notesField = form.querySelector('textarea[name="notes"]');
+    const existingAddressInput = form.querySelector('[name="property_address"]');
+    if (existingAddressInput || !notesField) {
+      return { addressInput: existingAddressInput, notesField };
+    }
+
+    const notesLabel = notesField.closest('.field');
+    if (!notesLabel) {
+      return { addressInput: null, notesField };
+    }
+
+    const addressLabel = document.createElement('label');
+    addressLabel.className = 'field';
+    addressLabel.style.marginTop = '16px';
+
+    const addressTitle = document.createElement('span');
+    addressTitle.textContent = 'כתובת הנכס';
+
+    const addressInput = document.createElement('input');
+    addressInput.type = 'text';
+    addressInput.name = 'property_address';
+    addressInput.maxLength = 220;
+    addressInput.autocomplete = 'street-address';
+    addressInput.placeholder = 'עיר, רחוב, מספר בית ודירה אם קיימת';
+    addressInput.required = true;
+
+    const addressHelp = document.createElement('small');
+    addressHelp.textContent = 'הכתובת נדרשת כדי להתאים את ההצעה, ההתקנה ואזור השירות.';
+
+    addressLabel.append(addressTitle, addressInput, addressHelp);
+    notesLabel.before(addressLabel);
+
+    const notesTitle = notesLabel.querySelector('span');
+    if (notesTitle) {
+      notesTitle.textContent = 'הערות או מידע נוסף';
+    }
+
+    const summaryList = form.querySelector('.summary-list');
+    if (summaryList && !document.getElementById('summary-address')) {
+      const item = document.createElement('li');
+      item.innerHTML = '<span class="summary-label">כתובת הנכס</span><span class="summary-value" id="summary-address">טרם הוזנה</span>';
+      const contactItem = document.getElementById('summary-contact')?.closest('li');
+      if (contactItem) {
+        contactItem.before(item);
+      } else {
+        summaryList.appendChild(item);
+      }
+    }
+
+    addressInput.addEventListener('input', () => {
+      text('summary-address', addressInput.value.trim() || 'טרם הוזנה');
+    });
+
+    return { addressInput, notesField };
+  }
+
+  const { addressInput, notesField } = enhancePropertyAddressField();
+
   function setGiftVisibility(turntableEligible, tc4Eligible) {
     const both = turntableEligible && tc4Eligible;
     const any = turntableEligible || tc4Eligible;
@@ -215,6 +274,7 @@
     text('summary-budget', labelFor(budget));
     text('summary-timeline', labelFor(timeline));
     text('summary-contact', labelFor(contact));
+    text('summary-address', addressInput?.value.trim() || 'טרם הוזנה');
 
     const turntableEligible = budget?.value === 'over';
     const tc4Eligible = property?.value === 'new' && scope?.value === 'full';
@@ -242,6 +302,27 @@
         eligibilityText.focus?.();
       }
       return;
+    }
+
+    const address = addressInput?.value.trim() || '';
+    if (!address) {
+      event.preventDefault();
+      addressInput?.reportValidity();
+      addressInput?.focus();
+      return;
+    }
+
+    if (notesField) {
+      const marker = 'כתובת הנכס:';
+      const currentNotes = notesField.value
+        .split(/\r?\n/)
+        .filter((line) => !line.trim().startsWith(marker))
+        .join('\n')
+        .trim();
+      const prefix = `${marker} ${address}`;
+      const availableLength = Math.max(0, 1800 - prefix.length - 1);
+      const additionalNotes = currentNotes.slice(0, availableLength);
+      notesField.value = `${prefix}${additionalNotes ? `\n${additionalNotes}` : ''}`;
     }
 
     const submit = form.querySelector('button[type="submit"]');
