@@ -153,6 +153,14 @@ function mtlaw_gate_capture_lead_profile(array $user): void
     if (($_SERVER['REQUEST_METHOD'] ?? 'GET') !== 'POST' || mtlaw_post('action', 40) !== 'lead') {
         return;
     }
+
+    try {
+        mtlaw_verify_csrf();
+    } catch (Throwable $error) {
+        error_log('[i-feel mt-law gate profile] rejected invalid CSRF: ' . $error->getMessage());
+        return;
+    }
+
     $email = strtolower(trim((string) ($user['email'] ?? '')));
     $fullName = trim(mtlaw_post('name', 120));
     $phone = trim(mtlaw_post('phone', 80));
