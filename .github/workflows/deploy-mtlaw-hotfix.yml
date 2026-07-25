@@ -73,6 +73,7 @@ jobs:
           grep -Fq 'הבחירה אינה תנאי' mtlaw-hotfix/mt-law/_gate_view.php
           grep -Fq 'MTLAW_CSRF_COOKIE' mtlaw-hotfix/mt-law/_bootstrap.php
           grep -Fq '/11-akuvox-ip-intercom.jpg' mtlaw-hotfix/mt-law/_gate_view.php
+          grep -Fq '/assets/articles/smart-home-security-cameras.jpg' mtlaw-hotfix/mt-law/_gate_view.php
           if grep -Fq 'name="marketing_opt_in" value="yes" required' mtlaw-hotfix/mt-law/_gate_view.php; then
             echo 'The mailing consent checkbox is still required.' >&2
             exit 1
@@ -225,6 +226,7 @@ jobs:
             'הבחירה אינה תנאי' \
             'ניתן לבטל את ההרשמה בכל עת' \
             '/projects/knx-smart-home-central-moshav/11-akuvox-ip-intercom.jpg' \
+            '/assets/articles/smart-home-security-cameras.jpg' \
             '/mt-law/mt-law-logo.svg'; do
             grep -Fq "$marker" "$work/entry.html" || fail_response "entry-missing-${marker}" 200 "$work/entry.html"
           done
