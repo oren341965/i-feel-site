@@ -34,7 +34,7 @@ function mtlaw_verify_csrf(): void
 
 require dirname(__DIR__, 2) . '/public/mt-law/_gate_data.php';
 
-function assert_same(mixed $expected, mixed $actual, string $message): void
+function assert_same($expected, $actual, string $message): void
 {
     if ($expected !== $actual) {
         fwrite(STDERR, "FAIL: {$message}\nExpected: " . var_export($expected, true) . "\nActual: " . var_export($actual, true) . "\n");
