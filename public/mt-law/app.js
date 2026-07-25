@@ -98,8 +98,8 @@
         alt: 'גלאי נוכחות חיצוני וצופר אזעקה בפרויקט בית חכם של I Feel',
       },
       {
-        src: '/projects/knx-smart-home-central-moshav/15-outdoor-security-camera.jpg',
-        alt: 'מצלמת אבטחה חיצונית המותקנת בגינה בפרויקט של I Feel',
+        src: '/assets/articles/smart-home-security-cameras.jpg',
+        alt: 'מצלמות אבטחה חיצוניות בבית פרטי בפרויקט I Feel',
       },
       {
         src: '/projects/knx-smart-home-central-moshav/11-akuvox-ip-intercom.jpg',
