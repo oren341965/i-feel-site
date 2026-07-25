@@ -147,6 +147,7 @@ $targets = @(
     "$base/customer-benefits/",
     "$base/mt-law/",
     "$base/mt-law/gate.php",
+    "$base/mt-law/product-image.php",
     "$base/mt-law/gate.css",
     "$base/mt-law/mt-law-logo.svg"
 )
