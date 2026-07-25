@@ -152,7 +152,10 @@ jobs:
         run: |
           $ErrorActionPreference = 'Stop'
           try {
-            powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\deploy\verify-live.ps1 -BaseUrl https://i-feel.co.il/
+            & powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\deploy\verify-live.ps1 -BaseUrl https://i-feel.co.il/
+            if ($LASTEXITCODE -ne 0) {
+              throw "verify-live exited with code $LASTEXITCODE"
+            }
             Add-Content -LiteralPath $env:GITHUB_OUTPUT -Value 'message=MT-Law live verification succeeded' -Encoding UTF8
           }
           catch {
