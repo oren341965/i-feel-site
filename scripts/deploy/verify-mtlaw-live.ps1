@@ -105,6 +105,7 @@ try {
         'action="/mt-law/gate.php"',
         'name="marketing_opt_in" value="yes"',
         '/projects/knx-smart-home-central-moshav/11-akuvox-ip-intercom.jpg',
+        '/assets/articles/smart-home-security-cameras.jpg',
         '/mt-law/mt-law-logo.svg'
     )) {
         Require-Marker -Body $rootBody -Marker $marker -Label 'MT-Law entry URL'
