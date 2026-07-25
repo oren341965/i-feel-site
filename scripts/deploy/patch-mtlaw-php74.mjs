@@ -87,10 +87,10 @@ index = replaceRequired(index, {
 });
 
 index = replaceRequired(index, {
-  label: "TC4 real project image in benefit card",
+  label: "TC4 product image in benefit card",
   marker: 'data-mtlaw-enhancement="tc4-card-image"',
   before: `          <div class="gift-visual"><div class="tc4-art" role="img" aria-label="איור מסך מגע Siemens TC4"><div><strong>TC4</strong><span>Siemens KNX Touch Control</span></div></div></div>`,
-  after: `          <div class="gift-visual" data-mtlaw-enhancement="tc4-card-image"><img src="/projects/knx-smart-home-central-moshav/07-knx-touch-panel-display.jpg" alt="מסך מגע Siemens KNX בפרויקט בית חכם של I Feel" style="display:block;width:100%;height:260px;object-fit:cover;border-radius:12px;" loading="lazy"></div>`,
+  after: `          <div class="gift-visual" data-mtlaw-enhancement="tc4-card-image"><img src="/assets/knx-advisor/siemens-tc4.webp" alt="מסך המגע Siemens Touch Control TC4" style="display:block;width:100%;height:260px;object-fit:contain;border-radius:12px;background:#fff;padding:12px;" loading="lazy"></div>`,
 });
 
 index = replaceRequired(index, {
