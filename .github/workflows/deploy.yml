@@ -116,20 +116,29 @@ jobs:
           name: site-dist-${{ github.sha }}
           path: dist
 
-      - name: Confirm protected files survived artifact transfer
+      - name: Restore and confirm protected deployment files
         shell: powershell
         run: |
-          $required = @(
-            'dist/.htaccess',
-            'dist/mt-law/.htaccess',
-            'dist/customer-benefits/.htaccess',
-            'dist/staff-expenses/.htaccess'
-          )
-          foreach ($path in $required) {
-            if (-not (Test-Path -LiteralPath $path -PathType Leaf)) {
-              throw "Protected deployment file is missing after artifact download: $path"
+          $mapping = @{
+            'public/.htaccess' = 'dist/.htaccess'
+            'public/mt-law/.htaccess' = 'dist/mt-law/.htaccess'
+            'public/customer-benefits/.htaccess' = 'dist/customer-benefits/.htaccess'
+            'public/staff-expenses/.htaccess' = 'dist/staff-expenses/.htaccess'
+          }
+
+          foreach ($entry in $mapping.GetEnumerator()) {
+            $source = $entry.Key
+            $destination = $entry.Value
+            if (-not (Test-Path -LiteralPath $source -PathType Leaf)) {
+              throw "Protected source file is missing from checkout: $source"
             }
-            Write-Host "OK protected file $path"
+            $destinationDirectory = Split-Path -Parent $destination
+            New-Item -ItemType Directory -Path $destinationDirectory -Force | Out-Null
+            Copy-Item -LiteralPath $source -Destination $destination -Force
+            if (-not (Test-Path -LiteralPath $destination -PathType Leaf)) {
+              throw "Protected deployment file could not be restored: $destination"
+            }
+            Write-Host "OK protected file $destination"
           }
 
       - name: Upload dist through persistent explicit FTPS
