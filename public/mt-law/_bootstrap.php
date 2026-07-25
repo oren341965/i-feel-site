@@ -13,6 +13,7 @@ const MTLAW_ACCESS_TTL = 7200;
 const MTLAW_OTP_TTL = 600;
 const MTLAW_OTP_RESEND_SECONDS = 60;
 const MTLAW_OTP_HOURLY_LIMIT = 5;
+const MTLAW_CSRF_COOKIE = 'ifeel_mt_law_csrf';
 const MTLAW_DEFAULT_BOARD_ID = '2732725332';
 const MTLAW_FALLBACK_EMAIL = 'sales@i-feel.co.il';
 const MTLAW_ALLOWED_DOMAINS = ['i-feel.co.il', 'mt-law.co.il'];
@@ -131,19 +132,48 @@ function mtlaw_redirect(array $params = []): void
     exit;
 }
 
+function mtlaw_valid_csrf_token(string $token): bool
+{
+    return preg_match('/\A[a-f0-9]{48}\z/D', $token) === 1;
+}
+
+function mtlaw_set_csrf_cookie(string $token): void
+{
+    if (headers_sent()) {
+        return;
+    }
+    setcookie(MTLAW_CSRF_COOKIE, $token, [
+        'expires' => 0,
+        'path' => '/mt-law/',
+        'secure' => mtlaw_is_https(),
+        'httponly' => true,
+        'samesite' => 'Strict',
+    ]);
+}
+
 function mtlaw_csrf_token(): string
 {
-    if (!isset($_SESSION['mtlaw_csrf']) || !is_string($_SESSION['mtlaw_csrf'])) {
-        $_SESSION['mtlaw_csrf'] = bin2hex(random_bytes(24));
+    $sessionToken = is_string($_SESSION['mtlaw_csrf'] ?? null) ? (string) $_SESSION['mtlaw_csrf'] : '';
+    $cookieToken = is_string($_COOKIE[MTLAW_CSRF_COOKIE] ?? null) ? (string) $_COOKIE[MTLAW_CSRF_COOKIE] : '';
+
+    if (!mtlaw_valid_csrf_token($sessionToken)) {
+        $sessionToken = mtlaw_valid_csrf_token($cookieToken) ? $cookieToken : bin2hex(random_bytes(24));
+        $_SESSION['mtlaw_csrf'] = $sessionToken;
     }
-    return $_SESSION['mtlaw_csrf'];
+    if (!hash_equals($sessionToken, $cookieToken)) {
+        mtlaw_set_csrf_cookie($sessionToken);
+    }
+    return $sessionToken;
 }
 
 function mtlaw_verify_csrf(): void
 {
     $posted = mtlaw_post('csrf', 100);
     $stored = (string) ($_SESSION['mtlaw_csrf'] ?? '');
-    if ($stored === '' || $posted === '' || !hash_equals($stored, $posted)) {
+    $cookie = (string) ($_COOKIE[MTLAW_CSRF_COOKIE] ?? '');
+    $sessionMatches = mtlaw_valid_csrf_token($stored) && mtlaw_valid_csrf_token($posted) && hash_equals($stored, $posted);
+    $cookieMatches = mtlaw_valid_csrf_token($cookie) && mtlaw_valid_csrf_token($posted) && hash_equals($cookie, $posted);
+    if (!$sessionMatches && !$cookieMatches) {
         throw new RuntimeException('הטופס פג תוקף. יש לרענן את העמוד ולנסות שוב.');
     }
 }
@@ -336,6 +366,7 @@ function mtlaw_label(string $group, string $value): string
             'audio' => 'אודיו',
             'alarm' => 'אזעקה',
             'cameras' => 'מצלמות',
+            'intercom' => 'אינטרקום',
         ],
         'alarm' => [
             'wired' => 'אזעקה קווית',
@@ -456,7 +487,7 @@ function mtlaw_submit_lead(array $user): string
 
     $allowedProperty = ['new', 'renovation', 'existing', 'checking'];
     $allowedScope = ['full', 'partial', 'advice'];
-    $allowedSystems = ['smart-electricity', 'audio', 'alarm', 'cameras'];
+    $allowedSystems = ['smart-electricity', 'audio', 'alarm', 'cameras', 'intercom'];
     $allowedAlarm = ['wired', 'wireless', 'recommend', 'none'];
     $allowedCamera = ['ready', 'partial', 'none', 'unknown'];
     $allowedBudget = ['over', 'under', 'unknown'];
