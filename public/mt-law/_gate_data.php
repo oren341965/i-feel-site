@@ -229,14 +229,14 @@ function mtlaw_gate_stats(): array
                 if (new DateTimeImmutable($consentAt) >= $monthStart) {
                     $stats['month']++;
                 }
-            } catch (Throwable) {
+            } catch (Throwable $error) {
             }
         }
     }
     return $stats;
 }
 
-function mtlaw_gate_stream_mailing_csv(string $period): never
+function mtlaw_gate_stream_mailing_csv(string $period): void
 {
     $user = mtlaw_current_user();
     if ($user === null || ($user['role'] ?? '') !== 'staff') {
@@ -271,13 +271,13 @@ function mtlaw_gate_stream_mailing_csv(string $period): never
         $consentAtRaw = trim((string) ($contact['marketing_consent_at'] ?? ''));
         try {
             $consentAt = $consentAtRaw !== '' ? new DateTimeImmutable($consentAtRaw) : null;
-        } catch (Throwable) {
+        } catch (Throwable $error) {
             $consentAt = null;
         }
         if ($period !== 'all' && ($consentAt === null || $consentAt < $monthStart)) {
             continue;
         }
-        $firstSeen = $consentAt?->setTimezone($timezone)->format('Y-m-d') ?? '';
+        $firstSeen = $consentAt !== null ? $consentAt->setTimezone($timezone)->format('Y-m-d') : '';
         $notes = implode('; ', array_filter([
             'אומת באמצעות דואר ארגוני של MT-Law',
             $consentAtRaw !== '' ? 'הסכמה מפורשת: ' . $consentAtRaw : '',

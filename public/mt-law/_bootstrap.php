@@ -1,6 +1,13 @@
 <?php
 declare(strict_types=1);
 
+if (!function_exists('str_starts_with')) {
+    function str_starts_with(string $haystack, string $needle): bool
+    {
+        return $needle === '' || strncmp($haystack, $needle, strlen($needle)) === 0;
+    }
+}
+
 const MTLAW_SESSION_NAME = 'ifeel_mt_law_access';
 const MTLAW_ACCESS_TTL = 7200;
 const MTLAW_OTP_TTL = 600;
@@ -114,7 +121,7 @@ function mtlaw_base_path(): string
     return '/mt-law/';
 }
 
-function mtlaw_redirect(array $params = []): never
+function mtlaw_redirect(array $params = []): void
 {
     $location = mtlaw_base_path();
     if ($params !== []) {
@@ -496,7 +503,9 @@ function mtlaw_submit_lead(array $user): string
         $gift = 'none';
     }
 
-    $systemLabels = array_map(static fn (string $item): string => mtlaw_label('system', $item), $systems);
+    $systemLabels = array_map(static function (string $item): string {
+        return mtlaw_label('system', $item);
+    }, $systems);
     $messageLines = [
         'זכאות: 10% הנחה על כלל הפריטים בהצעה',
         'מצב הנכס: ' . mtlaw_label('property', $property),

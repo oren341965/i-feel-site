@@ -10,7 +10,7 @@ header('X-Content-Type-Options: nosniff');
 header('Referrer-Policy: no-referrer');
 header('Cache-Control: public, max-age=86400, stale-if-error=604800');
 
-function mtlaw_product_image_output(string $body, string $contentType): never
+function mtlaw_product_image_output(string $body, string $contentType): void
 {
     $etag = '"' . hash('sha256', $body) . '"';
     if (trim((string) ($_SERVER['HTTP_IF_NONE_MATCH'] ?? '')) === $etag) {
@@ -26,7 +26,7 @@ function mtlaw_product_image_output(string $body, string $contentType): never
     exit;
 }
 
-function mtlaw_product_image_fallback(): never
+function mtlaw_product_image_fallback(): void
 {
     $svg = <<<'SVG'
 <svg xmlns="http://www.w3.org/2000/svg" width="1200" height="800" viewBox="0 0 1200 800" role="img" aria-label="תמונת המוצר אינה זמינה כרגע">
