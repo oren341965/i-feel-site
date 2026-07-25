@@ -66,9 +66,66 @@ jobs:
           if-no-files-found: error
           retention-days: 3
 
+  diagnose:
+    name: Diagnose current live MT-Law gate
+    needs: validate
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Inspect live gate, assets and required content
+        shell: bash
+        run: |
+          set -euo pipefail
+          cache_bust="$(date +%s)"
+          workdir="$(mktemp -d)"
+          trap 'rm -rf "$workdir"' EXIT
+
+          check_url() {
+            local label="$1"
+            local url="$2"
+            local output="$3"
+            local separator='?'
+            if [[ "$url" == *\?* ]]; then separator='&'; fi
+            local request_url="${url}${separator}_ifeel_diagnose=${cache_bust}"
+            local code
+            code="$(curl --silent --show-error --location --compressed \
+              --header 'Cache-Control: no-cache' \
+              --header 'Pragma: no-cache' \
+              --user-agent "I-Feel-Live-Diagnostic/${cache_bust}" \
+              --output "$output" --write-out '%{http_code}' --max-time 45 "$request_url")"
+            echo "DIAG label=${label} http=${code} url=${url}"
+            if (( code < 200 || code >= 400 )); then
+              echo "BODY-BEGIN ${label}"
+              head -c 3000 "$output" || true
+              echo
+              echo "BODY-END ${label}"
+              exit 1
+            fi
+          }
+
+          check_url customer-benefits 'https://i-feel.co.il/customer-benefits/' "$workdir/customer-benefits.html"
+          check_url mt-law-gate 'https://i-feel.co.il/mt-law/' "$workdir/mt-law.html"
+          check_url gate-css 'https://i-feel.co.il/mt-law/gate.css' "$workdir/gate.css"
+          check_url mt-law-logo 'https://i-feel.co.il/mt-law/mt-law-logo.svg' "$workdir/mt-law-logo.svg"
+
+          for marker in 'id="gate-title"' '/mt-law/mt-law-logo.svg' 'name="marketing_opt_in"' 'name="email"'; do
+            if ! grep -Fq "$marker" "$workdir/mt-law.html"; then
+              echo "MISSING-MARKER marker=${marker}"
+              echo 'BODY-BEGIN mt-law-gate'
+              head -c 5000 "$workdir/mt-law.html" || true
+              echo
+              echo 'BODY-END mt-law-gate'
+              exit 1
+            fi
+          done
+
+          echo 'DIAG current live MT-Law gate is complete'
+
   deploy:
     name: Deploy production
-    needs: validate
+    needs:
+      - validate
+      - diagnose
     runs-on:
       - self-hosted
       - windows
@@ -142,10 +199,12 @@ jobs:
     if: always()
     needs:
       - validate
+      - diagnose
       - deploy
     runs-on: ubuntu-latest
     env:
       VALIDATE_RESULT: ${{ needs.validate.result }}
+      DIAGNOSE_RESULT: ${{ needs.diagnose.result }}
       DEPLOY_RESULT: ${{ needs.deploy.result }}
       VERIFY_MESSAGE: ${{ needs.deploy.outputs.verify_message }}
 
@@ -155,12 +214,13 @@ jobs:
         with:
           script: |
             const validateResult = process.env.VALIDATE_RESULT;
+            const diagnoseResult = process.env.DIAGNOSE_RESULT;
             const deployResult = process.env.DEPLOY_RESULT;
             const verifyMessage = (process.env.VERIFY_MESSAGE || '').trim();
-            const success = validateResult === 'success' && deployResult === 'success';
+            const success = validateResult === 'success' && diagnoseResult === 'success' && deployResult === 'success';
             const description = success
               ? 'Production deployment and live verification succeeded'
-              : (verifyMessage || `Production failed: validate=${validateResult}, deploy=${deployResult}`);
+              : (verifyMessage || `Production failed: validate=${validateResult}, diagnose=${diagnoseResult}, deploy=${deployResult}`);
 
             await github.rest.repos.createCommitStatus({
               owner: context.repo.owner,
