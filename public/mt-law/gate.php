@@ -25,15 +25,14 @@ if ($user === null && (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST')) {
 
             $marketingOptIn = mtlaw_post('marketing_opt_in', 10) === 'yes';
 
-            if (!mtlaw_send_code($email)) {
+            if (!mtlaw_send_code($email, $marketingOptIn)) {
                 throw new RuntimeException('לא ניתן לשלוח קוד כרגע. יש להמתין דקה ולנסות שוב.');
             }
-            $_SESSION['mtlaw_gate_marketing_opt_in'] = $marketingOptIn;
             header('Location: /mt-law/gate.php?access=code-sent', true, 303);
             exit;
         }
         if ($action === 'verify_code') {
-            $email = strtolower((string) ($_SESSION['mtlaw_otp_email'] ?? ''));
+            $email = mtlaw_pending_email();
             $code = mtlaw_post('code', 20);
             if (!mtlaw_verify_code($email, $code)) {
                 throw new InvalidArgumentException('הקוד שגוי או שפג תוקפו.');
@@ -51,7 +50,7 @@ $user = mtlaw_current_user();
 if ($user === null) {
     $csrf = mtlaw_csrf_token();
     $accessStatus = trim((string) ($_GET['access'] ?? ''));
-    $pendingEmail = strtolower((string) ($_SESSION['mtlaw_otp_email'] ?? ''));
+    $pendingEmail = mtlaw_pending_email();
     mtlaw_gate_render_login($error, $accessStatus, $pendingEmail, $csrf);
 }
 
@@ -63,3 +62,4 @@ ob_start(static function (string $html) use ($user, $csrf): string {
 });
 require __DIR__ . '/index.php';
 ob_end_flush();
+
