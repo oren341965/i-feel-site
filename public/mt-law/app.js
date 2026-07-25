@@ -102,6 +102,10 @@
         alt: 'מצלמת אבטחה חיצונית המותקנת בגינה בפרויקט של I Feel',
       },
       {
+        src: '/projects/knx-smart-home-central-moshav/11-akuvox-ip-intercom.jpg',
+        alt: 'אינטרקום IP של Akuvox המותקן בפרויקט בית חכם של I Feel',
+      },
+      {
         src: '/projects/knx-smart-home-central-moshav/06-knx-touch-panel-wide.jpg',
         alt: 'מסך שליטה מרכזי בבית חכם KNX של I Feel',
       },
