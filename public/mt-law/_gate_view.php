@@ -66,7 +66,7 @@ HTML;
 
 function mtlaw_gate_enhance_verified_output(string $html, array $user, string $csrf): string
 {
-    $css = '<link rel="stylesheet" href="/mt-law/gate.css?v=20260725-2">';
+    $css = '<link rel="stylesheet" href="/mt-law/gate.css?v=20260725-3">';
     if (!str_contains($html, '/mt-law/gate.css')) {
         $html = str_replace('</head>', $css . "\n</head>", $html);
     }
@@ -89,9 +89,9 @@ function mtlaw_gate_render_head(string $title): void
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="robots" content="noindex,nofollow,noarchive,nosnippet,noimageindex">
-  <meta name="description" content="מתחם הטבות פרטי לעובדי מרקמן טומשין ושות׳: בית חכם, אודיו, אזעקה, מצלמות, הנחה ומתנות מיוחדות.">
+  <meta name="description" content="מתחם הטבות פרטי לעובדי מרקמן טומשין ושות׳: בית חכם, אודיו, אזעקה, מצלמות, אינטרקום, הנחה ומתנות מיוחדות.">
   <title><?= mtlaw_h($title) ?></title>
-  <link rel="stylesheet" href="/mt-law/gate.css?v=20260725-2">
+  <link rel="stylesheet" href="/mt-law/gate.css?v=20260725-3">
 </head>
 <body class="gate-body"><?php
 }
@@ -121,12 +121,12 @@ function mtlaw_gate_render_login(string $error, string $accessStatus, string $pe
       <div class="gate-hero-copy">
         <p class="gate-eyebrow">קבוצה נבחרת. הטבה שלא פתוחה לקהל הרחב.</p>
         <h1 id="gate-title">הבית הבא שלכם יכול להרגיש <span>חכם, בטוח ומדויק יותר</span></h1>
-        <p class="gate-lead">עובדי מרקמן טומשין ושות׳ מקבלים כניסה למתחם פרטי של I Feel עם פתרונות לבית חכם, אודיו, אזעקה ומצלמות, הנחה קבועה ומתנות מיוחדות לפרויקטים זכאים.</p>
+        <p class="gate-lead">עובדי מרקמן טומשין ושות׳ מקבלים כניסה למתחם פרטי של I Feel עם פתרונות לבית חכם, אודיו, אזעקה, מצלמות ואינטרקום, הנחה קבועה ומתנות מיוחדות לפרויקטים זכאים.</p>
 
         <div class="gate-value-row" aria-label="עיקרי ההטבה">
           <div><strong>10%</strong><span>הנחה על כלל הפריטים</span></div>
           <div><strong>1 מתוך 2</strong><span>מתנות פרימיום לפי הזכאות</span></div>
-          <div><strong>4 עולמות</strong><span>חשמל, אודיו, אזעקה ומצלמות</span></div>
+          <div><strong>5 עולמות</strong><span>חשמל, אודיו, אזעקה, מצלמות ואינטרקום</span></div>
         </div>
 
         <div class="gate-hero-actions">
@@ -206,6 +206,7 @@ function mtlaw_gate_render_login(string $error, string $accessStatus, string $pe
         <article><img src="/assets/projects/villa-raanana.jpg" alt="וילה חכמה בפרויקט I Feel" loading="lazy"><div><span>אודיו</span><h3>מוזיקה שמשתלבת בבית</h3><p>רמקולים שקועים, אזורי שמע ופתרונות אודיו לחללים נבחרים, בלי להעמיס על העיצוב.</p></div></article>
         <article><img src="/projects/knx-smart-home-central-moshav/12-knx-detector-outdoor-siren.jpg" alt="גלאי וצופר אזעקה בפרויקט I Feel" loading="lazy"><div><span>אזעקה</span><h3>קווית או אלחוטית לפי מצב הבית</h3><p>פתרון לבית חדש, שיפוץ או בית קיים, עם התאמה מקצועית להכנות ולצרכים.</p></div></article>
         <article><img src="/projects/knx-smart-home-central-moshav/15-outdoor-security-camera.jpg" alt="מצלמת אבטחה בפרויקט I Feel" loading="lazy"><div><span>מצלמות</span><h3>תמונה, הקלטה וגישה חכמה</h3><p>תכנון מצלמות לפי ההכנות, נקודות הצפייה, הגינה והכניסות לנכס.</p></div></article>
+        <article><img src="/projects/knx-smart-home-central-moshav/11-akuvox-ip-intercom.jpg" alt="אינטרקום IP של Akuvox בפרויקט I Feel" loading="lazy"><div><span>אינטרקום</span><h3>רואים, מדברים ופותחים מכל מקום</h3><p>אינטרקום IP עם וידאו, פתיחת דלת וגישה מהמסך בבית או מהטלפון, בהתאמה לכניסה ולתשתית.</p></div></article>
       </div>
     </div>
   </section>
