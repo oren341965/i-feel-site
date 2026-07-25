@@ -7,6 +7,7 @@ on:
     paths:
       - 'public/mt-law/**'
       - 'tests/mt-law/**'
+      - 'scripts/deploy/patch-mtlaw-php74.mjs'
       - '.github/workflows/deploy-mtlaw-hotfix.yml'
   workflow_dispatch:
 
@@ -68,9 +69,16 @@ jobs:
           test -f mtlaw-hotfix/mt-law/gate.php
           test -f mtlaw-hotfix/mt-law/_bootstrap.php
           test -f mtlaw-hotfix/mt-law/_gate_view.php
+          test -f mtlaw-hotfix/mt-law/product-image.php
           grep -Fq 'action="/mt-law/gate.php"' mtlaw-hotfix/mt-law/_gate_view.php
           grep -Fq 'name="marketing_opt_in" value="yes"' mtlaw-hotfix/mt-law/_gate_view.php
           grep -Fq 'הבחירה אינה תנאי' mtlaw-hotfix/mt-law/_gate_view.php
+          grep -Fq 'data-mtlaw-enhancement="turntable-print-image"' mtlaw-hotfix/mt-law/index.php
+          grep -Fq 'data-mtlaw-enhancement="turntable-card-image"' mtlaw-hotfix/mt-law/index.php
+          grep -Fq 'data-mtlaw-enhancement="tc4-card-image"' mtlaw-hotfix/mt-law/index.php
+          grep -Fq 'data-mtlaw-enhancement="tc4-resources"' mtlaw-hotfix/mt-law/index.php
+          grep -Fq '/assets/catalogs/siemens-touch-control-tc4-tc5-he.pdf' mtlaw-hotfix/mt-law/index.php
+          grep -Fq '/mt-law/product-image.php?v=3' mtlaw-hotfix/mt-law/index.php
           if grep -Fq 'name="marketing_opt_in" value="yes" required' mtlaw-hotfix/mt-law/_gate_view.php; then
             echo 'The mailing consent checkbox is still required.' >&2
             exit 1
@@ -79,7 +87,11 @@ jobs:
             echo 'PHP 8 mixed parameter type remains in the focused artifact.' >&2
             exit 1
           fi
-          echo 'Focused MT-Law artifact is ready.'
+          if grep -Fq 'str_starts_with(' mtlaw-hotfix/mt-law/product-image.php; then
+            echo 'PHP 8 str_starts_with remains in the turntable image endpoint.' >&2
+            exit 1
+          fi
+          echo 'Focused MT-Law artifact is ready with gift images and TC4 resources.'
 
       - name: Upload focused artifact including hidden files
         uses: actions/upload-artifact@v4
@@ -136,6 +148,7 @@ jobs:
           if not exist mtlaw-hotfix\mt-law\gate.php exit /b 1
           if not exist mtlaw-hotfix\mt-law\_bootstrap.php exit /b 1
           if not exist mtlaw-hotfix\mt-law\_gate_view.php exit /b 1
+          if not exist mtlaw-hotfix\mt-law\product-image.php exit /b 1
           echo Focused MT-Law files are present.
 
       - name: Upload MT-Law directory through explicit FTPS
@@ -149,12 +162,12 @@ jobs:
         run: node scripts\deploy\ftps-upload.mjs mtlaw-hotfix
 
   verify:
-    name: Verify live MT-Law entry and POST
+    name: Verify live MT-Law entry, POST and media
     needs: deploy
     runs-on: ubuntu-latest
 
     steps:
-      - name: Check live entry, direct gate and optional consent
+      - name: Check live entry, direct gate, optional consent and turntable image
         shell: bash
         run: |
           set -euo pipefail
@@ -253,6 +266,26 @@ jobs:
           grep -Fq 'הכניסה פתוחה רק לכתובות דואר' "$work/post.html" \
             || fail_response 'post-routing-response' 200 "$work/post.html"
           echo 'OK unchecked optional consent reaches direct POST without 404 or 500'
+
+          image_code="$(curl --silent --show-error --location --compressed \
+            --header 'Cache-Control: no-cache' \
+            --header 'Pragma: no-cache' \
+            --user-agent "I-Feel-MT-Law-Hosted-Verify/${cache}" \
+            --dump-header "$work/turntable.headers" \
+            --output "$work/turntable.image" \
+            --write-out '%{http_code}' --max-time 45 \
+            "${base}/mt-law/product-image.php?v=3&_ifeel_mtlaw_verify=${cache}")"
+          echo "GET label=turntable-image http=${image_code} url=${base}/mt-law/product-image.php"
+          [[ "$image_code" == '200' ]] || fail_response 'turntable-image-http' "$image_code" "$work/turntable.image"
+          image_type="$(awk 'BEGIN{IGNORECASE=1} /^content-type:/{value=$0} END{sub(/^[^:]+:[[:space:]]*/,"",value); gsub(/\r/,"",value); print tolower(value)}' "$work/turntable.headers")"
+          image_size="$(wc -c < "$work/turntable.image")"
+          echo "TURNABLE_IMAGE type=${image_type} bytes=${image_size}"
+          case "$image_type" in
+            image/webp*|image/jpeg*|image/png*) ;;
+            *) fail_response "turntable-image-content-type-${image_type}" 200 "$work/turntable.image" ;;
+          esac
+          [[ "$image_size" -gt 10000 ]] || fail_response 'turntable-image-too-small' 200 "$work/turntable.image"
+          echo 'OK real turntable product image is served from the I Feel domain'
           echo 'MT-Law live verification succeeded.'
 
   report:
@@ -278,7 +311,7 @@ jobs:
             const verifyResult = process.env.VERIFY_RESULT;
             const success = validateResult === 'success' && deployResult === 'success' && verifyResult === 'success';
             const description = success
-              ? 'MT-Law focused deployment and live verification succeeded'
+              ? 'MT-Law gifts, media and live verification succeeded'
               : `MT-Law failed: validate=${validateResult}, deploy=${deployResult}, verify=${verifyResult}`;
 
             await github.rest.repos.createCommitStatus({
