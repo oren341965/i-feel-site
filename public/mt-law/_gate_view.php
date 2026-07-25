@@ -224,7 +224,7 @@ function mtlaw_gate_render_login(string $error, string $accessStatus, string $pe
           <div><span>לרכישה מעל 15,000 ש״ח</span><h3>פטיפון Argon Audio TT MK2</h3><p>מתנת אודיו מעוצבת עם קדם מגבר מובנה, שנבחרה במיוחד למבצע העובדים.</p></div>
         </article>
         <article class="gate-gift-card">
-          <div class="gate-gift-image"><img src="/projects/knx-smart-home-central-moshav/07-knx-touch-panel-display.jpg" alt="מסך מגע KNX בפרויקט I Feel" loading="lazy"></div>
+          <div class="gate-gift-image"><img src="/assets/knx-advisor/siemens-tc4.webp" alt="מסך המגע Siemens Touch Control TC4" loading="lazy"></div>
           <div><span>לבית חדש עם מערכת קווית מלאה</span><h3>Siemens Touch Control TC4</h3><p>מסך מגע KNX בכניסה לבית לשליטה בתאורה, הצללה, מיזוג ותרחישים, בכפוף להתאמה הטכנית.</p></div>
         </article>
       </div>
