@@ -215,7 +215,7 @@ function mtlaw_gate_render_login(string $error, string $accessStatus, string $pe
     <div class="gate-shell">
       <div class="gate-section-heading gate-section-heading-light">
         <p class="gate-eyebrow">הטבה בלעדית לעובדי המשרד</p>
-        <h2 id="gate-gifts-title">10% הנחה, ובפרויקט זכאי גם מתנה שקשה להתעלם ממנה</h2>
+        <h2 id="gate-gifts-title">10% הנחה על כלל הפריטים, ובנוסף מתנה אחת בפרויקט זכאי</h2>
         <p>המתנות אינן מצטברות. כאשר קיימת זכאות לשתי האפשרויות, בוחרים מתנה אחת.</p>
       </div>
       <div class="gate-gift-grid">
