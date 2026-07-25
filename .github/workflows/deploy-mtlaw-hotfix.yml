@@ -7,7 +7,6 @@ on:
     paths:
       - 'public/mt-law/**'
       - 'tests/mt-law/**'
-      - 'scripts/deploy/verify-mtlaw-live.ps1'
       - '.github/workflows/deploy-mtlaw-hotfix.yml'
   workflow_dispatch:
 
@@ -94,8 +93,6 @@ jobs:
       - windows
       - x64
       - ifeel-deploy
-    outputs:
-      verify_message: ${{ steps.verify.outputs.message }}
     environment:
       name: production
       url: https://i-feel.co.il/mt-law/
@@ -146,28 +143,119 @@ jobs:
           IFEEL_FTP_SERVER_DIR: ${{ secrets.IFEEL_FTP_SERVER_DIR || secrets.FTP_SERVER_DIR }}
         run: node scripts\deploy\ftps-upload.mjs mtlaw-hotfix
 
-      - name: Verify live MT-Law access and consent
-        id: verify
-        shell: powershell
+  verify:
+    name: Verify live MT-Law entry and POST
+    needs: deploy
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check live entry, direct gate and consent enforcement
+        shell: bash
         run: |
-          $ErrorActionPreference = 'Stop'
-          try {
-            & powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\deploy\verify-mtlaw-live.ps1 -BaseUrl https://i-feel.co.il/
-            if ($LASTEXITCODE -ne 0) {
-              throw "verify-mtlaw-live exited with code $LASTEXITCODE"
-            }
-            Add-Content -LiteralPath $env:GITHUB_OUTPUT -Value 'message=MT-Law live verification succeeded' -Encoding UTF8
-          }
-          catch {
-            $message = [string]$_.Exception.Message
-            $message = ($message -replace '[\r\n]+', ' ' -replace '%', 'percent').Trim()
-            if ($message.Length -gt 120) {
-              $message = $message.Substring(0, 120)
-            }
-            Add-Content -LiteralPath $env:GITHUB_OUTPUT -Value ("message=" + $message) -Encoding UTF8
-            Write-Error $message
+          set -euo pipefail
+          base='https://i-feel.co.il'
+          cache="$(date +%s)"
+          work="$(mktemp -d)"
+          trap 'rm -rf "$work"' EXIT
+          cookie="$work/cookies.txt"
+
+          fail_response() {
+            local label="$1"
+            local code="$2"
+            local file="$3"
+            echo "FAIL label=${label} http=${code}"
+            echo "BODY-BEGIN ${label}"
+            head -c 3000 "$file" || true
+            echo
+            echo "BODY-END ${label}"
             exit 1
           }
+
+          get_page() {
+            local label="$1"
+            local url="$2"
+            local file="$3"
+            local code
+            code="$(curl --silent --show-error --location --compressed \
+              --header 'Cache-Control: no-cache' \
+              --header 'Pragma: no-cache' \
+              --user-agent "I-Feel-MT-Law-Hosted-Verify/${cache}" \
+              --cookie "$cookie" --cookie-jar "$cookie" \
+              --output "$file" --write-out '%{http_code}' --max-time 45 \
+              "${url}?_ifeel_mtlaw_verify=${cache}")"
+            echo "GET label=${label} http=${code} url=${url}"
+            [[ "$code" == '200' ]] || fail_response "$label" "$code" "$file"
+          }
+
+          post_page() {
+            local label="$1"
+            local file="$2"
+            shift 2
+            local code
+            local args=(
+              --silent --show-error --compressed
+              --header 'Cache-Control: no-cache'
+              --header 'Pragma: no-cache'
+              --user-agent "I-Feel-MT-Law-Hosted-Verify/${cache}"
+              --cookie "$cookie" --cookie-jar "$cookie"
+              --output "$file" --write-out '%{http_code}' --max-time 45
+              --request POST
+            )
+            for value in "$@"; do
+              args+=(--data-urlencode "$value")
+            done
+            args+=("${base}/mt-law/gate.php?_ifeel_mtlaw_verify=${cache}")
+            code="$(curl "${args[@]}")"
+            echo "POST label=${label} http=${code} url=${base}/mt-law/gate.php"
+            [[ "$code" == '200' ]] || fail_response "$label" "$code" "$file"
+          }
+
+          get_page 'entry' "${base}/mt-law/" "$work/entry.html"
+          for marker in \
+            'id="gate-title"' \
+            'action="/mt-law/gate.php"' \
+            'name="marketing_opt_in" value="yes" required' \
+            'ניתן לבטל את ההרשמה בכל עת' \
+            '/mt-law/mt-law-logo.svg'; do
+            grep -Fq "$marker" "$work/entry.html" || fail_response "entry-missing-${marker}" 200 "$work/entry.html"
+          done
+          if grep -Fq 'action="/mt-law/"' "$work/entry.html"; then
+            fail_response 'unsafe-directory-post-target' 200 "$work/entry.html"
+          fi
+          echo 'OK entry page, direct actions and consent wording'
+
+          get_page 'direct-gate' "${base}/mt-law/gate.php" "$work/gate.html"
+          grep -Fq 'id="gate-title"' "$work/gate.html" || fail_response 'direct-gate-marker' 200 "$work/gate.html"
+
+          csrf="$(python3 - "$work/gate.html" <<'PY'
+          import html, re, sys
+          body = open(sys.argv[1], encoding='utf-8').read()
+          match = re.search(r'name="csrf"\s+value="([^"]+)"', body)
+          print(html.unescape(match.group(1)) if match else '')
+          PY
+          )"
+          [[ -n "$csrf" ]] || fail_response 'missing-csrf' 200 "$work/gate.html"
+
+          post_page 'consent-required' "$work/consent.html" \
+            "csrf=${csrf}" \
+            'action=request_code' \
+            'email=routing-check@mt-law.co.il'
+          grep -Fq 'כדי לקבל קוד כניסה יש לאשר קבלת עדכונים והטבות' "$work/consent.html" \
+            || fail_response 'consent-not-enforced' 200 "$work/consent.html"
+          grep -Fq 'ניתן לבטל את ההרשמה בכל עת' "$work/consent.html" \
+            || fail_response 'unsubscribe-wording-missing' 200 "$work/consent.html"
+          echo 'OK consent is required before OTP sending'
+
+          post_page 'direct-post-route' "$work/post.html" \
+            "csrf=${csrf}" \
+            'action=request_code' \
+            'email=routing-check@example.com' \
+            'marketing_opt_in=yes'
+          grep -Fq 'id="gate-title"' "$work/post.html" || fail_response 'post-gate-marker' 200 "$work/post.html"
+          grep -Fq 'הכניסה פתוחה רק לכתובות דואר' "$work/post.html" \
+            || fail_response 'post-routing-response' 200 "$work/post.html"
+          echo 'OK direct POST returns the portal without 404 or 500'
+          echo 'MT-Law live verification succeeded.'
 
   report:
     name: Report MT-Law production status
@@ -175,11 +263,12 @@ jobs:
     needs:
       - validate
       - deploy
+      - verify
     runs-on: ubuntu-latest
     env:
       VALIDATE_RESULT: ${{ needs.validate.result }}
       DEPLOY_RESULT: ${{ needs.deploy.result }}
-      VERIFY_MESSAGE: ${{ needs.deploy.outputs.verify_message }}
+      VERIFY_RESULT: ${{ needs.verify.result }}
 
     steps:
       - name: Publish final MT-Law status
@@ -188,11 +277,11 @@ jobs:
           script: |
             const validateResult = process.env.VALIDATE_RESULT;
             const deployResult = process.env.DEPLOY_RESULT;
-            const verifyMessage = (process.env.VERIFY_MESSAGE || '').trim();
-            const success = validateResult === 'success' && deployResult === 'success';
+            const verifyResult = process.env.VERIFY_RESULT;
+            const success = validateResult === 'success' && deployResult === 'success' && verifyResult === 'success';
             const description = success
               ? 'MT-Law focused deployment and live verification succeeded'
-              : (verifyMessage || `MT-Law failed: validate=${validateResult}, deploy=${deployResult}`);
+              : `MT-Law failed: validate=${validateResult}, deploy=${deployResult}, verify=${verifyResult}`;
 
             await github.rest.repos.createCommitStatus({
               owner: context.repo.owner,
