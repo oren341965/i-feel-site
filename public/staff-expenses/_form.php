@@ -17,7 +17,7 @@ function portal_render_new_form(array $user, ?array $flash): void
         </div>
         <div class="privacy-box">
             <strong>המסמכים נשמרים מחוץ לתיקיית האתר</strong>
-            <span>קבלות וחשבוניות אינן נגישות בקישור ציבורי וניתנות להורדה רק למנהל מורשה.</span>
+            <span>קבלות וחשבוניות אינן נגישות בקישור ציבורי. העובד יכול לצפות במסמכים שהגיש באזור „ההוצאות שלי”, וגם מנהל מורשה יכול לצפות בהם.</span>
         </div>
     </section>
 
@@ -265,7 +265,7 @@ function portal_render_new_form(array $user, ?array $flash): void
         </section>
 
         <section class="submit-bar">
-            <div><strong>לפני השליחה</strong><span>ודאו שכל הסכומים והמסמכים צורפו. לאחר השליחה רק מנהל מורשה יכול לצפות בקבצים.</span></div>
+            <div><strong>לפני השליחה</strong><span>ודאו שכל הסכומים והמסמכים צורפו. לאחר השליחה תוכלו לצפות בקבלות ובמסמכים באזור „ההוצאות שלי”; גם מנהל מורשה יוכל לצפות בהם.</span></div>
             <button type="submit" class="button button--primary button--large" id="submit-report">שמירת הדיווח והמסמכים</button>
         </section>
     </form>

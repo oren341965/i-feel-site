@@ -419,12 +419,26 @@ function portal_handle_post(array $user): never
     throw new RuntimeException('הפעולה המבוקשת אינה מוכרת.');
 }
 
+function portal_user_can_download_record(array $user, array $record): bool
+{
+    if (($user['role'] ?? '') === 'admin') {
+        return true;
+    }
+
+    if (($user['role'] ?? '') !== 'employee') {
+        return false;
+    }
+
+    $userEmail = portal_normalize_company_email((string) ($user['email'] ?? ''));
+    $recordEmail = portal_normalize_company_email((string) ($record['employee']['email'] ?? ''));
+
+    return $userEmail !== null
+        && $recordEmail !== null
+        && hash_equals($userEmail, $recordEmail);
+}
+
 function portal_handle_download(array $user): never
 {
-    if (($user['role'] ?? '') !== 'admin') {
-        http_response_code(403);
-        exit('Forbidden');
-    }
     $recordId = trim((string) ($_GET['id'] ?? ''));
     $index = filter_var($_GET['file'] ?? null, FILTER_VALIDATE_INT, ['options' => ['min_range' => 0]]);
     if ($index === false) {
@@ -432,8 +446,12 @@ function portal_handle_download(array $user): never
         exit('Bad request');
     }
     $record = portal_load_record($recordId);
+    if (!is_array($record) || !portal_user_can_download_record($user, $record)) {
+        http_response_code(403);
+        exit('Forbidden');
+    }
     $attachment = is_array($record['attachments'] ?? null) ? ($record['attachments'][$index] ?? null) : null;
-    if (!is_array($record) || !is_array($attachment)) {
+    if (!is_array($attachment)) {
         http_response_code(404);
         exit('Not found');
     }
