@@ -8,6 +8,7 @@ $_SESSION = [];
 $_POST = [];
 $_SERVER['REQUEST_METHOD'] = 'GET';
 $GLOBALS['mtlaw_test_user'] = null;
+$GLOBALS['mtlaw_test_csrf_valid'] = true;
 
 function mtlaw_current_user(): ?array
 {
@@ -22,6 +23,13 @@ function mtlaw_post(string $key, int $max = 4000): string
         return '';
     }
     return substr(trim((string) $value), 0, $max);
+}
+
+function mtlaw_verify_csrf(): void
+{
+    if (($GLOBALS['mtlaw_test_csrf_valid'] ?? false) !== true) {
+        throw new RuntimeException('invalid test csrf');
+    }
 }
 
 require dirname(__DIR__, 2) . '/public/mt-law/_gate_data.php';
@@ -77,9 +85,20 @@ assert_same('i-feel', $contacts['oren@i-feel.co.il']['organization'] ?? null, 'I
 $_SERVER['REQUEST_METHOD'] = 'POST';
 $_POST = [
     'action' => 'lead',
+    'name' => 'שם לא מורשה',
+    'phone' => '050-000-0000',
+];
+$GLOBALS['mtlaw_test_csrf_valid'] = false;
+mtlaw_gate_capture_lead_profile(['email' => 'lawyer@mt-law.co.il', 'role' => 'member']);
+$contacts = mtlaw_gate_read_contacts();
+assert_same(null, $contacts['lawyer@mt-law.co.il']['full_name'] ?? null, 'Invalid CSRF must not update the verified contact profile.');
+
+$_POST = [
+    'action' => 'lead',
     'name' => 'דנה כהן',
     'phone' => '052-123-4567',
 ];
+$GLOBALS['mtlaw_test_csrf_valid'] = true;
 mtlaw_gate_capture_lead_profile(['email' => 'lawyer@mt-law.co.il', 'role' => 'member']);
 $contacts = mtlaw_gate_read_contacts();
 assert_same('דנה', $contacts['lawyer@mt-law.co.il']['first_name'] ?? null, 'First name should be captured from a submitted lead.');
