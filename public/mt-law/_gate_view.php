@@ -99,7 +99,7 @@ function mtlaw_gate_render_head(string $title): void
 function mtlaw_gate_render_login(string $error, string $accessStatus, string $pendingEmail, string $csrf): void
 {
     $logo = mtlaw_h(MTLAW_GATE_LOGO_PATH);
-    $pendingOptIn = (bool) ($_SESSION['mtlaw_gate_marketing_opt_in'] ?? false);
+    $pendingOptIn = mtlaw_pending_marketing_opt_in();
     mtlaw_gate_render_head('הטבה בלעדית לעובדי מרקמן טומשין ושות׳ | I Feel');
     ?>
 <header class="gate-topbar">
@@ -247,3 +247,4 @@ function mtlaw_gate_render_login(string $error, string $accessStatus, string $pe
 </html><?php
     exit;
 }
+
