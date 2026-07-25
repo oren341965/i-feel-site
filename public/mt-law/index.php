@@ -128,7 +128,7 @@ function mtlaw_print_view(string $view, array $user, string $csrf): void
       </div>
     <?php else: ?>
       <h1>הטבה בלעדית לעובדי מרקמן טומשין ושות׳</h1>
-      <p>פתרונות בית חכם, אודיו, אזעקה ומצלמות בתכנון, התקנה, תכנות ושירות של I Feel.</p>
+      <p>פתרונות בית חכם, אודיו, אזעקה, מצלמות ואינטרקום בתכנון, התקנה, תכנות ושירות של I Feel.</p>
       <div class="print-banner"><strong>10% הנחה על כלל הפריטים</strong><br>ובנוסף, מתנה אחת בלבד בהתאם לזכאות.</div>
       <div class="two-column">
         <section>
@@ -146,6 +146,7 @@ function mtlaw_print_view(string $view, array $user, string $csrf): void
         <section class="info-tile"><h3>חשמל חכם ואודיו</h3><p>מערכת מלאה או התחלה ממערכת נקודתית, בהתאם לנכס ולתקציב.</p></section>
         <section class="info-tile"><h3>אזעקה</h3><p>אפשרות למערכת קווית או אלחוטית, לפי מצב הבית וההכנות.</p></section>
         <section class="info-tile"><h3>מצלמות</h3><p>תכנון והצעה בהתאם להכנות קיימות, חלקיות או נדרשות.</p></section>
+        <section class="info-tile"><h3>אינטרקום</h3><p>אינטרקום IP עם וידאו, פתיחת דלת וגישה מהמסך בבית או מהטלפון.</p></section>
       </div>
       <h2>תנאים עיקריים</h2>
       <ul class="terms">
@@ -231,7 +232,7 @@ mtlaw_header($user, $csrf);
       <div class="hero-copy">
         <p class="eyebrow">הטבה בלעדית לעובדי מרקמן טומשין ושות׳</p>
         <h1 id="hero-title">בית חכם שמתחיל בהחלטה נכונה</h1>
-        <p class="hero-lead">I Feel מרכזת עבורכם חשמל חכם, אודיו, אזעקה ומצלמות, עם מסלול קצר שמוביל ממערכת מלאה לפתרון נקודתי בהתאם לנכס, להכנות ולתקציב.</p>
+        <p class="hero-lead">I Feel מרכזת עבורכם חשמל חכם, אודיו, אזעקה, מצלמות ואינטרקום, עם מסלול קצר שמוביל ממערכת מלאה לפתרון נקודתי בהתאם לנכס, להכנות ולתקציב.</p>
         <nav class="quick-nav" aria-label="ניווט בעמוד">
           <a href="#about">מי אנחנו</a>
           <a href="#benefit">ההטבה</a>
@@ -252,7 +253,7 @@ mtlaw_header($user, $csrf);
       </div>
       <div class="three-column">
         <article class="info-tile"><h3>תכנון לפי הנכס</h3><p>בנייה חדשה, שיפוץ או בית קיים מקבלים מסלול שונה, כדי לא להציע מערכת שאינה מתאימה להכנות.</p></article>
-        <article class="info-tile"><h3>פתרון מלא או מדורג</h3><p>אפשר להתחיל ממערכת מלאה, או לבחור חשמל חכם, אודיו, אזעקה או מצלמות כפתרון עצמאי.</p></article>
+        <article class="info-tile"><h3>פתרון מלא או מדורג</h3><p>אפשר להתחיל ממערכת מלאה, או לבחור חשמל חכם, אודיו, אזעקה, מצלמות או אינטרקום כפתרון עצמאי.</p></article>
         <article class="info-tile"><h3>פנייה אחת מסודרת</h3><p>כל הנתונים נשלחים דרך האתר, מסווגים מראש ומועברים לאיש המקצוע המתאים ללא צורך בריבוי שיחות.</p></article>
       </div>
     </section>
@@ -294,7 +295,8 @@ mtlaw_header($user, $csrf);
         <article class="system-card"><h3>חשמל חכם ואודיו</h3><p>שליטה בתאורה, תריסים, מיזוג ותרחישים, לצד פתרונות שמע המותאמים לחללים ולשימוש היומיומי.</p></article>
         <article class="system-card"><h3>אזעקה קווית או אלחוטית</h3><p>מערכת קווית מתאימה בדרך כלל כאשר קיימת תשתית מתוכננת. מערכת אלחוטית מאפשרת פתרון יעיל גם בבית קיים.</p></article>
         <article class="system-card"><h3>מצלמות</h3><p>כאשר קיימות הכנות, ניתן לתכנן את סוג המצלמות, נקודות הצפייה וההקלטה. כאשר אין הכנות, נבדוק חלופות אפשריות.</p></article>
-        <article class="system-card"><h3>מערכת מלאה או נקודתית</h3><p>המסלול מתחיל בבחינת מערכת מלאה, אך מאפשר לעבור בצורה מסודרת לחשמל חכם, אודיו, אזעקה או מצלמות בלבד.</p></article>
+        <article class="system-card"><h3>אינטרקום IP</h3><p>שיחה בווידאו, פתיחת דלת וגישה מהמסך בבית או מהטלפון, עם התאמה לשער, ללובי ולתשתית הקיימת.</p></article>
+        <article class="system-card"><h3>מערכת מלאה או נקודתית</h3><p>המסלול מתחיל בבחינת מערכת מלאה, אך מאפשר לעבור בצורה מסודרת לחשמל חכם, אודיו, אזעקה, מצלמות או אינטרקום בלבד.</p></article>
       </div>
     </section>
 
@@ -332,6 +334,7 @@ mtlaw_header($user, $csrf);
               <label class="option-card"><input type="checkbox" name="systems[]" value="audio"><span><strong>אודיו</strong><span>מוזיקה ורמקולים בחללים נבחרים</span></span></label>
               <label class="option-card"><input type="checkbox" name="systems[]" value="alarm"><span><strong>אזעקה</strong><span>קווית, אלחוטית או המלצה מקצועית</span></span></label>
               <label class="option-card"><input type="checkbox" name="systems[]" value="cameras"><span><strong>מצלמות</strong><span>בהתאם להכנות ולצרכי האבטחה</span></span></label>
+              <label class="option-card"><input type="checkbox" name="systems[]" value="intercom"><span><strong>אינטרקום</strong><span>וידאו, פתיחת דלת וגישה מהטלפון</span></span></label>
             </div>
           </fieldset>
 
@@ -436,6 +439,6 @@ mtlaw_header($user, $csrf);
 </main>
 
 <footer class="footer shell">I Feel Smart Home, עמוד פנימי שאינו מופיע בתפריטי האתר ואינו מיועד לאינדוקס</footer>
-<?php if ($user !== null): ?><script src="/mt-law/app.js" defer></script><?php endif; ?>
+<?php if ($user !== null): ?><script src="/mt-law/app.js?v=20260725-5" defer></script><?php endif; ?>
 </body>
 </html>
