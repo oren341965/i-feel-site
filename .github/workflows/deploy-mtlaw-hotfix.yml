@@ -71,6 +71,8 @@ jobs:
           grep -Fq 'action="/mt-law/gate.php"' mtlaw-hotfix/mt-law/_gate_view.php
           grep -Fq 'name="marketing_opt_in" value="yes"' mtlaw-hotfix/mt-law/_gate_view.php
           grep -Fq 'הבחירה אינה תנאי' mtlaw-hotfix/mt-law/_gate_view.php
+          grep -Fq 'MTLAW_CSRF_COOKIE' mtlaw-hotfix/mt-law/_bootstrap.php
+          grep -Fq '/11-akuvox-ip-intercom.jpg' mtlaw-hotfix/mt-law/_gate_view.php
           if grep -Fq 'name="marketing_opt_in" value="yes" required' mtlaw-hotfix/mt-law/_gate_view.php; then
             echo 'The mailing consent checkbox is still required.' >&2
             exit 1
@@ -222,6 +224,7 @@ jobs:
             'name="marketing_opt_in" value="yes"' \
             'הבחירה אינה תנאי' \
             'ניתן לבטל את ההרשמה בכל עת' \
+            '/projects/knx-smart-home-central-moshav/11-akuvox-ip-intercom.jpg' \
             '/mt-law/mt-law-logo.svg'; do
             grep -Fq "$marker" "$work/entry.html" || fail_response "entry-missing-${marker}" 200 "$work/entry.html"
           done
@@ -244,6 +247,9 @@ jobs:
           PY
           )"
           [[ -n "$csrf" ]] || fail_response 'missing-csrf' 200 "$work/gate.html"
+          grep -Fq $'\tifeel_mt_law_csrf\t' "$cookie" || fail_response 'missing-csrf-cookie' 200 "$work/gate.html"
+          grep -v $'\tifeel_mt_law_access\t' "$cookie" > "$work/cookies-csrf-only.txt"
+          mv "$work/cookies-csrf-only.txt" "$cookie"
 
           post_page 'direct-post-route' "$work/post.html" \
             "csrf=${csrf}" \
@@ -252,7 +258,7 @@ jobs:
           grep -Fq 'id="gate-title"' "$work/post.html" || fail_response 'post-gate-marker' 200 "$work/post.html"
           grep -Fq 'הכניסה פתוחה רק לכתובות דואר' "$work/post.html" \
             || fail_response 'post-routing-response' 200 "$work/post.html"
-          echo 'OK unchecked optional consent reaches direct POST without 404 or 500'
+          echo 'OK CSRF cookie fallback survives a missing PHP session without sending OTP'
           echo 'MT-Law live verification succeeded.'
 
   report:
