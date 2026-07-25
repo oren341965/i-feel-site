@@ -22,11 +22,16 @@ if ($user === null && (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST')) {
             if (!mtlaw_allowed_email($email)) {
                 throw new InvalidArgumentException('הכניסה פתוחה רק לכתובות דואר של I Feel או של mt-law.co.il.');
             }
+
             $marketingOptIn = mtlaw_post('marketing_opt_in', 10) === 'yes';
+            if (!$marketingOptIn) {
+                throw new InvalidArgumentException('כדי לקבל קוד כניסה יש לאשר קבלת עדכונים והטבות מ-I Feel. ניתן לבטל את ההרשמה בכל עת.');
+            }
+
             if (!mtlaw_send_code($email)) {
                 throw new RuntimeException('לא ניתן לשלוח קוד כרגע. יש להמתין דקה ולנסות שוב.');
             }
-            $_SESSION['mtlaw_gate_marketing_opt_in'] = $marketingOptIn;
+            $_SESSION['mtlaw_gate_marketing_opt_in'] = true;
             mtlaw_redirect(['access' => 'code-sent']);
         }
         if ($action === 'verify_code') {
