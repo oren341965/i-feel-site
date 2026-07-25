@@ -1,6 +1,13 @@
 <?php
 declare(strict_types=1);
 
+if (!function_exists('str_contains')) {
+    function str_contains(string $haystack, string $needle): bool
+    {
+        return $needle === '' || strpos($haystack, $needle) !== false;
+    }
+}
+
 function mtlaw_gate_verified_header(array $user, string $csrf): string
 {
     $logo = mtlaw_h(MTLAW_GATE_LOGO_PATH);
@@ -89,7 +96,7 @@ function mtlaw_gate_render_head(string $title): void
 <body class="gate-body"><?php
 }
 
-function mtlaw_gate_render_login(string $error, string $accessStatus, string $pendingEmail, string $csrf): never
+function mtlaw_gate_render_login(string $error, string $accessStatus, string $pendingEmail, string $csrf): void
 {
     $logo = mtlaw_h(MTLAW_GATE_LOGO_PATH);
     $pendingOptIn = (bool) ($_SESSION['mtlaw_gate_marketing_opt_in'] ?? false);

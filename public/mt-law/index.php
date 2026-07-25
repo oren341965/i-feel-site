@@ -88,7 +88,7 @@ function mtlaw_header(?array $user, string $csrf): void
 </header><?php
 }
 
-function mtlaw_print_view(string $view, array $user, string $csrf): never
+function mtlaw_print_view(string $view, array $user, string $csrf): void
 {
     $turntable = $view === 'turntable';
     mtlaw_document_head($turntable ? 'מפרט הפטיפון, I Feel' : 'הטבת עובדי MT-Law, I Feel');

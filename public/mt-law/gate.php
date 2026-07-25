@@ -54,6 +54,8 @@ if ($user === null) {
 mtlaw_gate_record_verified_access($user);
 mtlaw_gate_capture_lead_profile($user);
 $csrf = mtlaw_csrf_token();
-ob_start(static fn (string $html): string => mtlaw_gate_enhance_verified_output($html, $user, $csrf));
+ob_start(static function (string $html) use ($user, $csrf): string {
+    return mtlaw_gate_enhance_verified_output($html, $user, $csrf);
+});
 require __DIR__ . '/index.php';
 ob_end_flush();

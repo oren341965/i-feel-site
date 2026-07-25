@@ -46,6 +46,12 @@ jobs:
       - name: Install dependencies
         run: npm ci --legacy-peer-deps
 
+      - name: Setup production-compatible PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '7.4'
+          coverage: none
+
       - name: Lint secure PHP portals
         run: find public/staff-expenses public/mt-law -maxdepth 1 -type f -name '*.php' -print0 | xargs -0 -n1 php -l
 
@@ -145,7 +151,7 @@ jobs:
 
       - name: Verify live site
         id: verify
-        shell: powershell
+        shell: powershell -NoProfile -ExecutionPolicy Bypass -File {0}
         run: |
           $ErrorActionPreference = 'Stop'
           try {
