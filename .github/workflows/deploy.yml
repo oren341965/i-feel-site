@@ -74,6 +74,8 @@ jobs:
       - windows
       - x64
       - ifeel-deploy
+    outputs:
+      verify_message: ${{ steps.verify.outputs.message }}
     environment:
       name: production
       url: https://i-feel.co.il/
@@ -116,8 +118,24 @@ jobs:
         run: node scripts\deploy\ftps-upload.mjs dist
 
       - name: Verify live site
-        shell: powershell -NoProfile -ExecutionPolicy Bypass -File {0}
-        run: .\scripts\deploy\verify-live.ps1 -BaseUrl https://i-feel.co.il/
+        id: verify
+        shell: powershell
+        run: |
+          $ErrorActionPreference = 'Stop'
+          try {
+            .\scripts\deploy\verify-live.ps1 -BaseUrl https://i-feel.co.il/
+            Add-Content -LiteralPath $env:GITHUB_OUTPUT -Value 'message=live verification succeeded' -Encoding UTF8
+          }
+          catch {
+            $message = [string]$_.Exception.Message
+            $message = ($message -replace '[\r\n]+', ' ' -replace '%', 'percent').Trim()
+            if ($message.Length -gt 120) {
+              $message = $message.Substring(0, 120)
+            }
+            Add-Content -LiteralPath $env:GITHUB_OUTPUT -Value ("message=" + $message) -Encoding UTF8
+            Write-Error $message
+            exit 1
+          }
 
   report:
     name: Report production deployment status
@@ -129,6 +147,7 @@ jobs:
     env:
       VALIDATE_RESULT: ${{ needs.validate.result }}
       DEPLOY_RESULT: ${{ needs.deploy.result }}
+      VERIFY_MESSAGE: ${{ needs.deploy.outputs.verify_message }}
 
     steps:
       - name: Publish final production status
@@ -137,10 +156,11 @@ jobs:
           script: |
             const validateResult = process.env.VALIDATE_RESULT;
             const deployResult = process.env.DEPLOY_RESULT;
+            const verifyMessage = (process.env.VERIFY_MESSAGE || '').trim();
             const success = validateResult === 'success' && deployResult === 'success';
             const description = success
               ? 'Production deployment and live verification succeeded'
-              : `Production failed: validate=${validateResult}, deploy=${deployResult}`;
+              : (verifyMessage || `Production failed: validate=${validateResult}, deploy=${deployResult}`);
 
             await github.rest.repos.createCommitStatus({
               owner: context.repo.owner,
