@@ -67,7 +67,7 @@ if (session_status() !== PHP_SESSION_ACTIVE) {
     session_start();
 }
 
-function mtlaw_h(mixed $value): string
+function mtlaw_h($value): string
 {
     return htmlspecialchars((string) $value, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
 }
