@@ -3,6 +3,11 @@ DirectoryIndex gate.php
 
 <IfModule mod_rewrite.c>
   RewriteEngine On
+
+  # Route both GET and POST requests for /mt-law/ explicitly to the secure gate.
+  # Some shared-hosting configurations do not apply DirectoryIndex consistently to POST.
+  RewriteRule ^$ gate.php [L,QSA]
+
   RewriteCond %{THE_REQUEST} \s/+mt-law/index\.php(?:[?\s]) [NC]
   RewriteRule ^index\.php$ /mt-law/ [R=302,L]
 </IfModule>
