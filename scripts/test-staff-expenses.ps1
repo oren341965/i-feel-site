@@ -288,14 +288,16 @@ try {
     Invoke-PortalCurl "-o", $responseBody, "-b", $employeeCookies, "$baseUrl/staff-expenses/?tab=history" | Out-Null
     $html = Get-Content -Raw -Encoding utf8 $responseBody
     Assert-PortalTest ($html -match [regex]::Escape($vehicleRecord.id)) "Employee history omitted the submitted report."
-    Assert-PortalTest ($html -notmatch 'action=download') "Employee history exposed a document download action."
+    Assert-PortalTest ($html -match 'action=download') "Employee history omitted the employee receipt download action."
 
     $downloadStatus = Invoke-PortalCurl `
         "-o", $responseBody, `
         "-w", "%{http_code}", `
         "-b", $employeeCookies, `
         "$baseUrl/staff-expenses/?action=download&id=$($vehicleRecord.id)&file=0"
-    Assert-PortalTest ($downloadStatus -eq "403") "Employee was allowed to download a stored document."
+    Assert-PortalTest ($downloadStatus -eq "200") "Employee could not download a document from their own report."
+    $downloaded = Get-Content -Raw -Encoding utf8 $responseBody
+    Assert-PortalTest ($downloaded.StartsWith("%PDF-")) "Employee receipt download did not preserve the document."
 
     Invoke-PortalCurl "-o", $responseBody, "-b", $employeeCookies, "$baseUrl/staff-expenses/?tab=new" | Out-Null
     $html = Get-Content -Raw -Encoding utf8 $responseBody

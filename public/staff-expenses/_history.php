@@ -61,7 +61,7 @@ function portal_render_employee_history(array $user, ?array $flash): void
         <div>
             <p class="eyebrow">ההוצאות שלי</p>
             <h1>היסטוריית דיווחים</h1>
-            <p>כאן מופיעים רק הדיווחים שנשלחו מחשבון הדוא״ל המחובר. מסמכים מצורפים נשארים זמינים למנהל מורשה בלבד.</p>
+            <p>כאן מופיעים רק הדיווחים שנשלחו מחשבון הדוא״ל המחובר. ניתן לצפות ולהוריד מכאן את הקבלות והמסמכים שצורפו לכל דיווח.</p>
         </div>
         <div class="total-card"><span>דיווחים שנמצאו</span><strong><?= count($records) ?></strong></div>
     </section>
@@ -86,6 +86,19 @@ function portal_render_employee_history(array $user, ?array $flash): void
                         <span><?= count($record['attachments'] ?? []) ?> מסמכים צורפו</span>
                     </div>
                     <span class="status status--<?= portal_h($record['status'] ?? 'new') ?>"><?= portal_h(portal_status_label((string) ($record['status'] ?? 'new'))) ?></span>
+                    <?php if (($record['attachments'] ?? []) !== []): ?>
+                        <div class="file-list history-card__files">
+                            <?php foreach ($record['attachments'] as $index => $attachment): ?>
+                                <a class="file-card" href="<?= portal_h(portal_url(['action' => 'download', 'id' => $record['id'] ?? '', 'file' => $index])) ?>">
+                                    <span class="file-icon">↓</span>
+                                    <span>
+                                        <strong><?= portal_h($attachment['original_name'] ?? 'מסמך') ?></strong>
+                                        <small>צפייה או הורדה · <?= portal_h(number_format(((int) ($attachment['size'] ?? 0)) / 1024, 1)) ?> KB</small>
+                                    </span>
+                                </a>
+                            <?php endforeach; ?>
+                        </div>
+                    <?php endif; ?>
                 </article>
             <?php endforeach; ?>
         <?php endif; ?>

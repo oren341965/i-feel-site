@@ -370,6 +370,21 @@ try {
     $employeeRecords = portal_records_for_employee($employee);
     portal_test_expect(count($employeeRecords) === 1, 'Employee history exposed another employee record.');
     portal_test_expect(($employeeRecords[0]['id'] ?? '') === $ownRecordId, 'Employee history omitted the employee record.');
+    portal_test_expect(
+        portal_user_can_download_record($employee, $employeeRecords[0]),
+        'Employee could not access an attachment from their own record.'
+    );
+    portal_test_expect(
+        !portal_user_can_download_record($employee, portal_load_record($otherRecordId)),
+        'Employee could access another employee record.'
+    );
+    portal_test_expect(
+        portal_user_can_download_record(
+            ['role' => 'admin', 'email' => 'oren@i-feel.co.il'],
+            portal_load_record($otherRecordId)
+        ),
+        'Admin could not access an employee record.'
+    );
     $employeeProfile = portal_employee_profile($employee);
     portal_test_expect(($employeeProfile['name'] ?? '') === 'Updated Worker', 'Permanent employee profile name did not take precedence.');
     portal_test_expect(($employeeProfile['phone'] ?? '') === '054-777-8899', 'Permanent employee profile phone did not take precedence.');
