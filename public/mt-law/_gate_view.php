@@ -220,7 +220,7 @@ function mtlaw_gate_render_login(string $error, string $accessStatus, string $pe
       </div>
       <div class="gate-gift-grid">
         <article class="gate-gift-card">
-          <div class="gate-gift-image"><img src="/mt-law/product-image.php?v=2" alt="פטיפון Argon Audio TT MK2 בגוון Earth Grey" loading="lazy"></div>
+          <div class="gate-gift-image"><img src="/mt-law/product-image.php?v=3" alt="פטיפון Argon Audio TT MK2 בגוון Earth Grey" loading="lazy"></div>
           <div><span>לרכישה מעל 15,000 ש״ח</span><h3>פטיפון Argon Audio TT MK2</h3><p>מתנת אודיו מעוצבת עם קדם מגבר מובנה, שנבחרה במיוחד למבצע העובדים.</p></div>
         </article>
         <article class="gate-gift-card">
