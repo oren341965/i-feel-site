@@ -28,7 +28,8 @@ function replaceRequired(source, { marker, before, after, label }) {
   return source.replace(before, after);
 }
 
-let bootstrap = await readUtf8(bootstrapPath);
+const originalBootstrap = await readUtf8(bootstrapPath);
+let bootstrap = originalBootstrap;
 const php8Signature = "function mtlaw_h(mixed $value): string";
 const php74Signature = "function mtlaw_h($value): string";
 
@@ -41,22 +42,26 @@ if (bootstrap.includes(php8Signature)) {
 if (/\bmixed\s+\$/.test(bootstrap)) {
   throw new Error(`PHP 8 mixed parameter type still exists in ${bootstrapPath}.`);
 }
-await writeIfChanged(bootstrapPath, await readUtf8(bootstrapPath), bootstrap, "PHP 7.4 compatibility");
+await writeIfChanged(bootstrapPath, originalBootstrap, bootstrap, "PHP 7.4 compatibility");
 
 const productImagePath = path.join(portalDirectory, "product-image.php");
 const originalProductImage = await readUtf8(productImagePath);
 let productImage = originalProductImage;
-const php8ImageChecks = [
-  ["str_starts_with($cachedType, 'image/')", "strpos($cachedType, 'image/') === 0"],
-  ["str_starts_with($contentType, 'image/')", "strpos($contentType, 'image/') === 0"],
-  ["str_starts_with($staleType, 'image/')", "strpos($staleType, 'image/') === 0"],
-];
-for (const [before, after] of php8ImageChecks) {
-  if (productImage.includes(before)) {
-    productImage = productImage.replace(before, after);
-  } else if (!productImage.includes(after)) {
-    throw new Error(`Turntable image compatibility patch was not found: ${before}`);
+if (!productImage.includes("function mtlaw_product_image_is_image_type")) {
+  const php8ImageChecks = [
+    ["str_starts_with($cachedType, 'image/')", "strpos($cachedType, 'image/') === 0"],
+    ["str_starts_with($contentType, 'image/')", "strpos($contentType, 'image/') === 0"],
+    ["str_starts_with($staleType, 'image/')", "strpos($staleType, 'image/') === 0"],
+  ];
+  for (const [before, after] of php8ImageChecks) {
+    if (productImage.includes(before)) {
+      productImage = productImage.replace(before, after);
+    } else if (!productImage.includes(after)) {
+      throw new Error(`Turntable image compatibility patch was not found: ${before}`);
+    }
   }
+} else {
+  console.log("Turntable image endpoint compatibility: helper already present.");
 }
 if (productImage.includes("str_starts_with(")) {
   throw new Error(`PHP 8 str_starts_with remains in ${productImagePath}.`);
