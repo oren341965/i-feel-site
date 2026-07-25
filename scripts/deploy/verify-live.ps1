@@ -16,7 +16,10 @@ $base = $BaseUrl.TrimEnd("/")
 $cacheBust = [DateTimeOffset]::UtcNow.ToUnixTimeSeconds().ToString()
 
 function Add-CacheBust([string]$Url) {
-    $separator = $Url.Contains("?") ? "&" : "?"
+    $separator = "?"
+    if ($Url.Contains("?")) {
+        $separator = "&"
+    }
     return "$Url${separator}_ifeel_verify=$cacheBust"
 }
 
