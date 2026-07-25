@@ -137,7 +137,7 @@ function mtlaw_gate_record_verified_access(array $user): void
                 'marketing_consent_last_confirmed_at' => ($requestedConsent && $organization === 'mt-law') ? $nowIso : (string) ($existing['marketing_consent_last_confirmed_at'] ?? ''),
                 'marketing_consent_version' => ($permission === 'explicit-consent') ? MTLAW_GATE_CONSENT_VERSION : '',
                 'marketing_consent_text_hash' => ($permission === 'explicit-consent') ? hash('sha256', MTLAW_GATE_CONSENT_TEXT) : '',
-                'consent_evidence' => ($permission === 'explicit-consent') ? 'verified-corporate-email+required-checkbox-unchecked-by-default' : 'none',
+                'consent_evidence' => ($permission === 'explicit-consent') ? 'verified-corporate-email+explicit-opt-in-checkbox-unchecked-by-default' : 'none',
             ];
             return $contacts;
         });
