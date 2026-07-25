@@ -91,7 +91,7 @@ function mtlaw_gate_render_head(string $title): void
   <meta name="robots" content="noindex,nofollow,noarchive,nosnippet,noimageindex">
   <meta name="description" content="מתחם הטבות פרטי לעובדי מרקמן טומשין ושות׳: בית חכם, אודיו, אזעקה, מצלמות, אינטרקום, הנחה ומתנות מיוחדות.">
   <title><?= mtlaw_h($title) ?></title>
-  <link rel="stylesheet" href="/mt-law/gate.css?v=20260725-3">
+  <link rel="stylesheet" href="/mt-law/gate.css?v=20260725-4">
 </head>
 <body class="gate-body"><?php
 }
@@ -202,11 +202,11 @@ function mtlaw_gate_render_login(string $error, string $accessStatus, string $pe
         <p>מתחילים מהתמונה המלאה, ובוחרים אם להתקדם למערכת שלמה או למערכת אחת שמביאה ערך מיידי.</p>
       </div>
       <div class="gate-capability-grid">
-        <article><img src="/projects/knx-smart-home-central-moshav/05-knx-touch-panel-kitchen.jpg" alt="מסך מגע KNX בבית חכם של I Feel" loading="lazy"><div><span>בית חכם</span><h3>תאורה, תריסים, מיזוג ותרחישים</h3><p>שליטה פשוטה ממפסקים, מסך ואפליקציה, בתכנון שמתאים לנכס ולשגרת החיים.</p></div></article>
-        <article><img src="/assets/projects/villa-raanana.jpg" alt="וילה חכמה בפרויקט I Feel" loading="lazy"><div><span>אודיו</span><h3>מוזיקה שמשתלבת בבית</h3><p>רמקולים שקועים, אזורי שמע ופתרונות אודיו לחללים נבחרים, בלי להעמיס על העיצוב.</p></div></article>
-        <article><img src="/projects/knx-smart-home-central-moshav/12-knx-detector-outdoor-siren.jpg" alt="גלאי וצופר אזעקה בפרויקט I Feel" loading="lazy"><div><span>אזעקה</span><h3>קווית או אלחוטית לפי מצב הבית</h3><p>פתרון לבית חדש, שיפוץ או בית קיים, עם התאמה מקצועית להכנות ולצרכים.</p></div></article>
+        <article><img class="gate-capability-image-smart" src="/assets/articles/design-your-smart-switches.jpg" alt="מפסק זכוכית חכם לשליטה בתאורה ובתריסים" loading="lazy"><div><span>בית חכם</span><h3>תאורה, תריסים, מיזוג ותרחישים</h3><p>שליטה פשוטה ממפסקים, מסך ואפליקציה, בתכנון שמתאים לנכס ולשגרת החיים.</p></div></article>
+        <article><img class="gate-capability-image-audio" src="/mt-law/assets/focal-300-icw8.webp" alt="רמקול שקוע Focal 300 ICW8 למערכת אודיו ביתית" loading="lazy"><div><span>אודיו</span><h3>מוזיקה שמשתלבת בבית</h3><p>רמקולים שקועים, אזורי שמע ופתרונות אודיו לחללים נבחרים, בלי להעמיס על העיצוב.</p></div></article>
+        <article><img class="gate-capability-image-alarm" src="/projects/knx-smart-home-central-moshav/13-knx-detector-outdoor-siren-close.jpg" alt="גלאי נוכחות חיצוני וצופר אזעקה בפרויקט בית חכם של I Feel" loading="lazy"><div><span>אזעקה</span><h3>קווית או אלחוטית לפי מצב הבית</h3><p>פתרון לבית חדש, שיפוץ או בית קיים, עם התאמה מקצועית להכנות ולצרכים.</p></div></article>
         <article><img src="/assets/articles/smart-home-security-cameras.jpg" alt="מצלמות אבטחה חיצוניות בבית פרטי בפרויקט I Feel" loading="lazy"><div><span>מצלמות</span><h3>תמונה, הקלטה וגישה חכמה</h3><p>תכנון מצלמות לפי ההכנות, נקודות הצפייה, הגינה והכניסות לנכס.</p></div></article>
-        <article><img src="/projects/knx-smart-home-central-moshav/11-akuvox-ip-intercom.jpg" alt="אינטרקום IP של Akuvox בפרויקט I Feel" loading="lazy"><div><span>אינטרקום</span><h3>רואים, מדברים ופותחים מכל מקום</h3><p>אינטרקום IP עם וידאו, פתיחת דלת וגישה מהמסך בבית או מהטלפון, בהתאמה לכניסה ולתשתית.</p></div></article>
+        <article><img class="gate-capability-image-intercom" src="/projects/knx-smart-home-central-moshav/11-akuvox-ip-intercom.jpg" alt="פנל אינטרקום IP של Akuvox מותקן בכניסה לבית" loading="lazy"><div><span>אינטרקום</span><h3>רואים, מדברים ופותחים מכל מקום</h3><p>אינטרקום IP עם וידאו, פתיחת דלת וגישה מהמסך בבית או מהטלפון, בהתאמה לכניסה ולתשתית.</p></div></article>
       </div>
     </div>
   </section>

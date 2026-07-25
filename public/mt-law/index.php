@@ -63,7 +63,7 @@ function mtlaw_document_head(string $title): void
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="robots" content="noindex,nofollow,noarchive,nosnippet,noimageindex">
   <title><?= mtlaw_h($title) ?></title>
-  <link rel="stylesheet" href="/mt-law/styles.css">
+  <link rel="stylesheet" href="/mt-law/styles.css?v=20260725-2">
 </head>
 <body><?php
 }
@@ -291,12 +291,13 @@ mtlaw_header($user, $csrf);
 
     <section class="content-card" id="systems">
       <div class="section-heading"><div><p class="eyebrow">מערכות לבחירה</p><h2>הפתרון המתאים למצב הבית</h2><p>השאלון בהמשך בודק את התמונה המלאה, ולאחר מכן מאפשר לבחור מערכת אחת או מספר מערכות.</p></div></div>
-      <div class="two-column">
-        <article class="system-card"><h3>חשמל חכם ואודיו</h3><p>שליטה בתאורה, תריסים, מיזוג ותרחישים, לצד פתרונות שמע המותאמים לחללים ולשימוש היומיומי.</p></article>
-        <article class="system-card"><h3>אזעקה קווית או אלחוטית</h3><p>מערכת קווית מתאימה בדרך כלל כאשר קיימת תשתית מתוכננת. מערכת אלחוטית מאפשרת פתרון יעיל גם בבית קיים.</p></article>
-        <article class="system-card"><h3>מצלמות</h3><p>כאשר קיימות הכנות, ניתן לתכנן את סוג המצלמות, נקודות הצפייה וההקלטה. כאשר אין הכנות, נבדוק חלופות אפשריות.</p></article>
-        <article class="system-card"><h3>אינטרקום IP</h3><p>שיחה בווידאו, פתיחת דלת וגישה מהמסך בבית או מהטלפון, עם התאמה לשער, ללובי ולתשתית הקיימת.</p></article>
-        <article class="system-card"><h3>מערכת מלאה או נקודתית</h3><p>המסלול מתחיל בבחינת מערכת מלאה, אך מאפשר לעבור בצורה מסודרת לחשמל חכם, אודיו, אזעקה, מצלמות או אינטרקום בלבד.</p></article>
+      <div class="systems-grid">
+        <article class="system-card"><img class="system-card-image system-card-image-smart" src="/assets/articles/design-your-smart-switches.jpg" alt="מפסק זכוכית חכם לשליטה בתאורה ובתריסים" loading="lazy"><div><h3>חשמל חכם</h3><p>שליטה בתאורה, תריסים, מיזוג ותרחישים באמצעות מפסקים חכמים, מסך ואפליקציה.</p></div></article>
+        <article class="system-card"><img class="system-card-image system-card-image-audio" src="/mt-law/assets/focal-300-icw8.webp" alt="רמקול שקוע Focal 300 ICW8 למערכת אודיו ביתית" loading="lazy"><div><h3>אודיו לבית</h3><p>רמקולים שקועים או נסתרים ופתרונות שמע המותאמים לחללים ולשימוש היומיומי.</p></div></article>
+        <article class="system-card"><img class="system-card-image system-card-image-alarm" src="/projects/knx-smart-home-central-moshav/13-knx-detector-outdoor-siren-close.jpg" alt="גלאי נוכחות חיצוני וצופר אזעקה בפרויקט בית חכם של I Feel" loading="lazy"><div><h3>אזעקה קווית או אלחוטית</h3><p>מערכת קווית מתאימה בדרך כלל כאשר קיימת תשתית מתוכננת. מערכת אלחוטית מאפשרת פתרון יעיל גם בבית קיים.</p></div></article>
+        <article class="system-card"><img class="system-card-image" src="/assets/articles/smart-home-security-cameras.jpg" alt="מצלמות אבטחה חיצוניות בבית פרטי בפרויקט I Feel" loading="lazy"><div><h3>מצלמות</h3><p>כאשר קיימות הכנות, ניתן לתכנן את סוג המצלמות, נקודות הצפייה וההקלטה. כאשר אין הכנות, נבדוק חלופות אפשריות.</p></div></article>
+        <article class="system-card"><img class="system-card-image system-card-image-intercom" src="/projects/knx-smart-home-central-moshav/11-akuvox-ip-intercom.jpg" alt="פנל אינטרקום IP של Akuvox מותקן בכניסה לבית" loading="lazy"><div><h3>אינטרקום IP</h3><p>שיחה בווידאו, פתיחת דלת וגישה מהמסך בבית או מהטלפון, עם התאמה לשער, ללובי ולתשתית הקיימת.</p></div></article>
+        <article class="system-card system-card-summary"><div><h3>מערכת מלאה או נקודתית</h3><p>המסלול מתחיל בבחינת מערכת מלאה, אך מאפשר לעבור בצורה מסודרת לחשמל חכם, אודיו, אזעקה, מצלמות או אינטרקום בלבד.</p></div></article>
       </div>
     </section>
 

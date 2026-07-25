@@ -492,6 +492,57 @@ textarea {
   padding: 21px;
 }
 
+.systems-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.systems-grid .system-card {
+  overflow: hidden;
+  padding: 0;
+}
+
+.system-card-image {
+  display: block;
+  width: 100%;
+  height: 230px;
+  object-fit: cover;
+}
+
+.system-card-image-smart {
+  object-position: 50% 67%;
+}
+
+.system-card-image-audio {
+  object-fit: contain;
+  padding: 14px;
+  background: #f3f3f1;
+}
+
+.system-card-image-alarm {
+  object-position: 50% 10%;
+}
+
+.system-card-image-intercom {
+  object-position: 50% 27%;
+}
+
+.systems-grid .system-card > div {
+  padding: 21px;
+}
+
+.system-card-summary {
+  display: flex;
+  align-items: center;
+  background: linear-gradient(135deg, var(--navy), var(--navy-2));
+  color: #fff;
+}
+
+.system-card-summary p {
+  color: rgba(255, 255, 255, 0.8);
+}
+
 .info-tile h3,
 .gift-card h3,
 .system-card h3,
@@ -504,6 +555,16 @@ textarea {
 .gift-card p {
   margin: 0;
   color: var(--ink-soft);
+}
+
+@media (max-width: 720px) {
+  .systems-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .system-card-image {
+    height: 240px;
+  }
 }
 
 .feature-list {
@@ -950,3 +1011,4 @@ textarea {
     text-decoration: none;
   }
 }
+
