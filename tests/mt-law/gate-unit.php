@@ -111,7 +111,8 @@ assert_same(1, $stats['subscribers'] ?? null, 'Only explicit MT-Law consent shou
 assert_same(2, $stats['accesses'] ?? null, 'Verified access total should exclude I Feel staff.');
 
 $storedPath = mtlaw_gate_contacts_path();
-assert_true(str_starts_with($storedPath, $root . DIRECTORY_SEPARATOR), 'Registry must use the configured private storage root.');
+$expectedPrefix = $root . DIRECTORY_SEPARATOR;
+assert_true(strncmp($storedPath, $expectedPrefix, strlen($expectedPrefix)) === 0, 'Registry must use the configured private storage root.');
 assert_true(is_file($storedPath), 'Registry JSON should exist.');
 assert_true(is_file($root . DIRECTORY_SEPARATOR . '.htaccess'), 'Private storage should contain a deny rule.');
 
