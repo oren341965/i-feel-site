@@ -24,14 +24,11 @@ if ($user === null && (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST')) {
             }
 
             $marketingOptIn = mtlaw_post('marketing_opt_in', 10) === 'yes';
-            if (!$marketingOptIn) {
-                throw new InvalidArgumentException('כדי לקבל קוד כניסה יש לאשר קבלת עדכונים והטבות מ-I Feel. ניתן לבטל את ההרשמה בכל עת.');
-            }
 
             if (!mtlaw_send_code($email)) {
                 throw new RuntimeException('לא ניתן לשלוח קוד כרגע. יש להמתין דקה ולנסות שוב.');
             }
-            $_SESSION['mtlaw_gate_marketing_opt_in'] = true;
+            $_SESSION['mtlaw_gate_marketing_opt_in'] = $marketingOptIn;
             header('Location: /mt-law/gate.php?access=code-sent', true, 303);
             exit;
         }

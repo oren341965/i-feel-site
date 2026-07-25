@@ -39,11 +39,14 @@ auth_assert_true(($user['role'] ?? '') === 'member', 'An MT-Law email must recei
 $gateView = file_get_contents(dirname(__DIR__, 2) . '/public/mt-law/_gate_view.php');
 auth_assert_true(is_string($gateView), 'The gate view must be readable.');
 auth_assert_true(substr_count($gateView, 'action="/mt-law/gate.php"') >= 4, 'Authentication and logout forms must post directly to gate.php.');
-auth_assert_true(strpos($gateView, 'name="marketing_opt_in" value="yes" required') !== false, 'The mailing consent checkbox must be required and unchecked by default.');
+auth_assert_true(strpos($gateView, 'name="marketing_opt_in" value="yes"') !== false, 'The optional mailing consent checkbox must be present.');
+auth_assert_true(strpos($gateView, 'name="marketing_opt_in" value="yes" required') === false, 'The mailing consent checkbox must be optional and unchecked by default.');
+auth_assert_true(strpos($gateView, 'הבחירה אינה תנאי') !== false, 'The gate must explain that mailing consent is not required for access.');
 
 $gateController = file_get_contents(dirname(__DIR__, 2) . '/public/mt-law/gate.php');
 auth_assert_true(is_string($gateController), 'The gate controller must be readable.');
-auth_assert_true(strpos($gateController, 'if (!$marketingOptIn)') !== false, 'The server must reject code requests without explicit mailing consent.');
+auth_assert_true(strpos($gateController, 'if (!$marketingOptIn)') === false, 'The server must not reject code requests without mailing consent.');
+auth_assert_true(strpos($gateController, '$_SESSION[\'mtlaw_gate_marketing_opt_in\'] = $marketingOptIn;') !== false, 'The server must preserve the user\'s actual mailing choice.');
 auth_assert_true(strpos($gateController, '/mt-law/gate.php?access=verified') !== false, 'Successful verification must redirect directly to gate.php.');
 
 mtlaw_logout();
