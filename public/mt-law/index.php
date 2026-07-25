@@ -15,14 +15,14 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
             if (!mtlaw_allowed_email($email)) {
                 throw new InvalidArgumentException('הכניסה פתוחה רק לכתובות דואר של I Feel או של mt-law.co.il.');
             }
-            if (!mtlaw_send_code($email)) {
+            if (!mtlaw_send_code($email, mtlaw_post('marketing_opt_in', 10) === 'yes')) {
                 throw new RuntimeException('לא ניתן לשלוח קוד כרגע. יש להמתין דקה ולנסות שוב.');
             }
             mtlaw_redirect(['access' => 'code-sent']);
         }
 
         if ($action === 'verify_code') {
-            $email = strtolower((string) ($_SESSION['mtlaw_otp_email'] ?? ''));
+            $email = mtlaw_pending_email();
             $code = mtlaw_post('code', 20);
             if (!mtlaw_verify_code($email, $code)) {
                 throw new InvalidArgumentException('הקוד שגוי או שפג תוקפו.');
@@ -52,7 +52,7 @@ $csrf = mtlaw_csrf_token();
 $accessStatus = trim((string) ($_GET['access'] ?? ''));
 $leadStatus = trim((string) ($_GET['lead'] ?? ''));
 $view = trim((string) ($_GET['view'] ?? ''));
-$pendingEmail = strtolower((string) ($_SESSION['mtlaw_otp_email'] ?? ''));
+$pendingEmail = mtlaw_pending_email();
 
 function mtlaw_document_head(string $title): void
 {
@@ -442,3 +442,4 @@ mtlaw_header($user, $csrf);
 <?php if ($user !== null): ?><script src="/mt-law/app.js?v=20260725-5" defer></script><?php endif; ?>
 </body>
 </html>
+
