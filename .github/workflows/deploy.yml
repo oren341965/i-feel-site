@@ -37,6 +37,9 @@ jobs:
       - name: Test secure staff portal
         run: php -d upload_max_filesize=12M -d post_max_size=64M -d max_file_uploads=20 tests/staff-expenses/portal-unit.php
 
+      - name: Test MT-Law consent registry
+        run: php tests/mt-law/gate-unit.php
+
       - name: Build and validate Astro site
         run: npm run build
 
