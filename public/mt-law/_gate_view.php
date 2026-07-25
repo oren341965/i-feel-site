@@ -23,7 +23,7 @@ function mtlaw_gate_verified_header(array $user, string $csrf): string
     <img class="gate-mt-logo" src="{$logo}" alt="מרקמן טומשין ושות׳">
     <div class="gate-verified-tools">
       <span class="gate-verified-email">מחובר: {$email}</span>
-      <form method="post" action="/mt-law/">
+      <form method="post" action="/mt-law/gate.php">
         <input type="hidden" name="csrf" value="{$csrf}">
         <input type="hidden" name="action" value="logout">
         <button type="submit">יציאה</button>
@@ -47,7 +47,7 @@ function mtlaw_gate_staff_panel(): string
     <div>
       <p class="eyebrow">רישום כניסות ורשימת הדיוור</p>
       <h2>בקרת הצטרפות לעובדי I Feel</h2>
-      <p>כל כניסה נרשמת רק לאחר אימות הדואר. ל-CSV של קרן נכנסים רק עובדים שסימנו הסכמה מפורשת לקבלת עדכונים והטבות.</p>
+      <p>כל כניסה נרשמת רק לאחר אימות הדואר והסכמה מפורשת. ל-CSV של קרן נכנסים רק עובדי MT-Law שאימתו את הדואר ואישרו קבלת עדכונים והטבות.</p>
     </div>
   </div>
   <div class="gate-admin-stats">
@@ -57,8 +57,8 @@ function mtlaw_gate_staff_panel(): string
     <div><strong>{$month}</strong><span>מצטרפים החודש</span></div>
   </div>
   <div class="button-row gate-admin-actions">
-    <a class="primary-button" href="/mt-law/?view=mailing-csv&amp;period=month">הורדת מצטרפי החודש ל-Smoove</a>
-    <a class="ghost-button" href="/mt-law/?view=mailing-csv&amp;period=all">הורדת כל המאושרים</a>
+    <a class="primary-button" href="/mt-law/gate.php?view=mailing-csv&amp;period=month">הורדת מצטרפי החודש ל-Smoove</a>
+    <a class="ghost-button" href="/mt-law/gate.php?view=mailing-csv&amp;period=all">הורדת כל המאושרים</a>
   </div>
 </section>
 HTML;
@@ -66,7 +66,7 @@ HTML;
 
 function mtlaw_gate_enhance_verified_output(string $html, array $user, string $csrf): string
 {
-    $css = '<link rel="stylesheet" href="/mt-law/gate.css?v=20260725-1">';
+    $css = '<link rel="stylesheet" href="/mt-law/gate.css?v=20260725-2">';
     if (!str_contains($html, '/mt-law/gate.css')) {
         $html = str_replace('</head>', $css . "\n</head>", $html);
     }
@@ -91,7 +91,7 @@ function mtlaw_gate_render_head(string $title): void
   <meta name="robots" content="noindex,nofollow,noarchive,nosnippet,noimageindex">
   <meta name="description" content="מתחם הטבות פרטי לעובדי מרקמן טומשין ושות׳: בית חכם, אודיו, אזעקה, מצלמות, הנחה ומתנות מיוחדות.">
   <title><?= mtlaw_h($title) ?></title>
-  <link rel="stylesheet" href="/mt-law/gate.css?v=20260725-1">
+  <link rel="stylesheet" href="/mt-law/gate.css?v=20260725-2">
 </head>
 <body class="gate-body"><?php
 }
@@ -141,7 +141,7 @@ function mtlaw_gate_render_login(string $error, string $accessStatus, string $pe
           <span class="gate-lock" aria-hidden="true">●</span>
           <div><p>כניסה מאובטחת</p><h2 id="gate-access-title">גלו מה מחכה לכם בפנים</h2></div>
         </div>
-        <p class="gate-access-intro">הזינו את כתובת הדואר הארגונית. קוד חד פעמי יישלח אליכם, ורק לאחר האימות יוצגו התנאים המלאים, המתנות ושאלון ההתאמה.</p>
+        <p class="gate-access-intro">הזינו את כתובת הדואר הארגונית ואשרו קבלת עדכונים והטבות. קוד חד פעמי יישלח אליכם, ורק לאחר האימות יוצגו התנאים המלאים, המתנות ושאלון ההתאמה.</p>
 
         <?php if ($error !== ''): ?><div class="gate-alert gate-alert-error" role="alert"><?= mtlaw_h($error) ?></div><?php endif; ?>
         <?php if ($accessStatus === 'code-sent'): ?><div class="gate-alert gate-alert-success" role="status">הקוד נשלח. בדקו גם את תיקיית דואר הזבל. הקוד תקף ל-10 דקות.</div><?php endif; ?>
@@ -149,7 +149,7 @@ function mtlaw_gate_render_login(string $error, string $accessStatus, string $pe
         <?php if ($accessStatus === 'required'): ?><div class="gate-alert" role="status">כדי לצפות בהטבה יש לבצע אימות מחדש.</div><?php endif; ?>
 
         <?php if ($pendingEmail !== ''): ?>
-          <form class="gate-access-form" method="post" action="/mt-law/" autocomplete="one-time-code">
+          <form class="gate-access-form" method="post" action="/mt-law/gate.php" autocomplete="one-time-code">
             <input type="hidden" name="csrf" value="<?= mtlaw_h($csrf) ?>">
             <input type="hidden" name="action" value="verify_code">
             <label><span>הקוד שנשלח אל</span><strong><?= mtlaw_h($pendingEmail) ?></strong>
@@ -157,23 +157,30 @@ function mtlaw_gate_render_login(string $error, string $accessStatus, string $pe
             </label>
             <button type="submit">אימות וכניסה למתחם</button>
           </form>
-          <form class="gate-resend" method="post" action="/mt-law/">
+          <form class="gate-resend" method="post" action="/mt-law/gate.php">
             <input type="hidden" name="csrf" value="<?= mtlaw_h($csrf) ?>">
             <input type="hidden" name="action" value="request_code">
             <input type="hidden" name="email" value="<?= mtlaw_h($pendingEmail) ?>">
-            <?php if ($pendingOptIn): ?><input type="hidden" name="marketing_opt_in" value="yes"><?php endif; ?>
+            <?php if ($pendingOptIn): ?>
+              <input type="hidden" name="marketing_opt_in" value="yes">
+            <?php else: ?>
+              <label class="gate-consent">
+                <input type="checkbox" name="marketing_opt_in" value="yes" required>
+                <span><strong>אני מאשר/ת קבלת עדכונים והטבות מ-I Feel</strong><?= mtlaw_h(MTLAW_GATE_CONSENT_TEXT) ?></span>
+              </label>
+            <?php endif; ?>
             <button type="submit">שליחת קוד חדש</button>
           </form>
         <?php else: ?>
-          <form class="gate-access-form" method="post" action="/mt-law/">
+          <form class="gate-access-form" method="post" action="/mt-law/gate.php">
             <input type="hidden" name="csrf" value="<?= mtlaw_h($csrf) ?>">
             <input type="hidden" name="action" value="request_code">
             <label><span>דואר אלקטרוני של המשרד</span>
               <input type="email" name="email" placeholder="name@mt-law.co.il" autocomplete="email" required autofocus>
             </label>
             <label class="gate-consent">
-              <input type="checkbox" name="marketing_opt_in" value="yes">
-              <span><strong>כן, אשמח לקבל פעם בחודש רעיונות והטבות</strong><?= mtlaw_h(MTLAW_GATE_CONSENT_TEXT) ?><small>הבחירה אינה תנאי לכניסה. ניתן להסיר את עצמכם בכל עת.</small></span>
+              <input type="checkbox" name="marketing_opt_in" value="yes" required>
+              <span><strong>אני מאשר/ת קבלת עדכונים והטבות מ-I Feel</strong><?= mtlaw_h(MTLAW_GATE_CONSENT_TEXT) ?><small>האישור נדרש לצורך קבלת קוד הכניסה. ניתן לבטל את ההרשמה בכל עת.</small></span>
             </label>
             <button type="submit">שלחו לי קוד והציגו לי את ההטבות</button>
           </form>
