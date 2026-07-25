@@ -142,13 +142,12 @@ function mtlaw_set_csrf_cookie(string $token): void
     if (headers_sent()) {
         return;
     }
-    setcookie(MTLAW_CSRF_COOKIE, $token, [
-        'expires' => 0,
-        'path' => '/mt-law/',
-        'secure' => mtlaw_is_https(),
-        'httponly' => true,
-        'samesite' => 'Strict',
-    ]);
+    $secure = mtlaw_is_https() ? '; Secure' : '';
+    header(
+        'Set-Cookie: ' . MTLAW_CSRF_COOKIE . '=' . rawurlencode($token)
+        . '; Path=/mt-law/; HttpOnly; SameSite=Strict' . $secure,
+        false
+    );
 }
 
 function mtlaw_csrf_token(): string
@@ -160,7 +159,7 @@ function mtlaw_csrf_token(): string
         $sessionToken = mtlaw_valid_csrf_token($cookieToken) ? $cookieToken : bin2hex(random_bytes(24));
         $_SESSION['mtlaw_csrf'] = $sessionToken;
     }
-    if (!hash_equals($sessionToken, $cookieToken)) {
+    if ($cookieToken === '' || !hash_equals($sessionToken, $cookieToken)) {
         mtlaw_set_csrf_cookie($sessionToken);
     }
     return $sessionToken;
