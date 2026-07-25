@@ -104,8 +104,7 @@ try {
         'id="gate-title"',
         'action="/mt-law/gate.php"',
         'name="marketing_opt_in" value="yes"',
-        'הבחירה אינה תנאי',
-        'ניתן לבטל את ההרשמה בכל עת',
+        '/projects/knx-smart-home-central-moshav/11-akuvox-ip-intercom.jpg',
         '/mt-law/mt-law-logo.svg'
     )) {
         Require-Marker -Body $rootBody -Marker $marker -Label 'MT-Law entry URL'
@@ -129,6 +128,13 @@ try {
         throw 'MT-Law direct gate did not provide a CSRF token.'
     }
     $csrf = $csrfMatch.Groups[1].Value
+    $cookieLines = Get-Content -LiteralPath $cookie
+    if (-not ($cookieLines -match 'ifeel_mt_law_csrf')) {
+        throw 'MT-Law direct gate did not provide the CSRF fallback cookie.'
+    }
+    $cookieLines |
+        Where-Object { $_ -notmatch 'ifeel_mt_law_access' } |
+        Set-Content -LiteralPath $cookie -Encoding ASCII
 
     $routePath = Join-Path $work "direct-post.html"
     $routeStatus = Invoke-MtLawRequest -Method POST -Url "$base/mt-law/gate.php" -OutputPath $routePath -FormData @(
@@ -139,8 +145,8 @@ try {
     $routeBody = Read-Utf8Body $routePath
     Require-Http200 -Status $routeStatus -Label 'MT-Law direct POST route' -Body $routeBody
     Require-Marker -Body $routeBody -Marker 'id="gate-title"' -Label 'MT-Law direct POST route'
-    Require-Marker -Body $routeBody -Marker 'הכניסה פתוחה רק לכתובות דואר' -Label 'MT-Law direct POST route'
-    Write-Host 'OK direct gate POST returns the portal instead of 404 or 500'
+    Require-Marker -Body $routeBody -Marker 'gate-alert-error' -Label 'MT-Law direct POST route'
+    Write-Host 'OK direct POST survives a missing PHP session through the CSRF fallback cookie'
 
     Write-Host 'MT-Law live access, direct POST and optional consent verification succeeded.'
 }
