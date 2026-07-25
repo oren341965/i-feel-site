@@ -483,6 +483,24 @@
   object-fit: cover;
 }
 
+.gate-capability-grid .gate-capability-image-smart {
+  object-position: 50% 67%;
+}
+
+.gate-capability-grid .gate-capability-image-audio {
+  object-fit: contain;
+  padding: 12px;
+  background: #f3f3f1;
+}
+
+.gate-capability-grid .gate-capability-image-alarm {
+  object-position: 50% 10%;
+}
+
+.gate-capability-grid .gate-capability-image-intercom {
+  object-position: 50% 27%;
+}
+
 .gate-capability-grid article > div {
   padding: 21px;
 }
@@ -848,3 +866,4 @@
     display: none !important;
   }
 }
+
