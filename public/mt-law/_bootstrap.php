@@ -14,6 +14,8 @@ const MTLAW_OTP_TTL = 600;
 const MTLAW_OTP_RESEND_SECONDS = 60;
 const MTLAW_OTP_HOURLY_LIMIT = 5;
 const MTLAW_CSRF_COOKIE = 'ifeel_mt_law_csrf';
+const MTLAW_OTP_COOKIE = 'ifeel_mt_law_otp';
+const MTLAW_ACCESS_COOKIE = 'ifeel_mt_law_verified';
 const MTLAW_DEFAULT_BOARD_ID = '2732725332';
 const MTLAW_FALLBACK_EMAIL = 'sales@i-feel.co.il';
 const MTLAW_ALLOWED_DOMAINS = ['i-feel.co.il', 'mt-law.co.il'];
@@ -148,6 +150,7 @@ function mtlaw_set_csrf_cookie(string $token): void
         . '; Path=/mt-law/; HttpOnly; SameSite=Strict' . $secure,
         false
     );
+    $_COOKIE[MTLAW_CSRF_COOKIE] = $token;
 }
 
 function mtlaw_csrf_token(): string
@@ -198,6 +201,195 @@ function mtlaw_role_for_domain(string $domain): string
     return $domain === 'i-feel.co.il' ? 'staff' : 'member';
 }
 
+function mtlaw_valid_ticket_id(string $ticketId): bool
+{
+    return preg_match('/\A[a-f0-9]{48}\z/D', $ticketId) === 1;
+}
+
+function mtlaw_ticket_path(string $kind, string $ticketId): string
+{
+    if (!in_array($kind, ['otp', 'access'], true) || !mtlaw_valid_ticket_id($ticketId)) {
+        return '';
+    }
+    return rtrim(sys_get_temp_dir(), DIRECTORY_SEPARATOR)
+        . DIRECTORY_SEPARATOR
+        . 'ifeel-mtlaw-' . $kind . '-' . $ticketId . '.json';
+}
+
+function mtlaw_write_ticket(string $kind, string $ticketId, array $state): bool
+{
+    $path = mtlaw_ticket_path($kind, $ticketId);
+    if ($path === '') {
+        return false;
+    }
+    $json = json_encode($state, JSON_UNESCAPED_SLASHES);
+    if ($json === false || @file_put_contents($path, $json, LOCK_EX) === false) {
+        return false;
+    }
+    @chmod($path, 0600);
+    return true;
+}
+
+function mtlaw_read_ticket(string $kind, string $ticketId): ?array
+{
+    $path = mtlaw_ticket_path($kind, $ticketId);
+    if ($path === '' || !is_file($path)) {
+        return null;
+    }
+    $raw = @file_get_contents($path);
+    $state = $raw === false ? null : json_decode($raw, true);
+    if (!is_array($state) || (int) ($state['expires'] ?? 0) < time()) {
+        @unlink($path);
+        return null;
+    }
+    return $state;
+}
+
+function mtlaw_delete_ticket(string $kind, string $ticketId): void
+{
+    $path = mtlaw_ticket_path($kind, $ticketId);
+    if ($path !== '') {
+        @unlink($path);
+    }
+}
+
+function mtlaw_set_private_cookie(string $name, string $value, int $expires = 0): void
+{
+    if (headers_sent()) {
+        return;
+    }
+    $secure = mtlaw_is_https() ? '; Secure' : '';
+    $expiration = '';
+    if ($expires > 0) {
+        $expiration = '; Expires=' . gmdate('D, d M Y H:i:s', $expires) . ' GMT; Max-Age=' . max(0, $expires - time());
+    } elseif ($expires < 0) {
+        $expiration = '; Expires=Thu, 01 Jan 1970 00:00:00 GMT; Max-Age=0';
+    }
+    header(
+        'Set-Cookie: ' . $name . '=' . rawurlencode($value)
+        . $expiration . '; Path=/mt-law/; HttpOnly; SameSite=Strict' . $secure,
+        false
+    );
+    if ($expires < 0) {
+        unset($_COOKIE[$name]);
+    } else {
+        $_COOKIE[$name] = $value;
+    }
+}
+
+function mtlaw_cookie_ticket_id(string $cookieName): string
+{
+    $ticketId = is_string($_COOKIE[$cookieName] ?? null) ? (string) $_COOKIE[$cookieName] : '';
+    return mtlaw_valid_ticket_id($ticketId) ? $ticketId : '';
+}
+
+function mtlaw_otp_ticket(): ?array
+{
+    $ticketId = mtlaw_cookie_ticket_id(MTLAW_OTP_COOKIE);
+    if ($ticketId === '') {
+        return null;
+    }
+    $state = mtlaw_read_ticket('otp', $ticketId);
+    if ($state === null) {
+        mtlaw_set_private_cookie(MTLAW_OTP_COOKIE, '', -1);
+        return null;
+    }
+    return ['id' => $ticketId, 'state' => $state];
+}
+
+function mtlaw_create_otp_challenge(string $email, string $code, bool $marketingOptIn): string
+{
+    $ticketId = bin2hex(random_bytes(24));
+    $now = time();
+    $state = [
+        'email' => strtolower(trim($email)),
+        'hash' => hash('sha256', $code . '|' . $ticketId),
+        'expires' => $now + MTLAW_OTP_TTL,
+        'attempts' => 0,
+        'sent_at' => $now,
+        'marketing_opt_in' => $marketingOptIn,
+    ];
+    if (!mtlaw_write_ticket('otp', $ticketId, $state)) {
+        throw new RuntimeException('Could not persist the one-time code challenge.');
+    }
+    mtlaw_set_private_cookie(MTLAW_OTP_COOKIE, $ticketId, $state['expires']);
+    return $ticketId;
+}
+
+function mtlaw_clear_otp_challenge(): void
+{
+    $ticketId = mtlaw_cookie_ticket_id(MTLAW_OTP_COOKIE);
+    if ($ticketId !== '') {
+        mtlaw_delete_ticket('otp', $ticketId);
+    }
+    mtlaw_set_private_cookie(MTLAW_OTP_COOKIE, '', -1);
+}
+
+function mtlaw_pending_email(): string
+{
+    $ticket = mtlaw_otp_ticket();
+    if ($ticket !== null) {
+        $email = strtolower(trim((string) ($ticket['state']['email'] ?? '')));
+        if (mtlaw_allowed_email($email)) {
+            return $email;
+        }
+    }
+
+    $email = strtolower(trim((string) ($_SESSION['mtlaw_otp_email'] ?? '')));
+    $expires = (int) ($_SESSION['mtlaw_otp_expires'] ?? 0);
+    return mtlaw_allowed_email($email) && $expires >= time() ? $email : '';
+}
+
+function mtlaw_pending_marketing_opt_in(): bool
+{
+    $ticket = mtlaw_otp_ticket();
+    if ($ticket !== null) {
+        return (bool) ($ticket['state']['marketing_opt_in'] ?? false);
+    }
+    return (bool) ($_SESSION['mtlaw_gate_marketing_opt_in'] ?? false);
+}
+
+function mtlaw_access_ticket(): ?array
+{
+    $ticketId = mtlaw_cookie_ticket_id(MTLAW_ACCESS_COOKIE);
+    if ($ticketId === '') {
+        return null;
+    }
+    $state = mtlaw_read_ticket('access', $ticketId);
+    if ($state === null) {
+        mtlaw_set_private_cookie(MTLAW_ACCESS_COOKIE, '', -1);
+        return null;
+    }
+    return ['id' => $ticketId, 'state' => $state];
+}
+
+function mtlaw_create_access_ticket(string $email, int $verifiedAt, bool $marketingOptIn = false): string
+{
+    $ticketId = bin2hex(random_bytes(24));
+    $now = time();
+    $state = [
+        'email' => strtolower(trim($email)),
+        'verified_at' => $verifiedAt,
+        'last_activity' => $now,
+        'expires' => $now + MTLAW_ACCESS_TTL,
+        'marketing_opt_in' => $marketingOptIn,
+    ];
+    if (!mtlaw_write_ticket('access', $ticketId, $state)) {
+        return '';
+    }
+    mtlaw_set_private_cookie(MTLAW_ACCESS_COOKIE, $ticketId, $state['expires']);
+    return $ticketId;
+}
+
+function mtlaw_clear_access_ticket(): void
+{
+    $ticketId = mtlaw_cookie_ticket_id(MTLAW_ACCESS_COOKIE);
+    if ($ticketId !== '') {
+        mtlaw_delete_ticket('access', $ticketId);
+    }
+    mtlaw_set_private_cookie(MTLAW_ACCESS_COOKIE, '', -1);
+}
+
 function mtlaw_current_user(): ?array
 {
     $email = strtolower(trim((string) ($_SESSION['mtlaw_verified_email'] ?? '')));
@@ -206,7 +398,20 @@ function mtlaw_current_user(): ?array
     $now = time();
 
     if ($email === '' || !mtlaw_allowed_email($email) || $verifiedAt <= 0) {
-        return null;
+        $ticket = mtlaw_access_ticket();
+        if ($ticket === null) {
+            return null;
+        }
+        $email = strtolower(trim((string) ($ticket['state']['email'] ?? '')));
+        $verifiedAt = (int) ($ticket['state']['verified_at'] ?? 0);
+        $lastActivity = (int) ($ticket['state']['last_activity'] ?? 0);
+        if ($email === '' || !mtlaw_allowed_email($email) || $verifiedAt <= 0) {
+            mtlaw_clear_access_ticket();
+            return null;
+        }
+        $_SESSION['mtlaw_verified_email'] = $email;
+        $_SESSION['mtlaw_verified_at'] = $verifiedAt;
+        $_SESSION['mtlaw_gate_marketing_opt_in'] = (bool) ($ticket['state']['marketing_opt_in'] ?? false);
     }
     if ($lastActivity > 0 && ($now - $lastActivity) > MTLAW_ACCESS_TTL) {
         mtlaw_logout();
@@ -214,6 +419,16 @@ function mtlaw_current_user(): ?array
     }
 
     $_SESSION['mtlaw_last_activity'] = $now;
+    $ticket = mtlaw_access_ticket();
+    if ($ticket === null) {
+        mtlaw_create_access_ticket($email, $verifiedAt, (bool) ($_SESSION['mtlaw_gate_marketing_opt_in'] ?? false));
+    } else {
+        $ticket['state']['last_activity'] = $now;
+        $ticket['state']['expires'] = $now + MTLAW_ACCESS_TTL;
+        if (mtlaw_write_ticket('access', $ticket['id'], $ticket['state'])) {
+            mtlaw_set_private_cookie(MTLAW_ACCESS_COOKIE, $ticket['id'], $ticket['state']['expires']);
+        }
+    }
     $domain = mtlaw_email_domain($email);
     return [
         'email' => $email,
@@ -233,6 +448,8 @@ function mtlaw_require_user(): array
 
 function mtlaw_logout(): void
 {
+    mtlaw_clear_otp_challenge();
+    mtlaw_clear_access_ticket();
     foreach (array_keys($_SESSION) as $key) {
         if (str_starts_with((string) $key, 'mtlaw_')) {
             unset($_SESSION[$key]);
@@ -255,6 +472,14 @@ function mtlaw_allow_code_send(string $email): bool
     $lastSessionSend = (int) ($_SESSION['mtlaw_otp_sent_at'] ?? 0);
     if ($lastSessionSend > 0 && ($now - $lastSessionSend) < MTLAW_OTP_RESEND_SECONDS) {
         return false;
+    }
+    $ticket = mtlaw_otp_ticket();
+    if ($ticket !== null) {
+        $ticketEmail = strtolower(trim((string) ($ticket['state']['email'] ?? '')));
+        $ticketSentAt = (int) ($ticket['state']['sent_at'] ?? 0);
+        if ($ticketEmail === strtolower(trim($email)) && $ticketSentAt > 0 && ($now - $ticketSentAt) < MTLAW_OTP_RESEND_SECONDS) {
+            return false;
+        }
     }
 
     $path = mtlaw_rate_file($email);
@@ -279,18 +504,21 @@ function mtlaw_allow_code_send(string $email): bool
     return true;
 }
 
-function mtlaw_send_code(string $email): bool
+function mtlaw_send_code(string $email, bool $marketingOptIn = false): bool
 {
     if (!mtlaw_allowed_email($email) || !mtlaw_allow_code_send($email)) {
         return false;
     }
 
     $code = (string) random_int(100000, 999999);
-    $_SESSION['mtlaw_otp_email'] = strtolower($email);
+    $email = strtolower(trim($email));
+    $ticketId = mtlaw_create_otp_challenge($email, $code, $marketingOptIn);
+    $_SESSION['mtlaw_otp_email'] = $email;
     $_SESSION['mtlaw_otp_hash'] = hash('sha256', $code . '|' . session_id());
     $_SESSION['mtlaw_otp_expires'] = time() + MTLAW_OTP_TTL;
     $_SESSION['mtlaw_otp_attempts'] = 0;
     $_SESSION['mtlaw_otp_sent_at'] = time();
+    $_SESSION['mtlaw_gate_marketing_opt_in'] = $marketingOptIn;
 
     $subjectText = 'קוד כניסה להטבת עובדי I Feel ו-MT-Law';
     $subject = '=?UTF-8?B?' . base64_encode($subjectText) . '?=';
@@ -304,11 +532,14 @@ function mtlaw_send_code(string $email): bool
 
     $sent = @mail($email, $subject, $body, implode("\r\n", $headers));
     if (!$sent) {
+        mtlaw_delete_ticket('otp', $ticketId);
+        mtlaw_set_private_cookie(MTLAW_OTP_COOKIE, '', -1);
         unset(
             $_SESSION['mtlaw_otp_email'],
             $_SESSION['mtlaw_otp_hash'],
             $_SESSION['mtlaw_otp_expires'],
-            $_SESSION['mtlaw_otp_attempts']
+            $_SESSION['mtlaw_otp_attempts'],
+            $_SESSION['mtlaw_gate_marketing_opt_in']
         );
     }
     return $sent;
@@ -318,25 +549,46 @@ function mtlaw_verify_code(string $email, string $code): bool
 {
     $email = strtolower(trim($email));
     $code = preg_replace('/\D+/', '', $code) ?? '';
-    $storedEmail = strtolower((string) ($_SESSION['mtlaw_otp_email'] ?? ''));
-    $storedHash = (string) ($_SESSION['mtlaw_otp_hash'] ?? '');
-    $expires = (int) ($_SESSION['mtlaw_otp_expires'] ?? 0);
-    $attempts = (int) ($_SESSION['mtlaw_otp_attempts'] ?? 0);
+    $ticket = mtlaw_otp_ticket();
+    $usingTicket = $ticket !== null;
+    if ($usingTicket) {
+        $storedEmail = strtolower(trim((string) ($ticket['state']['email'] ?? '')));
+        $storedHash = (string) ($ticket['state']['hash'] ?? '');
+        $expires = (int) ($ticket['state']['expires'] ?? 0);
+        $attempts = (int) ($ticket['state']['attempts'] ?? 0);
+        $marketingOptIn = (bool) ($ticket['state']['marketing_opt_in'] ?? false);
+    } else {
+        $storedEmail = strtolower((string) ($_SESSION['mtlaw_otp_email'] ?? ''));
+        $storedHash = (string) ($_SESSION['mtlaw_otp_hash'] ?? '');
+        $expires = (int) ($_SESSION['mtlaw_otp_expires'] ?? 0);
+        $attempts = (int) ($_SESSION['mtlaw_otp_attempts'] ?? 0);
+        $marketingOptIn = (bool) ($_SESSION['mtlaw_gate_marketing_opt_in'] ?? false);
+    }
 
     if ($email === '' || $code === '' || $email !== $storedEmail || $storedHash === '' || time() > $expires || $attempts >= 5) {
         return false;
     }
 
     $_SESSION['mtlaw_otp_attempts'] = $attempts + 1;
-    $candidate = hash('sha256', $code . '|' . session_id());
+    if ($usingTicket) {
+        $ticket['state']['attempts'] = $attempts + 1;
+        mtlaw_write_ticket('otp', $ticket['id'], $ticket['state']);
+        $candidate = hash('sha256', $code . '|' . $ticket['id']);
+    } else {
+        $candidate = hash('sha256', $code . '|' . session_id());
+    }
     if (!hash_equals($storedHash, $candidate)) {
         return false;
     }
 
     session_regenerate_id(true);
+    $verifiedAt = time();
     $_SESSION['mtlaw_verified_email'] = $email;
-    $_SESSION['mtlaw_verified_at'] = time();
-    $_SESSION['mtlaw_last_activity'] = time();
+    $_SESSION['mtlaw_verified_at'] = $verifiedAt;
+    $_SESSION['mtlaw_last_activity'] = $verifiedAt;
+    $_SESSION['mtlaw_gate_marketing_opt_in'] = $marketingOptIn;
+    mtlaw_create_access_ticket($email, $verifiedAt, $marketingOptIn);
+    mtlaw_clear_otp_challenge();
     unset(
         $_SESSION['mtlaw_otp_email'],
         $_SESSION['mtlaw_otp_hash'],
@@ -629,3 +881,4 @@ function mtlaw_submit_lead(array $user): string
         return mtlaw_fallback_mail($lead, $error->getMessage()) ? 'sent-mail' : 'error';
     }
 }
+
