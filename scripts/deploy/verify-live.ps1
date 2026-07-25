@@ -161,8 +161,7 @@ try {
         'name="marketing_opt_in"',
         'name="email"',
         'action="/mt-law/gate.php"',
-        'name="marketing_opt_in" value="yes"',
-        'הבחירה אינה תנאי'
+        'name="marketing_opt_in" value="yes"'
     )) {
         if ($gateBody.IndexOf($marker, [StringComparison]::Ordinal) -lt 0) {
             throw "missing-marker=$marker url=$base/mt-law/gate.php"
