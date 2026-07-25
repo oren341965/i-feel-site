@@ -1,12 +1,18 @@
 Options -Indexes
-DirectoryIndex index.php
+DirectoryIndex gate.php
+
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteCond %{THE_REQUEST} \s/+mt-law/index\.php(?:[?\s]) [NC]
+  RewriteRule ^index\.php$ /mt-law/ [R=302,L]
+</IfModule>
 
 <IfModule mod_headers.c>
   Header always set X-Robots-Tag "noindex, nofollow, noarchive, nosnippet, noimageindex"
   Header always set Cache-Control "no-store, private, max-age=0, must-revalidate"
 </IfModule>
 
-<FilesMatch "^_bootstrap\.php$">
+<FilesMatch "^(?:_bootstrap|_gate_data|_gate_view)\.php$">
   Require all denied
 </FilesMatch>
 
