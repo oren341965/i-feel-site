@@ -58,6 +58,8 @@ jobs:
           find public/mt-law -maxdepth 1 -type f -name '*.php' -print0 | xargs -0 -n1 php -l
           php tests/mt-law/gate-unit.php
           php tests/mt-law/auth-unit.php
+          php -n public/mt-law/product-image.php > /tmp/mtlaw-product-image.svg
+          grep -Fq '<svg' /tmp/mtlaw-product-image.svg
 
       - name: Prepare focused deployment artifact
         run: |
@@ -68,6 +70,7 @@ jobs:
           test -f mtlaw-hotfix/mt-law/gate.php
           test -f mtlaw-hotfix/mt-law/_bootstrap.php
           test -f mtlaw-hotfix/mt-law/_gate_view.php
+          test -f mtlaw-hotfix/mt-law/product-image.php
           grep -Fq 'action="/mt-law/gate.php"' mtlaw-hotfix/mt-law/_gate_view.php
           grep -Fq 'name="marketing_opt_in" value="yes"' mtlaw-hotfix/mt-law/_gate_view.php
           grep -Fq 'הבחירה אינה תנאי' mtlaw-hotfix/mt-law/_gate_view.php
@@ -240,6 +243,9 @@ jobs:
 
           get_page 'direct-gate' "${base}/mt-law/gate.php" "$work/gate.html"
           grep -Fq 'id="gate-title"' "$work/gate.html" || fail_response 'direct-gate-marker' 200 "$work/gate.html"
+
+          get_page 'turntable-image' "${base}/mt-law/product-image.php" "$work/turntable-image.bin"
+          [[ "$(wc -c < "$work/turntable-image.bin")" -gt 1024 ]] || fail_response 'turntable-image-too-small' 200 "$work/turntable-image.bin"
 
           csrf="$(python3 - "$work/gate.html" <<'PY'
           import html, re, sys
