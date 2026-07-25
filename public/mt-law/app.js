@@ -81,10 +81,10 @@
     const tc4Art = document.querySelector('.tc4-art');
     if (tc4Art) {
       tc4Art.replaceWith(createPhotoFigure({
-        src: '/projects/knx-smart-home-central-moshav/07-knx-touch-panel-display.jpg',
-        alt: 'תצוגת מסך מגע KNX בפרויקט בית חכם של I Feel',
-        caption: 'מסך מגע מותקן בפרויקט I Feel. דגם המתנה הוא Siemens TC4',
-        variant: 'gift-photo-frame gift-photo-frame--installation',
+        src: '/assets/knx-advisor/siemens-tc4.webp',
+        alt: 'מסך המגע Siemens Touch Control TC4',
+        caption: 'תמונת המוצר Siemens Touch Control TC4',
+        variant: 'gift-photo-frame gift-photo-frame--product',
       }));
     }
 
