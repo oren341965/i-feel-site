@@ -1,8 +1,8 @@
 <?php
 declare(strict_types=1);
 
-const MTLAW_GATE_CONSENT_VERSION = 'mt-law-monthly-2026-07-v1';
-const MTLAW_GATE_CONSENT_TEXT = 'אני רוצה לקבל מ-I Feel פעם בחודש רעיונות, פרויקטים, עדכונים והטבות לבית חכם בדואר האלקטרוני. ידוע לי שאפשר להסיר את עצמי בכל עת.';
+const MTLAW_GATE_CONSENT_VERSION = 'mt-law-monthly-2026-07-v2';
+const MTLAW_GATE_CONSENT_TEXT = 'אני מאשר/ת ל-I Feel לשלוח אליי בדואר האלקטרוני עדכונים, פרויקטים, רעיונות והטבות לבית חכם. ידוע לי שניתן לבטל את ההרשמה בכל עת באמצעות קישור ההסרה בכל הודעה או בפנייה ל-I Feel.';
 const MTLAW_GATE_LOGO_PATH = '/mt-law/mt-law-logo.svg?v=1';
 
 function mtlaw_gate_storage_root(): string
@@ -137,7 +137,7 @@ function mtlaw_gate_record_verified_access(array $user): void
                 'marketing_consent_last_confirmed_at' => ($requestedConsent && $organization === 'mt-law') ? $nowIso : (string) ($existing['marketing_consent_last_confirmed_at'] ?? ''),
                 'marketing_consent_version' => ($permission === 'explicit-consent') ? MTLAW_GATE_CONSENT_VERSION : '',
                 'marketing_consent_text_hash' => ($permission === 'explicit-consent') ? hash('sha256', MTLAW_GATE_CONSENT_TEXT) : '',
-                'consent_evidence' => ($permission === 'explicit-consent') ? 'verified-corporate-email+optional-checkbox-unchecked-by-default' : 'none',
+                'consent_evidence' => ($permission === 'explicit-consent') ? 'verified-corporate-email+required-checkbox-unchecked-by-default' : 'none',
             ];
             return $contacts;
         });
@@ -153,14 +153,12 @@ function mtlaw_gate_capture_lead_profile(array $user): void
     if (($_SERVER['REQUEST_METHOD'] ?? 'GET') !== 'POST' || mtlaw_post('action', 40) !== 'lead') {
         return;
     }
-
     try {
         mtlaw_verify_csrf();
     } catch (Throwable $error) {
         error_log('[i-feel mt-law gate profile] rejected invalid CSRF: ' . $error->getMessage());
         return;
     }
-
     $email = strtolower(trim((string) ($user['email'] ?? '')));
     $fullName = trim(mtlaw_post('name', 120));
     $phone = trim(mtlaw_post('phone', 80));
