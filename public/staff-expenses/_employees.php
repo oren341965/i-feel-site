@@ -400,7 +400,7 @@ function portal_process_birthday_notifications(
     return $result;
 }
 
-function portal_handle_birthday_gift_download(array $user): never
+function portal_handle_birthday_gift_download(array $user): void
 {
     $email = portal_normalize_company_email((string) ($_GET['gift_email'] ?? '')) ?? '';
     $year = filter_var($_GET['gift_year'] ?? null, FILTER_VALIDATE_INT, ['options' => ['min_range' => 2026, 'max_range' => 2100]]);

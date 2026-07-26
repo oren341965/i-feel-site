@@ -803,7 +803,7 @@ function portal_verify_email_code(string $input): array
     return portal_complete_email_login((string) $challenge['email'], 'company_email_code');
 }
 
-function portal_render_email_entry(?string $error = null, string $email = ''): never
+function portal_render_email_entry(?string $error = null, string $email = ''): void
 {
     $blocked = portal_login_is_blocked();
     portal_page_start('כניסה באמצעות דוא״ל חברה');
@@ -835,7 +835,7 @@ function portal_render_email_entry(?string $error = null, string $email = ''): n
     exit;
 }
 
-function portal_render_email_code(?string $error = null): never
+function portal_render_email_code(?string $error = null): void
 {
     $challenge = portal_email_challenge();
     if ($challenge === null) {

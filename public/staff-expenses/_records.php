@@ -227,7 +227,7 @@ function portal_build_record(array $user): array
     }
 }
 
-function portal_handle_post(array $user): never
+function portal_handle_post(array $user): void
 {
     portal_verify_csrf();
     $action = portal_post('action', 60);
@@ -437,7 +437,7 @@ function portal_user_can_download_record(array $user, array $record): bool
         && hash_equals($userEmail, $recordEmail);
 }
 
-function portal_handle_download(array $user): never
+function portal_handle_download(array $user): void
 {
     $recordId = trim((string) ($_GET['id'] ?? ''));
     $index = filter_var($_GET['file'] ?? null, FILTER_VALIDATE_INT, ['options' => ['min_range' => 0]]);
@@ -475,7 +475,7 @@ function portal_handle_download(array $user): never
     exit;
 }
 
-function portal_csv_value(mixed $value): string
+function portal_csv_value($value): string
 {
     $text = (string) $value;
     if (preg_match('/^[\x00-\x20]*[=+\-@]/u', $text)) {
@@ -492,7 +492,7 @@ function portal_csv_row($stream, array $values): void
     }
 }
 
-function portal_handle_export(array $user): never
+function portal_handle_export(array $user): void
 {
     if (($user['role'] ?? '') !== 'admin') {
         http_response_code(403);
