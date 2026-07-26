@@ -36,6 +36,7 @@ i-feel היא חברת אינטגרציה ישראלית הפועלת משנת 2
 - [Akuvox MEGA 250 — מדריך תשתית לווילה](https://i-feel.co.il/akuvox-mega-250/): הכנת רשת, PoE, מנעול ושער לבתים פרטיים.
 - [Akuvox MEGA CITY 50 — אינטרקום זיהוי פנים לווילה](https://i-feel.co.il/akuvox-mega-city-50/): תשתית, מידות והכנות התקנה לבתים פרטיים.
 - [Akuvox MEGA CITY 70 — הנחיות ליזמים](https://i-feel.co.il/akuvox-mega-city-70/): ארכיטקטורת אינטרקום IP, עמוד CAT6 והכנות לבניינים רבי־דירות.
+- [חיישני הצפה בבית חכם](https://i-feel.co.il/articles/water-leak-sensors-smart-home/): התראה בזמן אמת וסגירת ברז מים חשמלי אוטומטית בזיהוי נזילה, בתוך הבית ומחוצה לו.
 - [מאמרים](https://i-feel.co.il/articles/) · [שאלות נפוצות](https://i-feel.co.il/answers/)
 
 ## קטלוגים להורדה
