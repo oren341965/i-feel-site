@@ -389,3 +389,13 @@
   RewriteRule ^17210-2/?$ - [G]
 
 </IfModule>
+
+
+# php -- BEGIN cPanel-generated handler, do not edit
+# Set the ea-php83 package as the default PHP programming language.
+# Kept in the repo so a deploy does not drop the site (and the staff-expenses
+# portal, which requires PHP >= 7.4) back to the system default PHP.
+<IfModule mime_module>
+AddHandler application/x-httpd-ea-php83 .php .php8 .phtml
+</IfModule>
+# php -- END cPanel-generated handler, do not edit
