@@ -189,6 +189,30 @@ const jsonLd = JSON.stringify(articleSchema);
             <div class="space-y-4 text-lg leading-8 text-brand-700">
               {section.body.map((paragraph) => <p>{paragraph}</p>)}
             </div>
+            {section.bullets && section.bullets.length > 0 && (
+              <ul class="mt-4 space-y-3 pr-1 text-lg leading-8 text-brand-700 list-none">
+                {section.bullets.map((item) => (
+                  <li class="relative pr-6 before:content-[''] before:absolute before:right-0 before:top-3.5 before:h-2 before:w-2 before:rounded-full before:bg-accent-500">{item}</li>
+                ))}
+              </ul>
+            )}
+            {section.afterBullets && section.afterBullets.length > 0 && (
+              <div class="mt-4 space-y-4 text-lg leading-8 text-brand-700">
+                {section.afterBullets.map((paragraph) => <p>{paragraph}</p>)}
+              </div>
+            )}
+            {section.image && (
+              <figure class="mt-6">
+                <img
+                  src={section.image.src}
+                  alt={section.image.alt}
+                  width={section.image.width ?? 1200}
+                  height={section.image.height ?? 563}
+                  loading="lazy"
+                  class="w-full h-auto rounded-xl border border-brand-100 shadow-sm"
+                />
+              </figure>
+            )}
             {section.cta && (
               <a href={section.cta.href} class="inline-flex items-center mt-5 bg-accent-500 hover:bg-accent-600 text-white px-6 py-3 rounded-lg font-semibold transition">
                 {section.cta.label}
