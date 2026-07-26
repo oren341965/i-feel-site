@@ -113,3 +113,14 @@ Build אדום עוצר את הפריסה. אין העלאה חלקית ואין
 - אין `git push --force`.
 - אין merge ל-`main` בלי אישור.
 - אין להבטיח שהאתר עלה לפני ש-Action הפריסה ו-verify-live ירוקים.
+
+
+## שמירת גרסת PHP — לא לשבור את אזור העובדים (staff-expenses)
+
+אזור העובדים (public/staff-expenses) הוא אפליקציית PHP שדורשת PHP >= 7.4. הפריסה מעלה את dist/.htaccess (מקורו public/.htaccess) לשורש בשרת, ובלעדיו כל ה-PHP נופל לברירת המחדל של השרת (7.2) והפורטל ננעל ל-503 עם header X-Ifeel-Portal-Status: php-version. לכן:
+
+- לפני build: ודא ש-public/.htaccess עדיין מכיל את בלוק ה-handler AddHandler application/x-httpd-ea-php83 .php .php8 .phtml (בתוך IfModule mime_module). אסור להסיר אותו.
+- - אחרי build: ודא שהבלוק קיים גם ב-dist/.htaccess לפני שהפריסה יוצאת.
+  - - אין להסתמך על MultiPHP Manager לבד — הוא כותב את הבלוק לשורש בשרת, אבל הפריסה הבאה דורסת אותו. מקור-האמת היחיד הוא public/.htaccess בריפו. (LiteSpeed מתעלם מ-handler ברמת תת-תיקייה, אז הבלוק חייב להיות ב-docroot.)
+    - - אחרי הפריסה: verify-live בודק ש-/staff-expenses/ מחזיר 200 ולא 503.
+      - 
