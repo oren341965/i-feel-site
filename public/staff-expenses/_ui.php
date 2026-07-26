@@ -85,7 +85,7 @@ function portal_render_flash(?array $flash): void
     <?php
 }
 
-function portal_render_login(?string $error = null): never
+function portal_render_login(?string $error = null): void
 {
     $blocked = portal_login_is_blocked();
     portal_page_start('כניסה מאובטחת');

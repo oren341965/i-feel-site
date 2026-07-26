@@ -63,7 +63,7 @@ function portal_render_reports(?array $flash): void
     <?php
 }
 
-function detail_row(string $label, mixed $value): void
+function detail_row(string $label, $value): void
 {
     if ($value === '' || $value === null) return;
     ?><div class="detail-item"><span><?= portal_h($label) ?></span><strong><?= nl2br(portal_h($value)) ?></strong></div><?php

@@ -8,26 +8,26 @@ function portal_format_datetime(string $value): string
     }
     try {
         return (new DateTimeImmutable($value))->setTimezone(new DateTimeZone('Asia/Jerusalem'))->format('d/m/Y H:i');
-    } catch (Throwable) {
+    } catch (Throwable $error) {
         return $value;
     }
 }
 
 function payment_method_label(string $value): string
 {
-    return match ($value) {
+    $labels = [
         'company_card' => 'כרטיס חברה',
         'private_card' => 'כרטיס פרטי',
         'cash' => 'מזומן',
         'bank_transfer' => 'העברה בנקאית',
         'other' => 'אחר',
-        default => $value,
-    };
+    ];
+    return $labels[$value] ?? $value;
 }
 
 function travel_category_label(string $value): string
 {
-    return match ($value) {
+    $labels = [
         'flight' => 'טיסות וכרטיסי טיסה',
         'hotel' => 'מלון / לינה',
         'meals' => 'אוכל וארוחות',
@@ -41,13 +41,13 @@ function travel_category_label(string $value): string
         'baggage' => 'כבודה ותוספות טיסה',
         'tips' => 'טיפים ושירות',
         'other' => 'אחר',
-        default => $value,
-    };
+    ];
+    return $labels[$value] ?? $value;
 }
 
 function vehicle_category_label(string $value): string
 {
-    return match ($value) {
+    $labels = [
         'fuel' => 'דלק',
         'service' => 'טיפול תקופתי',
         'repair' => 'תיקון',
@@ -59,13 +59,13 @@ function vehicle_category_label(string $value): string
         'rental' => 'השכרת רכב',
         'transport' => 'מונית / תחבורה',
         'other' => 'אחר',
-        default => $value,
-    };
+    ];
+    return $labels[$value] ?? $value;
 }
 
 function general_category_label(string $value): string
 {
-    return match ($value) {
+    $labels = [
         'office' => 'משרד וציוד משרדי',
         'equipment' => 'ציוד וכלים',
         'supplier' => 'ספק / קבלן משנה',
@@ -75,8 +75,8 @@ function general_category_label(string $value): string
         'software' => 'תוכנה ומנויים',
         'training' => 'הדרכה / כנס',
         'other' => 'אחר',
-        default => $value,
-    };
+    ];
+    return $labels[$value] ?? $value;
 }
 
 function portal_nav(string $tab, array $user): void

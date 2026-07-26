@@ -76,7 +76,7 @@ function portal_vehicle_previous_odometer(string $plate): int
     return (int) preg_replace('/\D+/', '', (string) ($vehicle['current_km'] ?? ''));
 }
 
-function portal_handle_vehicle_monthly_submission(array $user): never
+function portal_handle_vehicle_monthly_submission(array $user): void
 {
     $plate = portal_normalize_vehicle_plate(portal_post('monthly_vehicle_plate', 20));
     $vehicles = portal_vehicles_for_employee($user);

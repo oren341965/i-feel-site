@@ -17,7 +17,7 @@ require_once __DIR__ . '/_form.php';
 require_once __DIR__ . '/_admin.php';
 require_once __DIR__ . '/_readiness.php';
 
-function portal_render_maintenance_page(?string $requestId = null): never
+function portal_render_maintenance_page(?string $requestId = null): void
 {
     http_response_code(503);
     header('Retry-After: 300');
@@ -172,7 +172,7 @@ try {
     }
 
     $flash = portal_flash_take();
-    $pageTitle = match ($tab) {
+    $pageTitles = [
         'history' => 'ההוצאות שלי',
         'reports' => 'דיווחים',
         'employees' => 'פרטי עובדים וימי הולדת',
@@ -181,8 +181,8 @@ try {
         'my_vehicle' => 'הרכב שלי',
         'work' => 'סיום התקנה או שירות',
         'work_stats' => 'סטטיסטיקת עבודות',
-        default => 'דיווח חדש',
-    };
+    ];
+    $pageTitle = $pageTitles[$tab] ?? 'דיווח חדש';
     portal_page_start($pageTitle, $user);
     portal_nav($tab, $user);
     portal_render_birthday_banner($user);

@@ -49,7 +49,7 @@ function portal_bootstrap_maintenance(string $status, ?string $requestId = null)
     <?php
 }
 
-if (PHP_VERSION_ID < 80100) {
+if (PHP_VERSION_ID < 70400) {
     $requestId = bin2hex(random_bytes(6));
     error_log('[i-feel staff expenses bootstrap] request=' . $requestId . ' unsupported PHP ' . PHP_VERSION);
     portal_bootstrap_maintenance('php-version', $requestId);

@@ -14,11 +14,11 @@ function portal_work_report_recipient(): string
 
 function portal_work_report_type_label(string $type): string
 {
-    return match ($type) {
+    $labels = [
         'installation' => 'סיום התקנה',
         'service' => 'קריאת שירות',
-        default => 'דיווח עבודה',
-    };
+    ];
+    return $labels[$type] ?? 'דיווח עבודה';
 }
 
 function portal_work_report_outcome_label(string $outcome): string
@@ -169,7 +169,7 @@ function portal_notify_work_report(array $report): bool
     return true;
 }
 
-function portal_handle_work_report_post(array $user): never
+function portal_handle_work_report_post(array $user): void
 {
     portal_verify_csrf();
     $type = portal_post('work_type', 40);

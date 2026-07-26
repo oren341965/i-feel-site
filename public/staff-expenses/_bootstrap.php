@@ -8,6 +8,26 @@ const IFEEL_PORTAL_MAX_FILES = 20;
 const IFEEL_PORTAL_MAX_FILE_BYTES = 12 * 1024 * 1024;
 const IFEEL_PORTAL_MAX_TOTAL_BYTES = 60 * 1024 * 1024;
 
+// Production on JetServer runs PHP 7.4, which lacks the PHP 8 string helpers.
+if (!function_exists('str_contains')) {
+    function str_contains(string $haystack, string $needle): bool
+    {
+        return $needle === '' || strpos($haystack, $needle) !== false;
+    }
+}
+if (!function_exists('str_starts_with')) {
+    function str_starts_with(string $haystack, string $needle): bool
+    {
+        return strncmp($haystack, $needle, strlen($needle)) === 0;
+    }
+}
+if (!function_exists('str_ends_with')) {
+    function str_ends_with(string $haystack, string $needle): bool
+    {
+        return $needle === '' || substr($haystack, -strlen($needle)) === $needle;
+    }
+}
+
 // Load the existing server-only configuration file when it exists.
 // This file is intentionally not committed to GitHub.
 $serverConfig = dirname(__DIR__) . '/api/config.php';
@@ -98,13 +118,16 @@ function portal_url(array $params = []): string
     return $params === [] ? $base : $base . '?' . http_build_query($params);
 }
 
-function portal_redirect(array $params = []): never
+function portal_redirect(array $params = []): void
 {
     header('Location: ' . portal_url($params), true, 303);
     exit;
 }
 
-function portal_h(mixed $value): string
+/**
+ * @param mixed $value
+ */
+function portal_h($value): string
 {
     return htmlspecialchars((string) $value, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
 }
@@ -537,24 +560,24 @@ function portal_require_admin(): array
 
 function portal_report_type_label(string $type): string
 {
-    return match ($type) {
+    $labels = [
         'vehicle' => 'רכב, טיפול, חניה ונסיעות',
         'travel' => 'נסיעה לחו״ל',
         'general' => 'הוצאה כללית',
-        default => 'דיווח הוצאה',
-    };
+    ];
+    return $labels[$type] ?? 'דיווח הוצאה';
 }
 
 function portal_status_label(string $status): string
 {
-    return match ($status) {
+    $labels = [
         'new' => 'חדש',
         'review' => 'בבדיקה',
         'approved' => 'אושר',
         'missing' => 'חסר מידע',
         'paid' => 'שולם / הוחזר',
-        default => 'חדש',
-    };
+    ];
+    return $labels[$status] ?? 'חדש';
 }
 
 function portal_valid_statuses(): array
@@ -564,13 +587,13 @@ function portal_valid_statuses(): array
 
 function portal_currency_label(string $currency): string
 {
-    return match ($currency) {
+    $labels = [
         'ILS' => '₪',
         'USD' => '$',
         'EUR' => '€',
         'GBP' => '£',
-        default => $currency,
-    };
+    ];
+    return $labels[$currency] ?? $currency;
 }
 
 function portal_parse_amount(string $value): ?float
@@ -722,11 +745,17 @@ function portal_save_uploads(string $recordDir, array $files): array
             continue;
         }
         if ($error !== UPLOAD_ERR_OK) {
-            $message = match ($error) {
-                UPLOAD_ERR_INI_SIZE, UPLOAD_ERR_FORM_SIZE => 'אחד הקבצים גדול מהמותר בשרת.',
-                UPLOAD_ERR_PARTIAL => 'אחד הקבצים הועלה באופן חלקי בלבד.',
-                default => 'אירעה שגיאה בהעלאת אחד הקבצים.',
-            };
+            switch ($error) {
+                case UPLOAD_ERR_INI_SIZE:
+                case UPLOAD_ERR_FORM_SIZE:
+                    $message = 'אחד הקבצים גדול מהמותר בשרת.';
+                    break;
+                case UPLOAD_ERR_PARTIAL:
+                    $message = 'אחד הקבצים הועלה באופן חלקי בלבד.';
+                    break;
+                default:
+                    $message = 'אירעה שגיאה בהעלאת אחד הקבצים.';
+            }
             throw new RuntimeException($message);
         }
 
