@@ -101,3 +101,15 @@ git -C C:\Users\USER\i-feel-site rev-parse origin/main
 - אל תשתמש ב-WebFetch לבדיקות תגים/סקריפטים — הוא ממיר ל-markdown ומוחק אותם. רק curl.
 - אל תכריז על תקלה על סמך בדיקה אחת אם ייתכן cache — אמת פעמיים בהפרש דקה.
 - אל תריץ full על כל ~90 ה-URL-ים בלי סיבה — quick מספיק לשגרה.
+
+
+## אזור העובדים (staff-expenses) — בדיקת PHP handler
+
+אפליקציית PHP נפרדת שדורשת PHP >= 7.4. דיפלוי של האתר דורס את public_html/.htaccess ומסיר את בלוק ה-PHP handler של cPanel — ואז כל ה-PHP נופל לברירת המחדל של השרת (7.2) והפורטל נועל את עצמו ל-503. לבדוק בכל סבב:
+
+- סטטוס: curl.exe -s -o NUL -w "%{http_code}" "https://i-feel.co.il/staff-expenses/" — חייב 200.
+- - אם 503: curl.exe -sI "https://i-feel.co.il/staff-expenses/" — אם יש header בשם X-Ifeel-Portal-Status עם הערך php-version, זו בדיוק התקלה (רץ על PHP ישן מ-7.4).
+ 
+  - תיקון מיידי: cPanel -> MultiPHP Manager -> לסמן i-feel.co.il -> PHP 8.3 (ea-php83) -> Apply.
+  - תיקון קבוע (כבר בריפו): public/.htaccess מכיל בלוק handler עם AddHandler application/x-httpd-ea-php83 .php .php8 .phtml בתוך IfModule mime_module. אסור להסיר אותו — בלעדיו כל דיפלוי מפיל שוב את הפורטל. הערה: LiteSpeed מתעלם מ-handler ברמת תת-תיקייה, לכן הבלוק חייב להיות ב-docroot (public/.htaccess), לא רק ב-staff-expenses/.htaccess.
+  - 
