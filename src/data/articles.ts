@@ -1354,7 +1354,11 @@ export const articles: Article[] = [
     title: 'חיישני הצפה בבית חכם: התראה בזמן אמת וסגירת מים אוטומטית',
     description: 'חיישני הצפה בתוך הבית ומחוצה לו מזהים נזילה ברגע שהיא מתחילה, שולחים התראה לאפליקציה ויכולים לסגור ברז מים חשמלי אוטומטית. כך השקעה קטנה מונעת נזק של מאות אלפי שקלים.',
     category: 'בית חכם',
-    updated: '2026-07-26',
+    updated: '2026-07-27',
+    image: '/assets/articles/water-leak/risco-flood-detector-he.jpg',
+    imageAlt: 'גלאי הצפה של RISCO — זיהוי נזילת מים והתראה מיידית לאפליקציה',
+    imageWidth: 1200,
+    imageHeight: 573,
     related: [
       { label: 'תרחיש חופשה בבית חכם', href: '/articles/smart-home-vacation-scenario/' },
       { label: 'בית חכם KNX', href: '/knx-smart-home/' },
