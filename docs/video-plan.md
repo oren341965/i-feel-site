@@ -26,6 +26,7 @@
 | חיבור ושיוך מזגנים שונים למערכת הבית החכם SMARTSPHERE | הדרכות שימוש | `mVP8OHtLjso` | — (קישור מ-`/help/`) |
 | מסך מגע Control4 — שליטה מרכזית | בית חכם ו-KNX | `rR8Z2e7WnEo` | — |
 | מסך שליטה — Control4 ו-Home Assistant | בית חכם ו-KNX | `v2Bj4gMtvUs` | — |
+| בקרת מבנה BMS במשרדי ישקר בגוש תפן | BMS | `nxX_o_RmnDc` | `/structure-control/projects/iscar/` |
 
 ---
 
