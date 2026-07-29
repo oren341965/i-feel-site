@@ -1,3 +1,4 @@
+
 <?php
 declare(strict_types=1);
 
@@ -41,14 +42,14 @@ function portal_normalize_vehicle_date(string $value, int $row): string
             return $date->format('Y-m-d');
         }
     }
-    throw new RuntimeException('שורה ' . $row . ': תאריך הטסט או הביטוח אינו תקין. יש להשתמש בפורמט DD/MM/YYYY או YYYY-MM-DD.');
+    throw new RuntimeException('׳©׳•׳¨׳” ' . $row . ': ׳×׳׳¨׳™׳ ׳”׳˜׳¡׳˜ ׳׳• ׳”׳‘׳™׳˜׳•׳— ׳׳™׳ ׳• ׳×׳§׳™׳. ׳™׳© ׳׳”׳©׳×׳׳© ׳‘׳₪׳•׳¨׳׳˜ DD/MM/YYYY ׳׳• YYYY-MM-DD.');
 }
 
 function portal_vehicle_source_date(string $value): string
 {
     try {
         return portal_normalize_vehicle_date($value, 0);
-    } catch (Throwable $error) {
+    } catch (Throwable) {
         return '';
     }
 }
@@ -84,6 +85,7 @@ function portal_vehicle_directory(): array
             'comprehensive_insurance_due_date' => trim((string) ($entry['comprehensive_insurance_due_date'] ?? '')),
             'comprehensive_insurance_due_label' => trim((string) ($entry['comprehensive_insurance_due_label'] ?? '')),
             'comprehensive_insurance_status' => trim((string) ($entry['comprehensive_insurance_status'] ?? '')),
+            'third_party_insurance_due_date' => trim((string) ($entry['third_party_insurance_due_date'] ?? '')),
             'insurance_company' => trim((string) ($entry['insurance_company'] ?? '')),
             'policy_number' => trim((string) ($entry['policy_number'] ?? '')),
             'current_km' => trim((string) ($entry['current_km'] ?? '')),
@@ -100,7 +102,7 @@ function portal_parse_vehicle_directory_text(string $text): array
 {
     $text = trim(str_replace("\xEF\xBB\xBF", '', $text));
     if ($text === '') {
-        throw new RuntimeException('יש להדביק לפחות שורת רכב אחת.');
+        throw new RuntimeException('׳™׳© ׳׳”׳“׳‘׳™׳§ ׳׳₪׳—׳•׳× ׳©׳•׳¨׳× ׳¨׳›׳‘ ׳׳—׳×.');
     }
 
     $employees = portal_employee_directory();
@@ -115,16 +117,16 @@ function portal_parse_vehicle_directory_text(string $text): array
         $columns = array_map('trim', str_getcsv($line, $delimiter, '"', ''));
         $first = portal_lower((string) ($columns[0] ?? ''));
         $second = portal_lower((string) ($columns[1] ?? ''));
-        if ($lineNumber === 0 && trim($first) === 'שם' && trim($second) === 'אימייל') {
+        if ($lineNumber === 0 && trim($first) === '׳©׳' && trim($second) === '׳׳™׳׳™׳™׳') {
             $sourceFormat = true;
             continue;
         }
         if ($lineNumber === 0 && (
             str_contains($first, 'email')
-            || str_contains($first, 'דוא')
-            || str_contains($first, 'מייל')
+            || str_contains($first, '׳“׳•׳')
+            || str_contains($first, '׳׳™׳™׳')
             || str_contains($second, 'plate')
-            || str_contains($second, 'מספר רכב')
+            || str_contains($second, '׳׳¡׳₪׳¨ ׳¨׳›׳‘')
         )) {
             continue;
         }
@@ -162,13 +164,13 @@ function portal_parse_vehicle_directory_text(string $text): array
         }
 
         if ($email === null || !isset($employees[$email])) {
-            throw new RuntimeException('שורה ' . $row . ': דוא"ל העובד אינו קיים בספר העובדים.');
+            throw new RuntimeException('׳©׳•׳¨׳” ' . $row . ': ׳“׳•׳"׳ ׳”׳¢׳•׳‘׳“ ׳׳™׳ ׳• ׳§׳™׳™׳ ׳‘׳¡׳₪׳¨ ׳”׳¢׳•׳‘׳“׳™׳.');
         }
         if ($plate === null) {
-            throw new RuntimeException('שורה ' . $row . ': מספר הרכב חייב להכיל 7 או 8 ספרות.');
+            throw new RuntimeException('׳©׳•׳¨׳” ' . $row . ': ׳׳¡׳₪׳¨ ׳”׳¨׳›׳‘ ׳—׳™׳™׳‘ ׳׳”׳›׳™׳ 7 ׳׳• 8 ׳¡׳₪׳¨׳•׳×.');
         }
         if ($year !== 0 && ($year < 1980 || $year > (int) date('Y') + 1)) {
-            throw new RuntimeException('שורה ' . $row . ': שנת הרכב אינה תקינה.');
+            throw new RuntimeException('׳©׳•׳¨׳” ' . $row . ': ׳©׳ ׳× ׳”׳¨׳›׳‘ ׳׳™׳ ׳” ׳×׳§׳™׳ ׳”.');
         }
 
         $entries[$plate] = [
@@ -199,7 +201,7 @@ function portal_parse_vehicle_directory_text(string $text): array
     }
 
     if ($entries === []) {
-        throw new RuntimeException('לא נמצאו שורות רכב תקינות.');
+        throw new RuntimeException('׳׳ ׳ ׳׳¦׳׳• ׳©׳•׳¨׳•׳× ׳¨׳›׳‘ ׳×׳§׳™׳ ׳•׳×.');
     }
     return $entries;
 }
@@ -231,7 +233,7 @@ function portal_save_employee_vehicle(array $user, array $input): array
 {
     $email = portal_normalize_company_email((string) ($user['email'] ?? ''));
     if ($email === null) {
-        throw new RuntimeException('לא נמצאה כתובת דוא״ל מאומתת לעובד.');
+        throw new RuntimeException('׳׳ ׳ ׳׳¦׳׳” ׳›׳×׳•׳‘׳× ׳“׳•׳׳´׳ ׳׳׳•׳׳×׳× ׳׳¢׳•׳‘׳“.');
     }
 
     $existingPlate = portal_normalize_vehicle_plate((string) ($input['existing_plate'] ?? ''));
@@ -243,29 +245,29 @@ function portal_save_employee_vehicle(array $user, array $input): array
     $insuranceDueDate = portal_normalize_vehicle_date((string) ($input['insurance_due_date'] ?? ''), 1);
 
     if ($plate === null) {
-        throw new RuntimeException('מספר הרכב חייב להכיל 7 או 8 ספרות.');
+        throw new RuntimeException('׳׳¡׳₪׳¨ ׳”׳¨׳›׳‘ ׳—׳™׳™׳‘ ׳׳”׳›׳™׳ 7 ׳׳• 8 ׳¡׳₪׳¨׳•׳×.');
     }
     if ($makeModel === '') {
-        throw new RuntimeException('יש להזין יצרן ודגם של הרכב.');
+        throw new RuntimeException('׳™׳© ׳׳”׳–׳™׳ ׳™׳¦׳¨׳ ׳•׳“׳’׳ ׳©׳ ׳”׳¨׳›׳‘.');
     }
     if ($year !== 0 && ($year < 1980 || $year > (int) date('Y') + 1)) {
-        throw new RuntimeException('שנת הרכב אינה תקינה.');
+        throw new RuntimeException('׳©׳ ׳× ׳”׳¨׳›׳‘ ׳׳™׳ ׳” ׳×׳§׳™׳ ׳”.');
     }
     if ($testDueDate === '' || $insuranceDueDate === '') {
-        throw new RuntimeException('יש להזין תאריך טסט ותאריך חידוש ביטוח.');
+        throw new RuntimeException('׳™׳© ׳׳”׳–׳™׳ ׳×׳׳¨׳™׳ ׳˜׳¡׳˜ ׳•׳×׳׳¨׳™׳ ׳—׳™׳“׳•׳© ׳‘׳™׳˜׳•׳—.');
     }
 
     $vehicles = portal_vehicle_directory();
     if ($existingPlate !== null) {
         $existing = $vehicles[$existingPlate] ?? null;
         if (!is_array($existing) || !hash_equals($email, (string) ($existing['employee_email'] ?? ''))) {
-            throw new RuntimeException('הרכב המבוקש אינו משויך לחשבון העובד המחובר.');
+            throw new RuntimeException('׳”׳¨׳›׳‘ ׳”׳׳‘׳•׳§׳© ׳׳™׳ ׳• ׳׳©׳•׳™׳ ׳׳—׳©׳‘׳•׳ ׳”׳¢׳•׳‘׳“ ׳”׳׳—׳•׳‘׳¨.');
         }
         if (!hash_equals($existingPlate, $plate)) {
-            throw new RuntimeException('לא ניתן לשנות מספר רכב קיים. יש לפנות לאורן במקרה של החלפת רכב.');
+            throw new RuntimeException('׳׳ ׳ ׳™׳×׳ ׳׳©׳ ׳•׳× ׳׳¡׳₪׳¨ ׳¨׳›׳‘ ׳§׳™׳™׳. ׳™׳© ׳׳₪׳ ׳•׳× ׳׳׳•׳¨׳ ׳‘׳׳§׳¨׳” ׳©׳ ׳”׳—׳׳₪׳× ׳¨׳›׳‘.');
         }
     } elseif (isset($vehicles[$plate])) {
-        throw new RuntimeException('מספר הרכב כבר קיים במערכת ומשויך לעובד אחר.');
+        throw new RuntimeException('׳׳¡׳₪׳¨ ׳”׳¨׳›׳‘ ׳›׳‘׳¨ ׳§׳™׳™׳ ׳‘׳׳¢׳¨׳›׳× ׳•׳׳©׳•׳™׳ ׳׳¢׳•׳‘׳“ ׳׳—׳¨.');
     }
 
     $existing = $vehicles[$plate] ?? [];
@@ -298,7 +300,7 @@ function portal_save_employee_vehicle(array $user, array $input): array
 function portal_vehicle_deadline_status(string $date, ?DateTimeImmutable $now = null): array
 {
     if ($date === '') {
-        return ['label' => 'לא הוזן', 'class' => 'status--review', 'days' => null];
+        return ['label' => '׳׳ ׳”׳•׳–׳', 'class' => 'status--review', 'days' => null];
     }
     $today = ($now ?? new DateTimeImmutable('now', new DateTimeZone('Asia/Jerusalem')))
         ->setTimezone(new DateTimeZone('Asia/Jerusalem'))
@@ -306,24 +308,24 @@ function portal_vehicle_deadline_status(string $date, ?DateTimeImmutable $now = 
     $due = new DateTimeImmutable($date . ' 00:00:00', new DateTimeZone('Asia/Jerusalem'));
     $days = (int) $today->diff($due)->format('%r%a');
     if ($days < 0) {
-        return ['label' => 'באיחור של ' . abs($days) . ' ימים', 'class' => 'status--missing', 'days' => $days];
+        return ['label' => '׳‘׳׳™׳—׳•׳¨ ׳©׳ ' . abs($days) . ' ׳™׳׳™׳', 'class' => 'status--missing', 'days' => $days];
     }
     if ($days === 0) {
-        return ['label' => 'היום', 'class' => 'status--missing', 'days' => 0];
+        return ['label' => '׳”׳™׳•׳', 'class' => 'status--missing', 'days' => 0];
     }
     if ($days <= 30) {
-        return ['label' => 'בעוד ' . $days . ' ימים', 'class' => 'status--new', 'days' => $days];
+        return ['label' => '׳‘׳¢׳•׳“ ' . $days . ' ׳™׳׳™׳', 'class' => 'status--new', 'days' => $days];
     }
-    return ['label' => 'בתוקף', 'class' => 'status--approved', 'days' => $days];
+    return ['label' => '׳‘׳×׳•׳§׳£', 'class' => 'status--approved', 'days' => $days];
 }
 
 function portal_vehicle_source_status(string $sourceStatus): array
 {
     $sourceStatus = trim($sourceStatus);
     if ($sourceStatus === '') {
-        return ['label' => 'חסר תאריך מדויק', 'class' => 'status--review', 'days' => null];
+        return ['label' => '׳—׳¡׳¨ ׳×׳׳¨׳™׳ ׳׳“׳•׳™׳§', 'class' => 'status--review', 'days' => null];
     }
-    if (str_contains($sourceStatus, 'לא תקף')) {
+    if (str_contains($sourceStatus, '׳׳ ׳×׳§׳£')) {
         return ['label' => $sourceStatus, 'class' => 'status--missing', 'days' => null];
     }
     return ['label' => $sourceStatus, 'class' => 'status--approved', 'days' => null];
@@ -355,10 +357,11 @@ function portal_process_vehicle_notifications(
             continue;
         }
         foreach ([
-            'license_due_date' => 'חידוש רישיון',
-            'test_due_date' => 'טסט שנתי',
-            'compulsory_insurance_due_date' => 'חידוש ביטוח חובה',
-            'comprehensive_insurance_due_date' => 'חידוש ביטוח מקיף',
+            'license_due_date' => '׳—׳™׳“׳•׳© ׳¨׳™׳©׳™׳•׳',
+            'test_due_date' => '׳˜׳¡׳˜ ׳©׳ ׳×׳™',
+            'compulsory_insurance_due_date' => '׳—׳™׳“׳•׳© ׳‘׳™׳˜׳•׳— ׳—׳•׳‘׳”',
+            'comprehensive_insurance_due_date' => '׳—׳™׳“׳•׳© ׳‘׳™׳˜׳•׳— ׳׳§׳™׳£',
+            'third_party_insurance_due_date' => '׳—׳™׳“׳•׳© ׳‘׳™׳˜׳•׳— ׳¦׳“ ׳’׳³',
         ] as $field => $label) {
             $date = (string) ($vehicle[$field] ?? '');
             if ($date === '') {
@@ -371,18 +374,18 @@ function portal_process_vehicle_notifications(
             }
 
             $timing = $days < 0
-                ? 'המועד עבר לפני ' . abs($days) . ' ימים'
-                : ($days === 0 ? 'המועד חל היום' : 'המועד יחול בעוד ' . $days . ' ימים');
-            $subject = 'תזכורת רכב: ' . $label . ' לרכב ' . portal_format_vehicle_plate($plate);
+                ? '׳”׳׳•׳¢׳“ ׳¢׳‘׳¨ ׳׳₪׳ ׳™ ' . abs($days) . ' ׳™׳׳™׳'
+                : ($days === 0 ? '׳”׳׳•׳¢׳“ ׳—׳ ׳”׳™׳•׳' : '׳”׳׳•׳¢׳“ ׳™׳—׳•׳ ׳‘׳¢׳•׳“ ' . $days . ' ׳™׳׳™׳');
+            $subject = '׳×׳–׳›׳•׳¨׳× ׳¨׳›׳‘: ' . $label . ' ׳׳¨׳›׳‘ ' . portal_format_vehicle_plate($plate);
             $body = implode("\r\n", [
-                'שלום ' . (string) ($employee['name'] ?? '') . ',',
+                '׳©׳׳•׳ ' . (string) ($employee['name'] ?? '') . ',',
                 '',
-                'זוהי תזכורת לגבי רכב החברה המשויך אליך:',
-                'רכב: ' . (string) ($vehicle['make_model'] ?? '') . ' · ' . portal_format_vehicle_plate($plate),
+                '׳–׳•׳”׳™ ׳×׳–׳›׳•׳¨׳× ׳׳’׳‘׳™ ׳¨׳›׳‘ ׳”׳—׳‘׳¨׳” ׳”׳׳©׳•׳™׳ ׳׳׳™׳:',
+                '׳¨׳›׳‘: ' . (string) ($vehicle['make_model'] ?? '') . ' ֲ· ' . portal_format_vehicle_plate($plate),
                 $label . ': ' . $due->format('d/m/Y'),
                 $timing . '.',
                 '',
-                'פרטי הרכב המלאים מופיעים באזור העובדים:',
+                '׳₪׳¨׳˜׳™ ׳”׳¨׳›׳‘ ׳”׳׳׳׳™׳ ׳׳•׳₪׳™׳¢׳™׳ ׳‘׳׳–׳•׳¨ ׳”׳¢׳•׳‘׳“׳™׳:',
                 'https://i-feel.co.il/staff-expenses/',
                 '',
                 'I Feel',
@@ -425,12 +428,27 @@ function portal_render_vehicle_deadline(
     $status = $date !== '' ? portal_vehicle_deadline_status($date) : portal_vehicle_source_status($sourceStatus);
     $displayDate = $date !== ''
         ? (new DateTimeImmutable($date))->format('d/m/Y')
-        : ($displayLabel !== '' ? $displayLabel : 'לא הוזן');
+        : ($displayLabel !== '' ? $displayLabel : '׳׳ ׳”׳•׳–׳');
     ?>
     <div class="vehicle-deadline">
         <span><?= portal_h($label) ?></span>
         <strong><?= portal_h($displayDate) ?></strong>
         <span class="status <?= portal_h($status['class']) ?>"><?= portal_h($status['label']) ?></span>
+    </div>
+    <?php
+}
+
+function portal_render_optional_vehicle_deadline(string $label, string $date): void
+{
+    if ($date !== '') {
+        portal_render_vehicle_deadline($label, $date, $date, '');
+        return;
+    }
+    ?>
+    <div class="vehicle-deadline">
+        <span><?= portal_h($label) ?></span>
+        <strong>׳׳ ׳ ׳“׳¨׳© / ׳׳ ׳”׳•׳–׳</strong>
+        <span class="status status--approved">׳׳•׳₪׳¦׳™׳•׳ ׳׳™</span>
     </div>
     <?php
 }
@@ -442,28 +460,29 @@ function portal_render_employee_vehicle_card(array $user): void
         return;
     }
     ?>
-    <section class="vehicle-panel" aria-label="פרטי הרכב שלי">
+    <section class="vehicle-panel" aria-label="׳₪׳¨׳˜׳™ ׳”׳¨׳›׳‘ ׳©׳׳™">
         <div class="vehicle-panel__heading">
-            <span class="vehicle-panel__icon" aria-hidden="true">🚙</span>
-            <div><p class="eyebrow">הרכב שלי</p><h2>פרטי רכב ותוקף מסמכים</h2></div>
+            <span class="vehicle-panel__icon" aria-hidden="true">נ™</span>
+            <div><p class="eyebrow">׳”׳¨׳›׳‘ ׳©׳׳™</p><h2>׳₪׳¨׳˜׳™ ׳¨׳›׳‘ ׳•׳×׳•׳§׳£ ׳׳¡׳׳›׳™׳</h2></div>
         </div>
         <div class="vehicle-grid">
             <?php foreach ($vehicles as $vehicle): ?>
                 <article class="vehicle-card">
                     <div class="vehicle-card__title">
-                        <div><strong><?= portal_h($vehicle['make_model']) ?></strong><?php if ((int) $vehicle['year'] > 0): ?><span>שנת <?= (int) $vehicle['year'] ?></span><?php endif; ?></div>
+                        <div><strong><?= portal_h($vehicle['make_model']) ?></strong><?php if ((int) $vehicle['year'] > 0): ?><span>׳©׳ ׳× <?= (int) $vehicle['year'] ?></span><?php endif; ?></div>
                         <b dir="ltr"><?= portal_h(portal_format_vehicle_plate($vehicle['plate'])) ?></b>
                     </div>
                     <div class="vehicle-deadlines">
-                        <?php portal_render_vehicle_deadline('רישיון', $vehicle['license_due_date'], $vehicle['license_due_label'], $vehicle['license_status']); ?>
-                        <?php portal_render_vehicle_deadline('טסט שנתי', $vehicle['test_due_date'], $vehicle['test_due_label'], $vehicle['test_status']); ?>
-                        <?php portal_render_vehicle_deadline('ביטוח חובה', $vehicle['compulsory_insurance_due_date'], $vehicle['compulsory_insurance_due_label'], $vehicle['compulsory_insurance_status']); ?>
-                        <?php portal_render_vehicle_deadline('ביטוח מקיף', $vehicle['comprehensive_insurance_due_date'], $vehicle['comprehensive_insurance_due_label'], $vehicle['comprehensive_insurance_status']); ?>
+                        <?php portal_render_vehicle_deadline('׳¨׳™׳©׳™׳•׳', $vehicle['license_due_date'], $vehicle['license_due_label'], $vehicle['license_status']); ?>
+                        <?php portal_render_vehicle_deadline('׳˜׳¡׳˜ ׳©׳ ׳×׳™', $vehicle['test_due_date'], $vehicle['test_due_label'], $vehicle['test_status']); ?>
+                        <?php portal_render_vehicle_deadline('׳‘׳™׳˜׳•׳— ׳—׳•׳‘׳”', $vehicle['compulsory_insurance_due_date'], $vehicle['compulsory_insurance_due_label'], $vehicle['compulsory_insurance_status']); ?>
+                        <?php portal_render_optional_vehicle_deadline('׳‘׳™׳˜׳•׳— ׳׳§׳™׳£', $vehicle['comprehensive_insurance_due_date']); ?>
+                        <?php portal_render_optional_vehicle_deadline('׳‘׳™׳˜׳•׳— ׳¦׳“ ׳’׳³', $vehicle['third_party_insurance_due_date']); ?>
                     </div>
-                    <?php if ($vehicle['current_km'] !== ''): ?><p class="vehicle-card__meta">קילומטראז' בעדכון האחרון: <b><?= portal_h(number_format((float) preg_replace('/[^\d.]/', '', $vehicle['current_km']))) ?></b></p><?php endif; ?>
-                    <?php if ($vehicle['last_update'] !== ''): ?><p class="vehicle-card__meta">עדכון אחרון: <?= portal_h($vehicle['last_update']) ?></p><?php endif; ?>
+                    <?php if ($vehicle['current_km'] !== ''): ?><p class="vehicle-card__meta">׳§׳™׳׳•׳׳˜׳¨׳׳–' ׳‘׳¢׳“׳›׳•׳ ׳”׳׳—׳¨׳•׳: <b><?= portal_h(number_format((float) preg_replace('/[^\d.]/', '', $vehicle['current_km']))) ?></b></p><?php endif; ?>
+                    <?php if ($vehicle['last_update'] !== ''): ?><p class="vehicle-card__meta">׳¢׳“׳›׳•׳ ׳׳—׳¨׳•׳: <?= portal_h($vehicle['last_update']) ?></p><?php endif; ?>
                     <?php if ($vehicle['insurance_company'] !== '' || $vehicle['policy_number'] !== ''): ?>
-                        <p class="vehicle-card__meta">ביטוח: <?= portal_h(trim($vehicle['insurance_company'] . ($vehicle['policy_number'] !== '' ? ' · פוליסה ' . $vehicle['policy_number'] : ''))) ?></p>
+                        <p class="vehicle-card__meta">׳‘׳™׳˜׳•׳—: <?= portal_h(trim($vehicle['insurance_company'] . ($vehicle['policy_number'] !== '' ? ' ֲ· ׳₪׳•׳׳™׳¡׳” ' . $vehicle['policy_number'] : ''))) ?></p>
                     <?php endif; ?>
                     <?php if ($vehicle['notes'] !== ''): ?><p class="vehicle-card__meta"><?= portal_h($vehicle['notes']) ?></p><?php endif; ?>
                 </article>
@@ -481,33 +500,34 @@ function portal_render_vehicle_admin(?array $flash): void
     ?>
     <section class="page-heading page-heading--compact">
         <div>
-            <p class="eyebrow">צי רכב פרטי</p>
-            <h1>רכבי עובדים ותזכורות</h1>
-            <p>כל רכב משויך לעובד לפי הדוא"ל הארגוני. המידע נשמר מחוץ לאתר הציבורי, וייבוא חוזר מעדכן ומוסיף בלי למחוק רכבים אחרים.</p>
+            <p class="eyebrow">׳¦׳™ ׳¨׳›׳‘ ׳₪׳¨׳˜׳™</p>
+            <h1>׳¨׳›׳‘׳™ ׳¢׳•׳‘׳“׳™׳ ׳•׳×׳–׳›׳•׳¨׳•׳×</h1>
+            <p>׳›׳ ׳¨׳›׳‘ ׳׳©׳•׳™׳ ׳׳¢׳•׳‘׳“ ׳׳₪׳™ ׳”׳“׳•׳"׳ ׳”׳׳¨׳’׳•׳ ׳™. ׳”׳׳™׳“׳¢ ׳ ׳©׳׳¨ ׳׳—׳•׳¥ ׳׳׳×׳¨ ׳”׳¦׳™׳‘׳•׳¨׳™, ׳•׳™׳™׳‘׳•׳ ׳—׳•׳–׳¨ ׳׳¢׳“׳›׳ ׳•׳׳•׳¡׳™׳£ ׳‘׳׳™ ׳׳׳—׳•׳§ ׳¨׳›׳‘׳™׳ ׳׳—׳¨׳™׳.</p>
         </div>
-        <div class="total-card"><span>רכבים שנשמרו</span><strong><?= count($vehicles) ?></strong></div>
+        <div class="total-card"><span>׳¨׳›׳‘׳™׳ ׳©׳ ׳©׳׳¨׳•</span><strong><?= count($vehicles) ?></strong></div>
     </section>
 
     <section class="detail-card">
-        <h2>רכבים במערכת</h2>
+        <h2>׳¨׳›׳‘׳™׳ ׳‘׳׳¢׳¨׳›׳×</h2>
         <div class="table-wrap">
             <table class="records-table">
-                <thead><tr><th>עובד</th><th>רכב</th><th>מספר</th><th>רישיון</th><th>טסט</th><th>ביטוח חובה</th><th>ביטוח מקיף</th><th>ק"מ / עדכון</th></tr></thead>
+                <thead><tr><th>׳¢׳•׳‘׳“</th><th>׳¨׳›׳‘</th><th>׳׳¡׳₪׳¨</th><th>׳¨׳™׳©׳™׳•׳</th><th>׳˜׳¡׳˜</th><th>׳‘׳™׳˜׳•׳— ׳—׳•׳‘׳”</th><th>׳‘׳™׳˜׳•׳— ׳׳§׳™׳£</th><th>׳‘׳™׳˜׳•׳— ׳¦׳“ ׳’׳³</th><th>׳§"׳ / ׳¢׳“׳›׳•׳</th></tr></thead>
                 <tbody>
                 <?php if ($vehicles === []): ?>
-                    <tr><td colspan="8" class="empty-cell">עדיין לא נשמרו רכבים.</td></tr>
+                    <tr><td colspan="9" class="empty-cell">׳¢׳“׳™׳™׳ ׳׳ ׳ ׳©׳׳¨׳• ׳¨׳›׳‘׳™׳.</td></tr>
                 <?php else: ?>
                     <?php foreach ($vehicles as $vehicle): ?>
                         <?php $employee = $employees[$vehicle['employee_email']] ?? ['name' => '', 'email' => $vehicle['employee_email']]; ?>
                         <tr>
                             <td><strong><?= portal_h($employee['name']) ?></strong><small><?= portal_h($employee['email']) ?></small></td>
-                            <td><?= portal_h($vehicle['make_model']) ?><?= (int) $vehicle['year'] > 0 ? ' · ' . (int) $vehicle['year'] : '' ?></td>
+                            <td><?= portal_h($vehicle['make_model']) ?><?= (int) $vehicle['year'] > 0 ? ' ֲ· ' . (int) $vehicle['year'] : '' ?></td>
                             <td dir="ltr"><?= portal_h(portal_format_vehicle_plate($vehicle['plate'])) ?></td>
-                            <td><?php portal_render_vehicle_deadline('רישיון', $vehicle['license_due_date'], $vehicle['license_due_label'], $vehicle['license_status']); ?></td>
-                            <td><?php portal_render_vehicle_deadline('טסט', $vehicle['test_due_date'], $vehicle['test_due_label'], $vehicle['test_status']); ?></td>
-                            <td><?php portal_render_vehicle_deadline('חובה', $vehicle['compulsory_insurance_due_date'], $vehicle['compulsory_insurance_due_label'], $vehicle['compulsory_insurance_status']); ?></td>
-                            <td><?php portal_render_vehicle_deadline('מקיף', $vehicle['comprehensive_insurance_due_date'], $vehicle['comprehensive_insurance_due_label'], $vehicle['comprehensive_insurance_status']); ?></td>
-                            <td><?= $vehicle['current_km'] !== '' ? portal_h($vehicle['current_km']) . ' ק"מ' : '—' ?><?= $vehicle['last_update'] !== '' ? '<br><small>' . portal_h($vehicle['last_update']) . '</small>' : '' ?></td>
+                            <td><?php portal_render_vehicle_deadline('׳¨׳™׳©׳™׳•׳', $vehicle['license_due_date'], $vehicle['license_due_label'], $vehicle['license_status']); ?></td>
+                            <td><?php portal_render_vehicle_deadline('׳˜׳¡׳˜', $vehicle['test_due_date'], $vehicle['test_due_label'], $vehicle['test_status']); ?></td>
+                            <td><?php portal_render_vehicle_deadline('׳—׳•׳‘׳”', $vehicle['compulsory_insurance_due_date'], $vehicle['compulsory_insurance_due_label'], $vehicle['compulsory_insurance_status']); ?></td>
+                            <td><?php portal_render_optional_vehicle_deadline('׳׳§׳™׳£', $vehicle['comprehensive_insurance_due_date']); ?></td>
+                            <td><?php portal_render_optional_vehicle_deadline('׳¦׳“ ׳’׳³', $vehicle['third_party_insurance_due_date']); ?></td>
+                            <td><?= $vehicle['current_km'] !== '' ? portal_h($vehicle['current_km']) . ' ׳§"׳' : 'ג€”' ?><?= $vehicle['last_update'] !== '' ? '<br><small>' . portal_h($vehicle['last_update']) . '</small>' : '' ?></td>
                         </tr>
                     <?php endforeach; ?>
                 <?php endif; ?>
@@ -517,23 +537,48 @@ function portal_render_vehicle_admin(?array $flash): void
     </section>
 
     <section class="detail-card">
-        <h2>ייבוא או עדכון רכבים</h2>
-            <p>אפשר להדביק ישירות את עמודות A–V מהגיליון "תקינות רכבים", או להשתמש בתבנית המצומצמת. לפני הייבוא, העובד חייב להופיע במסך "עובדים וימי הולדת". לשיוך ראשוני מספיקים דוא"ל העובד ומספר הרכב; את הדגם, הטסט והביטוח העובד יכול להשלים לאחר הכניסה.</p>
+        <h2>׳™׳™׳‘׳•׳ ׳׳• ׳¢׳“׳›׳•׳ ׳¨׳›׳‘׳™׳</h2>
+            <p>׳׳₪׳©׳¨ ׳׳”׳“׳‘׳™׳§ ׳™׳©׳™׳¨׳•׳× ׳׳× ׳¢׳׳•׳“׳•׳× Aג€“V ׳׳”׳’׳™׳׳™׳•׳ "׳×׳§׳™׳ ׳•׳× ׳¨׳›׳‘׳™׳", ׳׳• ׳׳”׳©׳×׳׳© ׳‘׳×׳‘׳ ׳™׳× ׳”׳׳¦׳•׳׳¦׳׳×. ׳׳₪׳ ׳™ ׳”׳™׳™׳‘׳•׳, ׳”׳¢׳•׳‘׳“ ׳—׳™׳™׳‘ ׳׳”׳•׳₪׳™׳¢ ׳‘׳׳¡׳ "׳¢׳•׳‘׳“׳™׳ ׳•׳™׳׳™ ׳”׳•׳׳“׳×". ׳׳©׳™׳•׳ ׳¨׳׳©׳•׳ ׳™ ׳׳¡׳₪׳™׳§׳™׳ ׳“׳•׳"׳ ׳”׳¢׳•׳‘׳“ ׳•׳׳¡׳₪׳¨ ׳”׳¨׳›׳‘; ׳׳× ׳”׳“׳’׳, ׳”׳˜׳¡׳˜ ׳•׳”׳‘׳™׳˜׳•׳— ׳”׳¢׳•׳‘׳“ ׳™׳›׳•׳ ׳׳”׳©׳׳™׳ ׳׳׳—׳¨ ׳”׳›׳ ׳™׳¡׳”.</p>
         <form method="post" class="form-grid">
             <input type="hidden" name="csrf" value="<?= portal_h(portal_csrf_token()) ?>">
             <input type="hidden" name="action" value="import_vehicle_directory">
             <label class="field field--full">
-                <span>נתוני רכבים</span>
-                <textarea name="vehicle_directory_text" rows="9" maxlength="60000" required placeholder="דוא״ל עובד	מספר רכב	יצרן ודגם	שנתון	תוקף טסט	תוקף ביטוח	חברת ביטוח	מספר פוליסה	הערות"></textarea>
+                <span>׳ ׳×׳•׳ ׳™ ׳¨׳›׳‘׳™׳</span>
+                <textarea name="vehicle_directory_text" rows="9" maxlength="60000" required placeholder="׳“׳•׳׳´׳ ׳¢׳•׳‘׳“	׳׳¡׳₪׳¨ ׳¨׳›׳‘	׳™׳¦׳¨׳ ׳•׳“׳’׳	׳©׳ ׳×׳•׳	׳×׳•׳§׳£ ׳˜׳¡׳˜	׳×׳•׳§׳£ ׳‘׳™׳˜׳•׳—	׳—׳‘׳¨׳× ׳‘׳™׳˜׳•׳—	׳׳¡׳₪׳¨ ׳₪׳•׳׳™׳¡׳”	׳”׳¢׳¨׳•׳×"></textarea>
             </label>
-            <p class="form-note field--full">המערכת מזהה אוטומטית את מבנה הגיליון הקיים. בתבנית המצומצמת רק דוא"ל העובד ומספר הרכב הם חובה. יתר העמודות הן: יצרן ודגם, שנתון, תוקף טסט, תוקף ביטוח, חברת ביטוח, מספר פוליסה והערות.</p>
-            <div class="field--full"><button type="submit" class="button button--primary">שמירת הרכבים</button></div>
+            <p class="form-note field--full">׳”׳׳¢׳¨׳›׳× ׳׳–׳”׳” ׳׳•׳˜׳•׳׳˜׳™׳× ׳׳× ׳׳‘׳ ׳” ׳”׳’׳™׳׳™׳•׳ ׳”׳§׳™׳™׳. ׳‘׳×׳‘׳ ׳™׳× ׳”׳׳¦׳•׳׳¦׳׳× ׳¨׳§ ׳“׳•׳"׳ ׳”׳¢׳•׳‘׳“ ׳•׳׳¡׳₪׳¨ ׳”׳¨׳›׳‘ ׳”׳ ׳—׳•׳‘׳”. ׳™׳×׳¨ ׳”׳¢׳׳•׳“׳•׳× ׳”׳: ׳™׳¦׳¨׳ ׳•׳“׳’׳, ׳©׳ ׳×׳•׳, ׳×׳•׳§׳£ ׳˜׳¡׳˜, ׳×׳•׳§׳£ ׳‘׳™׳˜׳•׳—, ׳—׳‘׳¨׳× ׳‘׳™׳˜׳•׳—, ׳׳¡׳₪׳¨ ׳₪׳•׳׳™׳¡׳” ׳•׳”׳¢׳¨׳•׳×.</p>
+            <div class="field--full"><button type="submit" class="button button--primary">׳©׳׳™׳¨׳× ׳”׳¨׳›׳‘׳™׳</button></div>
         </form>
     </section>
 
+    <section class="detail-card vehicle-document-admin">
+        <h2>׳”׳¢׳׳׳× ׳׳¡׳׳ ׳¨׳›׳‘ ׳•׳¢׳“׳›׳•׳ ׳×׳•׳§׳£</h2>
+        <p>׳”׳׳¡׳׳ ׳ ׳©׳׳¨ ׳‘׳׳—׳¡׳•׳ ׳”׳₪׳¨׳˜׳™ ׳•׳׳™׳ ׳• ׳ ׳’׳™׳© ׳‘׳§׳™׳©׳•׳¨ ׳¦׳™׳‘׳•׳¨׳™. ׳”׳¢׳•׳‘׳“ ׳”׳׳©׳•׳™׳ ׳•׳”׳׳ ׳”׳ ׳‘׳׳‘׳“ ׳™׳›׳•׳׳™׳ ׳׳”׳•׳¨׳™׳“ ׳׳•׳×׳•.</p>
+        <form method="post" enctype="multipart/form-data" class="field-grid field-grid--2">
+            <input type="hidden" name="csrf" value="<?= portal_h(portal_csrf_token()) ?>">
+            <input type="hidden" name="action" value="save_vehicle_document">
+            <input type="hidden" name="MAX_FILE_SIZE" value="<?= IFEEL_PORTAL_MAX_FILE_BYTES ?>">
+            <label class="field"><span>׳¨׳›׳‘ <b>*</b></span><select name="vehicle_document_plate" required><option value="">׳‘׳—׳™׳¨׳”</option><?php foreach ($vehicles as $vehicle): $employee = $employees[$vehicle['employee_email']] ?? []; ?><option value="<?= portal_h($vehicle['plate']) ?>"><?= portal_h(portal_format_vehicle_plate($vehicle['plate']) . ' ג€” ' . ($employee['name'] ?? $vehicle['employee_email'])) ?></option><?php endforeach; ?></select></label>
+            <label class="field"><span>׳¡׳•׳’ ׳׳¡׳׳ <b>*</b></span><select name="vehicle_document_type" required><option value="">׳‘׳—׳™׳¨׳”</option><?php foreach (portal_vehicle_document_type_labels() as $value => $label): ?><option value="<?= portal_h($value) ?>"><?= portal_h($label) ?></option><?php endforeach; ?></select></label>
+            <label class="field"><span>׳×׳•׳§׳£ ׳”׳׳¡׳׳</span><input type="date" name="vehicle_document_expires_on"></label>
+            <label class="field"><span>׳׳¡׳₪׳¨ ׳₪׳•׳׳™׳¡׳” / ׳׳¡׳׳›׳×׳”</span><input type="text" name="vehicle_document_policy_number" maxlength="160"></label>
+            <label class="field field--full"><span>׳§׳•׳‘׳¥ PDF ׳׳• ׳×׳׳•׳ ׳” <b>*</b></span><input type="file" name="vehicle_document_file" required accept=".pdf,image/jpeg,image/png,image/webp,image/heic,image/heif,image/avif"></label>
+            <p class="form-note field--full">׳׳¨׳™׳©׳™׳•׳, ׳˜׳¡׳˜ ׳•׳‘׳™׳˜׳•׳— ׳™׳© ׳׳”׳–׳™׳ ׳×׳׳¨׳™׳ ׳×׳•׳§׳£. ׳‘׳™׳˜׳•׳— ׳¦׳“ ׳’׳³ ׳ ׳©׳׳¨ ׳‘׳ ׳₪׳¨׳“ ׳•׳׳™׳ ׳• ׳׳¡׳•׳׳ ׳›׳‘׳™׳˜׳•׳— ׳׳§׳™׳£.</p>
+            <div class="field--full"><button type="submit" class="button button--primary">׳©׳׳™׳¨׳× ׳”׳׳¡׳׳ ׳•׳¢׳“׳›׳•׳ ׳”׳×׳•׳§׳£</button></div>
+        </form>
+        <div class="vehicle-document-groups">
+            <?php foreach ($vehicles as $vehicle): $documents = portal_vehicle_documents((string) $vehicle['plate']); if ($documents === []) continue; ?>
+                <div class="vehicle-document-group"><h3><?= portal_h(portal_format_vehicle_plate($vehicle['plate'])) ?></h3><div class="document-list">
+                <?php foreach ($documents as $document): ?><div><strong><?= portal_h($document['type_label'] ?? '׳׳¡׳׳') ?></strong><span><a class="text-link" href="<?= portal_h(portal_url(['action' => 'vehicle_document_download', 'plate' => $vehicle['plate'], 'document' => $document['id'] ?? ''])) ?>"><?= portal_h($document['name'] ?? '') ?></a><?php if (($document['policy_number'] ?? '') !== ''): ?><small>׳₪׳•׳׳™׳¡׳”/׳׳¡׳׳›׳×׳”: <?= portal_h($document['policy_number']) ?></small><?php endif; ?></span><span><?= portal_h(($document['expires_on'] ?? '') !== '' ? '׳×׳•׳§׳£ ' . $document['expires_on'] : '׳׳׳ ׳×׳•׳§׳£') ?></span></div><?php endforeach; ?>
+                </div></div>
+            <?php endforeach; ?>
+        </div>
+    </section>
+
     <section class="detail-card">
-        <h2>מועדי תזכורת אוטומטיים</h2>
-        <p>העובד ואורן יקבלו דוא"ל על רישיון, טסט, ביטוח חובה וביטוח מקיף — 30, 14, 7 ויום אחד לפני המועד, ביום המועד, וכן יום, שבוע וחודש לאחר מועד שחלף. תזכורת נשלחת רק כאשר בגיליון קיים תאריך מלא ומדויק.</p>
+        <h2>׳׳•׳¢׳“׳™ ׳×׳–׳›׳•׳¨׳× ׳׳•׳˜׳•׳׳˜׳™׳™׳</h2>
+        <p>׳”׳¢׳•׳‘׳“ ׳•׳׳•׳¨׳ ׳™׳§׳‘׳׳• ׳“׳•׳"׳ ׳¢׳ ׳¨׳™׳©׳™׳•׳, ׳˜׳¡׳˜, ׳‘׳™׳˜׳•׳— ׳—׳•׳‘׳”, ׳‘׳™׳˜׳•׳— ׳׳§׳™׳£ ׳׳• ׳‘׳™׳˜׳•׳— ׳¦׳“ ׳’׳³ ג€” 30, 14, 7 ׳•׳™׳•׳ ׳׳—׳“ ׳׳₪׳ ׳™ ׳”׳׳•׳¢׳“, ׳‘׳™׳•׳ ׳”׳׳•׳¢׳“, ׳•׳›׳ ׳™׳•׳, ׳©׳‘׳•׳¢ ׳•׳—׳•׳“׳© ׳׳׳—׳¨ ׳׳•׳¢׳“ ׳©׳—׳׳£. ׳×׳–׳›׳•׳¨׳× ׳ ׳©׳׳—׳× ׳¨׳§ ׳›׳׳©׳¨ ׳§׳™׳™׳ ׳×׳׳¨׳™׳ ׳׳׳ ׳•׳׳“׳•׳™׳§.</p>
     </section>
     <?php
 }
+
