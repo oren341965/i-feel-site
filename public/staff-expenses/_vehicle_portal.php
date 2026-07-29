@@ -58,14 +58,15 @@ function portal_vehicle_document_type_labels(): array
 
 function portal_vehicle_document_expiry_field(string $type): ?string
 {
-    return match ($type) {
+    $fields = [
         'license' => 'license_due_date',
         'test' => 'test_due_date',
         'compulsory' => 'compulsory_insurance_due_date',
         'comprehensive' => 'comprehensive_insurance_due_date',
         'third_party' => 'third_party_insurance_due_date',
-        default => null,
-    };
+    ];
+
+    return $fields[$type] ?? null;
 }
 
 function portal_vehicle_document_directory(string $plate, string $documentId): string
