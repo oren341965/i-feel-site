@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-const IFEEL_PORTAL_MIN_PHP_VERSION_ID = 80100;
+const IFEEL_PORTAL_MIN_PHP_VERSION_ID = 70400;
 
 function portal_ini_bytes(string $value): int
 {
