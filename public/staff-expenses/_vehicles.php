@@ -48,7 +48,7 @@ function portal_vehicle_source_date(string $value): string
 {
     try {
         return portal_normalize_vehicle_date($value, 0);
-    } catch (Throwable) {
+    } catch (Throwable $error) {
         return '';
     }
 }
