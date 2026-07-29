@@ -17,7 +17,7 @@ require_once __DIR__ . '/_form.php';
 require_once __DIR__ . '/_admin.php';
 require_once __DIR__ . '/_readiness.php';
 
-function portal_render_maintenance_page(?string $requestId = null): void
+function portal_render_maintenance_page(?string $requestId = null): never
 {
     http_response_code(503);
     header('Retry-After: 300');
@@ -158,6 +158,9 @@ try {
     }
     if ($action === 'gift_download') {
         portal_handle_birthday_gift_download($user);
+    }
+    if ($action === 'vehicle_document_download') {
+        portal_handle_vehicle_document_download($user);
     }
 
     $tab = trim((string) ($_GET['tab'] ?? 'new'));

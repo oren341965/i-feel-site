@@ -169,7 +169,7 @@ function portal_notify_work_report(array $report): bool
     return true;
 }
 
-function portal_handle_work_report_post(array $user): void
+function portal_handle_work_report_post(array $user): never
 {
     portal_verify_csrf();
     $type = portal_post('work_type', 40);

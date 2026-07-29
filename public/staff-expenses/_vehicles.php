@@ -84,6 +84,7 @@ function portal_vehicle_directory(): array
             'comprehensive_insurance_due_date' => trim((string) ($entry['comprehensive_insurance_due_date'] ?? '')),
             'comprehensive_insurance_due_label' => trim((string) ($entry['comprehensive_insurance_due_label'] ?? '')),
             'comprehensive_insurance_status' => trim((string) ($entry['comprehensive_insurance_status'] ?? '')),
+            'third_party_insurance_due_date' => trim((string) ($entry['third_party_insurance_due_date'] ?? '')),
             'insurance_company' => trim((string) ($entry['insurance_company'] ?? '')),
             'policy_number' => trim((string) ($entry['policy_number'] ?? '')),
             'current_km' => trim((string) ($entry['current_km'] ?? '')),
@@ -359,6 +360,7 @@ function portal_process_vehicle_notifications(
             'test_due_date' => 'טסט שנתי',
             'compulsory_insurance_due_date' => 'חידוש ביטוח חובה',
             'comprehensive_insurance_due_date' => 'חידוש ביטוח מקיף',
+            'third_party_insurance_due_date' => 'חידוש ביטוח צד ג׳',
         ] as $field => $label) {
             $date = (string) ($vehicle[$field] ?? '');
             if ($date === '') {
@@ -435,6 +437,21 @@ function portal_render_vehicle_deadline(
     <?php
 }
 
+function portal_render_optional_vehicle_deadline(string $label, string $date): void
+{
+    if ($date !== '') {
+        portal_render_vehicle_deadline($label, $date, $date, '');
+        return;
+    }
+    ?>
+    <div class="vehicle-deadline">
+        <span><?= portal_h($label) ?></span>
+        <strong>לא נדרש / לא הוזן</strong>
+        <span class="status status--approved">אופציונלי</span>
+    </div>
+    <?php
+}
+
 function portal_render_employee_vehicle_card(array $user): void
 {
     $vehicles = portal_vehicles_for_employee($user);
@@ -458,7 +475,8 @@ function portal_render_employee_vehicle_card(array $user): void
                         <?php portal_render_vehicle_deadline('רישיון', $vehicle['license_due_date'], $vehicle['license_due_label'], $vehicle['license_status']); ?>
                         <?php portal_render_vehicle_deadline('טסט שנתי', $vehicle['test_due_date'], $vehicle['test_due_label'], $vehicle['test_status']); ?>
                         <?php portal_render_vehicle_deadline('ביטוח חובה', $vehicle['compulsory_insurance_due_date'], $vehicle['compulsory_insurance_due_label'], $vehicle['compulsory_insurance_status']); ?>
-                        <?php portal_render_vehicle_deadline('ביטוח מקיף', $vehicle['comprehensive_insurance_due_date'], $vehicle['comprehensive_insurance_due_label'], $vehicle['comprehensive_insurance_status']); ?>
+                        <?php portal_render_optional_vehicle_deadline('ביטוח מקיף', $vehicle['comprehensive_insurance_due_date']); ?>
+                        <?php portal_render_optional_vehicle_deadline('ביטוח צד ג׳', $vehicle['third_party_insurance_due_date']); ?>
                     </div>
                     <?php if ($vehicle['current_km'] !== ''): ?><p class="vehicle-card__meta">קילומטראז' בעדכון האחרון: <b><?= portal_h(number_format((float) preg_replace('/[^\d.]/', '', $vehicle['current_km']))) ?></b></p><?php endif; ?>
                     <?php if ($vehicle['last_update'] !== ''): ?><p class="vehicle-card__meta">עדכון אחרון: <?= portal_h($vehicle['last_update']) ?></p><?php endif; ?>
@@ -492,10 +510,10 @@ function portal_render_vehicle_admin(?array $flash): void
         <h2>רכבים במערכת</h2>
         <div class="table-wrap">
             <table class="records-table">
-                <thead><tr><th>עובד</th><th>רכב</th><th>מספר</th><th>רישיון</th><th>טסט</th><th>ביטוח חובה</th><th>ביטוח מקיף</th><th>ק"מ / עדכון</th></tr></thead>
+                <thead><tr><th>עובד</th><th>רכב</th><th>מספר</th><th>רישיון</th><th>טסט</th><th>ביטוח חובה</th><th>ביטוח מקיף</th><th>ביטוח צד ג׳</th><th>ק"מ / עדכון</th></tr></thead>
                 <tbody>
                 <?php if ($vehicles === []): ?>
-                    <tr><td colspan="8" class="empty-cell">עדיין לא נשמרו רכבים.</td></tr>
+                    <tr><td colspan="9" class="empty-cell">עדיין לא נשמרו רכבים.</td></tr>
                 <?php else: ?>
                     <?php foreach ($vehicles as $vehicle): ?>
                         <?php $employee = $employees[$vehicle['employee_email']] ?? ['name' => '', 'email' => $vehicle['employee_email']]; ?>
@@ -506,7 +524,8 @@ function portal_render_vehicle_admin(?array $flash): void
                             <td><?php portal_render_vehicle_deadline('רישיון', $vehicle['license_due_date'], $vehicle['license_due_label'], $vehicle['license_status']); ?></td>
                             <td><?php portal_render_vehicle_deadline('טסט', $vehicle['test_due_date'], $vehicle['test_due_label'], $vehicle['test_status']); ?></td>
                             <td><?php portal_render_vehicle_deadline('חובה', $vehicle['compulsory_insurance_due_date'], $vehicle['compulsory_insurance_due_label'], $vehicle['compulsory_insurance_status']); ?></td>
-                            <td><?php portal_render_vehicle_deadline('מקיף', $vehicle['comprehensive_insurance_due_date'], $vehicle['comprehensive_insurance_due_label'], $vehicle['comprehensive_insurance_status']); ?></td>
+                            <td><?php portal_render_optional_vehicle_deadline('מקיף', $vehicle['comprehensive_insurance_due_date']); ?></td>
+                            <td><?php portal_render_optional_vehicle_deadline('צד ג׳', $vehicle['third_party_insurance_due_date']); ?></td>
                             <td><?= $vehicle['current_km'] !== '' ? portal_h($vehicle['current_km']) . ' ק"מ' : '—' ?><?= $vehicle['last_update'] !== '' ? '<br><small>' . portal_h($vehicle['last_update']) . '</small>' : '' ?></td>
                         </tr>
                     <?php endforeach; ?>
@@ -531,9 +550,33 @@ function portal_render_vehicle_admin(?array $flash): void
         </form>
     </section>
 
+    <section class="detail-card vehicle-document-admin">
+        <h2>העלאת מסמך רכב ועדכון תוקף</h2>
+        <p>המסמך נשמר באחסון הפרטי ואינו נגיש בקישור ציבורי. העובד המשויך והמנהל בלבד יכולים להוריד אותו.</p>
+        <form method="post" enctype="multipart/form-data" class="field-grid field-grid--2">
+            <input type="hidden" name="csrf" value="<?= portal_h(portal_csrf_token()) ?>">
+            <input type="hidden" name="action" value="save_vehicle_document">
+            <input type="hidden" name="MAX_FILE_SIZE" value="<?= IFEEL_PORTAL_MAX_FILE_BYTES ?>">
+            <label class="field"><span>רכב <b>*</b></span><select name="vehicle_document_plate" required><option value="">בחירה</option><?php foreach ($vehicles as $vehicle): $employee = $employees[$vehicle['employee_email']] ?? []; ?><option value="<?= portal_h($vehicle['plate']) ?>"><?= portal_h(portal_format_vehicle_plate($vehicle['plate']) . ' — ' . ($employee['name'] ?? $vehicle['employee_email'])) ?></option><?php endforeach; ?></select></label>
+            <label class="field"><span>סוג מסמך <b>*</b></span><select name="vehicle_document_type" required><option value="">בחירה</option><?php foreach (portal_vehicle_document_type_labels() as $value => $label): ?><option value="<?= portal_h($value) ?>"><?= portal_h($label) ?></option><?php endforeach; ?></select></label>
+            <label class="field"><span>תוקף המסמך</span><input type="date" name="vehicle_document_expires_on"></label>
+            <label class="field"><span>מספר פוליסה / אסמכתה</span><input type="text" name="vehicle_document_policy_number" maxlength="160"></label>
+            <label class="field field--full"><span>קובץ PDF או תמונה <b>*</b></span><input type="file" name="vehicle_document_file" required accept=".pdf,image/jpeg,image/png,image/webp,image/heic,image/heif,image/avif"></label>
+            <p class="form-note field--full">לרישיון, טסט וביטוח יש להזין תאריך תוקף. ביטוח צד ג׳ נשמר בנפרד ואינו מסומן כביטוח מקיף.</p>
+            <div class="field--full"><button type="submit" class="button button--primary">שמירת המסמך ועדכון התוקף</button></div>
+        </form>
+        <div class="vehicle-document-groups">
+            <?php foreach ($vehicles as $vehicle): $documents = portal_vehicle_documents((string) $vehicle['plate']); if ($documents === []) continue; ?>
+                <div class="vehicle-document-group"><h3><?= portal_h(portal_format_vehicle_plate($vehicle['plate'])) ?></h3><div class="document-list">
+                <?php foreach ($documents as $document): ?><div><strong><?= portal_h($document['type_label'] ?? 'מסמך') ?></strong><span><a class="text-link" href="<?= portal_h(portal_url(['action' => 'vehicle_document_download', 'plate' => $vehicle['plate'], 'document' => $document['id'] ?? ''])) ?>"><?= portal_h($document['name'] ?? '') ?></a><?php if (($document['policy_number'] ?? '') !== ''): ?><small>פוליסה/אסמכתה: <?= portal_h($document['policy_number']) ?></small><?php endif; ?></span><span><?= portal_h(($document['expires_on'] ?? '') !== '' ? 'תוקף ' . $document['expires_on'] : 'ללא תוקף') ?></span></div><?php endforeach; ?>
+                </div></div>
+            <?php endforeach; ?>
+        </div>
+    </section>
+
     <section class="detail-card">
         <h2>מועדי תזכורת אוטומטיים</h2>
-        <p>העובד ואורן יקבלו דוא"ל על רישיון, טסט, ביטוח חובה וביטוח מקיף — 30, 14, 7 ויום אחד לפני המועד, ביום המועד, וכן יום, שבוע וחודש לאחר מועד שחלף. תזכורת נשלחת רק כאשר בגיליון קיים תאריך מלא ומדויק.</p>
+        <p>העובד ואורן יקבלו דוא"ל על רישיון, טסט, ביטוח חובה, ביטוח מקיף או ביטוח צד ג׳ — 30, 14, 7 ויום אחד לפני המועד, ביום המועד, וכן יום, שבוע וחודש לאחר מועד שחלף. תזכורת נשלחת רק כאשר קיים תאריך מלא ומדויק.</p>
     </section>
     <?php
 }

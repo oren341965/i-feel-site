@@ -43,6 +43,60 @@ function portal_vehicle_document_manifest_file(): string
     return portal_storage_root() . DIRECTORY_SEPARATOR . 'security' . DIRECTORY_SEPARATOR . 'vehicle-documents.json';
 }
 
+function portal_vehicle_document_type_labels(): array
+{
+    return [
+        'license' => 'רישיון רכב',
+        'test' => 'אישור טסט',
+        'compulsory' => 'ביטוח חובה',
+        'comprehensive' => 'ביטוח מקיף',
+        'third_party' => 'ביטוח צד ג׳',
+        'other' => 'מסמך רכב אחר',
+    ];
+}
+
+function portal_vehicle_document_expiry_field(string $type): ?string
+{
+    $fields = [
+        'license' => 'license_due_date',
+        'test' => 'test_due_date',
+        'compulsory' => 'compulsory_insurance_due_date',
+        'comprehensive' => 'comprehensive_insurance_due_date',
+        'third_party' => 'third_party_insurance_due_date',
+    ];
+
+    return $fields[$type] ?? null;
+}
+
+function portal_vehicle_document_directory(string $plate, string $documentId): string
+{
+    $plate = portal_normalize_vehicle_plate($plate) ?? '';
+    if ($plate === '' || !preg_match('/^[a-f0-9]{24}$/', $documentId)) {
+        throw new RuntimeException('מסמך הרכב המבוקש אינו תקין.');
+    }
+    return portal_storage_root() . DIRECTORY_SEPARATOR . 'vehicle-documents'
+        . DIRECTORY_SEPARATOR . $plate . DIRECTORY_SEPARATOR . $documentId;
+}
+
+function portal_vehicle_documents(string $plate): array
+{
+    $plate = portal_normalize_vehicle_plate($plate) ?? '';
+    if ($plate === '') {
+        return [];
+    }
+    $manifest = portal_json_read(portal_vehicle_document_manifest_file());
+    $documents = $manifest[$plate] ?? [];
+    if (!is_array($documents)) {
+        return [];
+    }
+    $documents = array_values(array_filter($documents, 'is_array'));
+    usort($documents, static fn(array $a, array $b): int => strcmp(
+        (string) ($b['uploaded_at'] ?? ''),
+        (string) ($a['uploaded_at'] ?? '')
+    ));
+    return $documents;
+}
+
 function portal_vehicle_documents_for_user(array $user, string $plate): array
 {
     $email = portal_normalize_company_email((string) ($user['email'] ?? '')) ?? '';
@@ -51,9 +105,150 @@ function portal_vehicle_documents_for_user(array $user, string $plate): array
     if (!is_array($vehicle) || (($user['role'] ?? '') !== 'admin' && !hash_equals($email, (string) ($vehicle['employee_email'] ?? '')))) {
         return [];
     }
+    return portal_vehicle_documents($plate);
+}
+
+function portal_register_vehicle_document(
+    string $plate,
+    string $type,
+    string $expiresOn,
+    string $policyNumber,
+    array $attachment,
+    ?string $documentId = null
+): array {
+    $plate = portal_normalize_vehicle_plate($plate) ?? '';
+    $vehicles = portal_vehicle_directory();
+    if ($plate === '' || !isset($vehicles[$plate])) {
+        throw new RuntimeException('הרכב שנבחר אינו קיים במערכת.');
+    }
+    $labels = portal_vehicle_document_type_labels();
+    if (!isset($labels[$type])) {
+        throw new RuntimeException('סוג מסמך הרכב אינו תקין.');
+    }
+    if ($expiresOn !== '' && !portal_valid_date($expiresOn)) {
+        throw new RuntimeException('תאריך התוקף אינו תקין.');
+    }
+    if ($type !== 'other' && $expiresOn === '') {
+        throw new RuntimeException('יש להזין תאריך תוקף למסמך.');
+    }
+    if (($attachment['storage_name'] ?? '') === '') {
+        throw new RuntimeException('חובה לצרף מסמך רכב.');
+    }
+
+    $documentId ??= bin2hex(random_bytes(12));
+    if (!preg_match('/^[a-f0-9]{24}$/', $documentId)) {
+        throw new RuntimeException('מזהה מסמך הרכב אינו תקין.');
+    }
+    $document = [
+        'id' => $documentId,
+        'type' => $type,
+        'type_label' => $labels[$type],
+        'name' => (string) ($attachment['original_name'] ?? 'מסמך רכב'),
+        'expires_on' => $expiresOn,
+        'policy_number' => portal_substr(trim($policyNumber), 0, 160),
+        'status' => $expiresOn === '' ? 'ללא תאריך תוקף' : portal_vehicle_deadline_status($expiresOn)['label'],
+        'attachment' => $attachment,
+        'uploaded_at' => gmdate('c'),
+    ];
+
     $manifest = portal_json_read(portal_vehicle_document_manifest_file());
-    $documents = $manifest[$plate] ?? [];
-    return is_array($documents) ? array_values(array_filter($documents, 'is_array')) : [];
+    $documents = is_array($manifest[$plate] ?? null) ? $manifest[$plate] : [];
+    $documents[] = $document;
+    $manifest[$plate] = $documents;
+    portal_json_write(portal_vehicle_document_manifest_file(), $manifest);
+
+    $expiryField = portal_vehicle_document_expiry_field($type);
+    if ($expiryField !== null && $expiresOn !== '') {
+        $vehicles[$plate][$expiryField] = $expiresOn;
+        $vehicles[$plate]['updated_at'] = gmdate('c');
+        portal_json_write(portal_vehicle_directory_file(), $vehicles);
+    }
+    return $document;
+}
+
+function portal_save_vehicle_document(array $user): array
+{
+    if (($user['role'] ?? '') !== 'admin') {
+        throw new RuntimeException('הפעולה דורשת הרשאת מנהל.');
+    }
+    $plate = portal_normalize_vehicle_plate(portal_post('vehicle_document_plate', 20)) ?? '';
+    $type = portal_post('vehicle_document_type', 30);
+    $expiresOn = portal_post('vehicle_document_expires_on', 10);
+    $policyNumber = portal_post('vehicle_document_policy_number', 160);
+    $documentId = bin2hex(random_bytes(12));
+    $directory = portal_vehicle_document_directory($plate, $documentId);
+    try {
+        $attachments = portal_save_uploads($directory, $_FILES['vehicle_document_file'] ?? []);
+        if (count($attachments) !== 1) {
+            throw new RuntimeException('יש לצרף קובץ אחד לכל מסמך רכב.');
+        }
+        return portal_register_vehicle_document(
+            $plate,
+            $type,
+            $expiresOn,
+            $policyNumber,
+            $attachments[0],
+            $documentId
+        );
+    } catch (Throwable $error) {
+        portal_remove_tree($directory);
+        throw $error;
+    }
+}
+
+function portal_user_can_access_vehicle(array $user, string $plate): bool
+{
+    $plate = portal_normalize_vehicle_plate($plate) ?? '';
+    $vehicle = portal_vehicle_directory()[$plate] ?? null;
+    if (!is_array($vehicle)) {
+        return false;
+    }
+    if (($user['role'] ?? '') === 'admin') {
+        return true;
+    }
+    $email = portal_normalize_company_email((string) ($user['email'] ?? '')) ?? '';
+    return $email !== '' && hash_equals($email, (string) ($vehicle['employee_email'] ?? ''));
+}
+
+function portal_handle_vehicle_document_download(array $user): never
+{
+    $plate = portal_normalize_vehicle_plate((string) ($_GET['plate'] ?? '')) ?? '';
+    $documentId = trim((string) ($_GET['document'] ?? ''));
+    if (!portal_user_can_access_vehicle($user, $plate) || !preg_match('/^[a-f0-9]{24}$/', $documentId)) {
+        http_response_code(403);
+        exit('Forbidden');
+    }
+    $document = null;
+    foreach (portal_vehicle_documents($plate) as $candidate) {
+        if (hash_equals($documentId, (string) ($candidate['id'] ?? ''))) {
+            $document = $candidate;
+            break;
+        }
+    }
+    $attachment = is_array($document['attachment'] ?? null) ? $document['attachment'] : null;
+    if (!is_array($attachment)) {
+        http_response_code(404);
+        exit('Not found');
+    }
+    $storageName = basename((string) ($attachment['storage_name'] ?? ''));
+    if ($storageName === '' || $storageName !== (string) ($attachment['storage_name'] ?? '')) {
+        http_response_code(400);
+        exit('Bad request');
+    }
+    $path = portal_vehicle_document_directory($plate, $documentId)
+        . DIRECTORY_SEPARATOR . 'files' . DIRECTORY_SEPARATOR . $storageName;
+    if (!is_file($path)) {
+        http_response_code(404);
+        exit('Not found');
+    }
+    $original = (string) ($attachment['original_name'] ?? 'vehicle-document');
+    $ascii = preg_replace('/[^A-Za-z0-9._-]/', '_', $original) ?: 'vehicle-document';
+    header('Content-Type: ' . ((string) ($attachment['mime'] ?? 'application/octet-stream')));
+    header('Content-Length: ' . filesize($path));
+    header('Content-Disposition: attachment; filename="' . $ascii . '"; filename*=UTF-8\'\'' . rawurlencode($original));
+    portal_audit('vehicle_document_downloaded', ['plate_hash' => hash('sha256', $plate), 'document_id' => $documentId]);
+    readfile($path);
+    exit;
 }
 
 function portal_vehicle_monthly_dir(string $plate, string $month, int $version): string
@@ -76,7 +271,7 @@ function portal_vehicle_previous_odometer(string $plate): int
     return (int) preg_replace('/\D+/', '', (string) ($vehicle['current_km'] ?? ''));
 }
 
-function portal_handle_vehicle_monthly_submission(array $user): void
+function portal_handle_vehicle_monthly_submission(array $user): never
 {
     $plate = portal_normalize_vehicle_plate(portal_post('monthly_vehicle_plate', 20));
     $vehicles = portal_vehicles_for_employee($user);
@@ -176,8 +371,20 @@ function portal_vehicle_overall_status(array $vehicle, ?array $monthly): array
     if (($monthly['manager_review_required'] ?? false) === true) {
         return ['class' => 'status--review', 'label' => 'ממתין לבדיקת מנהל'];
     }
-    foreach (['test_due_date', 'compulsory_insurance_due_date', 'comprehensive_insurance_due_date'] as $field) {
+    foreach (['test_due_date', 'compulsory_insurance_due_date'] as $field) {
         $deadline = portal_vehicle_deadline_status((string) ($vehicle[$field] ?? ''));
+        if (in_array($deadline['class'], ['status--missing', 'status--review'], true)) {
+            return ['class' => 'status--review', 'label' => 'מסמך עומד לפוג'];
+        }
+    }
+    if ((string) ($vehicle['comprehensive_insurance_due_date'] ?? '') !== '') {
+        $deadline = portal_vehicle_deadline_status((string) $vehicle['comprehensive_insurance_due_date']);
+        if (in_array($deadline['class'], ['status--missing', 'status--review'], true)) {
+            return ['class' => 'status--review', 'label' => 'מסמך עומד לפוג'];
+        }
+    }
+    if ((string) ($vehicle['third_party_insurance_due_date'] ?? '') !== '') {
+        $deadline = portal_vehicle_deadline_status((string) $vehicle['third_party_insurance_due_date']);
         if (in_array($deadline['class'], ['status--missing', 'status--review'], true)) {
             return ['class' => 'status--review', 'label' => 'מסמך עומד לפוג'];
         }
@@ -228,8 +435,8 @@ function portal_render_my_vehicle_page(array $user, ?array $flash): void
         <?php portal_render_vehicle_monthly_form($vehicle); ?>
         <section class="detail-card vehicle-documents-card"><h2>מסמכי הרכב והנהג</h2>
             <?php $documents = portal_vehicle_documents_for_user($user, (string) $vehicle['plate']); ?>
-            <?php if ($documents === []): ?><div class="alert alert--info">המסמכים נמצאו ב־Dropbox וממתינים למיפוי ולאישור מנהל. הם אינם מועתקים לריפו ואינם זמינים בקישור ציבורי.</div>
-            <?php else: ?><div class="document-list"><?php foreach ($documents as $document): ?><div><strong><?= portal_h($document['type'] ?? 'מסמך') ?></strong><span><?= portal_h($document['name'] ?? '') ?></span><span><?= portal_h($document['status'] ?? 'ממתין לבדיקה') ?></span></div><?php endforeach; ?></div><?php endif; ?>
+            <?php if ($documents === []): ?><div class="alert alert--info">עדיין לא נשמרו מסמכים לרכב זה. מנהל יכול להעלות רישיון, טסט וביטוחים במסך רכבי העובדים.</div>
+            <?php else: ?><div class="document-list"><?php foreach ($documents as $document): ?><div><strong><?= portal_h($document['type_label'] ?? 'מסמך') ?></strong><span><a class="text-link" href="<?= portal_h(portal_url(['action' => 'vehicle_document_download', 'plate' => $vehicle['plate'], 'document' => $document['id'] ?? ''])) ?>"><?= portal_h($document['name'] ?? '') ?></a></span><span><?= portal_h(($document['expires_on'] ?? '') !== '' ? 'תוקף ' . $document['expires_on'] : 'ללא תוקף') ?></span></div><?php endforeach; ?></div><?php endif; ?>
         </section>
         <section class="detail-card"><h2>היסטוריית דיווחים חודשיים</h2>
             <?php $history = portal_vehicle_reports_for_plate((string) $vehicle['plate']); ?>

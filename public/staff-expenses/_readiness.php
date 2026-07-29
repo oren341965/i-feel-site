@@ -1,7 +1,6 @@
 <?php
 declare(strict_types=1);
 
-// JetServer production runs PHP 7.4; the portal source stays 7.4-compatible.
 const IFEEL_PORTAL_MIN_PHP_VERSION_ID = 70400;
 
 function portal_ini_bytes(string $value): int
@@ -13,16 +12,12 @@ function portal_ini_bytes(string $value): int
 
     $unit = strtolower(substr($value, -1));
     $number = (float) $value;
-    switch ($unit) {
-        case 'g':
-            return (int) round($number * 1024 * 1024 * 1024);
-        case 'm':
-            return (int) round($number * 1024 * 1024);
-        case 'k':
-            return (int) round($number * 1024);
-        default:
-            return (int) round($number);
-    }
+    $sizes = [
+        'g' => (int) round($number * 1024 * 1024 * 1024),
+        'm' => (int) round($number * 1024 * 1024),
+        'k' => (int) round($number * 1024),
+    ];
+    return $sizes[$unit] ?? (int) round($number);
 }
 
 function portal_probe_private_storage(): void

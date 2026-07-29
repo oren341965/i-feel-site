@@ -117,6 +117,33 @@ try {
         portal_vehicles_for_employee(['email' => 'other@i-feel.co.il']) === [],
         'Employee vehicle lookup exposed another employee vehicle.'
     );
+    $vehicleDocument = portal_register_vehicle_document(
+        '123-45-678',
+        'third_party',
+        '2027-05-31',
+        'TEST-THIRD-PARTY',
+        [
+            'original_name' => 'third-party.pdf',
+            'storage_name' => 'test-document.pdf',
+            'mime' => 'application/pdf',
+            'size' => 128,
+            'sha256' => str_repeat('a', 64),
+        ],
+        'abcdefabcdefabcdefabcdef'
+    );
+    $vehicleAfterDocument = portal_vehicle_directory()['12345678'] ?? [];
+    portal_test_expect(
+        ($vehicleDocument['type_label'] ?? '') === 'ביטוח צד ג׳'
+        && ($vehicleAfterDocument['third_party_insurance_due_date'] ?? '') === '2027-05-31'
+        && ($vehicleAfterDocument['comprehensive_insurance_due_date'] ?? '') === '',
+        'Third-party policy was not stored separately from comprehensive insurance.'
+    );
+    portal_test_expect(
+        count(portal_vehicle_documents_for_user(['email' => 'worker@i-feel.co.il', 'role' => 'employee'], '12345678')) === 1
+        && count(portal_vehicle_documents_for_user(['email' => 'oren@i-feel.co.il', 'role' => 'admin'], '12345678')) === 1
+        && portal_vehicle_documents_for_user(['email' => 'other@i-feel.co.il', 'role' => 'employee'], '12345678') === [],
+        'Vehicle document access control is incorrect.'
+    );
     $minimalVehicleRows = implode("\n", [
         "דוא״ל עובד\tמספר רכב",
         "worker@i-feel.co.il\t876-54-321",

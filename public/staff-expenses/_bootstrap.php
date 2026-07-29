@@ -1,32 +1,26 @@
 <?php
 declare(strict_types=1);
 
-const IFEEL_PORTAL_VERSION = '1.5.0';
-const IFEEL_PORTAL_SESSION = 'ifeel_staff_expenses';
-const IFEEL_PORTAL_IDLE_TIMEOUT = 3600;
-const IFEEL_PORTAL_MAX_FILES = 20;
-const IFEEL_PORTAL_MAX_FILE_BYTES = 12 * 1024 * 1024;
-const IFEEL_PORTAL_MAX_TOTAL_BYTES = 60 * 1024 * 1024;
+if (!function_exists('str_starts_with')) {
+    function str_starts_with(string $haystack, string $needle): bool
+    {
+        return $needle === '' || substr($haystack, 0, strlen($needle)) === $needle;
+    }
+}
 
-// Production on JetServer runs PHP 7.4, which lacks the PHP 8 string helpers.
 if (!function_exists('str_contains')) {
     function str_contains(string $haystack, string $needle): bool
     {
         return $needle === '' || strpos($haystack, $needle) !== false;
     }
 }
-if (!function_exists('str_starts_with')) {
-    function str_starts_with(string $haystack, string $needle): bool
-    {
-        return strncmp($haystack, $needle, strlen($needle)) === 0;
-    }
-}
-if (!function_exists('str_ends_with')) {
-    function str_ends_with(string $haystack, string $needle): bool
-    {
-        return $needle === '' || substr($haystack, -strlen($needle)) === $needle;
-    }
-}
+
+const IFEEL_PORTAL_VERSION = '1.5.0';
+const IFEEL_PORTAL_SESSION = 'ifeel_staff_expenses';
+const IFEEL_PORTAL_IDLE_TIMEOUT = 3600;
+const IFEEL_PORTAL_MAX_FILES = 20;
+const IFEEL_PORTAL_MAX_FILE_BYTES = 12 * 1024 * 1024;
+const IFEEL_PORTAL_MAX_TOTAL_BYTES = 60 * 1024 * 1024;
 
 // Load the existing server-only configuration file when it exists.
 // This file is intentionally not committed to GitHub.
@@ -118,15 +112,12 @@ function portal_url(array $params = []): string
     return $params === [] ? $base : $base . '?' . http_build_query($params);
 }
 
-function portal_redirect(array $params = []): void
+function portal_redirect(array $params = []): never
 {
     header('Location: ' . portal_url($params), true, 303);
     exit;
 }
 
-/**
- * @param mixed $value
- */
 function portal_h($value): string
 {
     return htmlspecialchars((string) $value, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
@@ -745,17 +736,12 @@ function portal_save_uploads(string $recordDir, array $files): array
             continue;
         }
         if ($error !== UPLOAD_ERR_OK) {
-            switch ($error) {
-                case UPLOAD_ERR_INI_SIZE:
-                case UPLOAD_ERR_FORM_SIZE:
-                    $message = 'אחד הקבצים גדול מהמותר בשרת.';
-                    break;
-                case UPLOAD_ERR_PARTIAL:
-                    $message = 'אחד הקבצים הועלה באופן חלקי בלבד.';
-                    break;
-                default:
-                    $message = 'אירעה שגיאה בהעלאת אחד הקבצים.';
-            }
+            $messages = [
+                UPLOAD_ERR_INI_SIZE => 'אחד הקבצים גדול מהמותר בשרת.',
+                UPLOAD_ERR_FORM_SIZE => 'אחד הקבצים גדול מהמותר בשרת.',
+                UPLOAD_ERR_PARTIAL => 'אחד הקבצים הועלה באופן חלקי בלבד.',
+            ];
+            $message = $messages[$error] ?? 'אירעה שגיאה בהעלאת אחד הקבצים.';
             throw new RuntimeException($message);
         }
 

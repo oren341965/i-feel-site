@@ -227,7 +227,7 @@ function portal_build_record(array $user): array
     }
 }
 
-function portal_handle_post(array $user): void
+function portal_handle_post(array $user): never
 {
     portal_verify_csrf();
     $action = portal_post('action', 60);
@@ -392,6 +392,17 @@ function portal_handle_post(array $user): void
         portal_redirect(['tab' => 'vehicles']);
     }
 
+    if ($action === 'save_vehicle_document') {
+        portal_require_admin();
+        $document = portal_save_vehicle_document($user);
+        portal_audit('vehicle_document_saved', [
+            'document_id' => (string) ($document['id'] ?? ''),
+            'type' => (string) ($document['type'] ?? ''),
+        ]);
+        portal_flash_set('success', 'מסמך הרכב נשמר ותאריך התוקף עודכן.');
+        portal_redirect(['tab' => 'vehicles']);
+    }
+
     if ($action === 'save_birthday_gift') {
         portal_require_admin();
         $yearRaw = portal_post('gift_year', 4);
@@ -437,7 +448,7 @@ function portal_user_can_download_record(array $user, array $record): bool
         && hash_equals($userEmail, $recordEmail);
 }
 
-function portal_handle_download(array $user): void
+function portal_handle_download(array $user): never
 {
     $recordId = trim((string) ($_GET['id'] ?? ''));
     $index = filter_var($_GET['file'] ?? null, FILTER_VALIDATE_INT, ['options' => ['min_range' => 0]]);
@@ -492,7 +503,7 @@ function portal_csv_row($stream, array $values): void
     }
 }
 
-function portal_handle_export(array $user): void
+function portal_handle_export(array $user): never
 {
     if (($user['role'] ?? '') !== 'admin') {
         http_response_code(403);
