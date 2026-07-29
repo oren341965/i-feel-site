@@ -175,7 +175,7 @@ try {
     }
 
     $flash = portal_flash_take();
-    $pageTitle = match ($tab) {
+    $pageTitles = [
         'history' => '׳”׳”׳•׳¦׳׳•׳× ׳©׳׳™',
         'reports' => '׳“׳™׳•׳•׳—׳™׳',
         'employees' => '׳₪׳¨׳˜׳™ ׳¢׳•׳‘׳“׳™׳ ׳•׳™׳׳™ ׳”׳•׳׳“׳×',
@@ -184,8 +184,8 @@ try {
         'my_vehicle' => '׳”׳¨׳›׳‘ ׳©׳׳™',
         'work' => '׳¡׳™׳•׳ ׳”׳×׳§׳ ׳” ׳׳• ׳©׳™׳¨׳•׳×',
         'work_stats' => '׳¡׳˜׳˜׳™׳¡׳˜׳™׳§׳× ׳¢׳‘׳•׳“׳•׳×',
-        default => '׳“׳™׳•׳•׳— ׳—׳“׳©',
-    };
+    ];
+    $pageTitle = $pageTitles[$tab] ?? '׳“׳™׳•׳•׳— ׳—׳“׳©';
     portal_page_start($pageTitle, $user);
     portal_nav($tab, $user);
     portal_render_birthday_banner($user);
