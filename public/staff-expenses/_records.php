@@ -486,7 +486,7 @@ function portal_handle_download(array $user): never
     exit;
 }
 
-function portal_csv_value(mixed $value): string
+function portal_csv_value($value): string
 {
     $text = (string) $value;
     if (preg_match('/^[\x00-\x20]*[=+\-@]/u', $text)) {

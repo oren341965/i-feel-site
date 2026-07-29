@@ -118,7 +118,7 @@ function portal_redirect(array $params = []): never
     exit;
 }
 
-function portal_h(mixed $value): string
+function portal_h($value): string
 {
     return htmlspecialchars((string) $value, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
 }
