@@ -1,3 +1,4 @@
+
 <?php
 declare(strict_types=1);
 
@@ -11,7 +12,7 @@ function portal_parse_travel_items(): array
     $notes = $_POST['travel_item_note'] ?? [];
 
     if (!is_array($categories) || !is_array($dates) || !is_array($vendors) || !is_array($amounts) || !is_array($currencies) || !is_array($notes)) {
-        throw new RuntimeException('פרטי ההוצאות בנסיעה אינם תקינים.');
+        throw new RuntimeException('׳₪׳¨׳˜׳™ ׳”׳”׳•׳¦׳׳•׳× ׳‘׳ ׳¡׳™׳¢׳” ׳׳™׳ ׳ ׳×׳§׳™׳ ׳™׳.');
     }
 
     $allowedCategories = [
@@ -36,17 +37,17 @@ function portal_parse_travel_items(): array
             continue;
         }
         if (!in_array($category, $allowedCategories, true)) {
-            throw new RuntimeException('יש לבחור סוג הוצאה תקין בכל שורה.');
+            throw new RuntimeException('׳™׳© ׳׳‘׳—׳•׳¨ ׳¡׳•׳’ ׳”׳•׳¦׳׳” ׳×׳§׳™׳ ׳‘׳›׳ ׳©׳•׳¨׳”.');
         }
         $amount = portal_parse_amount($amountRaw);
         if ($amount === null) {
-            throw new RuntimeException('יש להזין סכום תקין בכל שורת הוצאה.');
+            throw new RuntimeException('׳™׳© ׳׳”׳–׳™׳ ׳¡׳›׳•׳ ׳×׳§׳™׳ ׳‘׳›׳ ׳©׳•׳¨׳× ׳”׳•׳¦׳׳”.');
         }
         if (!in_array($currency, $allowedCurrencies, true)) {
-            throw new RuntimeException('המטבע שנבחר אינו תקין.');
+            throw new RuntimeException('׳”׳׳˜׳‘׳¢ ׳©׳ ׳‘׳—׳¨ ׳׳™׳ ׳• ׳×׳§׳™׳.');
         }
         if ($date !== '' && !portal_valid_date($date)) {
-            throw new RuntimeException('אחד מתאריכי ההוצאות אינו תקין.');
+            throw new RuntimeException('׳׳—׳“ ׳׳×׳׳¨׳™׳›׳™ ׳”׳”׳•׳¦׳׳•׳× ׳׳™׳ ׳• ׳×׳§׳™׳.');
         }
 
         $items[] = [
@@ -61,7 +62,7 @@ function portal_parse_travel_items(): array
     }
 
     if ($items === []) {
-        throw new RuntimeException('יש להזין לפחות שורת הוצאה אחת עבור הנסיעה לחו״ל.');
+        throw new RuntimeException('׳™׳© ׳׳”׳–׳™׳ ׳׳₪׳—׳•׳× ׳©׳•׳¨׳× ׳”׳•׳¦׳׳” ׳׳—׳× ׳¢׳‘׳•׳¨ ׳”׳ ׳¡׳™׳¢׳” ׳׳—׳•׳´׳.');
     }
 
     return [$items, $totals];
@@ -71,12 +72,12 @@ function portal_build_record(array $user): array
 {
     $type = portal_post('report_type', 30);
     if (!in_array($type, ['vehicle', 'travel', 'general'], true)) {
-        throw new RuntimeException('יש לבחור סוג דיווח.');
+        throw new RuntimeException('׳™׳© ׳׳‘׳—׳•׳¨ ׳¡׳•׳’ ׳“׳™׳•׳•׳—.');
     }
 
     $employeeName = portal_post('employee_name', 120);
     if ($employeeName === '') {
-        throw new RuntimeException('חובה להזין את שם העובד או העובדת.');
+        throw new RuntimeException('׳—׳•׳‘׳” ׳׳”׳–׳™׳ ׳׳× ׳©׳ ׳”׳¢׳•׳‘׳“ ׳׳• ׳”׳¢׳•׳‘׳“׳×.');
     }
 
     $employee = [
@@ -85,7 +86,7 @@ function portal_build_record(array $user): array
         'phone' => portal_post('employee_phone', 60),
     ];
     if ($employee['email'] !== '' && !filter_var($employee['email'], FILTER_VALIDATE_EMAIL)) {
-        throw new RuntimeException('כתובת הדוא״ל אינה תקינה.');
+        throw new RuntimeException('׳›׳×׳•׳‘׳× ׳”׳“׳•׳׳´׳ ׳׳™׳ ׳” ׳×׳§׳™׳ ׳”.');
     }
 
     $details = [];
@@ -97,21 +98,21 @@ function portal_build_record(array $user): array
         $departureDate = portal_post('departure_date', 20);
         $returnDate = portal_post('return_date', 20);
         if (!portal_valid_date($departureDate) || !portal_valid_date($returnDate)) {
-            throw new RuntimeException('חובה להזין תאריכי יציאה וחזרה תקינים.');
+            throw new RuntimeException('׳—׳•׳‘׳” ׳׳”׳–׳™׳ ׳×׳׳¨׳™׳›׳™ ׳™׳¦׳™׳׳” ׳•׳—׳–׳¨׳” ׳×׳§׳™׳ ׳™׳.');
         }
         if ($returnDate < $departureDate) {
-            throw new RuntimeException('תאריך החזרה אינו יכול להיות מוקדם מתאריך היציאה.');
+            throw new RuntimeException('׳×׳׳¨׳™׳ ׳”׳—׳–׳¨׳” ׳׳™׳ ׳• ׳™׳›׳•׳ ׳׳”׳™׳•׳× ׳׳•׳§׳“׳ ׳׳×׳׳¨׳™׳ ׳”׳™׳¦׳™׳׳”.');
         }
         $destination = portal_post('destination', 300);
         $purpose = portal_post('trip_purpose', 800);
         if ($destination === '' || $purpose === '') {
-            throw new RuntimeException('חובה להזין יעד ומטרת נסיעה.');
+            throw new RuntimeException('׳—׳•׳‘׳” ׳׳”׳–׳™׳ ׳™׳¢׳“ ׳•׳׳˜׳¨׳× ׳ ׳¡׳™׳¢׳”.');
         }
         [$items, $totals] = portal_parse_travel_items();
         $reportDate = $departureDate;
         $businessDays = portal_post('business_days', 10);
         if ($businessDays !== '' && (!ctype_digit($businessDays) || (int) $businessDays > 365)) {
-            throw new RuntimeException('מספר ימי העבודה אינו תקין.');
+            throw new RuntimeException('׳׳¡׳₪׳¨ ׳™׳׳™ ׳”׳¢׳‘׳•׳“׳” ׳׳™׳ ׳• ׳×׳§׳™׳.');
         }
         $details = [
             'company_name' => portal_post('company_name', 120) ?: 'I Feel',
@@ -129,15 +130,15 @@ function portal_build_record(array $user): array
         $prefix = $type === 'vehicle' ? 'vehicle_' : 'general_';
         $expenseDate = portal_post($prefix . 'expense_date', 20);
         if (!portal_valid_date($expenseDate)) {
-            throw new RuntimeException('חובה להזין תאריך הוצאה תקין.');
+            throw new RuntimeException('׳—׳•׳‘׳” ׳׳”׳–׳™׳ ׳×׳׳¨׳™׳ ׳”׳•׳¦׳׳” ׳×׳§׳™׳.');
         }
         $amount = portal_parse_amount(portal_post($prefix . 'amount', 40));
         if ($amount === null) {
-            throw new RuntimeException('חובה להזין סכום תקין.');
+            throw new RuntimeException('׳—׳•׳‘׳” ׳׳”׳–׳™׳ ׳¡׳›׳•׳ ׳×׳§׳™׳.');
         }
         $currency = portal_post($prefix . 'currency', 10);
         if (!in_array($currency, ['ILS', 'USD', 'EUR', 'GBP'], true)) {
-            throw new RuntimeException('המטבע שנבחר אינו תקין.');
+            throw new RuntimeException('׳”׳׳˜׳‘׳¢ ׳©׳ ׳‘׳—׳¨ ׳׳™׳ ׳• ׳×׳§׳™׳.');
         }
         $totals = [$currency => $amount];
         $reportDate = $expenseDate;
@@ -161,7 +162,7 @@ function portal_build_record(array $user): array
                 'licensing', 'washing', 'rental', 'transport', 'other',
             ];
             if (!in_array($category, $allowedVehicleCategories, true)) {
-                throw new RuntimeException('בדיווח נסיעה או רכב חובה לבחור סוג הוצאה תקין.');
+                throw new RuntimeException('׳‘׳“׳™׳•׳•׳— ׳ ׳¡׳™׳¢׳” ׳׳• ׳¨׳›׳‘ ׳—׳•׳‘׳” ׳׳‘׳—׳•׳¨ ׳¡׳•׳’ ׳”׳•׳¦׳׳” ׳×׳§׳™׳.');
             }
             $details = $base + [
                 'vehicle_category' => $category,
@@ -173,7 +174,7 @@ function portal_build_record(array $user): array
         } else {
             $category = portal_post('general_category', 60);
             if ($category === '') {
-                throw new RuntimeException('חובה לבחור קטגוריית הוצאה.');
+                throw new RuntimeException('׳—׳•׳‘׳” ׳׳‘׳—׳•׳¨ ׳§׳˜׳’׳•׳¨׳™׳™׳× ׳”׳•׳¦׳׳”.');
             }
             $details = $base + ['general_category' => $category];
         }
@@ -187,7 +188,7 @@ function portal_build_record(array $user): array
         $attachments = portal_save_uploads($recordDir, $_FILES['attachments'] ?? []);
         $noReceiptReason = portal_post('no_receipt_reason', 1000);
         if ($attachments === [] && $noReceiptReason === '') {
-            throw new RuntimeException('חובה לצרף לפחות קבלה או חשבונית אחת, או להסביר מדוע אין מסמך.');
+            throw new RuntimeException('׳—׳•׳‘׳” ׳׳¦׳¨׳£ ׳׳₪׳—׳•׳× ׳§׳‘׳׳” ׳׳• ׳—׳©׳‘׳•׳ ׳™׳× ׳׳—׳×, ׳׳• ׳׳”׳¡׳‘׳™׳¨ ׳׳“׳•׳¢ ׳׳™׳ ׳׳¡׳׳.');
         }
 
         $now = gmdate('c');
@@ -227,7 +228,7 @@ function portal_build_record(array $user): array
     }
 }
 
-function portal_handle_post(array $user): void
+function portal_handle_post(array $user): never
 {
     portal_verify_csrf();
     $action = portal_post('action', 60);
@@ -244,7 +245,7 @@ function portal_handle_post(array $user): void
             portal_post('profile_name', 120),
             portal_post('profile_phone', 30)
         );
-        portal_flash_set('success', 'השם ומספר הטלפון נשמרו בפרופיל הקבוע.');
+        portal_flash_set('success', '׳”׳©׳ ׳•׳׳¡׳₪׳¨ ׳”׳˜׳׳₪׳•׳ ׳ ׳©׳׳¨׳• ׳‘׳₪׳¨׳•׳₪׳™׳ ׳”׳§׳‘׳•׳¢.');
         portal_redirect(['tab' => 'profile']);
     }
 
@@ -260,7 +261,7 @@ function portal_handle_post(array $user): void
             'policy_number' => portal_post('profile_vehicle_policy', 160),
             'notes' => portal_post('profile_vehicle_notes', 600),
         ]);
-        portal_flash_set('success', 'פרטי הרכב נשמרו. את מועדי הטסט והביטוח יש לעדכן רק בחידוש השנתי.');
+        portal_flash_set('success', '׳₪׳¨׳˜׳™ ׳”׳¨׳›׳‘ ׳ ׳©׳׳¨׳•. ׳׳× ׳׳•׳¢׳“׳™ ׳”׳˜׳¡׳˜ ׳•׳”׳‘׳™׳˜׳•׳— ׳™׳© ׳׳¢׳“׳›׳ ׳¨׳§ ׳‘׳—׳™׳“׳•׳© ׳”׳©׳ ׳×׳™.');
         portal_redirect(['tab' => 'profile']);
     }
 
@@ -303,9 +304,9 @@ function portal_handle_post(array $user): void
         portal_flash_set(
             $emailSent ? 'success' : 'error',
             ($emailSent
-                ? 'הדיווח נשמר והמסמכים נשלחו להנהלת החשבונות ולאורן. '
-                : 'הדיווח נשמר, אך שליחת המסמכים בדוא״ל נכשלה ויש לטפל בכך ידנית. ')
-            . 'מספר הדיווח: ' . $record['id']
+                ? '׳”׳“׳™׳•׳•׳— ׳ ׳©׳׳¨ ׳•׳”׳׳¡׳׳›׳™׳ ׳ ׳©׳׳—׳• ׳׳”׳ ׳”׳׳× ׳”׳—׳©׳‘׳•׳ ׳•׳× ׳•׳׳׳•׳¨׳. '
+                : '׳”׳“׳™׳•׳•׳— ׳ ׳©׳׳¨, ׳׳ ׳©׳׳™׳—׳× ׳”׳׳¡׳׳›׳™׳ ׳‘׳“׳•׳׳´׳ ׳ ׳›׳©׳׳” ׳•׳™׳© ׳׳˜׳₪׳ ׳‘׳›׳ ׳™׳“׳ ׳™׳×. ')
+            . '׳׳¡׳₪׳¨ ׳”׳“׳™׳•׳•׳—: ' . $record['id']
         );
         portal_redirect(['tab' => 'history', 'submitted' => $record['id']]);
     }
@@ -315,11 +316,11 @@ function portal_handle_post(array $user): void
         $recordId = portal_post('record_id', 80);
         $record = portal_load_record($recordId);
         if ($record === null) {
-            throw new RuntimeException('הדיווח לא נמצא.');
+            throw new RuntimeException('׳”׳“׳™׳•׳•׳— ׳׳ ׳ ׳׳¦׳.');
         }
         $status = portal_post('status', 30);
         if (!in_array($status, portal_valid_statuses(), true)) {
-            throw new RuntimeException('סטטוס הדיווח אינו תקין.');
+            throw new RuntimeException('׳¡׳˜׳˜׳•׳¡ ׳”׳“׳™׳•׳•׳— ׳׳™׳ ׳• ׳×׳§׳™׳.');
         }
         $record['status'] = $status;
         $record['admin_note'] = portal_post('admin_note', 2000);
@@ -332,7 +333,7 @@ function portal_handle_post(array $user): void
         ];
         portal_save_record($record);
         portal_audit('record_updated', ['record_id' => $recordId, 'status' => $status]);
-        portal_flash_set('success', 'סטטוס הדיווח עודכן.');
+        portal_flash_set('success', '׳¡׳˜׳˜׳•׳¡ ׳”׳“׳™׳•׳•׳— ׳¢׳•׳“׳›׳.');
         portal_redirect(['tab' => 'reports', 'view' => $recordId]);
     }
 
@@ -346,19 +347,19 @@ function portal_handle_post(array $user): void
         $existing = portal_users()[$username] ?? null;
 
         if ($displayName === '') {
-            throw new RuntimeException('חובה להזין שם מלא למשתמש.');
+            throw new RuntimeException('׳—׳•׳‘׳” ׳׳”׳–׳™׳ ׳©׳ ׳׳׳ ׳׳׳©׳×׳׳©.');
         }
         if ($existing === null && portal_strlen($password) < 12) {
-            throw new RuntimeException('למשתמש חדש חובה להגדיר סיסמה באורך 12 תווים לפחות.');
+            throw new RuntimeException('׳׳׳©׳×׳׳© ׳—׳“׳© ׳—׳•׳‘׳” ׳׳”׳’׳“׳™׳¨ ׳¡׳™׳¡׳׳” ׳‘׳׳•׳¨׳ 12 ׳×׳•׳•׳™׳ ׳׳₪׳—׳•׳×.');
         }
         if ($password !== '' && portal_strlen($password) < 12) {
-            throw new RuntimeException('הסיסמה חייבת להכיל לפחות 12 תווים.');
+            throw new RuntimeException('׳”׳¡׳™׳¡׳׳” ׳—׳™׳™׳‘׳× ׳׳”׳›׳™׳ ׳׳₪׳—׳•׳× 12 ׳×׳•׳•׳™׳.');
         }
         if ($username === (string) ($user['username'] ?? '') && !$active) {
-            throw new RuntimeException('לא ניתן להשבית את המשתמש המחובר.');
+            throw new RuntimeException('׳׳ ׳ ׳™׳×׳ ׳׳”׳©׳‘׳™׳× ׳׳× ׳”׳׳©׳×׳׳© ׳”׳׳—׳•׳‘׳¨.');
         }
         if ($username === (string) ($user['username'] ?? '') && $role !== 'admin') {
-            throw new RuntimeException('לא ניתן להסיר מעצמך הרשאת מנהל.');
+            throw new RuntimeException('׳׳ ׳ ׳™׳×׳ ׳׳”׳¡׳™׳¨ ׳׳¢׳¦׳׳ ׳”׳¨׳©׳׳× ׳׳ ׳”׳.');
         }
 
         $passwordHash = $existing['password_hash'] ?? '';
@@ -372,7 +373,7 @@ function portal_handle_post(array $user): void
             'password_hash' => $passwordHash,
         ]);
         portal_audit('user_saved', ['username' => $username, 'role' => $role, 'active' => $active, 'password_changed' => $password !== '']);
-        portal_flash_set('success', $existing === null ? 'המשתמש נוצר בהצלחה.' : 'פרטי המשתמש עודכנו.');
+        portal_flash_set('success', $existing === null ? '׳”׳׳©׳×׳׳© ׳ ׳•׳¦׳¨ ׳‘׳”׳¦׳׳—׳”.' : '׳₪׳¨׳˜׳™ ׳”׳׳©׳×׳׳© ׳¢׳•׳“׳›׳ ׳•.');
         portal_redirect(['tab' => 'users']);
     }
 
@@ -380,7 +381,7 @@ function portal_handle_post(array $user): void
         portal_require_admin();
         $count = portal_import_employee_directory(portal_post('employee_directory_text', 30000));
         portal_audit('employee_directory_imported', ['count' => $count]);
-        portal_flash_set('success', 'פרטי ' . $count . ' עובדים נשמרו בהצלחה.');
+        portal_flash_set('success', '׳₪׳¨׳˜׳™ ' . $count . ' ׳¢׳•׳‘׳“׳™׳ ׳ ׳©׳׳¨׳• ׳‘׳”׳¦׳׳—׳”.');
         portal_redirect(['tab' => 'employees']);
     }
 
@@ -388,7 +389,18 @@ function portal_handle_post(array $user): void
         portal_require_admin();
         $count = portal_import_vehicle_directory(portal_post('vehicle_directory_text', 60000));
         portal_audit('vehicle_directory_imported', ['count' => $count]);
-        portal_flash_set('success', 'פרטי ' . $count . ' רכבים נשמרו בהצלחה.');
+        portal_flash_set('success', '׳₪׳¨׳˜׳™ ' . $count . ' ׳¨׳›׳‘׳™׳ ׳ ׳©׳׳¨׳• ׳‘׳”׳¦׳׳—׳”.');
+        portal_redirect(['tab' => 'vehicles']);
+    }
+
+    if ($action === 'save_vehicle_document') {
+        portal_require_admin();
+        $document = portal_save_vehicle_document($user);
+        portal_audit('vehicle_document_saved', [
+            'document_id' => (string) ($document['id'] ?? ''),
+            'type' => (string) ($document['type'] ?? ''),
+        ]);
+        portal_flash_set('success', '׳׳¡׳׳ ׳”׳¨׳›׳‘ ׳ ׳©׳׳¨ ׳•׳×׳׳¨׳™׳ ׳”׳×׳•׳§׳£ ׳¢׳•׳“׳›׳.');
         portal_redirect(['tab' => 'vehicles']);
     }
 
@@ -396,7 +408,7 @@ function portal_handle_post(array $user): void
         portal_require_admin();
         $yearRaw = portal_post('gift_year', 4);
         if (!ctype_digit($yearRaw)) {
-            throw new RuntimeException('שנת המתנה אינה תקינה.');
+            throw new RuntimeException('׳©׳ ׳× ׳”׳׳×׳ ׳” ׳׳™׳ ׳” ׳×׳§׳™׳ ׳”.');
         }
         $email = portal_post('gift_employee_email', 160);
         portal_save_birthday_gift(
@@ -412,11 +424,11 @@ function portal_handle_post(array $user): void
             'email_hash' => hash('sha256', strtolower($email)),
             'year' => (int) $yearRaw,
         ]);
-        portal_flash_set('success', 'מתנת יום ההולדת נשמרה באזור האישי של העובד.');
+        portal_flash_set('success', '׳׳×׳ ׳× ׳™׳•׳ ׳”׳”׳•׳׳“׳× ׳ ׳©׳׳¨׳” ׳‘׳׳–׳•׳¨ ׳”׳׳™׳©׳™ ׳©׳ ׳”׳¢׳•׳‘׳“.');
         portal_redirect(['tab' => 'employees']);
     }
 
-    throw new RuntimeException('הפעולה המבוקשת אינה מוכרת.');
+    throw new RuntimeException('׳”׳₪׳¢׳•׳׳” ׳”׳׳‘׳•׳§׳©׳× ׳׳™׳ ׳” ׳׳•׳›׳¨׳×.');
 }
 
 function portal_user_can_download_record(array $user, array $record): bool
@@ -437,7 +449,7 @@ function portal_user_can_download_record(array $user, array $record): bool
         && hash_equals($userEmail, $recordEmail);
 }
 
-function portal_handle_download(array $user): void
+function portal_handle_download(array $user): never
 {
     $recordId = trim((string) ($_GET['id'] ?? ''));
     $index = filter_var($_GET['file'] ?? null, FILTER_VALIDATE_INT, ['options' => ['min_range' => 0]]);
@@ -475,7 +487,7 @@ function portal_handle_download(array $user): void
     exit;
 }
 
-function portal_csv_value($value): string
+function portal_csv_value(mixed $value): string
 {
     $text = (string) $value;
     if (preg_match('/^[\x00-\x20]*[=+\-@]/u', $text)) {
@@ -488,11 +500,11 @@ function portal_csv_row($stream, array $values): void
 {
     $safeValues = array_map('portal_csv_value', $values);
     if (fputcsv($stream, $safeValues) === false) {
-        throw new RuntimeException('לא ניתן היה להשלים את יצוא קובץ ה-CSV.');
+        throw new RuntimeException('׳׳ ׳ ׳™׳×׳ ׳”׳™׳” ׳׳”׳©׳׳™׳ ׳׳× ׳™׳¦׳•׳ ׳§׳•׳‘׳¥ ׳”-CSV.');
     }
 }
 
-function portal_handle_export(array $user): void
+function portal_handle_export(array $user): never
 {
     if (($user['role'] ?? '') !== 'admin') {
         http_response_code(403);
@@ -507,9 +519,9 @@ function portal_handle_export(array $user): void
         exit;
     }
     portal_csv_row($out, [
-        'מספר דיווח', 'סוג דיווח', 'סטטוס', 'שם עובד', 'תאריך דיווח',
-        'קטגוריה', 'ספק', 'סכום', 'מטבע', 'יעד / מספר רכב', 'מטרת נסיעה / תיאור',
-        'מספר קבצים', 'נשלח על ידי', 'נוצר בתאריך', 'הערת מנהל',
+        '׳׳¡׳₪׳¨ ׳“׳™׳•׳•׳—', '׳¡׳•׳’ ׳“׳™׳•׳•׳—', '׳¡׳˜׳˜׳•׳¡', '׳©׳ ׳¢׳•׳‘׳“', '׳×׳׳¨׳™׳ ׳“׳™׳•׳•׳—',
+        '׳§׳˜׳’׳•׳¨׳™׳”', '׳¡׳₪׳§', '׳¡׳›׳•׳', '׳׳˜׳‘׳¢', '׳™׳¢׳“ / ׳׳¡׳₪׳¨ ׳¨׳›׳‘', '׳׳˜׳¨׳× ׳ ׳¡׳™׳¢׳” / ׳×׳™׳׳•׳¨',
+        '׳׳¡׳₪׳¨ ׳§׳‘׳¦׳™׳', '׳ ׳©׳׳— ׳¢׳ ׳™׳“׳™', '׳ ׳•׳¦׳¨ ׳‘׳×׳׳¨׳™׳', '׳”׳¢׳¨׳× ׳׳ ׳”׳',
     ]);
 
     foreach (portal_all_records() as $record) {
@@ -562,3 +574,4 @@ function portal_handle_export(array $user): void
     fclose($out);
     exit;
 }
+
