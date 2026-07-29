@@ -1,3 +1,4 @@
+
 <?php
 declare(strict_types=1);
 
@@ -67,7 +68,7 @@ try {
     );
 
     $directoryRows = implode("\n", [
-        "שם מלא\tדואר אלקטרוני\tטלפון\tיום לידה\tחודש לידה",
+        "׳©׳ ׳׳׳\t׳“׳•׳׳¨ ׳׳׳§׳˜׳¨׳•׳ ׳™\t׳˜׳׳₪׳•׳\t׳™׳•׳ ׳׳™׳“׳”\t׳—׳•׳“׳© ׳׳™׳“׳”",
         "Test Worker\tworker@i-feel.co.il\t+972 54-111-2233\t15\t7",
         "No Birthday\tother@i-feel.co.il\t0523334455\t\t",
     ]);
@@ -103,7 +104,7 @@ try {
         'Vehicle plate normalization failed.'
     );
     $vehicleRows = implode("\n", [
-        "דוא״ל עובד\tמספר רכב\tיצרן ודגם\tשנתון\tתוקף טסט\tתוקף ביטוח\tחברת ביטוח\tמספר פוליסה\tהערות",
+        "׳“׳•׳׳´׳ ׳¢׳•׳‘׳“\t׳׳¡׳₪׳¨ ׳¨׳›׳‘\t׳™׳¦׳¨׳ ׳•׳“׳’׳\t׳©׳ ׳×׳•׳\t׳×׳•׳§׳£ ׳˜׳¡׳˜\t׳×׳•׳§׳£ ׳‘׳™׳˜׳•׳—\t׳—׳‘׳¨׳× ׳‘׳™׳˜׳•׳—\t׳׳¡׳₪׳¨ ׳₪׳•׳׳™׳¡׳”\t׳”׳¢׳¨׳•׳×",
         "worker@i-feel.co.il\t123-45-678\tTest Car\t2024\t13/08/{$giftYear}\t{$giftYear}-08-13\tTest Insurance\tPOLICY-1\tTest only",
     ]);
     portal_test_expect(portal_import_vehicle_directory($vehicleRows) === 1, 'Vehicle directory import count is wrong.');
@@ -117,8 +118,35 @@ try {
         portal_vehicles_for_employee(['email' => 'other@i-feel.co.il']) === [],
         'Employee vehicle lookup exposed another employee vehicle.'
     );
+    $vehicleDocument = portal_register_vehicle_document(
+        '123-45-678',
+        'third_party',
+        '2027-05-31',
+        'TEST-THIRD-PARTY',
+        [
+            'original_name' => 'third-party.pdf',
+            'storage_name' => 'test-document.pdf',
+            'mime' => 'application/pdf',
+            'size' => 128,
+            'sha256' => str_repeat('a', 64),
+        ],
+        'abcdefabcdefabcdefabcdef'
+    );
+    $vehicleAfterDocument = portal_vehicle_directory()['12345678'] ?? [];
+    portal_test_expect(
+        ($vehicleDocument['type_label'] ?? '') === '׳‘׳™׳˜׳•׳— ׳¦׳“ ׳’׳³'
+        && ($vehicleAfterDocument['third_party_insurance_due_date'] ?? '') === '2027-05-31'
+        && ($vehicleAfterDocument['comprehensive_insurance_due_date'] ?? '') === '',
+        'Third-party policy was not stored separately from comprehensive insurance.'
+    );
+    portal_test_expect(
+        count(portal_vehicle_documents_for_user(['email' => 'worker@i-feel.co.il', 'role' => 'employee'], '12345678')) === 1
+        && count(portal_vehicle_documents_for_user(['email' => 'oren@i-feel.co.il', 'role' => 'admin'], '12345678')) === 1
+        && portal_vehicle_documents_for_user(['email' => 'other@i-feel.co.il', 'role' => 'employee'], '12345678') === [],
+        'Vehicle document access control is incorrect.'
+    );
     $minimalVehicleRows = implode("\n", [
-        "דוא״ל עובד\tמספר רכב",
+        "׳“׳•׳׳´׳ ׳¢׳•׳‘׳“\t׳׳¡׳₪׳¨ ׳¨׳›׳‘",
         "worker@i-feel.co.il\t876-54-321",
     ]);
     $minimalVehicleAssignment = portal_parse_vehicle_directory_text($minimalVehicleRows);
@@ -158,8 +186,8 @@ try {
     );
     portal_test_expect(count($sentVehicleEmails) === 4, 'Vehicle reminders were sent more than once.');
     $sourceVehicleRows = implode("\n", [
-        "שם\tאימייל\tרכב\tמספר רכב\tרישיון תקף\tתוקף רישיון\tמספר רישיון\tטסט תקף\tתוקף טסט\tביטוח חובה תקף\tתוקף ביטוח חובה\tביטוח מקיף תקף\tתוקף ביטוח מקיף\tחשבוניות הוגשו\tחודש חשבוניות\tסכום חשבוניות\tפירוט חשבוניות\tק\"מ נוכחי\tהערות\tעדכון אחרון\tחודש מילוי\tתזכורת נשלחה",
-        "Test Worker\tworker@i-feel.co.il\tTest Car 2024\t123-45-678\tתקף\t15.08.2031\t1234567\tתקף\t26/05/27\tלא תקף\t30.06.26\tתקף\t20.6.27\tכן\t\t\t\t141174\tTest note\t13/07/2026\t7/2026\t",
+        "׳©׳\t׳׳™׳׳™׳™׳\t׳¨׳›׳‘\t׳׳¡׳₪׳¨ ׳¨׳›׳‘\t׳¨׳™׳©׳™׳•׳ ׳×׳§׳£\t׳×׳•׳§׳£ ׳¨׳™׳©׳™׳•׳\t׳׳¡׳₪׳¨ ׳¨׳™׳©׳™׳•׳\t׳˜׳¡׳˜ ׳×׳§׳£\t׳×׳•׳§׳£ ׳˜׳¡׳˜\t׳‘׳™׳˜׳•׳— ׳—׳•׳‘׳” ׳×׳§׳£\t׳×׳•׳§׳£ ׳‘׳™׳˜׳•׳— ׳—׳•׳‘׳”\t׳‘׳™׳˜׳•׳— ׳׳§׳™׳£ ׳×׳§׳£\t׳×׳•׳§׳£ ׳‘׳™׳˜׳•׳— ׳׳§׳™׳£\t׳—׳©׳‘׳•׳ ׳™׳•׳× ׳”׳•׳’׳©׳•\t׳—׳•׳“׳© ׳—׳©׳‘׳•׳ ׳™׳•׳×\t׳¡׳›׳•׳ ׳—׳©׳‘׳•׳ ׳™׳•׳×\t׳₪׳™׳¨׳•׳˜ ׳—׳©׳‘׳•׳ ׳™׳•׳×\t׳§\"׳ ׳ ׳•׳›׳—׳™\t׳”׳¢׳¨׳•׳×\t׳¢׳“׳›׳•׳ ׳׳—׳¨׳•׳\t׳—׳•׳“׳© ׳׳™׳׳•׳™\t׳×׳–׳›׳•׳¨׳× ׳ ׳©׳׳—׳”",
+        "Test Worker\tworker@i-feel.co.il\tTest Car 2024\t123-45-678\t׳×׳§׳£\t15.08.2031\t1234567\t׳×׳§׳£\t26/05/27\t׳׳ ׳×׳§׳£\t30.06.26\t׳×׳§׳£\t20.6.27\t׳›׳\t\t\t\t141174\tTest note\t13/07/2026\t7/2026\t",
     ]);
     portal_test_expect(portal_import_vehicle_directory($sourceVehicleRows) === 1, 'Google Sheet vehicle format was not imported.');
     $sourceVehicle = portal_vehicles_for_employee($directoryEmployee)[0] ?? [];
@@ -476,4 +504,5 @@ try {
     fwrite(STDERR, "Staff expenses unit checks failed: " . $error->getMessage() . "\n");
     exit(1);
 }
+
 
