@@ -11,7 +11,7 @@ function portal_parse_travel_items(): array
     $notes = $_POST['travel_item_note'] ?? [];
 
     if (!is_array($categories) || !is_array($dates) || !is_array($vendors) || !is_array($amounts) || !is_array($currencies) || !is_array($notes)) {
-        throw new RuntimeException('׳₪׳¨׳˜׳™ ׳”׳”׳•׳¦׳׳•׳× ׳‘׳ ׳¡׳™׳¢׳” ׳׳™׳ ׳ ׳×׳§׳™׳ ׳™׳.');
+        throw new RuntimeException('פרטי ההוצאות בנסיעה אינם תקינים.');
     }
 
     $allowedCategories = [
@@ -36,17 +36,17 @@ function portal_parse_travel_items(): array
             continue;
         }
         if (!in_array($category, $allowedCategories, true)) {
-            throw new RuntimeException('׳™׳© ׳׳‘׳—׳•׳¨ ׳¡׳•׳’ ׳”׳•׳¦׳׳” ׳×׳§׳™׳ ׳‘׳›׳ ׳©׳•׳¨׳”.');
+            throw new RuntimeException('יש לבחור סוג הוצאה תקין בכל שורה.');
         }
         $amount = portal_parse_amount($amountRaw);
         if ($amount === null) {
-            throw new RuntimeException('׳™׳© ׳׳”׳–׳™׳ ׳¡׳›׳•׳ ׳×׳§׳™׳ ׳‘׳›׳ ׳©׳•׳¨׳× ׳”׳•׳¦׳׳”.');
+            throw new RuntimeException('יש להזין סכום תקין בכל שורת הוצאה.');
         }
         if (!in_array($currency, $allowedCurrencies, true)) {
-            throw new RuntimeException('׳”׳׳˜׳‘׳¢ ׳©׳ ׳‘׳—׳¨ ׳׳™׳ ׳• ׳×׳§׳™׳.');
+            throw new RuntimeException('המטבע שנבחר אינו תקין.');
         }
         if ($date !== '' && !portal_valid_date($date)) {
-            throw new RuntimeException('׳׳—׳“ ׳׳×׳׳¨׳™׳›׳™ ׳”׳”׳•׳¦׳׳•׳× ׳׳™׳ ׳• ׳×׳§׳™׳.');
+            throw new RuntimeException('אחד מתאריכי ההוצאות אינו תקין.');
         }
 
         $items[] = [
@@ -61,7 +61,7 @@ function portal_parse_travel_items(): array
     }
 
     if ($items === []) {
-        throw new RuntimeException('׳™׳© ׳׳”׳–׳™׳ ׳׳₪׳—׳•׳× ׳©׳•׳¨׳× ׳”׳•׳¦׳׳” ׳׳—׳× ׳¢׳‘׳•׳¨ ׳”׳ ׳¡׳™׳¢׳” ׳׳—׳•׳´׳.');
+        throw new RuntimeException('יש להזין לפחות שורת הוצאה אחת עבור הנסיעה לחו״ל.');
     }
 
     return [$items, $totals];
@@ -71,12 +71,12 @@ function portal_build_record(array $user): array
 {
     $type = portal_post('report_type', 30);
     if (!in_array($type, ['vehicle', 'travel', 'general'], true)) {
-        throw new RuntimeException('׳™׳© ׳׳‘׳—׳•׳¨ ׳¡׳•׳’ ׳“׳™׳•׳•׳—.');
+        throw new RuntimeException('יש לבחור סוג דיווח.');
     }
 
     $employeeName = portal_post('employee_name', 120);
     if ($employeeName === '') {
-        throw new RuntimeException('׳—׳•׳‘׳” ׳׳”׳–׳™׳ ׳׳× ׳©׳ ׳”׳¢׳•׳‘׳“ ׳׳• ׳”׳¢׳•׳‘׳“׳×.');
+        throw new RuntimeException('חובה להזין את שם העובד או העובדת.');
     }
 
     $employee = [
@@ -85,7 +85,7 @@ function portal_build_record(array $user): array
         'phone' => portal_post('employee_phone', 60),
     ];
     if ($employee['email'] !== '' && !filter_var($employee['email'], FILTER_VALIDATE_EMAIL)) {
-        throw new RuntimeException('׳›׳×׳•׳‘׳× ׳”׳“׳•׳׳´׳ ׳׳™׳ ׳” ׳×׳§׳™׳ ׳”.');
+        throw new RuntimeException('כתובת הדוא״ל אינה תקינה.');
     }
 
     $details = [];
@@ -97,21 +97,21 @@ function portal_build_record(array $user): array
         $departureDate = portal_post('departure_date', 20);
         $returnDate = portal_post('return_date', 20);
         if (!portal_valid_date($departureDate) || !portal_valid_date($returnDate)) {
-            throw new RuntimeException('׳—׳•׳‘׳” ׳׳”׳–׳™׳ ׳×׳׳¨׳™׳›׳™ ׳™׳¦׳™׳׳” ׳•׳—׳–׳¨׳” ׳×׳§׳™׳ ׳™׳.');
+            throw new RuntimeException('חובה להזין תאריכי יציאה וחזרה תקינים.');
         }
         if ($returnDate < $departureDate) {
-            throw new RuntimeException('׳×׳׳¨׳™׳ ׳”׳—׳–׳¨׳” ׳׳™׳ ׳• ׳™׳›׳•׳ ׳׳”׳™׳•׳× ׳׳•׳§׳“׳ ׳׳×׳׳¨׳™׳ ׳”׳™׳¦׳™׳׳”.');
+            throw new RuntimeException('תאריך החזרה אינו יכול להיות מוקדם מתאריך היציאה.');
         }
         $destination = portal_post('destination', 300);
         $purpose = portal_post('trip_purpose', 800);
         if ($destination === '' || $purpose === '') {
-            throw new RuntimeException('׳—׳•׳‘׳” ׳׳”׳–׳™׳ ׳™׳¢׳“ ׳•׳׳˜׳¨׳× ׳ ׳¡׳™׳¢׳”.');
+            throw new RuntimeException('חובה להזין יעד ומטרת נסיעה.');
         }
         [$items, $totals] = portal_parse_travel_items();
         $reportDate = $departureDate;
         $businessDays = portal_post('business_days', 10);
         if ($businessDays !== '' && (!ctype_digit($businessDays) || (int) $businessDays > 365)) {
-            throw new RuntimeException('׳׳¡׳₪׳¨ ׳™׳׳™ ׳”׳¢׳‘׳•׳“׳” ׳׳™׳ ׳• ׳×׳§׳™׳.');
+            throw new RuntimeException('מספר ימי העבודה אינו תקין.');
         }
         $details = [
             'company_name' => portal_post('company_name', 120) ?: 'I Feel',
@@ -129,15 +129,15 @@ function portal_build_record(array $user): array
         $prefix = $type === 'vehicle' ? 'vehicle_' : 'general_';
         $expenseDate = portal_post($prefix . 'expense_date', 20);
         if (!portal_valid_date($expenseDate)) {
-            throw new RuntimeException('׳—׳•׳‘׳” ׳׳”׳–׳™׳ ׳×׳׳¨׳™׳ ׳”׳•׳¦׳׳” ׳×׳§׳™׳.');
+            throw new RuntimeException('חובה להזין תאריך הוצאה תקין.');
         }
         $amount = portal_parse_amount(portal_post($prefix . 'amount', 40));
         if ($amount === null) {
-            throw new RuntimeException('׳—׳•׳‘׳” ׳׳”׳–׳™׳ ׳¡׳›׳•׳ ׳×׳§׳™׳.');
+            throw new RuntimeException('חובה להזין סכום תקין.');
         }
         $currency = portal_post($prefix . 'currency', 10);
         if (!in_array($currency, ['ILS', 'USD', 'EUR', 'GBP'], true)) {
-            throw new RuntimeException('׳”׳׳˜׳‘׳¢ ׳©׳ ׳‘׳—׳¨ ׳׳™׳ ׳• ׳×׳§׳™׳.');
+            throw new RuntimeException('המטבע שנבחר אינו תקין.');
         }
         $totals = [$currency => $amount];
         $reportDate = $expenseDate;
@@ -161,7 +161,7 @@ function portal_build_record(array $user): array
                 'licensing', 'washing', 'rental', 'transport', 'other',
             ];
             if (!in_array($category, $allowedVehicleCategories, true)) {
-                throw new RuntimeException('׳‘׳“׳™׳•׳•׳— ׳ ׳¡׳™׳¢׳” ׳׳• ׳¨׳›׳‘ ׳—׳•׳‘׳” ׳׳‘׳—׳•׳¨ ׳¡׳•׳’ ׳”׳•׳¦׳׳” ׳×׳§׳™׳.');
+                throw new RuntimeException('בדיווח נסיעה או רכב חובה לבחור סוג הוצאה תקין.');
             }
             $details = $base + [
                 'vehicle_category' => $category,
@@ -173,7 +173,7 @@ function portal_build_record(array $user): array
         } else {
             $category = portal_post('general_category', 60);
             if ($category === '') {
-                throw new RuntimeException('׳—׳•׳‘׳” ׳׳‘׳—׳•׳¨ ׳§׳˜׳’׳•׳¨׳™׳™׳× ׳”׳•׳¦׳׳”.');
+                throw new RuntimeException('חובה לבחור קטגוריית הוצאה.');
             }
             $details = $base + ['general_category' => $category];
         }
@@ -187,7 +187,7 @@ function portal_build_record(array $user): array
         $attachments = portal_save_uploads($recordDir, $_FILES['attachments'] ?? []);
         $noReceiptReason = portal_post('no_receipt_reason', 1000);
         if ($attachments === [] && $noReceiptReason === '') {
-            throw new RuntimeException('׳—׳•׳‘׳” ׳׳¦׳¨׳£ ׳׳₪׳—׳•׳× ׳§׳‘׳׳” ׳׳• ׳—׳©׳‘׳•׳ ׳™׳× ׳׳—׳×, ׳׳• ׳׳”׳¡׳‘׳™׳¨ ׳׳“׳•׳¢ ׳׳™׳ ׳׳¡׳׳.');
+            throw new RuntimeException('חובה לצרף לפחות קבלה או חשבונית אחת, או להסביר מדוע אין מסמך.');
         }
 
         $now = gmdate('c');
@@ -223,354 +223,4 @@ function portal_build_record(array $user): array
         return $record;
     } catch (Throwable $error) {
         portal_remove_tree($recordDir);
-        throw $error;
-    }
-}
-
-function portal_handle_post(array $user): never
-{
-    portal_verify_csrf();
-    $action = portal_post('action', 60);
-
-    if ($action === 'logout') {
-        portal_audit('logout');
-        portal_logout();
-        portal_redirect();
-    }
-
-    if ($action === 'save_employee_profile') {
-        portal_save_employee_profile(
-            $user,
-            portal_post('profile_name', 120),
-            portal_post('profile_phone', 30)
-        );
-        portal_flash_set('success', '׳”׳©׳ ׳•׳׳¡׳₪׳¨ ׳”׳˜׳׳₪׳•׳ ׳ ׳©׳׳¨׳• ׳‘׳₪׳¨׳•׳₪׳™׳ ׳”׳§׳‘׳•׳¢.');
-        portal_redirect(['tab' => 'profile']);
-    }
-
-    if ($action === 'save_employee_vehicle') {
-        portal_save_employee_vehicle($user, [
-            'existing_plate' => portal_post('existing_plate', 20),
-            'plate' => portal_post('profile_vehicle_plate', 20),
-            'make_model' => portal_post('profile_vehicle_model', 160),
-            'year' => portal_post('profile_vehicle_year', 4),
-            'test_due_date' => portal_post('profile_vehicle_test_due', 10),
-            'insurance_due_date' => portal_post('profile_vehicle_insurance_due', 10),
-            'insurance_company' => portal_post('profile_vehicle_insurance_company', 160),
-            'policy_number' => portal_post('profile_vehicle_policy', 160),
-            'notes' => portal_post('profile_vehicle_notes', 600),
-        ]);
-        portal_flash_set('success', '׳₪׳¨׳˜׳™ ׳”׳¨׳›׳‘ ׳ ׳©׳׳¨׳•. ׳׳× ׳׳•׳¢׳“׳™ ׳”׳˜׳¡׳˜ ׳•׳”׳‘׳™׳˜׳•׳— ׳™׳© ׳׳¢׳“׳›׳ ׳¨׳§ ׳‘׳—׳™׳“׳•׳© ׳”׳©׳ ׳×׳™.');
-        portal_redirect(['tab' => 'profile']);
-    }
-
-    if ($action === 'submit_vehicle_monthly') {
-        portal_handle_vehicle_monthly_submission($user);
-    }
-
-    if ($action === 'submit_report') {
-        $savedProfile = portal_save_employee_profile(
-            $user,
-            portal_post('employee_name', 120),
-            portal_post('employee_phone', 30)
-        );
-        $_POST['employee_name'] = $savedProfile['name'];
-        $_POST['employee_phone'] = $savedProfile['phone'];
-        $record = portal_build_record($user);
-        $emailSent = false;
-        try {
-            $emailSent = portal_notify_expense_submission($record);
-        } catch (Throwable $notificationError) {
-            error_log('[i-feel staff expenses notification] record=' . $record['id'] . ' send_failed');
-        }
-        $record['email_notification'] = [
-            'recipients' => portal_expense_notification_recipients(),
-            'status' => $emailSent ? 'sent' : 'failed',
-            'updated_at' => gmdate('c'),
-        ];
-        $record['updated_at'] = $record['email_notification']['updated_at'];
-        $record['history'][] = [
-            'at' => $record['updated_at'],
-            'by' => 'system',
-            'action' => $emailSent ? 'email_sent' : 'email_failed',
-            'status' => (string) ($record['status'] ?? 'new'),
-        ];
-        portal_save_record($record);
-        portal_audit($emailSent ? 'record_email_sent' : 'record_email_failed', [
-            'record_id' => $record['id'],
-            'recipients' => portal_expense_notification_recipients(),
-        ]);
-        portal_flash_set(
-            $emailSent ? 'success' : 'error',
-            ($emailSent
-                ? '׳”׳“׳™׳•׳•׳— ׳ ׳©׳׳¨ ׳•׳”׳׳¡׳׳›׳™׳ ׳ ׳©׳׳—׳• ׳׳”׳ ׳”׳׳× ׳”׳—׳©׳‘׳•׳ ׳•׳× ׳•׳׳׳•׳¨׳. '
-                : '׳”׳“׳™׳•׳•׳— ׳ ׳©׳׳¨, ׳׳ ׳©׳׳™׳—׳× ׳”׳׳¡׳׳›׳™׳ ׳‘׳“׳•׳׳´׳ ׳ ׳›׳©׳׳” ׳•׳™׳© ׳׳˜׳₪׳ ׳‘׳›׳ ׳™׳“׳ ׳™׳×. ')
-            . '׳׳¡׳₪׳¨ ׳”׳“׳™׳•׳•׳—: ' . $record['id']
-        );
-        portal_redirect(['tab' => 'history', 'submitted' => $record['id']]);
-    }
-
-    if ($action === 'update_record') {
-        portal_require_admin();
-        $recordId = portal_post('record_id', 80);
-        $record = portal_load_record($recordId);
-        if ($record === null) {
-            throw new RuntimeException('׳”׳“׳™׳•׳•׳— ׳׳ ׳ ׳׳¦׳.');
-        }
-        $status = portal_post('status', 30);
-        if (!in_array($status, portal_valid_statuses(), true)) {
-            throw new RuntimeException('׳¡׳˜׳˜׳•׳¡ ׳”׳“׳™׳•׳•׳— ׳׳™׳ ׳• ׳×׳§׳™׳.');
-        }
-        $record['status'] = $status;
-        $record['admin_note'] = portal_post('admin_note', 2000);
-        $record['updated_at'] = gmdate('c');
-        $record['history'][] = [
-            'at' => $record['updated_at'],
-            'by' => (string) ($user['username'] ?? ''),
-            'action' => 'status_updated',
-            'status' => $status,
-        ];
-        portal_save_record($record);
-        portal_audit('record_updated', ['record_id' => $recordId, 'status' => $status]);
-        portal_flash_set('success', '׳¡׳˜׳˜׳•׳¡ ׳”׳“׳™׳•׳•׳— ׳¢׳•׳“׳›׳.');
-        portal_redirect(['tab' => 'reports', 'view' => $recordId]);
-    }
-
-    if ($action === 'save_user') {
-        portal_require_admin();
-        $username = strtolower(portal_post('account_username', 40));
-        $displayName = portal_post('account_display_name', 120);
-        $role = portal_post('account_role', 20) === 'admin' ? 'admin' : 'employee';
-        $active = portal_post('account_active', 10) === '1';
-        $password = portal_post('account_password', 200);
-        $existing = portal_users()[$username] ?? null;
-
-        if ($displayName === '') {
-            throw new RuntimeException('׳—׳•׳‘׳” ׳׳”׳–׳™׳ ׳©׳ ׳׳׳ ׳׳׳©׳×׳׳©.');
-        }
-        if ($existing === null && portal_strlen($password) < 12) {
-            throw new RuntimeException('׳׳׳©׳×׳׳© ׳—׳“׳© ׳—׳•׳‘׳” ׳׳”׳’׳“׳™׳¨ ׳¡׳™׳¡׳׳” ׳‘׳׳•׳¨׳ 12 ׳×׳•׳•׳™׳ ׳׳₪׳—׳•׳×.');
-        }
-        if ($password !== '' && portal_strlen($password) < 12) {
-            throw new RuntimeException('׳”׳¡׳™׳¡׳׳” ׳—׳™׳™׳‘׳× ׳׳”׳›׳™׳ ׳׳₪׳—׳•׳× 12 ׳×׳•׳•׳™׳.');
-        }
-        if ($username === (string) ($user['username'] ?? '') && !$active) {
-            throw new RuntimeException('׳׳ ׳ ׳™׳×׳ ׳׳”׳©׳‘׳™׳× ׳׳× ׳”׳׳©׳×׳׳© ׳”׳׳—׳•׳‘׳¨.');
-        }
-        if ($username === (string) ($user['username'] ?? '') && $role !== 'admin') {
-            throw new RuntimeException('׳׳ ׳ ׳™׳×׳ ׳׳”׳¡׳™׳¨ ׳׳¢׳¦׳׳ ׳”׳¨׳©׳׳× ׳׳ ׳”׳.');
-        }
-
-        $passwordHash = $existing['password_hash'] ?? '';
-        if ($password !== '') {
-            $passwordHash = password_hash($password, PASSWORD_DEFAULT);
-        }
-        portal_save_user($username, [
-            'display_name' => $displayName,
-            'role' => $role,
-            'active' => $active,
-            'password_hash' => $passwordHash,
-        ]);
-        portal_audit('user_saved', ['username' => $username, 'role' => $role, 'active' => $active, 'password_changed' => $password !== '']);
-        portal_flash_set('success', $existing === null ? '׳”׳׳©׳×׳׳© ׳ ׳•׳¦׳¨ ׳‘׳”׳¦׳׳—׳”.' : '׳₪׳¨׳˜׳™ ׳”׳׳©׳×׳׳© ׳¢׳•׳“׳›׳ ׳•.');
-        portal_redirect(['tab' => 'users']);
-    }
-
-    if ($action === 'import_employee_directory') {
-        portal_require_admin();
-        $count = portal_import_employee_directory(portal_post('employee_directory_text', 30000));
-        portal_audit('employee_directory_imported', ['count' => $count]);
-        portal_flash_set('success', '׳₪׳¨׳˜׳™ ' . $count . ' ׳¢׳•׳‘׳“׳™׳ ׳ ׳©׳׳¨׳• ׳‘׳”׳¦׳׳—׳”.');
-        portal_redirect(['tab' => 'employees']);
-    }
-
-    if ($action === 'import_vehicle_directory') {
-        portal_require_admin();
-        $count = portal_import_vehicle_directory(portal_post('vehicle_directory_text', 60000));
-        portal_audit('vehicle_directory_imported', ['count' => $count]);
-        portal_flash_set('success', '׳₪׳¨׳˜׳™ ' . $count . ' ׳¨׳›׳‘׳™׳ ׳ ׳©׳׳¨׳• ׳‘׳”׳¦׳׳—׳”.');
-        portal_redirect(['tab' => 'vehicles']);
-    }
-
-    if ($action === 'save_vehicle_document') {
-        portal_require_admin();
-        $document = portal_save_vehicle_document($user);
-        portal_audit('vehicle_document_saved', [
-            'document_id' => (string) ($document['id'] ?? ''),
-            'type' => (string) ($document['type'] ?? ''),
-        ]);
-        portal_flash_set('success', '׳׳¡׳׳ ׳”׳¨׳›׳‘ ׳ ׳©׳׳¨ ׳•׳×׳׳¨׳™׳ ׳”׳×׳•׳§׳£ ׳¢׳•׳“׳›׳.');
-        portal_redirect(['tab' => 'vehicles']);
-    }
-
-    if ($action === 'save_birthday_gift') {
-        portal_require_admin();
-        $yearRaw = portal_post('gift_year', 4);
-        if (!ctype_digit($yearRaw)) {
-            throw new RuntimeException('׳©׳ ׳× ׳”׳׳×׳ ׳” ׳׳™׳ ׳” ׳×׳§׳™׳ ׳”.');
-        }
-        $email = portal_post('gift_employee_email', 160);
-        portal_save_birthday_gift(
-            $email,
-            (int) $yearRaw,
-            portal_post('gift_title', 160),
-            portal_post('gift_message', 1200),
-            portal_post('gift_coupon_code', 160),
-            portal_post('gift_redemption_url', 500),
-            $_FILES['gift_attachment'] ?? []
-        );
-        portal_audit('birthday_gift_saved', [
-            'email_hash' => hash('sha256', strtolower($email)),
-            'year' => (int) $yearRaw,
-        ]);
-        portal_flash_set('success', '׳׳×׳ ׳× ׳™׳•׳ ׳”׳”׳•׳׳“׳× ׳ ׳©׳׳¨׳” ׳‘׳׳–׳•׳¨ ׳”׳׳™׳©׳™ ׳©׳ ׳”׳¢׳•׳‘׳“.');
-        portal_redirect(['tab' => 'employees']);
-    }
-
-    throw new RuntimeException('׳”׳₪׳¢׳•׳׳” ׳”׳׳‘׳•׳§׳©׳× ׳׳™׳ ׳” ׳׳•׳›׳¨׳×.');
-}
-
-function portal_user_can_download_record(array $user, array $record): bool
-{
-    if (($user['role'] ?? '') === 'admin') {
-        return true;
-    }
-
-    if (($user['role'] ?? '') !== 'employee') {
-        return false;
-    }
-
-    $userEmail = portal_normalize_company_email((string) ($user['email'] ?? ''));
-    $recordEmail = portal_normalize_company_email((string) ($record['employee']['email'] ?? ''));
-
-    return $userEmail !== null
-        && $recordEmail !== null
-        && hash_equals($userEmail, $recordEmail);
-}
-
-function portal_handle_download(array $user): never
-{
-    $recordId = trim((string) ($_GET['id'] ?? ''));
-    $index = filter_var($_GET['file'] ?? null, FILTER_VALIDATE_INT, ['options' => ['min_range' => 0]]);
-    if ($index === false) {
-        http_response_code(400);
-        exit('Bad request');
-    }
-    $record = portal_load_record($recordId);
-    if (!is_array($record) || !portal_user_can_download_record($user, $record)) {
-        http_response_code(403);
-        exit('Forbidden');
-    }
-    $attachment = is_array($record['attachments'] ?? null) ? ($record['attachments'][$index] ?? null) : null;
-    if (!is_array($attachment)) {
-        http_response_code(404);
-        exit('Not found');
-    }
-    $storageName = basename((string) ($attachment['storage_name'] ?? ''));
-    if ($storageName === '' || $storageName !== (string) ($attachment['storage_name'] ?? '')) {
-        http_response_code(400);
-        exit('Bad request');
-    }
-    $path = portal_record_dir($recordId) . DIRECTORY_SEPARATOR . 'files' . DIRECTORY_SEPARATOR . $storageName;
-    if (!is_file($path)) {
-        http_response_code(404);
-        exit('Not found');
-    }
-    $original = (string) ($attachment['original_name'] ?? 'document');
-    $ascii = preg_replace('/[^A-Za-z0-9._-]/', '_', $original) ?: 'document';
-    header('Content-Type: ' . ((string) ($attachment['mime'] ?? 'application/octet-stream')));
-    header('Content-Length: ' . filesize($path));
-    header('Content-Disposition: attachment; filename="' . $ascii . '"; filename*=UTF-8\'\'' . rawurlencode($original));
-    portal_audit('attachment_downloaded', ['record_id' => $recordId, 'file' => $index]);
-    readfile($path);
-    exit;
-}
-
-function portal_csv_value(mixed $value): string
-{
-    $text = (string) $value;
-    if (preg_match('/^[\x00-\x20]*[=+\-@]/u', $text)) {
-        return "'" . $text;
-    }
-    return $text;
-}
-
-function portal_csv_row($stream, array $values): void
-{
-    $safeValues = array_map('portal_csv_value', $values);
-    if (fputcsv($stream, $safeValues) === false) {
-        throw new RuntimeException('׳׳ ׳ ׳™׳×׳ ׳”׳™׳” ׳׳”׳©׳׳™׳ ׳׳× ׳™׳¦׳•׳ ׳§׳•׳‘׳¥ ׳”-CSV.');
-    }
-}
-
-function portal_handle_export(array $user): never
-{
-    if (($user['role'] ?? '') !== 'admin') {
-        http_response_code(403);
-        exit('Forbidden');
-    }
-    $filename = 'ifeel-expenses-' . gmdate('Y-m-d') . '.csv';
-    header('Content-Type: text/csv; charset=UTF-8');
-    header('Content-Disposition: attachment; filename="' . $filename . '"');
-    echo "\xEF\xBB\xBF";
-    $out = fopen('php://output', 'wb');
-    if ($out === false) {
-        exit;
-    }
-    portal_csv_row($out, [
-        '׳׳¡׳₪׳¨ ׳“׳™׳•׳•׳—', '׳¡׳•׳’ ׳“׳™׳•׳•׳—', '׳¡׳˜׳˜׳•׳¡', '׳©׳ ׳¢׳•׳‘׳“', '׳×׳׳¨׳™׳ ׳“׳™׳•׳•׳—',
-        '׳§׳˜׳’׳•׳¨׳™׳”', '׳¡׳₪׳§', '׳¡׳›׳•׳', '׳׳˜׳‘׳¢', '׳™׳¢׳“ / ׳׳¡׳₪׳¨ ׳¨׳›׳‘', '׳׳˜׳¨׳× ׳ ׳¡׳™׳¢׳” / ׳×׳™׳׳•׳¨',
-        '׳׳¡׳₪׳¨ ׳§׳‘׳¦׳™׳', '׳ ׳©׳׳— ׳¢׳ ׳™׳“׳™', '׳ ׳•׳¦׳¨ ׳‘׳×׳׳¨׳™׳', '׳”׳¢׳¨׳× ׳׳ ׳”׳',
-    ]);
-
-    foreach (portal_all_records() as $record) {
-        $details = is_array($record['details'] ?? null) ? $record['details'] : [];
-        $employee = is_array($record['employee'] ?? null) ? $record['employee'] : [];
-        $common = [
-            (string) ($record['id'] ?? ''),
-            portal_report_type_label((string) ($record['type'] ?? '')),
-            portal_status_label((string) ($record['status'] ?? 'new')),
-            (string) ($employee['name'] ?? ''),
-            (string) ($record['report_date'] ?? ''),
-        ];
-        if (($record['type'] ?? '') === 'travel' && is_array($record['expense_items'] ?? null)) {
-            foreach ($record['expense_items'] as $item) {
-                portal_csv_row($out, array_merge($common, [
-                    travel_category_label((string) ($item['category'] ?? '')),
-                    (string) ($item['vendor'] ?? ''),
-                    (string) ($item['amount'] ?? ''),
-                    (string) ($item['currency'] ?? ''),
-                    (string) ($details['destination'] ?? ''),
-                    (string) ($details['trip_purpose'] ?? ''),
-                    count($record['attachments'] ?? []),
-                    (string) ($record['submitted_by']['display_name'] ?? ''),
-                    (string) ($record['created_at'] ?? ''),
-                    (string) ($record['admin_note'] ?? ''),
-                ]));
-            }
-        } else {
-            $category = ($record['type'] ?? '') === 'vehicle'
-                ? vehicle_category_label((string) ($details['vehicle_category'] ?? ''))
-                : general_category_label((string) ($details['general_category'] ?? ''));
-            $target = ($record['type'] ?? '') === 'vehicle'
-                ? (string) ($details['vehicle_plate'] ?? '')
-                : (string) ($details['project_customer'] ?? '');
-            portal_csv_row($out, array_merge($common, [
-                $category,
-                (string) ($details['supplier'] ?? ''),
-                (string) ($details['amount'] ?? ''),
-                (string) ($details['currency'] ?? ''),
-                $target,
-                (string) ($details['description'] ?? ''),
-                count($record['attachments'] ?? []),
-                (string) ($record['submitted_by']['display_name'] ?? ''),
-                (string) ($record['created_at'] ?? ''),
-                (string) ($record['admin_note'] ?? ''),
-            ]));
-        }
-    }
-    portal_audit('records_exported');
-    fclose($out);
-    exit;
-}
-
+      '��V���W�6WF���}y���z�y��y}y=z�y}y]yyBy�My-y=y�z�zy�zy�Byyy]z�y�"z�y]y]y�y�y�My}y]z����Т���b�G77v�B�rrbb�F�7G&��77v�B��"��ТF�&��r'V���W�6WF���}yMzy�zy�By}y�y�yz�y�My�y�y�y�My}y]z�"z�y]y]y�y�r��Т���b�GW6W&�����7G&����GW6W%�wW6W&��u��rr�bbF7F�fR��ТF�&��r'V���W�6WF���}y�zy�z�y�y�Mz�yy�z�yz�yMy��z�y��yMy�}y]yz����Т���b�GW6W&�����7G&����GW6W%�wW6W&��u��rr�bbG&�R�vF֖���ТF�&��r'V���W�6WF���}y�zy�z�y�y�Mzy�z�y�-zmy��yMz�z�yz�y�yMy�r��Т��ТG77v�D�6��FW��7F���w77v�E�6�u��rs�Т�b�G77v�B�rr��ТG77v�D�6��77v�E�6��G77v�B�55t�E�TdT���Т���F�6fU�6W"�GW6W&����ТvF�7����r�FF�7������w&�Rr�G&�R��v7F�fRr�F7F�fR��w77v�E�6�r�G77v�D�6���ғ�Т�F�VF�B�wW6W%�fVBr��wW6W&��r�GW6W&���w&�Rr�G&�R�v7F�fRr�F7F�fR�w77v�E���VBr�G77v�B�ruғ�Т�F�f�6��WB�w7V66W72r�FW��7F�������}yMy��z�y��zy]zmz�yyMzmy�}yB��}zMz�y�y�yMy��z�y��z-y]y=y�zyR���Т�F�&VF�&V7B��wF"r�wW6W'2uғ�Т��Т�b�F7F����v���E����VU��&V7F��r��Т�F�&WV�&U�F֖ₓ�ТF6����F����E����VU��&V7F����F��B�vV���VU��&V7F���W�Br�3���Т�F�VF�B�vV���VU��&V7F����FVBr��v6��r�F6��ғ�Т�F�f�6��WB�w7V66W72r�}zMz�y�y�r�F6���rz-y]yy=y�y�zz�y��yRyyMzmy�}yB���Т�F�&VF�&V7B��wF"r�vV���VW2uғ�Т��Т�b�F7F����v���E�V��6���&V7F��r����F�&WV�&U�F֖ₓ�ТF6����F����E�V��6���&V7F����F��B�wfV��6���&V7F���W�Br�c���Т�F�VF�B�wfV��6���&V7F����FVBr��v6��r�F6��ғ�Т�F�f�6��WB�w7V66W72r�}zMz�y�y�r�F6���rz�y�yy�y�zz�y��yRyyMzmy�}yB���Т�F�&VF�&V7B��wF"r�wfV��6�2uғ��Р��b�F7F����w6fU�V��6���V��r����F�&WV�&U�F֖ₓ��FF�V����F�6fU�V��6���V���GW6W"����F�VF�B�wfV��6���V���fVBr���vF�V���r��7G&����FF�V���v�Bu��rr�"wG�Rr��7G&����FF�V���wG�Ru��rr�"ғ���F�f�6��WB�w7V66W72r�}y�y��yMz�y�yzz�y��y]z�yz�y�y�yMz�y]z}z2z-y]y=y�y�r����F�&VF�&V7B��wF"r�wfV��6�2uғ��РТ�b�F7F����w6fU��'F�F���gBr��Т�F�&WV�&U�F֖ₓ�ТG�V%&r��F��B�vv�gE�"r�B��Т�b�7G�U��v�B�G�V%&r���ТF�&��r'V���W�6WF���}z�zz�yMy��zyByy�zyBz�z}y�zyB���Т��FV�����F��B�vv�gE����VU�����c��Т�F�6fU��'F�F���gB�ТFV���Т����G�V%&r���F��B�vv�gE��F�r�c����F��B�vv�gE�W76vRr�#����F��B�vv�gE�����Rr�c����F��B�vv�gE�VFV�F���&��S���E���5�vv�gE�GF6���u�������Т�F�VF�B�v&�'F�F���gE�fVBr��ТvV����6�r��6��w6�#Sbr�7G'F��W"�FV�����w�V"r�����G�V%&r��ғ�Т�F�f�6��WB�w7V66W72r�}y��zz�y�y]y�yMyMy]y�=z�zz�y��yByyymy]z�yMyy�z�y�z�y�yMz-y]yy2���Т�F�&VF�&V7B��wF"r�vV���VW2uғ�Т��ТF�&��r'V���W�6WF���}yMzMz-y]y�ByMy�y]z}z�z�yy�zyBy�]y�z�z����Ч��ЦgV�F���F�W6W%��F���E�V6�B�'&�GW6W"�'&�G&V6�B��&����Т�b��GW6W%�w&�Ru��rr���vF֖���Т&WGW&�G'VS�Т��Т�b��GW6W%�w&�Ru��rr��vV���VRr��Т&WGW&�f�S�Т��ТGW6W$V�����F��&�Ɨ�U���V���7G&����GW6W%�vV�����rr���ТG&V6�DV�����F��&�Ɨ�U���V���7G&����G&V6�E�vV���VRuղvV�����rr���РТ&WGW&�GW6W$V������ТbbG&V6�DV������Тbb�6��V��GW6W$V���G&V6�DV���Ч��ЦgV�F���F��������B�'&�GW6W"���fW Ч�ТG&V6�D�B�G&�҂�7G&����E�UE�v�Bu��rr���ТF��W��f��W%�"�E�UE�vf��u�����d��U%�ĔDDU�B��v�F��2r��v֖�&�Rr����Т�b�F��W���f�R��Т�GG�W7�6U��R�C��ТW��B�t&B&WVW7Br��Т��G&V6�B��F��E�V6�B�G&V6�D�B��Т�b��5�'&��G&V6�B���F�W6W%��F���E�V6�B�GW6W"�G&V6�B���Т�GG�W7�6U��R�C2��ТW��B�tf�&�FFV���Т��FGF6�����5�'&��G&V6�E�vGF6���2u�������G&V6�E�vGF6���2uղF��W����������Т�b��5�'&��FGF6������Т�GG�W7�6U��R�CB��ТW��B�t�Bf��r��Т��G7F�vT���&6V����7G&����FGF6����w7F�vU��u��rr���Т�b�G7F�vT����rr�G7F�vT����7G&����FGF6����w7F�vU��u��rr���Т�GG�W7�6U��R�C��ТW��B�t&B&WVW7Br��Т��GF���F�&V6�E��"�G&V6�D�B��D�$T5D���U$D��vf��2r�D�$T5D���U$D��G7F�vT���Т�b��5����GF����Т�GG�W7�6U��R�CB��ТW��B�t�Bf��r��Т��F��v�����7G&����FGF6����v��v�����u��vF�V��r��ТF66���&Vu�W�6R�r�զףӒ����u��F��v���vF�V��s�Т�VFW"�t6�FV���S�r���7G&����FGF6����v֖�u��vƖ6F���7FWB�G&V�����Т�VFW"�t6�FV��V�F��r�f��6��R�GF����Т�VFW"�t6�FV���7��F���GF6����f�����r�F66���r#�f������DbӅ��r�&wW&���R�F��v����Т�F�VF�B�vGF6�������FVBr��w&V6�E�r�G&V6�D�B�vf��r�F��W�ғ�Т&VFf���GF���ТW��C�Ч��ЦgV�F���F�77e��R�֗�VBGf�R��7G&��Ч�ТGFW�B��7G&���Gf�S�Т�b�&Vu�F6��r��ǃ��#ҥ�ҵ��Rr�GFW�B���Т&WGW&�"r"�GFW�C�Т��&WGW&�GFW�C�Ч��ЦgV�F���F�77e���G7G&V�'&�Gf�W2��f�Ч�ТG6fUf�W2�'&���w�F�77e��Rr�Gf�W2��Т�b�gWF77b�G7G&V�G6fUf�W2���f�R��ТF�&��r'V���W�6WF���}y�zy�z�y�yMy�yBy�Mz�y��y�yz�y�zmy]yz}y]yzRyB�5b���Т����ЦgV�F���F�������B�'&�GW6W"���fW Ч�Т�b��GW6W%�w&�Ru��rr��vF֖���Т�GG�W7�6U��R�C2��ТW��B�tf�&�FFV���Т��Ff�����v�fVV�W�V�W2��v�FR�u���r��r�7bs�Т�VFW"�t6�FV���S�FW�B�7c�6�'6WC�Dbӂr��Т�VFW"�t6�FV���7��F���GF6����f�����r�Ff�����r"r��ТV6��%ǄTeǄ$%Ǆ$b#�ТF�B�f�V�����GWBr�wv"r��Т�b�F�B��f�R��ТW��C�Т���F�77e���F�B��Т}y�zMz�y=y�y]y]yrr�}zy]y"y=y�y]y]yrr�}zy�y�y]zr�}z�y�z-y]yy2r�}z�yz�y�y�y=y�y]y]yrr��}z}y�y-y]z�y�yBr�}zzMzrr�}zy�y]y��}y��yz"r�}y�z-y2�y�zMz�z�y�yr�}y��z�z�zzy�z-yB�z�y�yy]z�r��}y�zMz�z}yzmy�y��}zz�y�rz-y�y�y=y�r�}zy]zmz�yz�yz�y�y�r�}yMz-z�z�y�yMy���ғ�РТf�V6���F���V6�G2��2G&V6�B��ТFFWF����5�'&��G&V6�E�vFWF��u������G&V6�E�vFWF��u���ӰТFV���VR��5�'&��G&V6�E�vV���VRu������G&V6�E�vV���VRu���ӰТF6�����Т�7G&����G&V6�E�v�Bu��rr����F�&W�E��U�&V�7G&����G&V6�E�wG�Ru��rr�����F�7FGW5�&V�7G&����G&V6�E�w7FGW2u��v�rr�����7G&����FV���VU�v��u��rr����7G&����G&V6�E�w&W�E�FRu��rr���ӰТ�b��G&V6�E�wG�Ru��rr���wG&fV�bb�5�'&��G&V6�E�vW�V�U�V�u�������Тf�V6��G&V6�E�vW�V�U�V�u�2F�FVҒ�Т�F�77e���F�B�'&��W&vR�F6����ТG&fV�6FVv���&V�7G&����F�FVղv6FVv��u��rr�����7G&����F�FVղwfV��u��rr����7G&����F�FVղv�V�u��rr����7G&����F�FVղv7W'&V��u��rr����7G&����FFWF���vFW7F��F��u��rr����7G&����FFWF���wG&��W'�Ru��rr���6���G&V6�E�vGF6���2u���Ғ���7G&����G&V6�E�w7V&֗GFVE��uղvF�7����u��rr����7G&����G&V6�E�v7&VFVE�Bu��rr����7G&����G&V6�E�vF֖��FRu��rr���Ғ��Т���V�R�ТF6FVv����G&V6�E�wG�Ru��rr���wfV��6�pТ�fV��6��FVv���&V�7G&����FFWF���wfV��6��FVv��u��rr��Т�vV�&�6FVv���&V�7G&����FFWF���vvV�&�6FVv��u��rr���ТGF&vWB��G&V6�E�wG�Ru��rr���wfV��6�pТ��7G&����FFWF���wfV��6���FRu��rr�Т��7G&����FFWF���w&�7E�W7F�W"u��rr��Т�F�77e���F�B�'&��W&vR�F6����ТF6FVv�����7G&����FFWF���w7WƖW"u��rr����7G&����FFWF���v�V�u��rr����7G&����FFWF���v7W'&V��u��rr���GF&vWB���7G&����FFWF���vFW67&�F��u��rr���6���G&V6�E�vGF6���2u���Ғ���7G&����G&V6�E�w7V&֗GFVE��uղvF�7����u��rr����7G&����G&V6�E�v7&VFVE�Bu��rr����7G&����G&V6�E�vF֖��FRu��rr���Ғ��Т�����F�VF�B�w&V6�G5���FVBr��Тf6�6R�F�B��ТW��C�Ч�
