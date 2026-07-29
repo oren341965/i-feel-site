@@ -8,26 +8,6 @@ const IFEEL_PORTAL_MAX_FILES = 20;
 const IFEEL_PORTAL_MAX_FILE_BYTES = 12 * 1024 * 1024;
 const IFEEL_PORTAL_MAX_TOTAL_BYTES = 60 * 1024 * 1024;
 
-// Production on JetServer runs PHP 7.4, which lacks the PHP 8 string helpers.
-if (!function_exists('str_contains')) {
-    function str_contains(string $haystack, string $needle): bool
-    {
-        return $needle === '' || strpos($haystack, $needle) !== false;
-    }
-}
-if (!function_exists('str_starts_with')) {
-    function str_starts_with(string $haystack, string $needle): bool
-    {
-        return strncmp($haystack, $needle, strlen($needle)) === 0;
-    }
-}
-if (!function_exists('str_ends_with')) {
-    function str_ends_with(string $haystack, string $needle): bool
-    {
-        return $needle === '' || substr($haystack, -strlen($needle)) === $needle;
-    }
-}
-
 // Load the existing server-only configuration file when it exists.
 // This file is intentionally not committed to GitHub.
 $serverConfig = dirname(__DIR__) . '/api/config.php';
@@ -118,16 +98,13 @@ function portal_url(array $params = []): string
     return $params === [] ? $base : $base . '?' . http_build_query($params);
 }
 
-function portal_redirect(array $params = []): void
+function portal_redirect(array $params = []): never
 {
     header('Location: ' . portal_url($params), true, 303);
     exit;
 }
 
-/**
- * @param mixed $value
- */
-function portal_h($value): string
+function portal_h(mixed $value): string
 {
     return htmlspecialchars((string) $value, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
 }
@@ -226,7 +203,7 @@ function portal_assert_private_storage(string $path): void
 
     foreach (array_unique($webRoots) as $webRoot) {
         if ($webRoot !== '' && portal_path_is_within($path, $webRoot)) {
-            throw new RuntimeException('תיקיית אחסון הדיווחים חייבת להיות מחוץ לתיקייה הציבורית של האתר.');
+            throw new RuntimeException('׳×׳™׳§׳™׳™׳× ׳׳—׳¡׳•׳ ׳”׳“׳™׳•׳•׳—׳™׳ ׳—׳™׳™׳‘׳× ׳׳”׳™׳•׳× ׳׳—׳•׳¥ ׳׳×׳™׳§׳™׳™׳” ׳”׳¦׳™׳‘׳•׳¨׳™׳× ׳©׳ ׳”׳׳×׳¨.');
         }
     }
 }
@@ -237,7 +214,7 @@ function portal_ensure_directory(string $path, int $mode = 0700): void
         return;
     }
     if (!mkdir($path, $mode, true) && !is_dir($path)) {
-        throw new RuntimeException('לא ניתן ליצור את תיקיית האחסון המאובטחת.');
+        throw new RuntimeException('׳׳ ׳ ׳™׳×׳ ׳׳™׳¦׳•׳¨ ׳׳× ׳×׳™׳§׳™׳™׳× ׳”׳׳—׳¡׳•׳ ׳”׳׳׳•׳‘׳˜׳—׳×.');
     }
     @chmod($path, $mode);
 }
@@ -290,16 +267,16 @@ function portal_json_write(string $path, array $data): void
     portal_ensure_directory(dirname($path));
     $json = json_encode($data, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
     if ($json === false) {
-        throw new RuntimeException('שגיאה בשמירת הנתונים.');
+        throw new RuntimeException('׳©׳’׳™׳׳” ׳‘׳©׳׳™׳¨׳× ׳”׳ ׳×׳•׳ ׳™׳.');
     }
     $tmp = $path . '.tmp-' . bin2hex(random_bytes(6));
     if (file_put_contents($tmp, $json, LOCK_EX) === false) {
-        throw new RuntimeException('שגיאה בכתיבת הנתונים.');
+        throw new RuntimeException('׳©׳’׳™׳׳” ׳‘׳›׳×׳™׳‘׳× ׳”׳ ׳×׳•׳ ׳™׳.');
     }
     @chmod($tmp, 0600);
     if (!rename($tmp, $path)) {
         @unlink($tmp);
-        throw new RuntimeException('שגיאה בהשלמת שמירת הנתונים.');
+        throw new RuntimeException('׳©׳’׳™׳׳” ׳‘׳”׳©׳׳׳× ׳©׳׳™׳¨׳× ׳”׳ ׳×׳•׳ ׳™׳.');
     }
     @chmod($path, 0600);
 }
@@ -308,14 +285,14 @@ function portal_builtin_users(): array
 {
     return [
         'oren' => [
-            'display_name' => 'אורן לוי',
+            'display_name' => '׳׳•׳¨׳ ׳׳•׳™',
             'role' => 'admin',
             'active' => true,
             'password_hash' => '$2y$12$Xy3T6UxjpfhZeFMI6M6OweGrfpHNgfV2MNxtNqhr8sri0JHwA4WQC',
             'source' => 'bootstrap',
         ],
         'employee' => [
-            'display_name' => 'עובדי I Feel',
+            'display_name' => '׳¢׳•׳‘׳“׳™ I Feel',
             'role' => 'employee',
             'active' => true,
             'password_hash' => '$2y$12$o4H4lh740XV2VXSAM9bKjOrEWykYylV88/ZJqaWPBZYDxFgRu.V9K',
@@ -381,7 +358,7 @@ function portal_save_user(string $username, array $user): void
 {
     $username = strtolower(trim($username));
     if (!preg_match('/^[a-z0-9._-]{3,40}$/', $username)) {
-        throw new InvalidArgumentException('שם המשתמש חייב להכיל 3 עד 40 תווים באנגלית, מספרים, נקודה, מקף או קו תחתון.');
+        throw new InvalidArgumentException('׳©׳ ׳”׳׳©׳×׳׳© ׳—׳™׳™׳‘ ׳׳”׳›׳™׳ 3 ׳¢׳“ 40 ׳×׳•׳•׳™׳ ׳‘׳׳ ׳’׳׳™׳×, ׳׳¡׳₪׳¨׳™׳, ׳ ׳§׳•׳“׳”, ׳׳§׳£ ׳׳• ׳§׳• ׳×׳—׳×׳•׳.');
     }
 
     $stored = portal_saved_user_overrides();
@@ -410,7 +387,7 @@ function portal_verify_csrf(): void
     $sent = portal_post('csrf', 200);
     $known = $_SESSION['portal_csrf'] ?? '';
     if (!is_string($known) || $known === '' || !hash_equals($known, $sent)) {
-        throw new RuntimeException('פג תוקף הטופס. יש לרענן את הדף ולנסות שוב.');
+        throw new RuntimeException('׳₪׳’ ׳×׳•׳§׳£ ׳”׳˜׳•׳₪׳¡. ׳™׳© ׳׳¨׳¢׳ ׳ ׳׳× ׳”׳“׳£ ׳•׳׳ ׳¡׳•׳× ׳©׳•׳‘.');
     }
 }
 
@@ -553,7 +530,7 @@ function portal_require_admin(): array
     $user = portal_require_login();
     if (($user['role'] ?? '') !== 'admin') {
         http_response_code(403);
-        throw new RuntimeException('אין הרשאה לביצוע הפעולה.');
+        throw new RuntimeException('׳׳™׳ ׳”׳¨׳©׳׳” ׳׳‘׳™׳¦׳•׳¢ ׳”׳₪׳¢׳•׳׳”.');
     }
     return $user;
 }
@@ -561,23 +538,23 @@ function portal_require_admin(): array
 function portal_report_type_label(string $type): string
 {
     $labels = [
-        'vehicle' => 'רכב, טיפול, חניה ונסיעות',
-        'travel' => 'נסיעה לחו״ל',
-        'general' => 'הוצאה כללית',
+        'vehicle' => '׳¨׳›׳‘, ׳˜׳™׳₪׳•׳, ׳—׳ ׳™׳” ׳•׳ ׳¡׳™׳¢׳•׳×',
+        'travel' => '׳ ׳¡׳™׳¢׳” ׳׳—׳•׳´׳',
+        'general' => '׳”׳•׳¦׳׳” ׳›׳׳׳™׳×',
     ];
-    return $labels[$type] ?? 'דיווח הוצאה';
+    return $labels[$type] ?? '׳“׳™׳•׳•׳— ׳”׳•׳¦׳׳”';
 }
 
 function portal_status_label(string $status): string
 {
     $labels = [
-        'new' => 'חדש',
-        'review' => 'בבדיקה',
-        'approved' => 'אושר',
-        'missing' => 'חסר מידע',
-        'paid' => 'שולם / הוחזר',
+        'new' => '׳—׳“׳©',
+        'review' => '׳‘׳‘׳“׳™׳§׳”',
+        'approved' => '׳׳•׳©׳¨',
+        'missing' => '׳—׳¡׳¨ ׳׳™׳“׳¢',
+        'paid' => '׳©׳•׳׳ / ׳”׳•׳—׳–׳¨',
     ];
-    return $labels[$status] ?? 'חדש';
+    return $labels[$status] ?? '׳—׳“׳©';
 }
 
 function portal_valid_statuses(): array
@@ -588,10 +565,10 @@ function portal_valid_statuses(): array
 function portal_currency_label(string $currency): string
 {
     $labels = [
-        'ILS' => '₪',
+        'ILS' => 'ג‚×',
         'USD' => '$',
-        'EUR' => '€',
-        'GBP' => '£',
+        'EUR' => 'ג‚¬',
+        'GBP' => 'ֲ£',
     ];
     return $labels[$currency] ?? $currency;
 }
@@ -614,7 +591,7 @@ function portal_new_record_id(): string
 function portal_record_dir(string $recordId): string
 {
     if (!preg_match('/^(\d{4})(\d{2})\d{2}-\d{6}-[a-f0-9]{12}$/', $recordId, $match)) {
-        throw new InvalidArgumentException('מספר דיווח אינו תקין.');
+        throw new InvalidArgumentException('׳׳¡׳₪׳¨ ׳“׳™׳•׳•׳— ׳׳™׳ ׳• ׳×׳§׳™׳.');
     }
     return portal_storage_root()
         . DIRECTORY_SEPARATOR . 'records'
@@ -720,7 +697,7 @@ function portal_save_uploads(string $recordDir, array $files): array
 {
     $items = portal_normalize_files_array($files);
     if (count($items) > IFEEL_PORTAL_MAX_FILES) {
-        throw new RuntimeException('ניתן לצרף עד ' . IFEEL_PORTAL_MAX_FILES . ' קבצים בכל דיווח.');
+        throw new RuntimeException('׳ ׳™׳×׳ ׳׳¦׳¨׳£ ׳¢׳“ ' . IFEEL_PORTAL_MAX_FILES . ' ׳§׳‘׳¦׳™׳ ׳‘׳›׳ ׳“׳™׳•׳•׳—.');
     }
 
     $uploads = [];
@@ -745,32 +722,26 @@ function portal_save_uploads(string $recordDir, array $files): array
             continue;
         }
         if ($error !== UPLOAD_ERR_OK) {
-            switch ($error) {
-                case UPLOAD_ERR_INI_SIZE:
-                case UPLOAD_ERR_FORM_SIZE:
-                    $message = 'אחד הקבצים גדול מהמותר בשרת.';
-                    break;
-                case UPLOAD_ERR_PARTIAL:
-                    $message = 'אחד הקבצים הועלה באופן חלקי בלבד.';
-                    break;
-                default:
-                    $message = 'אירעה שגיאה בהעלאת אחד הקבצים.';
-            }
+            $message = match ($error) {
+                UPLOAD_ERR_INI_SIZE, UPLOAD_ERR_FORM_SIZE => '׳׳—׳“ ׳”׳§׳‘׳¦׳™׳ ׳’׳“׳•׳ ׳׳”׳׳•׳×׳¨ ׳‘׳©׳¨׳×.',
+                UPLOAD_ERR_PARTIAL => '׳׳—׳“ ׳”׳§׳‘׳¦׳™׳ ׳”׳•׳¢׳׳” ׳‘׳׳•׳₪׳ ׳—׳׳§׳™ ׳‘׳׳‘׳“.',
+                default => '׳׳™׳¨׳¢׳” ׳©׳’׳™׳׳” ׳‘׳”׳¢׳׳׳× ׳׳—׳“ ׳”׳§׳‘׳¦׳™׳.',
+            };
             throw new RuntimeException($message);
         }
 
         $size = (int) ($file['size'] ?? 0);
         if ($size <= 0 || $size > IFEEL_PORTAL_MAX_FILE_BYTES) {
-            throw new RuntimeException('כל קובץ חייב להיות קטן מ-12MB.');
+            throw new RuntimeException('׳›׳ ׳§׳•׳‘׳¥ ׳—׳™׳™׳‘ ׳׳”׳™׳•׳× ׳§׳˜׳ ׳-12MB.');
         }
         $totalBytes += $size;
         if ($totalBytes > IFEEL_PORTAL_MAX_TOTAL_BYTES) {
-            throw new RuntimeException('הגודל הכולל של הקבצים חייב להיות קטן מ-60MB.');
+            throw new RuntimeException('׳”׳’׳•׳“׳ ׳”׳›׳•׳׳ ׳©׳ ׳”׳§׳‘׳¦׳™׳ ׳—׳™׳™׳‘ ׳׳”׳™׳•׳× ׳§׳˜׳ ׳-60MB.');
         }
 
         $tmp = (string) ($file['tmp_name'] ?? '');
         if ($tmp === '' || !is_uploaded_file($tmp)) {
-            throw new RuntimeException('קובץ ההעלאה אינו תקין.');
+            throw new RuntimeException('׳§׳•׳‘׳¥ ׳”׳”׳¢׳׳׳” ׳׳™׳ ׳• ׳×׳§׳™׳.');
         }
 
         $mime = (string) $finfo->file($tmp);
@@ -783,13 +754,13 @@ function portal_save_uploads(string $recordDir, array $files): array
             $mime = $originalExt === 'avif' ? 'image/avif' : 'image/' . $originalExt;
         }
         if ($extension === null) {
-            throw new RuntimeException('סוג קובץ לא נתמך. ניתן להעלות PDF, JPG, PNG, WEBP, HEIC או AVIF בלבד.');
+            throw new RuntimeException('׳¡׳•׳’ ׳§׳•׳‘׳¥ ׳׳ ׳ ׳×׳׳. ׳ ׳™׳×׳ ׳׳”׳¢׳׳•׳× PDF, JPG, PNG, WEBP, HEIC ׳׳• AVIF ׳‘׳׳‘׳“.');
         }
 
         $storageName = bin2hex(random_bytes(16)) . '.' . $extension;
         $destination = $filesDir . DIRECTORY_SEPARATOR . $storageName;
         if (!move_uploaded_file($tmp, $destination)) {
-            throw new RuntimeException('לא ניתן לשמור את הקובץ בשרת.');
+            throw new RuntimeException('׳׳ ׳ ׳™׳×׳ ׳׳©׳׳•׳¨ ׳׳× ׳”׳§׳•׳‘׳¥ ׳‘׳©׳¨׳×.');
         }
         @chmod($destination, 0600);
 
@@ -809,13 +780,13 @@ function portal_format_totals(array $record): string
 {
     $totals = $record['totals'] ?? [];
     if (!is_array($totals) || $totals === []) {
-        return 'לא צוין';
+        return '׳׳ ׳¦׳•׳™׳';
     }
     $parts = [];
     foreach ($totals as $currency => $amount) {
         $parts[] = number_format((float) $amount, 2) . ' ' . portal_currency_label((string) $currency);
     }
-    return implode(' · ', $parts);
+    return implode(' ֲ· ', $parts);
 }
 
 function portal_audit(string $event, array $context = []): void
@@ -832,3 +803,4 @@ function portal_audit(string $event, array $context = []): void
     @file_put_contents($path, $line, FILE_APPEND | LOCK_EX);
     @chmod($path, 0600);
 }
+
