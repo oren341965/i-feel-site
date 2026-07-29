@@ -1,3 +1,4 @@
+
 <?php
 declare(strict_types=1);
 
@@ -17,7 +18,7 @@ require_once __DIR__ . '/_form.php';
 require_once __DIR__ . '/_admin.php';
 require_once __DIR__ . '/_readiness.php';
 
-function portal_render_maintenance_page(?string $requestId = null): void
+function portal_render_maintenance_page(?string $requestId = null): never
 {
     http_response_code(503);
     header('Retry-After: 300');
@@ -29,7 +30,7 @@ function portal_render_maintenance_page(?string $requestId = null): void
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="robots" content="noindex,nofollow,noarchive">
-  <title>אזור העובדים | I Feel</title>
+  <title>׳׳–׳•׳¨ ׳”׳¢׳•׳‘׳“׳™׳ | I Feel</title>
   <style>
     *{box-sizing:border-box}body{margin:0;min-height:100vh;display:grid;place-items:center;background:#f4f7fb;color:#10233f;font-family:Arial,"Heebo",sans-serif;padding:24px}.card{width:min(560px,100%);background:#fff;border:1px solid #dbe4ef;border-radius:20px;padding:36px;box-shadow:0 18px 45px rgba(16,35,63,.12);text-align:center}.logo{width:86px;height:auto;margin-bottom:20px}h1{font-size:30px;margin:0 0 12px}p{font-size:17px;line-height:1.65;margin:0 0 24px;color:#52657d}.button{display:inline-block;background:#1769aa;color:#fff;text-decoration:none;font-weight:700;padding:12px 22px;border-radius:10px}.note{margin-top:22px;font-size:14px;color:#6b7b90}
   </style>
@@ -37,10 +38,10 @@ function portal_render_maintenance_page(?string $requestId = null): void
 <body>
   <main class="card">
     <img class="logo" src="/assets/ifeel-logo.png" alt="I Feel">
-    <h1>אזור העובדים נמצא כרגע בטיפול</h1>
-    <p>הגישה לדיווח הוצאות הושבתה זמנית כדי למנוע תקלה. האתר הראשי ושירותי החברה ממשיכים לפעול כרגיל.</p>
-    <a class="button" href="/">חזרה לאתר I Feel</a>
-    <div class="note">המערכת תחזור לפעילות לאחר בדיקת השרת והשלמת בדיקות אבטחה.<?php if ($requestId !== null): ?> מספר בדיקה: <?= portal_h($requestId) ?>.<?php endif; ?></div>
+    <h1>׳׳–׳•׳¨ ׳”׳¢׳•׳‘׳“׳™׳ ׳ ׳׳¦׳ ׳›׳¨׳’׳¢ ׳‘׳˜׳™׳₪׳•׳</h1>
+    <p>׳”׳’׳™׳©׳” ׳׳“׳™׳•׳•׳— ׳”׳•׳¦׳׳•׳× ׳”׳•׳©׳‘׳×׳” ׳–׳׳ ׳™׳× ׳›׳“׳™ ׳׳׳ ׳•׳¢ ׳×׳§׳׳”. ׳”׳׳×׳¨ ׳”׳¨׳׳©׳™ ׳•׳©׳™׳¨׳•׳×׳™ ׳”׳—׳‘׳¨׳” ׳׳׳©׳™׳›׳™׳ ׳׳₪׳¢׳•׳ ׳›׳¨׳’׳™׳.</p>
+    <a class="button" href="/">׳—׳–׳¨׳” ׳׳׳×׳¨ I Feel</a>
+    <div class="note">׳”׳׳¢׳¨׳›׳× ׳×׳—׳–׳•׳¨ ׳׳₪׳¢׳™׳׳•׳× ׳׳׳—׳¨ ׳‘׳“׳™׳§׳× ׳”׳©׳¨׳× ׳•׳”׳©׳׳׳× ׳‘׳“׳™׳§׳•׳× ׳׳‘׳˜׳—׳”.<?php if ($requestId !== null): ?> ׳׳¡׳₪׳¨ ׳‘׳“׳™׳§׳”: <?= portal_h($requestId) ?>.<?php endif; ?></div>
   </main>
 </body>
 </html>
@@ -117,7 +118,7 @@ try {
                 portal_redirect();
             }
 
-            portal_render_email_entry('הפעולה המבוקשת אינה מוכרת.');
+            portal_render_email_entry('׳”׳₪׳¢׳•׳׳” ׳”׳׳‘׳•׳§׳©׳× ׳׳™׳ ׳” ׳׳•׳›׳¨׳×.');
         }
 
         if (portal_email_challenge() !== null) {
@@ -159,6 +160,9 @@ try {
     if ($action === 'gift_download') {
         portal_handle_birthday_gift_download($user);
     }
+    if ($action === 'vehicle_document_download') {
+        portal_handle_vehicle_document_download($user);
+    }
 
     $tab = trim((string) ($_GET['tab'] ?? 'new'));
     if (($user['role'] ?? '') !== 'admin' && !in_array($tab, ['new', 'history', 'work', 'profile', 'my_vehicle'], true)) {
@@ -172,17 +176,17 @@ try {
     }
 
     $flash = portal_flash_take();
-    $pageTitles = [
-        'history' => 'ההוצאות שלי',
-        'reports' => 'דיווחים',
-        'employees' => 'פרטי עובדים וימי הולדת',
-        'vehicles' => 'רכבי עובדים',
-        'profile' => 'הפרטים והרכב שלי',
-        'my_vehicle' => 'הרכב שלי',
-        'work' => 'סיום התקנה או שירות',
-        'work_stats' => 'סטטיסטיקת עבודות',
-    ];
-    $pageTitle = $pageTitles[$tab] ?? 'דיווח חדש';
+    $pageTitle = match ($tab) {
+        'history' => '׳”׳”׳•׳¦׳׳•׳× ׳©׳׳™',
+        'reports' => '׳“׳™׳•׳•׳—׳™׳',
+        'employees' => '׳₪׳¨׳˜׳™ ׳¢׳•׳‘׳“׳™׳ ׳•׳™׳׳™ ׳”׳•׳׳“׳×',
+        'vehicles' => '׳¨׳›׳‘׳™ ׳¢׳•׳‘׳“׳™׳',
+        'profile' => '׳”׳₪׳¨׳˜׳™׳ ׳•׳”׳¨׳›׳‘ ׳©׳׳™',
+        'my_vehicle' => '׳”׳¨׳›׳‘ ׳©׳׳™',
+        'work' => '׳¡׳™׳•׳ ׳”׳×׳§׳ ׳” ׳׳• ׳©׳™׳¨׳•׳×',
+        'work_stats' => '׳¡׳˜׳˜׳™׳¡׳˜׳™׳§׳× ׳¢׳‘׳•׳“׳•׳×',
+        default => '׳“׳™׳•׳•׳— ׳—׳“׳©',
+    };
     portal_page_start($pageTitle, $user);
     portal_nav($tab, $user);
     portal_render_birthday_banner($user);
@@ -209,7 +213,7 @@ try {
         if ($view !== '') {
             $record = portal_load_record($view);
             if ($record === null) {
-                throw new RuntimeException('הדיווח המבוקש לא נמצא.');
+                throw new RuntimeException('׳”׳“׳™׳•׳•׳— ׳”׳׳‘׳•׳§׳© ׳׳ ׳ ׳׳¦׳.');
             }
             portal_render_record_detail($record, $flash);
         } else {
@@ -233,8 +237,9 @@ try {
         portal_render_maintenance_page($requestId);
     }
 
-    portal_page_start('שגיאה', $user);
+    portal_page_start('׳©׳’׳™׳׳”', $user);
     portal_nav('new', $user);
-    ?><div class="alert alert--error" role="alert"><?= portal_h($error->getMessage()) ?></div><p><a class="button button--secondary" href="<?= portal_h(portal_url(['tab' => 'new'])) ?>">חזרה לטופס</a></p><?php
+    ?><div class="alert alert--error" role="alert"><?= portal_h($error->getMessage()) ?></div><p><a class="button button--secondary" href="<?= portal_h(portal_url(['tab' => 'new'])) ?>">׳—׳–׳¨׳” ׳׳˜׳•׳₪׳¡</a></p><?php
     portal_page_end();
 }
+
