@@ -722,11 +722,12 @@ function portal_save_uploads(string $recordDir, array $files): array
             continue;
         }
         if ($error !== UPLOAD_ERR_OK) {
-            $message = match ($error) {
-                UPLOAD_ERR_INI_SIZE, UPLOAD_ERR_FORM_SIZE => '׳׳—׳“ ׳”׳§׳‘׳¦׳™׳ ׳’׳“׳•׳ ׳׳”׳׳•׳×׳¨ ׳‘׳©׳¨׳×.',
+            $messages = [
+                UPLOAD_ERR_INI_SIZE => '׳׳—׳“ ׳”׳§׳‘׳¦׳™׳ ׳’׳“׳•׳ ׳׳”׳׳•׳×׳¨ ׳‘׳©׳¨׳×.',
+                UPLOAD_ERR_FORM_SIZE => '׳׳—׳“ ׳”׳§׳‘׳¦׳™׳ ׳’׳“׳•׳ ׳׳”׳׳•׳×׳¨ ׳‘׳©׳¨׳×.',
                 UPLOAD_ERR_PARTIAL => '׳׳—׳“ ׳”׳§׳‘׳¦׳™׳ ׳”׳•׳¢׳׳” ׳‘׳׳•׳₪׳ ׳—׳׳§׳™ ׳‘׳׳‘׳“.',
-                default => '׳׳™׳¨׳¢׳” ׳©׳’׳™׳׳” ׳‘׳”׳¢׳׳׳× ׳׳—׳“ ׳”׳§׳‘׳¦׳™׳.',
-            };
+            ];
+            $message = $messages[$error] ?? '׳׳™׳¨׳¢׳” ׳©׳’׳™׳׳” ׳‘׳”׳¢׳׳׳× ׳׳—׳“ ׳”׳§׳‘׳¦׳™׳.';
             throw new RuntimeException($message);
         }
 
