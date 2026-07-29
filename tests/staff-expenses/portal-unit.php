@@ -224,13 +224,38 @@ try {
         return true;
     };
     $monthlyReminder = portal_process_vehicle_monthly_reminders(
-        new DateTimeImmutable('2026-07-02 08:00:00', new DateTimeZone('Asia/Jerusalem')),
+        new DateTimeImmutable('2026-07-01 08:00:00', new DateTimeZone('Asia/Jerusalem')),
         $monthlyMailer
     );
     portal_test_expect(
         ($monthlyReminder['sent'] ?? 0) === 1
         && ($monthlyReminderEmails[0]['recipient'] ?? '') === 'worker@i-feel.co.il',
         'Monthly vehicle reminder was not sent to the assigned employee.'
+    );
+    portal_process_vehicle_monthly_reminders(
+        new DateTimeImmutable('2026-07-01 10:00:00', new DateTimeZone('Asia/Jerusalem')),
+        $monthlyMailer
+    );
+    portal_test_expect(count($monthlyReminderEmails) === 1, 'Monthly vehicle reminder was sent more than once on the same day.');
+    $nextDailyReminder = portal_process_vehicle_monthly_reminders(
+        new DateTimeImmutable('2026-07-03 08:00:00', new DateTimeZone('Asia/Jerusalem')),
+        $monthlyMailer
+    );
+    portal_test_expect(
+        ($nextDailyReminder['sent'] ?? 0) === 1
+        && count($monthlyReminderEmails) === 2,
+        'Monthly vehicle reminder was not repeated on the next outstanding day.'
+    );
+    $escalatedReminder = portal_process_vehicle_monthly_reminders(
+        new DateTimeImmutable('2026-07-08 08:00:00', new DateTimeZone('Asia/Jerusalem')),
+        $monthlyMailer
+    );
+    portal_test_expect(
+        ($escalatedReminder['sent'] ?? 0) === 1
+        && ($escalatedReminder['missing_flagged'] ?? 0) === 1
+        && ($monthlyReminderEmails[2]['recipient'] ?? '') === 'worker@i-feel.co.il'
+        && ($monthlyReminderEmails[3]['recipient'] ?? '') === 'oren@i-feel.co.il',
+        'Day-eight reminder was not sent to both the driver and Oren.'
     );
     portal_save_birthday_gift(
         'worker@i-feel.co.il',
@@ -503,4 +528,5 @@ try {
     fwrite(STDERR, "Staff expenses unit checks failed: " . $error->getMessage() . "\n");
     exit(1);
 }
+
 
