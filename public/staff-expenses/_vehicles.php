@@ -41,7 +41,7 @@ function portal_normalize_vehicle_date(string $value, int $row): string
             return $date->format('Y-m-d');
         }
     }
-    throw new RuntimeException('׳©׳•׳¨׳” ' . $row . ': ׳×׳׳¨׳™׳ ׳”׳˜׳¡׳˜ ׳׳• ׳”׳‘׳™׳˜׳•׳— ׳׳™׳ ׳• ׳×׳§׳™׳. ׳™׳© ׳׳”׳©׳×׳׳© ׳‘׳₪׳•׳¨׳׳˜ DD/MM/YYYY ׳׳• YYYY-MM-DD.');
+    throw new RuntimeException('שורה ' . $row . ': תאריך הטסט או הביטוח אינו תקין. יש להשתמש בפורמט DD/MM/YYYY או YYYY-MM-DD.');
 }
 
 function portal_vehicle_source_date(string $value): string
@@ -101,7 +101,7 @@ function portal_parse_vehicle_directory_text(string $text): array
 {
     $text = trim(str_replace("\xEF\xBB\xBF", '', $text));
     if ($text === '') {
-        throw new RuntimeException('׳™׳© ׳׳”׳“׳‘׳™׳§ ׳׳₪׳—׳•׳× ׳©׳•׳¨׳× ׳¨׳›׳‘ ׳׳—׳×.');
+        throw new RuntimeException('יש להדביק לפחות שורת רכב אחת.');
     }
 
     $employees = portal_employee_directory();
@@ -116,16 +116,16 @@ function portal_parse_vehicle_directory_text(string $text): array
         $columns = array_map('trim', str_getcsv($line, $delimiter, '"', ''));
         $first = portal_lower((string) ($columns[0] ?? ''));
         $second = portal_lower((string) ($columns[1] ?? ''));
-        if ($lineNumber === 0 && trim($first) === '׳©׳' && trim($second) === '׳׳™׳׳™׳™׳') {
+        if ($lineNumber === 0 && trim($first) === 'שם' && trim($second) === 'אימייל') {
             $sourceFormat = true;
             continue;
         }
         if ($lineNumber === 0 && (
             str_contains($first, 'email')
-            || str_contains($first, '׳“׳•׳')
-            || str_contains($first, '׳׳™׳™׳')
+            || str_contains($first, 'דוא')
+            || str_contains($first, 'מייל')
             || str_contains($second, 'plate')
-            || str_contains($second, '׳׳¡׳₪׳¨ ׳¨׳›׳‘')
+            || str_contains($second, 'מספר רכב')
         )) {
             continue;
         }
@@ -163,13 +163,13 @@ function portal_parse_vehicle_directory_text(string $text): array
         }
 
         if ($email === null || !isset($employees[$email])) {
-            throw new RuntimeException('׳©׳•׳¨׳” ' . $row . ': ׳“׳•׳"׳ ׳”׳¢׳•׳‘׳“ ׳׳™׳ ׳• ׳§׳™׳™׳ ׳‘׳¡׳₪׳¨ ׳”׳¢׳•׳‘׳“׳™׳.');
+            throw new RuntimeException('שורה ' . $row . ': דוא"ל העובד אינו קיים בספר העובדים.');
         }
         if ($plate === null) {
-            throw new RuntimeException('׳©׳•׳¨׳” ' . $row . ': ׳׳¡׳₪׳¨ ׳”׳¨׳›׳‘ ׳—׳™׳™׳‘ ׳׳”׳›׳™׳ 7 ׳׳• 8 ׳¡׳₪׳¨׳•׳×.');
+            throw new RuntimeException('שורה ' . $row . ': מספר הרכב חייב להכיל 7 או 8 ספרות.');
         }
         if ($year !== 0 && ($year < 1980 || $year > (int) date('Y') + 1)) {
-            throw new RuntimeException('׳©׳•׳¨׳” ' . $row . ': ׳©׳ ׳× ׳”׳¨׳›׳‘ ׳׳™׳ ׳” ׳×׳§׳™׳ ׳”.');
+            throw new RuntimeException('שורה ' . $row . ': שנת הרכב אינה תקינה.');
         }
 
         $entries[$plate] = [
@@ -193,391 +193,4 @@ function portal_parse_vehicle_directory_text(string $text): array
             'insurance_company' => $sourceFormat ? '' : portal_substr((string) ($columns[6] ?? ''), 0, 160),
             'policy_number' => $sourceFormat ? '' : portal_substr((string) ($columns[7] ?? ''), 0, 160),
             'current_km' => $sourceFormat ? portal_substr((string) ($columns[17] ?? ''), 0, 30) : '',
-            'last_update' => $sourceFormat ? portal_substr((string) ($columns[19] ?? ''), 0, 30) : '',
-            'notes' => portal_substr((string) ($columns[$sourceFormat ? 18 : 8] ?? ''), 0, 600),
-            'updated_at' => gmdate('c'),
-        ];
-    }
-
-    if ($entries === []) {
-        throw new RuntimeException('׳׳ ׳ ׳׳¦׳׳• ׳©׳•׳¨׳•׳× ׳¨׳›׳‘ ׳×׳§׳™׳ ׳•׳×.');
-    }
-    return $entries;
-}
-
-function portal_import_vehicle_directory(string $text): int
-{
-    $incoming = portal_parse_vehicle_directory_text($text);
-    $vehicles = portal_vehicle_directory();
-    foreach ($incoming as $plate => $vehicle) {
-        $vehicles[$plate] = $vehicle;
-    }
-    portal_json_write(portal_vehicle_directory_file(), $vehicles);
-    return count($incoming);
-}
-
-function portal_vehicles_for_employee(array $user): array
-{
-    $email = portal_normalize_company_email((string) ($user['email'] ?? ''));
-    if ($email === null) {
-        return [];
-    }
-    return array_values(array_filter(
-        portal_vehicle_directory(),
-        static fn(array $vehicle): bool => hash_equals($email, (string) ($vehicle['employee_email'] ?? ''))
-    ));
-}
-
-function portal_save_employee_vehicle(array $user, array $input): array
-{
-    $email = portal_normalize_company_email((string) ($user['email'] ?? ''));
-    if ($email === null) {
-        throw new RuntimeException('׳׳ ׳ ׳׳¦׳׳” ׳›׳×׳•׳‘׳× ׳“׳•׳׳´׳ ׳׳׳•׳׳×׳× ׳׳¢׳•׳‘׳“.');
-    }
-
-    $existingPlate = portal_normalize_vehicle_plate((string) ($input['existing_plate'] ?? ''));
-    $plate = portal_normalize_vehicle_plate((string) ($input['plate'] ?? ''));
-    $makeModel = trim((string) ($input['make_model'] ?? ''));
-    $yearRaw = trim((string) ($input['year'] ?? ''));
-    $year = $yearRaw === '' ? 0 : (int) $yearRaw;
-    $testDueDate = portal_normalize_vehicle_date((string) ($input['test_due_date'] ?? ''), 1);
-    $insuranceDueDate = portal_normalize_vehicle_date((string) ($input['insurance_due_date'] ?? ''), 1);
-
-    if ($plate === null) {
-        throw new RuntimeException('׳׳¡׳₪׳¨ ׳”׳¨׳›׳‘ ׳—׳™׳™׳‘ ׳׳”׳›׳™׳ 7 ׳׳• 8 ׳¡׳₪׳¨׳•׳×.');
-    }
-    if ($makeModel === '') {
-        throw new RuntimeException('׳™׳© ׳׳”׳–׳™׳ ׳™׳¦׳¨׳ ׳•׳“׳’׳ ׳©׳ ׳”׳¨׳›׳‘.');
-    }
-    if ($year !== 0 && ($year < 1980 || $year > (int) date('Y') + 1)) {
-        throw new RuntimeException('׳©׳ ׳× ׳”׳¨׳›׳‘ ׳׳™׳ ׳” ׳×׳§׳™׳ ׳”.');
-    }
-    if ($testDueDate === '' || $insuranceDueDate === '') {
-        throw new RuntimeException('׳™׳© ׳׳”׳–׳™׳ ׳×׳׳¨׳™׳ ׳˜׳¡׳˜ ׳•׳×׳׳¨׳™׳ ׳—׳™׳“׳•׳© ׳‘׳™׳˜׳•׳—.');
-    }
-
-    $vehicles = portal_vehicle_directory();
-    if ($existingPlate !== null) {
-        $existing = $vehicles[$existingPlate] ?? null;
-        if (!is_array($existing) || !hash_equals($email, (string) ($existing['employee_email'] ?? ''))) {
-            throw new RuntimeException('׳”׳¨׳›׳‘ ׳”׳׳‘׳•׳§׳© ׳׳™׳ ׳• ׳׳©׳•׳™׳ ׳׳—׳©׳‘׳•׳ ׳”׳¢׳•׳‘׳“ ׳”׳׳—׳•׳‘׳¨.');
-        }
-        if (!hash_equals($existingPlate, $plate)) {
-            throw new RuntimeException('׳׳ ׳ ׳™׳×׳ ׳׳©׳ ׳•׳× ׳׳¡׳₪׳¨ ׳¨׳›׳‘ ׳§׳™׳™׳. ׳™׳© ׳׳₪׳ ׳•׳× ׳׳׳•׳¨׳ ׳‘׳׳§׳¨׳” ׳©׳ ׳”׳—׳׳₪׳× ׳¨׳›׳‘.');
-        }
-    } elseif (isset($vehicles[$plate])) {
-        throw new RuntimeException('׳׳¡׳₪׳¨ ׳”׳¨׳›׳‘ ׳›׳‘׳¨ ׳§׳™׳™׳ ׳‘׳׳¢׳¨׳›׳× ׳•׳׳©׳•׳™׳ ׳׳¢׳•׳‘׳“ ׳׳—׳¨.');
-    }
-
-    $existing = $vehicles[$plate] ?? [];
-    $vehicles[$plate] = array_merge($existing, [
-        'plate' => $plate,
-        'employee_email' => $email,
-        'make_model' => portal_substr($makeModel, 0, 160),
-        'year' => $year,
-        'test_due_date' => $testDueDate,
-        'test_due_label' => $testDueDate,
-        'test_status' => '',
-        'insurance_due_date' => $insuranceDueDate,
-        'compulsory_insurance_due_date' => $insuranceDueDate,
-        'compulsory_insurance_due_label' => $insuranceDueDate,
-        'compulsory_insurance_status' => '',
-        'insurance_company' => portal_substr(trim((string) ($input['insurance_company'] ?? '')), 0, 160),
-        'policy_number' => portal_substr(trim((string) ($input['policy_number'] ?? '')), 0, 160),
-        'notes' => portal_substr(trim((string) ($input['notes'] ?? '')), 0, 600),
-        'last_update' => date('Y-m-d'),
-        'updated_at' => gmdate('c'),
-    ]);
-    portal_json_write(portal_vehicle_directory_file(), $vehicles);
-    portal_audit('employee_vehicle_saved', [
-        'email_hash' => hash('sha256', $email),
-        'plate_hash' => hash('sha256', $plate),
-    ]);
-    return $vehicles[$plate];
-}
-
-function portal_vehicle_deadline_status(string $date, ?DateTimeImmutable $now = null): array
-{
-    if ($date === '') {
-        return ['label' => '׳׳ ׳”׳•׳–׳', 'class' => 'status--review', 'days' => null];
-    }
-    $today = ($now ?? new DateTimeImmutable('now', new DateTimeZone('Asia/Jerusalem')))
-        ->setTimezone(new DateTimeZone('Asia/Jerusalem'))
-        ->setTime(0, 0);
-    $due = new DateTimeImmutable($date . ' 00:00:00', new DateTimeZone('Asia/Jerusalem'));
-    $days = (int) $today->diff($due)->format('%r%a');
-    if ($days < 0) {
-        return ['label' => '׳‘׳׳™׳—׳•׳¨ ׳©׳ ' . abs($days) . ' ׳™׳׳™׳', 'class' => 'status--missing', 'days' => $days];
-    }
-    if ($days === 0) {
-        return ['label' => '׳”׳™׳•׳', 'class' => 'status--missing', 'days' => 0];
-    }
-    if ($days <= 30) {
-        return ['label' => '׳‘׳¢׳•׳“ ' . $days . ' ׳™׳׳™׳', 'class' => 'status--new', 'days' => $days];
-    }
-    return ['label' => '׳‘׳×׳•׳§׳£', 'class' => 'status--approved', 'days' => $days];
-}
-
-function portal_vehicle_source_status(string $sourceStatus): array
-{
-    $sourceStatus = trim($sourceStatus);
-    if ($sourceStatus === '') {
-        return ['label' => '׳—׳¡׳¨ ׳×׳׳¨׳™׳ ׳׳“׳•׳™׳§', 'class' => 'status--review', 'days' => null];
-    }
-    if (str_contains($sourceStatus, '׳׳ ׳×׳§׳£')) {
-        return ['label' => $sourceStatus, 'class' => 'status--missing', 'days' => null];
-    }
-    return ['label' => $sourceStatus, 'class' => 'status--approved', 'days' => null];
-}
-
-function portal_vehicle_notification_state_file(): string
-{
-    return portal_storage_root() . DIRECTORY_SEPARATOR . 'security' . DIRECTORY_SEPARATOR . 'vehicle-notifications.json';
-}
-
-function portal_process_vehicle_notifications(
-    DateTimeImmutable $now,
-    ?callable $mailer = null
-): array {
-    $mailer ??= static fn(string $email, string $subject, string $body, array $attachments): bool =>
-        portal_send_mail_with_attachments($email, $subject, $body, $attachments);
-    $localNow = $now->setTimezone(new DateTimeZone('Asia/Jerusalem'))->setTime(0, 0);
-    $thresholds = [30, 14, 7, 1, 0, -1, -7, -30];
-    $state = portal_json_read(portal_vehicle_notification_state_file());
-    $employees = portal_employee_directory();
-    $result = ['reminders_sent' => 0, 'emails_sent' => 0, 'failed' => 0];
-    $changed = false;
-
-    foreach (portal_vehicle_directory() as $plate => $vehicle) {
-        $plate = (string) $plate;
-        $employeeEmail = (string) ($vehicle['employee_email'] ?? '');
-        $employee = $employees[$employeeEmail] ?? null;
-        if (!is_array($employee)) {
-            continue;
-        }
-        foreach ([
-            'license_due_date' => '׳—׳™׳“׳•׳© ׳¨׳™׳©׳™׳•׳',
-            'test_due_date' => '׳˜׳¡׳˜ ׳©׳ ׳×׳™',
-            'compulsory_insurance_due_date' => '׳—׳™׳“׳•׳© ׳‘׳™׳˜׳•׳— ׳—׳•׳‘׳”',
-            'comprehensive_insurance_due_date' => '׳—׳™׳“׳•׳© ׳‘׳™׳˜׳•׳— ׳׳§׳™׳£',
-            'third_party_insurance_due_date' => '׳—׳™׳“׳•׳© ׳‘׳™׳˜׳•׳— ׳¦׳“ ׳’׳³',
-        ] as $field => $label) {
-            $date = (string) ($vehicle[$field] ?? '');
-            if ($date === '') {
-                continue;
-            }
-            $due = new DateTimeImmutable($date . ' 00:00:00', new DateTimeZone('Asia/Jerusalem'));
-            $days = (int) $localNow->diff($due)->format('%r%a');
-            if (!in_array($days, $thresholds, true)) {
-                continue;
-            }
-
-            $timing = $days < 0
-                ? '׳”׳׳•׳¢׳“ ׳¢׳‘׳¨ ׳׳₪׳ ׳™ ' . abs($days) . ' ׳™׳׳™׳'
-                : ($days === 0 ? '׳”׳׳•׳¢׳“ ׳—׳ ׳”׳™׳•׳' : '׳”׳׳•׳¢׳“ ׳™׳—׳•׳ ׳‘׳¢׳•׳“ ' . $days . ' ׳™׳׳™׳');
-            $subject = '׳×׳–׳›׳•׳¨׳× ׳¨׳›׳‘: ' . $label . ' ׳׳¨׳›׳‘ ' . portal_format_vehicle_plate($plate);
-            $body = implode("\r\n", [
-                '׳©׳׳•׳ ' . (string) ($employee['name'] ?? '') . ',',
-                '',
-                '׳–׳•׳”׳™ ׳×׳–׳›׳•׳¨׳× ׳׳’׳‘׳™ ׳¨׳›׳‘ ׳”׳—׳‘׳¨׳” ׳”׳׳©׳•׳™׳ ׳׳׳™׳:',
-                '׳¨׳›׳‘: ' . (string) ($vehicle['make_model'] ?? '') . ' ֲ· ' . portal_format_vehicle_plate($plate),
-                $label . ': ' . $due->format('d/m/Y'),
-                $timing . '.',
-                '',
-                '׳₪׳¨׳˜׳™ ׳”׳¨׳›׳‘ ׳”׳׳׳׳™׳ ׳׳•׳₪׳™׳¢׳™׳ ׳‘׳׳–׳•׳¨ ׳”׳¢׳•׳‘׳“׳™׳:',
-                'https://i-feel.co.il/staff-expenses/',
-                '',
-                'I Feel',
-            ]);
-            $eventToken = $plate . ':' . $field . ':' . $date . ':' . $days;
-            $sentForEvent = false;
-            foreach ([$employeeEmail, 'oren@' . portal_company_email_domain()] as $recipient) {
-                $token = $eventToken . ':' . $recipient;
-                if (isset($state[$token])) {
-                    continue;
-                }
-                if ($mailer($recipient, $subject, $body, [])) {
-                    $state[$token] = gmdate('c');
-                    $result['emails_sent']++;
-                    $changed = true;
-                    $sentForEvent = true;
-                } else {
-                    $result['failed']++;
-                }
-            }
-            if ($sentForEvent) {
-                $result['reminders_sent']++;
-            }
-        }
-    }
-
-    if ($changed) {
-        portal_json_write(portal_vehicle_notification_state_file(), $state);
-    }
-    return $result;
-}
-
-function portal_render_vehicle_deadline(
-    string $label,
-    string $date,
-    string $displayLabel = '',
-    string $sourceStatus = ''
-): void
-{
-    $status = $date !== '' ? portal_vehicle_deadline_status($date) : portal_vehicle_source_status($sourceStatus);
-    $displayDate = $date !== ''
-        ? (new DateTimeImmutable($date))->format('d/m/Y')
-        : ($displayLabel !== '' ? $displayLabel : '׳׳ ׳”׳•׳–׳');
-    ?>
-    <div class="vehicle-deadline">
-        <span><?= portal_h($label) ?></span>
-        <strong><?= portal_h($displayDate) ?></strong>
-        <span class="status <?= portal_h($status['class']) ?>"><?= portal_h($status['label']) ?></span>
-    </div>
-    <?php
-}
-
-function portal_render_optional_vehicle_deadline(string $label, string $date): void
-{
-    if ($date !== '') {
-        portal_render_vehicle_deadline($label, $date, $date, '');
-        return;
-    }
-    ?>
-    <div class="vehicle-deadline">
-        <span><?= portal_h($label) ?></span>
-        <strong>׳׳ ׳ ׳“׳¨׳© / ׳׳ ׳”׳•׳–׳</strong>
-        <span class="status status--approved">׳׳•׳₪׳¦׳™׳•׳ ׳׳™</span>
-    </div>
-    <?php
-}
-
-function portal_render_employee_vehicle_card(array $user): void
-{
-    $vehicles = portal_vehicles_for_employee($user);
-    if ($vehicles === []) {
-        return;
-    }
-    ?>
-    <section class="vehicle-panel" aria-label="׳₪׳¨׳˜׳™ ׳”׳¨׳›׳‘ ׳©׳׳™">
-        <div class="vehicle-panel__heading">
-            <span class="vehicle-panel__icon" aria-hidden="true">נ™</span>
-            <div><p class="eyebrow">׳”׳¨׳›׳‘ ׳©׳׳™</p><h2>׳₪׳¨׳˜׳™ ׳¨׳›׳‘ ׳•׳×׳•׳§׳£ ׳׳¡׳׳›׳™׳</h2></div>
-        </div>
-        <div class="vehicle-grid">
-            <?php foreach ($vehicles as $vehicle): ?>
-                <article class="vehicle-card">
-                    <div class="vehicle-card__title">
-                        <div><strong><?= portal_h($vehicle['make_model']) ?></strong><?php if ((int) $vehicle['year'] > 0): ?><span>׳©׳ ׳× <?= (int) $vehicle['year'] ?></span><?php endif; ?></div>
-                        <b dir="ltr"><?= portal_h(portal_format_vehicle_plate($vehicle['plate'])) ?></b>
-                    </div>
-                    <div class="vehicle-deadlines">
-                        <?php portal_render_vehicle_deadline('׳¨׳™׳©׳™׳•׳', $vehicle['license_due_date'], $vehicle['license_due_label'], $vehicle['license_status']); ?>
-                        <?php portal_render_vehicle_deadline('׳˜׳¡׳˜ ׳©׳ ׳×׳™', $vehicle['test_due_date'], $vehicle['test_due_label'], $vehicle['test_status']); ?>
-                        <?php portal_render_vehicle_deadline('׳‘׳™׳˜׳•׳— ׳—׳•׳‘׳”', $vehicle['compulsory_insurance_due_date'], $vehicle['compulsory_insurance_due_label'], $vehicle['compulsory_insurance_status']); ?>
-                        <?php portal_render_optional_vehicle_deadline('׳‘׳™׳˜׳•׳— ׳׳§׳™׳£', $vehicle['comprehensive_insurance_due_date']); ?>
-                        <?php portal_render_optional_vehicle_deadline('׳‘׳™׳˜׳•׳— ׳¦׳“ ׳’׳³', $vehicle['third_party_insurance_due_date']); ?>
-                    </div>
-                    <?php if ($vehicle['current_km'] !== ''): ?><p class="vehicle-card__meta">׳§׳™׳׳•׳׳˜׳¨׳׳–' ׳‘׳¢׳“׳›׳•׳ ׳”׳׳—׳¨׳•׳: <b><?= portal_h(number_format((float) preg_replace('/[^\d.]/', '', $vehicle['current_km']))) ?></b></p><?php endif; ?>
-                    <?php if ($vehicle['last_update'] !== ''): ?><p class="vehicle-card__meta">׳¢׳“׳›׳•׳ ׳׳—׳¨׳•׳: <?= portal_h($vehicle['last_update']) ?></p><?php endif; ?>
-                    <?php if ($vehicle['insurance_company'] !== '' || $vehicle['policy_number'] !== ''): ?>
-                        <p class="vehicle-card__meta">׳‘׳™׳˜׳•׳—: <?= portal_h(trim($vehicle['insurance_company'] . ($vehicle['policy_number'] !== '' ? ' ֲ· ׳₪׳•׳׳™׳¡׳” ' . $vehicle['policy_number'] : ''))) ?></p>
-                    <?php endif; ?>
-                    <?php if ($vehicle['notes'] !== ''): ?><p class="vehicle-card__meta"><?= portal_h($vehicle['notes']) ?></p><?php endif; ?>
-                </article>
-            <?php endforeach; ?>
-        </div>
-    </section>
-    <?php
-}
-
-function portal_render_vehicle_admin(?array $flash): void
-{
-    portal_render_flash($flash);
-    $vehicles = portal_vehicle_directory();
-    $employees = portal_employee_directory();
-    ?>
-    <section class="page-heading page-heading--compact">
-        <div>
-            <p class="eyebrow">׳¦׳™ ׳¨׳›׳‘ ׳₪׳¨׳˜׳™</p>
-            <h1>׳¨׳›׳‘׳™ ׳¢׳•׳‘׳“׳™׳ ׳•׳×׳–׳›׳•׳¨׳•׳×</h1>
-            <p>׳›׳ ׳¨׳›׳‘ ׳׳©׳•׳™׳ ׳׳¢׳•׳‘׳“ ׳׳₪׳™ ׳”׳“׳•׳"׳ ׳”׳׳¨׳’׳•׳ ׳™. ׳”׳׳™׳“׳¢ ׳ ׳©׳׳¨ ׳׳—׳•׳¥ ׳׳׳×׳¨ ׳”׳¦׳™׳‘׳•׳¨׳™, ׳•׳™׳™׳‘׳•׳ ׳—׳•׳–׳¨ ׳׳¢׳“׳›׳ ׳•׳׳•׳¡׳™׳£ ׳‘׳׳™ ׳׳׳—׳•׳§ ׳¨׳›׳‘׳™׳ ׳׳—׳¨׳™׳.</p>
-        </div>
-        <div class="total-card"><span>׳¨׳›׳‘׳™׳ ׳©׳ ׳©׳׳¨׳•</span><strong><?= count($vehicles) ?></strong></div>
-    </section>
-
-    <section class="detail-card">
-        <h2>׳¨׳›׳‘׳™׳ ׳‘׳׳¢׳¨׳›׳×</h2>
-        <div class="table-wrap">
-            <table class="records-table">
-                <thead><tr><th>׳¢׳•׳‘׳“</th><th>׳¨׳›׳‘</th><th>׳׳¡׳₪׳¨</th><th>׳¨׳™׳©׳™׳•׳</th><th>׳˜׳¡׳˜</th><th>׳‘׳™׳˜׳•׳— ׳—׳•׳‘׳”</th><th>׳‘׳™׳˜׳•׳— ׳׳§׳™׳£</th><th>׳‘׳™׳˜׳•׳— ׳¦׳“ ׳’׳³</th><th>׳§"׳ / ׳¢׳“׳›׳•׳</th></tr></thead>
-                <tbody>
-                <?php if ($vehicles === []): ?>
-                    <tr><td colspan="9" class="empty-cell">׳¢׳“׳™׳™׳ ׳׳ ׳ ׳©׳׳¨׳• ׳¨׳›׳‘׳™׳.</td></tr>
-                <?php else: ?>
-                    <?php foreach ($vehicles as $vehicle): ?>
-                        <?php $employee = $employees[$vehicle['employee_email']] ?? ['name' => '', 'email' => $vehicle['employee_email']]; ?>
-                        <tr>
-                            <td><strong><?= portal_h($employee['name']) ?></strong><small><?= portal_h($employee['email']) ?></small></td>
-                            <td><?= portal_h($vehicle['make_model']) ?><?= (int) $vehicle['year'] > 0 ? ' ֲ· ' . (int) $vehicle['year'] : '' ?></td>
-                            <td dir="ltr"><?= portal_h(portal_format_vehicle_plate($vehicle['plate'])) ?></td>
-                            <td><?php portal_render_vehicle_deadline('׳¨׳™׳©׳™׳•׳', $vehicle['license_due_date'], $vehicle['license_due_label'], $vehicle['license_status']); ?></td>
-                            <td><?php portal_render_vehicle_deadline('׳˜׳¡׳˜', $vehicle['test_due_date'], $vehicle['test_due_label'], $vehicle['test_status']); ?></td>
-                            <td><?php portal_render_vehicle_deadline('׳—׳•׳‘׳”', $vehicle['compulsory_insurance_due_date'], $vehicle['compulsory_insurance_due_label'], $vehicle['compulsory_insurance_status']); ?></td>
-                            <td><?php portal_render_optional_vehicle_deadline('׳׳§׳™׳£', $vehicle['comprehensive_insurance_due_date']); ?></td>
-                            <td><?php portal_render_optional_vehicle_deadline('׳¦׳“ ׳’׳³', $vehicle['third_party_insurance_due_date']); ?></td>
-                            <td><?= $vehicle['current_km'] !== '' ? portal_h($vehicle['current_km']) . ' ׳§"׳' : 'ג€”' ?><?= $vehicle['last_update'] !== '' ? '<br><small>' . portal_h($vehicle['last_update']) . '</small>' : '' ?></td>
-                        </tr>
-                    <?php endforeach; ?>
-                <?php endif; ?>
-                </tbody>
-            </table>
-        </div>
-    </section>
-
-    <section class="detail-card">
-        <h2>׳™׳™׳‘׳•׳ ׳׳• ׳¢׳“׳›׳•׳ ׳¨׳›׳‘׳™׳</h2>
-            <p>׳׳₪׳©׳¨ ׳׳”׳“׳‘׳™׳§ ׳™׳©׳™׳¨׳•׳× ׳׳× ׳¢׳׳•׳“׳•׳× Aג€“V ׳׳”׳’׳™׳׳™׳•׳ "׳×׳§׳™׳ ׳•׳× ׳¨׳›׳‘׳™׳", ׳׳• ׳׳”׳©׳×׳׳© ׳‘׳×׳‘׳ ׳™׳× ׳”׳׳¦׳•׳׳¦׳׳×. ׳׳₪׳ ׳™ ׳”׳™׳™׳‘׳•׳, ׳”׳¢׳•׳‘׳“ ׳—׳™׳™׳‘ ׳׳”׳•׳₪׳™׳¢ ׳‘׳׳¡׳ "׳¢׳•׳‘׳“׳™׳ ׳•׳™׳׳™ ׳”׳•׳׳“׳×". ׳׳©׳™׳•׳ ׳¨׳׳©׳•׳ ׳™ ׳׳¡׳₪׳™׳§׳™׳ ׳“׳•׳"׳ ׳”׳¢׳•׳‘׳“ ׳•׳׳¡׳₪׳¨ ׳”׳¨׳›׳‘; ׳׳× ׳”׳“׳’׳, ׳”׳˜׳¡׳˜ ׳•׳”׳‘׳™׳˜׳•׳— ׳”׳¢׳•׳‘׳“ ׳™׳›׳•׳ ׳׳”׳©׳׳™׳ ׳׳׳—׳¨ ׳”׳›׳ ׳™׳¡׳”.</p>
-        <form method="post" class="form-grid">
-            <input type="hidden" name="csrf" value="<?= portal_h(portal_csrf_token()) ?>">
-            <input type="hidden" name="action" value="import_vehicle_directory">
-            <label class="field field--full">
-                <span>׳ ׳×׳•׳ ׳™ ׳¨׳›׳‘׳™׳</span>
-                <textarea name="vehicle_directory_text" rows="9" maxlength="60000" required placeholder="׳“׳•׳׳´׳ ׳¢׳•׳‘׳“	׳׳¡׳₪׳¨ ׳¨׳›׳‘	׳™׳¦׳¨׳ ׳•׳“׳’׳	׳©׳ ׳×׳•׳	׳×׳•׳§׳£ ׳˜׳¡׳˜	׳×׳•׳§׳£ ׳‘׳™׳˜׳•׳—	׳—׳‘׳¨׳× ׳‘׳™׳˜׳•׳—	׳׳¡׳₪׳¨ ׳₪׳•׳׳™׳¡׳”	׳”׳¢׳¨׳•׳×"></textarea>
-            </label>
-            <p class="form-note field--full">׳”׳׳¢׳¨׳›׳× ׳׳–׳”׳” ׳׳•׳˜׳•׳׳˜׳™׳× ׳׳× ׳׳‘׳ ׳” ׳”׳’׳™׳׳™׳•׳ ׳”׳§׳™׳™׳. ׳‘׳×׳‘׳ ׳™׳× ׳”׳׳¦׳•׳׳¦׳׳× ׳¨׳§ ׳“׳•׳"׳ ׳”׳¢׳•׳‘׳“ ׳•׳׳¡׳₪׳¨ ׳”׳¨׳›׳‘ ׳”׳ ׳—׳•׳‘׳”. ׳™׳×׳¨ ׳”׳¢׳׳•׳“׳•׳× ׳”׳: ׳™׳¦׳¨׳ ׳•׳“׳’׳, ׳©׳ ׳×׳•׳, ׳×׳•׳§׳£ ׳˜׳¡׳˜, ׳×׳•׳§׳£ ׳‘׳™׳˜׳•׳—, ׳—׳‘׳¨׳× ׳‘׳™׳˜׳•׳—, ׳׳¡׳₪׳¨ ׳₪׳•׳׳™׳¡׳” ׳•׳”׳¢׳¨׳•׳×.</p>
-            <div class="field--full"><button type="submit" class="button button--primary">׳©׳׳™׳¨׳× ׳”׳¨׳›׳‘׳™׳</button></div>
-        </form>
-    </section>
-
-    <section class="detail-card vehicle-document-admin">
-        <h2>׳”׳¢׳׳׳× ׳׳¡׳׳ ׳¨׳›׳‘ ׳•׳¢׳“׳›׳•׳ ׳×׳•׳§׳£</h2>
-        <p>׳”׳׳¡׳׳ ׳ ׳©׳׳¨ ׳‘׳׳—׳¡׳•׳ ׳”׳₪׳¨׳˜׳™ ׳•׳׳™׳ ׳• ׳ ׳’׳™׳© ׳‘׳§׳™׳©׳•׳¨ ׳¦׳™׳‘׳•׳¨׳™. ׳”׳¢׳•׳‘׳“ ׳”׳׳©׳•׳™׳ ׳•׳”׳׳ ׳”׳ ׳‘׳׳‘׳“ ׳™׳›׳•׳׳™׳ ׳׳”׳•׳¨׳™׳“ ׳׳•׳×׳•.</p>
-        <form method="post" enctype="multipart/form-data" class="field-grid field-grid--2">
-            <input type="hidden" name="csrf" value="<?= portal_h(portal_csrf_token()) ?>">
-            <input type="hidden" name="action" value="save_vehicle_document">
-            <input type="hidden" name="MAX_FILE_SIZE" value="<?= IFEEL_PORTAL_MAX_FILE_BYTES ?>">
-            <label class="field"><span>׳¨׳›׳‘ <b>*</b></span><select name="vehicle_document_plate" required><option value="">׳‘׳—׳™׳¨׳”</option><?php foreach ($vehicles as $vehicle): $employee = $employees[$vehicle['employee_email']] ?? []; ?><option value="<?= portal_h($vehicle['plate']) ?>"><?= portal_h(portal_format_vehicle_plate($vehicle['plate']) . ' ג€” ' . ($employee['name'] ?? $vehicle['employee_email'])) ?></option><?php endforeach; ?></select></label>
-            <label class="field"><span>׳¡׳•׳’ ׳׳¡׳׳ <b>*</b></span><select name="vehicle_document_type" required><option value="">׳‘׳—׳™׳¨׳”</option><?php foreach (portal_vehicle_document_type_labels() as $value => $label): ?><option value="<?= portal_h($value) ?>"><?= portal_h($label) ?></option><?php endforeach; ?></select></label>
-            <label class="field"><span>׳×׳•׳§׳£ ׳”׳׳¡׳׳</span><input type="date" name="vehicle_document_expires_on"></label>
-            <label class="field"><span>׳׳¡׳₪׳¨ ׳₪׳•׳׳™׳¡׳” / ׳׳¡׳׳›׳×׳”</span><input type="text" name="vehicle_document_policy_number" maxlength="160"></label>
-            <label class="field field--full"><span>׳§׳•׳‘׳¥ PDF ׳׳• ׳×׳׳•׳ ׳” <b>*</b></span><input type="file" name="vehicle_document_file" required accept=".pdf,image/jpeg,image/png,image/webp,image/heic,image/heif,image/avif"></label>
-            <p class="form-note field--full">׳׳¨׳™׳©׳™׳•׳, ׳˜׳¡׳˜ ׳•׳‘׳™׳˜׳•׳— ׳™׳© ׳׳”׳–׳™׳ ׳×׳׳¨׳™׳ ׳×׳•׳§׳£. ׳‘׳™׳˜׳•׳— ׳¦׳“ ׳’׳³ ׳ ׳©׳׳¨ ׳‘׳ ׳₪׳¨׳“ ׳•׳׳™׳ ׳• ׳׳¡׳•׳׳ ׳›׳‘׳™׳˜׳•׳— ׳׳§׳™׳£.</p>
-            <div class="field--full"><button type="submit" class="button button--primary">׳©׳׳™׳¨׳× ׳”׳׳¡׳׳ ׳•׳¢׳“׳›׳•׳ ׳”׳×׳•׳§׳£</button></div>
-        </form>
-        <div class="vehicle-document-groups">
-            <?php foreach ($vehicles as $vehicle): $documents = portal_vehicle_documents((string) $vehicle['plate']); if ($documents === []) continue; ?>
-                <div class="vehicle-document-group"><h3><?= portal_h(portal_format_vehicle_plate($vehicle['plate'])) ?></h3><div class="document-list">
-                <?php foreach ($documents as $document): ?><div><strong><?= portal_h($document['type_label'] ?? '׳׳¡׳׳') ?></strong><span><a class="text-link" href="<?= portal_h(portal_url(['action' => 'vehicle_document_download', 'plate' => $vehicle['plate'], 'document' => $document['id'] ?? ''])) ?>"><?= portal_h($document['name'] ?? '') ?></a><?php if (($document['policy_number'] ?? '') !== ''): ?><small>׳₪׳•׳׳™׳¡׳”/׳׳¡׳׳›׳×׳”: <?= portal_h($document['policy_number']) ?></small><?php endif; ?></span><span><?= portal_h(($document['expires_on'] ?? '') !== '' ? '׳×׳•׳§׳£ ' . $document['expires_on'] : '׳׳׳ ׳×׳•׳§׳£') ?></span></div><?php endforeach; ?>
-                </div></div>
-            <?php endforeach; ?>
-        </div>
-    </section>
-
-    <section class="detail-card">
-        <h2>׳׳•׳¢׳“׳™ ׳×׳–׳›׳•׳¨׳× ׳׳•׳˜׳•׳׳˜׳™׳™׳</h2>
-        <p>׳”׳¢׳•׳‘׳“ ׳•׳׳•׳¨׳ ׳™׳§׳‘׳׳• ׳“׳•׳"׳ ׳¢׳ ׳¨׳™׳©׳™׳•׳, ׳˜׳¡׳˜, ׳‘׳™׳˜׳•׳— ׳—׳•׳‘׳”, ׳‘׳™׳˜׳•׳— ׳׳§׳™׳£ ׳׳• ׳‘׳™׳˜׳•׳— ׳¦׳“ ׳’׳³ ג€” 30, 14, 7 ׳•׳™׳•׳ ׳׳—׳“ ׳׳₪׳ ׳™ ׳”׳׳•׳¢׳“, ׳‘׳™׳•׳ ׳”׳׳•׳¢׳“, ׳•׳›׳ ׳™׳•׳, ׳©׳‘׳•׳¢ ׳•׳—׳•׳“׳© ׳׳׳—׳¨ ׳׳•׳¢׳“ ׳©׳—׳׳£. ׳×׳–׳›׳•׳¨׳× ׳ ׳©׳׳—׳× ׳¨׳§ ׳›׳׳©׳¨ ׳§׳™׳™׳ ׳×׳׳¨׳™׳ ׳׳׳ ׳•׳׳“׳•׳™׳§.</p>
-    </section>
-    <?php
-}
-
+            'last_update' => $sourceFormat ? portal_ey���6��v7W'&V��u��rr����6�73�fV��6��&E��F#�}y�y�]y��z�yybryz-y=y�y]y�yMyy}z�y]y�����F�����W%���B��f�B�&Vu�W�6R�r�����rr�GfV��6��v7W'&V��uҒ����#�����V��c��Т���b�GfV��6��v�7E�FFRu��rr����6�73�fV��6��&E��F#�-y=y�y]y�yy}z�y]y����F���GfV��6��v�7E�FFRuҒ�����V��c��Т���b�GfV��6��v��W&�U�����rr�GfV��6��w��7��V�W"u��rr���Т�6�73�fV��6��&E��F#�y�y�y]ys����F���G&�҂GfV��6��v��W&�U������GfV��6��w��7��V�W"u��rr�r+rzMy]y��zyBr�GfV��6��w��7��V�W"u��rr���������V��c��Т���b�GfV��6��v�FW2u��rr����6�73�fV��6��&E��F#���F���GfV��6��v�FW2uҒ�����V��c��Т�'F�6�����V�f�V6���Т�F�c���6V7F������ Ч��ЦgV�F���F�&V�W%�V��6��F֖�'&�Ff�6���f���Т�F�&V�W%��6��Ff�6���ТGfV��6�2��F�fV��6���&V7F�����ТFV���VW2��F�V���VU��&V7F�����Т�Т�V7F��6�73�vRֆVF��vRֆVF���6�7B#����c���6�73�W�V'&�#�my�z�y�yzMz�y�y����ƃ��y�yy�z-y]yy=y�y�y]z�ymy�y]z�y]z��������y�z�y�yy��y]y�y�y�-y]yy2y�My�yMy=y]y-y�yMyz�y-y]zy��yMy��y=z"zz�y��y�}y]zRy�z�z�yMzmy�yy]z�y��y]y�y�yy]yy}y]ymz�y�-y=y�y�y]y�]zy�z2yy��y��}y]zrz�y�yy�y�yy}z�y�y�����F�c����b6�73�F��6&B#�7�z�y�yy�y�z�zz�y��yS�7��G&�s��6���GfV��6�2���7G&�s���c���6V7F����Т�V7F��6�73�FWF��6&B#��ƃ#��y�yy�y�yy�-z�y�z���#����b6�73�F&��&#���&�6�73�&V6�G2�&�#����VC�G#�F��-y]yy3�F��F���y�y�F��F���zMz��F��F���y�z�y�y]y����F���zy��F��F��y�y�y]yry}y]yyC�F��F��y�y�y]yry�}y�z3�F��F��y�y�y]yrzmy2y-{3�F��F��r-y��z-y=y�y]y�����#���VC��&�������b�GfV��6�2���ғ��Т�#�FB6�7�#�"6�73�V�G��V�#�-y=y�y�y�y�zz�y��yRz�y�yy�y��FC��#���V�S��Т��f�V6��GfV��6�22GfV��6����Т��FV���VR�FV���VW5�GfV��6��vV���VU�������v��r�rr�vV����GfV��6��vV���VU�������Т�#���C�7G&�s���F���FV���VU�v��uҒ��7G&�s�6�����F���FV���VU�vV���Ғ��6����C���C���F���GfV��6��v��U��V�Ғ�������GfV��6��w�V"u���r+rr�����GfV��6��w�V"u��rr��FC���BF�#��"#���F����F�f��E�V��6���FR�GfV��6��w�FRuҒ���FC���C����F�&V�W%�V��6��VFƖ��}z�y�z�y�y]y��GfV��6��vƖ6V�U�VU�FRu�GfV��6��vƖ6V�U�VU�&V��GfV��6��vƖ6V�U�FGW2uғ���FC���C����F�&V�W%�V��6��VFƖ��}y�zy�r�GfV��6��wFW7E�VU�FRu�GfV��6��wFW7E�VU�&V��GfV��6��wFW7E�FGW2uғ���FC���C����F�&V�W%�V��6��VFƖ��}y}y]yyBr�GfV��6��v6�V����7W&�U�VU�FRu�GfV��6��v6�V����7W&�U�VU�&V��GfV��6��v6�V����7W&�U�FGW2uғ���FC���C����F�&V�W%�F���fV��6��VFƖ��}y�}y�z2r�GfV��6��v6�&V�V��fU�7W&�U�VU�FRuғ���FC��C����F�&V�W%�F���fV��6��VFƖ��}zmy2y-{2r�GfV��6��wF��&E�'G��7W&�U�VU�FRuғ���FC��C��GfV��6��v7W'&V��u��rr��F���GfV��6��v7W'&V��uҒ�rzr-y��~(	Br���GfV��6��v�7E�FFRu��rr�s�#�6�����F���GfV��6��v�7E�FFRuҒ�s�6����rr��FC���G#����V�f�V6���Т��V��c��Т�F&�����F&����F�c���6V7F����Т�V7F��6�73�FWF��6&B#�ƃ#��y�yy]yyyRz-y=y�y]y�z�y�yy�y�����zMz�z�y�My=yy�zry�z�y�z�y]z�yz�z-y�]y=y]z�(	5by�My-y�y��y]y�-z�z}y�zy]z�z�y�yy�y��yyRy�Mz�z�y��yz�yzy�z�yMy�my]y�my���y�Mzy�yMy�y�yy]y�yMz-y]yy2y}y�y�yy�My]zMy�z"yy�y�-z-y]yy=y�y�y]y�y��yMy]y�=z�"�y��y�y]y�z�yz�y]zy�y�zMy�z}y�y�y=y]y-y�yMz-y]yy2y]y�zMz�yMz�y�y�yz�yMy=y-y�yMy�zy�y]yMyy�y�y]yryMz-y]yy2y�y�y]y�y�Mz�y��y�y�y}z�yMy�zy�zyB��������F����B"6�73�f��w&�B#��Ɩ�WBG�S���FFV����77&b"f�S����F����F�77&e��ₒ��#��Ɩ�WBG�S���FFV����7F��"f�S����E�V��6���&V7F��#���&V�6�73�f�V�f�V��gV�#����zz�y]zy�z�y�yy�y���Т�W�F&V���fV��6���&V7F���W�B"&�3��"����F��c"&WV�&VB�6V��FW#�y=y]y{My�z-y]yy0�y�zMz�z�y�y�y�zmz�y�y]y=y-yНz�zz�y]y��y]z}z2y�zy��z�y]z}z2yy�y�y]yp�y}yz�z�yy�y�y]yp�y�zMz�zMy]y��zy@�yMz-z�y]z�#��W�F&V����&V�Т�6�73�f���FRf�V��gV�#�My�-z�y�z�y�myMyByy]y�y]y��y�z�yz�y�zyByMy-y�y��y]y�yMz}y�y�y�yz�yzy�z�yMy�my]y�my��z�zry=y]y-y�yMz-y]yy2y]y�zMz�yMz�y�yyMy�y}y]yyB�y�z�z�yMz-y�]y=y]z�yMy�y�zmz�y�y]y=y-y�z�zz�y]y�z�y]z}z2y�zy��z�y]z}z2yy�y�y]yr�y}yz�z�yy�y�y]yr�y�zMz�zMy]y��zyBy]yMz-z�y]z�������b6�73�f�V��gV�#�'WGF�G�S�7V&֗B"6�73�'WGF�'WGF��&��'�#��y��z�z�yMz�y�yy�y��WGF����c���f��Т�6V7F��ࠢ�V7F��6�73�FWF��6&BfV��6���V���F֖��ƃ#�Mz-y�z�y�y��z�y�yy]z-y=y�y]y�z�y]z}z3��#���My�y��zz�y��yyy}zy]y�yMzMz�y�y�y]yy�zyRzy-y�z�yz}y�z�y]z�zmy�yy]z�y��yMz-y]yy2yMy��y]y�y�y]yMy�yMy�yy�y2y�y�y]y��y�y�My]z�y�y2yy]z�yR�������F����B"V�G�S����'B���FF"6�73�f�V��&�Bf�V��&�B�"#�Ɩ�WBG�S���FFV����77&b"f�S����F����F�77&e��ₒ��#�Ɩ�WBG�S���FFV����7F��"f�S�6fU�V��6���V��#�Ɩ�WBG�S���FFV������������R"f�S����dTT��D��������DU2�#��&V�6�73�f�V�#�7�z�y�y�������V�7B���fV��6���V����FR"&WV�&VC��F��f�S�#�y}y�z�yC��F�����f�V6��GfV��6�22GfV��6���FV���VR�FV���VW5�GfV��6��vV���VU�������Ӳ��F��f�S����F���GfV��6��w�FRuҒ�#���F����F�f��E�V��6���FR�GfV��6��w�FRuҒ�r(	Br��FV���VU�v��u��GfV��6��vV���VU����Ғ����F�����V�f�V6����6V�7C��&V���&V�6�73�f�V�#�7�zy]y"y�y���������V�7B���fV��6���V����R"&WV�&VC��F��f�S�#�y}y�z�yC��F�����f�V6���F�fV��6���V����U�&V���2Gf�R�F�&V���F��f�S����F���Gf�R��#���F���F�&V���F�����V�f�V6����6V�7C��&V���&V�6�73�f�V�#�7�z�y]z}z2yMy�y���7�Ɩ�WBG�S�FFR"���fV��6���V�����&W5����&V���&V�6�73�f�V�#�7�y�zMz�zMy]y��zyB�yzy��z�yC�7�Ɩ�WBG�S�FW�B"���fV��6���V�����7��V�W""����F��c#��&V���&V�6�73�f�V�f�V��gV�#�7�z}y]yzRDbyyRz�y�]zyB������Ɩ�WBG�S�f��"���fV��6���V�����"&WV�&VB66WC��FbƖ�vR�VrƖ�vR��Ɩ�vR�V'Ɩ�vR��2Ɩ�vR��bƖ�vR�f�b#��&V���6�73�f���FRf�V��gV�#���y�z�y�y]y�y�zy�y]yy�y�y]yry�z�y�Mymy�y�z�yz�y�y�z�y]z}z2�yy�y�y]yrzmy2y-{2zz�y��yzzMz�y2y]yy�zyRy�y]y��y�yy�y�y]yry�}y�z2�����b6�73�f�V��gV�#�'WGF�G�S�7V&֗B"6�73�'WGF�'WGF��&��'�#��y��z�z�yMy�y��y]z-y=y�y]y�yMz�y]z}z3�'WGF����c��f�����b6�73�fV��6���V���&�2#���f�V6��GfV��6�22GfV��6���FF�V��2��F�fV��6���V��2��7G&���GfV��6��w�FRuғ��b�FF�V��2���Ғ6�F��S�����b6�73�fV��6���V���&�#��3���F����F�f��E�V��6���FR�GfV��6��w�FRuҒ����3�F�b6�73�F�V����7B#���f�V6��FF�V��22FF�V�������c�7G&�s���F���FF�V���wG�U�&V���}y�y��r���7G&�s�7��6�73�FW�B����&Vc����F����F�W&�v7F��r�wfV��6���V������Br�w�FRr�GfV��6��w�FRu�vF�V��r�FF�V���v�Bu��ruҒ��#���F���FF�V���v��u��rr�������b��FF�V���w��7��V�W"u��rr��rr�������My]y��zyB�yzy��z�yC����F���FF�V���w��7��V�W"uҒ��6�����V��c���7������F����FF�V���vW��&W5����rr��rr�}z�y]z}z2r�FF�V���vW��&W5����}y��z�y]z}z2r���7��F�c���V�f�V6�����F�c���c���V�f�V6�����F�c��6V7F�����V7F��6�73�FWF��6&B#��ƃ#��]z-y=y�z�ymy�y]z�z�yy]y�y]y��y�y�y������Mz-y]yy2y]yy]z�y�y�z}yy�Ry=y]y-y�z-y�z�y�z�y�y]y�y�zy��yy�y�y]yry}y]yyB�yy�y�y]yry�}y�z2yyRyy�y�y]yrzmy2y-{2(	B3�B�ry]y�y]y�yy}y2y�Mzy�yMy�]z-y2�yy�y]y�yMy�]z-y2�y]y�y�y�y]y�z�yy]z"y]y}y]y=z�y�y}z�y�]z-y2z�y}y�2�z�ymy�y]z�z�zz�y�}z�z�zry�yz�z�z}y�y�y�z�yz�y�y�y��y]y�=y]y�zr����6V7F������ Ч�
