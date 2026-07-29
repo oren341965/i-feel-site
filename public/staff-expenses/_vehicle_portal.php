@@ -257,4 +257,237 @@ function portal_vehicle_monthly_dir(string $plate, string $month, int $version):
     if ($plate === '' || !preg_match('/^\d{4}-\d{2}$/', $month) || $version < 1) {
         throw new RuntimeException('נתוני הדיווח החודשי אינם תקינים.');
     }
-    return portal_storage_root() . DIRECTORY_SEPARATOR . 'vehicle-mo3c�6U�VU�FRuғ���b���'&��FFVFƖ��v6�72u��w7FGW2�֗76��r�w7FGW2�&Wf�Wru�G'VR����&WGW&��v6�72r�w7FGW2�&Wf�Wrr�v�&V��}y�y��z-y]y�2y�My]y"uӰ�ТТ&WGW&��v6�72r�w7FGW2�&�VBr�v�&V��}z�z}y�y�ӰЧ��ЦgV�F���F�&V�W%�V��6���F�Ǖ��҆'&�GfV��6���f�Ч�ТG&Wf��2��F�fV��6��&Wf��5�F�WFW"��7G&���GfV��6��w�FRuғ�Т�Т�V7F��6�73�f��6&BfV��6���F�ǒ�&B"�C����ǒ�W�B#����b6�73�f��6&E��VFW"#�7�6�73�7FW#��7���c��#�=y�y]y]yry}y]y=z�y�z}zmz���#��My=y�y]y]yry��y]z-y2y�}y�y�]y��z�yym{2y]y��myyMz�y�yyy�y2�y�y��y�y�zy�y]yy�y�y]yry�y]yMy��y�yzzMz�y2�����c���c������F����B"V�G�S����'B���FF"6�73�f�V��&�Bf�V��&�B�"#��Ɩ�WBG�S���FFV����77&b"f�S����F����F�77&e��ₒ��#��Ɩ�WBG�S���FFV����7F��"f�S�7V&֗E�V��6���F�ǒ#��Ɩ�WBG�S���FFV�������Ǖ�V��6���FR"f�S����F���GfV��6��w�FRuҒ�#���&V�6�73�f�V�#�7�z}y�y�]y��z�yym{2zy]y�y}y�������Ɩ�WBG�S���W""������Ǖ�F�WFW""&WV�&VB֖�#"����������"��WF�FS���&�2"�6V��FW#���G&Wf��2��}y=y�y]y]yrz}y]y=yӢr�G&Wf��2�rr�#��&V�Т�&V�6�73�f�V�#�7�yy�yMz}y�y�]y��z�yym{2y�z�y2(	ByMzyz��7�Ɩ�WBG�S�FW�B"�����WFW%�V7&V6U����F��"����F��c#��&V�Т�&V�6�73�f�V�#�7�y�y�zMy]y��y��������V�7B������Ǖ�&VF��"&WV�&VC��F��f�S���#��zy=z�z�y�y�zMy]y��F����F��f�S�&WV�&VB#�y=z�z�y�y�zMy]y��F����F��f�S�66�VGV�B#�z}yz"y�y�zMy]y��F����F��f�S�6��FVB#�y]zmz"y�y�zMy]y��F����V�7C��&V�Т�&V�6�73�f�V�#�7�z�z}y�zy]z�zmy��y-y�y��������V�7B������Ǖ��&W2"&WV�&VC��F��f�S����z}y�zy�y��F����F��f�S�6�V6�#�=y]z�z�y�y�yy=y�z}yC��F����F��f�S�&W�6R#�=y]z�z�y�y�yMy}y�MyC��F����F��f�S�W&vV�#�}y�y�y��z�z}y�By=y}y]zMyC��F����V�7C��&V�Т�&V�6�73�f�V�#�7�z�z}y�zy]z�y�y���z��������V�7B������Ǖ�V�&�7FGW2"&WV�&VC��F��f�S���Mz�y�yz�z}y�y��F����F��f�S��77VR#�}y�y�y��z�z}y�Bz�yy�zyBy=y}y]zMyC��F����F��f�S�6���y=z�z�y�y�zMy]y�yyMz}y=y��F����F��f�S�V�fR#�Mz�y�yyy�zyRyy�y]yry�zy�z-yC��F����V�7C��&V�Т�&V�6�73�f�V�#�7�zy]y"y�y�zMy]y��z�z}y�C�7�Ɩ�WBG�S�FW�B"������Ǖ�&VF����R"����F��3#��&V�Т�&V�6�73�f�V�#�7�z�yz�y�y�y�y�zMy]y���Ɩ�WBG�S�FFR"������Ǖ�&VF���FR#��&V�Т�&V�6�73�f�V�#�7�y�]zy��7�Ɩ�WBG�S�FW�B"������Ǖ�&vR"����F��##��&V�Т�&V�6�73�f�V�f�V��gV�#�7�z�y�yy]z�y]yMz-z�y]z�yy�}z�yBz�y�z�z}y�C�7��W�F&V������Ǖ�7VU�W67&�F��"&�3�2"����F��##��W�F&V��&V�Т�&V�6�73�f�V�f�V��gV�#�7�y}z�yy]zy�z��z�y�]zyByyRy�y���7�Ɩ�WBG�S�f��"������Ǖ�GF6���5������66WC��FbƖ�vR�VrƖ�vR��Ɩ�vR�V'Ɩ�vR��2Ɩ�vR��bƖ�vR�f�b#��&V�Т��b6�73�V�fR�&�rf�V��gV�#�y�yMz�y�yyy�zyRyy�y]yry�zy�z-yC�yy�y�y�My��y�y�y�zy]z"yz�y�yy�Mzy�z}yy��yMzy}y�yBy�My�yMy��F�c����b6�73�f�V��gV�#�'WGF�G�S�7V&֗B"6�73�'WGF�'WGF��&��'�'WGF���&vR#��y��y}z�yMy=y�y]y]yryMy}y]y=z�y��'WGF����c���f��Т�6V7F������ Ч��ЦgV�F���F�&V�W%���V��6��vR�'&�GW6W"��'&�Ff�6���f�Ч�Т�F�&V�W%��6��Ff�6���ТGfV��6�2��F�fV��6�5������VR�GW6W"��Т�Т�V7F��6�73�vRֆVF��#�F�c�6�73�W�V'&�#��y�yy}yz�yC����Mz�y�yz�y�������yy�zy�z�y�y�mzMy]z�yzMz�y�y�z�y�yyMy}yz�yB�yy�y��y�y�yMy}z�y]yy�y�y]yy�]z-y=y�yMy}y�y=y]z��y]y��y�]yryz�yMy=y�y]y]yryMy}y]y=z�y�yMz}zmz������c�6�73�'WGF�'WGF��&��'�'WGF���&vR"�&Vc�6���ǒ�W�B#���y�]y�y=y�y]y]yry}y]y=z�y����V7F������f�V6��GfV��6�22GfV��6����Т��F�FW7B��F�fV��6��FW7E��F�ǒ��7G&���GfV��6��w�FRuғ�G7FGW2��F�fV��6��fW&��FGW2�GfV��6��F�FW7B���Т�V7F��6�73�fV��6�ֆW&�����c�6�73�W�V'&�#���F����F�V���VU�&����GW6W"��v��uҒ����#���F���GfV��6��v��U��V���}zMz�y�y�yMy=y-y�y�z�y�yMy]z�y��Rr����#�"F�#��"#���F����F�f��E�V��6���FR�GfV��6��w�FRuҒ���#���c����6�73�7FGW2���F���G7FGW5�v6�72uҒ�#���F���G7FGW5�v�&V�Ғ��7�Т��b6�73�fV��6�ֆW&��FG2#�7�y�zy��G&�s���F���GfV��6��wFW7E�VU�FRu��}y}zz�r���7G&�s�����yy�y�y]yry}y]yyC�G&�s���F���GfV��6��v6�V����7W&�U�VU�FRu��}y}zz�r���7G&�s�����z}{My�yy}z�y]y�7G&�s���F���GfV��6��v7W'&V��u��}y�z�y�y=y]y]yrr���7G&�s�����z-y=y�y]y�yy}z�y]y�7G&�s���F���GfV��6��v�7E�FFRu��}y�z�y�y=y]y]yrr���7G&�s����F�c���6V7F�������F�&V�W%�V��6���F�Ǖ��҂GfV��6����Т�V7F��6�73�FWF��6&BfV��6���V��2�&B#��#��y��y�yMz�y�yy]yMzyMy#��#����FF�V��2��F�fV��6���V��5���6W"�GW6W"��7G&���GfV��6��w�FRuғ��Т���b�FF�V��2���ғ����b6�73��'B�'B�����-y=y�y�y�y�zz�y��yRy�y��y�y�y��y�yymyB�y�yMy�y�y�y]y�y�Mz-y�]z�z�y�z�y�y]y�y�zy�y]yy�y�y]y}y�y�yy�y�z�y�yy�yMz-y]yy=y�y��F�c���V�S����b6�73�F�V����7B#���f�V6��FF�V��22FF�V�������c�7G&�s���F���FF�V���wG�U�&V���}y�y��r���7G&�s�7��6�73�FW�B����&Vc����F����F�W&�v7F��r�wfV��6���V������Br�w�FRr�GfV��6��w�FRu�vF�V��r�FF�V���v�Bu��ruҒ��#���F���FF�V���v��u��rr�����������F����FF�V���vW��&W5����rr��rr�}z�y]z}z2r�FF�V���vW��&W5����}y��z�y]z}z2r���7��F�c���V�f�V6����F�c���V��c����6V7F�����V7F��6�73�FWF��6&B#��#�My�zy�y]z�y�y�z�y=y�y]y]y}y�y�y}y]y=z�y�y�y������F��7F����F�fV��6��W�G5����FR��7G&���GfV��6��w�FRuғ��Т���b�F��7F�����ғ���6�73��FVB�W�B#�-y=y�y�y�y�zz�y�ry=y�y]y]yry}y]y=z�y������V�S����b6�73���7F����7B#����'6�B�F��7F����f�V6��F��7F��2F����GfW'6��2��F�7B��5�'&��GfW'6��2��V��GfW'6��2���Ӳ��'F�6�6�73���7F���&B#�F�c�7�6�73���7F���&E�FFR#���F���F������7�ƃ#���F����7G&����F�7E�v��WFW"u��rr���z}{My���6�S��6���GfW'6��2��y-z�zyy]z��6�S���c�7�6�73�7FGW2���F�7E�v��vW%�Wf�Wu�WV�&VBu��f�R��w7FGW2�&Wf�Wrr�w7FGW2�&�VBr�#���F�7E�v��vW%�Wf�Wu�WV�&VBu��f�R��}y�y=y�z}z�y�yMy��}z�z}y�y���7��'F�6����V�f�V6����F�c���V��c��Т�6V7F������V�f�V6���Т�� Ч��ЦgV�F���F�fV��6���F�Ǖ�V֖�W%�FFU������7G&��Ч�Т&WGW&��F�7F�vU��B���D�$T5D���U$D��w6V7W&�G�r�D�$T5D���U$D��wfV��6���F�ǒ�V֖�W'2��s�Ч��ЦgV�F���F�&�W75�V��6���F�Ǖ�V֖�W'2�FFUF����WF&�F�r���&�F���"�����'&�Ч�ТF���"��7FF�2f�G&��FV���7G&��G7V&�V7B�7G&��F&���'&�FGF6���2��&���Т�F�6V����v�F��GF6���2�FV���G7V&�V7B�F&���FGF6���2��ТF�6��F�r�6WEF����R��rFFUF����R�t6��'W6�����ТFF������F�6����B�v�r��ТG&W7V���w6V�r��v֗76����vvVBr��vf��Br�ӰТ�b���'&��FF���"�B�r���G'VR���Т&WGW&�G&W7V��Т��F�����F�fV��6���F����F�6�ТG7FFR��F��6��VB��F�fV��6���F�Ǖ�V֖�W%�FFU�������Тf�V6���F�fV��6���&V7F����2G�FR�GfV��6���ТG�FR��7G&���G�FS�ТGfW'6��2��F�fV��6���F�Ǖ�W�G2���G�FUղF������ӰТ�b��5�'&��GfW'6��2�bbGfW'6��2��Ғ�Т6�F��S�Т��FV�����F��&�Ɨ�U���V���7G&����GfV��6��vV���VU������rr���Т�b�FV���������Т6�F��S�Т��G&V6��V��FF�����v�V�r��F�6��V���F��ₒ�FV��ðТGF���F����s�r�FF��s�r�G�FS�Т�b��76WB�G7FFU�GF�����Т6�F��S�Т��G7V&�V7B�FF�����}y=y�y]y]yrz�y�yy}y]y=z�y�y}zz�r�}z�ymy�y]z�z�y���y�]y�y=y�y]y]yryMz�y�yyMy}y]y=z�y�s�ТF&����FF�����}yMy=y�y]y]yryMy}y]y=z�y�y�z�y�y�]y�z-yy]z�yMz�y�yr�}y�z�y���yz�yMy=y�y]y]yryMy}y]y=z�y�yMz}zmz�z-yy]z�yMz�y�yr�Т��F�f��E�V��6���FR�G�FR��"�%��GG3����VV�6���7Ffb��V�W2�F#���V��6�#�Т�b�F���"�G&V6��V��G7V&�V7B�F&����Ғ��ТG7FFU�GF���v�FR�v2r��ТFF�����G&W7V��v֗76����vvVBuҲ��G&W7V��w6V�uҲ��Т�V�R�ТG&W7V��vf��BuҲ��Т�����F��6��&�FR��F�fV��6���F�Ǖ�V֖�W%�FFU������G7FFR��Т&WGW&�G&W7V��Ч�
+    return portal_storage_root() . DIRECTORY_SEPARATOR . 'vehicle-monthly' . DIRECTORY_SEPARATOR . $plate
+        . DIRECTORY_SEPARATOR . $month . DIRECTORY_SEPARATOR . 'v' . $version;
+}
+
+function portal_vehicle_previous_odometer(string $plate): int
+{
+    $latest = portal_vehicle_latest_monthly($plate);
+    if ($latest !== null) {
+        return (int) ($latest['odometer'] ?? 0);
+    }
+    $vehicle = portal_vehicle_directory()[$plate] ?? [];
+    return (int) preg_replace('/\D+/', '', (string) ($vehicle['current_km'] ?? ''));
+}
+
+function portal_handle_vehicle_monthly_submission(array $user): never
+{
+    $plate = portal_normalize_vehicle_plate(portal_post('monthly_vehicle_plate', 20));
+    $vehicles = portal_vehicles_for_employee($user);
+    $vehicle = null;
+    foreach ($vehicles as $candidate) {
+        if ($plate !== null && hash_equals($plate, (string) ($candidate['plate'] ?? ''))) {
+            $vehicle = $candidate;
+            break;
+        }
+    }
+    if (!is_array($vehicle)) {
+        throw new RuntimeException('הרכב אינו משויך לחשבון העובד המחובר.');
+    }
+
+    $odometerRaw = portal_post('monthly_odometer', 12);
+    $odometer = ctype_digit($odometerRaw) ? (int) $odometerRaw : 0;
+    if ($odometer < 1 || $odometer > 9999999) {
+        throw new RuntimeException('יש להזין קילומטראז׳ נוכחי תקין.');
+    }
+    $previous = portal_vehicle_previous_odometer($plate);
+    $decreaseExplanation = portal_post('odometer_decrease_explanation', 600);
+    if ($previous > 0 && $odometer < $previous && $decreaseExplanation === '') {
+        throw new RuntimeException('הקילומטראז׳ נמוך מהדיווח הקודם. יש להוסיף הסבר כדי להעביר את החריגה לבדיקת מנהל.');
+    }
+
+    $treatment = portal_post('monthly_treatment', 30);
+    $tireStatus = portal_post('monthly_tires', 30);
+    $generalStatus = portal_post('monthly_general_status', 30);
+    if (!in_array($treatment, ['none', 'required', 'scheduled', 'completed'], true)
+        || !in_array($tireStatus, ['ok', 'check', 'replace', 'urgent'], true)
+        || !in_array($generalStatus, ['ok', 'issue', 'soon', 'unsafe'], true)) {
+        throw new RuntimeException('יש להשלים את מצב הטיפול, הצמיגים והתקינות הכללית.');
+    }
+    $issueDescription = portal_post('monthly_issue_description', 1200);
+    if (($treatment !== 'none' || $tireStatus !== 'ok' || $generalStatus !== 'ok') && $issueDescription === '') {
+        throw new RuntimeException('כאשר מסומנת תקלה או טיפול, יש להוסיף תיאור קצר.');
+    }
+
+    $month = portal_vehicle_month_key();
+    $all = portal_vehicle_monthly_reports();
+    $versions = is_array($all[$plate][$month] ?? null) ? $all[$plate][$month] : [];
+    $version = count($versions) + 1;
+    $attachments = portal_save_uploads(
+        portal_vehicle_monthly_dir($plate, $month, $version),
+        $_FILES['monthly_attachments'] ?? []
+    );
+    $record = [
+        'id' => $plate . '-' . $month . '-v' . $version,
+        'plate' => $plate,
+        'employee_email' => portal_normalize_company_email((string) ($user['email'] ?? '')),
+        'month' => $month,
+        'version' => $version,
+        'odometer' => $odometer,
+        'previous_odometer' => $previous,
+        'odometer_decrease_explanation' => $decreaseExplanation,
+        'treatment_status' => $treatment,
+        'treatment_type' => portal_post('monthly_treatment_type', 300),
+        'treatment_date' => portal_post('monthly_treatment_date', 10),
+        'garage' => portal_post('monthly_garage', 200),
+        'tire_status' => $tireStatus,
+        'general_status' => $generalStatus,
+        'description' => $issueDescription,
+        'attachments' => $attachments,
+        'manager_review_required' => ($previous > 0 && $odometer < $previous) || $generalStatus !== 'ok' || $tireStatus !== 'ok' || $treatment !== 'none',
+        'submitted_at' => gmdate('c'),
+    ];
+    $versions[] = $record;
+    $all[$plate][$month] = $versions;
+    portal_json_write(portal_vehicle_monthly_file(), $all);
+
+    $directory = portal_vehicle_directory();
+    $directory[$plate]['current_km'] = (string) $odometer;
+    $directory[$plate]['last_update'] = date('Y-m-d');
+    portal_json_write(portal_vehicle_directory_file(), $directory);
+    portal_audit('vehicle_monthly_submitted', ['plate_hash' => hash('sha256', $plate), 'month' => $month, 'version' => $version]);
+
+    if ($generalStatus === 'unsafe') {
+        portal_send_mail_with_attachments(
+            'oren@' . portal_company_email_domain(),
+            'התראה דחופה: רכב אינו בטוח לנסיעה',
+            "עובד סימן שהרכב " . portal_format_vehicle_plate($plate) . " אינו בטוח לנסיעה.\r\nיש לבדוק את הדיווח בפורטל העובדים.",
+            []
+        );
+    }
+    portal_flash_set('success', 'הדיווח החודשי נשמר בהצלחה. גרסה ' . $version . ' לחודש ' . $month . '.');
+    portal_redirect(['tab' => 'my_vehicle']);
+}
+
+function portal_vehicle_overall_status(array $vehicle, ?array $monthly): array
+{
+    if ($monthly === null || (string) ($monthly['month'] ?? '') !== portal_vehicle_month_key()) {
+        return ['class' => 'status--missing', 'label' => 'דיווח חודשי חסר'];
+    }
+    if (($monthly['general_status'] ?? '') === 'unsafe' || ($monthly['tire_status'] ?? '') === 'urgent') {
+        return ['class' => 'status--missing', 'label' => 'דורש טיפול דחוף'];
+    }
+    if (($monthly['manager_review_required'] ?? false) === true) {
+        return ['class' => 'status--review', 'label' => 'ממתין לבדיקת מנהל'];
+    }
+    foreach (['test_due_date', 'compulsory_insurance_due_date'] as $field) {
+        $deadline = portal_vehicle_deadline_status((string) ($vehicle[$field] ?? ''));
+        if (in_array($deadline['class'], ['status--missing', 'status--review'], true)) {
+            return ['class' => 'status--review', 'label' => 'מסמך עומד לפוג'];
+        }
+    }
+    if ((string) ($vehicle['comprehensive_insurance_due_date'] ?? '') !== '') {
+        $deadline = portal_vehicle_deadline_status((string) $vehicle['comprehensive_insurance_due_date']);
+        if (in_array($deadline['class'], ['status--missing', 'status--review'], true)) {
+            return ['class' => 'status--review', 'label' => 'מסמך עומד לפוג'];
+        }
+    }
+    if ((string) ($vehicle['third_party_insurance_due_date'] ?? '') !== '') {
+        $deadline = portal_vehicle_deadline_status((string) $vehicle['third_party_insurance_due_date']);
+        if (in_array($deadline['class'], ['status--missing', 'status--review'], true)) {
+            return ['class' => 'status--review', 'label' => 'מסמך עומד לפוג'];
+        }
+    }
+    return ['class' => 'status--approved', 'label' => 'תקין'];
+}
+
+function portal_render_vehicle_monthly_form(array $vehicle): void
+{
+    $previous = portal_vehicle_previous_odometer((string) $vehicle['plate']);
+    ?>
+    <section class="form-card vehicle-monthly-card" id="monthly-report">
+        <div class="form-card__header"><span class="step">1</span><div><h2>דיווח חודשי קצר</h2><p>הדיווח מיועד לקילומטראז׳ ולמצב הרכב בלבד. מסמכי טסט וביטוח מנוהלים בנפרד.</p></div></div>
+        <form method="post" enctype="multipart/form-data" class="field-grid field-grid--2">
+            <input type="hidden" name="csrf" value="<?= portal_h(portal_csrf_token()) ?>">
+            <input type="hidden" name="action" value="submit_vehicle_monthly">
+            <input type="hidden" name="monthly_vehicle_plate" value="<?= portal_h($vehicle['plate']) ?>">
+            <label class="field"><span>קילומטראז׳ נוכחי <b>*</b></span><input type="number" name="monthly_odometer" required min="1" max="9999999" inputmode="numeric" placeholder="<?= $previous > 0 ? 'דיווח קודם: ' . $previous : '' ?>"></label>
+            <label class="field"><span>אם הקילומטראז׳ ירד — הסבר</span><input type="text" name="odometer_decrease_explanation" maxlength="600"></label>
+            <label class="field"><span>טיפולים <b>*</b></span><select name="monthly_treatment" required><option value="none">לא נדרש טיפול</option><option value="required">נדרש טיפול</option><option value="scheduled">נקבע טיפול</option><option value="completed">בוצע טיפול</option></select></label>
+            <label class="field"><span>תקינות צמיגים <b>*</b></span><select name="monthly_tires" required><option value="ok">תקינים</option><option value="check">דורשים בדיקה</option><option value="replace">דורשים החלפה</option><option value="urgent">קיימת תקלה דחופה</option></select></label>
+            <label class="field"><span>תקינות כללית <b>*</b></span><select name="monthly_general_status" required><option value="ok">הרכב תקין</option><option value="issue">קיימת תקלה שאינה דחופה</option><option value="soon">נדרש טיפול בהקדם</option><option value="unsafe">הרכב אינו בטוח לנסיעה</option></select></label>
+            <label class="field"><span>סוג טיפול / תקלה</span><input type="text" name="monthly_treatment_type" maxlength="300"></label>
+            <label class="field"><span>תאריך טיפול</span><input type="date" name="monthly_treatment_date"></label>
+            <label class="field"><span>מוסך</span><input type="text" name="monthly_garage" maxlength="200"></label>
+            <label class="field field--full"><span>תיאור והערות במקרה של תקלה</span><textarea name="monthly_issue_description" rows="3" maxlength="1200"></textarea></label>
+            <label class="field field--full"><span>חשבונית, תמונה או מסמך</span><input type="file" name="monthly_attachments[]" multiple accept=".pdf,image/jpeg,image/png,image/webp,image/heic,image/heif,image/avif"></label>
+            <div class="unsafe-warning field--full">אם הרכב אינו בטוח לנסיעה: אין להמשיך לנסוע ברכב לפני קבלת הנחיה מהמנהל.</div>
+            <div class="field--full"><button type="submit" class="button button--primary button--large">שליחת הדיווח החודשי</button></div>
+        </form>
+    </section>
+    <?php
+}
+
+function portal_render_my_vehicle_page(array $user, ?array $flash): void
+{
+    portal_render_flash($flash);
+    $vehicles = portal_vehicles_for_employee($user);
+    ?>
+    <section class="page-heading"><div><p class="eyebrow">רכב חברה</p><h1>הרכב שלי</h1><p>כאן ניתן לצפות בפרטי רכב החברה, במסמכים החשובים ובמועדי החידוש, ולשלוח את הדיווח החודשי הקצר.</p></div><a class="button button--primary button--large" href="#monthly-report">מילוי דיווח חודשי</a></section>
+    <?php foreach ($vehicles as $vehicle): ?>
+        <?php $latest = portal_vehicle_latest_monthly((string) $vehicle['plate']); $status = portal_vehicle_overall_status($vehicle, $latest); ?>
+        <section class="vehicle-hero">
+            <div><p class="eyebrow"><?= portal_h(portal_employee_profile($user)['name']) ?></p><h2><?= portal_h($vehicle['make_model'] ?: 'פרטי הדגם טרם הושלמו') ?></h2><b dir="ltr"><?= portal_h(portal_format_vehicle_plate($vehicle['plate'])) ?></b></div>
+            <span class="status <?= portal_h($status['class']) ?>"><?= portal_h($status['label']) ?></span>
+            <div class="vehicle-hero__stats"><span>טסט<strong><?= portal_h($vehicle['test_due_date'] ?: 'חסר') ?></strong></span><span>ביטוח חובה<strong><?= portal_h($vehicle['compulsory_insurance_due_date'] ?: 'חסר') ?></strong></span><span>ק״מ אחרון<strong><?= portal_h($vehicle['current_km'] ?: 'טרם דווח') ?></strong></span><span>עדכון אחרון<strong><?= portal_h($vehicle['last_update'] ?: 'טרם דווח') ?></strong></span></div>
+        </section>
+        <?php portal_render_vehicle_monthly_form($vehicle); ?>
+        <section class="detail-card vehicle-documents-card"><h2>מסמכי הרכב והנהג</h2>
+            <?php $documents = portal_vehicle_documents_for_user($user, (string) $vehicle['plate']); ?>
+            <?php if ($documents === []): ?><div class="alert alert--info">עדיין לא נשמרו מסמכים לרכב זה. מנהל יכול להעלות רישיון, טסט וביטוחים במסך רכבי העובדים.</div>
+            <?php else: ?><div class="document-list"><?php foreach ($documents as $document): ?><div><strong><?= portal_h($document['type_label'] ?? 'מסמך') ?></strong><span><a class="text-link" href="<?= portal_h(portal_url(['action' => 'vehicle_document_download', 'plate' => $vehicle['plate'], 'document' => $document['id'] ?? ''])) ?>"><?= portal_h($document['name'] ?? '') ?></a></span><span><?= portal_h(($document['expires_on'] ?? '') !== '' ? 'תוקף ' . $document['expires_on'] : 'ללא תוקף') ?></span></div><?php endforeach; ?></div><?php endif; ?>
+        </section>
+        <section class="detail-card"><h2>היסטוריית דיווחים חודשיים</h2>
+            <?php $history = portal_vehicle_reports_for_plate((string) $vehicle['plate']); ?>
+            <?php if ($history === []): ?><p class="muted-text">עדיין לא נשלח דיווח חודשי.</p><?php else: ?><div class="history-list"><?php krsort($history); foreach ($history as $month => $versions): $last = is_array($versions) ? end($versions) : []; ?><article class="history-card"><div><span class="history-card__date"><?= portal_h($month) ?></span><h2><?= portal_h((string) ($last['odometer'] ?? '')) ?> ק״מ</h2><code><?= count($versions) ?> גרסאות</code></div><span class="status <?= ($last['manager_review_required'] ?? false) ? 'status--review' : 'status--approved' ?>"><?= ($last['manager_review_required'] ?? false) ? 'לבדיקת מנהל' : 'תקין' ?></span></article><?php endforeach; ?></div><?php endif; ?>
+        </section>
+    <?php endforeach; ?>
+    <?php
+}
+
+function portal_vehicle_monthly_reminder_state_file(): string
+{
+    return portal_storage_root() . DIRECTORY_SEPARATOR . 'security' . DIRECTORY_SEPARATOR . 'vehicle-monthly-reminders.json';
+}
+
+function portal_process_vehicle_monthly_reminders(DateTimeImmutable $now, ?callable $mailer = null): array
+{
+    $mailer ??= static fn(string $email, string $subject, string $body, array $attachments): bool =>
+        portal_send_mail_with_attachments($email, $subject, $body, $attachments);
+    $local = $now->setTimezone(new DateTimeZone('Asia/Jerusalem'));
+    $day = (int) $local->format('j');
+    $result = ['sent' => 0, 'missing_flagged' => 0, 'failed' => 0];
+    if (!in_array($day, [2, 4, 7, 8], true)) {
+        return $result;
+    }
+    $month = portal_vehicle_month_key($local);
+    $state = portal_json_read(portal_vehicle_monthly_reminder_state_file());
+    foreach (portal_vehicle_directory() as $plate => $vehicle) {
+        $plate = (string) $plate;
+        $versions = portal_vehicle_monthly_reports()[$plate][$month] ?? [];
+        if (is_array($versions) && $versions !== []) {
+            continue;
+        }
+        $email = portal_normalize_company_email((string) ($vehicle['employee_email'] ?? ''));
+        if ($email === null) {
+            continue;
+        }
+        $recipient = $day === 8 ? 'oren@' . portal_company_email_domain() : $email;
+        $token = $month . ':' . $day . ':' . $plate;
+        if (isset($state[$token])) {
+            continue;
+        }
+        $subject = $day === 8 ? 'דיווח רכב חודשי חסר' : 'תזכורת למילוי דיווח הרכב החודשי';
+        $body = ($day === 8 ? 'הדיווח החודשי טרם מולא עבור הרכב ' : 'יש למלא את הדיווח החודשי הקצר עבור הרכב ')
+            . portal_format_vehicle_plate($plate) . ".\r\nhttps://i-feel.co.il/staff-expenses/?tab=my_vehicle";
+        if ($mailer($recipient, $subject, $body, [])) {
+            $state[$token] = gmdate('c');
+            $day === 8 ? $result['missing_flagged']++ : $result['sent']++;
+        } else {
+            $result['failed']++;
+        }
+    }
+    portal_json_write(portal_vehicle_monthly_reminder_state_file(), $state);
+    return $result;
+}

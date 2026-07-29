@@ -302,4 +302,519 @@ function portal_builtin_users(): array
             'display_name' => 'אורן לוי',
             'role' => 'admin',
             'active' => true,
-            'password_hash' => '$2y$12$Xy3T6UxjpfhZeFMI6M6OweGrfpHNgfV2MNxtNqhr8sri0JH6����ТFƗfUW6W"�GW6W'5��7G&����GW6W%�wW6W&��u��rr������Т�b��5�'&��FƗfUW6W"���&��FƗfUW6W%�v7F�fRu��f�R���Т�F��v�B���Т&WGW&����Т��ТE�U54���w�F�W6W"uղv�7E�7F�f�G�u��F�����ТE�U54���w�F�W6W"uղvF�7����u���7G&���FƗfUW6W%�vF�7����uӰТE�U54���w�F�W6W"uղw&�Ru���7G&���FƗfUW6W%�w&�RuӰТ&WGW&�E�U54���w�F�W6W"uӰЧ��ЦgV�F���F�&WV�&U���ₓ�'&�Ч�ТGW6W"��F�7W'&V��6W"���Т�b�GW6W"������Т�F�&VF�&V7B���Т��&WGW&�GW6W#�Ч��ЦgV�F���F�&WV�&U�F֖ₓ�'&�Ч�ТGW6W"��F�&WV�&U���ₓ�Т�b��GW6W%�w&�Ru��rr��vF֖���Т�GG�W7�6U��R�C2��ТF�&��r'V���W�6WF���}yy�y�yMz�z�yyBy�y�zmy]z"yMzMz-y]y�B���Т��&WGW&�GW6W#�Ч��ЦgV�F���F�&W�E��U�&V7G&��GG�R��7G&��Ч�ТF�&V����wfV��6�r�}z�y�y�y�y�zMy]y�y}zy�yBy]zzy�z-y]z�r��wG&fV��}zzy�z-yBy�}y]{My���vvV�&��}yMy]zmyyBy�y���z�r��Ӱ�&WGW&�F�&V��GG�U��}y=y�y]y]yryMy]zmyyBs����ЦgV�F���F�7FGW5�&V7G&��G7FGW2��7G&��Ч�ТF�&V����v�rr�}y}y=z�r��w&Wf�Wrr�}yyy=y�z}yBr��v&�VBr�}yy]z�z�r��v֗76��r�}y}zz�y��y=z"r��w�Br�}z�y]y���yMy]y}ymz�r��Ӱ�&WGW&�F�&V��G7FGW5��}y}y=z�s����ЦgV�F���F�fƖE�FGW6W2���'&�Ч�Т&WGW&��v�rr�w&Wf�Wrr�v&�VBr�v֗76��r�w�BuӰЧ��ЦgV�F���F�7W'&V���&V7G&��F7W'&V����7G&��Ч�ТF�&V����t��r�~(*�r��uU4Br�rBr��tUU"r�~(*���tt%r�|*2r��Ӱ�&WGW&�F�&V��F7W'&V����F7W'&V������ЦgV�F���F�'6U��V��7G&��Gf�R����@Ч�ТGf�R�G&�҇7G%�W�6R��r��ru��rr�ru�Gf�R���Т�b�Gf�R��rr�&Vu�F6��r������G��ғ���Gf�R���Т&WGW&����Т��F�V���f�B�Gf�S�Т&WGW&�F�V��bbF�V���&���F�V��"�����Ч��ЦgV�F���F��u�V6�E����7G&��Ч�Т&WGW&�v�FR�u��Ԇ�2r��r��&���W��&����FW2�b���Ч��ЦgV�F���F�&V6�E��"�7G&��G&V6�D�B��7G&��Ч�Т�b�&Vu�F6��r����GҒ���'ҕ��'���g���ӕ׳'���G&V6�D�B�F�F6����ТF�&��r��ƖD&wV��W�6WF���}y�zMz�y=y�y]y]yryy�zyRz�z}y�y�r��Т��&WGW&��F�7F�vU��B��Т�D�$T5D���U$D��w&V6�G2pТ�D�$T5D���U$D��F�F6�����D�$T5D���U$D��F�F6��%���D�$T5D���U$D��G&V6�D�C�Ч��ЦgV�F���F�&V6�E����7G&��G&V6�D�B��7G&��Ч�Т&WGW&��F�&V6�E��"�G&V6�D�B��D�$T5D���U$D��v�FFF��s�Ч��ЦgV�F���F��E�V6�B�7G&��G&V6�D�B���'&�Ч�ТGF���F�&V6�E����G&V6�D�B��Т�b��5����GF����Т&WGW&����Т��G&V6�B��F��6��VB�GF���Т&WGW&�G&V6�B��������G&V6�C�Ч��ЦgV�F���F�6fU�V6�B�'&�G&V6�B��f�Ч�ТG&V6�D�B��7G&����G&V6�E�v�Bu��rr��Т�F��6��&�FR��F�&V6�E����G&V6�D�B��G&V6�B��Ч��ЦgV�F���F���V6�G2���'&�Ч�ТGGFW&���F�7F�vU��B���D�$T5D���U$D��w&V6�G2r�D�$T5D���U$D��r�r�D�$T5D���U$D��r�r�D�$T5D���U$D��r�r�D�$T5D���U$D��v�FFF��s�ТG&V6�G2��ӰТf�V6��v�"�GGFW&����2GF���ТG&V6�B��F��6��VB�GF���Т�b�G&V6�B���bb�76WB�G&V6�E�v�BuҒ��ТG&V6�G5���G&V6�C�Т����W6�B�G&V6�G2�7FF�2f�'&�F�'&�F"�����7G&6���7G&����F%�v7&VFVE�Bu��rr���7G&����F�v7&VFVE�Bu��rr����Т&WGW&�G&V6�G3�Ч��ЦgV�F���F�&V�fU�&VR�7G&��GF���f�Ч�Т�b��5��"�GF����Т&WGW&����F�FV��66��"�GF���Т�b�F�FV���f�R��Т&WGW&����f�V6��F�FV�2F�FVҒ�Т�b�F�FV���r��F�FV���r�r��Т6�F��S�Т��FgV��GF��D�$T5D���U$D��F�FVӰТ�b��5��"�FgV����Т�F�&V�fU�&VR�FgV���Т�V�R�ТV��沂FgV���Т����&��"�GF���Ч��ЦgV�F���F��5��2�7G&��GF���&����ТF����f�V�F��w&"r��Т�b�F�����f�R��Т&WGW&�f�S�Т��F�VB�g&VB�F����3"��Тf6�6R�F�����Т�b��5�G&���F�VB���Т&WGW&�f�S�Т��&WGW&��&�&Vu�F6��r�G����7ƆV��ƆWf7ƆWg���c�6c�f�b���F�VB��Ч��ЦgV�F���F��&�Ɨ�U���5�'&��'&�Ff��2��'&�Ч�Т�b��76WB�Ff��5�v��uҒ��Т&WGW&��ӰТ���b��5�'&��Ff��5�v��uҒ��Т&WGW&��Ff��5ӰТ��F�&�Ɨ�VB��ӰТf�V6��Ff��5�v��u�2F��W��F����ТF�&�Ɨ�VE����Тv��r�F����wG�Rr�Ff��5�wG�RuղF��W���rr��wF���r�Ff��5�wF���uղF��W���rr��vW'&�r�Ff��5�vW'&�uղF��W���U�E�%%��d����w6��Rr�Ff��5�w6��RuղF��W�����ӰТ��&WGW&�F�&�Ɨ�VC�Ч��ЦgV�F���F�6fU��G2�7G&��G&V6�DF�"�'&�Ff��2��'&�Ч�ТF�FV���F��&�Ɨ�U���5�'&��Ff��2��Т�b�6���F�FV����dTT��D������2��ТF�&��r'V���W�6WF���}zy�z�y�y�mz�z2z-y2r��dTT��D������2�rz}yzmy�y�yy�y�y=y�y]y]yr���Т��ТGW�G2��ӰТGF���FW2��ТFf��4F�"�G&V6�DF�"�D�$T5D���U$D��vf��2s�Т�F�V�W&U��&V7F���Ff��4F�"��ТFf�����rf��������Ԕ���R��РТF��VD'�֖���ТvƖ6F���Fbr�wFbr��v��vR�Vrr�v�rr��v��vR��r�w�r��v��vR�V'r�wvV'r��v��vR��2r�v�V�2r��v��vR��br�v�V�br��v��vR�f�br�vf�br��ӰРТf�V6��F�FV�2Ff����ТFW'&�������Ff���vW'&�u��U�E�%%��d����Т�b�FW'&���U�E�%%��d����Т6�F��S�Т���b�FW'&��U�E�%%����ТF�76vW2���U�E�%%�����R�}yy}y2yMz}yzmy�y�y-y=y]y�y�My�]z�z�yz�z�z��"U�E�%%���4��R�}yy}y2yMz}yzmy�y�y-y=y]y�y�My�]z�z�yz�z�z��"U�E�%%�%D���}yy}y2yMz}yzmy�y�yMy]z-y�Byyy]zMy�y}y�}y�yy�y2�"Ӱ�F�76vR�F�76vW5�FW'&���}yy�z�z-yBz�y-y�yyByyMz-y�z�yy}y2yMz}yzmy�y�s��F�&��r'V���W�6WF���F�76vR��Т��ТG6��R������Ff���w6��Ru����Т�b�G6��R��G6��R��dTT��D��������DU2��ТF�&��r'V���W�6WF���}y�y�z}y]yzRy}y�y�yy�My�y]z�z}y�y�y�$����Т��GF���FW2��G6��S�Т�b�GF���FW2��dTT��D������%�DU2��ТF�&��r'V���W�6WF���}yMy-y]y=y�yMy�y]y��z�y�yMz}yzmy�y�y}y�y�yy�My�y]z�z}y�y�y�c����Т��ТGF���7G&����Ff���wF���u��rr��Т�b�GF���rr��5��FVE����GF����ТF�&��r'V���W�6WF���}z}y]yzRyMyMz-y�yByy�zyRz�z}y�y�r��Т��ТF֖���7G&���Ff�������GF���ТF��v�����G&�҆&6V����7G&����Ff���v��u��vF�V��r����ТF��v����B�7G'F��W"�F������v�����D����U�DT������ТFW�FV����F��VD'�֖��F֖������РТ�b�FW�FV�������bb��'&��F��v����B��v�V�2r�v�V�br�vf�bu�G'VR�bb�F��5��2�GF����ТFW�FV����F��v����C�ТF֖��F��v����B��vf�br�v��vR�f�br�v��vR��F��v����C�Т���b�FW�FV���������ТF�&��r'V���W�6WF���}zy]y"z}y]yzRy�zz�y���zy�z�y�y�Mz-y�]z�Db��r���tT%��T�2yyRd�byy�y2���Т��ТG7F�vT���&���W��&����FW2�b���r��FW�FV����ТFFW7F��F���Ff��4F�"�D�$T5D���U$D��G7F�vT���Т�b��fU��FVE����GF��FFW7F��F�����ТF�&��r'V���W�6WF���}y�zy�z�y�y��y�]z�yz�yMz}y]yzRyz�z�z����Т��6��B�FFW7F��F���c��РТGW�G5����Тv��v�����r��F�7V'7G"�F��v�����rr�F��v�����vF�V����FW�FV�����#C���w7F�vU��r�G7F�vT����v֖�r�F֖���w6��Rr�G6��R��w6�#Sbr��6�����w6�#Sbr�FFW7F��F����rr��ӰТ��Т&WGW&�GW�G3�Ч��ЦgV�F���F�f��E����'&�G&V6�B��7G&��Ч�ТGF���G&V6�E�wF��u���ӰТ�b��5�'&��GF����GF�����Ғ�Т&WGW&�}y�zmy]y�y��Т��G'G2��ӰТf�V6��GF��2F7W'&V���F�V���ТG'G5�����W%���B��f�B�F�V��"��rr��F�7W'&V���&V�7G&���F7W'&V����Т��&WGW&����FR�r+rr�G'G2��Ч��ЦgV�F���F�VF�B�7G&��FWfV��'&�F6�FW�B��ғ�f�Ч�ТFV�'���ТvBr�v�FR�v2r���vWfV�r�FWfV���wW6W"r��7G&����E�U54���w�F�W6W"uղwW6W&��u��vwVW7Br���v��6�r��6��w6�#Sbr��F�6ƖV�������v6�FW�Br�F6�FW�B��ӰТGF���F�7F�vU��B���D�$T5D���U$D��w6V7W&�G�r�D�$T5D���U$D��vVF�B��v�FR�u��r��r��s�ТFƖ���6����R�FV�'���4���44TE���R��4���44TE��4�U2��%�#�Тf���WE��FV�2�GF��FƖ��d���T���4�����Т6��B�GF��c��Ч�
+            'password_hash' => '$2y$12$Xy3T6UxjpfhZeFMI6M6OweGrfpHNgfV2MNxtNqhr8sri0JHwA4WQC',
+            'source' => 'bootstrap',
+        ],
+        'employee' => [
+            'display_name' => 'עובדי I Feel',
+            'role' => 'employee',
+            'active' => true,
+            'password_hash' => '$2y$12$o4H4lh740XV2VXSAM9bKjOrEWykYylV88/ZJqaWPBZYDxFgRu.V9K',
+            'source' => 'bootstrap',
+        ],
+    ];
+}
+
+function portal_users_file(): string
+{
+    return portal_storage_root() . DIRECTORY_SEPARATOR . 'security' . DIRECTORY_SEPARATOR . 'users.json';
+}
+
+function portal_users(): array
+{
+    $users = portal_builtin_users();
+
+    if (defined('EXPENSE_PORTAL_USERS') && is_array(constant('EXPENSE_PORTAL_USERS'))) {
+        foreach (constant('EXPENSE_PORTAL_USERS') as $username => $user) {
+            if (is_string($username) && is_array($user)) {
+                $users[strtolower($username)] = $user + ['source' => 'server-config'];
+            }
+        }
+    }
+
+    $json = trim((string) getenv('EXPENSE_PORTAL_USERS_JSON'));
+    if ($json !== '') {
+        $decoded = json_decode($json, true);
+        if (is_array($decoded)) {
+            foreach ($decoded as $username => $user) {
+                if (is_string($username) && is_array($user)) {
+                    $users[strtolower($username)] = $user + ['source' => 'environment'];
+                }
+            }
+        }
+    }
+
+    $stored = portal_json_read(portal_users_file());
+    foreach ($stored as $username => $user) {
+        if (is_string($username) && is_array($user)) {
+            $users[strtolower($username)] = $user + ['source' => 'private-storage'];
+        }
+    }
+
+    foreach ($users as $username => &$user) {
+        $user['username'] = $username;
+        $user['display_name'] = trim((string) ($user['display_name'] ?? $username));
+        $user['role'] = ($user['role'] ?? 'employee') === 'admin' ? 'admin' : 'employee';
+        $user['active'] = (bool) ($user['active'] ?? true);
+        $user['password_hash'] = (string) ($user['password_hash'] ?? '');
+    }
+    unset($user);
+
+    return $users;
+}
+
+function portal_saved_user_overrides(): array
+{
+    return portal_json_read(portal_users_file());
+}
+
+function portal_save_user(string $username, array $user): void
+{
+    $username = strtolower(trim($username));
+    if (!preg_match('/^[a-z0-9._-]{3,40}$/', $username)) {
+        throw new InvalidArgumentException('שם המשתמש חייב להכיל 3 עד 40 תווים באנגלית, מספרים, נקודה, מקף או קו תחתון.');
+    }
+
+    $stored = portal_saved_user_overrides();
+    $existing = portal_users()[$username] ?? [];
+    $stored[$username] = [
+        'display_name' => trim((string) ($user['display_name'] ?? $existing['display_name'] ?? $username)),
+        'role' => ($user['role'] ?? $existing['role'] ?? 'employee') === 'admin' ? 'admin' : 'employee',
+        'active' => (bool) ($user['active'] ?? $existing['active'] ?? true),
+        'password_hash' => (string) ($user['password_hash'] ?? $existing['password_hash'] ?? ''),
+        'updated_at' => gmdate('c'),
+        'updated_by' => (string) ($_SESSION['portal_user']['username'] ?? 'system'),
+    ];
+    portal_json_write(portal_users_file(), $stored);
+}
+
+function portal_csrf_token(): string
+{
+    if (!isset($_SESSION['portal_csrf']) || !is_string($_SESSION['portal_csrf']) || strlen($_SESSION['portal_csrf']) < 32) {
+        $_SESSION['portal_csrf'] = bin2hex(random_bytes(24));
+    }
+    return $_SESSION['portal_csrf'];
+}
+
+function portal_verify_csrf(): void
+{
+    $sent = portal_post('csrf', 200);
+    $known = $_SESSION['portal_csrf'] ?? '';
+    if (!is_string($known) || $known === '' || !hash_equals($known, $sent)) {
+        throw new RuntimeException('פג תוקף הטופס. יש לרענן את הדף ולנסות שוב.');
+    }
+}
+
+function portal_client_ip(): string
+{
+    // Do not trust arbitrary forwarded headers. The hosting proxy can be added in server config if required.
+    return (string) ($_SERVER['REMOTE_ADDR'] ?? 'unknown');
+}
+
+function portal_login_attempt_file(): string
+{
+    return portal_storage_root() . DIRECTORY_SEPARATOR . 'security' . DIRECTORY_SEPARATOR . 'login-' . hash('sha256', portal_client_ip()) . '.json';
+}
+
+function portal_login_is_blocked(): int
+{
+    $data = portal_json_read(portal_login_attempt_file());
+    $until = (int) ($data['blocked_until'] ?? 0);
+    return max(0, $until - time());
+}
+
+function portal_record_login_failure(): void
+{
+    $path = portal_login_attempt_file();
+    $data = portal_json_read($path);
+    $now = time();
+    $windowStart = (int) ($data['window_start'] ?? $now);
+    $count = (int) ($data['count'] ?? 0);
+    if ($now - $windowStart > 900) {
+        $windowStart = $now;
+        $count = 0;
+    }
+    $count++;
+    $blockedUntil = $count >= 5 ? $now + 900 : 0;
+    portal_json_write($path, [
+        'window_start' => $windowStart,
+        'count' => $count,
+        'blocked_until' => $blockedUntil,
+        'last_attempt' => $now,
+    ]);
+}
+
+function portal_clear_login_failures(): void
+{
+    @unlink(portal_login_attempt_file());
+}
+
+function portal_login(string $username, string $password): bool
+{
+    $username = strtolower(trim($username));
+    if (portal_login_is_blocked() > 0) {
+        return false;
+    }
+
+    $users = portal_users();
+    $user = $users[$username] ?? null;
+    $valid = is_array($user)
+        && (bool) ($user['active'] ?? false)
+        && is_string($user['password_hash'] ?? null)
+        && ($user['password_hash'] ?? '') !== ''
+        && password_verify($password, (string) $user['password_hash']);
+
+    if (!$valid) {
+        portal_record_login_failure();
+        usleep(random_int(250000, 650000));
+        return false;
+    }
+
+    portal_clear_login_failures();
+    session_regenerate_id(true);
+    $_SESSION['portal_user'] = [
+        'username' => $username,
+        'display_name' => (string) $user['display_name'],
+        'role' => (string) $user['role'],
+        'logged_in_at' => time(),
+        'last_activity' => time(),
+    ];
+    unset($_SESSION['portal_csrf']);
+    portal_csrf_token();
+    return true;
+}
+
+function portal_logout(): void
+{
+    if (function_exists('portal_revoke_remembered_login')) {
+        portal_revoke_remembered_login();
+    }
+    $_SESSION = [];
+    if (ini_get('session.use_cookies')) {
+        $params = session_get_cookie_params();
+        setcookie(session_name(), '', [
+            'expires' => time() - 42000,
+            'path' => $params['path'],
+            'domain' => $params['domain'] ?? '',
+            'secure' => (bool) $params['secure'],
+            'httponly' => (bool) $params['httponly'],
+            'samesite' => 'Strict',
+        ]);
+    }
+    session_destroy();
+}
+
+function portal_current_user(): ?array
+{
+    $user = $_SESSION['portal_user'] ?? null;
+    if (!is_array($user)) {
+        return null;
+    }
+
+    $last = (int) ($user['last_activity'] ?? 0);
+    if ($last <= 0 || time() - $last > IFEEL_PORTAL_IDLE_TIMEOUT) {
+        portal_logout();
+        return null;
+    }
+
+    $users = portal_users();
+    $liveUser = $users[(string) ($user['username'] ?? '')] ?? null;
+    if (!is_array($liveUser) || !(bool) ($liveUser['active'] ?? false)) {
+        portal_logout();
+        return null;
+    }
+
+    $_SESSION['portal_user']['last_activity'] = time();
+    $_SESSION['portal_user']['display_name'] = (string) $liveUser['display_name'];
+    $_SESSION['portal_user']['role'] = (string) $liveUser['role'];
+    return $_SESSION['portal_user'];
+}
+
+function portal_require_login(): array
+{
+    $user = portal_current_user();
+    if ($user === null) {
+        portal_redirect();
+    }
+    return $user;
+}
+
+function portal_require_admin(): array
+{
+    $user = portal_require_login();
+    if (($user['role'] ?? '') !== 'admin') {
+        http_response_code(403);
+        throw new RuntimeException('אין הרשאה לביצוע הפעולה.');
+    }
+    return $user;
+}
+
+function portal_report_type_label(string $type): string
+{
+    $labels = [
+        'vehicle' => 'רכב, טיפול, חניה ונסיעות',
+        'travel' => 'נסיעה לחו״ל',
+        'general' => 'הוצאה כללית',
+    ];
+    return $labels[$type] ?? 'דיווח הוצאה';
+}
+
+function portal_status_label(string $status): string
+{
+    $labels = [
+        'new' => 'חדש',
+        'review' => 'בבדיקה',
+        'approved' => 'אושר',
+        'missing' => 'חסר מידע',
+        'paid' => 'שולם / הוחזר',
+    ];
+    return $labels[$status] ?? 'חדש';
+}
+
+function portal_valid_statuses(): array
+{
+    return ['new', 'review', 'approved', 'missing', 'paid'];
+}
+
+function portal_currency_label(string $currency): string
+{
+    $labels = [
+        'ILS' => '₪',
+        'USD' => '$',
+        'EUR' => '€',
+        'GBP' => '£',
+    ];
+    return $labels[$currency] ?? $currency;
+}
+
+function portal_parse_amount(string $value): ?float
+{
+    $value = trim(str_replace([',', ' '], ['', ''], $value));
+    if ($value === '' || !preg_match('/^\d+(?:\.\d{1,2})?$/', $value)) {
+        return null;
+    }
+    $amount = (float) $value;
+    return $amount > 0 && $amount <= 100000000 ? round($amount, 2) : null;
+}
+
+function portal_new_record_id(): string
+{
+    return gmdate('Ymd-His') . '-' . bin2hex(random_bytes(6));
+}
+
+function portal_record_dir(string $recordId): string
+{
+    if (!preg_match('/^(\d{4})(\d{2})\d{2}-\d{6}-[a-f0-9]{12}$/', $recordId, $match)) {
+        throw new InvalidArgumentException('מספר דיווח אינו תקין.');
+    }
+    return portal_storage_root()
+        . DIRECTORY_SEPARATOR . 'records'
+        . DIRECTORY_SEPARATOR . $match[1]
+        . DIRECTORY_SEPARATOR . $match[2]
+        . DIRECTORY_SEPARATOR . $recordId;
+}
+
+function portal_record_file(string $recordId): string
+{
+    return portal_record_dir($recordId) . DIRECTORY_SEPARATOR . 'metadata.json';
+}
+
+function portal_load_record(string $recordId): ?array
+{
+    $path = portal_record_file($recordId);
+    if (!is_file($path)) {
+        return null;
+    }
+    $record = portal_json_read($path);
+    return $record === [] ? null : $record;
+}
+
+function portal_save_record(array $record): void
+{
+    $recordId = (string) ($record['id'] ?? '');
+    portal_json_write(portal_record_file($recordId), $record);
+}
+
+function portal_all_records(): array
+{
+    $pattern = portal_storage_root() . DIRECTORY_SEPARATOR . 'records' . DIRECTORY_SEPARATOR . '*' . DIRECTORY_SEPARATOR . '*' . DIRECTORY_SEPARATOR . '*' . DIRECTORY_SEPARATOR . 'metadata.json';
+    $records = [];
+    foreach (glob($pattern) ?: [] as $path) {
+        $record = portal_json_read($path);
+        if ($record !== [] && isset($record['id'])) {
+            $records[] = $record;
+        }
+    }
+    usort($records, static fn(array $a, array $b): int => strcmp((string) ($b['created_at'] ?? ''), (string) ($a['created_at'] ?? '')));
+    return $records;
+}
+
+function portal_remove_tree(string $path): void
+{
+    if (!is_dir($path)) {
+        return;
+    }
+    $items = scandir($path);
+    if ($items === false) {
+        return;
+    }
+    foreach ($items as $item) {
+        if ($item === '.' || $item === '..') {
+            continue;
+        }
+        $full = $path . DIRECTORY_SEPARATOR . $item;
+        if (is_dir($full)) {
+            portal_remove_tree($full);
+        } else {
+            @unlink($full);
+        }
+    }
+    @rmdir($path);
+}
+
+function portal_is_heic(string $path): bool
+{
+    $handle = @fopen($path, 'rb');
+    if ($handle === false) {
+        return false;
+    }
+    $head = fread($handle, 32);
+    fclose($handle);
+    if (!is_string($head)) {
+        return false;
+    }
+    return (bool) preg_match('/ftyp(?:heic|heix|hevc|hevx|mif1|msf1|avif)/', $head);
+}
+
+function portal_normalize_files_array(array $files): array
+{
+    if (!isset($files['name'])) {
+        return [];
+    }
+    if (!is_array($files['name'])) {
+        return [$files];
+    }
+    $normalized = [];
+    foreach ($files['name'] as $index => $name) {
+        $normalized[] = [
+            'name' => $name,
+            'type' => $files['type'][$index] ?? '',
+            'tmp_name' => $files['tmp_name'][$index] ?? '',
+            'error' => $files['error'][$index] ?? UPLOAD_ERR_NO_FILE,
+            'size' => $files['size'][$index] ?? 0,
+        ];
+    }
+    return $normalized;
+}
+
+function portal_save_uploads(string $recordDir, array $files): array
+{
+    $items = portal_normalize_files_array($files);
+    if (count($items) > IFEEL_PORTAL_MAX_FILES) {
+        throw new RuntimeException('ניתן לצרף עד ' . IFEEL_PORTAL_MAX_FILES . ' קבצים בכל דיווח.');
+    }
+
+    $uploads = [];
+    $totalBytes = 0;
+    $filesDir = $recordDir . DIRECTORY_SEPARATOR . 'files';
+    portal_ensure_directory($filesDir);
+    $finfo = new finfo(FILEINFO_MIME_TYPE);
+
+    $allowedByMime = [
+        'application/pdf' => 'pdf',
+        'image/jpeg' => 'jpg',
+        'image/png' => 'png',
+        'image/webp' => 'webp',
+        'image/heic' => 'heic',
+        'image/heif' => 'heif',
+        'image/avif' => 'avif',
+    ];
+
+    foreach ($items as $file) {
+        $error = (int) ($file['error'] ?? UPLOAD_ERR_NO_FILE);
+        if ($error === UPLOAD_ERR_NO_FILE) {
+            continue;
+        }
+        if ($error !== UPLOAD_ERR_OK) {
+            $messages = [
+                UPLOAD_ERR_INI_SIZE => 'אחד הקבצים גדול מהמותר בשרת.',
+                UPLOAD_ERR_FORM_SIZE => 'אחד הקבצים גדול מהמותר בשרת.',
+                UPLOAD_ERR_PARTIAL => 'אחד הקבצים הועלה באופן חלקי בלבד.',
+            ];
+            $message = $messages[$error] ?? 'אירעה שגיאה בהעלאת אחד הקבצים.';
+            throw new RuntimeException($message);
+        }
+
+        $size = (int) ($file['size'] ?? 0);
+        if ($size <= 0 || $size > IFEEL_PORTAL_MAX_FILE_BYTES) {
+            throw new RuntimeException('כל קובץ חייב להיות קטן מ-12MB.');
+        }
+        $totalBytes += $size;
+        if ($totalBytes > IFEEL_PORTAL_MAX_TOTAL_BYTES) {
+            throw new RuntimeException('הגודל הכולל של הקבצים חייב להיות קטן מ-60MB.');
+        }
+
+        $tmp = (string) ($file['tmp_name'] ?? '');
+        if ($tmp === '' || !is_uploaded_file($tmp)) {
+            throw new RuntimeException('קובץ ההעלאה אינו תקין.');
+        }
+
+        $mime = (string) $finfo->file($tmp);
+        $originalName = trim(basename((string) ($file['name'] ?? 'document')));
+        $originalExt = strtolower(pathinfo($originalName, PATHINFO_EXTENSION));
+        $extension = $allowedByMime[$mime] ?? null;
+
+        if ($extension === null && in_array($originalExt, ['heic', 'heif', 'avif'], true) && portal_is_heic($tmp)) {
+            $extension = $originalExt;
+            $mime = $originalExt === 'avif' ? 'image/avif' : 'image/' . $originalExt;
+        }
+        if ($extension === null) {
+            throw new RuntimeException('סוג קובץ לא נתמך. ניתן להעלות PDF, JPG, PNG, WEBP, HEIC או AVIF בלבד.');
+        }
+
+        $storageName = bin2hex(random_bytes(16)) . '.' . $extension;
+        $destination = $filesDir . DIRECTORY_SEPARATOR . $storageName;
+        if (!move_uploaded_file($tmp, $destination)) {
+            throw new RuntimeException('לא ניתן לשמור את הקובץ בשרת.');
+        }
+        @chmod($destination, 0600);
+
+        $uploads[] = [
+            'original_name' => portal_substr($originalName !== '' ? $originalName : 'document.' . $extension, 0, 240),
+            'storage_name' => $storageName,
+            'mime' => $mime,
+            'size' => $size,
+            'sha256' => hash_file('sha256', $destination) ?: '',
+        ];
+    }
+
+    return $uploads;
+}
+
+function portal_format_totals(array $record): string
+{
+    $totals = $record['totals'] ?? [];
+    if (!is_array($totals) || $totals === []) {
+        return 'לא צוין';
+    }
+    $parts = [];
+    foreach ($totals as $currency => $amount) {
+        $parts[] = number_format((float) $amount, 2) . ' ' . portal_currency_label((string) $currency);
+    }
+    return implode(' · ', $parts);
+}
+
+function portal_audit(string $event, array $context = []): void
+{
+    $entry = [
+        'at' => gmdate('c'),
+        'event' => $event,
+        'user' => (string) ($_SESSION['portal_user']['username'] ?? 'guest'),
+        'ip_hash' => hash('sha256', portal_client_ip()),
+        'context' => $context,
+    ];
+    $path = portal_storage_root() . DIRECTORY_SEPARATOR . 'security' . DIRECTORY_SEPARATOR . 'audit-' . gmdate('Y-m') . '.log';
+    $line = json_encode($entry, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) . "\n";
+    @file_put_contents($path, $line, FILE_APPEND | LOCK_EX);
+    @chmod($path, 0600);
+}

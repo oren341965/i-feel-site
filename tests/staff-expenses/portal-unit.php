@@ -195,4 +195,312 @@ try {
         && ($sourceVehicle['test_due_date'] ?? '') === '2027-05-26'
         && ($sourceVehicle['compulsory_insurance_due_date'] ?? '') === '2026-06-30'
         && ($sourceVehicle['comprehensive_insurance_due_date'] ?? '') === '2027-06-20'
-        && ($sourceVehicle#T�2�BvV�&FVB6fVǒ�Т��Т�F�FW7E��V7B�Т�F�6�7V��v�5��沂F�v�5F����wv��W$��VV�6�����ufƖB�v�2Ɩ�v2�B66WFVB�Т��ТG'��Т�F�6�7V��v�5��沂F�v�5F�⓰ТF�&��r'V���W�6WF���t�v�2Ɩ�v266WFVBGv�6R���Т�6F6��'V���W�6WF��FW'&���Т�F�FW7E��V7B�FW'&��vWD�76vR���t�v�2Ɩ�v266WFVBGv�6R��FW'&��vWD�76vR����Т��ТFW��&VD�v�4Ɩ���F�7&VFU�v�5��沂wv��W$��VV�6�����Т'6U�G"��7G&���'6U�&�7G&���FW��&VD�v�4Ɩ浲wW&����$�TU%���FW��&VD�v�5VW'���ТFW��&VD�v�5F����7G&����FW��&VD�v�5VW'��v�v��F����rr��Т�F��6��&�FR��7G&���FW��&VD�v�4Ɩ浲wF�u��ТvV����wv��W$��VV�6�����v7&VFVE�Br�F�����s��vW��&W5�Br�F�������ғ�ТG'��Т�F�6�7V��v�5��沂FW��&VD�v�5F�⓰ТF�&��r'V���W�6WF���t�W��&VB�v�2Ɩ�v266WFVB���Т�6F6��'V���W�6WF��FW'&���Т�F�FW7E��V7B�FW'&��vWD�76vR���t�W��&VB�v�2Ɩ�v266WFVB��FW'&��vWD�76vR����Т��Т�F�7&VFU�V��W&VE����v��W$��VV�6�����ТFf�'7E&V��W%F����7G&����E����U��dTT��D�$T��U%����U��rr��Т�F�FW7E��V7B�Т7G&��f�'7E&V��W%F����cBbb�5�����F�&V��W%����Ff�'7E&V��W%F�⒒��u&V��W&VB�Wf�6R7&VFV���v2�B7F�VB�Т��ТV�WB�E�U54���w�F�W6W"uғ�ТG&V��W&VEW6W"��F�&W7F�U�V��W&VE���ₓ�ТG&�FVE&V��W%F����7G&����E����U��dTT��D�$T��U%����U��rr��Т�F�FW7E��V7B�Т�G&V��W&VEW6W%�vV�����rr���wv��W$��VV�6���ТbbG&�FVE&V��W%F���Ff�'7E&V��W%F���bb�5�����F�&V��W%����Ff�'7E&V��W%F�⒐Тbb�5�����F�&V��W%����G&�FVE&V��W%F�⒒��u&V��W&VB�Wf�6R6W76��v2�B&W7F�VB�&�FVB�Т��Т�F��v�B���Т�F�FW7E��V7B�Т�76WB�E����U��dTT��D�$T��U%����UҐТbb�5�����F�&V��W%����G&�FVE&V��W%F�⒒��t�v�BF�B�B&Wf�F�R&V��W&VB�Wf�6R7&VFV���pТ��Т�b�6W76���FGW2�����U54���5D�dR��Т6W76���F'B���Т��ТF��v��R�s#3CSbs�ТE�U54���w�F�V���6��V�Ru���ТvV����wv��W$��VV�6�����v6�U�6�r�77v�E�6��F��v��R�55t�E�TdT����v7&VFVE�Br�F������w6V��Br�F������vW��&W5�Br�F�����c��vGFV�G2r���ӰТf��FGFV�B��FGFV�B��dTT��D�T���4�U���EDT�E3�FGFV�B����ТG'��Т�F�fW&�g�����6�R�sr��ТF�&��r'V���W�6WF���uw&�rV���6�Rv266WFVB���Т�6F6��'V���W�6WF��FW'&���Т�F�FW7E��V7B�FW'&��vWD�76vR���uw&�rV���6�Rv266WFVB��FW'&��vWD�76vR����Т�����F�FW7E��V7B��F�V���6��V�R�������t6��V�R7W'f�fVBf�fRw&�rGFV�G2���Т�F�6�%����f��&W2���РТE�U54���w�F�V���6��V�Ru���ТvV����wv��W$��VV�6�����v6�U�6�r�77v�E�6��F��v��R�55t�E�TdT����v7&VFVE�Br�F������w6V��Br�F������vW��&W5�Br�F�����c��vGFV�G2r���ӰТFV���VR��F�fW&�g�����6�R�F��v��R��Т�F�FW7E��V7B��FV���VU�w&�Ru��rr���vV���VRr�tV���VR&�Rv2�B76�v�B���Т�F�FW7E��V7B��FV���VU�vV�����rr���wv��W$��VV�6����ufW&�f�VBV���v2�B&�����РТF��V6�D�B��F��u�V6�E����Т�F�V�W&U��&V7F����F�&V6�E��"�F��V6�D�B���Т�F�6fU�V6�B��Тv�Br�F��V6�D�B��vV���VRr��v��r�uv��W"��r�vV����wv��W$��VV�6����w��Rr�sS�u�Тv7&VFVE�Br�s##b�r�EC���r��ғ�ТF��W%&V6�D�B��F��u�V6�E����Т�F�V�W&U��&V7F����F�&V6�E��"�F��W%&V6�D�B���Т�F�6fU�V6�B��Тv�Br�F��W%&V6�D�B��vV���VRr��v��r�t��W"v��W"r�vV����v��W$��VV�6����w��Rr�sS�u�Тv7&VFVE�Br�s##b�r�EC����r��ғ�ТFV���VU&V6�G2��F�&V6�G5������VR�FV���VR��Т�F�FW7E��V7B�6���FV���VU&V6�G2����tV���VR��7F��W��VB�F�W"V���VR&V6�B���Т�F�FW7E��V7B��FV���VU&V6�G5�ղv�Bu��rr���F��V6�D�B�tV���VR��7F����GFVBF�RV���VR&V6�B���Т�F�FW7E��V7B�Т�F�W6W%��F���E�V6�B�FV���VR�FV���VU&V6�G5�Ғ��tV���VR6���B66W72�GF6���g&�F�V�"��&V6�B�Т��Т�F�FW7E��V7B�Т�F�W6W%��F���E�V6�B�FV���VR��F��E�V6�B�F��W%&V6�D�B����tV���VR6��66W72�F�W"V���VR&V6�B�Т��Т�F�FW7E��V7B�Т�F�W6W%��F���E�V6�B�Т�w&�Rr�vF֖��vV����v�V���VV�6����Т�F��E�V6�B�F��W%&V6�D�B�Т���tF֖�6���B66W72�V���VR&V6�B�Т��ТFV���VU&�����F�V���VU�&����FV���VR��Т�F�FW7E��V7B��FV���VU&����v��u��rr���uWFFVBv��W"r�uW&���V���VR&�����F�B�BF�R&V6VFV�R���Т�F�FW7E��V7B��FV���VU&����w��Ru��rr���sSB�srӃ���r�uW&���V���VR&�����RF�B�BF�R&V6VFV�R���РТV�WB�E�U54���w�F�W6W"uғ�ТE�U54���w�F�V���6��V�Ru���ТvV����v�V���VV�6�����v6�U�6�r�77v�E�6��F��v��R�55t�E�TdT����v7&VFVE�Br�F������w6V��Br�F������vW��&W5�Br�F�����c��vGFV�G2r���ӰТFF֖���F�fW&�g�����6�R�F��v��R��Т�F�FW7E��V7B��FF֖�&�Ru��rr���vF֖��tF֖�&�Rv2�B76�v�B���РТ�F�&V6�E����6V��GFV�B�wv��W$��VV�6�����Т�F�FW7E��V7B�Т�F�V���6V��WG'��gFW"�wv��W$��VV�6�������t7&�2�W76��V���&W6V�F�&�FƖ�f��B�Т��РТ�F�FW7E��V7B��F�77e��R�s��"r���"s��""�t55bf���v2�B�WG&Ɨ�VB���Т�F�FW7E��V7B��F�77e��R�r5T҄�r���"r5T҄�"�t55bf���v�F�v��FW76Rv2�B�WG&Ɨ�VB���Т�F�FW7E��V7B��F�77e��R�v�F��'�FW�Br���v�F��'�FW�Br�u6fR55bFW�Bv2�F�f�VB���ТF�F�f�6F��&V6��V�2��F�W�V�U���f�6F���V6��V�2���Т�F�FW7E��V7B�Т��'&��v66����VV�6����F�F�f�6F��&V6��V�2�G'VR�Тbb��'&��v�V���VV�6����F�F�f�6F��&V6��V�2�G'VR���tW�V�R�F�f�6F��&V6��V�2&R����FR�Т��Т�F�FW7E��V7B�Т�F�v���W�E�V6��V�����vז��T��VV�6�����uv��&W�B&V6��V��2�Bה��R�Т��ТGv��7FG2��F�v���W�E�FG2��Т�wG�Rr�v��F�F��r�v�F6�Rr�v6��FVBr�vV���VRr��v��r�uFW7Bv��W"r�vV����wv��W$��VV�6����vGF6���2r�������Т�wG�Rr�w6W'f�6Rr�v�F6�Rr�vf��u�r�vV���VRr��v��r�uFW7Bv��W"r�vV����wv��W$��VV�6����vGF6���2r�����Тғ�Т�F�FW7E��V7B�Т�Gv��7FG5�wv��W$��VV�6���ղwF������� Тbb�Gv��7FG5�wv��W$��VV�6���ղv��F�F��2u�����Тbb�Gv��7FG5�wv��W$��VV�6���ղw6W'f�6Ru�����Тbb�Gv��7FG5�wv��W$��VV�6���ղvf��u�u�����Тbb�Gv��7FG5�wv��W$��VV�6���ղvGF6���2u�����2��uv��&W�B7FF�7F�72&Rw&�r�Т��ТF֖���B��F������B�u&V6V�BGF6�VBr���ТwF�r�G&W��F��&�B�r�W7G2�Ffb��V�W2���GW&W2�V6V�B�Fbr��v��r�w&V6V�B�Fbr��v֖�r�vƖ6F���Fbr��w6��Rr������Т�F�FW7E��V7B�Т7G%��F������FR�%�"�F֖���E�v�VFW'2uҒ�v���'B���VBr�Тbb7G%��F���F֖���E�v&��u�t6�FV���S�Ɩ6F���Fbr�Тbb7G%��F���F֖���E�v&��u�vf�����&V6V�B�Fb"r���uDbGF6���Ԕ���Bv2�BvV�&FVB�Т��ТF�v������B��F������B�Тt�V��GG3����VV�6���7Ffb��V�W2��v��F��FW7Br����Тs���&Vc��GG3����VV�6���7Ffb��V�W2��v��F��FW7B#��������Т��Т�F�FW7E��V7B�Т7G%��F������FR�%�"�F�v������E�v�VFW'2uҒ�v���'B��W&�F�fRr�Тbb7G%��F���F�v������E�v&��u�t6�FV���S�FW�B��r�Тbb7G%��F���F�v������E�v&��u�v�v��F��FW7Br���t�v�2���V���F�B�B���FR�D�����FW�B�W&�F�fW2�Т��Т�F�FW7E��V7B�Т6����F�GF6����F6�W2��Т�w6��Rr�"�#B�#E�Т�w6��Rr�"�#B�#E�ТҒ���"��t�&vRV���GF6���2vW&R�B7ƗB���6fR&F6�W2�Т��РТG&VF��72��F�&VF��75�W�B���Т�F�FW7E��V7B�Т�&��G&VF��75�w&VG�u��f�R���u&VF��72f��C�r����FR�r��G&VF��75�vf��Bu���ҐТ��РТ�F�&V�fU�&VR�G7F�vUF���Тgw&�FR�5DD�B�%7FfbW�V�W2V�6�V6�276VB����Ч�6F6��F�&�&�FW'&���Т�F�&V�fU�&VR�G7F�vUF���Тgw&�FR�5DDU%"�%7FfbW�V�W2V�6�V6�2f��C�"�FW'&��vWD�76vR���%�"��ТW��B���Ч���
+        && ($sourceVehicle['current_km'] ?? '') === '141174',
+        'Google Sheet vehicle fields were not mapped correctly: ' . json_encode($sourceVehicle, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES)
+    );
+    $selfUpdatedVehicle = portal_save_employee_vehicle(
+        ['email' => 'worker@i-feel.co.il'],
+        [
+            'existing_plate' => '12345678',
+            'plate' => '123-45-678',
+            'make_model' => 'Test Car Updated',
+            'year' => '2025',
+            'test_due_date' => '2028-05-26',
+            'insurance_due_date' => '2028-06-30',
+            'insurance_company' => 'Updated Insurance',
+            'policy_number' => 'UPDATED-1',
+            'notes' => 'Annual self-service update',
+        ]
+    );
+    portal_test_expect(
+        ($selfUpdatedVehicle['test_due_date'] ?? '') === '2028-05-26'
+        && ($selfUpdatedVehicle['compulsory_insurance_due_date'] ?? '') === '2028-06-30'
+        && ($selfUpdatedVehicle['employee_email'] ?? '') === 'worker@i-feel.co.il',
+        'Employee annual vehicle update was not saved.'
+    );
+    $monthlyReminderEmails = [];
+    $monthlyMailer = static function (string $recipient, string $subject, string $body, array $attachments) use (&$monthlyReminderEmails): bool {
+        $monthlyReminderEmails[] = compact('recipient', 'subject', 'body', 'attachments');
+        return true;
+    };
+    $monthlyReminder = portal_process_vehicle_monthly_reminders(
+        new DateTimeImmutable('2026-07-02 08:00:00', new DateTimeZone('Asia/Jerusalem')),
+        $monthlyMailer
+    );
+    portal_test_expect(
+        ($monthlyReminder['sent'] ?? 0) === 1
+        && ($monthlyReminderEmails[0]['recipient'] ?? '') === 'worker@i-feel.co.il',
+        'Monthly vehicle reminder was not sent to the assigned employee.'
+    );
+    portal_save_birthday_gift(
+        'worker@i-feel.co.il',
+        $giftYear,
+        'Test Gift',
+        'A personal birthday message',
+        'TEST-COUPON',
+        'https://example.com/redeem',
+        []
+    );
+    $savedGift = portal_birthday_gift('worker@i-feel.co.il', $giftYear);
+    portal_test_expect(
+        ($savedGift['coupon_code'] ?? '') === 'TEST-COUPON',
+        'Birthday gift coupon was not stored.'
+    );
+    $sentBirthdayEmails = [];
+    $testBirthdayMailer = static function (
+        string $recipient,
+        string $subject,
+        string $body,
+        array $attachments
+    ) use (&$sentBirthdayEmails): bool {
+        $sentBirthdayEmails[] = compact('recipient', 'subject', 'body', 'attachments');
+        return true;
+    };
+    $reminderResult = portal_process_birthday_notifications(
+        new DateTimeImmutable($giftYear . '-07-14 08:00:00', new DateTimeZone('Asia/Jerusalem')),
+        $testBirthdayMailer
+    );
+    portal_test_expect(
+        ($reminderResult['reminders_sent'] ?? 0) === 1
+        && ($sentBirthdayEmails[0]['recipient'] ?? '') === 'oren@i-feel.co.il'
+        && str_contains((string) ($sentBirthdayEmails[0]['body'] ?? ''), 'TEST-COUPON'),
+        'The day-before birthday reminder was not sent to Oren.'
+    );
+    portal_process_birthday_notifications(
+        new DateTimeImmutable($giftYear . '-07-14 10:00:00', new DateTimeZone('Asia/Jerusalem')),
+        $testBirthdayMailer
+    );
+    portal_test_expect(count($sentBirthdayEmails) === 1, 'Birthday reminder was sent more than once.');
+    $greetingResult = portal_process_birthday_notifications(
+        new DateTimeImmutable($giftYear . '-07-15 08:00:00', new DateTimeZone('Asia/Jerusalem')),
+        $testBirthdayMailer
+    );
+    portal_test_expect(
+        ($greetingResult['greetings_sent'] ?? 0) === 1
+        && ($sentBirthdayEmails[1]['recipient'] ?? '') === 'worker@i-feel.co.il'
+        && str_contains((string) ($sentBirthdayEmails[1]['body'] ?? ''), 'TEST-COUPON'),
+        'Birthday greeting and gift were not sent to the employee.'
+    );
+
+    portal_test_expect(portal_ini_bytes('12M') === 12 * 1024 * 1024, '12M parsing failed.');
+    portal_test_expect(portal_ini_bytes('1G') === 1024 * 1024 * 1024, '1G parsing failed.');
+    portal_test_expect(
+        !portal_path_is_within($storagePath, $_SERVER['DOCUMENT_ROOT']),
+        'Test storage unexpectedly resolves inside the public document root.'
+    );
+
+    $magicLink = portal_create_magic_link('worker@i-feel.co.il');
+    parse_str((string) parse_url((string) $magicLink['url'], PHP_URL_QUERY), $magicQuery);
+    $magicToken = (string) ($magicQuery['login_token'] ?? '');
+    portal_test_expect(
+        strlen($magicToken) === 64 && str_starts_with((string) $magicLink['url'], 'http://localhost:8080/staff-expenses/'),
+        'Magic-link URL was not generated safely.'
+    );
+    portal_test_expect(
+        portal_consume_magic_link($magicToken) === 'worker@i-feel.co.il',
+        'Valid magic link was not accepted.'
+    );
+    try {
+        portal_consume_magic_link($magicToken);
+        throw new RuntimeException('A magic link was accepted twice.');
+    } catch (RuntimeException $error) {
+        portal_test_expect($error->getMessage() !== 'A magic link was accepted twice.', $error->getMessage());
+    }
+
+    $expiredMagicLink = portal_create_magic_link('worker@i-feel.co.il');
+    parse_str((string) parse_url((string) $expiredMagicLink['url'], PHP_URL_QUERY), $expiredMagicQuery);
+    $expiredMagicToken = (string) ($expiredMagicQuery['login_token'] ?? '');
+    portal_json_write((string) $expiredMagicLink['path'], [
+        'email' => 'worker@i-feel.co.il',
+        'created_at' => time() - 700,
+        'expires_at' => time() - 1,
+    ]);
+    try {
+        portal_consume_magic_link($expiredMagicToken);
+        throw new RuntimeException('An expired magic link was accepted.');
+    } catch (RuntimeException $error) {
+        portal_test_expect($error->getMessage() !== 'An expired magic link was accepted.', $error->getMessage());
+    }
+
+    portal_create_remembered_login('worker@i-feel.co.il');
+    $firstRememberToken = (string) ($_COOKIE[IFEEL_PORTAL_REMEMBER_COOKIE] ?? '');
+    portal_test_expect(
+        strlen($firstRememberToken) === 64 && is_file(portal_remember_file($firstRememberToken)),
+        'Remembered-device credential was not stored.'
+    );
+    unset($_SESSION['portal_user']);
+    $rememberedUser = portal_restore_remembered_login();
+    $rotatedRememberToken = (string) ($_COOKIE[IFEEL_PORTAL_REMEMBER_COOKIE] ?? '');
+    portal_test_expect(
+        ($rememberedUser['email'] ?? '') === 'worker@i-feel.co.il'
+        && $rotatedRememberToken !== $firstRememberToken
+        && !is_file(portal_remember_file($firstRememberToken))
+        && is_file(portal_remember_file($rotatedRememberToken)),
+        'Remembered-device session was not restored and rotated.'
+    );
+    portal_logout();
+    portal_test_expect(
+        !isset($_COOKIE[IFEEL_PORTAL_REMEMBER_COOKIE])
+        && !is_file(portal_remember_file($rotatedRememberToken)),
+        'Logout did not revoke the remembered-device credential.'
+    );
+    if (session_status() !== PHP_SESSION_ACTIVE) {
+        session_start();
+    }
+
+    $knownCode = '123456';
+    $_SESSION['portal_email_challenge'] = [
+        'email' => 'worker@i-feel.co.il',
+        'code_hash' => password_hash($knownCode, PASSWORD_DEFAULT),
+        'created_at' => time(),
+        'sent_at' => time(),
+        'expires_at' => time() + 600,
+        'attempts' => 0,
+    ];
+    for ($attempt = 1; $attempt <= IFEEL_PORTAL_EMAIL_CODE_MAX_ATTEMPTS; $attempt++) {
+        try {
+            portal_verify_email_code('000000');
+            throw new RuntimeException('Wrong email code was accepted.');
+        } catch (RuntimeException $error) {
+            portal_test_expect($error->getMessage() !== 'Wrong email code was accepted.', $error->getMessage());
+        }
+    }
+    portal_test_expect(portal_email_challenge() === null, 'Challenge survived five wrong attempts.');
+    portal_clear_login_failures();
+
+    $_SESSION['portal_email_challenge'] = [
+        'email' => 'worker@i-feel.co.il',
+        'code_hash' => password_hash($knownCode, PASSWORD_DEFAULT),
+        'created_at' => time(),
+        'sent_at' => time(),
+        'expires_at' => time() + 600,
+        'attempts' => 0,
+    ];
+    $employee = portal_verify_email_code($knownCode);
+    portal_test_expect(($employee['role'] ?? '') === 'employee', 'Employee role was not assigned.');
+    portal_test_expect(($employee['email'] ?? '') === 'worker@i-feel.co.il', 'Verified email was not bound.');
+
+    $ownRecordId = portal_new_record_id();
+    portal_ensure_directory(portal_record_dir($ownRecordId));
+    portal_save_record([
+        'id' => $ownRecordId,
+        'employee' => ['name' => 'Worker Name', 'email' => 'worker@i-feel.co.il', 'phone' => '050-0000000'],
+        'created_at' => '2026-07-24T10:00:00Z',
+    ]);
+    $otherRecordId = portal_new_record_id();
+    portal_ensure_directory(portal_record_dir($otherRecordId));
+    portal_save_record([
+        'id' => $otherRecordId,
+        'employee' => ['name' => 'Other Worker', 'email' => 'other@i-feel.co.il', 'phone' => '050-1111111'],
+        'created_at' => '2026-07-24T09:00:00Z',
+    ]);
+    $employeeRecords = portal_records_for_employee($employee);
+    portal_test_expect(count($employeeRecords) === 1, 'Employee history exposed another employee record.');
+    portal_test_expect(($employeeRecords[0]['id'] ?? '') === $ownRecordId, 'Employee history omitted the employee record.');
+    portal_test_expect(
+        portal_user_can_download_record($employee, $employeeRecords[0]),
+        'Employee could not access an attachment from their own record.'
+    );
+    portal_test_expect(
+        !portal_user_can_download_record($employee, portal_load_record($otherRecordId)),
+        'Employee could access another employee record.'
+    );
+    portal_test_expect(
+        portal_user_can_download_record(
+            ['role' => 'admin', 'email' => 'oren@i-feel.co.il'],
+            portal_load_record($otherRecordId)
+        ),
+        'Admin could not access an employee record.'
+    );
+    $employeeProfile = portal_employee_profile($employee);
+    portal_test_expect(($employeeProfile['name'] ?? '') === 'Updated Worker', 'Permanent employee profile name did not take precedence.');
+    portal_test_expect(($employeeProfile['phone'] ?? '') === '054-777-8899', 'Permanent employee profile phone did not take precedence.');
+
+    unset($_SESSION['portal_user']);
+    $_SESSION['portal_email_challenge'] = [
+        'email' => 'oren@i-feel.co.il',
+        'code_hash' => password_hash($knownCode, PASSWORD_DEFAULT),
+        'created_at' => time(),
+        'sent_at' => time(),
+        'expires_at' => time() + 600,
+        'attempts' => 0,
+    ];
+    $admin = portal_verify_email_code($knownCode);
+    portal_test_expect(($admin['role'] ?? '') === 'admin', 'Admin role was not assigned.');
+
+    portal_record_email_send_attempt('worker@i-feel.co.il');
+    portal_test_expect(
+        portal_email_send_retry_after('worker@i-feel.co.il') > 0,
+        'Cross-session email resend throttling failed.'
+    );
+
+    portal_test_expect(portal_csv_value('=2+2') === "'=2+2", 'CSV formula was not neutralized.');
+    portal_test_expect(portal_csv_value('  @SUM(A1)') === "'  @SUM(A1)", 'CSV formula with whitespace was not neutralized.');
+    portal_test_expect(portal_csv_value('ordinary text') === 'ordinary text', 'Safe CSV text was modified.');
+    $notificationRecipients = portal_expense_notification_recipients();
+    portal_test_expect(
+        in_array('account@i-feel.co.il', $notificationRecipients, true)
+        && in_array('oren@i-feel.co.il', $notificationRecipients, true),
+        'Expense notification recipients are incomplete.'
+    );
+    portal_test_expect(
+        portal_work_report_recipient() === 'myhome@i-feel.co.il',
+        'Work report recipient is not MyHome.'
+    );
+    $workStats = portal_work_report_stats([
+        ['type' => 'installation', 'outcome' => 'completed', 'employee' => ['name' => 'Test Worker', 'email' => 'worker@i-feel.co.il'], 'attachments' => [[], []]],
+        ['type' => 'service', 'outcome' => 'follow_up', 'employee' => ['name' => 'Test Worker', 'email' => 'worker@i-feel.co.il'], 'attachments' => [[]]],
+    ]);
+    portal_test_expect(
+        ($workStats['worker@i-feel.co.il']['total'] ?? 0) === 2
+        && ($workStats['worker@i-feel.co.il']['installations'] ?? 0) === 1
+        && ($workStats['worker@i-feel.co.il']['service'] ?? 0) === 1
+        && ($workStats['worker@i-feel.co.il']['follow_up'] ?? 0) === 1
+        && ($workStats['worker@i-feel.co.il']['attachments'] ?? 0) === 3,
+        'Work report statistics are wrong.'
+    );
+    $mimePayload = portal_mail_payload('Receipt attached', [[
+        'path' => $repositoryRoot . '/tests/staff-expenses/fixtures/receipt.pdf',
+        'name' => 'receipt.pdf',
+        'mime' => 'application/pdf',
+        'size' => 100,
+    ]]);
+    portal_test_expect(
+        str_contains(implode("\n", $mimePayload['headers']), 'multipart/mixed')
+        && str_contains($mimePayload['body'], 'Content-Type: application/pdf')
+        && str_contains($mimePayload['body'], 'filename="receipt.pdf"'),
+        'PDF attachment MIME payload was not generated.'
+    );
+    $loginMailPayload = portal_mail_payload(
+        'Open https://i-feel.co.il/staff-expenses/?login_token=test',
+        [],
+        '<p><a href="https://i-feel.co.il/staff-expenses/?login_token=test">Login</a></p>'
+    );
+    portal_test_expect(
+        str_contains(implode("\n", $loginMailPayload['headers']), 'multipart/alternative')
+        && str_contains($loginMailPayload['body'], 'Content-Type: text/html')
+        && str_contains($loginMailPayload['body'], 'login_token=test'),
+        'Magic-link email did not include HTML and plain-text alternatives.'
+    );
+    portal_test_expect(
+        count(portal_attachment_batches([
+            ['size' => 12 * 1024 * 1024],
+            ['size' => 12 * 1024 * 1024],
+        ])) === 2,
+        'Large email attachments were not split into safe batches.'
+    );
+
+    $readiness = portal_readiness_report();
+    portal_test_expect(
+        (bool) ($readiness['ready'] ?? false),
+        'Readiness failed: ' . implode(',', $readiness['failed'] ?? [])
+    );
+
+    portal_remove_tree($storagePath);
+    fwrite(STDOUT, "Staff expenses unit checks passed.\n");
+} catch (Throwable $error) {
+    portal_remove_tree($storagePath);
+    fwrite(STDERR, "Staff expenses unit checks failed: " . $error->getMessage() . "\n");
+    exit(1);
+}
+
