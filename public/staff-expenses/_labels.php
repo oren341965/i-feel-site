@@ -16,11 +16,11 @@ function portal_format_datetime(string $value): string
 function payment_method_label(string $value): string
 {
     $labels = [
-        'company_card' => '׳›׳¨׳˜׳™׳¡ ׳—׳‘׳¨׳”',
-        'private_card' => '׳›׳¨׳˜׳™׳¡ ׳₪׳¨׳˜׳™',
-        'cash' => '׳׳–׳•׳׳',
-        'bank_transfer' => '׳”׳¢׳‘׳¨׳” ׳‘׳ ׳§׳׳™׳×',
-        'other' => '׳׳—׳¨',
+        'company_card' => 'כרטיס חברה',
+        'private_card' => 'כרטיס פרטי',
+        'cash' => 'מזומן',
+        'bank_transfer' => 'העברה בנקאית',
+        'other' => 'אחר',
     ];
     return $labels[$value] ?? $value;
 }
@@ -28,19 +28,19 @@ function payment_method_label(string $value): string
 function travel_category_label(string $value): string
 {
     $labels = [
-        'flight' => '׳˜׳™׳¡׳•׳× ׳•׳›׳¨׳˜׳™׳¡׳™ ׳˜׳™׳¡׳”',
-        'hotel' => '׳׳׳•׳ / ׳׳™׳ ׳”',
-        'meals' => '׳׳•׳›׳ ׳•׳׳¨׳•׳—׳•׳×',
-        'car_rental' => '׳”׳©׳›׳¨׳× ׳¨׳›׳‘',
-        'local_transport' => '׳׳•׳ ׳™׳•׳× / ׳×׳—׳‘׳•׳¨׳” ׳¦׳™׳‘׳•׳¨׳™׳× / ׳ ׳¡׳™׳¢׳•׳×',
-        'parking' => '׳—׳ ׳™׳”',
-        'communications' => '׳×׳§׳©׳•׳¨׳× / ׳¡׳׳•׳׳¨',
-        'insurance_visa' => '׳‘׳™׳˜׳•׳— / ׳׳©׳¨׳”',
-        'conference' => '׳›׳ ׳¡ / ׳×׳¢׳¨׳•׳›׳”',
-        'purchases' => '׳¨׳›׳™׳©׳•׳× ׳•׳§׳ ׳™׳•׳×',
-        'baggage' => '׳›׳‘׳•׳“׳” ׳•׳×׳•׳¡׳₪׳•׳× ׳˜׳™׳¡׳”',
-        'tips' => '׳˜׳™׳₪׳™׳ ׳•׳©׳™׳¨׳•׳×',
-        'other' => '׳׳—׳¨',
+        'flight' => 'טיסות וכרטיסי טיסה',
+        'hotel' => 'מלון / לינה',
+        'meals' => 'אוכל וארוחות',
+        'car_rental' => 'השכרת רכב',
+        'local_transport' => 'מוניות / תחבורה ציבורית / נסיעות',
+        'parking' => 'חניה',
+        'communications' => 'תקשורת / סלולר',
+        'insurance_visa' => 'ביטוח / אשרה',
+        'conference' => 'כנס / תערוכה',
+        'purchases' => 'רכישות וקניות',
+        'baggage' => 'כבודה ותוספות טיסה',
+        'tips' => 'טיפים ושירות',
+        'other' => 'אחר',
     ];
     return $labels[$value] ?? $value;
 }
@@ -48,17 +48,17 @@ function travel_category_label(string $value): string
 function vehicle_category_label(string $value): string
 {
     $labels = [
-        'fuel' => '׳“׳׳§',
-        'service' => '׳˜׳™׳₪׳•׳ ׳×׳§׳•׳₪׳×׳™',
-        'repair' => '׳×׳™׳§׳•׳',
-        'parking' => '׳—׳ ׳™׳”',
-        'toll' => '׳›׳‘׳™׳©׳™ ׳׳’׳¨׳”',
-        'insurance' => '׳‘׳™׳˜׳•׳—',
-        'licensing' => '׳¨׳™׳©׳•׳™ / ׳˜׳¡׳˜',
-        'washing' => '׳©׳˜׳™׳₪׳”',
-        'rental' => '׳”׳©׳›׳¨׳× ׳¨׳›׳‘',
-        'transport' => '׳׳•׳ ׳™׳× / ׳×׳—׳‘׳•׳¨׳”',
-        'other' => '׳׳—׳¨',
+        'fuel' => 'דלק',
+        'service' => 'טיפול תקופתי',
+        'repair' => 'תיקון',
+        'parking' => 'חניה',
+        'toll' => 'כבישי אגרה',
+        'insurance' => 'ביטוח',
+        'licensing' => 'רישוי / טסט',
+        'washing' => 'שטיפה',
+        'rental' => 'השכרת רכב',
+        'transport' => 'מונית / תחבורה',
+        'other' => 'אחר',
     ];
     return $labels[$value] ?? $value;
 }
@@ -66,15 +66,15 @@ function vehicle_category_label(string $value): string
 function general_category_label(string $value): string
 {
     $labels = [
-        'office' => '׳׳©׳¨׳“ ׳•׳¦׳™׳•׳“ ׳׳©׳¨׳“׳™',
-        'equipment' => '׳¦׳™׳•׳“ ׳•׳›׳׳™׳',
-        'supplier' => '׳¡׳₪׳§ / ׳§׳‘׳׳ ׳׳©׳ ׳”',
-        'hospitality' => '׳׳™׳¨׳•׳— ׳•׳›׳™׳‘׳•׳“',
-        'shipping' => '׳׳©׳׳•׳— ׳•׳©׳׳™׳—׳•׳™׳•׳×',
-        'parking' => '׳—׳ ׳™׳” ׳•׳ ׳¡׳™׳¢׳•׳×',
-        'software' => '׳×׳•׳›׳ ׳” ׳•׳׳ ׳•׳™׳™׳',
-        'training' => '׳”׳“׳¨׳›׳” / ׳›׳ ׳¡',
-        'other' => '׳׳—׳¨',
+        'office' => 'משרד וציוד משרדי',
+        'equipment' => 'ציוד וכלים',
+        'supplier' => 'ספק / קבלן משנה',
+        'hospitality' => 'אירוח וכיבוד',
+        'shipping' => 'משלוח ושליחויות',
+        'parking' => 'חניה ונסיעות',
+        'software' => 'תוכנה ומנויים',
+        'training' => 'הדרכה / כנס',
+        'other' => 'אחר',
     ];
     return $labels[$value] ?? $value;
 }
@@ -82,21 +82,20 @@ function general_category_label(string $value): string
 function portal_nav(string $tab, array $user): void
 {
     ?>
-    <nav class="tabs" aria-label="׳ ׳™׳•׳•׳˜ ׳׳–׳•׳¨ ׳¢׳•׳‘׳“׳™׳">
-        <a href="<?= portal_h(portal_url(['tab' => 'new'])) ?>" class="tab<?= $tab === 'new' ? ' is-active' : '' ?>">׳“׳™׳•׳•׳— ׳—׳“׳©</a>
-        <a href="<?= portal_h(portal_url(['tab' => 'history'])) ?>" class="tab<?= $tab === 'history' ? ' is-active' : '' ?>">׳”׳”׳•׳¦׳׳•׳× ׳©׳׳™</a>
-        <a href="<?= portal_h(portal_url(['tab' => 'profile'])) ?>" class="tab<?= $tab === 'profile' ? ' is-active' : '' ?>">׳”׳₪׳¨׳˜׳™׳ ׳•׳”׳¨׳›׳‘ ׳©׳׳™</a>
+    <nav class="tabs" aria-label="ניווט אזור עובדים">
+        <a href="<?= portal_h(portal_url(['tab' => 'new'])) ?>" class="tab<?= $tab === 'new' ? ' is-active' : '' ?>">דיווח חדש</a>
+        <a href="<?= portal_h(portal_url(['tab' => 'history'])) ?>" class="tab<?= $tab === 'history' ? ' is-active' : '' ?>">ההוצאות שלי</a>
+        <a href="<?= portal_h(portal_url(['tab' => 'profile'])) ?>" class="tab<?= $tab === 'profile' ? ' is-active' : '' ?>">הפרטים והרכב שלי</a>
         <?php if (portal_vehicles_for_employee($user) !== []): ?>
-            <a href="<?= portal_h(portal_url(['tab' => 'my_vehicle'])) ?>" class="tab tab--vehicle<?= $tab === 'my_vehicle' ? ' is-active' : '' ?>">נ™ ׳”׳¨׳›׳‘ ׳©׳׳™</a>
+            <a href="<?= portal_h(portal_url(['tab' => 'my_vehicle'])) ?>" class="tab tab--vehicle<?= $tab === 'my_vehicle' ? ' is-active' : '' ?>">🚙 הרכב שלי</a>
         <?php endif; ?>
-        <a href="<?= portal_h(portal_installation_form_url()) ?>" class="tab" target="_blank" rel="noopener noreferrer">׳¡׳™׳•׳ ׳”׳×׳§׳ ׳” ג†—</a>
+        <a href="<?= portal_h(portal_installation_form_url()) ?>" class="tab" target="_blank" rel="noopener noreferrer">סיום התקנה ↗</a>
         <?php if (($user['role'] ?? '') === 'admin'): ?>
-            <a href="<?= portal_h(portal_url(['tab' => 'reports'])) ?>" class="tab<?= $tab === 'reports' ? ' is-active' : '' ?>">׳“׳™׳•׳•׳—׳™׳ ׳•׳׳¡׳׳›׳™׳</a>
-            <a href="<?= portal_h(portal_url(['tab' => 'employees'])) ?>" class="tab<?= $tab === 'employees' ? ' is-active' : '' ?>">׳¢׳•׳‘׳“׳™׳ ׳•׳™׳׳™ ׳”׳•׳׳“׳×</a>
-            <a href="<?= portal_h(portal_url(['tab' => 'vehicles'])) ?>" class="tab<?= $tab === 'vehicles' ? ' is-active' : '' ?>">׳¨׳›׳‘׳™ ׳¢׳•׳‘׳“׳™׳</a>
-            <a href="<?= portal_h(portal_url(['tab' => 'work_stats'])) ?>" class="tab<?= $tab === 'work_stats' ? ' is-active' : '' ?>">׳¡׳˜׳˜׳™׳¡׳˜׳™׳§׳× ׳¢׳‘׳•׳“׳•׳×</a>
+            <a href="<?= portal_h(portal_url(['tab' => 'reports'])) ?>" class="tab<?= $tab === 'reports' ? ' is-active' : '' ?>">דיווחים ומסמכים</a>
+            <a href="<?= portal_h(portal_url(['tab' => 'employees'])) ?>" class="tab<?= $tab === 'employees' ? ' is-active' : '' ?>">עובדים וימי הולדת</a>
+            <a href="<?= portal_h(portal_url(['tab' => 'vehicles'])) ?>" class="tab<?= $tab === 'vehicles' ? ' is-active' : '' ?>">רכבי עובדים</a>
+            <a href="<?= portal_h(portal_url(['tab' => 'work_stats'])) ?>" class="tab<?= $tab === 'work_stats' ? ' is-active' : '' ?>">סטטיסטיקת עבודות</a>
         <?php endif; ?>
     </nav>
     <?php
 }
-
