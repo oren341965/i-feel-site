@@ -15,19 +15,19 @@ function portal_format_datetime(string $value): string
 
 function payment_method_label(string $value): string
 {
-    return match ($value) {
+    $labels = [
         'company_card' => '׳›׳¨׳˜׳™׳¡ ׳—׳‘׳¨׳”',
         'private_card' => '׳›׳¨׳˜׳™׳¡ ׳₪׳¨׳˜׳™',
         'cash' => '׳׳–׳•׳׳',
         'bank_transfer' => '׳”׳¢׳‘׳¨׳” ׳‘׳ ׳§׳׳™׳×',
         'other' => '׳׳—׳¨',
-        default => $value,
-    };
+    ];
+    return $labels[$value] ?? $value;
 }
 
 function travel_category_label(string $value): string
 {
-    return match ($value) {
+    $labels = [
         'flight' => '׳˜׳™׳¡׳•׳× ׳•׳›׳¨׳˜׳™׳¡׳™ ׳˜׳™׳¡׳”',
         'hotel' => '׳׳׳•׳ / ׳׳™׳ ׳”',
         'meals' => '׳׳•׳›׳ ׳•׳׳¨׳•׳—׳•׳×',
@@ -41,13 +41,13 @@ function travel_category_label(string $value): string
         'baggage' => '׳›׳‘׳•׳“׳” ׳•׳×׳•׳¡׳₪׳•׳× ׳˜׳™׳¡׳”',
         'tips' => '׳˜׳™׳₪׳™׳ ׳•׳©׳™׳¨׳•׳×',
         'other' => '׳׳—׳¨',
-        default => $value,
-    };
+    ];
+    return $labels[$value] ?? $value;
 }
 
 function vehicle_category_label(string $value): string
 {
-    return match ($value) {
+    $labels = [
         'fuel' => '׳“׳׳§',
         'service' => '׳˜׳™׳₪׳•׳ ׳×׳§׳•׳₪׳×׳™',
         'repair' => '׳×׳™׳§׳•׳',
@@ -59,13 +59,13 @@ function vehicle_category_label(string $value): string
         'rental' => '׳”׳©׳›׳¨׳× ׳¨׳›׳‘',
         'transport' => '׳׳•׳ ׳™׳× / ׳×׳—׳‘׳•׳¨׳”',
         'other' => '׳׳—׳¨',
-        default => $value,
-    };
+    ];
+    return $labels[$value] ?? $value;
 }
 
 function general_category_label(string $value): string
 {
-    return match ($value) {
+    $labels = [
         'office' => '׳׳©׳¨׳“ ׳•׳¦׳™׳•׳“ ׳׳©׳¨׳“׳™',
         'equipment' => '׳¦׳™׳•׳“ ׳•׳›׳׳™׳',
         'supplier' => '׳¡׳₪׳§ / ׳§׳‘׳׳ ׳׳©׳ ׳”',
@@ -75,8 +75,8 @@ function general_category_label(string $value): string
         'software' => '׳×׳•׳›׳ ׳” ׳•׳׳ ׳•׳™׳™׳',
         'training' => '׳”׳“׳¨׳›׳” / ׳›׳ ׳¡',
         'other' => '׳׳—׳¨',
-        default => $value,
-    };
+    ];
+    return $labels[$value] ?? $value;
 }
 
 function portal_nav(string $tab, array $user): void
