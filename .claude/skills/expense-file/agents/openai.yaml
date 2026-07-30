@@ -1,0 +1,4 @@
+interface:
+  display_name: "קובץ הוצאות"
+  short_description: "עדכון ובקרת הוצאות חודשיות של i-feel"
+  default_prompt: "Use $expense-file to prepare and update the monthly i-feel expense file."
