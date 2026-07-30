@@ -31,6 +31,23 @@ if ($fundPaymentMethod -match "check|credit-card") {
     throw "Employee funds must not use checks or credit cards."
 }
 
+$fundBodies = @("harel", "phoenix", "migdal", "altshuler-shaham")
+$fundRows = @($fundBodies | ForEach-Object {
+    [pscustomobject]@{ Body = $_; DueDate = [datetime]"2026-09-17"; Status = "awaiting-bank-transfer" }
+})
+$fundRows[0].DueDate = $fundRows[0].DueDate.AddDays(2)
+
+if ($fundRows.Count -ne 4 -or @($fundRows.Body | Sort-Object -Unique).Count -ne 4) {
+    throw "Each employee fund body must have exactly one monthly row."
+}
+if ($fundRows[0].DueDate -ne [datetime]"2026-09-19") {
+    throw "An unpaid fund due date must move forward by exactly two days."
+}
+if ($fundRows[0].Status -ne "awaiting-bank-transfer") {
+    throw "Moving the due date must not mark the fund as paid."
+}
+
 Write-Host "PASS: unpaid items rolled forward once and next-month total is 1050."
 Write-Host "PASS: employee fund payment method is a direct bank transfer."
+Write-Host "PASS: four monthly fund bodies start on the 17th and an unpaid row moves by two days."
 
