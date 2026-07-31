@@ -1,0 +1,207 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+const canonical = 'https://i-feel.co.il/articles/siemens-n543d51-knx-8-blind-actuator/';
+const title = 'Siemens N 543D51: בקר KNX ל-8 תריסים AC | i-feel';
+const description = 'הכירו את Siemens N 543D51, בקר KNX ייעודי ל-8 תריסים, וילונות או הצללות AC 230V, עם זיהוי מצבי קצה וקביעת זמן תנועה אוטומטית.';
+const productImage = 'https://mall.industry.siemens.com/mall/collaterals/files/184/jpg/P_I201_xx_08563i.jpg';
+const dataSheetUrl = 'https://sid.siemens.com/v/u/A6V13264591';
+const jsonLd = JSON.stringify({
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  headline: 'Siemens N 543D51: בקר KNX ייעודי ל-8 תריסים AC',
+  description,
+  datePublished: '2026-07-31',
+  dateModified: '2026-07-31',
+  inLanguage: 'he-IL',
+  mainEntityOfPage: canonical,
+  image: productImage,
+  author: { '@type': 'Organization', name: 'i-feel', url: 'https://i-feel.co.il/' },
+  publisher: { '@type': 'Organization', name: 'i-feel', url: 'https://i-feel.co.il/' },
+});
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  canonical={canonical}
+  ogTitle={title}
+  ogDescription={description}
+  ogUrl={canonical}
+  ogImage={productImage}
+  jsonLd={jsonLd}
+>
+  <article class="bg-white" dir="rtl">
+    <header class="bg-brand-900 text-white py-16 md:py-20">
+      <div class="max-w-5xl mx-auto px-4">
+        <a href="/articles/" class="text-accent-400 font-semibold hover:text-accent-300">מאמרים</a>
+        <p class="mt-4 text-sm text-brand-200">Siemens GAMMA / KNX · עודכן 31.07.2026</p>
+        <h1 class="mt-4 text-4xl md:text-5xl font-extrabold leading-tight">
+          Siemens N 543D51: בקר KNX ייעודי ל-8 תריסים ומנועי AC
+        </h1>
+        <p class="mt-5 max-w-4xl text-lg md:text-xl text-brand-100 leading-relaxed">
+          שליטה מדויקת בשמונה תריסים, וילונות, סוככים או מערכות הצללה AC 230V, עם זיהוי מצבי קצה, קביעה אוטומטית של זמן התנועה ופונקציות בטיחות מתקדמות.
+        </p>
+      </div>
+    </header>
+
+    <div class="max-w-5xl mx-auto px-4 py-12">
+      <section class="grid lg:grid-cols-[1.05fr_0.95fr] gap-8 items-center mb-12">
+        <div class="rounded-2xl border border-brand-100 bg-white p-5 shadow-sm">
+          <img
+            src={productImage}
+            alt="בקר תריסים Siemens N 543D51 לשמונה מנועי AC במערכת KNX"
+            width="1200"
+            height="800"
+            loading="eager"
+            class="w-full h-auto object-contain"
+            referrerpolicy="no-referrer"
+          />
+        </div>
+        <div>
+          <p class="text-accent-700 font-bold text-lg mb-3">מידע עבור הלקוח</p>
+          <h2 class="text-3xl font-extrabold text-brand-900 leading-tight mb-5">שמונה מנועים, מיקום מדויק ובקרת הצללה חכמה</h2>
+          <p class="text-lg text-brand-700 leading-relaxed mb-5">
+            Siemens N 543D51 הוא בקר KNX ייעודי לשמונה מנועי תריס או הצללה במתח AC 230V. הוא מנהל את כיווני העלייה והירידה, מודד את זרם המנוע כדי לזהות את מצבי הקצה, וקובע באופן אוטומטי את זמן התנועה הנדרש לכל מנוע.
+          </p>
+          <a href={dataSheetUrl} target="_blank" rel="noopener noreferrer" class="inline-flex items-center justify-center rounded-lg bg-accent-600 px-5 py-3 font-bold text-white transition hover:bg-accent-700">
+            פתיחת ה-Datasheet הרשמי של Siemens
+          </a>
+        </div>
+      </section>
+
+      <section class="grid grid-cols-2 md:grid-cols-5 gap-3 mb-14" aria-label="נתונים מרכזיים">
+        <div class="rounded-xl border border-brand-100 bg-brand-50 p-4 text-center"><div class="text-3xl font-extrabold text-accent-700">8</div><div class="mt-2 text-sm font-semibold">מנועי AC</div></div>
+        <div class="rounded-xl border border-brand-100 bg-brand-50 p-4 text-center"><div class="text-3xl font-extrabold text-accent-700">6A</div><div class="mt-2 text-sm font-semibold">לערוץ מנוע</div></div>
+        <div class="rounded-xl border border-brand-100 bg-brand-50 p-4 text-center"><div class="text-3xl font-extrabold text-accent-700">230V</div><div class="mt-2 text-sm font-semibold">מתח מנועים</div></div>
+        <div class="rounded-xl border border-brand-100 bg-brand-50 p-4 text-center"><div class="text-3xl font-extrabold text-accent-700">8</div><div class="mt-2 text-sm font-semibold">מודולים בלוח</div></div>
+        <div class="rounded-xl border border-brand-100 bg-brand-50 p-4 text-center"><div class="text-2xl font-extrabold text-accent-700">AUTO</div><div class="mt-2 text-sm font-semibold">זמן תנועה אוטומטי</div></div>
+      </section>
+
+      <div class="prose-he max-w-none">
+        <section>
+          <h2>בקר ייעודי לשמונה תריסים והצללות</h2>
+          <p>
+            כל אחד משמונה הערוצים מיועד למנוע AC אחד וכולל שני מגעי ממסר משולבים לכיווני עלייה וירידה. המגעים נעולים זה מול זה כדי למנוע הפעלה בו זמנית של שני כיווני המנוע.
+          </p>
+          <p>
+            הבקר מתאים לתריסים, וילונות ממונעים, סוככים, רפפות, מסכי הצללה וגם מנועי פתחי אוורור, כל עוד מדובר במנוע AC 230V התואם לנתוני המוצר.
+          </p>
+        </section>
+
+        <section>
+          <h2>זיהוי מצבי קצה וקביעת זמן תנועה אוטומטית</h2>
+          <p>
+            הבקר מודד את זרם המנוע ומזהה את עצירתו במצב העליון או התחתון. באמצעות הזיהוי הזה הוא יכול לקבוע אוטומטית את זמן התנועה המלא של התריס ולשפר את הדיוק בפקודות מיקום.
+          </p>
+          <p>
+            לאחר שהמערכת מכירה את זמן התנועה, ניתן לשלוח את התריס למיקום רצוי בין 0 ל-100 אחוז. בווילונות וברפפות ניתן גם לשלוט בשלבי הרפפה, בהתאם לסוג המנוע ולתכנון המערכת.
+          </p>
+        </section>
+
+        <section>
+          <h2>שליטה מקומית וחיווי בחזית הבקר</h2>
+          <p>
+            בחזית המוצר קיימים לחצנים להפעלה ישירה וחיווי LED לכיוון התנועה ולמצב העבודה. הדבר מקל על בדיקת המנועים בזמן ההתקנה, על כיול הכיוונים ועל איתור תקלות במהלך השירות.
+          </p>
+          <p>
+            ההפעלה הישירה זמינה גם לפני השלמת כל התכנות, כך שניתן לבדוק את חיבורי המנועים ואת כיוון התנועה בצורה מסודרת כבר בשלב ההתקנה.
+          </p>
+        </section>
+
+        <section>
+          <h2>אוטומציה, שמש ותרחישים</h2>
+          <p>
+            באמצעות ETS ניתן לשלב את התריסים בתרחישים, בפקודות מרכזיות ובאוטומציה לפי שעות או נתוני מערכת. כאשר מחברים תחנת מזג אוויר או חיישני שמש מתאימים, ניתן לבצע מעקב שמש ולמקם את ההצללה בהתאם לכיוון ולעוצמת הקרינה.
+          </p>
+          <ul>
+            <li>עלייה, ירידה ועצירה.</li>
+            <li>פקודות מיקום של 0 עד 100 אחוז.</li>
+            <li>שליטה ברפפות ובשלבי הטיה.</li>
+            <li>מצב ידני ומצב אוטומטי.</li>
+            <li>שליטה מרכזית וסצנות.</li>
+            <li>מעקב שמש באמצעות נתוני מערכת מתאימים.</li>
+            <li>משוב מיקום, כיוון תנועה ומצב הערוץ.</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>פונקציות בטיחות והגנה</h2>
+          <p>
+            הבקר כולל עד שבע שכבות Override שניתן להגדיר בהתאם לפרויקט. כך ניתן לתת עדיפות לאירועי בטיחות כגון רוח חזקה, גשם, כפור, נעילה או פקודת חירום, גם כאשר קיימת פקודה רגילה מהמשתמש או מהאוטומציה.
+          </p>
+          <p>
+            המערכת יכולה לדווח על מצבים חריגים, על עומס יתר ועל בעיות במגעים, וכך לסייע באבחון ובתחזוקה.
+          </p>
+        </section>
+
+        <section>
+          <h2>ללא ספק כוח עזר וללא חיבור אפס לבקר</h2>
+          <p>
+            האלקטרוניקה מוזנת מקו ה-KNX בלבד. לבקר עצמו אין צורך בספק כוח עזר או בחיבור מוליך אפס. חיבורי המנועים וההגנות מבוצעים בהתאם לתכנית החשמל ולהוראות Siemens.
+          </p>
+        </section>
+
+        <aside class="my-8 rounded-xl border-r-4 border-accent-600 bg-accent-50 p-5 not-prose">
+          <h2 class="text-xl font-extrabold text-brand-900 mb-2">חשוב לדעת: מיועד למנועי AC, לא לתאורה ולא למנועי DC</h2>
+          <p class="m-0 text-brand-700 leading-relaxed">
+            Siemens N 543D51 הוא בקר תריסים ייעודי לשמונה מנועים במתח AC 230V. הוא אינו בקר מיתוג תאורה, אינו דימר ואינו מיועד לשליטה ישירה במנועי DC.
+          </p>
+        </aside>
+
+        <section>
+          <h2>היתרונות עבור הלקוח</h2>
+          <div class="not-prose grid md:grid-cols-2 lg:grid-cols-3 gap-4 my-6">
+            <div class="rounded-xl border border-brand-100 p-5"><h3 class="font-extrabold text-accent-700 mb-2">שמונה מנועים בבקר אחד</h3><p class="m-0 text-brand-700">פתרון מרוכז לתריסים ולהצללות בלוח KNX.</p></div>
+            <div class="rounded-xl border border-brand-100 p-5"><h3 class="font-extrabold text-accent-700 mb-2">כיול זמן אוטומטי</h3><p class="m-0 text-brand-700">זיהוי מצבי קצה באמצעות מדידת זרם וקביעה אוטומטית של זמן התנועה.</p></div>
+            <div class="rounded-xl border border-brand-100 p-5"><h3 class="font-extrabold text-accent-700 mb-2">מיקום מדויק</h3><p class="m-0 text-brand-700">שליחה לאחוז פתיחה רצוי ושליטה ברפפות בהתאם למערכת.</p></div>
+            <div class="rounded-xl border border-brand-100 p-5"><h3 class="font-extrabold text-accent-700 mb-2">הגנות מתקדמות</h3><p class="m-0 text-brand-700">עדיפויות לרוח, גשם, כפור, נעילה ופקודות בטיחות אחרות.</p></div>
+            <div class="rounded-xl border border-brand-100 p-5"><h3 class="font-extrabold text-accent-700 mb-2">בדיקות נוחות מהלוח</h3><p class="m-0 text-brand-700">לחצנים וחיווי LED מקלים על בדיקת הכיוון והתנועה.</p></div>
+            <div class="rounded-xl border border-brand-100 p-5"><h3 class="font-extrabold text-accent-700 mb-2">חיסכון בציוד עזר</h3><p class="m-0 text-brand-700">הזנת האלקטרוניקה מקו ה-KNX ללא ספק נוסף.</p></div>
+          </div>
+        </section>
+
+        <section>
+          <h2>נתונים טכניים מרכזיים</h2>
+          <div class="not-prose overflow-hidden rounded-xl border border-brand-100 my-6">
+            <table class="w-full text-right">
+              <tbody class="divide-y divide-brand-100">
+                <tr><th class="bg-brand-50 p-4 font-bold text-brand-900 w-2/5">דגם</th><td class="p-4">Siemens N 543D51</td></tr>
+                <tr><th class="bg-brand-50 p-4 font-bold text-brand-900">מק״ט</th><td class="p-4">5WG1543-1DB51</td></tr>
+                <tr><th class="bg-brand-50 p-4 font-bold text-brand-900">מספר ערוצי מנוע</th><td class="p-4">8 מנועי תריס או הצללה</td></tr>
+                <tr><th class="bg-brand-50 p-4 font-bold text-brand-900">סוג מנוע</th><td class="p-4">AC 230V, 50/60Hz</td></tr>
+                <tr><th class="bg-brand-50 p-4 font-bold text-brand-900">זרם נקוב</th><td class="p-4">6A לעומס התנגדותי לכל ערוץ</td></tr>
+                <tr><th class="bg-brand-50 p-4 font-bold text-brand-900">הספק מרבי בעומס התנגדותי</th><td class="p-4">1,380W לערוץ, בהתאם לתנאי היצרן</td></tr>
+                <tr><th class="bg-brand-50 p-4 font-bold text-brand-900">זיהוי זמן תנועה</th><td class="p-4">מדידת זרם וזיהוי מצבי קצה, החל מזרם מנוע של 75mA</td></tr>
+                <tr><th class="bg-brand-50 p-4 font-bold text-brand-900">רוחב בלוח</th><td class="p-4">8 מודולים, 144 מ״מ</td></tr>
+                <tr><th class="bg-brand-50 p-4 font-bold text-brand-900">הזנת אלקטרוניקה</th><td class="p-4">מקו KNX, ללא ספק כוח עזר</td></tr>
+                <tr><th class="bg-brand-50 p-4 font-bold text-brand-900">דרגת הגנה</th><td class="p-4">IP20</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p class="text-sm text-brand-600">
+            הנתונים מתייחסים למסמכי Siemens. התאמת המנוע, החיווט, ההגנות ופונקציות הבטיחות חייבת להתבצע לפי תכנון החשמל, נתוני יצרן המנוע והתקנים החלים בישראל.
+          </p>
+        </section>
+      </div>
+
+      <section class="mt-12 rounded-2xl bg-brand-50 border border-brand-100 p-6 md:p-8">
+        <h2 class="text-2xl font-extrabold text-brand-900 mb-4">בקרי Siemens KNX נוספים</h2>
+        <div class="grid md:grid-cols-3 gap-3">
+          <a href="/articles/siemens-n543d31-knx-4-blind-actuator/" class="rounded-lg bg-white border border-brand-100 p-4 font-bold text-brand-800 hover:border-accent-500">N 543D31, ארבעה מנועי תריס AC</a>
+          <a href="/articles/siemens-n532d51-knx-8-switch-output/" class="rounded-lg bg-white border border-brand-100 p-4 font-bold text-brand-800 hover:border-accent-500">N 532D51, שמונה יציאות מיתוג 10AX</a>
+          <a href="/articles/siemens-n56881-knx-24-output/" class="rounded-lg bg-white border border-brand-100 p-4 font-bold text-brand-800 hover:border-accent-500">N 568/81, בקר רב תכליתי עם 24 יציאות</a>
+        </div>
+      </section>
+
+      <section class="mt-10 rounded-2xl bg-brand-900 text-white p-7 md:p-9">
+        <h2 class="text-3xl font-extrabold mb-3">צריכים לתכנן את חלוקת התריסים?</h2>
+        <p class="text-brand-100 text-lg mb-6">שלחו ל-i-feel את תכנית התריסים וההצללות, וקבלו התאמת בקרי Siemens KNX וחלוקת ערוצים נכונה לפרויקט.</p>
+        <div class="flex flex-wrap gap-3">
+          <a href="tel:0533006239" class="inline-flex items-center justify-center rounded-lg bg-accent-600 px-5 py-3 font-bold text-white hover:bg-accent-700">053-300-6239</a>
+          <a href="/catalogs/#siemens-knx-actuators" class="inline-flex items-center justify-center rounded-lg border border-white/30 px-5 py-3 font-bold text-white hover:bg-white/10">לכל דפי המוצר של Siemens</a>
+        </div>
+      </section>
+    </div>
+  </article>
+</BaseLayout>
