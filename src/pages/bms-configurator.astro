@@ -68,4 +68,53 @@ const jsonLd = JSON.stringify({
   jsonLd={jsonLd}
 >
   <Fragment set:html={content} />
+
+  <script is:inline>
+    (() => {
+      const calculateButton = document.getElementById('calculate-bms');
+      const leadForm = document.getElementById('bms-lead-form');
+      const notes = document.getElementById('project-notes');
+      const serialNetworks = document.getElementById('serial-networks');
+      const pointIds = ['point-di', 'point-ai', 'point-ai-current', 'point-ao', 'point-relay', 'point-triac', 'point-pt100'];
+      const serialProtocolIds = ['protocol-mstp', 'protocol-modbus-rtu', 'protocol-mbus'];
+
+      const numericValue = (id) => Math.max(0, Number(document.getElementById(id)?.value || 0));
+
+      const syncSerialNetworks = () => {
+        if (!serialNetworks) return;
+        const selectedProtocols = serialProtocolIds.filter((id) => document.getElementById(id)?.checked).length;
+        const requiredByDevices = numericValue('mstp-devices') > 0 ? 1 : 0;
+        const required = Math.min(4, Math.max(selectedProtocols, requiredByDevices));
+        const current = numericValue('serial-networks');
+        if (required > current) serialNetworks.value = String(required);
+      };
+
+      serialProtocolIds.forEach((id) => {
+        document.getElementById(id)?.addEventListener('change', syncSerialNetworks);
+      });
+      document.getElementById('mstp-devices')?.addEventListener('change', syncSerialNetworks);
+      calculateButton?.addEventListener('click', syncSerialNetworks, true);
+
+      if (notes) {
+        notes.setAttribute('maxlength', '2000');
+        notes.addEventListener('input', () => {
+          const cleanValue = notes.value.replace(/[<>]/g, '');
+          if (cleanValue !== notes.value) notes.value = cleanValue;
+        });
+      }
+
+      leadForm?.addEventListener('submit', (event) => {
+        const physicalPoints = pointIds.reduce((sum, id) => sum + numericValue(id), 0);
+        const integrationPoints = numericValue('integration-points');
+        if (physicalPoints === 0 && integrationPoints === 0) {
+          event.preventDefault();
+          event.stopImmediatePropagation();
+          window.alert('יש להזין לפחות נקודת I/O אחת או נקודת אינטגרציה לפני שליחת התצורה.');
+          document.getElementById('bms-builder')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      }, true);
+
+      syncSerialNetworks();
+    })();
+  </script>
 </BaseLayout>
