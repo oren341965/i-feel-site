@@ -5,6 +5,13 @@ import { articles } from '../../data/articles';
 const title = 'מאמרים ומדריכים | i-feel';
 const description = 'מדריכי i-feel לבית חכם, KNX, בקרת מבנה BMS, שדרוג בית קיים, יזמים, אדריכלים ושירות.';
 const canonical = 'https://i-feel.co.il/articles/';
+const siemensN56722Article = {
+  slug: 'siemens-n56722-knx-16-output',
+  title: 'Siemens N 567/22: בקר KNX עם 16 יציאות 10A',
+  description: '16 יציאות מיתוג, עד 10A לעומס התנגדותי, תפעול ידני, חיווי לכל ערוץ ופונקציות ETS מתקדמות.',
+  category: 'Siemens / KNX',
+  updated: '2026-07-31',
+};
 const siemensN56881Article = {
   slug: 'siemens-n56881-knx-24-output',
   title: 'Siemens N 568/81: בקר KNX רב תכליתי עם 24 יציאות',
@@ -12,7 +19,7 @@ const siemensN56881Article = {
   category: 'Siemens / KNX',
   updated: '2026-07-31',
 };
-const publicArticles = [siemensN56881Article, ...articles.filter((article) => !article.hidden)];
+const publicArticles = [siemensN56722Article, siemensN56881Article, ...articles.filter((article) => !article.hidden)];
 const jsonLd = JSON.stringify({
   '@context': 'https://schema.org',
   '@type': 'CollectionPage',
