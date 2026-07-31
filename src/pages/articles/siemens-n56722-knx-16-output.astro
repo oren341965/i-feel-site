@@ -1,0 +1,182 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+const canonical = 'https://i-feel.co.il/articles/siemens-n56722-knx-16-output/';
+const title = 'Siemens N 567/22: בקר KNX עם 16 יציאות 10A | i-feel';
+const description = 'הכירו את Siemens N 567/22, בקר מיתוג KNX עם 16 יציאות ממסר, עד 10A ליציאה, תפעול ידני, חיווי מצב ופונקציות ETS מתקדמות.';
+const productImage = 'https://www.eibabo.com/media/seo_images/productimages_eibabo/NS6508387/ZOOM/siemens-5wg1567_1ab22-eib-ns6508387_01.jpg';
+const dataSheetUrl = 'https://sid.siemens.com/api/khub/documents/iYsEFlCM~23xEGwvrDHQvw/content';
+const jsonLd = JSON.stringify({
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  headline: 'Siemens N 567/22: בקר KNX עם 16 יציאות 10A',
+  description,
+  datePublished: '2026-07-31',
+  dateModified: '2026-07-31',
+  inLanguage: 'he-IL',
+  mainEntityOfPage: canonical,
+  image: productImage,
+  author: { '@type': 'Organization', name: 'i-feel', url: 'https://i-feel.co.il/' },
+  publisher: { '@type': 'Organization', name: 'i-feel', url: 'https://i-feel.co.il/' },
+});
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  canonical={canonical}
+  ogTitle={title}
+  ogDescription={description}
+  ogUrl={canonical}
+  ogImage={productImage}
+  jsonLd={jsonLd}
+>
+  <article class="bg-white" dir="rtl">
+    <header class="bg-brand-900 text-white py-16 md:py-20">
+      <div class="max-w-5xl mx-auto px-4">
+        <a href="/articles/" class="text-accent-400 font-semibold hover:text-accent-300">מאמרים</a>
+        <p class="mt-4 text-sm text-brand-200">Siemens GAMMA / KNX · עודכן 31.07.2026</p>
+        <h1 class="mt-4 text-4xl md:text-5xl font-extrabold leading-tight">
+          Siemens N 567/22: בקר KNX עם 16 יציאות מיתוג
+        </h1>
+        <p class="mt-5 max-w-4xl text-lg md:text-xl text-brand-100 leading-relaxed">
+          16 מעגלי תאורה ועומסים בבקר אחד, עד 10A ליציאה, עם תפעול ידני, חיווי מצב ופונקציות תכנות מתקדמות ב-ETS.
+        </p>
+      </div>
+    </header>
+
+    <div class="max-w-5xl mx-auto px-4 py-12">
+      <section class="grid lg:grid-cols-[1.1fr_0.9fr] gap-8 items-center mb-12">
+        <div class="rounded-2xl border border-brand-100 bg-white p-5 shadow-sm">
+          <img
+            src={productImage}
+            alt="בקר Siemens N 567/22 עם 16 יציאות מיתוג למערכת KNX"
+            width="1200"
+            height="800"
+            loading="eager"
+            class="w-full h-auto object-contain"
+            referrerpolicy="no-referrer"
+          />
+        </div>
+        <div>
+          <p class="text-accent-700 font-bold text-lg mb-3">מידע עבור הלקוח</p>
+          <h2 class="text-3xl font-extrabold text-brand-900 leading-tight mb-5">16 יציאות, שליטה ברורה ושירות נוח מהלוח</h2>
+          <p class="text-lg text-brand-700 leading-relaxed mb-5">
+            Siemens N 567/22 הוא בקר מיתוג KNX המיועד לניהול מרוכז של עד 16 מעגלי תאורה, שקעים ועומסים מתאימים. כל יציאה ניתנת לתכנות בנפרד וכוללת לחצן הפעלה וחיווי מצב בחזית הבקר, נתון שמקל על ההתקנה, הבדיקות והשירות.
+          </p>
+          <a href={dataSheetUrl} target="_blank" rel="noopener noreferrer" class="inline-flex items-center justify-center rounded-lg bg-accent-600 px-5 py-3 font-bold text-white transition hover:bg-accent-700">
+            פתיחת ה-Datasheet הרשמי של Siemens
+          </a>
+        </div>
+      </section>
+
+      <section class="grid grid-cols-2 md:grid-cols-5 gap-3 mb-14" aria-label="נתונים מרכזיים">
+        <div class="rounded-xl border border-brand-100 bg-brand-50 p-4 text-center"><div class="text-3xl font-extrabold text-accent-700">16</div><div class="mt-2 text-sm font-semibold">יציאות מיתוג</div></div>
+        <div class="rounded-xl border border-brand-100 bg-brand-50 p-4 text-center"><div class="text-3xl font-extrabold text-accent-700">10A</div><div class="mt-2 text-sm font-semibold">לעומס התנגדותי</div></div>
+        <div class="rounded-xl border border-brand-100 bg-brand-50 p-4 text-center"><div class="text-3xl font-extrabold text-accent-700">8</div><div class="mt-2 text-sm font-semibold">מודולים בלוח</div></div>
+        <div class="rounded-xl border border-brand-100 bg-brand-50 p-4 text-center"><div class="text-3xl font-extrabold text-accent-700">8</div><div class="mt-2 text-sm font-semibold">סצנות לכל יציאה</div></div>
+        <div class="rounded-xl border border-brand-100 bg-brand-50 p-4 text-center"><div class="text-3xl font-extrabold text-accent-700">230V</div><div class="mt-2 text-sm font-semibold">הזנה לאלקטרוניקה</div></div>
+      </section>
+
+      <div class="prose-he max-w-none">
+        <section>
+          <h2>16 יציאות למיתוג תאורה ועומסים</h2>
+          <p>
+            הבקר כולל 16 יציאות ממסר המאפשרות למתג קבוצות חשמליות בנפרד. הוא מתאים למעגלי תאורה, הפעלת שקעים, מאווררים, משאבות ופיקודים נוספים, כל עוד סוג העומס, זרם ההתנעה, ההגנות והחיווט תואמים להוראות Siemens ולתכנון החשמל.
+          </p>
+          <p>
+            הזרם הנקוב הוא עד 10A לעומס התנגדותי. אין להסתמך על נתון זה בלבד עבור עומסי LED, ספקי כוח, מנועים או עומסים בעלי זרם התנעה גבוה, ויש לבצע התאמה מקצועית לכל מעגל.
+          </p>
+        </section>
+
+        <section>
+          <h2>תפעול ידני וחיווי לכל יציאה</h2>
+          <p>
+            בחזית הבקר נמצא לחצן ייעודי לכל אחד מ-16 הערוצים, ולצדו נורית חיווי המציגה אם היציאה פועלת. במצב Direct ניתן להפעיל ולכבות את הערוצים ישירות מהלוח, ללא צורך לפתוח את ETS בכל בדיקה.
+          </p>
+          <p>
+            האלקטרוניקה מוזנת באמצעות ספק כוח פנימי של AC 230V. כאשר מתח הרשת קיים, ניתן להשתמש בתפעול הישיר גם אם מתח ה-KNX אינו זמין או שהתקשורת באוטובוס הופסקה. זהו יתרון משמעותי בזמן התקנה, מסירה ואיתור תקלות.
+          </p>
+        </section>
+
+        <section>
+          <h2>פונקציות מתקדמות ב-ETS</h2>
+          <p>כל יציאה ניתנת להגדרה משותפת או עצמאית, עם מגוון פונקציות שימושיות:</p>
+          <ul>
+            <li>מצב עבודה רגיל או הפעלה מוגבלת בזמן.</li>
+            <li>הגדרת מגע רגיל פתוח או רגיל סגור.</li>
+            <li>השהיית הפעלה והשהיית כיבוי.</li>
+            <li>פעולות לוגיות AND או OR.</li>
+            <li>משוב מצב עבור כל ערוץ.</li>
+            <li>מצב לילה עם זמן הפעלה מוגדר.</li>
+            <li>הבהוב אזהרה לפני כיבוי אוטומטי.</li>
+            <li>בקרת סצנות של 8 ביט, עד 8 סצנות לכל יציאה.</li>
+            <li>הגדרת מצב היציאה לאחר חזרת מתח.</li>
+          </ul>
+        </section>
+
+        <aside class="my-8 rounded-xl border-r-4 border-accent-600 bg-accent-50 p-5 not-prose">
+          <h2 class="text-xl font-extrabold text-brand-900 mb-2">חשוב לדעת: זהו בקר מיתוג</h2>
+          <p class="m-0 text-brand-700 leading-relaxed">
+            Siemens N 567/22 מיועד להפעלה וכיבוי של עומסים. הוא אינו כולל דימר מובנה ואינו מיועד להפעלה ישירה של מנועי תריס. עבור דימור או שליטה בתריסים יש לבחור בקר ייעודי או בקר רב תכליתי מתאים.
+          </p>
+        </aside>
+
+        <section>
+          <h2>נתונים טכניים מרכזיים</h2>
+          <div class="not-prose overflow-hidden rounded-xl border border-brand-100 my-6">
+            <table class="w-full text-right">
+              <tbody class="divide-y divide-brand-100">
+                <tr><th class="bg-brand-50 p-4 font-bold text-brand-900 w-2/5">דגם</th><td class="p-4">Siemens N 567/22</td></tr>
+                <tr><th class="bg-brand-50 p-4 font-bold text-brand-900">מק״ט</th><td class="p-4">5WG1567-1AB22</td></tr>
+                <tr><th class="bg-brand-50 p-4 font-bold text-brand-900">מספר יציאות</th><td class="p-4">16 יציאות ממסר</td></tr>
+                <tr><th class="bg-brand-50 p-4 font-bold text-brand-900">מתח מיתוג נקוב</th><td class="p-4">AC 230V, 50/60Hz</td></tr>
+                <tr><th class="bg-brand-50 p-4 font-bold text-brand-900">זרם נקוב</th><td class="p-4">עד 10A לעומס התנגדותי</td></tr>
+                <tr><th class="bg-brand-50 p-4 font-bold text-brand-900">הזנת אלקטרוניקה</th><td class="p-4">ספק כוח פנימי AC 230V</td></tr>
+                <tr><th class="bg-brand-50 p-4 font-bold text-brand-900">צריכת זרם מה-KNX</th><td class="p-4">כ-5mA</td></tr>
+                <tr><th class="bg-brand-50 p-4 font-bold text-brand-900">רוחב בלוח</th><td class="p-4">8 מודולים, 144 מ״מ</td></tr>
+                <tr><th class="bg-brand-50 p-4 font-bold text-brand-900">דרגת אטימות</th><td class="p-4">IP20</td></tr>
+                <tr><th class="bg-brand-50 p-4 font-bold text-brand-900">טמפרטורת עבודה</th><td class="p-4">מינוס 5 עד פלוס 45 מעלות צלזיוס</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section>
+          <h2>מה היתרון עבור הלקוח?</h2>
+          <div class="not-prose grid md:grid-cols-2 lg:grid-cols-3 gap-4 my-6">
+            <div class="rounded-xl border border-brand-100 p-5"><h3 class="font-extrabold text-accent-700 mb-2">ריכוז של 16 מעגלים</h3><p class="m-0 text-brand-700">בקר אחד מרכז מספר גדול של מעגלי מיתוג ומפשט את מבנה הלוח.</p></div>
+            <div class="rounded-xl border border-brand-100 p-5"><h3 class="font-extrabold text-accent-700 mb-2">בדיקה מהירה מהלוח</h3><p class="m-0 text-brand-700">לחצן וחיווי לכל יציאה מקצרים את זמן ההתקנה ואיתור התקלה.</p></div>
+            <div class="rounded-xl border border-brand-100 p-5"><h3 class="font-extrabold text-accent-700 mb-2">תכנות נפרד לכל ערוץ</h3><p class="m-0 text-brand-700">ניתן להתאים זמני פעולה, לוגיקה, משוב וסצנות לכל מעגל.</p></div>
+            <div class="rounded-xl border border-brand-100 p-5"><h3 class="font-extrabold text-accent-700 mb-2">פעולה ישירה ללא תקשורת KNX</h3><p class="m-0 text-brand-700">כאשר מתח הרשת קיים, ניתן לבדוק ולהפעיל ערוצים גם ללא תקשורת באוטובוס.</p></div>
+            <div class="rounded-xl border border-brand-100 p-5"><h3 class="font-extrabold text-accent-700 mb-2">התנהגות מוגדרת לאחר הפסקת חשמל</h3><p class="m-0 text-brand-700">ניתן לקבוע לכל ערוץ אם יחזור למצב קודם, יפעל או יישאר כבוי.</p></div>
+            <div class="rounded-xl border border-brand-100 p-5"><h3 class="font-extrabold text-accent-700 mb-2">פתרון Siemens מקצועי</h3><p class="m-0 text-brand-700">מוצר KNX פעיל ממשפחת GAMMA, המיועד להתקנה בלוחות חשמל מקצועיים.</p></div>
+          </div>
+        </section>
+
+        <section>
+          <h2>מתי לבחור בבקר 16 יציאות ומתי בבקר 24 יציאות?</h2>
+          <p>
+            N 567/22 מתאים במיוחד כאשר נדרשת שליטת ON/OFF ברורה על עד 16 מעגלים, עם תפעול מקומי מתקדם וחיווי לכל ערוץ. כאשר הפרויקט דורש מספר גדול יותר של יציאות או שילוב של תאורה, תריסים, מנועי DC, מאוורר ושסתומים באותה יחידה, ניתן לבחון את
+            <a href="/articles/siemens-n56881-knx-24-output/">Siemens N 568/81 עם 24 יציאות</a>.
+          </p>
+        </section>
+      </div>
+
+      <section class="mt-14 rounded-2xl bg-brand-900 p-7 md:p-9 text-white">
+        <h2 class="text-3xl font-extrabold mb-4">צריכים התאמת בקר לפרויקט?</h2>
+        <p class="text-lg text-brand-100 leading-relaxed max-w-3xl mb-6">
+          שלחו ל-i-feel רשימת מעגלים או תכנית לוח. נבדוק את סוגי העומסים, מספר היציאות, דרישות השירות וההרחבה, ונמליץ על חלוקת ציוד מתאימה לפרויקט.
+        </p>
+        <div class="flex flex-wrap gap-3">
+          <a href="tel:0533006239" class="inline-flex items-center justify-center rounded-lg bg-accent-500 px-5 py-3 font-bold text-brand-950 hover:bg-accent-400">053-300-6239</a>
+          <a href="/contact/" class="inline-flex items-center justify-center rounded-lg border border-white/40 px-5 py-3 font-bold text-white hover:bg-white/10">יצירת קשר</a>
+        </div>
+      </section>
+
+      <p class="mt-8 text-sm text-brand-500 leading-relaxed">
+        המידע מבוסס על מסמך Siemens לדגם N 567/22, מק״ט 5WG1567-1AB22. נתוני החיבור, העומס וההגנות בפועל נקבעים לפי סוג העומס, זרמי ההתנעה, תכנון המערכת, התקנים החלים והוראות היצרן.
+      </p>
+    </div>
+  </article>
+</BaseLayout>
