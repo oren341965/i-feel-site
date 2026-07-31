@@ -1,0 +1,922 @@
+<style>
+  .bms-number-input::-webkit-inner-spin-button,
+  .bms-number-input::-webkit-outer-spin-button { opacity: 1; }
+  .bms-result-table th,
+  .bms-result-table td { vertical-align: top; }
+  .bms-pulse { animation: bmsPulse 1.5s ease-in-out infinite; }
+  @keyframes bmsPulse { 0%, 100% { opacity: 1; } 50% { opacity: .55; } }
+  @media print {
+    body > header,
+    body > footer,
+    #bms-config-nav,
+    #bms-config-hero,
+    #bms-intro,
+    #bms-input-column,
+    #bms-lead-section,
+    .bms-no-print { display: none !important; }
+    #bms-builder { padding: 0 !important; background: white !important; }
+    #bms-builder .bms-builder-grid { display: block !important; }
+    #bms-result-column { position: static !important; width: 100% !important; }
+    #bms-results { box-shadow: none !important; border: 0 !important; }
+    #bms-results .bms-print-only { display: block !important; }
+    @page { size: A4; margin: 12mm; }
+  }
+</style>
+
+<nav id="bms-config-nav" class="bg-brand-50 border-b border-brand-100" aria-label="פירורי לחם" dir="rtl">
+  <div class="max-w-7xl mx-auto px-4 py-3 text-sm">
+    <a href="/" class="text-brand-600 hover:text-accent-600">דף הבית</a>
+    <span class="mx-2 text-brand-400">›</span>
+    <a href="/structure-control/" class="text-brand-600 hover:text-accent-600">בקרת מבנה BMS</a>
+    <span class="mx-2 text-brand-400">›</span>
+    <span class="text-brand-900 font-medium">קונפיגורטור BMS</span>
+  </div>
+</nav>
+
+<header id="bms-config-hero" class="bg-brand-900 text-white py-16 lg:py-20 overflow-hidden" dir="rtl">
+  <div class="max-w-7xl mx-auto px-4 relative">
+    <div class="absolute -left-24 -top-24 h-96 w-96 rounded-full bg-accent-500/10 blur-3xl" aria-hidden="true"></div>
+    <div class="relative grid lg:grid-cols-[1.2fr_0.8fr] gap-10 items-center">
+      <div>
+        <div class="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-2 text-sm font-bold mb-6">
+          Siemens Desigo · PXC · TX-I/O
+        </div>
+        <h1 class="text-4xl md:text-5xl lg:text-6xl font-extrabold leading-tight mb-6">קונפיגורטור BMS ו-DDC</h1>
+        <p class="text-xl leading-9 text-brand-100 max-w-4xl mb-8">
+          הזינו את רשימת הנקודות והאינטגרציות. הכלי יבחר בקר Siemens ראשוני, יחלק את מודולי TX-I/O, יוסיף רזרבה ויפיק רשימת ציוד שניתן להדפיס, לשמור כ-PDF או לפתוח ב-Excel.
+        </p>
+        <div class="flex flex-wrap gap-3">
+          <a href="#bms-builder" class="inline-flex items-center justify-center rounded-lg bg-accent-500 px-7 py-3.5 font-bold text-white shadow-lg hover:bg-accent-600">התחלת התכנון</a>
+          <a href="/siemens-ddc/" class="inline-flex items-center justify-center rounded-lg border border-white/30 bg-white/10 px-7 py-3.5 font-bold text-white hover:bg-white/20">ספריית מוצרי DDC</a>
+        </div>
+      </div>
+      <aside class="rounded-3xl border border-white/15 bg-white/10 p-7 backdrop-blur">
+        <h2 class="text-2xl font-extrabold mb-5">מה מתקבל בסיום?</h2>
+        <ul class="space-y-4 text-brand-100">
+          <li class="flex gap-3"><span class="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-accent-500 font-bold text-white">1</span><span>בקר PXC מומלץ והסבר לבחירה</span></li>
+          <li class="flex gap-3"><span class="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-accent-500 font-bold text-white">2</span><span>חלוקת נקודות מובנות ומודולי TX-I/O</span></li>
+          <li class="flex gap-3"><span class="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-accent-500 font-bold text-white">3</span><span>רשימת ציוד BOM, הערות והנחות תכנון</span></li>
+          <li class="flex gap-3"><span class="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-accent-500 font-bold text-white">4</span><span>ייצוא CSV, הדפסה ושליחה לבדיקה הנדסית</span></li>
+        </ul>
+      </aside>
+    </div>
+  </div>
+</header>
+
+<section id="bms-intro" class="bg-white py-10 border-b border-brand-100" dir="rtl">
+  <div class="max-w-7xl mx-auto px-4 grid md:grid-cols-3 gap-5">
+    <div class="rounded-2xl border border-brand-100 p-6">
+      <div class="text-3xl font-extrabold text-accent-700 mb-2">שלב 1</div>
+      <h2 class="text-xl font-extrabold text-brand-900 mb-2">מזינים נקודות</h2>
+      <p class="text-brand-600 leading-7">DI, AI, 4-20mA, AO, ממסרים, Triac ו-Pt100.</p>
+    </div>
+    <div class="rounded-2xl border border-brand-100 p-6">
+      <div class="text-3xl font-extrabold text-accent-700 mb-2">שלב 2</div>
+      <h2 class="text-xl font-extrabold text-brand-900 mb-2">מגדירים אינטגרציה</h2>
+      <p class="text-brand-600 leading-7">כמות נקודות תקשורת, רשתות RS485 והתקני BACnet.</p>
+    </div>
+    <div class="rounded-2xl border border-brand-100 p-6">
+      <div class="text-3xl font-extrabold text-accent-700 mb-2">שלב 3</div>
+      <h2 class="text-xl font-extrabold text-brand-900 mb-2">מקבלים תצורה</h2>
+      <p class="text-brand-600 leading-7">בקר, מודולים, רזרבה, אזהרות וקובץ להעברה לצוות.</p>
+    </div>
+  </div>
+</section>
+
+<main id="bms-builder" class="bg-brand-50/50 py-12 lg:py-16" dir="rtl">
+  <div class="max-w-7xl mx-auto px-4">
+    <div class="bms-builder-grid grid xl:grid-cols-[1.1fr_0.9fr] gap-8 items-start">
+      <section id="bms-input-column" class="space-y-7">
+        <div class="rounded-2xl border border-brand-100 bg-white p-6 md:p-7 shadow-sm">
+          <div class="flex flex-wrap items-start justify-between gap-4 mb-6">
+            <div>
+              <p class="text-sm font-bold text-accent-700 mb-1">פרטי הפרויקט</p>
+              <h2 class="text-2xl md:text-3xl font-extrabold text-brand-900">הגדרות בסיסיות</h2>
+            </div>
+            <span id="bms-save-status" class="rounded-full bg-brand-50 px-3 py-1.5 text-xs font-bold text-brand-600">נשמר מקומית בדפדפן</span>
+          </div>
+
+          <div class="grid md:grid-cols-2 gap-5">
+            <label class="block">
+              <span class="block font-bold text-brand-800 mb-2">שם הפרויקט</span>
+              <input id="project-name" type="text" class="w-full rounded-lg border border-brand-200 px-4 py-3 outline-none focus:border-accent-500 focus:ring-2 focus:ring-accent-500/20" placeholder="לדוגמה: מלון, בניין משרדים או חדר מכונות" />
+            </label>
+            <label class="block">
+              <span class="block font-bold text-brand-800 mb-2">סוג הפרויקט</span>
+              <select id="project-type" class="w-full rounded-lg border border-brand-200 px-4 py-3 outline-none focus:border-accent-500">
+                <option value="office">בניין משרדים</option>
+                <option value="hotel">מלון</option>
+                <option value="hospital">בית חולים או מרפאה</option>
+                <option value="public">מבנה ציבור</option>
+                <option value="commercial">מרכז מסחרי</option>
+                <option value="industrial">מפעל או מתקן תעשייתי</option>
+                <option value="parking">חניון ומפוחים</option>
+                <option value="system">מערכת מכנית אחת</option>
+                <option value="other">אחר</option>
+              </select>
+            </label>
+            <label class="block">
+              <span class="block font-bold text-brand-800 mb-2">רזרבה תכנונית</span>
+              <select id="reserve-percent" class="w-full rounded-lg border border-brand-200 px-4 py-3 outline-none focus:border-accent-500">
+                <option value="10">10%</option>
+                <option value="15" selected>15%</option>
+                <option value="20">20%</option>
+                <option value="25">25%</option>
+              </select>
+            </label>
+            <div>
+              <span class="block font-bold text-brand-800 mb-2">תבנית מהירה</span>
+              <div class="flex gap-2">
+                <select id="template-select" class="min-w-0 flex-1 rounded-lg border border-brand-200 px-3 py-3 outline-none focus:border-accent-500">
+                  <option value="">בחירה</option>
+                  <option value="ahu">יחידת טיפול באוויר</option>
+                  <option value="pumps">חדר משאבות</option>
+                  <option value="chiller">חדר צ׳ילרים</option>
+                  <option value="small-building">מבנה מסחרי קטן</option>
+                  <option value="parking">חניון ומפוחים</option>
+                </select>
+                <button id="apply-template" type="button" class="rounded-lg bg-brand-700 px-4 py-3 font-bold text-white hover:bg-brand-800">החל</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="rounded-2xl border border-brand-100 bg-white p-6 md:p-7 shadow-sm">
+          <div class="flex flex-wrap items-start justify-between gap-4 mb-6">
+            <div>
+              <p class="text-sm font-bold text-accent-700 mb-1">קלטים ופלטים פיזיים</p>
+              <h2 class="text-2xl md:text-3xl font-extrabold text-brand-900">רשימת נקודות I/O</h2>
+              <p class="mt-2 text-brand-600">יש להזין את הכמות הנדרשת לפני רזרבה.</p>
+            </div>
+            <label class="inline-flex cursor-pointer items-center gap-2 rounded-lg border border-brand-200 bg-brand-50 px-4 py-3 font-bold text-brand-700 hover:border-accent-400">
+              <input id="csv-import" type="file" accept=".csv,text/csv" class="hidden" />
+              ייבוא CSV
+            </label>
+          </div>
+
+          <div id="csv-message" class="hidden mb-5 rounded-lg border border-accent-200 bg-accent-50 p-4 text-sm font-semibold text-accent-900"></div>
+
+          <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            <label class="rounded-xl border border-brand-100 bg-brand-50 p-5">
+              <span class="block text-2xl font-extrabold text-brand-900" dir="ltr">DI</span>
+              <span class="block text-sm text-brand-600 mb-4">כניסות דיגיטליות ומגעים יבשים</span>
+              <input id="point-di" data-bms-input type="number" min="0" step="1" value="0" class="bms-number-input w-full rounded-lg border border-brand-200 bg-white px-4 py-3 text-2xl font-bold outline-none focus:border-accent-500" />
+            </label>
+            <label class="rounded-xl border border-brand-100 bg-brand-50 p-5">
+              <span class="block text-2xl font-extrabold text-brand-900" dir="ltr">AI / UI</span>
+              <span class="block text-sm text-brand-600 mb-4">חיישנים, התנגדות ו-0-10V</span>
+              <input id="point-ai" data-bms-input type="number" min="0" step="1" value="0" class="bms-number-input w-full rounded-lg border border-brand-200 bg-white px-4 py-3 text-2xl font-bold outline-none focus:border-accent-500" />
+            </label>
+            <label class="rounded-xl border border-brand-100 bg-brand-50 p-5">
+              <span class="block text-2xl font-extrabold text-brand-900" dir="ltr">AI 4-20mA</span>
+              <span class="block text-sm text-brand-600 mb-4">כניסות זרם אנלוגיות</span>
+              <input id="point-ai-current" data-bms-input type="number" min="0" step="1" value="0" class="bms-number-input w-full rounded-lg border border-brand-200 bg-white px-4 py-3 text-2xl font-bold outline-none focus:border-accent-500" />
+            </label>
+            <label class="rounded-xl border border-brand-100 bg-brand-50 p-5">
+              <span class="block text-2xl font-extrabold text-brand-900" dir="ltr">AO 0-10V</span>
+              <span class="block text-sm text-brand-600 mb-4">פקודות אנלוגיות לשסתומים ווסתים</span>
+              <input id="point-ao" data-bms-input type="number" min="0" step="1" value="0" class="bms-number-input w-full rounded-lg border border-brand-200 bg-white px-4 py-3 text-2xl font-bold outline-none focus:border-accent-500" />
+            </label>
+            <label class="rounded-xl border border-brand-100 bg-brand-50 p-5">
+              <span class="block text-2xl font-extrabold text-brand-900" dir="ltr">DO Relay</span>
+              <span class="block text-sm text-brand-600 mb-4">פקודות ממסר ON/OFF</span>
+              <input id="point-relay" data-bms-input type="number" min="0" step="1" value="0" class="bms-number-input w-full rounded-lg border border-brand-200 bg-white px-4 py-3 text-2xl font-bold outline-none focus:border-accent-500" />
+            </label>
+            <label class="rounded-xl border border-brand-100 bg-brand-50 p-5">
+              <span class="block text-2xl font-extrabold text-brand-900" dir="ltr">DO Triac</span>
+              <span class="block text-sm text-brand-600 mb-4">שסתומים ומפעילים תואמי Triac</span>
+              <input id="point-triac" data-bms-input type="number" min="0" step="1" value="0" class="bms-number-input w-full rounded-lg border border-brand-200 bg-white px-4 py-3 text-2xl font-bold outline-none focus:border-accent-500" />
+            </label>
+            <label class="rounded-xl border border-brand-100 bg-brand-50 p-5 sm:col-span-2 lg:col-span-1">
+              <span class="block text-2xl font-extrabold text-brand-900" dir="ltr">Pt100</span>
+              <span class="block text-sm text-brand-600 mb-4">חיישני Pt100 בחיבור ארבעה חוטים</span>
+              <input id="point-pt100" data-bms-input type="number" min="0" step="1" value="0" class="bms-number-input w-full rounded-lg border border-brand-200 bg-white px-4 py-3 text-2xl font-bold outline-none focus:border-accent-500" />
+            </label>
+          </div>
+          <p class="mt-5 text-sm leading-6 text-brand-500">ייבוא CSV: עמודה ראשונה סוג נקודה, עמודה שנייה כמות. דוגמאות לסוגים: DI, AI, AI_4_20, AO, DO, TRIAC, PT100.</p>
+        </div>
+
+        <div class="rounded-2xl border border-brand-100 bg-white p-6 md:p-7 shadow-sm">
+          <div class="mb-6">
+            <p class="text-sm font-bold text-accent-700 mb-1">מערכות תקשורת</p>
+            <h2 class="text-2xl md:text-3xl font-extrabold text-brand-900">אינטגרציה ופרוטוקולים</h2>
+          </div>
+
+          <div class="grid md:grid-cols-2 gap-5 mb-6">
+            <label class="block">
+              <span class="block font-bold text-brand-800 mb-2">סך נקודות אינטגרציה</span>
+              <input id="integration-points" data-bms-input type="number" min="0" step="1" value="0" class="bms-number-input w-full rounded-lg border border-brand-200 px-4 py-3 text-xl font-bold outline-none focus:border-accent-500" />
+              <span class="mt-1 block text-xs text-brand-500">כל נקודות Modbus, BACnet ו-M-Bus שאינן I/O פיזי בבקר</span>
+            </label>
+            <label class="block">
+              <span class="block font-bold text-brand-800 mb-2">מספר רשתות RS485</span>
+              <select id="serial-networks" class="w-full rounded-lg border border-brand-200 px-4 py-3 outline-none focus:border-accent-500">
+                <option value="0">0</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+              </select>
+              <span class="mt-1 block text-xs text-brand-500">Modbus RTU, BACnet MS/TP או M-Bus לפי התכנון</span>
+            </label>
+            <label class="block">
+              <span class="block font-bold text-brand-800 mb-2">התקני BACnet MS/TP</span>
+              <input id="mstp-devices" data-bms-input type="number" min="0" step="1" value="0" class="bms-number-input w-full rounded-lg border border-brand-200 px-4 py-3 text-xl font-bold outline-none focus:border-accent-500" />
+            </label>
+            <label class="block">
+              <span class="block font-bold text-brand-800 mb-2">צמתי BACnet/SC</span>
+              <input id="sc-nodes" data-bms-input type="number" min="0" step="1" value="0" class="bms-number-input w-full rounded-lg border border-brand-200 px-4 py-3 text-xl font-bold outline-none focus:border-accent-500" />
+            </label>
+            <label class="block">
+              <span class="block font-bold text-brand-800 mb-2">התקני KNX PL-Link</span>
+              <input id="knx-devices" data-bms-input type="number" min="0" step="1" value="0" class="bms-number-input w-full rounded-lg border border-brand-200 px-4 py-3 text-xl font-bold outline-none focus:border-accent-500" />
+            </label>
+            <label class="block">
+              <span class="block font-bold text-brand-800 mb-2">ממשק תפעול</span>
+              <select id="hmi-choice" class="w-full rounded-lg border border-brand-200 px-4 py-3 outline-none focus:border-accent-500">
+                <option value="none">ללא ממשק בשלב זה</option>
+                <option value="web-standard">PXG3.W100-2, Web סטנדרטי</option>
+                <option value="web-extended">PXG3.W200-2, Web מורחב</option>
+                <option value="pxm30">PXM30.E, מסך 7 אינץ׳</option>
+                <option value="pxm40">PXM40.E, מסך 10.1 אינץ׳</option>
+                <option value="pxm50">PXM50.E, מסך 15.6 אינץ׳</option>
+              </select>
+            </label>
+          </div>
+
+          <fieldset>
+            <legend class="font-bold text-brand-800 mb-3">פרוטוקולים נדרשים</legend>
+            <div class="flex flex-wrap gap-3">
+              <label class="inline-flex items-center gap-2 rounded-full border border-brand-200 px-4 py-2.5"><input type="checkbox" id="protocol-bacnet-ip" checked /> BACnet/IP</label>
+              <label class="inline-flex items-center gap-2 rounded-full border border-brand-200 px-4 py-2.5"><input type="checkbox" id="protocol-bacnet-sc" /> BACnet/SC</label>
+              <label class="inline-flex items-center gap-2 rounded-full border border-brand-200 px-4 py-2.5"><input type="checkbox" id="protocol-mstp" /> BACnet MS/TP</label>
+              <label class="inline-flex items-center gap-2 rounded-full border border-brand-200 px-4 py-2.5"><input type="checkbox" id="protocol-modbus-tcp" /> Modbus TCP</label>
+              <label class="inline-flex items-center gap-2 rounded-full border border-brand-200 px-4 py-2.5"><input type="checkbox" id="protocol-modbus-rtu" /> Modbus RTU</label>
+              <label class="inline-flex items-center gap-2 rounded-full border border-brand-200 px-4 py-2.5"><input type="checkbox" id="protocol-mbus" /> M-Bus</label>
+              <label class="inline-flex items-center gap-2 rounded-full border border-brand-200 px-4 py-2.5"><input type="checkbox" id="protocol-knx" /> KNX PL-Link</label>
+            </div>
+          </fieldset>
+        </div>
+
+        <div class="rounded-2xl border border-brand-100 bg-white p-6 md:p-7 shadow-sm">
+          <div class="mb-6">
+            <p class="text-sm font-bold text-accent-700 mb-1">אפשרויות ביצוע</p>
+            <h2 class="text-2xl md:text-3xl font-extrabold text-brand-900">העדפות תכנון</h2>
+          </div>
+          <div class="grid md:grid-cols-2 gap-4">
+            <label class="flex cursor-pointer items-start gap-3 rounded-xl border border-brand-100 bg-brand-50 p-5">
+              <input id="local-operation" type="checkbox" class="mt-1 h-5 w-5" />
+              <span><strong class="block text-brand-900">תפעול מקומי במודולי I/O</strong><span class="mt-1 block text-sm leading-6 text-brand-600">העדפת גרסאות ML ו-M עם LCD או Override, כאשר קיימות.</span></span>
+            </label>
+            <label class="flex cursor-pointer items-start gap-3 rounded-xl border border-brand-100 bg-brand-50 p-5">
+              <input id="secure-preferred" type="checkbox" class="mt-1 h-5 w-5" />
+              <span><strong class="block text-brand-900">העדפת BACnet Secure Connect</strong><span class="mt-1 block text-sm leading-6 text-brand-600">בבחירת PXC4 תועדף גרסת PXC4.E16S-2.</span></span>
+            </label>
+          </div>
+          <label class="block mt-5">
+            <span class="block font-bold text-brand-800 mb-2">הערות לתכנון</span>
+            <textarea id="project-notes" rows="4" class="w-full rounded-lg border border-brand-200 px-4 py-3 outline-none focus:border-accent-500" placeholder="לדוגמה: ציוד קיים, פרוטוקול של צ׳ילר, דרישת שבת, לוח מרוחק או רזרבה מיוחדת"></textarea>
+          </label>
+        </div>
+
+        <div class="bms-no-print flex flex-wrap gap-3">
+          <button id="calculate-bms" type="button" class="flex-1 min-w-56 rounded-xl bg-accent-600 px-7 py-4 text-lg font-extrabold text-white shadow-lg hover:bg-accent-700">חשב תצורת BMS</button>
+          <button id="clear-bms" type="button" class="rounded-xl border border-brand-200 bg-white px-6 py-4 font-bold text-brand-700 hover:border-red-300 hover:text-red-700">נקה הכל</button>
+        </div>
+      </section>
+
+      <aside id="bms-result-column" class="xl:sticky xl:top-24">
+        <section id="bms-results" class="rounded-2xl border border-brand-100 bg-white shadow-lg overflow-hidden">
+          <div class="bg-brand-900 p-6 text-white">
+            <div class="bms-print-only hidden text-sm text-brand-200 mb-2">i-feel | 03-508-9553 | www.i-feel.co.il</div>
+            <div class="flex flex-wrap items-start justify-between gap-4">
+              <div>
+                <p class="text-accent-300 font-bold mb-1">תוצאה ראשונית</p>
+                <h2 class="text-2xl md:text-3xl font-extrabold">קונפיגורציית Siemens Desigo</h2>
+              </div>
+              <span id="result-status" class="rounded-full bg-white/10 px-4 py-2 text-sm font-bold">ממתין לנתונים</span>
+            </div>
+          </div>
+
+          <div id="result-empty" class="p-8 text-center">
+            <div class="mx-auto mb-5 flex h-20 w-20 items-center justify-center rounded-full bg-brand-50 text-3xl font-black text-brand-400">I/O</div>
+            <h3 class="text-2xl font-extrabold text-brand-900 mb-2">הזינו נקודות ולחצו על חישוב</h3>
+            <p class="leading-7 text-brand-600">התוצאה תציג את הבקר, חלוקת הנקודות, המודולים והערות התכנון.</p>
+          </div>
+
+          <div id="result-content" class="hidden">
+            <section class="border-b border-brand-100 p-6">
+              <p class="text-sm font-bold text-accent-700 mb-2">בקר מומלץ</p>
+              <div class="flex flex-wrap items-start justify-between gap-4">
+                <div>
+                  <h3 id="controller-model" class="text-3xl font-extrabold text-brand-900" dir="ltr"></h3>
+                  <p id="controller-name" class="mt-1 font-bold text-brand-700"></p>
+                </div>
+                <span id="controller-quantity" class="rounded-xl bg-accent-500/10 px-4 py-2 font-extrabold text-accent-800"></span>
+              </div>
+              <p id="controller-reason" class="mt-4 leading-7 text-brand-600"></p>
+              <a id="controller-link" href="/siemens-ddc/" class="mt-4 inline-flex font-bold text-accent-700 hover:underline">לדף המוצר</a>
+            </section>
+
+            <section class="border-b border-brand-100 p-6">
+              <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
+                <h3 class="text-xl font-extrabold text-brand-900">סיכום נקודות</h3>
+                <span id="point-total-badge" class="rounded-full bg-brand-50 px-3 py-1.5 text-sm font-bold text-brand-700"></span>
+              </div>
+              <div class="overflow-x-auto rounded-xl border border-brand-100">
+                <table class="bms-result-table w-full min-w-[560px] text-sm">
+                  <thead class="bg-brand-50 text-brand-700"><tr><th class="p-3 text-right">סוג</th><th class="p-3 text-center">מקור</th><th class="p-3 text-center">עם רזרבה</th><th class="p-3 text-center">מובנה בבקר</th><th class="p-3 text-center">חיצוני</th></tr></thead>
+                  <tbody id="point-summary-body" class="divide-y divide-brand-100"></tbody>
+                </table>
+              </div>
+            </section>
+
+            <section class="border-b border-brand-100 p-6">
+              <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
+                <h3 class="text-xl font-extrabold text-brand-900">רשימת ציוד BOM</h3>
+                <span id="bom-count" class="rounded-full bg-brand-50 px-3 py-1.5 text-sm font-bold text-brand-700"></span>
+              </div>
+              <div class="overflow-x-auto rounded-xl border border-brand-100">
+                <table class="bms-result-table w-full min-w-[620px] text-sm">
+                  <thead class="bg-brand-50 text-brand-700"><tr><th class="p-3 text-right">דגם</th><th class="p-3 text-center">כמות</th><th class="p-3 text-right">ייעוד</th><th class="p-3 text-center">מצב</th></tr></thead>
+                  <tbody id="bom-body" class="divide-y divide-brand-100"></tbody>
+                </table>
+              </div>
+            </section>
+
+            <section class="border-b border-brand-100 p-6">
+              <h3 class="text-xl font-extrabold text-brand-900 mb-4">ארכיטקטורה מוצעת</h3>
+              <div class="grid gap-3 text-center text-sm font-bold sm:grid-cols-3">
+                <div class="rounded-xl border border-brand-100 bg-brand-50 p-4"><span class="block text-accent-700 mb-1">HMI / Web</span><span id="architecture-hmi">לפי בחירה</span></div>
+                <div class="rounded-xl border-2 border-accent-400 bg-accent-50 p-4"><span class="block text-accent-700 mb-1">DDC</span><span id="architecture-controller" dir="ltr"></span></div>
+                <div class="rounded-xl border border-brand-100 bg-brand-50 p-4"><span class="block text-accent-700 mb-1">Field</span><span>TX-I/O · RS485 · BACnet · KNX</span></div>
+              </div>
+            </section>
+
+            <section class="p-6">
+              <h3 class="text-xl font-extrabold text-brand-900 mb-4">הערות ואזהרות</h3>
+              <ul id="warning-list" class="space-y-3 text-sm leading-6 text-brand-700"></ul>
+            </section>
+
+            <div class="bms-no-print grid grid-cols-2 gap-3 border-t border-brand-100 bg-brand-50 p-5">
+              <button id="print-result" type="button" class="rounded-lg bg-brand-800 px-4 py-3 font-bold text-white hover:bg-brand-900">הדפסה או PDF</button>
+              <button id="export-csv" type="button" class="rounded-lg bg-accent-600 px-4 py-3 font-bold text-white hover:bg-accent-700">ייצוא CSV</button>
+              <button id="copy-result" type="button" class="rounded-lg border border-brand-200 bg-white px-4 py-3 font-bold text-brand-700 hover:border-accent-500">העתקת סיכום</button>
+              <a href="#bms-lead-section" class="rounded-lg border border-brand-200 bg-white px-4 py-3 text-center font-bold text-brand-700 hover:border-accent-500">שליחה לבדיקה</a>
+            </div>
+          </div>
+        </section>
+      </aside>
+    </div>
+  </div>
+</main>
+
+<section id="bms-lead-section" class="bg-white py-14 lg:py-16 border-t border-brand-100" dir="rtl">
+  <div class="max-w-5xl mx-auto px-4">
+    <div class="grid lg:grid-cols-[0.85fr_1.15fr] gap-8 items-start">
+      <div>
+        <p class="text-accent-700 font-bold mb-2">בדיקה מקצועית של i-feel</p>
+        <h2 class="text-3xl md:text-4xl font-extrabold text-brand-900 mb-4">שלחו את התצורה לבדיקה הנדסית</h2>
+        <p class="text-lg leading-8 text-brand-700 mb-5">
+          נבדוק את חלוקת הנקודות, סוגי המודולים, הרישוי, אספקת הכוח, רשתות התקשורת וההתאמה לגרסת Desigo ולציוד השדה.
+        </p>
+        <div class="rounded-2xl bg-brand-50 border border-brand-100 p-5">
+          <p class="font-bold text-brand-900 mb-2">חשוב לדעת</p>
+          <p class="text-sm leading-7 text-brand-600 m-0">הקונפיגורטור מספק תכנון ראשוני בלבד. רשימת ההזמנה הסופית נקבעת לאחר קבלת תכניות, רשימת I/O מלאה ומפרטי הציוד המחובר.</p>
+        </div>
+      </div>
+
+      <form id="bms-lead-form" action="/api/lead.php" method="post" class="rounded-2xl border border-brand-100 bg-brand-50 p-6 md:p-7">
+        <input type="hidden" name="source_page" value="bms-configurator" />
+        <input type="hidden" name="redirect_to" value="/bms-configurator/?sent=1" />
+        <input type="hidden" name="lead_type" value="bms_configuration" />
+        <input type="hidden" name="subject" value="בקשה לבדיקת קונפיגורציית Siemens BMS" />
+        <textarea id="lead-message" name="message" class="hidden"></textarea>
+        <div class="hidden" aria-hidden="true"><label>Website<input type="text" name="website" tabindex="-1" autocomplete="off" /></label></div>
+
+        <div class="grid md:grid-cols-2 gap-5">
+          <label class="block"><span class="block font-bold text-brand-800 mb-2">שם מלא</span><input name="name" required class="w-full rounded-lg border border-brand-200 bg-white px-4 py-3 outline-none focus:border-accent-500" /></label>
+          <label class="block"><span class="block font-bold text-brand-800 mb-2">חברה</span><input name="company" class="w-full rounded-lg border border-brand-200 bg-white px-4 py-3 outline-none focus:border-accent-500" /></label>
+          <label class="block"><span class="block font-bold text-brand-800 mb-2">טלפון</span><input name="phone" required inputmode="tel" class="w-full rounded-lg border border-brand-200 bg-white px-4 py-3 outline-none focus:border-accent-500" /></label>
+          <label class="block"><span class="block font-bold text-brand-800 mb-2">דוא״ל</span><input name="email" type="email" required class="w-full rounded-lg border border-brand-200 bg-white px-4 py-3 outline-none focus:border-accent-500" /></label>
+        </div>
+        <label class="mt-5 flex items-start gap-3 text-sm leading-6 text-brand-600"><input type="checkbox" required class="mt-1" /><span>אני מאשר להעביר את פרטי התכנון לצוות i-feel לצורך בדיקה וחזרה אליי.</span></label>
+        <button type="submit" class="mt-6 w-full rounded-xl bg-accent-600 px-7 py-4 text-lg font-extrabold text-white shadow-lg hover:bg-accent-700">שליחת התצורה לבדיקה</button>
+        <p class="mt-3 text-center text-sm text-brand-500">מענה בטלפון 03-508-9553</p>
+      </form>
+    </div>
+  </div>
+</section>
+
+<script>
+  (() => {
+    const STORAGE_KEY = 'ifeel-bms-configurator-v1';
+    const pointFields = {
+      di: { id: 'point-di', label: 'DI' },
+      ai: { id: 'point-ai', label: 'AI / UI' },
+      aiCurrent: { id: 'point-ai-current', label: 'AI 4-20mA' },
+      ao: { id: 'point-ao', label: 'AO 0-10V' },
+      relay: { id: 'point-relay', label: 'DO Relay' },
+      triac: { id: 'point-triac', label: 'DO Triac' },
+      pt100: { id: 'point-pt100', label: 'Pt100 4-wire' },
+    };
+
+    const controllers = {
+      pxc4: { model: 'PXC4.E16-2', secureModel: 'PXC4.E16S-2', slug: 'pxc4-e16-2', secureSlug: 'pxc4-e16s-2', name: 'בקר קומפקטי עם 16 נקודות מובנות', physical: 50, integration: 40, combined: 90, serial: 1, mstp: 60, sc: 100, knx: 64 },
+      pxc5: { model: 'PXC5.E24', slug: 'pxc5-e24', name: 'בקר מודולרי עם 24 נקודות מובנות', physical: 80, integration: 120, combined: 120, serial: 2, mstp: 120, sc: 100, knx: 64 },
+      pxc5Integration: { model: 'PXC5.E003', slug: 'pxc5-e003', name: 'בקר מערכת ואינטגרציה', physical: 1, integration: 2000, baseIntegration: 500, combined: 2001, serial: 2, mstp: 120, sc: 100, knx: 64 },
+      pxc7s: { model: 'PXC7.E400S', slug: 'pxc7-e400s', name: 'בקר מודולרי לביצועים גבוהים, גרסת S', physical: 100, integration: 100, combined: 100, serial: 1, mstp: 60, sc: 100, knx: 64 },
+      pxc7m: { model: 'PXC7.E400M', slug: 'pxc7-e400m', name: 'בקר מודולרי לביצועים גבוהים, גרסת M', physical: 200, integration: 250, combined: 250, serial: 2, mstp: 120, sc: 100, knx: 64 },
+      pxc7l: { model: 'PXC7.E400L', slug: 'pxc7-e400l', name: 'בקר מודולרי לביצועים גבוהים, גרסת L', physical: 400, integration: 600, combined: 600, serial: 4, mstp: 240, sc: 100, knx: 64 },
+    };
+
+    const templates = {
+      ahu: { di: 8, ai: 8, aiCurrent: 0, ao: 4, relay: 8, triac: 0, pt100: 0, integration: 0, serial: 0 },
+      pumps: { di: 16, ai: 6, aiCurrent: 2, ao: 4, relay: 12, triac: 0, pt100: 0, integration: 0, serial: 0 },
+      chiller: { di: 24, ai: 16, aiCurrent: 8, ao: 8, relay: 20, triac: 0, pt100: 8, integration: 80, serial: 2 },
+      'small-building': { di: 32, ai: 24, aiCurrent: 4, ao: 12, relay: 24, triac: 0, pt100: 0, integration: 120, serial: 2 },
+      parking: { di: 28, ai: 12, aiCurrent: 8, ao: 8, relay: 20, triac: 0, pt100: 0, integration: 40, serial: 1 },
+    };
+
+    const hmiMap = {
+      none: null,
+      'web-standard': { model: 'PXG3.W100-2', slug: 'pxg3-w100-2', label: 'Web סטנדרטי' },
+      'web-extended': { model: 'PXG3.W200-2', slug: 'pxg3-w200-2', label: 'Web מורחב' },
+      pxm30: { model: 'PXM30.E', slug: 'pxm30-e', label: 'מסך 7 אינץ׳' },
+      pxm40: { model: 'PXM40.E', slug: 'pxm40-e', label: 'מסך 10.1 אינץ׳' },
+      pxm50: { model: 'PXM50.E', slug: 'pxm50-e', label: 'מסך 15.6 אינץ׳' },
+    };
+
+    let lastResult = null;
+
+    const el = (id) => document.getElementById(id);
+    const numberValue = (id) => Math.max(0, Math.floor(Number(el(id)?.value || 0)));
+    const setNumber = (id, value) => { const target = el(id); if (target) target.value = String(Math.max(0, Math.floor(value || 0))); };
+    const escapeCsv = (value) => `"${String(value ?? '').replace(/"/g, '""')}"`;
+
+    const readState = () => ({
+      projectName: el('project-name')?.value || '',
+      projectType: el('project-type')?.value || 'office',
+      reserve: numberValue('reserve-percent'),
+      points: Object.fromEntries(Object.entries(pointFields).map(([key, field]) => [key, numberValue(field.id)])),
+      integrationPoints: numberValue('integration-points'),
+      serialNetworks: numberValue('serial-networks'),
+      mstpDevices: numberValue('mstp-devices'),
+      scNodes: numberValue('sc-nodes'),
+      knxDevices: numberValue('knx-devices'),
+      hmiChoice: el('hmi-choice')?.value || 'none',
+      localOperation: Boolean(el('local-operation')?.checked),
+      securePreferred: Boolean(el('secure-preferred')?.checked),
+      notes: el('project-notes')?.value || '',
+      protocols: {
+        bacnetIp: Boolean(el('protocol-bacnet-ip')?.checked),
+        bacnetSc: Boolean(el('protocol-bacnet-sc')?.checked),
+        mstp: Boolean(el('protocol-mstp')?.checked),
+        modbusTcp: Boolean(el('protocol-modbus-tcp')?.checked),
+        modbusRtu: Boolean(el('protocol-modbus-rtu')?.checked),
+        mbus: Boolean(el('protocol-mbus')?.checked),
+        knx: Boolean(el('protocol-knx')?.checked),
+      },
+    });
+
+    const saveState = () => {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(readState()));
+        const status = el('bms-save-status');
+        if (status) {
+          status.textContent = 'נשמר מקומית בדפדפן';
+          status.classList.add('text-accent-700');
+          window.setTimeout(() => status.classList.remove('text-accent-700'), 800);
+        }
+      } catch (_) {}
+    };
+
+    const restoreState = () => {
+      try {
+        const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null');
+        if (!saved) return;
+        if (el('project-name')) el('project-name').value = saved.projectName || '';
+        if (el('project-type')) el('project-type').value = saved.projectType || 'office';
+        if (el('reserve-percent')) el('reserve-percent').value = String(saved.reserve || 15);
+        Object.entries(pointFields).forEach(([key, field]) => setNumber(field.id, saved.points?.[key] || 0));
+        setNumber('integration-points', saved.integrationPoints || 0);
+        setNumber('serial-networks', saved.serialNetworks || 0);
+        setNumber('mstp-devices', saved.mstpDevices || 0);
+        setNumber('sc-nodes', saved.scNodes || 0);
+        setNumber('knx-devices', saved.knxDevices || 0);
+        if (el('hmi-choice')) el('hmi-choice').value = saved.hmiChoice || 'none';
+        if (el('local-operation')) el('local-operation').checked = Boolean(saved.localOperation);
+        if (el('secure-preferred')) el('secure-preferred').checked = Boolean(saved.securePreferred);
+        if (el('project-notes')) el('project-notes').value = saved.notes || '';
+        const protocolMap = {
+          'protocol-bacnet-ip': 'bacnetIp', 'protocol-bacnet-sc': 'bacnetSc', 'protocol-mstp': 'mstp',
+          'protocol-modbus-tcp': 'modbusTcp', 'protocol-modbus-rtu': 'modbusRtu', 'protocol-mbus': 'mbus', 'protocol-knx': 'knx',
+        };
+        Object.entries(protocolMap).forEach(([id, key]) => { if (el(id)) el(id).checked = Boolean(saved.protocols?.[key]); });
+      } catch (_) {}
+    };
+
+    const reservePoints = (points, percent) => Object.fromEntries(
+      Object.entries(points).map(([key, value]) => [key, Math.ceil(value * (1 + percent / 100))])
+    );
+
+    const totalPoints = (points) => Object.values(points).reduce((sum, value) => sum + Number(value || 0), 0);
+
+    const fitsController = (controller, demand) => (
+      demand.physical <= controller.physical &&
+      demand.integration <= controller.integration &&
+      demand.combined <= controller.combined &&
+      demand.serial <= controller.serial &&
+      demand.mstp <= controller.mstp &&
+      demand.sc <= controller.sc &&
+      demand.knx <= controller.knx
+    );
+
+    const chooseController = (demand, securePreferred) => {
+      if (demand.physical <= 1 && demand.integration > 0 && fitsController(controllers.pxc5Integration, demand)) {
+        return { ...controllers.pxc5Integration, quantity: 1, licenseRequired: demand.integration > controllers.pxc5Integration.baseIntegration, reason: 'עיקר הדרישה הוא אינטגרציה ולא I/O פיזי. PXC5.E003 מיועד לריכוז מערכות ויכול לגדול באמצעות רישוי אינטגרציה.' };
+      }
+      const candidates = [controllers.pxc4, controllers.pxc5, controllers.pxc7s, controllers.pxc7m, controllers.pxc7l];
+      const selected = candidates.find((controller) => fitsController(controller, demand));
+      if (selected) {
+        const result = { ...selected, quantity: 1, licenseRequired: false };
+        if (selected === controllers.pxc4 && securePreferred) {
+          result.model = selected.secureModel;
+          result.slug = selected.secureSlug;
+        }
+        result.reason = selected === controllers.pxc4
+          ? 'היקף הנקודות והאינטגרציה מתאים לבקר קומפקטי, תוך ניצול נקודות I/O מובנות והרחבת TX-I/O לפי הצורך.'
+          : selected === controllers.pxc5
+            ? 'הפרויקט מתאים לבקר PXC5.E24 עם 24 נקודות מובנות, שתי רשתות RS485 ויכולת הרחבה בינונית.'
+            : selected === controllers.pxc7s
+              ? 'כמות הנקודות דורשת בקר PXC7, אך עדיין מתאימה לגרסת S ולרשת RS485 אחת.'
+              : selected === controllers.pxc7m
+                ? 'היקף הנקודות והתקשורת מתאים לגרסת PXC7.E400M עם שתי רשתות RS485 וקיבולת בינונית-גדולה.'
+                : 'הפרויקט דורש את קיבולת PXC7.E400L, עם עד ארבע רשתות RS485 ומרחב גדול לנקודות פיזיות ואינטגרציה.';
+        return result;
+      }
+
+      const quantity = Math.max(
+        1,
+        Math.ceil(demand.physical / controllers.pxc7l.physical),
+        Math.ceil(demand.combined / controllers.pxc7l.combined),
+        Math.ceil(demand.serial / controllers.pxc7l.serial),
+        Math.ceil(demand.mstp / controllers.pxc7l.mstp),
+        Math.ceil(demand.sc / controllers.pxc7l.sc),
+        Math.ceil(demand.knx / controllers.pxc7l.knx),
+      );
+      return {
+        ...controllers.pxc7l,
+        quantity,
+        licenseRequired: false,
+        multiController: true,
+        reason: `היקף הפרויקט חורג מקיבולת בקר יחיד. נדרשת חלוקה ראשונית לכ-${quantity} בקרי PXC7.E400L או לארכיטקטורה רב-בקרית אחרת לאחר חלוקה למערכות ולוחות.`,
+      };
+    };
+
+    const allocateOnboard = (controller, reserved) => {
+      const remaining = { ...reserved };
+      const onboard = Object.fromEntries(Object.keys(reserved).map((key) => [key, 0]));
+      const take = (key, capacity) => {
+        const amount = Math.min(remaining[key] || 0, Math.max(0, capacity));
+        remaining[key] -= amount;
+        onboard[key] += amount;
+        return capacity - amount;
+      };
+
+      if (controller.model.startsWith('PXC4.')) {
+        take('relay', 4);
+        let universal = 12;
+        universal = take('ao', universal);
+        universal = take('ai', universal);
+        take('di', universal);
+      } else if (controller.model === 'PXC5.E24') {
+        take('relay', 6);
+        take('di', 2);
+        let xio = 8;
+        xio = take('aiCurrent', xio);
+        xio = take('ao', xio);
+        xio = take('ai', xio);
+        take('di', xio);
+        let uio = 8;
+        uio = take('ao', uio);
+        uio = take('ai', uio);
+        take('di', uio);
+      } else {
+        take('di', 1);
+      }
+      return { onboard, remaining };
+    };
+
+    const planDiModules = (count) => {
+      if (count <= 0) return { d16: 0, d8: 0, capacity: 0 };
+      let d16 = Math.floor(count / 16);
+      const remainder = count % 16;
+      let d8 = 0;
+      if (remainder > 8) d16 += 1;
+      else if (remainder > 0) d8 = 1;
+      return { d16, d8, capacity: d16 * 16 + d8 * 8 };
+    };
+
+    const optimizeDigitalRelay = (di, relay, localOperation) => {
+      let best = null;
+      const maxCombined = localOperation ? 0 : Math.min(Math.ceil(di / 4), Math.ceil(relay / 3));
+      for (let combined = 0; combined <= maxCombined; combined += 1) {
+        const remainingDi = Math.max(0, di - combined * 4);
+        const remainingRelay = Math.max(0, relay - combined * 3);
+        const diPlan = planDiModules(remainingDi);
+        const relayModules = Math.ceil(remainingRelay / 6);
+        const totalModules = combined + diPlan.d16 + diPlan.d8 + relayModules;
+        const capacity = combined * 7 + diPlan.capacity + relayModules * 6;
+        const waste = capacity - (di + relay);
+        const candidate = { combined, remainingDi, remainingRelay, ...diPlan, relayModules, totalModules, waste };
+        if (!best || candidate.totalModules < best.totalModules || (candidate.totalModules === best.totalModules && candidate.waste < best.waste)) best = candidate;
+      }
+      return best || { combined: 0, d16: 0, d8: 0, relayModules: 0, totalModules: 0, waste: 0 };
+    };
+
+    const buildBom = (controller, allocation, state) => {
+      const rows = [];
+      const add = (model, quantity, purpose, slug, status = 'מומלץ') => {
+        if (quantity === 0) return;
+        rows.push({ model, quantity, purpose, slug, status });
+      };
+
+      add(controller.model, controller.quantity, controller.name, controller.slug, controller.multiController ? 'חלוקה הנדסית' : 'מומלץ');
+      if (controller.licenseRequired) add('רישוי אינטגרציה PXC5', 'לפי מדרגה', 'הרחבה מעבר ל-500 נקודות אינטגרציה', '', 'לאימות');
+
+      const remaining = allocation.remaining;
+      const local = state.localOperation;
+      const combinedPlan = optimizeDigitalRelay(remaining.di, remaining.relay, local);
+      add('TXM1.4D3R', combinedPlan.combined, '4 כניסות דיגיטליות ו-3 יציאות ממסר בכל מודול', 'txm1-4d3r');
+      add('TXM1.16D', combinedPlan.d16, '16 כניסות דיגיטליות בכל מודול', 'txm1-16d');
+      add('TXM1.8D', combinedPlan.d8, '8 כניסות דיגיטליות בכל מודול', 'txm1-8d');
+      add(local ? 'TXM1.6R-M' : 'TXM1.6R', combinedPlan.relayModules, local ? '6 יציאות ממסר עם תפעול מקומי' : '6 יציאות ממסר', local ? 'txm1-6r-m' : 'txm1-6r');
+
+      const standardAnalog = remaining.ai + remaining.ao;
+      add(local ? 'TXM1.8U-ML' : 'TXM1.8U', Math.ceil(standardAnalog / 8), `${remaining.ai} AI/UI ו-${remaining.ao} AO לחלוקה סופית`, local ? 'txm1-8u-ml' : 'txm1-8u');
+      add(local ? 'TXM1.8X-ML' : 'TXM1.8X', Math.ceil(remaining.aiCurrent / 8), 'כניסות 4-20mA ויישומי XIO', local ? 'txm1-8x-ml' : 'txm1-8x');
+      add('TXM1.8P', Math.ceil(remaining.pt100 / 8), '8 מדידות Pt100 בכל מודול', 'txm1-8p');
+      add('TXM1.8T', Math.ceil(remaining.triac / 8), '8 יציאות Triac בכל מודול', 'txm1-8t');
+
+      const hmi = hmiMap[state.hmiChoice];
+      if (hmi) add(hmi.model, 1, hmi.label, hmi.slug);
+
+      const externalModuleCount = rows
+        .filter((row) => String(row.model).startsWith('TXM1.'))
+        .reduce((sum, row) => sum + Number(row.quantity || 0), 0);
+
+      if (externalModuleCount > 0) {
+        add('TXS1.12F10 / TXS1.EF10', 'לאימות', 'אספקת כוח וחיבור Bus לפי צריכת המודולים ומבנה האי', '', 'חישוב הספק');
+      }
+      if (externalModuleCount > 12) {
+        add('TXA1.IBE', 'לאימות', 'הארכת Island Bus או חלוקת מסילות, לפי מבנה הלוח', 'txa1-ibe', 'תכנון לוח');
+      }
+      return { rows, externalModuleCount };
+    };
+
+    const buildWarnings = (state, controller, demand, allocation, bomInfo) => {
+      const warnings = [
+        'זוהי קונפיגורציה ראשונית. יש לאמת כל נקודה מול רשימת I/O, סוג האות, מתח העבודה וציוד השדה.',
+        'יש לבצע חישוב הספק מלא למודולי TX-I/O, לאספקת 24V ולציוד השדה לפני הפקת רשימת הזמנה.',
+        'כמות נקודות האינטגרציה אינה מספיקה לבדה. יש לבדוק גם כמות אובייקטי BACnet, רישיונות, קצב תקשורת ומיפוי רגיסטרים.',
+      ];
+      if (controller.multiController) warnings.unshift('נדרשת חלוקה הנדסית למספר בקרים, לוחות או מערכות. הכמות המוצגת היא אומדן קיבולת בלבד.');
+      if (controller.licenseRequired) warnings.push('PXC5.E003 כולל קיבולת בסיסית של עד 500 נקודות אינטגרציה. מעבר לכך נדרש רישוי מתאים עד לתקרת המוצר.');
+      if (state.points.aiCurrent > 0) warnings.push('כניסות 4-20mA הוקצו למודולי Super Universal. יש לבדוק סוג חיבור, הזנת לולאה ובידוד.');
+      if (state.points.triac > 0) warnings.push('יציאות Triac מחייבות בדיקת מתח הזנה, זרם המפעילים ותאימות לבקר ולמודול ההספק.');
+      if (state.points.pt100 > 0) warnings.push('החישוב מתייחס ל-Pt100 בארבעה חוטים. חיישני התנגדות אחרים עשויים להתאים למודול שונה.');
+      if (state.localOperation && allocation.remaining.di > 0) warnings.push('למודולי DI אין גרסת ML. תפעול מקומי מלא לכל נקודה אינו אפשרי באותה צורה כמו במודולי U, X ו-R.');
+      if (bomInfo.externalModuleCount > 0) warnings.push(`הקונפיגורציה כוללת ${bomInfo.externalModuleCount} מודולי TX-I/O חיצוניים. יש לבדוק רצף מסילות, כתובות, Island Bus ורזרבה פיזית בלוח.`);
+      if (demand.serial > 0) warnings.push(`הוגדרו ${demand.serial} רשתות RS485. יש להפריד בין BACnet MS/TP, Modbus RTU ו-M-Bus לפי ארכיטקטורת הפרויקט.`);
+      if (demand.knx > 64 * controller.quantity) warnings.push('כמות התקני KNX PL-Link חורגת מהקיבולת המחושבת ודורשת חלוקה נוספת.');
+      if (state.projectType === 'hotel') warnings.push('במלון יש לבדוק בנפרד אם נדרשים בקרי חדר DXR2, אינטגרציה ל-PMS ותרחישי תפוסה ושבת.');
+      if (state.notes) warnings.push(`הערת הפרויקט: ${state.notes}`);
+      return warnings;
+    };
+
+    const renderResult = (result) => {
+      el('result-empty')?.classList.add('hidden');
+      el('result-content')?.classList.remove('hidden');
+      el('result-status').textContent = result.controller.multiController ? 'נדרשת חלוקה' : 'תכנון ראשוני מוכן';
+      el('result-status').className = `rounded-full px-4 py-2 text-sm font-bold ${result.controller.multiController ? 'bg-amber-400/20 text-amber-100' : 'bg-accent-500/20 text-accent-100'}`;
+      el('controller-model').textContent = result.controller.model;
+      el('controller-name').textContent = result.controller.name;
+      el('controller-quantity').textContent = `כמות: ${result.controller.quantity}`;
+      el('controller-reason').textContent = result.controller.reason;
+      el('controller-link').href = `/siemens-ddc/${result.controller.slug}/`;
+      el('architecture-controller').textContent = result.controller.quantity > 1 ? `${result.controller.quantity} × ${result.controller.model}` : result.controller.model;
+      el('architecture-hmi').textContent = hmiMap[result.state.hmiChoice]?.label || 'ללא HMI בשלב זה';
+
+      const sourceTotal = totalPoints(result.state.points);
+      const reservedTotal = totalPoints(result.reserved);
+      el('point-total-badge').textContent = `${sourceTotal} מקור · ${reservedTotal} עם רזרבה`;
+      el('point-summary-body').innerHTML = Object.entries(pointFields).map(([key, field]) => {
+        const source = result.state.points[key];
+        const reserved = result.reserved[key];
+        const onboard = result.allocation.onboard[key];
+        const external = result.allocation.remaining[key];
+        return `<tr><td class="p-3 font-bold text-brand-900" dir="ltr">${field.label}</td><td class="p-3 text-center">${source}</td><td class="p-3 text-center font-bold">${reserved}</td><td class="p-3 text-center text-accent-700 font-bold">${onboard}</td><td class="p-3 text-center">${external}</td></tr>`;
+      }).join('');
+
+      el('bom-count').textContent = `${result.bom.rows.length} שורות`;
+      el('bom-body').innerHTML = result.bom.rows.map((row) => {
+        const model = row.slug ? `<a class="font-extrabold text-accent-700 hover:underline" href="/siemens-ddc/${row.slug}/" dir="ltr">${row.model}</a>` : `<span class="font-extrabold text-brand-900" dir="ltr">${row.model}</span>`;
+        const statusClass = row.status === 'מומלץ' ? 'bg-accent-500/10 text-accent-800' : 'bg-amber-100 text-amber-800';
+        return `<tr><td class="p-3">${model}</td><td class="p-3 text-center font-bold">${row.quantity}</td><td class="p-3 leading-6 text-brand-600">${row.purpose}</td><td class="p-3 text-center"><span class="rounded-full px-2.5 py-1 text-xs font-bold ${statusClass}">${row.status}</span></td></tr>`;
+      }).join('');
+
+      el('warning-list').innerHTML = result.warnings.map((warning) => `<li class="flex gap-3"><span class="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-amber-100 font-bold text-amber-800">!</span><span>${warning}</span></li>`).join('');
+      updateLeadMessage(result);
+    };
+
+    const createTextSummary = (result) => {
+      const lines = [
+        'קונפיגורציית Siemens Desigo BMS, תכנון ראשוני',
+        `פרויקט: ${result.state.projectName || 'ללא שם'}`,
+        `סוג: ${el('project-type')?.selectedOptions?.[0]?.textContent || result.state.projectType}`,
+        `רזרבה: ${result.state.reserve}%`,
+        `בקר: ${result.controller.quantity} × ${result.controller.model}`,
+        `I/O מקור: ${totalPoints(result.state.points)}`,
+        `I/O עם רזרבה: ${totalPoints(result.reserved)}`,
+        `נקודות אינטגרציה: ${result.state.integrationPoints}`,
+        `רשתות RS485: ${result.state.serialNetworks}`,
+        '',
+        'רשימת ציוד:',
+        ...result.bom.rows.map((row) => `- ${row.quantity} × ${row.model}: ${row.purpose} [${row.status}]`),
+        '',
+        'הערות:',
+        ...result.warnings.map((warning) => `- ${warning}`),
+        '',
+        'i-feel | 03-508-9553 | www.i-feel.co.il',
+      ];
+      return lines.join('\n');
+    };
+
+    const updateLeadMessage = (result) => {
+      const target = el('lead-message');
+      if (target) target.value = createTextSummary(result);
+    };
+
+    const calculate = () => {
+      const state = readState();
+      const reserved = reservePoints(state.points, state.reserve);
+      const physical = totalPoints(reserved);
+      const demand = {
+        physical,
+        integration: state.integrationPoints,
+        combined: physical + state.integrationPoints,
+        serial: state.serialNetworks,
+        mstp: state.mstpDevices,
+        sc: state.scNodes,
+        knx: state.knxDevices,
+      };
+
+      if (physical === 0 && state.integrationPoints === 0) {
+        el('result-empty')?.classList.remove('hidden');
+        el('result-content')?.classList.add('hidden');
+        el('result-status').textContent = 'ממתין לנתונים';
+        lastResult = null;
+        return;
+      }
+
+      const controller = chooseController(demand, state.securePreferred);
+      const allocation = allocateOnboard(controller, reserved);
+      const bom = buildBom(controller, allocation, state);
+      const warnings = buildWarnings(state, controller, demand, allocation, bom);
+      lastResult = { state, reserved, demand, controller, allocation, bom, warnings };
+      renderResult(lastResult);
+      saveState();
+    };
+
+    const applyTemplate = () => {
+      const key = el('template-select')?.value;
+      const template = templates[key];
+      if (!template) return;
+      Object.entries(pointFields).forEach(([pointKey, field]) => setNumber(field.id, template[pointKey] || 0));
+      setNumber('integration-points', template.integration || 0);
+      setNumber('serial-networks', template.serial || 0);
+      calculate();
+    };
+
+    const clearAll = () => {
+      if (!window.confirm('לנקות את כל נתוני הקונפיגורטור?')) return;
+      localStorage.removeItem(STORAGE_KEY);
+      document.querySelectorAll('#bms-input-column input[type="number"]').forEach((input) => { input.value = '0'; });
+      if (el('project-name')) el('project-name').value = '';
+      if (el('project-notes')) el('project-notes').value = '';
+      if (el('reserve-percent')) el('reserve-percent').value = '15';
+      if (el('serial-networks')) el('serial-networks').value = '0';
+      if (el('hmi-choice')) el('hmi-choice').value = 'none';
+      if (el('local-operation')) el('local-operation').checked = false;
+      if (el('secure-preferred')) el('secure-preferred').checked = false;
+      calculate();
+    };
+
+    const exportCsv = () => {
+      if (!lastResult) return;
+      const rows = [
+        ['Project', lastResult.state.projectName || ''],
+        ['Controller', lastResult.controller.model],
+        ['Reserve', `${lastResult.state.reserve}%`],
+        [],
+        ['Model', 'Quantity', 'Purpose', 'Status'],
+        ...lastResult.bom.rows.map((row) => [row.model, row.quantity, row.purpose, row.status]),
+        [],
+        ['Point type', 'Source', 'With reserve', 'Onboard', 'External'],
+        ...Object.entries(pointFields).map(([key, field]) => [field.label, lastResult.state.points[key], lastResult.reserved[key], lastResult.allocation.onboard[key], lastResult.allocation.remaining[key]]),
+      ];
+      const csv = '\uFEFF' + rows.map((row) => row.map(escapeCsv).join(',')).join('\r\n');
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      const safeName = (lastResult.state.projectName || 'siemens-bms-configuration').replace(/[^a-zA-Z0-9א-ת_-]+/g, '-');
+      link.href = url;
+      link.download = `${safeName}.csv`;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      URL.revokeObjectURL(url);
+    };
+
+    const copyResult = async () => {
+      if (!lastResult) return;
+      try {
+        await navigator.clipboard.writeText(createTextSummary(lastResult));
+        const button = el('copy-result');
+        const original = button.textContent;
+        button.textContent = 'הועתק';
+        window.setTimeout(() => { button.textContent = original; }, 1200);
+      } catch (_) {
+        window.alert('לא ניתן להעתיק אוטומטית. ניתן להשתמש בהדפסה או בייצוא CSV.');
+      }
+    };
+
+    const parseCsvImport = async (file) => {
+      const message = el('csv-message');
+      try {
+        const text = (await file.text()).replace(/^\uFEFF/, '');
+        const lines = text.split(/\r?\n/).map((line) => line.trim()).filter(Boolean);
+        const mapping = {
+          DI: 'point-di', DIGITAL_INPUT: 'point-di', 'כניסה דיגיטלית': 'point-di',
+          AI: 'point-ai', UI: 'point-ai', ANALOG_INPUT: 'point-ai', 'כניסה אנלוגית': 'point-ai',
+          AI_4_20: 'point-ai-current', '4-20MA': 'point-ai-current', CURRENT_AI: 'point-ai-current',
+          AO: 'point-ao', ANALOG_OUTPUT: 'point-ao', 'יציאה אנלוגית': 'point-ao',
+          DO: 'point-relay', RELAY: 'point-relay', DIGITAL_OUTPUT: 'point-relay', 'יציאת ממסר': 'point-relay',
+          TRIAC: 'point-triac', PT100: 'point-pt100',
+        };
+        let imported = 0;
+        lines.forEach((line, index) => {
+          const delimiter = line.includes(';') ? ';' : line.includes('\t') ? '\t' : ',';
+          const cells = line.split(delimiter).map((cell) => cell.trim().replace(/^"|"$/g, ''));
+          if (index === 0 && /type|סוג/i.test(cells[0] || '')) return;
+          const type = String(cells[0] || '').toUpperCase().replace(/\s+/g, '_');
+          const quantity = Math.max(0, Math.floor(Number(cells[1] || 0)));
+          const targetId = mapping[type] || mapping[String(cells[0] || '').trim()];
+          if (targetId && Number.isFinite(quantity)) {
+            setNumber(targetId, numberValue(targetId) + quantity);
+            imported += 1;
+          }
+        });
+        if (message) {
+          message.textContent = imported > 0 ? `יובאו ${imported} שורות מהקובץ. יש לבדוק את הכמויות לפני החישוב.` : 'לא נמצאו שורות מזוהות. יש להשתמש בסוגים DI, AI, AI_4_20, AO, DO, TRIAC או PT100.';
+          message.classList.remove('hidden');
+        }
+        calculate();
+      } catch (_) {
+        if (message) {
+          message.textContent = 'קריאת הקובץ נכשלה. יש לשמור אותו כ-CSV ולנסות שוב.';
+          message.classList.remove('hidden');
+        }
+      }
+    };
+
+    el('calculate-bms')?.addEventListener('click', calculate);
+    el('apply-template')?.addEventListener('click', applyTemplate);
+    el('clear-bms')?.addEventListener('click', clearAll);
+    el('print-result')?.addEventListener('click', () => window.print());
+    el('export-csv')?.addEventListener('click', exportCsv);
+    el('copy-result')?.addEventListener('click', copyResult);
+    el('csv-import')?.addEventListener('change', (event) => {
+      const file = event.target.files?.[0];
+      if (file) parseCsvImport(file);
+      event.target.value = '';
+    });
+    el('bms-lead-form')?.addEventListener('submit', () => {
+      if (!lastResult) calculate();
+      if (lastResult) updateLeadMessage(lastResult);
+    });
+
+    document.querySelectorAll('#bms-input-column input, #bms-input-column select, #bms-input-column textarea').forEach((input) => {
+      input.addEventListener('change', saveState);
+    });
+
+    restoreState();
+    const query = new URLSearchParams(window.location.search);
+    if (query.get('sent') === '1') {
+      const form = el('bms-lead-form');
+      if (form) form.innerHTML = '<div class="rounded-xl border border-accent-200 bg-accent-50 p-7 text-center"><h3 class="text-2xl font-extrabold text-brand-900 mb-2">התצורה נשלחה בהצלחה</h3><p class="text-brand-700">צוות i-feel יקבל את רשימת הציוד וההערות ויחזור אליכם לאחר בדיקה.</p></div>';
+    }
+    calculate();
+  })();
+</script>
