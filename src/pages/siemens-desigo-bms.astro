@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import SiemensDdcCta from '../components/SiemensDdcCta.astro';
 import content from '../page-html/siemens-desigo-bms.html?raw';
 
 const meta = {
@@ -50,5 +51,6 @@ const meta = {
 ---
 <BaseLayout {...meta}>
   <Fragment set:html={content} />
+  <SiemensDdcCta />
 </BaseLayout>
 
