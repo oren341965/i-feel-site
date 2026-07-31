@@ -1,0 +1,196 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+const canonical = 'https://i-feel.co.il/articles/siemens-n532d51-knx-8-switch-output/';
+const title = 'Siemens N 532D51: בקר KNX עם 8 יציאות 10AX | i-feel';
+const description = 'הכירו את Siemens N 532D51, בקר מיתוג KNX עם 8 יציאות ממסר פוטנציאל חופשי, דירוג 10AX, התאמה לעומסי C ופונקציות ETS מתקדמות.';
+const productImage = 'https://mall.industry.siemens.com/mall/collaterals/files/198/jpg/04/80/P_I201_XX_08405i.jpg';
+const dataSheetUrl = 'https://sid.siemens.com/v/u/A6V11252209';
+const jsonLd = JSON.stringify({
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  headline: 'Siemens N 532D51: בקר KNX עם 8 יציאות מיתוג 10AX',
+  description,
+  datePublished: '2026-07-31',
+  dateModified: '2026-07-31',
+  inLanguage: 'he-IL',
+  mainEntityOfPage: canonical,
+  image: productImage,
+  author: { '@type': 'Organization', name: 'i-feel', url: 'https://i-feel.co.il/' },
+  publisher: { '@type': 'Organization', name: 'i-feel', url: 'https://i-feel.co.il/' },
+});
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  canonical={canonical}
+  ogTitle={title}
+  ogDescription={description}
+  ogUrl={canonical}
+  ogImage={productImage}
+  jsonLd={jsonLd}
+>
+  <article class="bg-white" dir="rtl">
+    <header class="bg-brand-900 text-white py-16 md:py-20">
+      <div class="max-w-5xl mx-auto px-4">
+        <a href="/articles/" class="text-accent-400 font-semibold hover:text-accent-300">מאמרים</a>
+        <p class="mt-4 text-sm text-brand-200">Siemens GAMMA / KNX · עודכן 31.07.2026</p>
+        <h1 class="mt-4 text-4xl md:text-5xl font-extrabold leading-tight">
+          Siemens N 532D51: בקר KNX עם 8 יציאות מיתוג 10AX
+        </h1>
+        <p class="mt-5 max-w-4xl text-lg md:text-xl text-brand-100 leading-relaxed">
+          שמונה יציאות ממסר עצמאיות ופוטנציאל חופשי, התאמה לעומסי תאורה בעלי זרמי התנעה גבוהים, תפעול מכני מקומי ומגוון רחב של פונקציות ב-ETS.
+        </p>
+      </div>
+    </header>
+
+    <div class="max-w-5xl mx-auto px-4 py-12">
+      <section class="grid lg:grid-cols-[1.05fr_0.95fr] gap-8 items-center mb-12">
+        <div class="rounded-2xl border border-brand-100 bg-white p-5 shadow-sm">
+          <img
+            src={productImage}
+            alt="בקר מיתוג Siemens N 532D51 עם 8 יציאות למערכת KNX"
+            width="1200"
+            height="800"
+            loading="eager"
+            class="w-full h-auto object-contain"
+            referrerpolicy="no-referrer"
+          />
+        </div>
+        <div>
+          <p class="text-accent-700 font-bold text-lg mb-3">מידע עבור הלקוח</p>
+          <h2 class="text-3xl font-extrabold text-brand-900 leading-tight mb-5">8 יציאות לתאורה ולעומסים, בבקר קומפקטי אחד</h2>
+          <p class="text-lg text-brand-700 leading-relaxed mb-5">
+            Siemens N 532D51 הוא בקר מיתוג KNX המיועד לניהול שמונה מעגלי תאורה, שקעים ועומסים מתאימים. כל ערוץ כולל ממסר פוטנציאל חופשי וניתן לתכנות בנפרד, כך שאפשר להתאים את פעולת כל מעגל לצרכים המדויקים של הפרויקט.
+          </p>
+          <a href={dataSheetUrl} target="_blank" rel="noopener noreferrer" class="inline-flex items-center justify-center rounded-lg bg-accent-600 px-5 py-3 font-bold text-white transition hover:bg-accent-700">
+            פתיחת ה-Datasheet הרשמי של Siemens
+          </a>
+        </div>
+      </section>
+
+      <section class="grid grid-cols-2 md:grid-cols-5 gap-3 mb-14" aria-label="נתונים מרכזיים">
+        <div class="rounded-xl border border-brand-100 bg-brand-50 p-4 text-center"><div class="text-3xl font-extrabold text-accent-700">8</div><div class="mt-2 text-sm font-semibold">יציאות ממסר</div></div>
+        <div class="rounded-xl border border-brand-100 bg-brand-50 p-4 text-center"><div class="text-3xl font-extrabold text-accent-700">10AX</div><div class="mt-2 text-sm font-semibold">דירוג מיתוג</div></div>
+        <div class="rounded-xl border border-brand-100 bg-brand-50 p-4 text-center"><div class="text-3xl font-extrabold text-accent-700">230V</div><div class="mt-2 text-sm font-semibold">מתח מיתוג</div></div>
+        <div class="rounded-xl border border-brand-100 bg-brand-50 p-4 text-center"><div class="text-3xl font-extrabold text-accent-700">8</div><div class="mt-2 text-sm font-semibold">מודולים בלוח</div></div>
+        <div class="rounded-xl border border-brand-100 bg-brand-50 p-4 text-center"><div class="text-3xl font-extrabold text-accent-700">140µF</div><div class="mt-2 text-sm font-semibold">עומס קיבולי מרבי</div></div>
+      </section>
+
+      <div class="prose-he max-w-none">
+        <section>
+          <h2>שמונה יציאות עצמאיות ופוטנציאל חופשי</h2>
+          <p>
+            הבקר כולל שמונה ממסרים דו יציבים, וכל יציאה יכולה למתג קבוצה חשמלית עצמאית. המבנה הפוטנציאל חופשי מאפשר למתכנן לבחור את ההזנה המתאימה לכל מעגל, בכפוף לתכנון החשמל, להגנות ולמגבלות היצרן.
+          </p>
+          <p>
+            הוא מתאים לעומסים התנגדותיים, השראתיים וקיבוליים, לרבות מעגלי תאורה עם ספקי כוח אלקטרוניים. דירוג 10AX נועד גם להתמודדות טובה יותר עם עומסי תאורה בעלי זרמי התנעה גבוהים, אך בכל פרויקט יש לבדוק את נתוני גוף התאורה או ספק הכוח בפועל.
+          </p>
+        </section>
+
+        <section>
+          <h2>מתאים לעומסי C ולמערכות תאורה מודרניות</h2>
+          <p>
+            משפחת N 532 מיועדת ל-10AX ומאפשרת עומס קיבולי של עד 140µF בהתאם לנתוני Siemens. הנתון חשוב במיוחד בפרויקטים שבהם מותקנים דרייברים, ספקי כוח וגופי LED רבים, מאחר שהזרם ברגע ההפעלה עשוי להיות גבוה משמעותית מהצריכה הרגילה.
+          </p>
+          <p>
+            הנתון 10AX אינו מחליף חישוב עומסים. יש להתאים לכל ערוץ את מספר הגופים, זרם ההתנעה, אמצעי ההגנה, החיווט ותנאי ההתקנה.
+          </p>
+        </section>
+
+        <section>
+          <h2>תפעול מכני מקומי ובדיקת המעגלים</h2>
+          <p>
+            לכל יציאה קיים מחוון מכני המציג את מצב הממסר, וניתן לשנות את מצב המגע באמצעות כלי מתאים. האפשרות הזו מסייעת לחשמלאי לבדוק את חיבורי המעגלים בזמן ההתקנה או במקרה חירום.
+          </p>
+          <p>
+            חשוב לדעת שהפעלה מכנית של המחוון מיועדת לבדיקה או לחירום בלבד. היא אינה שולחת הודעה לקו ה-KNX, והבקר אינו רושם את השינוי שבוצע ידנית.
+          </p>
+        </section>
+
+        <section>
+          <h2>פונקציות מתקדמות ב-ETS</h2>
+          <p>כל אחת משמונה היציאות ניתנת להגדרה בנפרד וכוללת אפשרויות שימושיות למערכת חכמה:</p>
+          <ul>
+            <li>הפעלה וכיבוי עם משוב מצב.</li>
+            <li>פעולות לוגיות ושליטה מרכזית.</li>
+            <li>השהיית הפעלה, השהיית כיבוי ומצב לילה.</li>
+            <li>התראה לפני כיבוי אוטומטי.</li>
+            <li>עד שמונה סצנות לכל יציאה.</li>
+            <li>עד שבע פונקציות Override לכל ערוץ.</li>
+            <li>ספירת מחזורי מיתוג ושעות עבודה עם ערכי סף.</li>
+            <li>הגדרת התנהגות לאחר נפילת מתח וחזרת מתח KNX.</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>ללא ספק כוח עזר ועם חיבור נוח בלוח</h2>
+          <p>
+            האלקטרוניקה של הבקר מוזנת מקו ה-KNX, ולכן אין צורך בספק כוח עזר נוסף עבור הבקר. המסופים מאפשרים חיבור מוליכים בחתך 0.5 עד 2.5 ממ״ר וכן העברת הזנה מערוץ לערוץ, בהתאם לתכנון ולהוראות ההתקנה.
+          </p>
+        </section>
+
+        <aside class="my-8 rounded-xl border-r-4 border-accent-600 bg-accent-50 p-5 not-prose">
+          <h2 class="text-xl font-extrabold text-brand-900 mb-2">חשוב לדעת: זהו בקר מיתוג</h2>
+          <p class="m-0 text-brand-700 leading-relaxed">
+            Siemens N 532D51 מיועד להפעלה ולכיבוי של שמונה עומסים. הוא אינו כולל דימר ואינו מיועד להפעלה ישירה של מנועי תריס. לדימור או לשליטה בתריסים יש לבחור בקר ייעודי מתאים.
+          </p>
+        </aside>
+
+        <section>
+          <h2>היתרונות עבור הלקוח</h2>
+          <div class="not-prose grid md:grid-cols-2 lg:grid-cols-3 gap-4 my-6">
+            <div class="rounded-xl border border-brand-100 p-5"><h3 class="font-extrabold text-accent-700 mb-2">התאמה לתאורה מודרנית</h3><p class="m-0 text-brand-700">דירוג 10AX ותמיכה בעומסי C מסייעים בהתאמה לדרייברים ולספקי כוח נפוצים.</p></div>
+            <div class="rounded-xl border border-brand-100 p-5"><h3 class="font-extrabold text-accent-700 mb-2">שמונה מעגלים ביחידה אחת</h3><p class="m-0 text-brand-700">פתרון מסודר למעגלי תאורה ועומסים בלוח KNX.</p></div>
+            <div class="rounded-xl border border-brand-100 p-5"><h3 class="font-extrabold text-accent-700 mb-2">אבחון פשוט יותר</h3><p class="m-0 text-brand-700">מחוון מכני לכל יציאה מסייע לבדיקה מהירה של מצב הממסר והחיווט.</p></div>
+            <div class="rounded-xl border border-brand-100 p-5"><h3 class="font-extrabold text-accent-700 mb-2">אוטומציה מתקדמת</h3><p class="m-0 text-brand-700">סצנות, לוגיקה, זמנים, Override ומשוב מצב לכל ערוץ.</p></div>
+            <div class="rounded-xl border border-brand-100 p-5"><h3 class="font-extrabold text-accent-700 mb-2">חיסכון בציוד עזר</h3><p class="m-0 text-brand-700">הזנת האלקטרוניקה מקו ה-KNX ללא ספק כוח נוסף.</p></div>
+            <div class="rounded-xl border border-brand-100 p-5"><h3 class="font-extrabold text-accent-700 mb-2">מוצר Siemens פעיל</h3><p class="m-0 text-brand-700">חלק ממשפחת GAMMA KNX המיועדת למערכות מקצועיות.</p></div>
+          </div>
+        </section>
+
+        <section>
+          <h2>נתונים טכניים מרכזיים</h2>
+          <div class="not-prose overflow-hidden rounded-xl border border-brand-100 my-6">
+            <table class="w-full text-right">
+              <tbody class="divide-y divide-brand-100">
+                <tr><th class="bg-brand-50 p-4 font-bold text-brand-900 w-2/5">דגם</th><td class="p-4">Siemens N 532D51</td></tr>
+                <tr><th class="bg-brand-50 p-4 font-bold text-brand-900">מק״ט</th><td class="p-4">5WG1532-1DB51</td></tr>
+                <tr><th class="bg-brand-50 p-4 font-bold text-brand-900">מספר יציאות</th><td class="p-4">8 ממסרים דו יציבים ופוטנציאל חופשי</td></tr>
+                <tr><th class="bg-brand-50 p-4 font-bold text-brand-900">מתח מיתוג נקוב</th><td class="p-4">AC 230V, 50/60Hz</td></tr>
+                <tr><th class="bg-brand-50 p-4 font-bold text-brand-900">דירוג לכל ערוץ</th><td class="p-4">10A, עומס תאורה 10AX</td></tr>
+                <tr><th class="bg-brand-50 p-4 font-bold text-brand-900">הספק מרבי בעומס התנגדותי</th><td class="p-4">2,300W לכל ערוץ, בהתאם לתנאי היצרן</td></tr>
+                <tr><th class="bg-brand-50 p-4 font-bold text-brand-900">עומס קיבולי מרבי</th><td class="p-4">140µF</td></tr>
+                <tr><th class="bg-brand-50 p-4 font-bold text-brand-900">רוחב בלוח</th><td class="p-4">8 מודולים, 144 מ״מ</td></tr>
+                <tr><th class="bg-brand-50 p-4 font-bold text-brand-900">הזנת אלקטרוניקה</th><td class="p-4">מקו KNX, ללא ספק כוח עזר</td></tr>
+                <tr><th class="bg-brand-50 p-4 font-bold text-brand-900">דרגת הגנה</th><td class="p-4">IP20</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p class="text-sm text-brand-600">
+            הנתונים מתייחסים למסמכי Siemens. ההתאמה הסופית תלויה בסוג העומס, זרם ההתנעה, תנאי ההתקנה, החיווט, ההגנות והתקנים החלים בישראל.
+          </p>
+        </section>
+      </div>
+
+      <section class="mt-12 rounded-2xl bg-brand-50 border border-brand-100 p-6 md:p-8">
+        <h2 class="text-2xl font-extrabold text-brand-900 mb-4">בקרי Siemens KNX נוספים</h2>
+        <div class="grid md:grid-cols-3 gap-3">
+          <a href="/articles/siemens-n532d31-knx-4-switch-output/" class="rounded-lg bg-white border border-brand-100 p-4 font-bold text-brand-800 hover:border-accent-500">N 532D31, ארבע יציאות מיתוג 10AX</a>
+          <a href="/articles/siemens-n56722-knx-16-output/" class="rounded-lg bg-white border border-brand-100 p-4 font-bold text-brand-800 hover:border-accent-500">N 567/22, שש עשרה יציאות מיתוג</a>
+          <a href="/articles/siemens-n543d51-knx-8-blind-actuator/" class="rounded-lg bg-white border border-brand-100 p-4 font-bold text-brand-800 hover:border-accent-500">N 543D51, שמונה מנועי תריס AC</a>
+        </div>
+      </section>
+
+      <section class="mt-10 rounded-2xl bg-brand-900 text-white p-7 md:p-9">
+        <h2 class="text-3xl font-extrabold mb-3">צריכים להתאים בקר לרשימת המעגלים?</h2>
+        <p class="text-brand-100 text-lg mb-6">שלחו ל-i-feel את תכנית הלוח או רשימת התאורה והעומסים, וקבלו התאמת ציוד Siemens KNX לפרויקט.</p>
+        <div class="flex flex-wrap gap-3">
+          <a href="tel:0533006239" class="inline-flex items-center justify-center rounded-lg bg-accent-600 px-5 py-3 font-bold text-white hover:bg-accent-700">053-300-6239</a>
+          <a href="/catalogs/#siemens-knx-actuators" class="inline-flex items-center justify-center rounded-lg border border-white/30 px-5 py-3 font-bold text-white hover:bg-white/10">לכל דפי המוצר של Siemens</a>
+        </div>
+      </section>
+    </div>
+  </article>
+</BaseLayout>
