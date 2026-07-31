@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import SiemensDdcCta from '../../components/SiemensDdcCta.astro';
 const url = 'https://i-feel.co.il/answers/what-is-ddc/';
 const question = 'מה זה DDC?';
 const answer = 'DDC (Direct Digital Controller) הוא בקר דיגיטלי שהוא הליבה של מערכת בקרת מבנה (BMS). הבקר מקבל נתונים מחיישנים בכל המבנה, מפעיל את ציוד ה-HVAC, התאורה והמשאבות לפי לוגיקת בקרה מתוכנתת, ומדווח לשרת הניהול המרכזי. בפרויקטי BMS ה-DDC מתחבר לפי הצורך ל-KNX, BACnet, Modbus ו-Siemens Desigo.';
@@ -23,7 +24,9 @@ const meta = {
     <h1>{question}</h1>
     <div class="not-prose bg-brand-50 border-r-4 border-accent-500 rounded-lg p-6 my-6"><p class="text-lg leading-relaxed text-brand-800" style="margin:0"><strong>תשובה קצרה:</strong> {answer}</p></div>
     <h2>תפקיד ה-DDC במבנה</h2><p>בקר ה-DDC הוא המוח של <a href="/structure-control/">בקרת המבנה</a> — מקבל נתונים מחיישנים, מפעיל את ציוד ה-HVAC, התאורה והמשאבות לפי לוגיקה מתוכנתת, ומדווח לשרת הניהול. בפרויקטים שלנו ה-DDC משולב עם <a href="/siemens-desigo-bms/">Siemens Desigo</a>, KNX, <a href="/answers/what-is-bacnet/">BACnet</a> ו-Modbus.</p>
+    <h2>איך בוחרים בקר ומודולי I/O?</h2><p>הבחירה מתחילה בכמות ובסוג הנקודות: כניסות דיגיטליות, חיישנים אנלוגיים, יציאות 0-10V, ממסרים, Triac ו-Pt100. לאחר מכן בודקים אינטגרציות, רשתות RS485, רזרבה, אספקת כוח ורישוי. ניתן לעיין ב<a href="/siemens-ddc/">ספריית מוצרי Siemens DDC</a> או לבצע <a href="/bms-configurator/">קונפיגורציה ראשונית של מערכת BMS</a>.</p>
     <div class="not-prose bg-brand-50 rounded-lg p-5 my-8"><p class="font-bold text-brand-900 mb-2" style="margin:0">שאלות קשורות</p><ul class="space-y-1" style="margin:0"><li><a href="/answers/what-is-bms/" class="text-accent-600 font-semibold hover:underline">מה זה BMS?</a></li><li><a href="/answers/what-is-bacnet/" class="text-accent-600 font-semibold hover:underline">מה זה BACnet?</a></li></ul></div>
   </div></article>
+  <SiemensDdcCta compact={true} />
   <section class="bg-brand-900 text-white py-14"><div class="max-w-4xl mx-auto px-4 text-center"><h2 class="text-2xl md:text-3xl font-extrabold mb-4">מתכננים מערכת בקרת מבנה?</h2><div class="flex flex-wrap justify-center gap-3"><a href="tel:+972-3-508-9553" class="bg-accent-500 hover:bg-accent-600 text-white px-7 py-3 rounded-lg font-semibold">03-508-9553</a><a href="/structure-control/" class="bg-white/10 text-white px-7 py-3 rounded-lg font-semibold border border-white/30">בקרת מבנה BMS</a></div></div></section>
 </BaseLayout>
