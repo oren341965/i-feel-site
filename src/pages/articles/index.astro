@@ -5,13 +5,7 @@ import { articles } from '../../data/articles';
 const title = 'מאמרים ומדריכים | i-feel';
 const description = 'מדריכי i-feel לבית חכם, KNX, בקרת מבנה BMS, שדרוג בית קיים, יזמים, אדריכלים ושירות.';
 const canonical = 'https://i-feel.co.il/articles/';
-const siemensN56722Article = {
-  slug: 'siemens-n56722-knx-16-output',
-  title: 'Siemens N 567/22: בקר KNX עם 16 יציאות 10A',
-  description: '16 יציאות מיתוג, עד 10A לעומס התנגדותי, תפעול ידני, חיווי לכל ערוץ ופונקציות ETS מתקדמות.',
-  category: 'Siemens / KNX',
-  updated: '2026-07-31',
-};
+
 const siemensN56881Article = {
   slug: 'siemens-n56881-knx-24-output',
   title: 'Siemens N 568/81: בקר KNX רב תכליתי עם 24 יציאות',
@@ -19,7 +13,57 @@ const siemensN56881Article = {
   category: 'Siemens / KNX',
   updated: '2026-07-31',
 };
-const publicArticles = [siemensN56722Article, siemensN56881Article, ...articles.filter((article) => !article.hidden)];
+
+const siemensN56722Article = {
+  slug: 'siemens-n56722-knx-16-output',
+  title: 'Siemens N 567/22: בקר KNX עם 16 יציאות 10A',
+  description: '16 יציאות מיתוג, עד 10A לעומס התנגדותי, תפעול ידני, חיווי לכל ערוץ ופונקציות ETS מתקדמות.',
+  category: 'Siemens / KNX',
+  updated: '2026-07-31',
+};
+
+const siemensN532D51Article = {
+  slug: 'siemens-n532d51-knx-8-switch-output',
+  title: 'Siemens N 532D51: בקר KNX עם 8 יציאות 10AX',
+  description: '8 יציאות ממסר פוטנציאל חופשי, התאמה לעומסי C ולזרמי התנעה, תפעול מכני מקומי ופונקציות ETS מתקדמות.',
+  category: 'Siemens / KNX',
+  updated: '2026-07-31',
+};
+
+const siemensN532D31Article = {
+  slug: 'siemens-n532d31-knx-4-switch-output',
+  title: 'Siemens N 532D31: בקר KNX עם 4 יציאות 10AX',
+  description: '4 יציאות מיתוג פוטנציאל חופשי ברוחב קומפקטי, עם התאמה לעומסי C, סצנות, לוגיקה, זמנים ומשובי מצב.',
+  category: 'Siemens / KNX',
+  updated: '2026-07-31',
+};
+
+const siemensN543D51Article = {
+  slug: 'siemens-n543d51-knx-8-blind-actuator',
+  title: 'Siemens N 543D51: בקר KNX ל-8 תריסים AC',
+  description: 'בקר ייעודי ל-8 מנועי AC 230V, עם זיהוי מצבי קצה, קביעת זמן תנועה אוטומטית, מיקום מדויק ופונקציות בטיחות.',
+  category: 'Siemens / KNX',
+  updated: '2026-07-31',
+};
+
+const siemensN543D31Article = {
+  slug: 'siemens-n543d31-knx-4-blind-actuator',
+  title: 'Siemens N 543D31: בקר KNX ל-4 תריסים AC',
+  description: 'בקר קומפקטי ל-4 מנועי AC 230V, עם זיהוי מצבי קצה, זמן תנועה אוטומטי, שליטה ברפפות והגנות רוח וגשם.',
+  category: 'Siemens / KNX',
+  updated: '2026-07-31',
+};
+
+const publicArticles = [
+  siemensN56881Article,
+  siemensN56722Article,
+  siemensN532D51Article,
+  siemensN532D31Article,
+  siemensN543D51Article,
+  siemensN543D31Article,
+  ...articles.filter((article) => !article.hidden),
+];
+
 const jsonLd = JSON.stringify({
   '@context': 'https://schema.org',
   '@type': 'CollectionPage',
