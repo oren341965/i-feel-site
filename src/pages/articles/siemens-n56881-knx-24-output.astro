@@ -1,0 +1,212 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+const canonical = 'https://i-feel.co.il/articles/siemens-n56881-knx-24-output/';
+const title = 'Siemens N 568/81: בקר KNX רב תכליתי עם 24 יציאות | i-feel';
+const description = 'הכירו את Siemens N 568/81: בקר KNX עם 24 יציאות ממסר, עד 12 מנועי תריס AC, עד 2 מנועי DC, מאוורר תלת מהירויות ושסתומי חימום וקירור.';
+const productImage = 'https://sid.siemens.com/api/khub/documents/qLOkNs7ZkEMvk6cm8ADIOw/content';
+const jsonLd = JSON.stringify({
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  headline: 'Siemens N 568/81: בקר KNX רב תכליתי עם 24 יציאות',
+  description,
+  datePublished: '2026-07-31',
+  dateModified: '2026-07-31',
+  inLanguage: 'he-IL',
+  mainEntityOfPage: canonical,
+  image: productImage,
+  author: { '@type': 'Organization', name: 'i-feel', url: 'https://i-feel.co.il/' },
+  publisher: { '@type': 'Organization', name: 'i-feel', url: 'https://i-feel.co.il/' },
+});
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  canonical={canonical}
+  ogTitle={title}
+  ogDescription={description}
+  ogUrl={canonical}
+  ogImage={productImage}
+  jsonLd={jsonLd}
+>
+  <article class="bg-white" dir="rtl">
+    <header class="bg-brand-900 text-white py-14 md:py-18">
+      <div class="max-w-5xl mx-auto px-4">
+        <a href="/articles/" class="text-accent-400 font-semibold hover:text-accent-300">מאמרים</a>
+        <p class="mt-4 text-sm text-brand-200">Siemens GAMMA / KNX · עודכן 31.07.2026</p>
+        <h1 class="mt-4 text-4xl md:text-5xl font-extrabold leading-tight">
+          Siemens N 568/81: בקר KNX רב תכליתי עם 24 יציאות
+        </h1>
+        <p class="mt-5 max-w-4xl text-lg md:text-xl text-brand-100 leading-relaxed">
+          תאורה, תריסים, הצללות ופונקציות חדר בבקר אחד, עם עד 10A ליציאת מיתוג, בהתאם לסוג העומס ולהוראות היצרן.
+        </p>
+      </div>
+    </header>
+
+    <div class="max-w-5xl mx-auto px-4 py-12">
+      <section class="grid lg:grid-cols-[1.15fr_0.85fr] gap-8 items-center mb-12">
+        <div class="rounded-2xl border border-brand-100 bg-white p-5 shadow-sm">
+          <img
+            src={productImage}
+            alt="בקר Siemens N 568/81 עם 24 יציאות ממסר למערכת KNX"
+            width="1200"
+            height="700"
+            loading="eager"
+            class="w-full h-auto object-contain"
+            referrerpolicy="no-referrer"
+          />
+        </div>
+        <div>
+          <p class="text-accent-700 font-bold text-lg mb-3">דף מידע עבור הלקוח</p>
+          <h2 class="text-3xl font-extrabold text-brand-900 leading-tight mb-5">24 יציאות, בקר אחד, הרבה יותר אפשרויות</h2>
+          <p class="text-lg text-brand-700 leading-relaxed mb-5">
+            Siemens N 568/81 הוא בקר KNX רב תכליתי שמאפשר לתכנן באותה יחידה מעגלי מיתוג, מנועי תריס והצללה, מאוורר ושסתומי חימום וקירור. הגמישות הזו יכולה לצמצם את כמות היחידות בלוח, לפשט את התכנון ולהשאיר יותר אפשרויות להתאמות במהלך הפרויקט.
+          </p>
+          <button id="print-siemens-info" type="button" class="inline-flex items-center justify-center rounded-lg bg-accent-600 px-5 py-3 font-bold text-white transition hover:bg-accent-700">
+            הדפסת דף המידע עבור הלקוח
+          </button>
+        </div>
+      </section>
+
+      <section class="grid grid-cols-2 md:grid-cols-5 gap-3 mb-14" aria-label="נתונים מרכזיים">
+        <div class="rounded-xl border border-brand-100 bg-brand-50 p-4 text-center"><div class="text-3xl font-extrabold text-accent-700">24</div><div class="mt-2 text-sm font-semibold">יציאות ממסר</div></div>
+        <div class="rounded-xl border border-brand-100 bg-brand-50 p-4 text-center"><div class="text-3xl font-extrabold text-accent-700">12</div><div class="mt-2 text-sm font-semibold">עד 12 מנועי AC</div></div>
+        <div class="rounded-xl border border-brand-100 bg-brand-50 p-4 text-center"><div class="text-3xl font-extrabold text-accent-700">2</div><div class="mt-2 text-sm font-semibold">עד 2 מנועי DC</div></div>
+        <div class="rounded-xl border border-brand-100 bg-brand-50 p-4 text-center"><div class="text-3xl font-extrabold text-accent-700">3</div><div class="mt-2 text-sm font-semibold">מהירויות מאוורר</div></div>
+        <div class="rounded-xl border border-brand-100 bg-brand-50 p-4 text-center"><div class="text-3xl font-extrabold text-accent-700">10A</div><div class="mt-2 text-sm font-semibold">ליציאת מיתוג</div></div>
+      </section>
+
+      <div class="prose-he max-w-none">
+        <section>
+          <h2>24 יציאות למיתוג תאורה ועומסים</h2>
+          <p>
+            הבקר כולל 24 יציאות ממסר שניתן להגדיר כערוצי מיתוג עבור תאורה, שקעים ועומסים מתאימים. כל יציאה כוללת משוב מצב וניתנת להפעלה ידנית מחזית הבקר, כך שהחשמלאי או הטכנאי יכולים לבדוק את החיווט ואת העומס גם במהלך ההתקנה והשירות.
+          </p>
+          <p>
+            דירוג המיתוג הוא עד 10A ליציאה, אך הבחירה והחיבור בפועל חייבים להתאים לסוג העומס, לזרמי ההתנעה, להגנות בלוח ולהוראות Siemens.
+          </p>
+        </section>
+
+        <section>
+          <h2>עד 12 מנועי תריס AC או עד 2 מנועי DC</h2>
+          <p>
+            עבור תריסים והצללות במתח AC, כל מנוע משתמש בשתי יציאות ממסר, ולכן ניתן לנהל עד 12 מנועים. המערכת תומכת בעלייה, ירידה, עצירה, מיקום של 0 עד 100 אחוז, שלבי רפפה, תרחישים ופונקציות בטיחות.
+          </p>
+          <p>
+            בנוסף, ניתן לשלוט בעד שני מנועי תריס או הצללה DC. כל מנוע DC משתמש בארבע יציאות ממסר לצורך היפוך קוטביות. לפי מסמך היצרן, היישומים מיועדים לקבוצות היציאות 17 עד 20 ו-21 עד 24.
+          </p>
+        </section>
+
+        <aside class="my-8 rounded-xl border-r-4 border-accent-600 bg-accent-50 p-5 not-prose">
+          <h2 class="text-xl font-extrabold text-brand-900 mb-2">הבהרה חשובה: אין בבקר דימר תאורה מובנה</h2>
+          <p class="m-0 text-brand-700 leading-relaxed">
+            האפשרות לשלוט בעד שני מנועי DC אינה דימור לתאורה. היא מיועדת לתריסים או להצללות באמצעות היפוך קוטביות. גם פונקציית PWM מיועדת לבקרת שסתומי חימום וקירור, ולא לעמעום גופי תאורה.
+          </p>
+        </aside>
+
+        <section>
+          <h2>מאוורר תלת מהירויות ושסתומי חימום וקירור</h2>
+          <p>
+            הבקר יכול לנהל מאוורר חד פאזי בעל עד שלוש מהירויות, בהפעלה ידנית או אוטומטית ועם משוב על הדרגה הפעילה. בנוסף ניתן לשלוט בשסתומי חימום וקירור במערכות 2 או 4 צינורות, באמצעות ON/OFF, פיקוד PWM או פיקוד 3 נקודות.
+          </p>
+        </section>
+
+        <section>
+          <h2>פונקציות מתקדמות ב-ETS</h2>
+          <p>מעבר למיתוג בסיסי, מסד הנתונים של הבקר כולל מגוון רחב של אפשרויות תכנות:</p>
+          <ul>
+            <li>השהיית הפעלה וכיבוי, חדר מדרגות והבהוב.</li>
+            <li>סצנות, שליטה מרכזית, נעילות והפעלה כפויה.</li>
+            <li>פעולות לוגיות AND, OR ו-XOR.</li>
+            <li>משוב מצב וספירת שעות עבודה.</li>
+            <li>מיקום תריס ורפפה, זמני תנועה ושינוי כיוון.</li>
+            <li>התנהגות לאחר נפילת מתח KNX, חזרת מתח או הורדת תוכנה.</li>
+          </ul>
+          <p>
+            קיבולת ה-KNX של המוצר מגיעה לעד 532 אובייקטי תקשורת, 1,000 כתובות קבוצתיות ו-1,000 אסוציאציות.
+          </p>
+        </section>
+
+        <section>
+          <h2>מה היתרון עבור הלקוח?</h2>
+          <div class="not-prose grid md:grid-cols-2 lg:grid-cols-3 gap-4 my-6">
+            <div class="rounded-xl border border-brand-100 p-5"><h3 class="font-extrabold text-accent-700 mb-2">פחות יחידות בלוח</h3><p class="m-0 text-brand-700">24 יציאות בבקר אחד עשויות לצמצם את מספר היחידות הנדרשות.</p></div>
+            <div class="rounded-xl border border-brand-100 p-5"><h3 class="font-extrabold text-accent-700 mb-2">גמישות בתכנון</h3><p class="m-0 text-brand-700">ניתן לשלב מיתוג, תריסים ופונקציות חדר בהתאם לצורכי הפרויקט.</p></div>
+            <div class="rounded-xl border border-brand-100 p-5"><h3 class="font-extrabold text-accent-700 mb-2">שירות פשוט יותר</h3><p class="m-0 text-brand-700">לחצנים וחיווי בחזית מסייעים בבדיקות ובהפעלת העומסים.</p></div>
+            <div class="rounded-xl border border-brand-100 p-5"><h3 class="font-extrabold text-accent-700 mb-2">התאמה לשינויים</h3><p class="m-0 text-brand-700">מוצר רב תכליתי משאיר יותר אפשרויות כאשר חלוקת המעגלים משתנה.</p></div>
+            <div class="rounded-xl border border-brand-100 p-5"><h3 class="font-extrabold text-accent-700 mb-2">עלות לכל יציאה</h3><p class="m-0 text-brand-700">מספר יציאות גבוה מאפשר יחס מצוין בין מחיר, מקום בלוח ויכולות.</p></div>
+            <div class="rounded-xl border border-brand-100 p-5"><h3 class="font-extrabold text-accent-700 mb-2">מוצר Siemens</h3><p class="m-0 text-brand-700">פתרון מקצועי למערכות KNX בדירות, וילות, משרדים, מלונות ופרויקטים קבלניים.</p></div>
+          </div>
+        </section>
+
+        <section id="technical-data">
+          <h2>נתונים טכניים מרכזיים</h2>
+          <div class="not-prose overflow-x-auto my-6">
+            <table class="w-full border-collapse text-right">
+              <tbody>
+                <tr><th class="border border-brand-100 bg-brand-50 p-3 text-accent-800">דגם ומק״ט</th><td class="border border-brand-100 p-3">N 568/81, מק״ט 5WG1568-1AB81</td></tr>
+                <tr><th class="border border-brand-100 bg-brand-50 p-3 text-accent-800">מספר יציאות</th><td class="border border-brand-100 p-3">24 יציאות ממסר</td></tr>
+                <tr><th class="border border-brand-100 bg-brand-50 p-3 text-accent-800">מתח מיתוג</th><td class="border border-brand-100 p-3">AC 230V, 50/60Hz</td></tr>
+                <tr><th class="border border-brand-100 bg-brand-50 p-3 text-accent-800">זרם נקוב</th><td class="border border-brand-100 p-3">עד 10A, בהתאם לסוג העומס ולהוראות היצרן</td></tr>
+                <tr><th class="border border-brand-100 bg-brand-50 p-3 text-accent-800">מנועי הצללה</th><td class="border border-brand-100 p-3">עד 12 מנועי AC או עד 2 מנועי DC באמצעות היפוך קוטביות</td></tr>
+                <tr><th class="border border-brand-100 bg-brand-50 p-3 text-accent-800">תפעול מקומי</th><td class="border border-brand-100 p-3">לחצן וחיווי LED לכל ערוץ</td></tr>
+                <tr><th class="border border-brand-100 bg-brand-50 p-3 text-accent-800">הזנת אלקטרוניקה</th><td class="border border-brand-100 p-3">מקו KNX, ללא ספק כוח עזר נוסף</td></tr>
+                <tr><th class="border border-brand-100 bg-brand-50 p-3 text-accent-800">קיבולת KNX</th><td class="border border-brand-100 p-3">עד 532 אובייקטים, 1,000 כתובות קבוצתיות ו-1,000 אסוציאציות</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section>
+          <h2>מתאים במיוחד עבור</h2>
+          <p>
+            וילות ובתים פרטיים, דירות יוקרה, פרויקטים קבלניים, משרדים, בתי מלון ופרויקטים שבהם נדרשת גמישות גבוהה בחלוקת מעגלי התאורה, התריסים ופונקציות החדר.
+          </p>
+        </section>
+
+        <section class="not-prose mt-10 rounded-2xl bg-brand-900 p-7 text-white">
+          <h2 class="text-2xl md:text-3xl font-extrabold mb-3">קבלו חלוקת יציאות והצעת מחיר מותאמת עבור הלקוח</h2>
+          <p class="text-brand-100 text-lg leading-relaxed mb-5">
+            שלחו אלינו רשימת מעגלים או תכנית לוח. צוות i-feel יסייע בבדיקת החלוקה, התאמת הציוד ובניית מפרט לפרויקט.
+          </p>
+          <div class="flex flex-wrap gap-3">
+            <a href="/contactus/" class="inline-flex rounded-lg bg-accent-500 px-5 py-3 font-bold text-white hover:bg-accent-600">פנייה ל-i-feel</a>
+            <a href="/knx-smart-home/" class="inline-flex rounded-lg border border-white/40 px-5 py-3 font-bold text-white hover:border-accent-400 hover:text-accent-300">מידע על בית חכם KNX</a>
+          </div>
+        </section>
+
+        <p class="mt-8 text-sm text-brand-500">
+          מקור הנתונים הטכניים: Siemens, מסמך A6V14731160, מהדורה 10.07.2025. נתוני החיבור והעומס בפועל נקבעים לפי תכנון המערכת, סוג העומס והוראות היצרן.
+          <a href="https://sid.siemens.com/api/khub/documents/QHpaRe5AzLTfZHRTZ9gDqg/content" target="_blank" rel="noopener noreferrer" class="font-semibold text-accent-700 hover:text-accent-600">למסמך הרשמי של Siemens</a>.
+        </p>
+      </div>
+    </div>
+  </article>
+
+  <script is:inline>
+    document.getElementById('print-siemens-info')?.addEventListener('click', function () {
+      window.print();
+    });
+  </script>
+
+  <style is:global>
+    @media print {
+      header.sticky,
+      body > div:first-child,
+      #site-search-dialog,
+      footer,
+      #print-siemens-info {
+        display: none !important;
+      }
+      article {
+        color: #111 !important;
+      }
+      article header {
+        background: #073b49 !important;
+        print-color-adjust: exact;
+        -webkit-print-color-adjust: exact;
+      }
+    }
+  </style>
+</BaseLayout>
