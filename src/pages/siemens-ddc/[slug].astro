@@ -1,0 +1,253 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import {
+  ddcCategoryMeta,
+  getDdcProductBySlug,
+  siemensDdcProducts,
+  type SiemensDdcProduct,
+} from '../../data/siemens-ddc-products';
+
+export function getStaticPaths() {
+  return siemensDdcProducts.map((product) => ({
+    params: { slug: product.slug },
+    props: { product },
+  }));
+}
+
+const { product } = Astro.props as { product: SiemensDdcProduct };
+const canonical = `https://i-feel.co.il/siemens-ddc/${product.slug}/`;
+const title = `${product.model}: ${product.name} | Siemens Desigo DDC | i-feel`;
+const description = product.shortDescription;
+const categoryMeta = ddcCategoryMeta[product.category];
+const relatedProducts = (product.relatedSlugs || [])
+  .map((slug) => getDdcProductBySlug(slug))
+  .filter((item): item is SiemensDdcProduct => Boolean(item));
+
+const jsonLd = JSON.stringify({
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'Product',
+      '@id': `${canonical}#product`,
+      name: `${product.model} - ${product.name}`,
+      model: product.model,
+      description: product.shortDescription,
+      category: product.categoryLabel,
+      brand: { '@type': 'Brand', name: 'Siemens' },
+      manufacturer: { '@type': 'Organization', name: 'Siemens' },
+      sku: product.orderNumber || product.model,
+      url: canonical,
+      additionalProperty: product.specs.map((spec) => ({
+        '@type': 'PropertyValue',
+        name: spec.label,
+        value: spec.value,
+      })),
+    },
+    {
+      '@type': 'BreadcrumbList',
+      itemListElement: [
+        { '@type': 'ListItem', position: 1, name: 'דף הבית', item: 'https://i-feel.co.il/' },
+        { '@type': 'ListItem', position: 2, name: 'בקרת מבנה BMS', item: 'https://i-feel.co.il/structure-control/' },
+        { '@type': 'ListItem', position: 3, name: 'ציוד Siemens DDC', item: 'https://i-feel.co.il/siemens-ddc/' },
+        { '@type': 'ListItem', position: 4, name: product.model, item: canonical },
+      ],
+    },
+    {
+      '@type': 'TechArticle',
+      headline: `${product.model}: ${product.name}`,
+      description: product.shortDescription,
+      mainEntityOfPage: canonical,
+      inLanguage: 'he-IL',
+      datePublished: '2026-07-31',
+      dateModified: '2026-07-31',
+      author: { '@type': 'Organization', name: 'i-feel', url: 'https://i-feel.co.il/' },
+      publisher: { '@type': 'Organization', name: 'i-feel', url: 'https://i-feel.co.il/' },
+    },
+  ],
+});
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  canonical={canonical}
+  ogTitle={title}
+  ogDescription={description}
+  ogUrl={canonical}
+  ogImage="https://i-feel.co.il/assets/office-bms.jpeg"
+  jsonLd={jsonLd}
+>
+  <nav class="bg-brand-50 border-b border-brand-100" aria-label="פירורי לחם" dir="rtl">
+    <div class="max-w-7xl mx-auto px-4 py-3 text-sm">
+      <a href="/" class="text-brand-600 hover:text-accent-600">דף הבית</a>
+      <span class="mx-2 text-brand-400">›</span>
+      <a href="/structure-control/" class="text-brand-600 hover:text-accent-600">בקרת מבנה BMS</a>
+      <span class="mx-2 text-brand-400">›</span>
+      <a href="/siemens-ddc/" class="text-brand-600 hover:text-accent-600">ציוד Siemens DDC</a>
+      <span class="mx-2 text-brand-400">›</span>
+      <span class="text-brand-900 font-medium" dir="ltr">{product.model}</span>
+    </div>
+  </nav>
+
+  <main dir="rtl">
+    <header class="bg-brand-900 text-white py-16 lg:py-20 overflow-hidden">
+      <div class="max-w-7xl mx-auto px-4 relative">
+        <div class="absolute -left-16 -top-20 h-80 w-80 rounded-full bg-accent-500/10 blur-3xl" aria-hidden="true"></div>
+        <div class="relative grid lg:grid-cols-[1fr_0.9fr] gap-10 items-center">
+          <div>
+            <div class="flex flex-wrap items-center gap-2 mb-6">
+              <span class="rounded-full border border-white/20 bg-white/10 px-4 py-2 text-sm font-bold">Siemens Desigo</span>
+              <span class="rounded-full border border-accent-400/30 bg-accent-500/10 px-4 py-2 text-sm font-bold text-accent-200">{product.categoryLabel}</span>
+            </div>
+            <p class="text-accent-300 font-bold text-lg mb-3">{product.family}</p>
+            <h1 class="text-4xl md:text-5xl lg:text-6xl font-extrabold leading-tight mb-5" dir="ltr">{product.model}</h1>
+            <p class="text-2xl md:text-3xl font-bold text-white mb-5">{product.name}</p>
+            <p class="text-xl leading-9 text-brand-100 max-w-4xl">{product.shortDescription}</p>
+            <div class="flex flex-wrap gap-3 mt-8">
+              <a href={product.datasheetUrl} target="_blank" rel="noopener noreferrer" class="inline-flex items-center justify-center rounded-lg bg-accent-500 px-6 py-3.5 font-bold text-white shadow-lg transition hover:bg-accent-600">
+                Datasheet רשמי של Siemens
+              </a>
+              <a href="/bms-configurator/" class="inline-flex items-center justify-center rounded-lg border border-white/30 bg-white/10 px-6 py-3.5 font-bold text-white transition hover:bg-white/20">
+                הוספה לתכנון BMS
+              </a>
+            </div>
+          </div>
+
+          <div class="rounded-3xl border border-white/15 bg-white/10 p-6 md:p-8 backdrop-blur">
+            <div class="rounded-2xl bg-white p-7 text-brand-900 shadow-xl">
+              <div class="flex items-center justify-between gap-4 border-b border-brand-100 pb-5 mb-6">
+                <div>
+                  <p class="text-sm font-bold text-accent-700 mb-1">SIEMENS</p>
+                  <p class="font-extrabold text-xl">{product.family}</p>
+                </div>
+                <div class="flex h-16 min-w-20 items-center justify-center rounded-xl bg-brand-900 px-4 text-lg font-black tracking-wide text-white">{product.icon}</div>
+              </div>
+              <div class="rounded-xl bg-brand-50 p-5 mb-5">
+                <p class="text-sm font-bold text-brand-500 mb-1">דגם</p>
+                <p class="text-3xl font-extrabold text-brand-900" dir="ltr">{product.model}</p>
+              </div>
+              <dl class="grid gap-4 text-sm">
+                {product.orderNumber && (
+                  <div class="flex items-start justify-between gap-4 border-b border-brand-100 pb-3">
+                    <dt class="font-bold text-brand-600">מספר הזמנה</dt>
+                    <dd class="font-semibold text-brand-900" dir="ltr">{product.orderNumber}</dd>
+                  </div>
+                )}
+                <div class="flex items-start justify-between gap-4 border-b border-brand-100 pb-3">
+                  <dt class="font-bold text-brand-600">משפחה</dt>
+                  <dd class="font-semibold text-brand-900 text-left">{product.categoryLabel}</dd>
+                </div>
+                {product.documentNumber && (
+                  <div class="flex items-start justify-between gap-4">
+                    <dt class="font-bold text-brand-600">מסמך Siemens</dt>
+                    <dd class="font-semibold text-brand-900" dir="ltr">{product.documentNumber}</dd>
+                  </div>
+                )}
+              </dl>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <section class="bg-white py-12 lg:py-16">
+      <div class="max-w-7xl mx-auto px-4">
+        <div class="grid lg:grid-cols-[1.1fr_0.9fr] gap-10 items-start">
+          <article class="prose-he max-w-none">
+            <h2>מה המוצר עושה?</h2>
+            {product.description.map((paragraph) => <p>{paragraph}</p>)}
+
+            <h2>יתרונות מרכזיים</h2>
+            <div class="not-prose grid sm:grid-cols-2 gap-4 my-6">
+              {product.highlights.map((highlight, index) => (
+                <div class="rounded-xl border border-brand-100 bg-brand-50 p-5">
+                  <div class="flex h-9 w-9 items-center justify-center rounded-full bg-accent-500 text-sm font-extrabold text-white mb-3">{index + 1}</div>
+                  <p class="m-0 font-bold leading-7 text-brand-900">{highlight}</p>
+                </div>
+              ))}
+            </div>
+
+            <h2>יישומים מתאימים</h2>
+            <ul>
+              {product.applications.map((application) => <li>{application}</li>)}
+            </ul>
+
+            <h2>פרוטוקולים וממשקים</h2>
+            <div class="not-prose flex flex-wrap gap-3 my-6">
+              {product.protocols.map((protocol) => (
+                <span class="rounded-full border border-accent-500/30 bg-accent-500/10 px-4 py-2 font-bold text-accent-800">{protocol}</span>
+              ))}
+            </div>
+          </article>
+
+          <aside class="lg:sticky lg:top-24 space-y-6">
+            <section class="rounded-2xl border border-brand-100 bg-white shadow-sm overflow-hidden">
+              <div class="bg-brand-50 border-b border-brand-100 p-5">
+                <h2 class="text-2xl font-extrabold text-brand-900">נתונים טכניים מרכזיים</h2>
+              </div>
+              <dl class="divide-y divide-brand-100">
+                {product.specs.map((spec) => (
+                  <div class="grid grid-cols-[0.85fr_1.15fr] gap-4 p-5">
+                    <dt class="font-bold text-brand-600">{spec.label}</dt>
+                    <dd class="font-semibold leading-7 text-brand-900">{spec.value}</dd>
+                  </div>
+                ))}
+              </dl>
+            </section>
+
+            <section class="rounded-2xl border-r-4 border-accent-500 bg-accent-50 p-6">
+              <h2 class="text-xl font-extrabold text-brand-900 mb-3">נדרש תכנון הנדסי סופי</h2>
+              <p class="leading-7 text-brand-700 m-0">
+                בחירת המוצר תלויה בכמות הנקודות, סוגי האותות, רישוי, אספקת כוח, רשתות תקשורת, גרסת Desigo והדרישות המקומיות. המידע בדף מיועד לאפיון ראשוני ואינו מחליף בדיקת מהנדס או מתכנת Siemens.
+              </p>
+            </section>
+
+            <section class="rounded-2xl bg-brand-900 p-6 text-white">
+              <h2 class="text-2xl font-extrabold mb-3">צריכים התאמה לפרויקט?</h2>
+              <p class="text-brand-100 leading-7 mb-5">הזינו את רשימת הנקודות בקונפיגורטור או שלחו אלינו קובץ I/O לקבלת בדיקה ותצורה מסודרת.</p>
+              <div class="grid gap-3">
+                <a href="/bms-configurator/" class="rounded-lg bg-accent-500 px-5 py-3 text-center font-bold text-white hover:bg-accent-600">פתיחת קונפיגורטור BMS</a>
+                <a href="tel:+972-3-508-9553" class="rounded-lg border border-white/25 px-5 py-3 text-center font-bold text-white hover:bg-white/10">03-508-9553</a>
+              </div>
+            </section>
+          </aside>
+        </div>
+      </div>
+    </section>
+
+    {relatedProducts.length > 0 && (
+      <section class="bg-brand-50 py-12 lg:py-14 border-y border-brand-100">
+        <div class="max-w-7xl mx-auto px-4">
+          <div class="flex flex-wrap items-end justify-between gap-4 mb-7">
+            <div>
+              <p class="font-bold text-accent-700 mb-2">מוצרים משלימים</p>
+              <h2 class="text-3xl font-extrabold text-brand-900">מוצרים שכדאי לבדוק יחד</h2>
+            </div>
+            <a href="/siemens-ddc/" class="font-bold text-accent-700 hover:underline">לכל ספריית המוצרים</a>
+          </div>
+          <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
+            {relatedProducts.map((related) => (
+              <a href={`/siemens-ddc/${related.slug}/`} class="group rounded-2xl border border-brand-100 bg-white p-5 shadow-sm transition hover:-translate-y-1 hover:border-accent-400 hover:shadow-md">
+                <div class="flex h-11 min-w-14 w-fit items-center justify-center rounded-lg bg-brand-900 px-3 text-xs font-black text-white mb-4">{related.icon}</div>
+                <p class="text-sm font-bold text-accent-700 mb-2">{related.family}</p>
+                <h3 class="text-xl font-extrabold text-brand-900 mb-2 group-hover:text-accent-700" dir="ltr">{related.model}</h3>
+                <p class="text-sm leading-6 text-brand-600">{related.name}</p>
+              </a>
+            ))}
+          </div>
+        </div>
+      </section>
+    )}
+
+    <section class="bg-white py-12">
+      <div class="max-w-5xl mx-auto px-4 text-center">
+        <p class="text-brand-600 leading-7 mb-5">
+          מקור הנתונים: מסמכי Siemens הרשמיים המופיעים בקישור ה-Datasheet. יש לבדוק תמיד את גרסת המסמך, התאמת המוצר וזמינותו לפני הזמנה.
+        </p>
+        <a href="/siemens-ddc/" class="inline-flex items-center justify-center rounded-lg border border-brand-200 bg-white px-6 py-3 font-bold text-brand-800 transition hover:border-accent-500 hover:text-accent-700">
+          חזרה לספריית Siemens DDC
+        </a>
+      </div>
+    </section>
+  </main>
+</BaseLayout>
