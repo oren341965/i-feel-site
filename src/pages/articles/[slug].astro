@@ -10,6 +10,15 @@ export function getStaticPaths() {
 }
 
 const { article } = Astro.props;
+const linkedVideo = article.slug === 'smart-home-everything-works-together'
+  ? {
+      id: 'I28b9j8MZyg',
+      title: 'כך כל מערכות הבית החכם עובדות יחד',
+      description: 'הסרטון מציג כיצד מערכות הבית החכם של i-feel מתחברות ופועלות יחד בממשק אחד.',
+      uploadDate: '2026-01-21T00:26:06-08:00',
+    }
+  : undefined;
+const video = article.video ?? linkedVideo;
 const canonical = `https://i-feel.co.il/articles/${article.slug}/`;
 const title = `${article.title} | i-feel`;
 const ogImage = article.image ? `https://i-feel.co.il${article.image}` : undefined;
@@ -33,15 +42,15 @@ const articleSchema = {
     name: 'i-feel',
     url: 'https://i-feel.co.il/',
   },
-  ...(article.video ? {
+  ...(video ? {
     video: {
       '@type': 'VideoObject',
-      name: article.video.title,
-      description: article.video.description,
-      uploadDate: article.video.uploadDate,
-      thumbnailUrl: `https://i.ytimg.com/vi/${article.video.id}/hqdefault.jpg`,
-      contentUrl: `https://www.youtube.com/watch?v=${article.video.id}`,
-      embedUrl: `https://www.youtube-nocookie.com/embed/${article.video.id}`,
+      name: video.title,
+      description: video.description,
+      uploadDate: video.uploadDate,
+      thumbnailUrl: `https://i.ytimg.com/vi/${video.id}/hqdefault.jpg`,
+      contentUrl: `https://www.youtube.com/watch?v=${video.id}`,
+      embedUrl: `https://www.youtube-nocookie.com/embed/${video.id}`,
       inLanguage: 'he-IL',
     },
   } : {}),
@@ -76,16 +85,16 @@ const jsonLd = JSON.stringify(articleSchema);
     )}
 
     <div class="max-w-4xl mx-auto px-4 py-12">
-      {article.video && (
+      {video && (
         <section class="mb-12" aria-labelledby="article-video-title">
-          <h2 id="article-video-title" class="text-3xl font-bold text-brand-900 mb-4">{article.video.title}</h2>
-          <p class="text-lg leading-8 text-brand-700 mb-5">{article.video.description}</p>
+          <h2 id="article-video-title" class="text-3xl font-bold text-brand-900 mb-4">{video.title}</h2>
+          <p class="text-lg leading-8 text-brand-700 mb-5">{video.description}</p>
           <div class="relative w-full overflow-hidden rounded-2xl bg-brand-100 shadow-sm" style="aspect-ratio: 16 / 9;">
             <iframe
               class="absolute inset-0 h-full w-full"
               loading="lazy"
-              src={`https://www.youtube-nocookie.com/embed/${article.video.id}`}
-              title={article.video.title}
+              src={`https://www.youtube-nocookie.com/embed/${video.id}`}
+              title={video.title}
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
               allowfullscreen
             ></iframe>
