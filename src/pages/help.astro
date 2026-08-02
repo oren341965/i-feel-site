@@ -8,7 +8,7 @@ const meta = {
   description: "מרכז השירות של i-feel: פתרונות לתקלות נפוצות בבית חכם ובבקרת מבנה, מדריכים לפי מערכת, הדרכות וידאו ופתיחת קריאת שירות למוקד התמיכה.",
   canonical: "https://i-feel.co.il/help/",
   ogTitle: "מרכז שירות ותמיכה — בית חכם ובקרת מבנה | i-feel",
-  ogDescription: "תקלה, שאלה או שדרוג? נכוון אתכם לפתרון המהיר ביותר — לפי סוג המערכת שלכם.",
+  ogDescription: "תקלה, שאלה או שדרוג? נכוון אתכם לפתרון המהיר ביותר לפי סוג המערכת שלכם.",
   ogUrl: "https://i-feel.co.il/help/",
   ogImage: "https://i-feel.co.il/assets/og-cover.jpg",
   jsonLd: JSON.stringify({
@@ -42,16 +42,23 @@ const meta = {
         <p class="mt-1 text-sm leading-6 text-brand-700">האפליקציה אינה זמינה עוד בחנות Apple. ניתן להיכנס למערכת דרך הענן ולהוסיף קיצור למסך הבית.</p>
       </div>
       <a href="/touchwand-app/" class="shrink-0 rounded-lg bg-brand-900 px-5 py-2.5 text-center font-bold text-white transition hover:bg-brand-800">
-        להוראות הכניסה
+        להסבר ולכניסה למערכת
       </a>
     </div>
   </section>
   <Fragment set:html={content} />
   <FloatingCta
     label="פתיחת קריאת שירות"
-    href="https://www.superform.spot-nik.com/form/63cd83d84533621571484d9b"
-    external={true}
+    href="/service-request/"
+    external={false}
     event="service_request_start"
     params={{ source_page: '/help/', trigger: 'floating_cta' }}
   />
+  <script is:inline>
+    document.querySelectorAll('a[href*="63cd83d84533621571484d9b"]').forEach(function (link) {
+      link.setAttribute('href', '/service-request/');
+      link.removeAttribute('target');
+      link.removeAttribute('rel');
+    });
+  </script>
 </BaseLayout>
