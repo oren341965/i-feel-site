@@ -35,6 +35,17 @@ const meta = {
 };
 ---
 <BaseLayout {...meta}>
+  <section class="border-b border-amber-200 bg-amber-50" aria-label="עדכון ללקוחות TouchWand">
+    <div class="mx-auto flex max-w-6xl flex-col gap-3 px-4 py-4 sm:flex-row sm:items-center sm:justify-between">
+      <div>
+        <p class="font-extrabold text-brand-900">משתמשים ב-TouchWand באייפון?</p>
+        <p class="mt-1 text-sm leading-6 text-brand-700">האפליקציה אינה זמינה עוד בחנות Apple. ניתן להיכנס למערכת דרך הענן ולהוסיף קיצור למסך הבית.</p>
+      </div>
+      <a href="/touchwand-app/" class="shrink-0 rounded-lg bg-brand-900 px-5 py-2.5 text-center font-bold text-white transition hover:bg-brand-800">
+        להוראות הכניסה
+      </a>
+    </div>
+  </section>
   <Fragment set:html={content} />
   <FloatingCta
     label="פתיחת קריאת שירות"
