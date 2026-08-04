@@ -132,50 +132,97 @@
   </div>
 </section>
 
-<!-- 4. SELECTED PROJECTS — real photos only -->
-<section class="bg-brand-50 py-16 lg:py-24 border-y border-brand-100" aria-label="פרויקטים נבחרים">
+<!-- 4. SELECTED PROJECTS — architectural showcase, real photos only -->
+<section class="bg-brand-950 py-16 lg:py-24 text-white overflow-hidden" aria-label="פרויקטים נבחרים">
   <div class="max-w-6xl mx-auto px-4">
-    <h2 class="text-3xl md:text-4xl font-extrabold text-brand-900 mb-10">פרויקטים שאנחנו גאים בהם</h2>
-    <div class="grid sm:grid-cols-2 gap-6">
-
-      <a href="/smart-home-villa/" class="group relative rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition block min-h-[220px]">
-        <img src="/assets/projects/villa-caesarea.jpg" alt="וילה חכמה בקיסריה — מערכת KNX של i-feel" class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition duration-500" loading="lazy" />
-        <div class="absolute inset-0 bg-gradient-to-t from-brand-900/85 to-transparent"></div>
-        <div class="relative p-5 flex flex-col justify-end min-h-[220px]">
-          <span class="text-xs font-bold text-accent-500 mb-1">בית חכם</span>
-          <span class="text-xl font-extrabold text-white">וילה חכמה בקיסריה</span>
-        </div>
+    <div class="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-5 mb-10">
+      <div class="max-w-3xl">
+        <span class="inline-flex items-center gap-2 text-xs font-bold tracking-wider text-accent-500 mb-3">
+          <span class="w-8 h-px bg-accent-500" aria-hidden="true"></span>
+          פרויקטים נבחרים
+        </span>
+        <h2 class="text-3xl md:text-4xl lg:text-5xl font-extrabold leading-tight mb-3">פרויקטים אמיתיים. מערכות שעובדות לאורך שנים.</h2>
+        <p class="text-lg text-brand-200 leading-relaxed">מבתים פרטיים ועד קמפוסים, משרדים ופרויקטים יזמיים: תכנון, אינטגרציה ושירות תחת אחריות אחת.</p>
+      </div>
+      <a href="/projects/" class="hidden lg:inline-flex items-center gap-2 text-white font-bold hover:text-accent-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-500 rounded-lg px-2 py-1 transition">
+        לכל הפרויקטים
+        <span aria-hidden="true">←</span>
       </a>
-
-      <a href="/contractor-customer-care/projects/" class="group relative rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition block min-h-[220px]">
-        <img src="/assets/projects/metropolis-herzliya.jpg" alt="פרויקט מטרופוליס הרצליה — דירות חכמות לפרויקט יזמי" class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition duration-500" loading="lazy" />
-        <div class="absolute inset-0 bg-gradient-to-t from-brand-900/85 to-transparent"></div>
-        <div class="relative p-5 flex flex-col justify-end min-h-[220px]">
-          <span class="text-xs font-bold text-accent-500 mb-1">יזמים ודיירים</span>
-          <span class="text-xl font-extrabold text-white">מטרופוליס הרצליה</span>
-        </div>
-      </a>
-
-      <a href="/structure-control/caesarea-rail-campus/" class="group relative rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition block min-h-[220px]">
-        <img src="/assets/projects/kesariya-cle.jpg" alt="קמפוס הרכבת בקיסריה — בקרת מבנה BMS של i-feel" class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition duration-500" loading="lazy" />
-        <div class="absolute inset-0 bg-gradient-to-t from-brand-900/85 to-transparent"></div>
-        <div class="relative p-5 flex flex-col justify-end min-h-[220px]">
-          <span class="text-xs font-bold text-accent-500 mb-1">בקרת מבנה BMS</span>
-          <span class="text-xl font-extrabold text-white">קמפוס הרכבת, קיסריה</span>
-        </div>
-      </a>
-
-      <a href="/hadassah-knx-system/" class="group relative rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition block min-h-[220px] bg-brand-800">
-        <div class="relative p-5 flex flex-col justify-end min-h-[220px]">
-          <span class="text-xs font-bold text-accent-500 mb-1">בקרת מבנה BMS · מוסד רפואי</span>
-          <span class="text-xl font-extrabold text-white">מערכת KNX בהדסה נתיבות</span>
-          <span class="text-sm text-brand-200 mt-1">מקרה בוחן מפורט — בקרה במוסד רפואי פעיל</span>
-        </div>
-      </a>
-
     </div>
-    <div class="text-center mt-8">
-      <a href="/projects/" class="inline-block bg-brand-700 hover:bg-brand-800 text-white px-7 py-3.5 rounded-lg font-semibold transition">לכל הפרויקטים ←</a>
+
+    <div class="grid lg:grid-cols-12 gap-5">
+      <a href="/smart-home-villa/"
+         class="group relative lg:col-span-7 min-h-[340px] lg:min-h-[560px] rounded-3xl overflow-hidden border border-white/10 shadow-2xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-500 focus-visible:ring-offset-4 focus-visible:ring-offset-brand-950"
+         aria-label="וילה חכמה בקיסריה — מערכת KNX מלאה לבית פרטי">
+        <img src="/assets/projects/villa-caesarea.jpg" alt="וילה חכמה בקיסריה עם מערכת KNX של i-feel" width="1200" height="900" loading="lazy"
+             class="absolute inset-0 w-full h-full object-cover motion-safe:transition-transform motion-safe:duration-700 motion-safe:group-hover:scale-[1.03]" />
+        <div class="absolute inset-0 bg-gradient-to-t from-brand-950 via-brand-950/35 to-transparent" aria-hidden="true"></div>
+        <div class="relative min-h-[340px] lg:min-h-[560px] p-6 md:p-8 flex flex-col justify-end">
+          <div class="flex flex-wrap gap-2 mb-4">
+            <span class="bg-white/10 backdrop-blur-sm border border-white/20 rounded-full px-3 py-1 text-xs font-semibold">KNX</span>
+            <span class="bg-white/10 backdrop-blur-sm border border-white/20 rounded-full px-3 py-1 text-xs font-semibold">בית פרטי</span>
+            <span class="bg-white/10 backdrop-blur-sm border border-white/20 rounded-full px-3 py-1 text-xs font-semibold">אינטגרציה מלאה</span>
+          </div>
+          <span class="text-sm font-bold text-accent-400 mb-2">מגורים פרטיים · קיסריה</span>
+          <h3 class="text-2xl md:text-4xl font-extrabold mb-3">וילה חכמה בקיסריה</h3>
+          <p class="text-brand-100 text-base md:text-lg max-w-xl mb-5">מערכת KNX שמחברת תאורה, מיזוג, תריסים, אבטחה ואודיו לממשק אחד.</p>
+          <span class="inline-flex items-center gap-2 font-bold">
+            לצפייה בפרויקט
+            <span class="motion-safe:transition-transform motion-safe:group-hover:-translate-x-1" aria-hidden="true">←</span>
+          </span>
+        </div>
+      </a>
+
+      <div class="lg:col-span-5 grid gap-5">
+        <a href="/structure-control/caesarea-rail-campus/"
+           class="group relative min-h-[230px] rounded-3xl overflow-hidden border border-white/10 shadow-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-500 focus-visible:ring-offset-4 focus-visible:ring-offset-brand-950"
+           aria-label="קמפוס הרכבת בקיסריה — מערכת בקרת מבנה BMS">
+          <img src="/assets/projects/kesariya-cle.jpg" alt="קמפוס הרכבת בקיסריה עם מערכת בקרת מבנה BMS של i-feel" width="1000" height="650" loading="lazy"
+               class="absolute inset-0 w-full h-full object-cover motion-safe:transition-transform motion-safe:duration-700 motion-safe:group-hover:scale-[1.03]" />
+          <div class="absolute inset-0 bg-gradient-to-t from-brand-950 via-brand-950/50 to-brand-950/5" aria-hidden="true"></div>
+          <div class="relative min-h-[230px] p-6 flex flex-col justify-end">
+            <span class="text-xs font-bold text-accent-400 mb-2">BMS · קמפוס תחבורה</span>
+            <h3 class="text-2xl font-extrabold mb-2">קמפוס הרכבת, קיסריה</h3>
+            <p class="text-sm text-brand-100 mb-3">Siemens Desigo · KNX · DALI · HMI</p>
+            <span class="inline-flex items-center gap-2 text-sm font-bold">למקרה הבוחן <span class="motion-safe:transition-transform motion-safe:group-hover:-translate-x-1" aria-hidden="true">←</span></span>
+          </div>
+        </a>
+
+        <a href="/contractor-customer-care/projects/"
+           class="group relative min-h-[230px] rounded-3xl overflow-hidden border border-white/10 shadow-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-500 focus-visible:ring-offset-4 focus-visible:ring-offset-brand-950"
+           aria-label="מטרופוליס הרצליה — תשתית חכמה ושדרוגי דיירים">
+          <img src="/assets/projects/metropolis-herzliya.jpg" alt="פרויקט מטרופוליס הרצליה עם תשתית בית חכם של i-feel" width="1000" height="650" loading="lazy"
+               class="absolute inset-0 w-full h-full object-cover motion-safe:transition-transform motion-safe:duration-700 motion-safe:group-hover:scale-[1.03]" />
+          <div class="absolute inset-0 bg-gradient-to-t from-brand-950 via-brand-950/55 to-brand-950/5" aria-hidden="true"></div>
+          <div class="relative min-h-[230px] p-6 flex flex-col justify-end">
+            <span class="text-xs font-bold text-accent-400 mb-2">יזמים ודיירים · הרצליה</span>
+            <h3 class="text-2xl font-extrabold mb-2">מטרופוליס הרצליה</h3>
+            <p class="text-sm text-brand-100 mb-3">תשתית חכמה לפרויקט מגורים ומסלול שדרוג ברור לדיירים.</p>
+            <span class="inline-flex items-center gap-2 text-sm font-bold">לפרויקטי היזמים <span class="motion-safe:transition-transform motion-safe:group-hover:-translate-x-1" aria-hidden="true">←</span></span>
+          </div>
+        </a>
+
+        <a href="/smart-office/"
+           class="group relative min-h-[230px] rounded-3xl overflow-hidden border border-white/10 shadow-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-500 focus-visible:ring-offset-4 focus-visible:ring-offset-brand-950"
+           aria-label="משרד CountRite — משרד חכם במערכת שליטה אחת">
+          <img src="/projects/countrite-technologies/countrite-technologies-01.jpg" alt="משרד CountRite עם מערכת משרד חכם של i-feel" width="1000" height="650" loading="lazy"
+               class="absolute inset-0 w-full h-full object-cover motion-safe:transition-transform motion-safe:duration-700 motion-safe:group-hover:scale-[1.03]" />
+          <div class="absolute inset-0 bg-gradient-to-t from-brand-950 via-brand-950/55 to-brand-950/5" aria-hidden="true"></div>
+          <div class="relative min-h-[230px] p-6 flex flex-col justify-end">
+            <span class="text-xs font-bold text-accent-400 mb-2">משרד חכם · אינטגרציה עסקית</span>
+            <h3 class="text-2xl font-extrabold mb-2">משרדי CountRite</h3>
+            <p class="text-sm text-brand-100 mb-3">חשמל, תאורה, הצללה, מיזוג, אודיו ואבטחה במערכת אחת.</p>
+            <span class="inline-flex items-center gap-2 text-sm font-bold">למשרד החכם <span class="motion-safe:transition-transform motion-safe:group-hover:-translate-x-1" aria-hidden="true">←</span></span>
+          </div>
+        </a>
+      </div>
+    </div>
+
+    <div class="mt-8 lg:hidden">
+      <a href="/projects/" class="inline-flex w-full justify-center items-center gap-2 bg-white text-brand-950 px-7 py-3.5 rounded-xl font-bold hover:bg-brand-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-500 transition">
+        לכל הפרויקטים
+        <span aria-hidden="true">←</span>
+      </a>
     </div>
   </div>
 </section>
