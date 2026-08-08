@@ -1,6 +1,10 @@
+
 name: Validate and deploy site
 
 on:
+  pull_request:
+    branches:
+      - main
   push:
     branches:
       - main
@@ -104,6 +108,7 @@ jobs:
   deploy:
     name: Deploy production
     needs: validate
+    if: github.event_name != 'pull_request'
     runs-on:
       - self-hosted
       - windows
@@ -191,7 +196,7 @@ jobs:
 
   report:
     name: Report production deployment status
-    if: always()
+    if: always() && github.event_name != 'pull_request'
     needs:
       - validate
       - deploy
@@ -223,3 +228,4 @@ jobs:
               description: description.slice(0, 140),
               target_url: `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`,
             });
+
