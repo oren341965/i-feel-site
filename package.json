@@ -8,7 +8,10 @@
     "check:content-freshness": "node scripts/check-content-freshness.mjs",
     "check:build": "node scripts/validate-build.mjs",
     "build": "node scripts/check-content-freshness.mjs && astro build && node scripts/generate-og-images.mjs && node scripts/validate-build.mjs",
-    "preview": "astro preview"
+    "preview": "astro preview",
+    "youtube:auth": "node scripts/youtube-auth.mjs",
+    "youtube:verify": "node scripts/youtube-verify-channel.mjs",
+    "youtube:upload": "node scripts/youtube-upload.mjs"
   },
   "dependencies": {
     "@astrojs/tailwind": "^6.0.2",
