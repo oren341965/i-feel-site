@@ -46,16 +46,36 @@ description: "שרשרת מלאה של הוספת סרטון הדרכה/תמיכ
 
 הצג את הטקסט לאורן לאישור לפני העלאה.
 
-## שלב 2 — העלאה ל-YouTube  ⚠️ פרסום פומבי — דורש אישור מפורש
+## שלב 2 — העלאה ל-YouTube  ⚠️ פרסום/שינוי ב-YouTube דורש אישור מפורש
 
-**אין כרגע YouTube API מחובר.** לכן ברירת המחדל:
+YouTube Data API v3 מחובר דרך OAuth מקומי. הסקריפטים:
+- `npm run youtube:auth -- --credentials="PATH_TO_GOOGLE_OAUTH_JSON"` — אישור חד-פעמי ושמירת refresh token ב-`.youtube/token.json`.
+- `npm run youtube:verify -- --credentials="PATH_TO_GOOGLE_OAUTH_JSON"` — אימות שהחשבון המחובר הוא ערוץ `@ifeelsmarthome` לפני העלאה.
+- `npm run youtube:upload -- ... --confirm=yes` — העלאה בפועל. הסקריפט מסרב להעלות בלי `--confirm=yes`.
 
-- **מסלול ידני (ברירת מחדל):** אורן מעלה את הקובץ לערוץ עם הכותרת/התיאור/התגיות שהוכנו,
-  ומוסר ל-Claude את ה-`VIDEO_ID` (11 תווים מה-URL). זה השלב היחיד הידני — כל השאר אוטומטי.
-- **מסלול API (אם יחובר בעתיד):** YouTube Data API v3 עם OAuth של הערוץ. גם אז —
-  לא מעלים בלי אישור מפורש של אורן על הכותרת, התיאור והנראות (unlisted/public).
+לפני העלאה בפעם הראשונה במחשב חדש:
+1. ודא שקובץ ה-OAuth JSON נשמר מקומית בלבד ואינו בריפו.
+2. הרץ `youtube:auth` פעם אחת בחשבון Google שמנהל את `@ifeelsmarthome`.
+3. הרץ `youtube:verify`; אם הערוץ שונה — עצור ואל תעלה.
 
-אל תעלה, אל תפרסם ואל תשנה דבר ב-YouTube על דעת עצמך. פרסום = בלתי הפיך.
+העלאה לדוגמה אחרי שאורן אישר במפורש כותרת, תיאור ונראות:
+
+```powershell
+npm run youtube:upload -- `
+  --credentials="C:\secure\ifeel-youtube-oauth.json" `
+  --file="C:\videos\video.mp4" `
+  --title="כותרת מאושרת | i-feel" `
+  --description="תיאור מאושר" `
+  --tags="בית חכם,LED,ifeel,smarthome" `
+  --category=28 `
+  --privacy=private `
+  --confirm=yes
+```
+
+ברירת המחדל היא `private`. `unlisted` או `public` מותרים רק אם אורן אישר במפורש את מצב הנראות הזה.
+אחרי הצלחה הסקריפט מחזיר `VIDEO_ID` ו-URL. המשך לשלב 3 עם ה-ID שהתקבל.
+
+אם OAuth עדיין לא הושלם במחשב, אין להמציא שה-API עובד: אפשר להכין מטא-דאטה ולהמתין לאישור, או להשתמש במסלול ידני רק אם אורן מבקש במפורש.
 
 ## שלב 3 — הטמעה בדף הריכוז `/video/`
 
@@ -118,7 +138,8 @@ npm run build
 
 ## אל-תעשה
 
-- אל תעלה/תפרסם/תשנה ב-YouTube בלי אישור מפורש. אין API — העלאה ידנית ע"י אורן.
+- אל תעלה/תפרסם/תשנה ב-YouTube בלי אישור מפורש; הסקריפט דורש `--confirm=yes` כהגנת חובה.
+- אל תכניס Client Secret, OAuth JSON או refresh token ל-GitHub. `.youtube/` וקבצי OAuth מקומיים מוחרגים ב-`.gitignore`.
 - אל תשתמש ב-`youtube.com/embed` רגיל — תמיד `youtube-nocookie.com/embed` (פרטיות + קבוע באתר).
 - אל תוסיף כרטיס ב-/video/ בלי VideoObject תואם ב-video.astro — ולהפך. שניהם ביחד.
 - אל תשבור את מחרוזת ה-jsonLd המוברחת ב-video.astro (מרכאות `\"`, פסיקים בין אובייקטים).
