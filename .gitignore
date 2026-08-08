@@ -10,6 +10,9 @@ dist/
 .env
 .env.*
 !.env.example
+.youtube/
+*client_secret*.json
+*oauth*.json
 
 # logs
 npm-debug.log*
