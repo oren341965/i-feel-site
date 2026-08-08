@@ -1,3 +1,4 @@
+
 ---
 name: daily-seo-crawl
 description: "סקיל יומי שמקדם את i-feel.co.il למקום #1 בגוגל ישראל עבור 'בית חכם' (מסלול פרטי) ו-'בקרת מבנה' (מסלול BMS). בניגוד לסקיל SEO סטנדרטי — זה לא מנטר, זה *מקדם*: כל דוח יומי כולל ניתוח פער מול הדף שמחזיק את #1, והצעה למהלך ההתקפי השבועי. מפיק דוח עברית של 10-20 שורות עם: מיקומי North Star + המהלך ההתקפי הבא + משימות טכניות דחופות + אימות הפוסט היומי. השתמש בסקיל כאשר אורן כותב: 'סריקת SEO', 'בדיקת האתר', 'מה המצב עם SEO', 'איפה אנחנו בגוגל', 'איפה אנחנו ב-בית חכם', 'איפה אנחנו ב-בקרת מבנה', 'תבדוק את האתר', 'יש בעיות באתר', 'מה צריך לתקן באתר', 'למה אנחנו לא מדורגים', 'למה לא מוצאים אותנו בגוגל', 'תריץ אימות', 're-verify', 'בדוק שהתיקון עבד', 'ציון האתר', 'מה המתחרים עושים'. גם כשאורן מזכיר 'גוגל', 'דירוג', 'אינדוקס', 'sitemap', 'Core Web Vitals', 'CLS', 'LCP', או מדבר על Vitrea/SwitchBee/HiGoal בהקשר של i-feel. הפעלה אוטומטית ב-07:00 דרך Make.com. גם אם אורן לא אמר 'סקיל' — אם הוא רוצה לדעת איפה i-feel בגוגל או איך לטפס ל-#1, השתמש בסקיל הזה."
@@ -207,7 +208,8 @@ https://www.googleapis.com/pagespeedonline/v5/runPagespeed?url=https://i-feel.co
 ## תיקונים אוטומטיים
 
 > **האתר סטטי (Astro), לא WordPress.** אין WordPress MCP ואין Yoast. כל תיקון =
-> work branch חדש מה-`origin/main` → build → Draft PR → הסקיל `deploy-ifeel`.
+> ענף `work/seo-*` חדש מה-`origin/main` → commit → `seo-autopublish.mjs` (push+PR+auto-merge)
+> → deploy.yml פורס אוטומטית → אימות חי. ראה "פרסום אוטומטי בסוף ריצה".
 > אין עריכה ישירה של `main` ואין העלאת FTP ידנית.
 
 **רשאי לתקן ישירות** (ללא אישור נוסף, אחרי שהצעת ואורן אמר "תתקן"):
@@ -222,12 +224,39 @@ https://www.googleapis.com/pagespeedonline/v5/runPagespeed?url=https://i-feel.co
 - מחיקת תוכן
 - שינוי סוג schema
 
-## Post-fix propagation (אחרי תיקון)
-אם הוחל שינוי באתר:
-1. לפרסם Draft PR דרך `publish-work.ps1`, להמשיך לפי `deploy-ifeel`, ואז `verify-live`.
-2. Facebook OG debugger — אם שונו og: tags, הצג את הלינק: `https://developers.facebook.com/tools/debug/?q={url}`
-3. GSC — הצג: `https://search.google.com/search-console` → URL Inspection → Request Indexing
-4. אחרי 60 שניות — `web_fetch` עם cache-bust (`?cb={timestamp}`) כדי לאמת.
+## פרסום אוטומטי בסוף ריצה (auto-publish + verify) — ברירת מחדל מ-08/08/2026
+
+אם הוחל שינוי בקוד/תוכן האתר במהלך הריצה, סוגרים את הלולאה לבד — בלי לעצור לאישור,
+בגבולות התיקונים המותרים בלבד (meta / alt / sitemap / הרחבת FAQ schema קיים / קישורים פנימיים).
+
+הזרימה (רצה מסביבת ה-bash של הריצה, ללא PowerShell וללא FTP ידני):
+
+1. **ענף עבודה תקני**: ודא שאתה על ענף `work/seo-<slug>-<YYYY-MM-DD>` (חובה תבנית `work/seo-*` —
+   רק היא ממוזגת אוטומטית). אם התחלת על שם אחר — `git branch -m work/seo-...`.
+2. **commit** של השינוי עם הודעה תיאורית.
+3. **push + PR + auto-merge**:
+   ```
+   node scripts/deploy/seo-autopublish.mjs --title "SEO: <תיאור קצר>"
+   ```
+   הסקריפט קורא את `IFEEL_GH_TOKEN` מ-`.env.local`, דוחף את הענף, פותח PR מול main,
+   ומפעיל auto-merge (squash). הוא **לעולם לא דוחף ישירות ל-main** וממזג רק ענפי `work/seo-*`.
+4. **הדיפלוי אוטומטי**: ה-merge ל-main מפעיל את `.github/workflows/deploy.yml` →
+   job על ה-runner `ifeel-deploy` → build+טסטים → FTPS → verify-live פנימי.
+5. **אימות חיצוני שלך (חובה בסיום)**: המתן ~90 שניות למחזור ה-CI, ואז אמת שהאתר חי ותקין:
+   - `web_fetch https://i-feel.co.il/?cb={timestamp}` → צריך 200.
+   - אם שונה דף ספציפי — `web_fetch` אליו עם cache-bust, ובדוק שהשינוי בפועל באוויר.
+   - במצב מלא יותר — הרץ את הסקיל `verify-live`.
+   סכם בדוח: "✅ עלה לאוויר ואומת" או "🔴 העלאה נכשלה — {סיבה}".
+6. Facebook OG debugger — אם שונו og: tags, הצג: `https://developers.facebook.com/tools/debug/?q={url}`
+7. GSC — הצג: `https://search.google.com/search-console` → URL Inspection → Request Indexing.
+
+**נפילה בטוחה**: אם `seo-autopublish.mjs` נכשל (אין token / ה-runner אופליין / checks אדומים) —
+אל תמזג ידנית ואל תעלה FTP. השאר את ה-commit על ענף `work/seo-*`, דווח את הסיבה בדוח כפריט 🔴,
+ותן לאורן את קישור ה-PR לפעולה ידנית. אף פעם אל תמחק את הענף.
+
+**דרישות תשתית (אורן מגדיר פעם אחת)**: `.env.local` עם `IFEEL_GH_TOKEN` (fine-grained PAT, repo זה,
+Contents+Pull requests = RW); Allow auto-merge מופעל בריפו; branch protection ל-main עם required check
+`Validate site` (רץ על Pull Requests); ה-runner `ifeel-deploy` מקוון; סודות `IFEEL_FTP_*` קיימים.
 
 ## טריגרים ושיגור
 
@@ -259,6 +288,7 @@ https://www.googleapis.com/pagespeedonline/v5/runPagespeed?url=https://i-feel.co
 | `conversation_search` ללא תוצאות | ריצת bootstrap. ציין בתחתית: "בייסליין חדש — אין השוואה." |
 | Google Search Console MCP לא זמין | fallback ל-`web_search` כמתואר. ציין: "מיקומים משוערים." |
 | Monday MCP לא זמין | משימות 🔴 נרשמות ב-section נפרד בדוח תחת "לפתוח ידנית ב-Monday". |
+| `seo-autopublish.mjs` נכשל (token/runner/checks) | אל תמזג ואל תעלה ידנית. השאר commit על `work/seo-*`, דווח 🔴 עם קישור ה-PR. |
 
 ## מלכודות ידועות — לקרוא לפני שמכריזים על "חסם טכני"
 
@@ -309,3 +339,4 @@ https://www.googleapis.com/pagespeedonline/v5/runPagespeed?url=https://i-feel.co
 - לעדכן מילות הדגל אם משתנה מיקוד אסטרטגי
 - סף PSI (5 נקודות / 0.5 CLS) — ניתן לכוונון אם אורן רוצה רגישות שונה
 - אם המעבר ל-GSC API יצליח — לבטל את ה-web_search fallback במיקומי מילות מפתח
+
