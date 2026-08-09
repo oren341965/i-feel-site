@@ -1,0 +1,230 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+const canonical = 'https://i-feel.co.il/articles/siemens-n554d31-knx-4-channel-dimmer/';
+const title = 'Siemens N 554D31: דימר KNX עם 4 ערוצים עד 300VA | i-feel';
+const description = 'הכירו את Siemens N 554D31, דימר KNX אוניברסלי עם 4 ערוצים עד 300VA לערוץ או עד 1000VA בחיבור ערוצים, זיהוי עומס אוטומטי והגנות אלקטרוניות.';
+const productImage = 'https://mall.industry.siemens.com/mall/collaterals/files/198/jpg/07/01/P_I201_XX_08336i.jpg';
+const dataSheetUrl = 'https://sid.siemens.com/v/u/A6V15749829';
+const industryMallUrl = 'https://mall.industry.siemens.com/mall/en/oeii/Catalog/Product?SiepCountryCode=OE&mlfb=5WG1554-1DB31';
+const jsonLd = JSON.stringify({
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'Article',
+      headline: 'Siemens N 554D31: דימר KNX אוניברסלי עם 4 ערוצים',
+      description,
+      datePublished: '2026-08-09',
+      dateModified: '2026-08-09',
+      inLanguage: 'he-IL',
+      mainEntityOfPage: canonical,
+      image: productImage,
+      author: { '@type': 'Organization', name: 'i-feel', url: 'https://i-feel.co.il/' },
+      publisher: { '@type': 'Organization', name: 'i-feel', url: 'https://i-feel.co.il/' },
+    },
+    {
+      '@type': 'Product',
+      name: 'Siemens N 554D31 KNX Universal Dimmer',
+      model: 'N 554D31',
+      sku: '5WG1554-1DB31',
+      image: productImage,
+      description,
+      brand: { '@type': 'Brand', name: 'Siemens' },
+      category: 'KNX universal dimmer actuator',
+    },
+    {
+      '@type': 'BreadcrumbList',
+      itemListElement: [
+        { '@type': 'ListItem', position: 1, name: 'דף הבית', item: 'https://i-feel.co.il/' },
+        { '@type': 'ListItem', position: 2, name: 'מאמרים', item: 'https://i-feel.co.il/articles/' },
+        { '@type': 'ListItem', position: 3, name: 'Siemens N 554D31', item: canonical },
+      ],
+    },
+  ],
+});
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  canonical={canonical}
+  ogTitle={title}
+  ogDescription={description}
+  ogUrl={canonical}
+  ogImage={productImage}
+  jsonLd={jsonLd}
+>
+  <article class="bg-white" dir="rtl">
+    <header class="bg-brand-900 text-white py-16 md:py-20">
+      <div class="max-w-5xl mx-auto px-4">
+        <a href="/articles/" class="text-accent-400 font-semibold hover:text-accent-300">מאמרים</a>
+        <p class="mt-4 text-sm text-brand-200">Siemens GAMMA / KNX · עודכן 09.08.2026</p>
+        <h1 class="mt-4 text-4xl md:text-5xl font-extrabold leading-tight">
+          Siemens N 554D31: דימר KNX אוניברסלי עם 4 ערוצים
+        </h1>
+        <p class="mt-5 max-w-4xl text-lg md:text-xl text-brand-100 leading-relaxed">
+          ארבע יציאות לעמעום עומסים תואמים, עד 300VA לכל ערוץ או עד 1000VA באמצעות חיבור ערוצים סמוכים, עם התאמה אוטומטית לשיטת הדימור והגנות אלקטרוניות לכל יציאה.
+        </p>
+      </div>
+    </header>
+
+    <div class="max-w-5xl mx-auto px-4 py-12">
+      <section class="grid lg:grid-cols-[1.05fr_0.95fr] gap-8 items-center mb-12">
+        <div class="rounded-2xl border border-brand-100 bg-white p-5 shadow-sm">
+          <img
+            src={productImage}
+            alt="דימר KNX אוניברסלי Siemens N 554D31 עם ארבעה ערוצים"
+            width="1200"
+            height="800"
+            loading="eager"
+            class="w-full h-auto object-contain"
+            referrerpolicy="no-referrer"
+          />
+        </div>
+        <div>
+          <p class="text-accent-700 font-bold text-lg mb-3">מידע עבור הלקוח</p>
+          <h2 class="text-3xl font-extrabold text-brand-900 leading-tight mb-5">ארבעה ערוצי דימור, עם אפשרות לרכז הספק גבוה יותר</h2>
+          <p class="text-lg text-brand-700 leading-relaxed mb-5">
+            Siemens N 554D31 הוא דימר KNX אוניברסלי למתח AC 230V. הוא מיועד להפעלה ולעמעום של עומסים התנגדותיים, השראתיים וקיבוליים התואמים לדימור פאזה, ומזהה באופן אוטומטי אם נדרשת שיטת Leading Edge או Trailing Edge לפי סוג העומס.
+          </p>
+          <div class="flex flex-wrap gap-3">
+            <a href={dataSheetUrl} target="_blank" rel="noopener noreferrer" class="inline-flex items-center justify-center rounded-lg bg-accent-600 px-5 py-3 font-bold text-white transition hover:bg-accent-700">
+              פתיחת המדריך הטכני של Siemens
+            </a>
+            <a href={industryMallUrl} target="_blank" rel="noopener noreferrer" class="inline-flex items-center justify-center rounded-lg border border-brand-200 bg-white px-5 py-3 font-bold text-brand-800 transition hover:border-accent-500 hover:text-accent-700">
+              עמוד המוצר הרשמי
+            </a>
+          </div>
+        </div>
+      </section>
+
+      <section class="grid grid-cols-2 md:grid-cols-5 gap-3 mb-14" aria-label="נתונים מרכזיים">
+        <div class="rounded-xl border border-brand-100 bg-brand-50 p-4 text-center"><div class="text-3xl font-extrabold text-accent-700">4</div><div class="mt-2 text-sm font-semibold">ערוצי דימור</div></div>
+        <div class="rounded-xl border border-brand-100 bg-brand-50 p-4 text-center"><div class="text-3xl font-extrabold text-accent-700">300VA</div><div class="mt-2 text-sm font-semibold">לכל ערוץ</div></div>
+        <div class="rounded-xl border border-brand-100 bg-brand-50 p-4 text-center"><div class="text-3xl font-extrabold text-accent-700">1000VA</div><div class="mt-2 text-sm font-semibold">בחיבור ערוצים</div></div>
+        <div class="rounded-xl border border-brand-100 bg-brand-50 p-4 text-center"><div class="text-3xl font-extrabold text-accent-700">230V</div><div class="mt-2 text-sm font-semibold">מתח עבודה</div></div>
+        <div class="rounded-xl border border-brand-100 bg-brand-50 p-4 text-center"><div class="text-3xl font-extrabold text-accent-700">8</div><div class="mt-2 text-sm font-semibold">מודולים בלוח</div></div>
+      </section>
+
+      <div class="prose-he max-w-none">
+        <section>
+          <h2>4 × 300VA או עד 1000VA בחיבור ערוצים סמוכים</h2>
+          <p>
+            בטמפרטורת סביבה של עד 45 מעלות צלזיוס, כל אחד מארבעת הערוצים מיועד להספק של עד 300VA. כאשר נדרש מעגל חזק יותר, ניתן לקבץ יציאות סמוכות בהתאם להוראות Siemens ולהגיע להספק כולל של עד 1000VA.
+          </p>
+          <p>
+            המשמעות היא שניתן להשתמש בבקר כארבעה מעגלי דימור עצמאיים, או לבנות חלוקה אחרת כאשר אחד המעגלים דורש הספק גבוה יותר. החלוקה הסופית חייבת להתאים לסוג העומס, לטמפרטורת הלוח, לחיווט ולהנחיות היצרן.
+          </p>
+        </section>
+
+        <section>
+          <h2>התאמה אוטומטית ל-Leading Edge או Trailing Edge</h2>
+          <p>
+            הבקר מזהה את אופי העומס ומתאים את שיטת הדימור. עומסים השראתיים משתמשים בדרך כלל בדימור Leading Edge, בעוד שעומסים קיבוליים משתמשים בדרך כלל ב-Trailing Edge. הבחירה האוטומטית מפשטת את התכנון ומפחיתה את הסיכון להגדרה שאינה מתאימה לעומס.
+          </p>
+          <p>
+            אין לחבר לאותו ערוץ שילוב של עומסים השראתיים וקיבוליים. יש לבדוק מראש שהגוף, הדרייבר או השנאי מאושרים לדימור פאזה ובאיזו שיטה הם תומכים.
+          </p>
+        </section>
+
+        <section>
+          <h2>ללא עומס מינימלי לכל יציאה</h2>
+          <p>
+            Siemens מציינת שאין דרישת עומס מינימלי לכל ערוץ. זהו יתרון בפרויקטים שבהם קיימים מעגלים קטנים או מספר מצומצם של גופי תאורה, אך עדיין נדרשת התאמה מלאה בין הדימר לבין מקור האור והדרייבר.
+          </p>
+          <p>
+            בגופי LED, ההספק הנומינלי אינו הנתון היחיד שקובע. יש לוודא תאימות לדימור פאזה, טווח עמעום תקין, היעדר הבהוב ועמידה בכמות הגופים המרבית שהיצרן מתיר על דימר אחד.
+          </p>
+        </section>
+
+        <section>
+          <h2>הגנות אלקטרוניות נפרדות לכל ערוץ</h2>
+          <p>
+            כל יציאה כוללת הגנה אלקטרונית מפני עומס יתר, קצר ועליית טמפרטורה. ההגנות מסייעות לשמור על הבקר ועל המעגל במקרה של מצב חריג, אך אינן מחליפות מאמ״ת, הגנות חשמליות ותכנון לוח לפי התקן.
+          </p>
+        </section>
+
+        <section>
+          <h2>תפעול ידני ישירות מהבקר</h2>
+          <p>
+            בחזית המוצר קיימים לחצנים להפעלה, כיבוי ועמעום, וכן להפעלת מצב Direct. כך ניתן לבדוק את המעגלים בזמן ההתקנה, לוודא שהעומסים מגיבים ולבצע אבחון ראשוני גם לפני השלמת כל תהליך התכנות.
+          </p>
+        </section>
+
+        <section>
+          <h2>מוזן מקו ה-KNX וחוסך ספק כוח עזר</h2>
+          <p>
+            האלקטרוניקה של הבקר מוזנת מקו ה-KNX. אין צורך בספק כוח עזר ייעודי להפעלת האלקטרוניקה, והיחידה מותקנת על מסילת DIN ברוחב של שמונה מודולים.
+          </p>
+          <p>
+            המסופים מיועדים למוליכים בחתך 0.5 עד 2.5 ממ״ר ומאפשרים חיבור והעברת הזנה בהתאם לתכנון הלוח ולהוראות ההתקנה.
+          </p>
+        </section>
+
+        <aside class="my-8 rounded-xl border-r-4 border-accent-600 bg-accent-50 p-5 not-prose">
+          <h2 class="text-xl font-extrabold text-brand-900 mb-2">חשוב לדעת: זהו דימר פאזה, לא DALI ולא 0-10V</h2>
+          <p class="m-0 text-brand-700 leading-relaxed">
+            N 554D31 מעמעם את מתח ה-AC באמצעות Leading Edge או Trailing Edge. הוא אינו בקר DALI ואינו מספק יציאת 0-10V. עבור גופי DALI או דרייברים עם כניסת 0-10V יש לבחור ממשק ייעודי מתאים.
+          </p>
+        </aside>
+
+        <section>
+          <h2>למי הבקר מתאים?</h2>
+          <div class="not-prose grid md:grid-cols-2 lg:grid-cols-3 gap-4 my-6">
+            <div class="rounded-xl border border-brand-100 p-5"><h3 class="font-extrabold text-accent-700 mb-2">וילות ודירות יוקרה</h3><p class="m-0 text-brand-700">עמעום תאורה בסלון, פינת אוכל, חדרי שינה ואזורים שבהם נדרשת אווירה משתנה.</p></div>
+            <div class="rounded-xl border border-brand-100 p-5"><h3 class="font-extrabold text-accent-700 mb-2">מסעדות ואירוח</h3><p class="m-0 text-brand-700">יצירת תרחישי תאורה והחלפת עוצמה לפי שעות הפעילות והשימוש בחלל.</p></div>
+            <div class="rounded-xl border border-brand-100 p-5"><h3 class="font-extrabold text-accent-700 mb-2">חדרי ישיבות</h3><p class="m-0 text-brand-700">התאמת התאורה לישיבה, מצגת, וידאו או ניקיון כחלק ממערכת KNX.</p></div>
+            <div class="rounded-xl border border-brand-100 p-5"><h3 class="font-extrabold text-accent-700 mb-2">עומסים שונים באותו לוח</h3><p class="m-0 text-brand-700">תמיכה בעומסים התנגדותיים, השראתיים וקיבוליים, כאשר כל עומס תואם לדימור.</p></div>
+            <div class="rounded-xl border border-brand-100 p-5"><h3 class="font-extrabold text-accent-700 mb-2">מעגל חזק במיוחד</h3><p class="m-0 text-brand-700">אפשרות לחבר ערוצים סמוכים ולהגיע עד 1000VA בהתאם להוראות Siemens.</p></div>
+            <div class="rounded-xl border border-brand-100 p-5"><h3 class="font-extrabold text-accent-700 mb-2">בדיקה נוחה מהלוח</h3><p class="m-0 text-brand-700">לחצנים מקומיים מאפשרים הפעלה ועמעום במהלך התקנה ושירות.</p></div>
+          </div>
+        </section>
+
+        <section>
+          <h2>נתונים טכניים מרכזיים</h2>
+          <div class="not-prose overflow-hidden rounded-xl border border-brand-100 my-6">
+            <table class="w-full text-right">
+              <tbody class="divide-y divide-brand-100">
+                <tr><th class="bg-brand-50 p-4 font-bold text-brand-900 w-2/5">דגם</th><td class="p-4">Siemens N 554D31</td></tr>
+                <tr><th class="bg-brand-50 p-4 font-bold text-brand-900">מק״ט</th><td class="p-4">5WG1554-1DB31</td></tr>
+                <tr><th class="bg-brand-50 p-4 font-bold text-brand-900">מספר יציאות</th><td class="p-4">4 ערוצי מיתוג ודימור</td></tr>
+                <tr><th class="bg-brand-50 p-4 font-bold text-brand-900">מתח עבודה</th><td class="p-4">AC 230V, 50/60Hz</td></tr>
+                <tr><th class="bg-brand-50 p-4 font-bold text-brand-900">הספק נקוב ב-45°C</th><td class="p-4">עד 300VA לכל יציאה</td></tr>
+                <tr><th class="bg-brand-50 p-4 font-bold text-brand-900">הספק בחיבור ערוצים</th><td class="p-4">עד 1000VA באמצעות קיבוץ יציאות סמוכות</td></tr>
+                <tr><th class="bg-brand-50 p-4 font-bold text-brand-900">עומס מינימלי</th><td class="p-4">ללא עומס מינימלי לכל יציאה</td></tr>
+                <tr><th class="bg-brand-50 p-4 font-bold text-brand-900">סוגי עומסים</th><td class="p-4">התנגדותיים, השראתיים וקיבוליים התואמים לדימור פאזה</td></tr>
+                <tr><th class="bg-brand-50 p-4 font-bold text-brand-900">שיטת דימור</th><td class="p-4">התאמה אוטומטית ל-Leading Edge או Trailing Edge</td></tr>
+                <tr><th class="bg-brand-50 p-4 font-bold text-brand-900">הגנות</th><td class="p-4">עומס יתר, קצר ועליית טמפרטורה בכל יציאה</td></tr>
+                <tr><th class="bg-brand-50 p-4 font-bold text-brand-900">תפעול מקומי</th><td class="p-4">לחצנים להפעלה, כיבוי, עמעום ומצב Direct</td></tr>
+                <tr><th class="bg-brand-50 p-4 font-bold text-brand-900">רוחב בלוח</th><td class="p-4">8 מודולים</td></tr>
+                <tr><th class="bg-brand-50 p-4 font-bold text-brand-900">חתך מוליכים</th><td class="p-4">0.5 עד 2.5 ממ״ר</td></tr>
+                <tr><th class="bg-brand-50 p-4 font-bold text-brand-900">הזנת האלקטרוניקה</th><td class="p-4">מקו KNX</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p class="text-sm text-brand-600">
+            התאמת העומסים וההספק בפועל תלויה בגוף התאורה, בדרייבר או בשנאי, בשיטת הדימור, בטמפרטורת הלוח, בחיווט ובהוראות Siemens. יש לבצע בדיקת תאימות לפני הזמנה והתקנה.
+          </p>
+        </section>
+      </div>
+
+      <section class="mt-12 rounded-2xl bg-brand-50 border border-brand-100 p-6 md:p-8">
+        <h2 class="text-2xl font-extrabold text-brand-900 mb-4">בקרי Siemens KNX נוספים</h2>
+        <div class="grid md:grid-cols-3 gap-3">
+          <a href="/articles/siemens-n532d31-knx-4-switch-output/" class="rounded-lg bg-white border border-brand-100 p-4 font-bold text-brand-800 hover:border-accent-500">N 532D31, ארבע יציאות מיתוג 10AX</a>
+          <a href="/articles/siemens-n532d51-knx-8-switch-output/" class="rounded-lg bg-white border border-brand-100 p-4 font-bold text-brand-800 hover:border-accent-500">N 532D51, שמונה יציאות מיתוג 10AX</a>
+          <a href="/articles/siemens-n56881-knx-24-output/" class="rounded-lg bg-white border border-brand-100 p-4 font-bold text-brand-800 hover:border-accent-500">N 568/81, בקר רב תכליתי עם 24 יציאות</a>
+        </div>
+      </section>
+
+      <section class="mt-10 rounded-2xl bg-brand-900 text-white p-7 md:p-9">
+        <h2 class="text-3xl font-extrabold mb-3">צריכים לבדוק התאמה לגופי התאורה?</h2>
+        <p class="text-brand-100 text-lg mb-6">שלחו ל-i-feel את דגם גוף התאורה, הדרייבר, ההספק והכמות בכל מעגל, וקבלו בדיקת התאמה ותכנון ציוד Siemens KNX לפרויקט.</p>
+        <div class="flex flex-wrap gap-3">
+          <a href="tel:+972-3-508-9553" class="inline-flex items-center justify-center rounded-lg bg-accent-600 px-5 py-3 font-bold text-white hover:bg-accent-700">03-508-9553</a>
+          <a href="/catalogs/#siemens-knx-actuators" class="inline-flex items-center justify-center rounded-lg border border-white/30 px-5 py-3 font-bold text-white hover:bg-white/10">לכל דפי המוצר של Siemens</a>
+        </div>
+      </section>
+    </div>
+  </article>
+</BaseLayout>
