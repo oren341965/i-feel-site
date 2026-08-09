@@ -2,8 +2,8 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 
 const canonical = 'https://i-feel.co.il/articles/siemens-n554d31-knx-4-channel-dimmer/';
-const title = 'Siemens N 554D31: דימר KNX עם 4 ערוצים עד 300VA | i-feel';
-const description = 'הכירו את Siemens N 554D31, דימר KNX אוניברסלי עם 4 ערוצים עד 300VA לערוץ או עד 1000VA בחיבור ערוצים, זיהוי עומס אוטומטי והגנות אלקטרוניות.';
+const title = 'Siemens N 554D31: דימר KNX מסוג TRIAC עם 4 ערוצים | i-feel';
+const description = 'הכירו את Siemens N 554D31, דימר פאזה אוניברסלי מסוג TRIAC (טריאק) עם 4 ערוצים, עד 300VA לערוץ, מידות 144×90×61 מ״מ והגנות אלקטרוניות.';
 const productImage = 'https://mall.industry.siemens.com/mall/collaterals/files/198/jpg/07/01/P_I201_XX_08336i.jpg';
 const dataSheetUrl = 'https://sid.siemens.com/v/u/A6V15749829';
 const industryMallUrl = 'https://mall.industry.siemens.com/mall/en/oeii/Catalog/Product?SiepCountryCode=OE&mlfb=5WG1554-1DB31';
@@ -12,7 +12,7 @@ const jsonLd = JSON.stringify({
   '@graph': [
     {
       '@type': 'Article',
-      headline: 'Siemens N 554D31: דימר KNX אוניברסלי עם 4 ערוצים',
+      headline: 'Siemens N 554D31: דימר KNX אוניברסלי מסוג TRIAC עם 4 ערוצים',
       description,
       datePublished: '2026-08-09',
       dateModified: '2026-08-09',
@@ -24,13 +24,16 @@ const jsonLd = JSON.stringify({
     },
     {
       '@type': 'Product',
-      name: 'Siemens N 554D31 KNX Universal Dimmer',
+      name: 'Siemens N 554D31 KNX Universal Phase-Cut Dimmer',
       model: 'N 554D31',
       sku: '5WG1554-1DB31',
       image: productImage,
       description,
       brand: { '@type': 'Brand', name: 'Siemens' },
-      category: 'KNX universal dimmer actuator',
+      category: 'KNX universal phase-cut dimmer actuator',
+      width: { '@type': 'QuantitativeValue', value: 144, unitCode: 'MMT' },
+      height: { '@type': 'QuantitativeValue', value: 90, unitCode: 'MMT' },
+      depth: { '@type': 'QuantitativeValue', value: 61, unitCode: 'MMT' },
     },
     {
       '@type': 'BreadcrumbList',
@@ -60,10 +63,10 @@ const jsonLd = JSON.stringify({
         <a href="/articles/" class="text-accent-400 font-semibold hover:text-accent-300">מאמרים</a>
         <p class="mt-4 text-sm text-brand-200">Siemens GAMMA / KNX · עודכן 09.08.2026</p>
         <h1 class="mt-4 text-4xl md:text-5xl font-extrabold leading-tight">
-          Siemens N 554D31: דימר KNX אוניברסלי עם 4 ערוצים
+          Siemens N 554D31: דימר KNX אוניברסלי מסוג TRIAC עם 4 ערוצים
         </h1>
         <p class="mt-5 max-w-4xl text-lg md:text-xl text-brand-100 leading-relaxed">
-          ארבע יציאות לעמעום עומסים תואמים, עד 300VA לכל ערוץ או עד 1000VA באמצעות חיבור ערוצים סמוכים, עם התאמה אוטומטית לשיטת הדימור והגנות אלקטרוניות לכל יציאה.
+          דימר פאזה מסוג TRIAC, טריאק בעברית, עם ארבע יציאות לעמעום עומסים תואמים, עד 300VA לכל ערוץ או עד 1000VA באמצעות חיבור ערוצים סמוכים, והתאמה אוטומטית לשיטת הדימור.
         </p>
       </div>
     </header>
@@ -73,7 +76,7 @@ const jsonLd = JSON.stringify({
         <div class="rounded-2xl border border-brand-100 bg-white p-5 shadow-sm">
           <img
             src={productImage}
-            alt="דימר KNX אוניברסלי Siemens N 554D31 עם ארבעה ערוצים"
+            alt="דימר KNX אוניברסלי מסוג TRIAC Siemens N 554D31 עם ארבעה ערוצים"
             width="1200"
             height="800"
             loading="eager"
@@ -83,9 +86,9 @@ const jsonLd = JSON.stringify({
         </div>
         <div>
           <p class="text-accent-700 font-bold text-lg mb-3">מידע עבור הלקוח</p>
-          <h2 class="text-3xl font-extrabold text-brand-900 leading-tight mb-5">ארבעה ערוצי דימור, עם אפשרות לרכז הספק גבוה יותר</h2>
+          <h2 class="text-3xl font-extrabold text-brand-900 leading-tight mb-5">ארבעה ערוצי דימור TRIAC, עם אפשרות לרכז הספק גבוה יותר</h2>
           <p class="text-lg text-brand-700 leading-relaxed mb-5">
-            Siemens N 554D31 הוא דימר KNX אוניברסלי למתח AC 230V. הוא מיועד להפעלה ולעמעום של עומסים התנגדותיים, השראתיים וקיבוליים התואמים לדימור פאזה, ומזהה באופן אוטומטי אם נדרשת שיטת Leading Edge או Trailing Edge לפי סוג העומס.
+            Siemens N 554D31 הוא דימר KNX אוניברסלי למתח AC 230V. במונחי שוק זהו דימר פאזה מסוג TRIAC, או טריאק בעברית. הוא מיועד להפעלה ולעמעום של עומסים התנגדותיים, השראתיים וקיבוליים התואמים לדימור פאזה, ומזהה אוטומטית אם נדרשת שיטת Leading Edge או Trailing Edge לפי סוג העומס.
           </p>
           <div class="flex flex-wrap gap-3">
             <a href={dataSheetUrl} target="_blank" rel="noopener noreferrer" class="inline-flex items-center justify-center rounded-lg bg-accent-600 px-5 py-3 font-bold text-white transition hover:bg-accent-700">
@@ -98,12 +101,13 @@ const jsonLd = JSON.stringify({
         </div>
       </section>
 
-      <section class="grid grid-cols-2 md:grid-cols-5 gap-3 mb-14" aria-label="נתונים מרכזיים">
+      <section class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 mb-14" aria-label="נתונים מרכזיים">
         <div class="rounded-xl border border-brand-100 bg-brand-50 p-4 text-center"><div class="text-3xl font-extrabold text-accent-700">4</div><div class="mt-2 text-sm font-semibold">ערוצי דימור</div></div>
+        <div class="rounded-xl border border-brand-100 bg-brand-50 p-4 text-center"><div class="text-3xl font-extrabold text-accent-700">TRIAC</div><div class="mt-2 text-sm font-semibold">טריאק, דימור פאזה</div></div>
         <div class="rounded-xl border border-brand-100 bg-brand-50 p-4 text-center"><div class="text-3xl font-extrabold text-accent-700">300VA</div><div class="mt-2 text-sm font-semibold">לכל ערוץ</div></div>
         <div class="rounded-xl border border-brand-100 bg-brand-50 p-4 text-center"><div class="text-3xl font-extrabold text-accent-700">1000VA</div><div class="mt-2 text-sm font-semibold">בחיבור ערוצים</div></div>
-        <div class="rounded-xl border border-brand-100 bg-brand-50 p-4 text-center"><div class="text-3xl font-extrabold text-accent-700">230V</div><div class="mt-2 text-sm font-semibold">מתח עבודה</div></div>
         <div class="rounded-xl border border-brand-100 bg-brand-50 p-4 text-center"><div class="text-3xl font-extrabold text-accent-700">8</div><div class="mt-2 text-sm font-semibold">מודולים בלוח</div></div>
+        <div class="rounded-xl border border-brand-100 bg-brand-50 p-4 text-center"><div class="text-xl font-extrabold text-accent-700">144×90×61</div><div class="mt-2 text-sm font-semibold">מידות במ״מ</div></div>
       </section>
 
       <div class="prose-he max-w-none">
@@ -114,6 +118,16 @@ const jsonLd = JSON.stringify({
           </p>
           <p>
             המשמעות היא שניתן להשתמש בבקר כארבעה מעגלי דימור עצמאיים, או לבנות חלוקה אחרת כאשר אחד המעגלים דורש הספק גבוה יותר. החלוקה הסופית חייבת להתאים לסוג העומס, לטמפרטורת הלוח, לחיווט ולהנחיות היצרן.
+          </p>
+        </section>
+
+        <section>
+          <h2>דימר TRIAC, טריאק בעברית, לעמעום פאזה</h2>
+          <p>
+            המונח TRIAC, שנכתב בעברית טריאק, משמש בישראל לתיאור דימרים המעמעמים את מתח ה-AC באמצעות חיתוך פאזה. לכן N 554D31 מתאים למפרטים שבהם נדרש דימר TRIAC או דימר טריאק למערכת KNX.
+          </p>
+          <p>
+            Siemens מגדירה את המוצר כדימר אוניברסלי, משום שהוא אינו מוגבל להגדרת פאזה אחת בלבד: הבקר מתאים את שיטת העבודה אוטומטית בין Leading Edge לבין Trailing Edge בהתאם לעומס המחובר. זהו דימור על קו AC 230V, ולא ממשק DALI או יציאת 0-10V.
           </p>
         </section>
 
@@ -152,19 +166,19 @@ const jsonLd = JSON.stringify({
         </section>
 
         <section>
-          <h2>מוזן מקו ה-KNX וחוסך ספק כוח עזר</h2>
+          <h2>מידות פיזיות והתקנה בלוח</h2>
           <p>
-            האלקטרוניקה של הבקר מוזנת מקו ה-KNX. אין צורך בספק כוח עזר ייעודי להפעלת האלקטרוניקה, והיחידה מותקנת על מסילת DIN ברוחב של שמונה מודולים.
+            מידות הבקר הן 144 מ״מ רוחב, 90 מ״מ גובה ו-61 מ״מ עומק. היחידה תופסת שמונה מודולים DIN, כאשר כל מודול הוא 18 מ״מ, ומותקנת על מסילת TH35 לפי DIN EN 60715.
           </p>
           <p>
-            המסופים מיועדים למוליכים בחתך 0.5 עד 2.5 ממ״ר ומאפשרים חיבור והעברת הזנה בהתאם לתכנון הלוח ולהוראות ההתקנה.
+            האלקטרוניקה מוזנת מקו ה-KNX, ללא צורך בספק כוח עזר ייעודי. המסופים מיועדים למוליכים בחתך 0.5 עד 2.5 ממ״ר ומאפשרים חיבור והעברת הזנה בהתאם לתכנון הלוח ולהוראות ההתקנה.
           </p>
         </section>
 
         <aside class="my-8 rounded-xl border-r-4 border-accent-600 bg-accent-50 p-5 not-prose">
-          <h2 class="text-xl font-extrabold text-brand-900 mb-2">חשוב לדעת: זהו דימר פאזה, לא DALI ולא 0-10V</h2>
+          <h2 class="text-xl font-extrabold text-brand-900 mb-2">חשוב לדעת: דימר TRIAC, טריאק, ולא DALI או 0-10V</h2>
           <p class="m-0 text-brand-700 leading-relaxed">
-            N 554D31 מעמעם את מתח ה-AC באמצעות Leading Edge או Trailing Edge. הוא אינו בקר DALI ואינו מספק יציאת 0-10V. עבור גופי DALI או דרייברים עם כניסת 0-10V יש לבחור ממשק ייעודי מתאים.
+            N 554D31 הוא דימר פאזה אוניברסלי, המכונה בשוק גם דימר TRIAC או דימר טריאק. הוא מעמעם את מתח ה-AC באמצעות Leading Edge או Trailing Edge. עבור גופי DALI או דרייברים עם כניסת 0-10V יש לבחור ממשק ייעודי מתאים.
           </p>
         </aside>
 
@@ -187,6 +201,7 @@ const jsonLd = JSON.stringify({
               <tbody class="divide-y divide-brand-100">
                 <tr><th class="bg-brand-50 p-4 font-bold text-brand-900 w-2/5">דגם</th><td class="p-4">Siemens N 554D31</td></tr>
                 <tr><th class="bg-brand-50 p-4 font-bold text-brand-900">מק״ט</th><td class="p-4">5WG1554-1DB31</td></tr>
+                <tr><th class="bg-brand-50 p-4 font-bold text-brand-900">סוג הדימר</th><td class="p-4">דימר פאזה אוניברסלי מסוג TRIAC, טריאק בעברית</td></tr>
                 <tr><th class="bg-brand-50 p-4 font-bold text-brand-900">מספר יציאות</th><td class="p-4">4 ערוצי מיתוג ודימור</td></tr>
                 <tr><th class="bg-brand-50 p-4 font-bold text-brand-900">מתח עבודה</th><td class="p-4">AC 230V, 50/60Hz</td></tr>
                 <tr><th class="bg-brand-50 p-4 font-bold text-brand-900">הספק נקוב ב-45°C</th><td class="p-4">עד 300VA לכל יציאה</td></tr>
@@ -196,7 +211,9 @@ const jsonLd = JSON.stringify({
                 <tr><th class="bg-brand-50 p-4 font-bold text-brand-900">שיטת דימור</th><td class="p-4">התאמה אוטומטית ל-Leading Edge או Trailing Edge</td></tr>
                 <tr><th class="bg-brand-50 p-4 font-bold text-brand-900">הגנות</th><td class="p-4">עומס יתר, קצר ועליית טמפרטורה בכל יציאה</td></tr>
                 <tr><th class="bg-brand-50 p-4 font-bold text-brand-900">תפעול מקומי</th><td class="p-4">לחצנים להפעלה, כיבוי, עמעום ומצב Direct</td></tr>
-                <tr><th class="bg-brand-50 p-4 font-bold text-brand-900">רוחב בלוח</th><td class="p-4">8 מודולים</td></tr>
+                <tr><th class="bg-brand-50 p-4 font-bold text-brand-900">מידות פיזיות</th><td class="p-4">144 × 90 × 61 מ״מ, רוחב × גובה × עומק</td></tr>
+                <tr><th class="bg-brand-50 p-4 font-bold text-brand-900">רוחב בלוח</th><td class="p-4">8 מודולים DIN, רוחב 144 מ״מ</td></tr>
+                <tr><th class="bg-brand-50 p-4 font-bold text-brand-900">התקנה</th><td class="p-4">מסילת TH35 לפי DIN EN 60715</td></tr>
                 <tr><th class="bg-brand-50 p-4 font-bold text-brand-900">חתך מוליכים</th><td class="p-4">0.5 עד 2.5 ממ״ר</td></tr>
                 <tr><th class="bg-brand-50 p-4 font-bold text-brand-900">הזנת האלקטרוניקה</th><td class="p-4">מקו KNX</td></tr>
               </tbody>
