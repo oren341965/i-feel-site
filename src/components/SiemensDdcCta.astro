@@ -1,0 +1,34 @@
+---
+interface Props {
+  compact?: boolean;
+}
+
+const { compact = false } = Astro.props;
+---
+
+<section class:list={[
+  'not-prose bg-brand-900 text-white border-y border-brand-800',
+  compact ? 'py-10' : 'py-14 lg:py-16',
+]} dir="rtl">
+  <div class="max-w-7xl mx-auto px-4">
+    <div class:list={['grid items-center gap-8', compact ? 'lg:grid-cols-[1fr_auto]' : 'lg:grid-cols-[1.2fr_0.8fr]']}>
+      <div>
+        <p class="text-accent-400 font-bold mb-2">Siemens Desigo DDC</p>
+        <h2 class:list={['font-extrabold leading-tight mb-4', compact ? 'text-2xl md:text-3xl' : 'text-3xl md:text-4xl']}>
+          ספריית מוצרי DDC וקונפיגורטור BMS ראשוני
+        </h2>
+        <p class="text-brand-100 text-lg leading-8 max-w-4xl">
+          עיינו בבקרי PXC, מודולי TX-I/O, בקרי חדר DXR2 ומסכי Control Point, או הזינו את רשימת הנקודות וקבלו תצורת Siemens ראשונית ורשימת ציוד מסודרת.
+        </p>
+      </div>
+      <div class="flex flex-wrap lg:justify-end gap-3">
+        <a href="/siemens-ddc/" class="inline-flex items-center justify-center rounded-lg bg-white px-6 py-3.5 font-bold text-brand-900 transition hover:bg-brand-50">
+          לכל מוצרי Siemens DDC
+        </a>
+        <a href="/bms-configurator/" class="inline-flex items-center justify-center rounded-lg bg-accent-500 px-6 py-3.5 font-bold text-white shadow-lg transition hover:bg-accent-600">
+          בניית קונפיגורציית BMS
+        </a>
+      </div>
+    </div>
+  </div>
+</section>

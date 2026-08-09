@@ -30,6 +30,8 @@ i-feel היא חברת אינטגרציה ישראלית הפועלת משנת 2
 - [מדריך BMS](https://i-feel.co.il/articles/bms-guide/): DDC, ניטור, אנרגיה וחיבור מערכות במבנים מסחריים.
 - [איך BMS מסייע לחיסכון באנרגיה](https://i-feel.co.il/articles/bms-save-energy/)
 - [Siemens Desigo BMS](https://i-feel.co.il/siemens-desigo-bms/): שרת ניהול מרכזי לבקרת מבנה.
+- [ספריית מוצרי Siemens Desigo DDC](https://i-feel.co.il/siemens-ddc/): דפי מוצר בעברית לבקרי PXC4, PXC5 ו-PXC7, מודולי TX-I/O, בקרי חדר DXR2 ומסכי Control Point.
+- [קונפיגורטור Siemens BMS](https://i-feel.co.il/bms-configurator/): הזנת DI, AI, AO, DO, Triac, Pt100 ואינטגרציות לקבלת בקר PXC, חלוקת TX-I/O ורשימת ציוד ראשונית.
 - [בקרת תאורה DALI](https://i-feel.co.il/structure-control/dali-lighting-control/)
 - [BMS למשרדים](https://i-feel.co.il/bms-offices/) · [BMS למלונות](https://i-feel.co.il/bms-hotels/) · [BMS למבני ציבור](https://i-feel.co.il/bms-public-buildings/) · [BMS לבתי חולים](https://i-feel.co.il/bms-hospitals/)
 - [בנייה ירוקה ותקן 5281](https://i-feel.co.il/green-building/)
@@ -38,6 +40,14 @@ i-feel היא חברת אינטגרציה ישראלית הפועלת משנת 2
 - [Akuvox MEGA CITY 70 — הנחיות ליזמים](https://i-feel.co.il/akuvox-mega-city-70/): ארכיטקטורת אינטרקום IP, עמוד CAT6 והכנות לבניינים רבי־דירות.
 - [חיישני הצפה בבית חכם](https://i-feel.co.il/articles/water-leak-sensors-smart-home/): התראה בזמן אמת וסגירת ברז מים חשמלי אוטומטית בזיהוי נזילה, בתוך הבית ומחוצה לו.
 - [מאמרים](https://i-feel.co.il/articles/) · [שאלות נפוצות](https://i-feel.co.il/answers/)
+
+## קטלוג ציוד Siemens Desigo DDC
+
+- [בקרי PXC](https://i-feel.co.il/siemens-ddc/): PXC4.E16-2, PXC4.E16S-2, PXC5.E24, PXC5.E003 ו-PXC7.E400 בגרסאות S, M ו-L.
+- מודולי TX-I/O: TXM1.8D, TXM1.16D, TXM1.8U, TXM1.8U-ML, TXM1.8X, TXM1.8X-ML, TXM1.6R, TXM1.6R-M, TXM1.6RL, TXM1.8P, TXM1.8T, TXM1.4D3R ו-TXM1.8RB.
+- תשתית TX-I/O: TXS1.12F10, TXS1.EF10 ו-TXA1.IBE.
+- בקרי חדר: DXR2.E12P-102B, DXR2.E18-101A, DXR2.M18-101B ו-DXR2.E17C-103A.
+- ממשקי תפעול: PXM30.E, PXM40.E, PXM50.E, PXG3.W100-2 ו-PXG3.W200-2.
 
 ## קטלוגים להורדה
 

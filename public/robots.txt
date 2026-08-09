@@ -81,8 +81,9 @@ User-agent: Diffbot
 Allow: /
 Disallow: /staff-expenses/
 
-# Sitemap location
+# Sitemap locations
 Sitemap: https://i-feel.co.il/sitemap.xml
+Sitemap: https://i-feel.co.il/sitemap-ddc.xml
 
 # AI discovery files
 # https://i-feel.co.il/llms.txt
