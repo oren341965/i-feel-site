@@ -121,6 +121,24 @@ function fallback_mail(array $lead, string $reason, array $marketing = []): bool
     return mail($to, $subject, $body, implode("\r\n", $headers));
 }
 
+function landing_label(string $sourcePage, string $leadType): string
+{
+    $labels = [
+        '/lp/structure-control/' => 'BMS',
+        '/lp/smart-home-villa/' => 'וילה',
+        '/lp/knx-smart-home/' => 'KNX',
+        '/lp/dali/' => 'DALI',
+        '/lp/smart-home/' => 'בית חכם',
+    ];
+
+    if (isset($labels[$sourcePage])) {
+        return $labels[$sourcePage];
+    }
+
+    $fallback = trim($leadType);
+    return $fallback !== '' ? $fallback : 'אתר';
+}
+
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     http_response_code(405);
     header('Allow: POST');
@@ -162,7 +180,8 @@ if ($lead['email'] !== '' && !filter_var($lead['email'], FILTER_VALIDATE_EMAIL))
 $token = getenv('MONDAY_API_TOKEN') ?: '';
 $boardId = getenv('MONDAY_BOARD_ID') ?: DEFAULT_BOARD_ID;
 $groupId = getenv('MONDAY_GROUP_ID') ?: null;
-$itemName = trim('Lead מהאתר - ' . $lead['name'] . ' - ' . $lead['lead_type']);
+$landingLabel = landing_label($lead['source_page'], $lead['lead_type']);
+$itemName = trim($lead['name'] . ' | ' . $landingLabel);
 
 $updateBody = implode("\n", [
     '**Lead from i-feel website**',
@@ -171,6 +190,7 @@ $updateBody = implode("\n", [
     '* Phone: ' . $lead['phone'],
     '* Email: ' . ($lead['email'] ?: '-'),
     '* Lead type: ' . $lead['lead_type'],
+    '* Landing label: ' . $landingLabel,
     '* Subject: ' . ($lead['subject'] ?: '-'),
     '* Source page: ' . ($lead['source_page'] ?: '/contactus/'),
     '* Submitted at: ' . gmdate('c'),
