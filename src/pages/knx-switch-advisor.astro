@@ -3,7 +3,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import '../styles/knx-advisor.css';
 
 const title = 'איזה מפסק KNX מתאים לבית? יועץ חשמל חכם | I Feel';
-const description = 'כלי אינטראקטיבי לבחירת מפסקי KNX ומערכת חשמל חכם לפי חדר, תאורה, תריסים, מיזוג, חימום, אודיו, תרחישים והתקנה בקו אפס.';
+const description = 'כלי אינטראקטיבי לבחירת מפסקי KNX: Siemens TC4/TC5, תאורה, תריסים, מיזוג והתקנה אסתטית בקו אפס עם קופסאות TAV TC4/TAV TC5.';
 const canonical = 'https://i-feel.co.il/knx-switch-advisor/';
 
 const faqs = [
@@ -14,7 +14,8 @@ const faqs = [
   ['מה חשוב לדעת על VRF?', 'כדי לשלוט במערכת VRF ממפסק KNX מסוג מסך נדרש מתאם תקשורת בין KNX למערכת המיזוג. CoolMaster KNX הוא אחת האפשרויות שנבדקות, אך סוג המתאם והתאימות נקבעים מראש יחד עם איש המיזוג.'],
   ['איך משלבים חימום תת רצפתי?', 'עם מתאם מתאים ניתן לשלב הפעלה ובקרת טמפרטורה. ללא מתאם ניתן לתכנן נקודות קיצון להפעלה וכיבוי, בעוד שינוי הטמפרטורה נשאר ביחידת החימום.'],
   ['מה נחשב פעולה במפסק?', 'תאורה, דימר, מזגן, דוד או תרחיש נספרים בדרך כלל כפעולה אחת. תריס, וילון או צלון כלוא נספרים כשתי פעולות - פתיחה וסגירה.'],
-  ['מהי התקנה בקו אפס?', 'מתאם ייעודי מאפשר להתקין את המפסק בקו אחיד עם הקיר למראה שטוח. יש לתכנן זאת לפני השלמת הקיר ולתאם קופסה, עומק וחומר גמר.'],
+  ['מהי התקנה בקו אפס?', 'בהקשר האדריכלי, קו אפס פירושו שחזית המפסק יושבת במישור הקיר למראה שטוח ונקי; אין הכוונה למוליך האפס החשמלי. יש לתכנן את ההשקעה לפני השלמת הקיר ולתאם קופסה, עומק וחומר גמר.'],
+  ['איזו קופסת השקעה מתאימה ל-Siemens TC4 ול-TC5?', 'למסך Siemens TC4 משתמשים בקופסת ההשקעה של I Feel במק״ט TAV TC4, ולמסך Siemens TC5 בקופסה במק״ט TAV TC5. הבחירה נעשית לפי דגם המסך, ויש לתאם את ההשקעה עם החשמלאי וצוות הגמר לפני סגירת הקיר.'],
   ['האם אפשר לשנות את פעולות המפסק בעתיד?', 'כן. מתקין KNX מורשה יכול לשנות תפקידי לחצנים ותרחישים, בכפוף ליכולות הדגם ולתשתית. במסך דינמי הגמישות גבוהה במיוחד.'],
   ['מה מומלץ בחדר ילדים?', 'ליד המיטה מומלצים בדרך כלל לחצנים פשוטים ועמידים עם מעט פעולות ותרחישים ברורים. מסך בכניסה נשקל כאשר נדרשת שליטת מיזוג או ריבוי מערכות.'],
   ['איזה מפסק מתאים ליד בריכה או באזור חשוף למים?', 'אין להשתמש שם במפסק KNX מסוג מסך שמיועד לפנים. מתקינים מתאם Siemens PBI מאחורי מפסק קפיצי מוגן מים שאותו מספק החשמלאי, לאחר תיאום הקופסה וההתקנה.'],
@@ -73,10 +74,11 @@ const jsonLd = JSON.stringify({
       <div class="advisor-shell">
         <span class="advisor-eyebrow">⚡ מרכז בחירה והדגמה למפסקי KNX</span>
         <h1 id="advisor-title">רואים מה כל מפסק עושה, בונים את התוכן ורק אז בוחרים</h1>
-        <p>הכירו מפסקי KNX מסוג מסך TC4 ו-TC5, לחצני KNX ומתאמי PBI, נסו דוגמאות אמיתיות לפי חדר ובנו על המסך את הפעולות שתרצו לקבל. ליד כל מוצר תמצאו הסבר, תמונה, יתרונות, מגבלות וקטלוג.</p>
+        <p>הכירו מפסקי KNX מסוג מסך TC4 ו-TC5, קופסאות השקעה TAV להתקנה בקו אפס, לחצני KNX ומתאמי PBI. נסו דוגמאות אמיתיות לפי חדר ובנו על המסך את הפעולות שתרצו לקבל.</p>
         <div class="advisor-hero-actions">
           <a class="advisor-btn advisor-btn-primary" href="#switch-lab" data-track="advisor_hero_builder">בואו נבנה מפסק</a>
           <a class="advisor-btn advisor-btn-secondary" href="#product-guide" data-track="advisor_hero_products">הכירו את הדגמים</a>
+          <a class="advisor-btn advisor-btn-ghost advisor-btn-on-dark" href="#flush-boxes" data-track="advisor_hero_flush_boxes">קופסאות השקעה לקו אפס</a>
           <a class="advisor-btn advisor-btn-ghost advisor-btn-on-dark" href="#start-advisor" data-track="advisor_hero_start">לתכנון בית שלם</a>
         </div>
       </div>
@@ -115,6 +117,7 @@ const jsonLd = JSON.stringify({
               <ul>
                 <li><b>מתאים במיוחד:</b> חדרי שינה, משרד, מטבח או סלון עם כמות בינונית של פעולות.</li>
                 <li><b>מה הלקוח מקבל:</b> מסך צבעוני, דפי פונקציה, אייקונים ותוכן שניתן לתכנת ולעדכן.</li>
+                <li><b>לקו אפס עם הקיר:</b> מתכננים מראש קופסת השקעה במק״ט <bdi dir="ltr">TAV TC4</bdi>.</li>
                 <li><b>חשוב לדעת:</b> נדרשים קופסת התקנה, KNX והזנת עזר; התאמת מיזוג נבדקת בנפרד.</li>
               </ul>
               <div class="advisor-product-actions">
@@ -136,6 +139,7 @@ const jsonLd = JSON.stringify({
               <ul>
                 <li><b>מתאים במיוחד:</b> כניסה, סלון גדול, חדר קולנוע או אזור מרכזי עם הרבה מערכות.</li>
                 <li><b>מה הלקוח מקבל:</b> יותר פעולות ומידע גלוי בכל מסך ופחות מעבר בין דפים.</li>
+                <li><b>לקו אפס עם הקיר:</b> מתכננים מראש קופסת השקעה במק״ט <bdi dir="ltr">TAV TC5</bdi>.</li>
                 <li><b>חשוב לדעת:</b> מסך גדול אינו בהכרח טוב יותר בחדר פשוט; הוא דורש מקום ותכנון מתאים.</li>
               </ul>
               <div class="advisor-product-actions">
@@ -180,6 +184,33 @@ const jsonLd = JSON.stringify({
             </div>
           </article>
         </div>
+
+        <section class="advisor-flush-section" id="flush-boxes" aria-labelledby="flush-boxes-title">
+          <div class="advisor-family-heading">
+            <div><span class="advisor-kicker">המראה שהרבה לקוחות אוהבים</span><h3 id="flush-boxes-title">קופסאות השקעה לקו אפס — המסך יושב במישור הקיר</h3></div>
+            <p>במקום שמסגרת המסך תבלוט מהקיר, קופסת השקעה ייעודית מאפשרת להכין מראש שקע מדויק ולהביא את חזית ה‑TC4 או ה‑TC5 לקו אחיד עם הגמר. התוצאה נקייה, רציפה ואסתטית במיוחד בחללים שבהם כל פרט על הקיר מתוכנן.</p>
+          </div>
+
+          <div class="advisor-flush-grid">
+            <article class="advisor-flush-card">
+              <div class="advisor-flush-visual" aria-hidden="true"><span class="advisor-flush-plane">קו הקיר</span><span class="advisor-flush-screen advisor-flush-screen-tc4">TC4</span></div>
+              <div class="advisor-flush-card-content"><span class="advisor-flush-code"><bdi dir="ltr">TAV TC4</bdi></span><h4>קופסת השקעה למסך Siemens TC4</h4><p>מותאמת לתכנון מסך TC4 בקו אפס עם הקיר. יש לסמן את המק״ט בתוכניות ולסגור מראש את העומק, המיקום וגמר הקיר.</p></div>
+            </article>
+            <article class="advisor-flush-card">
+              <div class="advisor-flush-visual" aria-hidden="true"><span class="advisor-flush-plane">קו הקיר</span><span class="advisor-flush-screen advisor-flush-screen-tc5">TC5</span></div>
+              <div class="advisor-flush-card-content"><span class="advisor-flush-code"><bdi dir="ltr">TAV TC5</bdi></span><h4>קופסת השקעה למסך Siemens TC5</h4><p>מותאמת לתכנון מסך TC5 בקו אפס עם הקיר. במסך הגדול חשוב במיוחד לתאם מראש גם את כיוון ההתקנה ואת מיקום הכבילה.</p></div>
+            </article>
+          </div>
+
+          <ol class="advisor-flush-steps">
+            <li><span>1</span><div><strong>בוחרים דגם</strong><p>TC4 או TC5, מיקום וכיוון התקנה.</p></div></li>
+            <li><span>2</span><div><strong>משקיעים לפני הגמר</strong><p>החשמלאי וצוות הטיח או הגבס מתאמים את קופסת ה‑TAV לפני סגירת הקיר.</p></div></li>
+            <li><span>3</span><div><strong>מתקינים בקו הקיר</strong><p>לאחר הגמר מתקינים את המסך כך שהחזית משתלבת במישור הקיר.</p></div></li>
+          </ol>
+
+          <div class="advisor-info-box advisor-flush-note"><span aria-hidden="true">ℹ️</span><div><strong>חשוב להבדיל:</strong> “קו אפס” כאן הוא מונח אדריכלי למישור הגמר, לא מוליך האפס החשמלי. הפתרון מתאים בעיקר לקירות טיח וגבס; בנגרות נדרשים דוגמה ותיאום, ובשיש או אבן בדרך כלל לא מומלץ. בקיר שכבר הושלם נדרשת בדיקת היתכנות.</div></div>
+          <div class="advisor-product-actions"><a class="advisor-btn advisor-btn-primary" href="#start-advisor" data-track="advisor_flush_boxes_to_plan">סמנו קו אפס בתכנון הבית</a><a class="advisor-text-link" href="#lead-form">בדיקת התאמה מול I Feel ←</a></div>
+        </section>
 
         <div class="advisor-family-section" aria-labelledby="alternative-families-title">
           <div class="advisor-family-heading">
@@ -411,7 +442,7 @@ const jsonLd = JSON.stringify({
                   <div class="advisor-field"><label for="flush-line">מראה שטוח</label><select id="flush-line" data-design="flushLine"><option value="no">לא</option><option value="yes">כן</option><option value="considering">רוצה לבדוק</option></select></div>
                   <div class="advisor-field"><label for="wall-type">סוג הקיר או החיפוי</label><select id="wall-type" data-design="wallType"><option value="plaster">טיח</option><option value="drywall">גבס</option><option value="woodwork">נגרות</option><option value="stone">שיש או אבן</option><option value="unknown">לא ידוע</option></select></div>
                   <div class="advisor-field"><label for="wall-finished">מצב הקיר</label><select id="wall-finished" data-design="wallFinished"><option value="not-finished">טרם הושלם</option><option value="finished">הקיר כבר הושלם</option><option value="unknown">לא ידוע</option></select></div>
-                </div><p class="advisor-help">I Feel מייצרת מתאם ייעודי להתקנת המפסק בקו אפס עם הקיר. מתאים בעיקר לטיח וגבס; בנגרות נדרשת דוגמה ותיאום, ובשיש או אבן בדרך כלל לא מומלץ.</p></fieldset>
+                </div><p class="advisor-help">למסכי Siemens משתמשים בקופסת השקעה לפי הדגם: <bdi dir="ltr">TAV TC4</bdi> ל‑TC4 או <bdi dir="ltr">TAV TC5</bdi> ל‑TC5. “קו אפס” כאן פירושו חזית במישור הקיר, לא מוליך האפס החשמלי. מתאים בעיקר לטיח וגבס; בנגרות נדרשת דוגמה ותיאום, ובשיש או אבן בדרך כלל לא מומלץ.</p></fieldset>
               </div>
             </section>
 

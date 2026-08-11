@@ -419,6 +419,12 @@ function needsScreen(room: RoomState, operations: number): boolean {
   return room.acType === 'vrf' || Boolean(room.actions.audio) || operations >= 5 || state.design.interface === 'screen' || state.design.labels === 'dynamic';
 }
 
+function flushBoxPart(family: string): string {
+  if (family === 'TC4') return 'TAV TC4';
+  if (family === 'TC5') return 'TAV TC5';
+  return '';
+}
+
 function recommend(room: RoomState, location: string, operations: number, exterior: boolean): PositionRecommendation {
   const systems = actionLabels(room);
   const isBedside = location.includes('המיטה');
@@ -486,10 +492,11 @@ function recommend(room: RoomState, location: string, operations: number, exteri
   }
   alternatives = alternatives.slice(0, 2);
 
+  const flushBox = state.design.flushLine !== 'no' ? flushBoxPart(family) : '';
   const electricianNote = exterior
     ? 'המפסק הקפיצי המוגן מים בנקודת החוץ יסופק על ידי החשמלאי. יש לתאם מראש את הקופסה, עומק ההתקנה, הכבילה והמקום למתאם PBI.'
     : family.startsWith('PBI') ? 'לתאם קופסה עמוקה, מפסק קפיצי, קו KNX ומקום למתאם PBI מאחורי החזית.'
-      : family.startsWith('TC') ? 'לתאם קופסה, עומק, KNX והזנת עזר לפני סגירת הקיר.' : 'לתאם קופסה, קו KNX, מספר לחצנים וסימון לפני ההזמנה.';
+      : family.startsWith('TC') ? flushBox ? `להתקנה בקו אפס יש לציין קופסת השקעה ${flushBox}, ולתאם עומק, מיקום, KNX והזנת עזר לפני סגירת הקיר.` : 'לתאם קופסה, עומק, KNX והזנת עזר לפני סגירת הקיר.' : 'לתאם קופסה, קו KNX, מספר לחצנים וסימון לפני ההזמנה.';
   const hvacNote = room.acType === 'vrf' ? 'נדרש מתאם תקשורת בין KNX למערכת המיזוג. CoolMaster KNX הוא אחת האפשרויות שנבדקות; סוג המתאם והתאימות נקבעים עם איש המיזוג.' : room.acType !== 'none' ? 'יש לאמת את סוג הממשק ורמת השליטה מול איש המיזוג.' : 'ללא דרישת מיזוג שהוגדרה.';
 
   return { room, location, operations, systems, exterior, family, manufacturer, model, reason, advantages, limitations, verify, alternatives, electricianNote, hvacNote };
@@ -529,6 +536,7 @@ function validationMessages(recommendations: PositionRecommendation[]): Array<{ 
   });
   if (state.design.flushLine !== 'no' && state.design.wallFinished === 'finished') messages.push({ text: 'קו אפס נבחר לאחר השלמת הקיר. נדרשת בדיקת היתכנות לפני התחייבות.' });
   if (state.design.flushLine !== 'no' && state.design.wallType === 'stone') messages.push({ text: 'קו אפס בשיש או אבן בדרך כלל אינו מומלץ ונדרש אישור פרט התקנה.' });
+  if (state.design.flushLine !== 'no' && recommendations.some((item) => !item.exterior && !['TC4', 'TC5'].includes(item.family))) messages.push({ text: 'קופסאות TAV TC4 ו-TAV TC5 מיועדות למסכי Siemens המתאימים. לנקודות עם מוצר אחר נדרש פרט קו אפס נפרד לאימות.' });
   if (!messages.length) messages.push({ ok: true, text: 'לא נמצאו סתירות אוטומטיות. עדיין נדרשת בדיקה מקצועית של התוכניות, הקופסאות והתאימות.' });
   return messages;
 }
@@ -541,8 +549,20 @@ function quantityMap(recommendations: PositionRecommendation[]): NumberMap {
     if (room.actions.heating) counts['נקודות חימום'] = (counts['נקודות חימום'] || 0) + 1;
     if (room.actions.audio) counts['נקודות אודיו'] = (counts['נקודות אודיו'] || 0) + 1;
   });
-  if (state.design.flushLine !== 'no') counts['מתאמי קו אפס'] = recommendations.filter((item) => !item.exterior).length;
+  if (state.design.flushLine !== 'no') {
+    const tc4Boxes = recommendations.filter((item) => !item.exterior && item.family === 'TC4').length;
+    const tc5Boxes = recommendations.filter((item) => !item.exterior && item.family === 'TC5').length;
+    const otherFlushDetails = recommendations.filter((item) => !item.exterior && !['TC4', 'TC5'].includes(item.family)).length;
+    if (tc4Boxes) counts['קופסאות השקעה TAV TC4'] = tc4Boxes;
+    if (tc5Boxes) counts['קופסאות השקעה TAV TC5'] = tc5Boxes;
+    if (otherFlushDetails) counts['פרטי קו אפס אחרים — לאימות'] = otherFlushDetails;
+  }
   return counts;
+}
+
+function flushBoxFor(item: PositionRecommendation): string {
+  if (state.design.flushLine === 'no' || item.exterior) return 'לא';
+  return flushBoxPart(item.family) || 'פרט אחר — לאימות';
 }
 
 function resourceFor(item: PositionRecommendation): (typeof PRODUCT_RESOURCES)[keyof typeof PRODUCT_RESOURCES] {
@@ -631,7 +651,7 @@ function renderResults(): void {
     </article>`).join('');
 
   qs<HTMLElement>('#quantity-summary').innerHTML = `<div class="advisor-result-summary">${Object.entries(quantities).map(([name, count]) => `<div class="advisor-stat"><strong>${count}</strong><span>${escapeHtml(name)}</span></div>`).join('')}</div>`;
-  qs<HTMLElement>('#summary-table-body').innerHTML = lastRecommendations.map((item) => `<tr><td>${item.room.floor}</td><td>${escapeHtml(item.room.name)}</td><td>${escapeHtml(item.location)}</td><td>${item.operations}</td><td>${escapeHtml(item.systems.join(', '))}</td><td>${escapeHtml(item.model)}</td><td>${state.design.flushLine === 'no' || item.exterior ? 'לא' : 'כן - לאימות'}</td><td>${escapeHtml(item.verify)}</td></tr>`).join('');
+  qs<HTMLElement>('#summary-table-body').innerHTML = lastRecommendations.map((item) => `<tr><td>${item.room.floor}</td><td>${escapeHtml(item.room.name)}</td><td>${escapeHtml(item.location)}</td><td>${item.operations}</td><td>${escapeHtml(item.systems.join(', '))}</td><td>${escapeHtml(item.model)}</td><td>${escapeHtml(flushBoxFor(item))}</td><td>${escapeHtml(item.verify)}</td></tr>`).join('');
 
   const checks = validationMessages(lastRecommendations);
   qs<HTMLElement>('#validation-list').innerHTML = checks.map((item) => `<div class="advisor-validation-item ${item.ok ? 'ok' : ''}"><span aria-hidden="true">${item.ok ? '✓' : '!'}</span><span>${escapeHtml(item.text)}</span></div>`).join('');
@@ -654,6 +674,7 @@ function summaryText(): string {
   ];
   recommendations.forEach((item) => {
     lines.push(`- קומה ${item.room.floor}, ${item.room.name}, ${item.location}: ${item.operations} פעולות; ${item.model}; מערכות: ${item.systems.join(', ')}.`);
+    if (flushBoxFor(item) !== 'לא') lines.push(`  קו אפס / קופסת השקעה: ${flushBoxFor(item)}.`);
     lines.push(`  לחשמלאי: ${item.electricianNote}`);
     if (item.room.acType !== 'none') lines.push(`  למיזוג: ${item.hvacNote}`);
   });
