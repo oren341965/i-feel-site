@@ -200,6 +200,24 @@
 .advisor-text-link:hover { text-decoration: underline; }
 
 .advisor-family-section { margin-top: 2.2rem; padding-top: 2rem; border-top: 1px solid var(--advisor-line); }
+.advisor-flush-section { scroll-margin-top: 100px; margin-top: 2.2rem; padding: clamp(1.1rem, 3vw, 2rem); border: 1px solid #b9e2df; border-radius: 1.15rem; background: linear-gradient(145deg, #f4fbfa, #fffaf0); box-shadow: 0 14px 38px rgba(15,31,54,.07); }
+.advisor-flush-grid { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 1rem; }
+.advisor-flush-card { min-width: 0; display: grid; grid-template-columns: 190px minmax(0,1fr); border: 1px solid var(--advisor-line); border-radius: 1rem; overflow: hidden; background: #fff; box-shadow: 0 10px 28px rgba(15,31,54,.06); }
+.advisor-flush-visual { position: relative; min-height: 215px; display: grid; place-items: center; padding: 1rem; overflow: hidden; background: linear-gradient(90deg, #ece5d9 0 49%, #c8bca9 49% 51%, #f8f5ef 51% 100%); border-inline-end: 1px solid var(--advisor-line); }
+.advisor-flush-plane { position: absolute; inset-inline-start: .65rem; top: .65rem; padding: .3rem .55rem; border-radius: 999px; background: rgba(255,255,255,.9); color: var(--advisor-muted); font-size: .72rem; font-weight: 800; }
+.advisor-flush-screen { position: relative; z-index: 1; width: 92px; display: grid; place-items: center; border: 5px solid #111820; border-radius: .55rem; background: linear-gradient(145deg,#163657,#49a49e); box-shadow: 0 9px 25px rgba(15,31,54,.22), 0 0 0 2px rgba(255,255,255,.75); color: #fff; font-size: 1rem; font-weight: 850; letter-spacing: .04em; }
+.advisor-flush-screen-tc4 { height: 92px; }
+.advisor-flush-screen-tc5 { height: 145px; }
+.advisor-flush-card-content { padding: 1.2rem; }
+.advisor-flush-code { display: inline-flex; padding: .35rem .65rem; border-radius: 999px; background: var(--advisor-navy); color: #fff; font-size: .82rem; font-weight: 850; letter-spacing: .03em; }
+.advisor-flush-card h4 { margin: .75rem 0 .55rem; color: var(--advisor-navy); font-size: 1.25rem; }
+.advisor-flush-card p { margin: 0; color: var(--advisor-muted); line-height: 1.65; }
+.advisor-flush-steps { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: .75rem; margin: 1rem 0 0; padding: 0; list-style: none; }
+.advisor-flush-steps li { display: grid; grid-template-columns: 36px minmax(0,1fr); gap: .65rem; align-items: start; padding: .85rem; border: 1px solid var(--advisor-line); border-radius: .8rem; background: rgba(255,255,255,.82); }
+.advisor-flush-steps li > span { width: 34px; height: 34px; display: grid; place-items: center; border-radius: 50%; background: var(--advisor-gold); color: #fff; font-weight: 850; }
+.advisor-flush-steps strong { color: var(--advisor-navy); }
+.advisor-flush-steps p { margin: .2rem 0 0; color: var(--advisor-muted); font-size: .88rem; line-height: 1.5; }
+.advisor-flush-note { margin-top: 1rem; }
 .advisor-family-heading { display: grid; grid-template-columns: minmax(300px,.75fr) minmax(0,1.25fr); gap: 1.5rem; align-items: end; margin-bottom: 1rem; }
 .advisor-family-heading h3 { margin: 0; color: var(--advisor-navy); font-size: clamp(1.55rem,3vw,2.1rem); }
 .advisor-family-heading > p { margin: 0; color: var(--advisor-muted); line-height: 1.65; }
@@ -526,6 +544,7 @@
 
 @media (max-width: 900px) {
   .advisor-product-grid { grid-template-columns: 1fr; }
+  .advisor-flush-grid { grid-template-columns: 1fr; }
   .advisor-family-grid { grid-template-columns: repeat(2,minmax(0,1fr)); }
   .advisor-lab-layout { grid-template-columns: 1fr; }
   .advisor-lab-preview { position: static; }
@@ -559,6 +578,9 @@
   .advisor-scale-note { align-items: flex-start; flex-direction: column; gap: .2rem; }
   .advisor-product-title { align-items: flex-start; }
   .advisor-product-actions .advisor-btn { width: 100%; }
+  .advisor-flush-card { grid-template-columns: 1fr; }
+  .advisor-flush-visual { min-height: 185px; border-inline-end: 0; border-bottom: 1px solid var(--advisor-line); }
+  .advisor-flush-steps { grid-template-columns: 1fr; }
   .advisor-family-heading { grid-template-columns: 1fr; gap: .65rem; }
   .advisor-family-grid { grid-template-columns: 1fr; }
   .advisor-rec-functions-grid { grid-template-columns: 1fr; }
