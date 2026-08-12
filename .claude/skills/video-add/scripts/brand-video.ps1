@@ -71,8 +71,8 @@ try {
     '-filter_complex',$vf,'-map','[v]','-map','2:a','-t','3','-r','30',
     '-c:v','libx264','-preset','medium','-crf','20','-c:a','aac','-b:a','160k','-ar','48000',$outro) $FfmpegPath
 
-  @($intro,$main,$outro) | ForEach-Object { "file '$($_.Replace('\','/').Replace("'","''"))'" } |
-    Set-Content -LiteralPath $list -Encoding utf8
+  $concatLines=@($intro,$main,$outro) | ForEach-Object { "file '$($_.Replace('\','/').Replace("'","''"))'" }
+  [IO.File]::WriteAllLines($list,$concatLines,[Text.UTF8Encoding]::new($false))
   Run-Ffmpeg @('-y','-f','concat','-safe','0','-i',$list,'-c','copy','-movflags','+faststart',$OutputFile) $FfmpegPath
 
   $item=Get-Item -LiteralPath $OutputFile
