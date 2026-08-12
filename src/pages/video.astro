@@ -26,7 +26,21 @@ const iscarVideoObject = `,
       \"publisher\": { \"@id\": \"https://i-feel.co.il/#business\" }
     }`;
 
-meta.jsonLd = meta.jsonLd.replace("\n  ]\n}", `${iscarVideoObject}\n  ]\n}`);
+const smartLockVideoObject = `,
+    {
+      \\\"@type\\\": \\\"VideoObject\\\",
+      \\\"@id\\\": \\\"https://i-feel.co.il/video/#v-smart-lock-dry-contact\\\",
+      \\\"name\\\": \\\"חיבור מנעול חכם במגע יבש למערכת הבית החכם\\\",
+      \\\"description\\\": \\\"הדגמה מקצועית של חיבור מנעול חכם באמצעות מגע יבש למערכת הבית החכם של I FEEL, לשליטה נוחה ואמינה בפתיחת הדלת.\\\",
+      \\\"uploadDate\\\": \\\"2026-08-13\\\",
+      \\\"thumbnailUrl\\\": \\\"https://i.ytimg.com/vi/UmMtj2TJpf0/hqdefault.jpg\\\",
+      \\\"contentUrl\\\": \\\"https://www.youtube.com/watch?v=UmMtj2TJpf0\\\",
+      \\\"embedUrl\\\": \\\"https://www.youtube-nocookie.com/embed/UmMtj2TJpf0\\\",
+      \\\"inLanguage\\\": \\\"he-IL\\\",
+      \\\"publisher\\\": { \\\"@id\\\": \\\"https://i-feel.co.il/#business\\\" }
+    }`;
+
+meta.jsonLd = meta.jsonLd.replace("\n  ]\n}", `${iscarVideoObject}${smartLockVideoObject}\n  ]\n}`);
 ---
 <BaseLayout {...meta}>
   <Fragment set:html={content} />
