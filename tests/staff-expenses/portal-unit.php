@@ -539,14 +539,88 @@ try {
         'Custom controller location was not normalized.'
     );
     portal_test_expect(
+        portal_handover_ready_label('delivered_with_app_link') === 'נמסר עם קישור לאפליקציה'
+        && portal_handover_ready_label('completed_without_app_link') === 'הסתיים ללא קישור לאפליקציה'
+        && portal_handover_ready_label('ready_for_delivery') === 'מוכן למסירה'
+        && portal_handover_ready_label('not_ready_return_required') === 'לא מוכן — יש לחזור',
+        'Tenant handover delivery status labels are wrong.'
+    );
+    portal_test_expect(
+        portal_handover_cloud_link('https://cloud.example.com/customer/1001') === 'https://cloud.example.com/customer/1001'
+        && portal_handover_cloud_link('http://cloud.example.com/customer/1001') === ''
+        && portal_handover_cloud_link('javascript:alert(1)') === ''
+        && portal_handover_support_url() === 'https://i-feel.co.il/smart-home-support/',
+        'Tenant handover cloud or support links were not validated correctly.'
+    );
+    $handoverCustomerEmail = [
+        'resident' => ['name' => 'Test Resident', 'apartment' => '12', 'building' => '2', 'project_title' => 'Test Project'],
+        'credentials' => ['username' => 'resident@example.com', 'password' => '0501234567'],
+        'details' => ['cloud_link' => 'https://cloud.example.com/customer/1001'],
+    ];
+    portal_test_expect(
+        str_contains(portal_handover_resident_email_body($handoverCustomerEmail), 'https://cloud.example.com/customer/1001')
+        && str_contains(portal_handover_resident_email_body($handoverCustomerEmail), portal_handover_support_url())
+        && str_contains(portal_handover_resident_email_html($handoverCustomerEmail), 'tenant-handover-support-qr.png')
+        && str_contains(portal_handover_resident_email_html($handoverCustomerEmail), 'פתיחת מערכת הבית החכם בענן')
+        && is_file($repositoryRoot . '/public/assets/tenant-handover-support-qr.png'),
+        'Tenant handover customer email omitted the cloud link, connection instructions, or support QR code.'
+    );
+    portal_test_expect(
         portal_handover_switch_9_label('shutter_2_light_2') === '2 תריסים ו-2 תאורות'
         && portal_handover_captive_shutter_24v_label('installed_activated') === 'יש והופעל'
         && portal_handover_captive_shutter_24v_label('not_in_project') === 'אין בפרויקט'
         && portal_handover_hvac_connection_label('none') === 'אין חיבור למזגן'
         && portal_handover_hvac_connection_label('ir') === 'חיבור באמצעות IR'
         && portal_handover_hvac_connection_label('dry_contact_panel_9') === 'חיבור באמצעות מגע יבש מפאנל 9'
-        && portal_handover_hvac_connection_label('micromodule') === 'חיבור באמצעות מיקרומודול',
-        'Structured handover switch or HVAC labels are wrong.'
+        && portal_handover_hvac_connection_label('micromodule') === 'חיבור באמצעות מיקרומודול'
+        && portal_handover_boiler_label('avatto') === 'AVATTO'
+        && portal_handover_boiler_label('domex') === 'DOMEX'
+        && portal_handover_boiler_label('none') === 'אין'
+        && portal_handover_boiler_label('switcher') === 'סוויטשר',
+        'Structured handover switch, HVAC, or boiler labels are wrong.'
+    );
+    $switch9EmailLines = portal_handover_switch_9_email_lines([
+        'switch_9_count' => 2,
+        'switch_9_units' => [
+            ['configuration' => 'shutter_2_light_2', 'location' => 'כניסה'],
+            ['configuration' => 'light_9', 'location' => 'סלון'],
+        ],
+    ]);
+    portal_test_expect(
+        $switch9EmailLines === [
+            'כמות מפסקי 9: 2',
+            'מפסק 9 מס׳ 1: 2 תריסים ו-2 תאורות | מיקום: כניסה',
+            'מפסק 9 מס׳ 2: 9 לתאורה בלבד | מיקום: סלון',
+        ],
+        'Per-unit switch 9 email details are wrong.'
+    );
+    portal_test_expect(
+        portal_handover_issue_label('electrical') === 'תקלת חשמל'
+        && portal_handover_issue_label('cabling') === 'תקלת כבילה'
+        && portal_handover_issue_label('contractor') === 'בעיית קבלנים (טיח או קופסא שבורה)'
+        && portal_handover_issue_email_lines([
+            'issues' => [['type' => 'electrical'], ['type' => 'contractor']],
+        ]) === [
+            'מספר תקלות שצולמו בדירה: 2',
+            'תקלה מס׳ 1: תקלת חשמל',
+            'תקלה מס׳ 2: בעיית קבלנים (טיח או קופסא שבורה)',
+        ],
+        'Apartment issue labels or email details are wrong.'
+    );
+    portal_test_expect(
+        portal_handover_photo_keys([
+            'photos' => [
+                'switch_10' => ['storage_name' => 'switch-10.png'],
+                'controller' => ['storage_name' => 'controller.png'],
+                'switch_2' => ['storage_name' => 'switch-2.png'],
+                'switch_1' => ['storage_name' => 'switch-1.png'],
+                'issue_10' => ['storage_name' => 'issue-10.png'],
+                'issue_2' => ['storage_name' => 'issue-2.png'],
+                'issue_1' => ['storage_name' => 'issue-1.png'],
+                'untrusted' => ['storage_name' => 'ignored.png'],
+            ],
+        ]) === ['controller', 'switch_1', 'switch_2', 'switch_10', 'issue_1', 'issue_2', 'issue_10'],
+        'Tenant handover photo keys were not filtered and ordered correctly.'
     );
     $workStats = portal_work_report_stats([
         ['type' => 'installation', 'outcome' => 'completed', 'employee' => ['name' => 'Test Worker', 'email' => 'worker@i-feel.co.il'], 'attachments' => [[], []]],

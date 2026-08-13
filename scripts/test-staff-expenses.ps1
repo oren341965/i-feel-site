@@ -272,12 +272,20 @@ try {
     Assert-PortalTest ($handoverHtml -match 'resident@example\.com') "Authenticated handover form omitted the Monday resident email."
     Assert-PortalTest ($handoverHtml -match '0501234567') "Authenticated handover form omitted the derived initial password."
     Assert-PortalTest ($handoverHtml -notmatch 'name="handover_resident_email"|name="handover_resident_phone"') "Resident PII was trusted through client-editable fields."
-    Assert-PortalTest ($handoverHtml -match 'name="handover_switch_9_configuration"[^>]*required' -and $handoverHtml -match 'value="shutter_2_light_2"') "Switch 9 configuration choices were not rendered."
-    Assert-PortalTest ($handoverHtml -match 'name="handover_switch_9_location"[^>]*required') "Switch 9 location field was not rendered."
-    Assert-PortalTest ($handoverHtml -match 'name="handover_light_switch_count"[^>]*required' -and $handoverHtml -match 'name="handover_light_switch_location"[^>]*required') "Light switch details were not rendered."
-    Assert-PortalTest ($handoverHtml -match 'name="handover_shutter_switch_location"[^>]*required') "Shutter switch location field was not rendered."
+    Assert-PortalTest ($handoverHtml -match 'name="handover_ready"[^>]*required' -and $handoverHtml -match 'value="delivered_with_app_link"' -and $handoverHtml -match 'value="completed_without_app_link"' -and $handoverHtml -match 'value="ready_for_delivery"' -and $handoverHtml -match 'value="not_ready_return_required"') "Delivery status choices were not rendered."
+    Assert-PortalTest ($handoverHtml -match 'type="url"[^>]*name="handover_cloud_link"' -and $handoverHtml -match 'data-handover-cloud-link') "Customer-specific cloud link field was not rendered."
+    Assert-PortalTest ($handoverHtml -match 'name="handover_controller_location"[^>]*required' -and $handoverHtml -match 'name="handover_controller"[^>]*required' -and $handoverHtml -match 'name="handover_icons"[^>]*required') "Controller and icon requirements were not marked mandatory."
+    Assert-PortalTest ($handoverHtml -match 'name="handover_switch_9_count"[^>]*min="1"[^>]*max="50"[^>]*required') "Switch 9 quantity field was not rendered."
+    Assert-PortalTest ($handoverHtml -match 'name="handover_switch_9_configuration_1"[^>]*required' -and $handoverHtml -match 'value="shutter_2_light_2"') "Per-unit switch 9 configuration choices were not rendered."
+    Assert-PortalTest ($handoverHtml -match 'name="handover_switch_9_location_1"[^>]*required') "Per-unit switch 9 location field was not rendered."
+    Assert-PortalTest ($handoverHtml -match 'name="handover_switch_photo_1"[^>]*data-handover-switch-9-photo[^>]*required') "Per-unit switch 9 photo field was not rendered."
+    Assert-PortalTest ($handoverHtml -match 'name="handover_light_switch_count"[^>]*min="0"[^>]*max="99"[^>]*required' -and $handoverHtml -match 'name="handover_light_switch_location"') "Light switch quantity and location fields were not rendered."
+    Assert-PortalTest ($handoverHtml -match 'name="handover_shutter_switch_count"[^>]*min="0"[^>]*max="99"[^>]*required' -and $handoverHtml -match 'name="handover_shutter_switch_location"') "Shutter switch quantity and location fields were not rendered."
     Assert-PortalTest ($handoverHtml -match 'name="handover_captive_shutter_24v"[^>]*required' -and $handoverHtml -match 'value="not_in_project"') "Captive shutter 24V choices were not rendered."
     Assert-PortalTest ($handoverHtml -match 'name="handover_hvac_connection"[^>]*required' -and $handoverHtml -match 'value="none"' -and $handoverHtml -match 'value="ir"' -and $handoverHtml -match 'value="dry_contact_panel_9"' -and $handoverHtml -match 'value="micromodule"') "HVAC connection choices were not rendered."
+    Assert-PortalTest ($handoverHtml -match 'name="handover_boiler"[^>]*required' -and $handoverHtml -match 'value="avatto"' -and $handoverHtml -match 'value="domex"' -and $handoverHtml -match 'value="none"' -and $handoverHtml -match 'value="switcher"' -and $handoverHtml -match 'name="handover_notes"[^>]*required') "Boiler choices or notes requirement were not rendered."
+    Assert-PortalTest ($handoverHtml -match 'name="handover_controller_photo"[^>]*required') "Mandatory controller photo was not rendered."
+    Assert-PortalTest ($handoverHtml -match 'name="handover_issue_count" value="0"' -and $handoverHtml -match 'data-handover-issue-add' -and $handoverHtml -match 'data-handover-issue-photo' -and $handoverHtml -match 'value="electrical"' -and $handoverHtml -match 'value="cabling"' -and $handoverHtml -match 'value="contractor"') "Repeatable apartment issue photo controls were not rendered."
     Assert-PortalTest ($handoverHtml -notmatch 'name="handover_switch_9"|name="handover_blinds"') "Legacy free-text switch fields are still rendered."
     $handoverCsrf = Get-CsrfFromHtml $handoverHtml
     $handoverTokenMatch = [regex]::Match($handoverHtml, 'name="handover_submission_token"\s+value="([a-f0-9]{64})"')
@@ -294,22 +302,33 @@ try {
         "-F", "handover_submission_token=$handoverToken", `
         "-F", "handover_project_id=test-project", `
         "-F", "handover_resident_id=1001", `
-        "-F", "handover_ready=delivered", `
+        "-F", "handover_ready=delivered_with_app_link", `
+        "-F", "handover_cloud_link=https://cloud.example.com/customer/1001", `
         "-F", "handover_date=2026-08-13", `
         "-F", "handover_controller_location=communications_cabinet", `
         "-F", "handover_controller=raspberry_pi", `
         "-F", "handover_icons=done", `
-        "-F", "handover_switch_9_configuration=shutter_2_light_2", `
-        "-F", "handover_switch_9_location=Entrance", `
+        "-F", "handover_switch_9_count=2", `
+        "-F", "handover_switch_9_configuration_1=shutter_2_light_2", `
+        "-F", "handover_switch_9_location_1=Entrance", `
+        "-F", "handover_switch_9_configuration_2=light_9", `
+        "-F", "handover_switch_9_location_2=Kitchen", `
         "-F", "handover_light_switch_count=2", `
-        "-F", "handover_light_switch_location=Living room", `
+        "-F", "handover_light_switch_location=Living room, Bedroom", `
+        "-F", "handover_shutter_switch_count=1", `
         "-F", "handover_shutter_switch_location=Balcony", `
         "-F", "handover_captive_shutter_24v=installed_activated", `
         "-F", "handover_hvac_connection=dry_contact_panel_9", `
-        "-F", "handover_boiler=Completed", `
+        "-F", "handover_boiler=switcher", `
         "-F", "handover_notes=Integration test", `
         "-F", "handover_controller_photo=@$handoverImage;type=image/png", `
-        "-F", "handover_switch_photo=@$handoverImage;type=image/png", `
+        "-F", "handover_switch_photo_1=@$handoverImage;type=image/png", `
+        "-F", "handover_switch_photo_2=@$handoverImage;type=image/png", `
+        "-F", "handover_issue_count=2", `
+        "-F", "handover_issue_type_1=electrical", `
+        "-F", "handover_issue_type_2=contractor", `
+        "-F", "handover_issue_photo_1=@$handoverImage;type=image/png", `
+        "-F", "handover_issue_photo_2=@$handoverImage;type=image/png", `
         "$baseUrl/staff-expenses/"
     Assert-PortalTest ($headers -match "HTTP/1\.1 303") "Tenant handover submission was not accepted."
     $handoverMetadata = @(Get-ChildItem -LiteralPath (Join-Path $storagePath "tenant-handovers") -Recurse -Filter "metadata.json")
@@ -317,16 +336,34 @@ try {
     $handoverRecord = Get-Content -Raw -Encoding utf8 $handoverMetadata[0].FullName | ConvertFrom-Json
     Assert-PortalTest ($handoverRecord.source.item_id -eq "1001") "Tenant handover did not retain the verified Monday item ID."
     Assert-PortalTest ($handoverRecord.credentials.password -eq "0501234567") "Tenant handover credentials were not stored correctly."
+    Assert-PortalTest ($handoverRecord.details.ready -eq "delivered_with_app_link") "Tenant handover delivery status was not stored correctly."
+    Assert-PortalTest ($handoverRecord.details.cloud_link -eq "https://cloud.example.com/customer/1001") "Tenant handover cloud link was not stored correctly."
     Assert-PortalTest (
-        $handoverRecord.details.switch_9_configuration -eq "shutter_2_light_2" `
-        -and $handoverRecord.details.switch_9_location -eq "Entrance" `
+        $handoverRecord.details.switch_9_count -eq 2 `
+        -and $handoverRecord.details.switch_9_units.Count -eq 2 `
+        -and $handoverRecord.details.switch_9_units[0].configuration -eq "shutter_2_light_2" `
+        -and $handoverRecord.details.switch_9_units[0].location -eq "Entrance" `
+        -and $handoverRecord.details.switch_9_units[1].configuration -eq "light_9" `
+        -and $handoverRecord.details.switch_9_units[1].location -eq "Kitchen" `
+        -and $handoverRecord.details.issues.Count -eq 2 `
+        -and $handoverRecord.details.issues[0].type -eq "electrical" `
+        -and $handoverRecord.details.issues[1].type -eq "contractor" `
         -and $handoverRecord.details.light_switch_count -eq "2" `
-        -and $handoverRecord.details.light_switch_location -eq "Living room" `
+        -and $handoverRecord.details.light_switch_location -eq "Living room, Bedroom" `
+        -and $handoverRecord.details.shutter_switch_count -eq "1" `
         -and $handoverRecord.details.shutter_switch_location -eq "Balcony" `
         -and $handoverRecord.details.captive_shutter_24v -eq "installed_activated" `
-        -and $handoverRecord.details.hvac_connection -eq "dry_contact_panel_9"
+        -and $handoverRecord.details.hvac_connection -eq "dry_contact_panel_9" `
+        -and $handoverRecord.details.boiler -eq "switcher"
     ) "Structured handover switch and HVAC details were not stored correctly."
-    Assert-PortalTest (@($handoverRecord.photos.PSObject.Properties).Count -eq 2) "Tenant handover did not preserve both required photos."
+    Assert-PortalTest (
+        @($handoverRecord.photos.PSObject.Properties).Count -eq 5 `
+        -and $null -ne $handoverRecord.photos.controller `
+        -and $null -ne $handoverRecord.photos.switch_1 `
+        -and $null -ne $handoverRecord.photos.switch_2 `
+        -and $null -ne $handoverRecord.photos.issue_1 `
+        -and $null -ne $handoverRecord.photos.issue_2
+    ) "Tenant handover did not preserve the controller, switch 9, and apartment issue photos."
     Assert-PortalTest ($handoverRecord.notifications.resident.status -eq "sent") "Resident handover email status was not recorded."
     Assert-PortalTest ($handoverRecord.notifications.internal.failed.Count -eq 0) "Internal handover email status was not recorded as successful."
     $handoverDownloadStatus = Invoke-PortalCurl `
@@ -335,6 +372,18 @@ try {
         "-b", $employeeCookies, `
         "$baseUrl/staff-expenses/?action=handover_download&handover_id=$($handoverRecord.id)&file=controller"
     Assert-PortalTest ($handoverDownloadStatus -eq "200") "Authenticated employee could not open a protected handover photo."
+    $handoverSwitchDownloadStatus = Invoke-PortalCurl `
+        "-o", $responseBody, `
+        "-w", "%{http_code}", `
+        "-b", $employeeCookies, `
+        "$baseUrl/staff-expenses/?action=handover_download&handover_id=$($handoverRecord.id)&file=switch_2"
+    Assert-PortalTest ($handoverSwitchDownloadStatus -eq "200") "Authenticated employee could not open the second switch 9 photo."
+    $handoverIssueDownloadStatus = Invoke-PortalCurl `
+        "-o", $responseBody, `
+        "-w", "%{http_code}", `
+        "-b", $employeeCookies, `
+        "$baseUrl/staff-expenses/?action=handover_download&handover_id=$($handoverRecord.id)&file=issue_2"
+    Assert-PortalTest ($handoverIssueDownloadStatus -eq "200") "Authenticated employee could not open the second apartment issue photo."
 
     $csrf = Get-CsrfFromHtml $html
 

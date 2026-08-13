@@ -689,7 +689,8 @@ function portal_send_mail_with_attachments(
     string $email,
     string $subject,
     string $body,
-    array $attachments = []
+    array $attachments = [],
+    ?string $htmlBody = null
 ): bool {
     if (filter_var($email, FILTER_VALIDATE_EMAIL) === false) {
         return false;
@@ -697,13 +698,13 @@ function portal_send_mail_with_attachments(
     $sender = portal_mail_sender();
     $encodedSubject = portal_email_subject($subject);
     if (portal_mail_transport_mode() === 'smtp') {
-        return portal_smtp_send($email, $encodedSubject, $body, $sender, $attachments);
+        return portal_smtp_send($email, $encodedSubject, $body, $sender, $attachments, $htmlBody);
     }
     if (portal_mail_transport_mode() !== 'mail' || !function_exists('mail')) {
         return false;
     }
 
-    $payload = portal_mail_payload($body, $attachments);
+    $payload = portal_mail_payload($body, $attachments, $htmlBody);
     $headers = array_merge([
         'From: I Feel <' . $sender . '>',
         'Reply-To: ' . $sender,

@@ -236,6 +236,22 @@ input[readonly] { background: #f3f5f8; }
 .handover-field-preview span { padding: 7px 10px; border: 1px solid #efd39a; border-radius: 999px; background: #fff8e8; color: #6b4a0c; font-size: .86rem; font-weight: 700; }
 .handover-form-heading { padding-bottom: 14px; border-bottom: 1px solid var(--border); }
 .handover-form-heading h2 { margin: 0; }
+.handover-switch-9-units { display: grid; gap: 12px; }
+.handover-switch-9-unit { min-width: 0; margin: 0; padding: 14px; border: 1px solid #b8d8ef; border-radius: 12px; background: #f8fbfe; }
+.handover-switch-9-unit legend { padding: 0 8px; color: var(--primary-dark); font-weight: 900; }
+.handover-switch-9-unit__fields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+.handover-switch-9-photo .receipt-action { min-height: 110px; }
+.receipt-actions--single { grid-template-columns: 1fr; }
+.handover-issues { display: grid; gap: 14px; padding: 18px; border: 1px solid #e2c574; border-radius: 14px; background: #fffdf7; }
+.handover-issues__heading { display: flex; align-items: flex-start; justify-content: space-between; gap: 18px; }
+.handover-issues__heading h3 { margin: 0; }
+.handover-issues__heading p { margin: 4px 0 0; color: var(--muted); }
+.handover-issue-list { display: grid; gap: 12px; }
+.handover-issue { min-width: 0; margin: 0; padding: 14px; border: 1px solid #e6c16f; border-radius: 12px; background: #fff; }
+.handover-issue legend { padding: 0 8px; color: #7a5310; font-weight: 900; }
+.handover-issue__fields { display: grid; gap: 12px; }
+.handover-issue .receipt-action { min-height: 110px; }
+.handover-issue__remove { justify-self: start; }
 .handover-resident-card { border-color: #efd39a; background: linear-gradient(135deg, #fffdf8, #fff8e8); }
 .handover-resident-card .credential-item { border-color: #e6c16f; background: #fffaf0; }
 .handover-resident-card .credential-item strong { font-family: Consolas, "Courier New", monospace; }
@@ -249,6 +265,9 @@ input[readonly] { background: #f3f5f8; }
   .handover-search__fields { grid-template-columns: 1fr; }
   .handover-search__actions { width: 100%; }
   .handover-search__actions .button { flex: 1; }
+  .handover-switch-9-unit__fields { grid-template-columns: 1fr; }
+  .handover-issues__heading { flex-direction: column; }
+  .handover-issues__heading .button { width: 100%; }
 }
 .vehicle-hero { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 18px; margin-bottom: 18px; padding: 24px; border: 1px solid #b8dfc8; border-radius: 18px; background: linear-gradient(135deg, #f7fff9, #edf8ff); box-shadow: var(--shadow); }
 .vehicle-hero h2 { margin: 2px 0 8px; font-size: 1.5rem; }
