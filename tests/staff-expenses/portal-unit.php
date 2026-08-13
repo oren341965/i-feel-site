@@ -485,10 +485,19 @@ try {
         portal_handover_credentials($handoverResident)['password'] === '0501234567',
         'Tenant handover credentials were not derived from the resident phone.'
     );
+    $handoverClientId = portal_new_handover_client_id();
+    $handoverFormCreatedAt = portal_handover_form_created_at($handoverClientId);
     portal_test_expect(
-        preg_match('/^[a-f0-9]{32}$/', portal_new_handover_client_id()) === 1
+        preg_match('/^[a-f0-9]{32}$/', $handoverClientId) === 1
+        && $handoverFormCreatedAt !== ''
+        && portal_valid_date(portal_handover_form_date($handoverClientId))
         && is_file($repositoryRoot . '/public/staff-expenses/offline-worker.js'),
         'Tenant handover offline identity or worker is missing.'
+    );
+    portal_handover_forget_form($handoverClientId);
+    portal_test_expect(
+        portal_handover_form_created_at($handoverClientId) === '',
+        'Completed tenant handover form metadata was not cleared.'
     );
     $signatureTestDir = $storagePath . DIRECTORY_SEPARATOR . 'signature-test';
     portal_ensure_directory($signatureTestDir);

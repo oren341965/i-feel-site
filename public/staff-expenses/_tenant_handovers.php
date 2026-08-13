@@ -910,7 +910,53 @@ function portal_handover_async_response(array $payload, int $status = 200): neve
 
 function portal_new_handover_client_id(): string
 {
-    return bin2hex(random_bytes(16));
+    $clientId = bin2hex(random_bytes(16));
+    $forms = is_array($_SESSION['portal_handover_forms'] ?? null)
+        ? $_SESSION['portal_handover_forms']
+        : [];
+    $forms[$clientId] = ['created_at' => gmdate('c')];
+    if (count($forms) > 100) {
+        $forms = array_slice($forms, -100, null, true);
+    }
+    $_SESSION['portal_handover_forms'] = $forms;
+    return $clientId;
+}
+
+function portal_handover_form_created_at(string $clientId): string
+{
+    $forms = is_array($_SESSION['portal_handover_forms'] ?? null)
+        ? $_SESSION['portal_handover_forms']
+        : [];
+    $form = $forms[$clientId] ?? null;
+    $createdAt = is_array($form) ? trim((string) ($form['created_at'] ?? '')) : '';
+    if ($createdAt === '') {
+        return '';
+    }
+    try {
+        return (new DateTimeImmutable($createdAt))->format('c');
+    } catch (Throwable $error) {
+        return '';
+    }
+}
+
+function portal_handover_form_date(string $clientId): string
+{
+    $createdAt = portal_handover_form_created_at($clientId);
+    if ($createdAt === '') {
+        throw new RuntimeException('לא ניתן לזהות את מועד פתיחת טופס המסירה. יש לטעון אותו מחדש.');
+    }
+    return (new DateTimeImmutable($createdAt))
+        ->setTimezone(new DateTimeZone('Asia/Jerusalem'))
+        ->format('Y-m-d');
+}
+
+function portal_handover_forget_form(string $clientId): void
+{
+    $forms = is_array($_SESSION['portal_handover_forms'] ?? null)
+        ? $_SESSION['portal_handover_forms']
+        : [];
+    unset($forms[$clientId]);
+    $_SESSION['portal_handover_forms'] = $forms;
 }
 
 function portal_handover_existing_client_submission(string $clientId, string $technicianEmail): ?array
@@ -1469,7 +1515,8 @@ function portal_handle_tenant_handover_post(array $user): void
     $recipientName = portal_post('handover_recipient_name', 180);
     $recipientSignature = portal_post('handover_recipient_signature', 1400000);
     $cloudLink = '';
-    $date = portal_post('handover_date', 20);
+    $formCreatedAt = portal_handover_form_created_at($clientId);
+    $date = portal_handover_form_date($clientId);
     $controllerLocationKey = portal_post('handover_controller_location', 40);
     $controllerLocation = portal_handover_controller_location(
         $controllerLocationKey,
@@ -1514,9 +1561,6 @@ function portal_handle_tenant_handover_post(array $user): void
     if (!$isDelivered) {
         $recipientName = '';
         $recipientSignature = '';
-    }
-    if (!portal_valid_date($date)) {
-        throw new RuntimeException('תאריך המסירה אינו תקין.');
     }
     if (!in_array($controllerLocationKey, ['communications_cabinet', 'developer_rep', 'ifeel', 'other'], true) || $controllerLocation === '') {
         throw new RuntimeException('יש לבחור ולפרט את מיקום הקונטרולר.');
@@ -1665,6 +1709,7 @@ function portal_handle_tenant_handover_post(array $user): void
                 'recipient_name' => $recipientName,
                 'cloud_link' => $cloudLink,
                 'date' => $date,
+                'form_created_at' => $formCreatedAt,
                 'controller_location' => $controllerLocation,
                 'controller' => $controller,
                 'icons' => $icons,
@@ -1704,6 +1749,7 @@ function portal_handle_tenant_handover_post(array $user): void
             portal_save_handover($handover);
         }
         unset($_SESSION['portal_handover_submission_token']);
+        portal_handover_forget_form($clientId);
 
         try {
             $handover['notifications']['internal'] = portal_handover_send_internal($handover, $user);
@@ -1967,6 +2013,11 @@ function portal_render_tenant_handover_form(array $user, array $projects, string
     $cloudLinkForTechnician = $cloudAvailable
         ? portal_handover_cloud_link((string) ($cloudLookup['link'] ?? ''))
         : '';
+    $handoverClientId = portal_new_handover_client_id();
+    $handoverCreatedAt = portal_handover_form_created_at($handoverClientId);
+    $handoverCreatedAtLabel = $handoverCreatedAt !== ''
+        ? (new DateTimeImmutable($handoverCreatedAt))->setTimezone(new DateTimeZone('Asia/Jerusalem'))->format('d/m/Y H:i')
+        : '';
     ?>
     <section class="detail-card handover-resident-card">
         <h2>פרטי הדייר ופרטי הכניסה</h2>
@@ -1985,7 +2036,7 @@ function portal_render_tenant_handover_form(array $user, array $projects, string
         <input type="hidden" name="csrf" value="<?= portal_h(portal_csrf_token()) ?>">
         <input type="hidden" name="action" value="submit_tenant_handover">
         <input type="hidden" name="handover_submission_token" value="<?= portal_h(portal_handover_submission_token()) ?>">
-        <input type="hidden" name="handover_client_id" value="<?= portal_h(portal_new_handover_client_id()) ?>">
+        <input type="hidden" name="handover_client_id" value="<?= portal_h($handoverClientId) ?>">
         <input type="hidden" name="handover_project_id" value="<?= portal_h($projectId) ?>">
         <input type="hidden" name="handover_resident_id" value="<?= portal_h($resident['item_id']) ?>">
         <div class="field--full handover-form-heading"><p class="eyebrow">שלב 2</p><h2>פרטי המסירה למילוי הטכנאי</h2><p>כל השדות בטופס הם שדות חובה. יש לצרף צילום קונטרולר וצילום נפרד לכל מפסק 9 שהוגדר.</p></div>
@@ -2007,28 +2058,10 @@ function portal_render_tenant_handover_form(array $user, array $projects, string
                 <option value="not_ready_not_delivered">לא מוכן ולא נמסר</option>
                 <option value="ready_delivered">מוכן ונמסר ללקוח/נציג הלקוח</option>
             </select>
+            <small class="form-note">בבחירת „מוכן ונמסר” ייפתח בתחתית הטופס אזור חתימה של מקבל המסירה.</small>
         </label>
-        <section class="field--full handover-recipient" data-handover-recipient-fields hidden aria-labelledby="handover-recipient-title">
-            <div class="handover-recipient__heading">
-                <h3 id="handover-recipient-title">אישור קבלת המסירה</h3>
-                <p>יש למלא את שם הלקוח או הנציג שקיבל את המערכת ולהחתים אותו על המסך.</p>
-            </div>
-            <label class="field">
-                <span>שם מקבל המסירה <b>*</b></span>
-                <input type="text" name="handover_recipient_name" maxlength="180" autocomplete="name" data-handover-recipient-name>
-            </label>
-            <div class="field handover-signature-field">
-                <span>חתימת מקבל המסירה <b>*</b></span>
-                <div class="handover-signature-pad" data-handover-signature-pad>
-                    <canvas width="640" height="220" data-handover-signature-canvas aria-label="משטח חתימה"></canvas>
-                    <span class="handover-signature-pad__hint" data-handover-signature-hint>יש לחתום בתוך המסגרת</span>
-                </div>
-                <input type="hidden" name="handover_recipient_signature" data-handover-signature-value>
-                <button type="button" class="button button--ghost button--small" data-handover-signature-clear>ניקוי חתימה</button>
-            </div>
-        </section>
         <section class="field field--full handover-cloud-source <?= $cloudAvailable ? 'handover-cloud-source--ready' : 'handover-cloud-source--missing' ?>" data-handover-cloud-link-field data-handover-cloud-available="<?= $cloudAvailable ? '1' : '0' ?>">
-            <span>קישור ענן ייעודי ללקוח <b>*</b></span>
+            <span>קישור ענן שהוקצה אוטומטית ללקוח <b>*</b></span>
             <strong><?= portal_h(portal_handover_cloud_lookup_message($cloudLookup)) ?></strong>
             <?php if ($cloudAvailable): ?>
                 <div class="handover-cloud-source__link" dir="ltr" data-handover-cloud-link><?= portal_h($cloudLinkForTechnician) ?></div>
@@ -2038,9 +2071,13 @@ function portal_render_tenant_handover_form(array $user, array $projects, string
                     <span class="handover-cloud-source__copy-status" data-handover-cloud-copy-status role="status" aria-live="polite"></span>
                 </div>
             <?php endif; ?>
-            <small class="form-note">הכתובת הוקצתה זמנית ממאגר homeassistant-tunnels כדי להגדיר את הקונטרולר באפליקציה. בסיום ושליחה היא תינעל לדייר זה ותסומן כמוקצית, ללא חשיפת מאגר הכתובות המלא.</small>
+            <small class="form-note">המערכת בחרה את הכתובת אוטומטית מתוך הקובץ של אריק. הטכנאי אינו בוחר כתובת ואינו מקבל גישה למאגר המלא. בסיום ושליחה הכתובת תינעל לדייר זה ותסומן כמוקצית.</small>
         </section>
-        <label class="field"><span>תאריך מסירה <b>*</b></span><input type="date" name="handover_date" value="<?= portal_h(date('Y-m-d')) ?>" required></label>
+        <div class="field handover-auto-date">
+            <span>מועד פתיחת טופס המסירה</span>
+            <strong><time datetime="<?= portal_h($handoverCreatedAt) ?>"><?= portal_h($handoverCreatedAtLabel) ?></time></strong>
+            <small class="form-note">המועד נקבע אוטומטית בשרת בעת פתיחת הטופס ואינו ניתן לשינוי.</small>
+        </div>
         <label class="field">
             <span>מיקום קונטרולר <b>*</b></span>
             <select name="handover_controller_location" data-handover-location required>
@@ -2154,6 +2191,25 @@ function portal_render_tenant_handover_form(array $user, array $projects, string
                     </div>
                 </fieldset>
             </template>
+        </section>
+        <section class="field--full handover-recipient" data-handover-recipient-fields hidden aria-labelledby="handover-recipient-title">
+            <div class="handover-recipient__heading">
+                <h3 id="handover-recipient-title">אישור וחתימת מקבל המסירה</h3>
+                <p>אזור זה נפתח רק כאשר סטטוס המסירה הוא „מוכן ונמסר”. יש למלא את שם הלקוח או הנציג שקיבל את המערכת ולהחתים אותו בתחתית הטופס.</p>
+            </div>
+            <label class="field">
+                <span>שם מקבל המסירה <b>*</b></span>
+                <input type="text" name="handover_recipient_name" maxlength="180" autocomplete="name" data-handover-recipient-name>
+            </label>
+            <div class="field handover-signature-field">
+                <span>חתימת מקבל המסירה <b>*</b></span>
+                <div class="handover-signature-pad" data-handover-signature-pad>
+                    <canvas width="640" height="220" data-handover-signature-canvas aria-label="משטח חתימה"></canvas>
+                    <span class="handover-signature-pad__hint" data-handover-signature-hint>מקבל המסירה חותם כאן</span>
+                </div>
+                <input type="hidden" name="handover_recipient_signature" data-handover-signature-value>
+                <button type="button" class="button button--ghost button--small" data-handover-signature-clear>ניקוי חתימה</button>
+            </div>
         </section>
         <div class="field--full submit-bar"><div><strong>פעולה אחת: שמירה ושליחה</strong><span>ללא קליטה, הטופס והתמונות נשמרים במכשיר ומסתנכרנים אוטומטית לאחר חזרת האינטרנט.</span></div><button type="submit" class="button button--primary" data-handover-submit <?= $credentials['password'] === '' ? 'disabled' : '' ?>>סיום ושליחה</button></div>
     </form>
