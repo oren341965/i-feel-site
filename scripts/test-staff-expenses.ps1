@@ -281,7 +281,7 @@ try {
     Assert-PortalTest ($handoverHtml -match 'name="handover_shutter_switch_count"[^>]*min="0"[^>]*max="99"[^>]*required' -and $handoverHtml -match 'name="handover_shutter_switch_location"') "Shutter switch quantity and location fields were not rendered."
     Assert-PortalTest ($handoverHtml -match 'name="handover_captive_shutter_24v"[^>]*required' -and $handoverHtml -match 'value="not_in_project"') "Captive shutter 24V choices were not rendered."
     Assert-PortalTest ($handoverHtml -match 'name="handover_hvac_connection"[^>]*required' -and $handoverHtml -match 'value="none"' -and $handoverHtml -match 'value="ir"' -and $handoverHtml -match 'value="dry_contact_panel_9"' -and $handoverHtml -match 'value="micromodule"') "HVAC connection choices were not rendered."
-    Assert-PortalTest ($handoverHtml -match 'name="handover_boiler"[^>]*required' -and $handoverHtml -match 'name="handover_notes"[^>]*required') "Boiler and notes requirements were not marked mandatory."
+    Assert-PortalTest ($handoverHtml -match 'name="handover_boiler"[^>]*required' -and $handoverHtml -match 'value="avatto"' -and $handoverHtml -match 'value="domex"' -and $handoverHtml -match 'value="none"' -and $handoverHtml -match 'value="switcher"' -and $handoverHtml -match 'name="handover_notes"[^>]*required') "Boiler choices or notes requirement were not rendered."
     $mandatoryPhotoLabels = [regex]::Matches($handoverHtml, '<label class="receipt-action receipt-action--camera">.*?<strong>[^<]+ \*</strong>', [Text.RegularExpressions.RegexOptions]::Singleline)
     Assert-PortalTest ($mandatoryPhotoLabels.Count -eq 2) "Mandatory photo asterisks were not rendered."
     Assert-PortalTest ($handoverHtml -notmatch 'name="handover_switch_9"|name="handover_blinds"') "Legacy free-text switch fields are still rendered."
@@ -316,7 +316,7 @@ try {
         "-F", "handover_shutter_switch_location=Balcony", `
         "-F", "handover_captive_shutter_24v=installed_activated", `
         "-F", "handover_hvac_connection=dry_contact_panel_9", `
-        "-F", "handover_boiler=Completed", `
+        "-F", "handover_boiler=switcher", `
         "-F", "handover_notes=Integration test", `
         "-F", "handover_controller_photo=@$handoverImage;type=image/png", `
         "-F", "handover_switch_photo=@$handoverImage;type=image/png", `
@@ -340,7 +340,8 @@ try {
         -and $handoverRecord.details.shutter_switch_count -eq "1" `
         -and $handoverRecord.details.shutter_switch_location -eq "Balcony" `
         -and $handoverRecord.details.captive_shutter_24v -eq "installed_activated" `
-        -and $handoverRecord.details.hvac_connection -eq "dry_contact_panel_9"
+        -and $handoverRecord.details.hvac_connection -eq "dry_contact_panel_9" `
+        -and $handoverRecord.details.boiler -eq "switcher"
     ) "Structured handover switch and HVAC details were not stored correctly."
     Assert-PortalTest (@($handoverRecord.photos.PSObject.Properties).Count -eq 2) "Tenant handover did not preserve both required photos."
     Assert-PortalTest ($handoverRecord.notifications.resident.status -eq "sent") "Resident handover email status was not recorded."

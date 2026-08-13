@@ -940,7 +940,7 @@ function portal_handover_internal_email_body(array $handover): string
         'מיקומי מפסקי תריס: ' . ((string) ($details['shutter_switch_location'] ?? ($details['blinds'] ?? '')) ?: '-'),
         'מפסק 24V לתריס כלוא: ' . portal_handover_captive_shutter_24v_label((string) ($details['captive_shutter_24v'] ?? '')),
         'חיבור למזגן: ' . portal_handover_hvac_connection_label((string) ($details['hvac_connection'] ?? '')),
-        'דוד: ' . (string) ($details['boiler'] ?? ''),
+        'דוד: ' . portal_handover_boiler_label((string) ($details['boiler'] ?? '')),
         'הערות: ' . (string) ($details['notes'] ?? ''),
         '',
         'טכנאי: ' . (string) ($technician['name'] ?? ''),
@@ -1099,6 +1099,16 @@ function portal_handover_hvac_connection_label(string $value): string
     ][$value] ?? '-';
 }
 
+function portal_handover_boiler_label(string $value): string
+{
+    return [
+        'avatto' => 'AVATTO',
+        'domex' => 'DOMEX',
+        'none' => 'אין',
+        'switcher' => 'סוויטשר',
+    ][$value] ?? ($value !== '' ? $value : '-');
+}
+
 function portal_handover_controller_location(string $value, string $other): string
 {
     $labels = [
@@ -1196,8 +1206,8 @@ function portal_handle_tenant_handover_post(array $user): void
     if (!in_array($hvacConnection, ['none', 'ir', 'dry_contact_panel_9', 'micromodule'], true)) {
         throw new RuntimeException('יש לבחור את סוג החיבור למזגן.');
     }
-    if ($boiler === '') {
-        throw new RuntimeException('יש למלא את פרטי הדוד.');
+    if (!in_array($boiler, ['avatto', 'domex', 'none', 'switcher'], true)) {
+        throw new RuntimeException('יש לבחור אפשרות תקינה בשדה הדוד.');
     }
     if ($notes === '') {
         throw new RuntimeException('יש למלא את שדה ההערות. אם אין הערות, ניתן לכתוב "אין".');
@@ -1579,7 +1589,16 @@ function portal_render_tenant_handover_form(array $user, array $projects, string
                 <option value="micromodule">חיבור באמצעות מיקרומודול</option>
             </select>
         </label>
-        <label class="field"><span>דוד <b>*</b></span><input type="text" name="handover_boiler" maxlength="500" required></label>
+        <label class="field">
+            <span>דוד <b>*</b></span>
+            <select name="handover_boiler" required>
+                <option value="">בחירה</option>
+                <option value="avatto">AVATTO</option>
+                <option value="domex">DOMEX</option>
+                <option value="none">אין</option>
+                <option value="switcher">סוויטשר</option>
+            </select>
+        </label>
         <label class="field field--full"><span>הערות <b>*</b></span><textarea name="handover_notes" rows="4" maxlength="3000" placeholder="אם אין הערות, יש לכתוב: אין" required></textarea></label>
         <div class="field"><span>שם הטכנאי <b>*</b></span><input type="text" value="<?= portal_h($profile['name'] ?? $user['display_name'] ?? '') ?>" readonly></div>
         <div class="field"><span>דוא״ל הטכנאי <b>*</b></span><input type="email" value="<?= portal_h($user['email'] ?? '') ?>" readonly dir="ltr"></div>

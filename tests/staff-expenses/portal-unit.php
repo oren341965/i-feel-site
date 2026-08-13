@@ -552,8 +552,12 @@ try {
         && portal_handover_hvac_connection_label('none') === 'אין חיבור למזגן'
         && portal_handover_hvac_connection_label('ir') === 'חיבור באמצעות IR'
         && portal_handover_hvac_connection_label('dry_contact_panel_9') === 'חיבור באמצעות מגע יבש מפאנל 9'
-        && portal_handover_hvac_connection_label('micromodule') === 'חיבור באמצעות מיקרומודול',
-        'Structured handover switch or HVAC labels are wrong.'
+        && portal_handover_hvac_connection_label('micromodule') === 'חיבור באמצעות מיקרומודול'
+        && portal_handover_boiler_label('avatto') === 'AVATTO'
+        && portal_handover_boiler_label('domex') === 'DOMEX'
+        && portal_handover_boiler_label('none') === 'אין'
+        && portal_handover_boiler_label('switcher') === 'סוויטשר',
+        'Structured handover switch, HVAC, or boiler labels are wrong.'
     );
     $switch9EmailLines = portal_handover_switch_9_email_lines([
         'switch_9_count' => 2,
