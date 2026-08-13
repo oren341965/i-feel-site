@@ -34,6 +34,7 @@ require_once $repositoryRoot . '/public/staff-expenses/_records.php';
 require_once $repositoryRoot . '/public/staff-expenses/_notifications.php';
 require_once $repositoryRoot . '/public/staff-expenses/_work_reports.php';
 require_once $repositoryRoot . '/public/staff-expenses/_tenant_handovers.php';
+require_once $repositoryRoot . '/public/staff-expenses/_tenant_handover_cloud.php';
 require_once $repositoryRoot . '/public/staff-expenses/_history.php';
 require_once $repositoryRoot . '/public/staff-expenses/_readiness.php';
 
@@ -575,6 +576,33 @@ try {
         && portal_handover_cloud_link('javascript:alert(1)') === ''
         && portal_handover_support_url() === 'https://i-feel.co.il/smart-home-support/',
         'Tenant handover cloud or support links were not validated correctly.'
+    );
+    $cloudPoolUpdate = portal_handover_cloud_pool_sheet_update_data([
+        'resident_name' => 'Test Resident',
+        'reserved_at' => '2026-08-13T15:00:00+00:00',
+        'assigned_at' => '2026-08-13T16:00:00+00:00',
+        'key' => str_repeat('a', 64),
+    ], 'handover-123', 42, "'homeassistant-tunnels.csv'");
+    portal_test_expect(
+        ($cloudPoolUpdate[0]['range'] ?? '') === "'homeassistant-tunnels.csv'!C1:H1"
+        && ($cloudPoolUpdate[0]['values'][0] ?? []) === [
+            'סטטוס',
+            'שם הדייר',
+            'מועד פתיחת הגישה',
+            'מועד סיום המסירה',
+            'מזהה הקצאה',
+            'מספר מסירה',
+        ]
+        && ($cloudPoolUpdate[1]['range'] ?? '') === "'homeassistant-tunnels.csv'!C42:H42"
+        && ($cloudPoolUpdate[1]['values'][0] ?? []) === [
+            'הוקצה',
+            'Test Resident',
+            '13/08/2026 18:00',
+            '13/08/2026 19:00',
+            str_repeat('a', 20),
+            'handover-123',
+        ],
+        'Tenant cloud pool update omitted the resident name or access-opening time.'
     );
     $handoverCustomerEmail = [
         'resident' => ['name' => 'Test Resident', 'apartment' => '12', 'building' => '2', 'project_title' => 'Test Project'],

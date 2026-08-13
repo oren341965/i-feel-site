@@ -320,7 +320,8 @@ try {
     $allocationLedgerPath = Join-Path $storagePath "tenant-cloud-allocations.json"
     $reservedLedger = Get-Content -Raw -Encoding utf8 $allocationLedgerPath | ConvertFrom-Json
     $firstReservation = @($reservedLedger.allocations.PSObject.Properties.Value | Where-Object { $_.link -eq "https://cloud.example.com/pool/001" })
-    Assert-PortalTest ($firstReservation.Count -eq 1 -and $firstReservation[0].state -eq "reserved") "Opening a resident did not create a temporary locked cloud address reservation."
+    $firstOpenedAt = if ($firstReservation.Count -eq 1) { [string]$firstReservation[0].reserved_at } else { "" }
+    Assert-PortalTest ($firstReservation.Count -eq 1 -and $firstReservation[0].state -eq "reserved" -and $firstReservation[0].resident_name -eq "דייר בדיקה" -and -not [string]::IsNullOrWhiteSpace($firstOpenedAt)) "Opening a resident did not create a named, timestamped, locked cloud address reservation."
 
     Invoke-PortalCurl `
         "-o", $responseBody, `
@@ -392,7 +393,7 @@ try {
     Assert-PortalTest ($handoverRecord.details.cloud_allocation.state -eq "assigned" -and $handoverRecord.details.cloud_allocation.sheet_sync -eq "synced") "Completed handover did not record the permanent cloud allocation state."
     $assignedLedger = Get-Content -Raw -Encoding utf8 $allocationLedgerPath | ConvertFrom-Json
     $assignedAllocation = @($assignedLedger.allocations.PSObject.Properties.Value | Where-Object { $_.link -eq "https://cloud.example.com/pool/001" })
-    Assert-PortalTest ($assignedAllocation.Count -eq 1 -and $assignedAllocation[0].state -eq "assigned" -and $assignedAllocation[0].handover_id -eq $handoverSubmitResponse.handoverId -and $assignedAllocation[0].sheet_sync -eq "synced") "Completed cloud address was not locked permanently against reuse."
+    Assert-PortalTest ($assignedAllocation.Count -eq 1 -and $assignedAllocation[0].state -eq "assigned" -and $assignedAllocation[0].resident_name -eq "דייר בדיקה" -and $assignedAllocation[0].reserved_at -eq $firstOpenedAt -and $assignedAllocation[0].handover_id -eq $handoverSubmitResponse.handoverId -and $assignedAllocation[0].sheet_sync -eq "synced") "Completed cloud address did not retain the resident name and original access-opening time or was not locked permanently against reuse."
     Assert-PortalTest (
         $handoverRecord.details.switch_9_count -eq 2 `
         -and $handoverRecord.details.switch_9_units.Count -eq 2 `

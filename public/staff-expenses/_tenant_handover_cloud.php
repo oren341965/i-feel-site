@@ -514,7 +514,7 @@ function portal_handover_cloud_pool_sheet(): array
             'TENANT_HANDOVER_CLOUD_POOL_SHEET',
             'homeassistant-tunnels.csv'
         ),
-        'range' => 'A1:F1000',
+        'range' => 'A1:H1000',
     ];
 }
 
@@ -671,6 +671,7 @@ function portal_handover_cloud_allocate(array $resident, array $entries): array
             'pool_spreadsheet_id' => (string) portal_handover_cloud_pool_sheet()['spreadsheet_id'],
             'pool_sheet' => (string) portal_handover_cloud_pool_sheet()['sheet'],
             'resident_ref' => hash('sha256', (string) ($resident['item_id'] ?? '')),
+            'resident_name' => portal_substr(trim((string) ($resident['name'] ?? '')), 0, 180),
             'reserved_at' => gmdate('c'),
             'assigned_at' => null,
             'handover_id' => null,
@@ -682,6 +683,59 @@ function portal_handover_cloud_allocate(array $resident, array $entries): array
         portal_json_write($file, $ledger);
         return $allocation;
     });
+}
+
+function portal_handover_cloud_sheet_datetime(string $value): string
+{
+    $value = trim($value);
+    if ($value === '') {
+        return '';
+    }
+    try {
+        return (new DateTimeImmutable($value))
+            ->setTimezone(new DateTimeZone('Asia/Jerusalem'))
+            ->format('d/m/Y H:i');
+    } catch (Throwable $error) {
+        return '';
+    }
+}
+
+function portal_handover_cloud_pool_sheet_update_data(
+    array $allocation,
+    string $handoverId,
+    int $row,
+    string $quotedSheet
+): array {
+    $openedAt = trim((string) ($allocation['reserved_at'] ?? ''));
+    $assignedAt = trim((string) ($allocation['assigned_at'] ?? ''));
+    if ($openedAt === '') {
+        $openedAt = $assignedAt;
+    }
+
+    return [
+        [
+            'range' => $quotedSheet . '!C1:H1',
+            'values' => [[
+                'סטטוס',
+                'שם הדייר',
+                'מועד פתיחת הגישה',
+                'מועד סיום המסירה',
+                'מזהה הקצאה',
+                'מספר מסירה',
+            ]],
+        ],
+        [
+            'range' => $quotedSheet . '!C' . $row . ':H' . $row,
+            'values' => [[
+                'הוקצה',
+                portal_substr(trim((string) ($allocation['resident_name'] ?? '')), 0, 180),
+                portal_handover_cloud_sheet_datetime($openedAt),
+                portal_handover_cloud_sheet_datetime($assignedAt),
+                substr((string) ($allocation['key'] ?? ''), 0, 20),
+                $handoverId,
+            ]],
+        ],
+    ];
 }
 
 function portal_handover_cloud_mark_pool_row(array $allocation, string $handoverId): void
@@ -699,7 +753,7 @@ function portal_handover_cloud_mark_pool_row(array $allocation, string $handover
     $currentValues = portal_handover_google_sheet_values([
         'spreadsheet_id' => (string) $sheet['spreadsheet_id'],
         'sheet' => $sheetName,
-        'range' => 'A' . $row . ':F' . $row,
+        'range' => 'A' . $row . ':H' . $row,
     ], true);
     $currentLink = portal_handover_cloud_link((string) ($currentValues[0][1] ?? ''));
     if ($currentLink === '' || !hash_equals((string) ($allocation['link'] ?? ''), $currentLink)) {
@@ -711,28 +765,14 @@ function portal_handover_cloud_mark_pool_row(array $allocation, string $handover
         . '/values:batchUpdate';
     portal_handover_google_post_json($url, [
         'valueInputOption' => 'RAW',
-        'data' => [
-            [
-                'range' => $quotedSheet . '!C1:F1',
-                'values' => [['סטטוס', 'הוקצה בתאריך', 'מזהה הקצאה', 'מספר מסירה']],
-            ],
-            [
-                'range' => $quotedSheet . '!C' . $row . ':F' . $row,
-                'values' => [[
-                    'הוקצה',
-                    gmdate('c'),
-                    substr((string) ($allocation['key'] ?? ''), 0, 20),
-                    $handoverId,
-                ]],
-            ],
-        ],
+        'data' => portal_handover_cloud_pool_sheet_update_data($allocation, $handoverId, $row, $quotedSheet),
     ]);
 }
 
 function portal_handover_cloud_finalize(array $resident, string $handoverId): array
 {
     $allocationKey = portal_handover_cloud_allocation_key($resident);
-    $allocation = portal_handover_cloud_with_allocation_lock(static function () use ($allocationKey, $handoverId): array {
+    $allocation = portal_handover_cloud_with_allocation_lock(static function () use ($allocationKey, $handoverId, $resident): array {
         $file = portal_handover_cloud_allocations_file();
         $ledger = portal_json_read($file, ['version' => 1, 'allocations' => []]);
         $allocations = is_array($ledger['allocations'] ?? null) ? $ledger['allocations'] : [];
@@ -741,6 +781,7 @@ function portal_handover_cloud_finalize(array $resident, string $handoverId): ar
             throw new RuntimeException('לא נמצאה כתובת הענן שנשמרה לדייר.');
         }
         $allocation['state'] = 'assigned';
+        $allocation['resident_name'] = portal_substr(trim((string) ($resident['name'] ?? '')), 0, 180);
         $allocation['assigned_at'] = gmdate('c');
         $allocation['handover_id'] = $handoverId;
         $allocation['sheet_sync'] = 'pending';
