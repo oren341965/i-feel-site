@@ -933,8 +933,16 @@ function portal_handover_internal_email_body(array $handover): string
         'מיקום קונטרולר: ' . (string) ($details['controller_location'] ?? ''),
         'קונטרולר: ' . portal_handover_controller_label((string) ($details['controller'] ?? '')),
         'אייקונים במפסק: ' . portal_handover_icons_label((string) ($details['icons'] ?? '')),
-        'מפסק 9: ' . (string) ($details['switch_9'] ?? ''),
-        'תריסים: ' . (string) ($details['blinds'] ?? ''),
+        'תצורת מפסק 9: ' . (
+            isset($details['switch_9_configuration'])
+                ? portal_handover_switch_9_label((string) $details['switch_9_configuration'])
+                : (string) ($details['switch_9'] ?? '-')
+        ),
+        'מיקום מפסק 9: ' . (string) ($details['switch_9_location'] ?? '-'),
+        'מספר מפסקי תאורה: ' . (string) ($details['light_switch_count'] ?? '-'),
+        'מיקום מפסקי תאורה: ' . (string) ($details['light_switch_location'] ?? '-'),
+        'מיקום מפסק תריס: ' . (string) ($details['shutter_switch_location'] ?? ($details['blinds'] ?? '-')),
+        'מפסק 24V לתריס כלוא: ' . portal_handover_captive_shutter_24v_label((string) ($details['captive_shutter_24v'] ?? '')),
         'דוד: ' . (string) ($details['boiler'] ?? ''),
         'הערות: ' . (string) ($details['notes'] ?? ''),
         '',
@@ -1031,6 +1039,25 @@ function portal_handover_icons_label(string $value): string
     return ['done' => 'בוצע', 'not_done' => 'לא בוצע', 'partial' => 'חלקי'][$value] ?? '-';
 }
 
+function portal_handover_switch_9_label(string $value): string
+{
+    return [
+        'light_9' => '9 לתאורה בלבד',
+        'shutter_1_light_4' => 'תריס אחד ו-4 תאורות',
+        'shutter_2_light_2' => '2 תריסים ו-2 תאורות',
+        'shutter_3' => '3 תריסים',
+    ][$value] ?? '-';
+}
+
+function portal_handover_captive_shutter_24v_label(string $value): string
+{
+    return [
+        'installed_activated' => 'יש והופעל',
+        'installed_not_activated' => 'יש ולא הופעל',
+        'not_in_project' => 'אין בפרויקט',
+    ][$value] ?? '-';
+}
+
 function portal_handover_controller_location(string $value, string $other): string
 {
     $labels = [
@@ -1068,6 +1095,12 @@ function portal_handle_tenant_handover_post(array $user): void
     );
     $controller = portal_post('handover_controller', 40);
     $icons = portal_post('handover_icons', 40);
+    $switch9Configuration = portal_post('handover_switch_9_configuration', 40);
+    $switch9Location = portal_post('handover_switch_9_location', 300);
+    $lightSwitchCount = portal_post('handover_light_switch_count', 10);
+    $lightSwitchLocation = portal_post('handover_light_switch_location', 300);
+    $shutterSwitchLocation = portal_post('handover_shutter_switch_location', 300);
+    $captiveShutter24v = portal_post('handover_captive_shutter_24v', 40);
     if ($ready !== '' && !in_array($ready, ['ready', 'not_ready', 'delivered'], true)) {
         throw new RuntimeException('סטטוס המוכנות אינו תקין.');
     }
@@ -1082,6 +1115,24 @@ function portal_handle_tenant_handover_post(array $user): void
     }
     if ($icons !== '' && !in_array($icons, ['done', 'not_done', 'partial'], true)) {
         throw new RuntimeException('סטטוס האייקונים אינו תקין.');
+    }
+    if (!in_array($switch9Configuration, ['light_9', 'shutter_1_light_4', 'shutter_2_light_2', 'shutter_3'], true)) {
+        throw new RuntimeException('יש לבחור את תצורת מפסק 9.');
+    }
+    if ($switch9Location === '') {
+        throw new RuntimeException('יש לפרט את מיקום מפסק 9.');
+    }
+    if (!in_array($lightSwitchCount, ['1', '2', '3'], true)) {
+        throw new RuntimeException('יש לבחור מספר מפסקי תאורה.');
+    }
+    if ($lightSwitchLocation === '') {
+        throw new RuntimeException('יש לפרט את מיקום מפסקי התאורה.');
+    }
+    if ($shutterSwitchLocation === '') {
+        throw new RuntimeException('יש לפרט את מיקום מפסק התריס.');
+    }
+    if (!in_array($captiveShutter24v, ['installed_activated', 'installed_not_activated', 'not_in_project'], true)) {
+        throw new RuntimeException('יש לבחור את מצב מפסק 24V לתריס הכלוא.');
     }
 
     $profile = portal_employee_profile($user);
@@ -1119,8 +1170,12 @@ function portal_handle_tenant_handover_post(array $user): void
                 'controller_location' => $controllerLocation,
                 'controller' => $controller,
                 'icons' => $icons,
-                'switch_9' => portal_post('handover_switch_9', 500),
-                'blinds' => portal_post('handover_blinds', 500),
+                'switch_9_configuration' => $switch9Configuration,
+                'switch_9_location' => $switch9Location,
+                'light_switch_count' => $lightSwitchCount,
+                'light_switch_location' => $lightSwitchLocation,
+                'shutter_switch_location' => $shutterSwitchLocation,
+                'captive_shutter_24v' => $captiveShutter24v,
                 'boiler' => portal_post('handover_boiler', 500),
                 'notes' => portal_post('handover_notes', 3000),
             ],
@@ -1355,7 +1410,8 @@ function portal_render_tenant_handover_form(array $user, array $projects, string
             <p>לאחר בחירת פרויקט, בניין ודירה ייפתח כאן מיד הטופס המלא. אין צורך ללחוץ על כפתור נוסף.</p>
             <div class="handover-field-preview" aria-label="השדות שיופיעו בטופס">
                 <span>מוכן לפרוטוקול</span><span>תאריך מסירה</span><span>מיקום וסוג קונטרולר</span>
-                <span>אייקונים ומפסק 9</span><span>תריסים ודוד</span><span>הערות</span>
+                <span>תצורת ומיקום מפסק 9</span><span>מפסקי תאורה ותריס</span><span>מפסק 24V לתריס כלוא</span>
+                <span>דוד והערות</span>
                 <span>פרטי הטכנאי</span><span>שני צילומי חובה</span><span>סיום ושליחה</span>
             </div>
         </section>
@@ -1396,8 +1452,34 @@ function portal_render_tenant_handover_form(array $user, array $projects, string
         <label class="field" data-handover-location-other hidden><span>מיקום אחר <b>*</b></span><input type="text" name="handover_controller_location_other" maxlength="300"></label>
         <label class="field"><span>קונטרולר</span><select name="handover_controller"><option value="">בחירה</option><option value="raspberry_pi">רספברי פיי</option><option value="ava_hab">AVA-HAB</option></select></label>
         <label class="field"><span>אייקונים במפסק</span><select name="handover_icons"><option value="">בחירה</option><option value="done">בוצע</option><option value="not_done">לא בוצע</option><option value="partial">חלקי</option></select></label>
-        <label class="field"><span>מפסק 9</span><input type="text" name="handover_switch_9" maxlength="500"></label>
-        <label class="field"><span>תריסים</span><input type="text" name="handover_blinds" maxlength="500"></label>
+        <label class="field">
+            <span>תצורת מפסק 9 <b>*</b></span>
+            <select name="handover_switch_9_configuration" required>
+                <option value="">בחירה</option>
+                <option value="light_9">9 לתאורה בלבד</option>
+                <option value="shutter_1_light_4">תריס אחד ו-4 תאורות</option>
+                <option value="shutter_2_light_2">2 תריסים ו-2 תאורות</option>
+                <option value="shutter_3">3 תריסים</option>
+            </select>
+        </label>
+        <label class="field"><span>מיקום מפסק 9 <b>*</b></span><input type="text" name="handover_switch_9_location" maxlength="300" required></label>
+        <label class="field">
+            <span>מספר מפסקי תאורה <b>*</b></span>
+            <select name="handover_light_switch_count" required>
+                <option value="">בחירה</option><option value="1">1</option><option value="2">2</option><option value="3">3</option>
+            </select>
+        </label>
+        <label class="field"><span>מיקום מפסקי תאורה <b>*</b></span><input type="text" name="handover_light_switch_location" maxlength="300" required></label>
+        <label class="field"><span>מיקום מפסק תריס <b>*</b></span><input type="text" name="handover_shutter_switch_location" maxlength="300" required></label>
+        <label class="field">
+            <span>מפסק 24V לתריס כלוא <b>*</b></span>
+            <select name="handover_captive_shutter_24v" required>
+                <option value="">בחירה</option>
+                <option value="installed_activated">יש והופעל</option>
+                <option value="installed_not_activated">יש ולא הופעל</option>
+                <option value="not_in_project">אין בפרויקט</option>
+            </select>
+        </label>
         <label class="field"><span>דוד</span><input type="text" name="handover_boiler" maxlength="500"></label>
         <label class="field field--full"><span>הערות</span><textarea name="handover_notes" rows="4" maxlength="3000"></textarea></label>
         <div class="field"><span>שם הטכנאי</span><input type="text" value="<?= portal_h($profile['name'] ?? $user['display_name'] ?? '') ?>" readonly></div>
