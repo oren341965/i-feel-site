@@ -546,6 +546,26 @@ try {
         'Tenant handover delivery status labels are wrong.'
     );
     portal_test_expect(
+        portal_handover_cloud_link('https://cloud.example.com/customer/1001') === 'https://cloud.example.com/customer/1001'
+        && portal_handover_cloud_link('http://cloud.example.com/customer/1001') === ''
+        && portal_handover_cloud_link('javascript:alert(1)') === ''
+        && portal_handover_support_url() === 'https://i-feel.co.il/smart-home-support/',
+        'Tenant handover cloud or support links were not validated correctly.'
+    );
+    $handoverCustomerEmail = [
+        'resident' => ['name' => 'Test Resident', 'apartment' => '12', 'building' => '2', 'project_title' => 'Test Project'],
+        'credentials' => ['username' => 'resident@example.com', 'password' => '0501234567'],
+        'details' => ['cloud_link' => 'https://cloud.example.com/customer/1001'],
+    ];
+    portal_test_expect(
+        str_contains(portal_handover_resident_email_body($handoverCustomerEmail), 'https://cloud.example.com/customer/1001')
+        && str_contains(portal_handover_resident_email_body($handoverCustomerEmail), portal_handover_support_url())
+        && str_contains(portal_handover_resident_email_html($handoverCustomerEmail), 'tenant-handover-support-qr.png')
+        && str_contains(portal_handover_resident_email_html($handoverCustomerEmail), 'פתיחת מערכת הבית החכם בענן')
+        && is_file($repositoryRoot . '/public/assets/tenant-handover-support-qr.png'),
+        'Tenant handover customer email omitted the cloud link, connection instructions, or support QR code.'
+    );
+    portal_test_expect(
         portal_handover_switch_9_label('shutter_2_light_2') === '2 תריסים ו-2 תאורות'
         && portal_handover_captive_shutter_24v_label('installed_activated') === 'יש והופעל'
         && portal_handover_captive_shutter_24v_label('not_in_project') === 'אין בפרויקט'

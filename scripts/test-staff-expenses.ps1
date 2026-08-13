@@ -273,6 +273,7 @@ try {
     Assert-PortalTest ($handoverHtml -match '0501234567') "Authenticated handover form omitted the derived initial password."
     Assert-PortalTest ($handoverHtml -notmatch 'name="handover_resident_email"|name="handover_resident_phone"') "Resident PII was trusted through client-editable fields."
     Assert-PortalTest ($handoverHtml -match 'name="handover_ready"[^>]*required' -and $handoverHtml -match 'value="delivered_with_app_link"' -and $handoverHtml -match 'value="completed_without_app_link"' -and $handoverHtml -match 'value="ready_for_delivery"' -and $handoverHtml -match 'value="not_ready_return_required"') "Delivery status choices were not rendered."
+    Assert-PortalTest ($handoverHtml -match 'type="url"[^>]*name="handover_cloud_link"' -and $handoverHtml -match 'data-handover-cloud-link') "Customer-specific cloud link field was not rendered."
     Assert-PortalTest ($handoverHtml -match 'name="handover_controller_location"[^>]*required' -and $handoverHtml -match 'name="handover_controller"[^>]*required' -and $handoverHtml -match 'name="handover_icons"[^>]*required') "Controller and icon requirements were not marked mandatory."
     Assert-PortalTest ($handoverHtml -match 'name="handover_switch_9_count"[^>]*min="1"[^>]*max="50"[^>]*required') "Switch 9 quantity field was not rendered."
     Assert-PortalTest ($handoverHtml -match 'name="handover_switch_9_configuration_1"[^>]*required' -and $handoverHtml -match 'value="shutter_2_light_2"') "Per-unit switch 9 configuration choices were not rendered."
@@ -302,6 +303,7 @@ try {
         "-F", "handover_project_id=test-project", `
         "-F", "handover_resident_id=1001", `
         "-F", "handover_ready=delivered_with_app_link", `
+        "-F", "handover_cloud_link=https://cloud.example.com/customer/1001", `
         "-F", "handover_date=2026-08-13", `
         "-F", "handover_controller_location=communications_cabinet", `
         "-F", "handover_controller=raspberry_pi", `
@@ -335,6 +337,7 @@ try {
     Assert-PortalTest ($handoverRecord.source.item_id -eq "1001") "Tenant handover did not retain the verified Monday item ID."
     Assert-PortalTest ($handoverRecord.credentials.password -eq "0501234567") "Tenant handover credentials were not stored correctly."
     Assert-PortalTest ($handoverRecord.details.ready -eq "delivered_with_app_link") "Tenant handover delivery status was not stored correctly."
+    Assert-PortalTest ($handoverRecord.details.cloud_link -eq "https://cloud.example.com/customer/1001") "Tenant handover cloud link was not stored correctly."
     Assert-PortalTest (
         $handoverRecord.details.switch_9_count -eq 2 `
         -and $handoverRecord.details.switch_9_units.Count -eq 2 `

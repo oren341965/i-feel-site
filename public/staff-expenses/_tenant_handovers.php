@@ -951,6 +951,32 @@ function portal_handover_photo_email_lines(array $handover): array
     return $lines;
 }
 
+function portal_handover_cloud_link(string $value): string
+{
+    $value = trim($value);
+    if ($value === '') {
+        return '';
+    }
+    if (strlen($value) > 2000 || filter_var($value, FILTER_VALIDATE_URL) === false) {
+        return '';
+    }
+    $parts = parse_url($value);
+    if (!is_array($parts) || strtolower((string) ($parts['scheme'] ?? '')) !== 'https' || trim((string) ($parts['host'] ?? '')) === '') {
+        return '';
+    }
+    return $value;
+}
+
+function portal_handover_support_url(): string
+{
+    return 'https://i-feel.co.il/smart-home-support/';
+}
+
+function portal_handover_support_qr_url(): string
+{
+    return 'https://i-feel.co.il/assets/tenant-handover-support-qr.png';
+}
+
 function portal_handover_internal_email_body(array $handover): string
 {
     $resident = is_array($handover['resident'] ?? null) ? $handover['resident'] : [];
@@ -971,6 +997,7 @@ function portal_handover_internal_email_body(array $handover): string
         '',
         'שם משתמש: ' . (string) ($credentials['username'] ?? ''),
         'סיסמה ראשונית: ' . (string) ($credentials['password'] ?? ''),
+        'קישור ענן ייעודי ללקוח: ' . ((string) ($details['cloud_link'] ?? '') ?: 'לא צורף'),
         '',
         'סטטוס המסירה: ' . portal_handover_ready_label((string) ($details['ready'] ?? '')),
         'תאריך מסירה: ' . (string) ($details['date'] ?? ''),
@@ -1000,22 +1027,89 @@ function portal_handover_resident_email_body(array $handover): string
 {
     $resident = is_array($handover['resident'] ?? null) ? $handover['resident'] : [];
     $credentials = is_array($handover['credentials'] ?? null) ? $handover['credentials'] : [];
+    $details = is_array($handover['details'] ?? null) ? $handover['details'] : [];
+    $cloudLink = portal_handover_cloud_link((string) ($details['cloud_link'] ?? ''));
     $building = trim((string) ($resident['building'] ?? ''));
     $location = $building !== '' ? ' (בניין ' . $building . ')' : '';
-    return implode("\r\n", [
+    $lines = [
         'שלום ' . (string) ($resident['name'] ?? '') . ',',
         '',
         'צוות I Feel סיים את מסירת מערכת הבית החכם בדירה ' . (string) ($resident['apartment'] ?? '') . $location . ', בפרויקט ' . (string) ($resident['project_title'] ?? '') . '.',
         '',
+    ];
+    if ($cloudLink !== '') {
+        array_push($lines,
+            'קישור הענן הייעודי של המערכת שלך:',
+            $cloudLink,
+            '',
+            'איך מתחברים למערכת:',
+            '1. פתחו את קישור הענן הייעודי שמופיע למעלה.',
+            '2. התחברו באמצעות שם המשתמש והסיסמה הראשונית שמופיעים בהמשך.',
+            '3. לאחר הכניסה הראשונה מומלץ להחליף את הסיסמה, אם המערכת מאפשרת זאת.',
+            ''
+        );
+    }
+    array_push($lines,
         'פרטי הכניסה שלך לאפליקציה:',
         'שם משתמש: ' . (string) ($credentials['username'] ?? ''),
         'סיסמה ראשונית: ' . (string) ($credentials['password'] ?? ''),
         '',
-        'מומלץ להחליף את הסיסמה לאחר הכניסה הראשונה, אם האפליקציה מאפשרת זאת.',
+        'מדריכים ותמיכה למערכת הבית החכם:',
+        portal_handover_support_url(),
+        'ניתן גם לסרוק את קוד ה-QR המצורף בגוף ההודעה.',
         '',
         'תודה שבחרתם ב-I Feel!',
-        '03-508-9553',
-    ]);
+        '03-508-9553'
+    );
+    return implode("\r\n", $lines);
+}
+
+function portal_handover_resident_email_html(array $handover): string
+{
+    $resident = is_array($handover['resident'] ?? null) ? $handover['resident'] : [];
+    $credentials = is_array($handover['credentials'] ?? null) ? $handover['credentials'] : [];
+    $details = is_array($handover['details'] ?? null) ? $handover['details'] : [];
+    $cloudLink = portal_handover_cloud_link((string) ($details['cloud_link'] ?? ''));
+    $building = trim((string) ($resident['building'] ?? ''));
+    $location = $building !== '' ? ' (בניין ' . $building . ')' : '';
+    $safeName = portal_h((string) ($resident['name'] ?? ''));
+    $safeApartment = portal_h((string) ($resident['apartment'] ?? ''));
+    $safeLocation = portal_h($location);
+    $safeProject = portal_h((string) ($resident['project_title'] ?? ''));
+    $safeUsername = portal_h((string) ($credentials['username'] ?? ''));
+    $safePassword = portal_h((string) ($credentials['password'] ?? ''));
+    $safeCloudLink = portal_h($cloudLink);
+    $safeSupportUrl = portal_h(portal_handover_support_url());
+    $safeQrUrl = portal_h(portal_handover_support_qr_url());
+    $cloudSection = '';
+    if ($cloudLink !== '') {
+        $cloudSection = '<div style="margin:24px 0;padding:22px;background:#eef7fd;border:1px solid #bedcf0;border-radius:14px">'
+            . '<h2 style="font-size:20px;margin:0 0 12px">כניסה לענן של הבית החכם</h2>'
+            . '<p style="font-size:16px;line-height:1.7;margin:0 0 16px">זהו הקישור הייעודי למערכת שלך. לחצו עליו והתחברו באמצעות הפרטים שבהמשך.</p>'
+            . '<p style="text-align:center;margin:0"><a href="' . $safeCloudLink . '" style="display:inline-block;background:#1769aa;color:#fff;text-decoration:none;font-weight:bold;padding:13px 22px;border-radius:10px">פתיחת מערכת הבית החכם בענן</a></p>'
+            . '<p dir="ltr" style="font-size:13px;line-height:1.6;text-align:center;word-break:break-all;margin:14px 0 0"><a href="' . $safeCloudLink . '" style="color:#1769aa">' . $safeCloudLink . '</a></p>'
+            . '</div>';
+    }
+    return '<!doctype html><html lang="he" dir="rtl"><body style="margin:0;background:#f4f7fb;font-family:Arial,sans-serif;color:#10233f">'
+        . '<div style="max-width:620px;margin:24px auto;background:#fff;border:1px solid #dbe4ef;border-radius:18px;padding:32px;text-align:right">'
+        . '<h1 style="font-size:26px;margin:0 0 14px">מסירת מערכת הבית החכם הושלמה</h1>'
+        . '<p style="font-size:16px;line-height:1.7">שלום ' . $safeName . ',<br>צוות I Feel סיים את המסירה בדירה ' . $safeApartment . $safeLocation . ', בפרויקט ' . $safeProject . '.</p>'
+        . $cloudSection
+        . '<div style="margin:24px 0;padding:20px;border:1px solid #dbe4ef;border-radius:14px">'
+        . '<h2 style="font-size:20px;margin:0 0 14px">פרטי הכניסה שלך</h2>'
+        . '<p style="margin:8px 0"><strong>שם משתמש:</strong> <span dir="ltr">' . $safeUsername . '</span></p>'
+        . '<p style="margin:8px 0"><strong>סיסמה ראשונית:</strong> <span dir="ltr">' . $safePassword . '</span></p>'
+        . '<p style="font-size:14px;line-height:1.6;color:#52657d;margin:14px 0 0">לאחר הכניסה הראשונה מומלץ להחליף את הסיסמה, אם המערכת מאפשרת זאת.</p>'
+        . '</div>'
+        . '<div style="text-align:center;margin:28px 0 18px">'
+        . '<h2 style="font-size:20px;margin:0 0 10px">מדריכים ותמיכה</h2>'
+        . '<p style="font-size:15px;line-height:1.6;margin:0 0 16px">סרקו את קוד ה-QR או לחצו עליו כדי לעבור למדריכי התמיכה של I Feel.</p>'
+        . '<a href="' . $safeSupportUrl . '"><img src="' . $safeQrUrl . '" width="280" alt="קוד QR למדריכי התמיכה של I Feel" style="display:block;width:280px;max-width:100%;height:auto;margin:0 auto;border:0"></a>'
+        . '<p style="margin:14px 0 0"><a href="' . $safeSupportUrl . '" style="color:#1769aa;font-weight:bold">' . $safeSupportUrl . '</a></p>'
+        . '</div>'
+        . '<hr style="border:0;border-top:1px solid #e3e9f0;margin:24px 0">'
+        . '<p style="font-size:15px;line-height:1.7;margin:0">תודה שבחרתם ב-I Feel!<br><a href="tel:+97235089553" style="color:#1769aa">03-508-9553</a></p>'
+        . '</div></body></html>';
 }
 
 function portal_handover_send_internal(array $handover, array $user): array
@@ -1058,7 +1152,13 @@ function portal_handover_send_resident(array $handover): array
         return ['recipient' => $email, 'status' => 'sent'];
     }
     $subject = 'סיום מסירה — מערכת בית חכם I Feel · דירה ' . (string) ($handover['resident']['apartment'] ?? '');
-    $sent = portal_send_mail_with_attachments($email, $subject, portal_handover_resident_email_body($handover));
+    $sent = portal_send_mail_with_attachments(
+        $email,
+        $subject,
+        portal_handover_resident_email_body($handover),
+        [],
+        portal_handover_resident_email_html($handover)
+    );
     return ['recipient' => $email, 'status' => $sent ? 'sent' : 'failed'];
 }
 
@@ -1204,6 +1304,8 @@ function portal_handle_tenant_handover_post(array $user): void
     }
 
     $ready = portal_post('handover_ready', 30);
+    $cloudLinkInput = portal_post('handover_cloud_link', 2000);
+    $cloudLink = portal_handover_cloud_link($cloudLinkInput);
     $date = portal_post('handover_date', 20);
     $controllerLocationKey = portal_post('handover_controller_location', 40);
     $controllerLocation = portal_handover_controller_location(
@@ -1224,6 +1326,12 @@ function portal_handle_tenant_handover_post(array $user): void
     $notes = portal_post('handover_notes', 3000);
     if (!in_array($ready, ['delivered_with_app_link', 'completed_without_app_link', 'ready_for_delivery', 'not_ready_return_required'], true)) {
         throw new RuntimeException('יש לבחור סטטוס מסירה תקין.');
+    }
+    if ($cloudLinkInput !== '' && $cloudLink === '') {
+        throw new RuntimeException('קישור הענן חייב להיות כתובת HTTPS תקינה.');
+    }
+    if ($ready === 'delivered_with_app_link' && $cloudLink === '') {
+        throw new RuntimeException('יש לצרף את קישור הענן הייעודי של הלקוח.');
     }
     if (!portal_valid_date($date)) {
         throw new RuntimeException('תאריך המסירה אינו תקין.');
@@ -1337,6 +1445,7 @@ function portal_handle_tenant_handover_post(array $user): void
             'credentials' => $credentials,
             'details' => [
                 'ready' => $ready,
+                'cloud_link' => $cloudLink,
                 'date' => $date,
                 'controller_location' => $controllerLocation,
                 'controller' => $controller,
@@ -1616,13 +1725,18 @@ function portal_render_tenant_handover_form(array $user, array $projects, string
         <div class="field--full handover-form-heading"><p class="eyebrow">שלב 2</p><h2>פרטי המסירה למילוי הטכנאי</h2><p>כל השדות בטופס הם שדות חובה. יש לצרף צילום קונטרולר וצילום נפרד לכל מפסק 9 שהוגדר.</p></div>
         <label class="field">
             <span>סטטוס המסירה <b>*</b></span>
-            <select name="handover_ready" required>
+            <select name="handover_ready" data-handover-ready required>
                 <option value="">בחירה</option>
                 <option value="delivered_with_app_link">נמסר עם קישור לאפליקציה</option>
                 <option value="completed_without_app_link">הסתיים ללא קישור לאפליקציה</option>
                 <option value="ready_for_delivery">מוכן למסירה</option>
                 <option value="not_ready_return_required">לא מוכן — יש לחזור</option>
             </select>
+        </label>
+        <label class="field field--full" data-handover-cloud-link-field hidden>
+            <span>קישור ענן ייעודי ללקוח <b>*</b></span>
+            <input type="url" name="handover_cloud_link" maxlength="2000" inputmode="url" autocomplete="off" dir="ltr" placeholder="https://..." data-handover-cloud-link>
+            <small class="form-note">יש להעתיק את הקישור הייעודי מרישום הקונטרולר בענן. הקישור יישמר עם המסירה ויישלח ללקוח.</small>
         </label>
         <label class="field"><span>תאריך מסירה <b>*</b></span><input type="date" name="handover_date" value="<?= portal_h(date('Y-m-d')) ?>" required></label>
         <label class="field">

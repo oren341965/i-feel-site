@@ -178,6 +178,19 @@
     updateHandoverLocation();
 
     const handoverForm = document.querySelector('[data-handover-form]');
+    const handoverReady = handoverForm?.querySelector('[data-handover-ready]');
+    const handoverCloudLinkField = handoverForm?.querySelector('[data-handover-cloud-link-field]');
+    const handoverCloudLink = handoverForm?.querySelector('[data-handover-cloud-link]');
+    const updateHandoverCloudLink = () => {
+        if (!handoverReady || !handoverCloudLinkField || !handoverCloudLink) return;
+        const needsCloudLink = handoverReady.value === 'delivered_with_app_link';
+        handoverCloudLinkField.hidden = !needsCloudLink;
+        handoverCloudLink.required = needsCloudLink;
+        if (!needsCloudLink) handoverCloudLink.value = '';
+    };
+    handoverReady?.addEventListener('change', updateHandoverCloudLink);
+    updateHandoverCloudLink();
+
     const switch9CountInput = handoverForm?.querySelector('[data-handover-switch-9-count]');
     const switch9Units = handoverForm?.querySelector('[data-handover-switch-9-units]');
     const switch9Template = handoverForm?.querySelector('[data-handover-switch-9-template]');
