@@ -1212,29 +1212,36 @@ function portal_render_tenant_handover_search(array $search, array $outcome): vo
     $results = is_array($outcome['results'] ?? null) ? $outcome['results'] : [];
     $total = (int) ($outcome['total'] ?? 0);
     ?>
-    <form method="post" class="detail-card handover-search" data-handover-search>
-        <input type="hidden" name="csrf" value="<?= portal_h(portal_csrf_token()) ?>">
-        <input type="hidden" name="action" value="search_tenant_handovers">
-        <div class="handover-search__heading">
-            <div><p class="eyebrow">חיפוש במסירות בלבד</p><h2>איתור פרויקט או דייר</h2></div>
-            <p>אפשר לחפש לפי שם הפרויקט, לפי שם הדייר או לשלב בין שניהם. החיפוש אינו מחפש בשאר האתר.</p>
-        </div>
-        <div class="form-grid handover-search__fields">
-            <label class="field">
-                <span>שם הפרויקט</span>
-                <input type="search" name="handover_project_search" value="<?= portal_h($projectTerm) ?>" maxlength="100" autocomplete="off" placeholder="לדוגמה: הראשונים 15">
-            </label>
-            <label class="field">
-                <span>שם הדייר</span>
-                <input type="search" name="handover_resident_search" value="<?= portal_h($residentTerm) ?>" maxlength="100" autocomplete="off" placeholder="שם פרטי או שם מלא">
-            </label>
-            <div class="field field--actions handover-search__actions">
-                <button type="submit" class="button button--primary">חיפוש</button>
-                <?php if ($active): ?><button type="submit" name="handover_search_clear" value="1" class="button button--secondary" formnovalidate>ניקוי</button><?php endif; ?>
+    <details class="detail-card handover-search-shell" data-handover-search-shell<?= $active ? ' open' : '' ?>>
+        <summary class="handover-search-toggle">
+            <span class="handover-search-toggle__icon" aria-hidden="true">⌕</span>
+            <span class="handover-search-toggle__text">
+                <strong>חיפוש פרויקט או דייר</strong>
+                <small>לפי שם הפרויקט, שם הדייר או שניהם</small>
+            </span>
+            <span class="handover-search-toggle__action" aria-hidden="true"></span>
+        </summary>
+        <form method="post" class="handover-search" data-handover-search>
+            <input type="hidden" name="csrf" value="<?= portal_h(portal_csrf_token()) ?>">
+            <input type="hidden" name="action" value="search_tenant_handovers">
+            <p class="handover-search__intro">החיפוש מוגבל למסירות דיירים ואינו מחפש בשאר האתר.</p>
+            <div class="form-grid handover-search__fields">
+                <label class="field">
+                    <span>שם הפרויקט</span>
+                    <input type="search" name="handover_project_search" value="<?= portal_h($projectTerm) ?>" maxlength="100" autocomplete="off" placeholder="לדוגמה: הראשונים 15">
+                </label>
+                <label class="field">
+                    <span>שם הדייר</span>
+                    <input type="search" name="handover_resident_search" value="<?= portal_h($residentTerm) ?>" maxlength="100" autocomplete="off" placeholder="שם פרטי או שם מלא">
+                </label>
+                <div class="field field--actions handover-search__actions">
+                    <button type="submit" class="button button--primary">חיפוש</button>
+                    <?php if ($active): ?><button type="submit" name="handover_search_clear" value="1" class="button button--secondary" formnovalidate>ניקוי</button><?php endif; ?>
+                </div>
             </div>
-        </div>
-        <p class="form-note">שמות הדיירים נשלחים לשרת בלבד, אינם נכתבים בכתובת העמוד ואינם מצטרפים למנוע החיפוש של האתר.</p>
-    </form>
+            <p class="form-note">שמות הדיירים נשלחים לשרת בלבד, אינם נכתבים בכתובת העמוד ואינם מצטרפים למנוע החיפוש של האתר.</p>
+        </form>
+    </details>
 
     <?php if ($active && isset($outcome['error'])): ?>
         <div class="alert alert--error" role="alert"><?= portal_h((string) $outcome['error']) ?></div>

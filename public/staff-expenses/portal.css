@@ -204,10 +204,27 @@ input[readonly] { background: #f3f5f8; }
 .tab--handover { background: #fff7e8; color: #7a4b00; border-color: #efd39a; }
 .handover-selector { grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); align-items: end; }
 .handover-selector .field--actions { align-self: end; }
-.handover-search { display: grid; gap: 16px; }
-.handover-search__heading, .handover-search-results__heading { display: flex; align-items: flex-start; justify-content: space-between; gap: 20px; }
-.handover-search__heading h2, .handover-search-results__heading h2 { margin: 0; }
-.handover-search__heading > p { max-width: 560px; margin: 0; color: var(--muted); }
+.handover-search-shell { padding: 0; overflow: hidden; }
+.handover-search-toggle { min-height: 58px; display: flex; align-items: center; gap: 12px; padding: 11px 16px; cursor: pointer; list-style: none; color: var(--primary-dark); }
+.handover-search-toggle::-webkit-details-marker { display: none; }
+.handover-search-toggle::marker { content: ""; }
+.handover-search-toggle:hover { background: var(--primary-soft); }
+.handover-search-toggle:focus-visible { outline: 3px solid rgba(22, 93, 143, .22); outline-offset: -3px; }
+.handover-search-toggle__icon { width: 34px; height: 34px; flex: 0 0 34px; display: grid; place-items: center; border-radius: 10px; background: var(--primary-soft); color: var(--primary); font-size: 1.45rem; font-weight: 800; line-height: 1; }
+.handover-search-toggle__text { min-width: 0; display: grid; gap: 1px; }
+.handover-search-toggle__text strong { font-size: .98rem; }
+.handover-search-toggle__text small { color: var(--muted); font-size: .8rem; }
+.handover-search-toggle__action { margin-inline-start: auto; flex: 0 0 auto; color: var(--primary); font-size: .82rem; font-weight: 800; }
+.handover-search-toggle__action::before { content: "פתיחה"; }
+.handover-search-toggle__action::after { content: "⌄"; display: inline-block; margin-inline-start: 7px; font-size: 1rem; transition: transform .15s ease; }
+.handover-search-shell[open] .handover-search-toggle { border-bottom: 1px solid var(--border); background: var(--surface-soft); }
+.handover-search-shell[open] .handover-search-toggle__action::before { content: "סגירה"; }
+.handover-search-shell[open] .handover-search-toggle__action::after { transform: rotate(180deg); }
+.handover-search { display: grid; gap: 16px; padding: 18px; }
+.handover-search-shell:not([open]) > .handover-search { display: none; }
+.handover-search__intro { margin: 0; color: var(--muted); font-size: .9rem; }
+.handover-search-results__heading { display: flex; align-items: flex-start; justify-content: space-between; gap: 20px; }
+.handover-search-results__heading h2 { margin: 0; }
 .handover-search__fields { grid-template-columns: minmax(220px, 1fr) minmax(220px, 1fr) auto; align-items: end; }
 .handover-search__actions { display: flex; flex-direction: row; gap: 8px; align-items: end; }
 .handover-search-results { border-color: #b8d8ef; }
@@ -223,7 +240,12 @@ input[readonly] { background: #f3f5f8; }
 .handover-resident-card .credential-item { border-color: #e6c16f; background: #fffaf0; }
 .handover-resident-card .credential-item strong { font-family: Consolas, "Courier New", monospace; }
 @media (max-width: 760px) {
-  .handover-search__heading, .handover-search-results__heading { flex-direction: column; gap: 8px; }
+  .handover-search-toggle { min-height: 54px; padding: 9px 12px; }
+  .handover-search-toggle__text small { display: none; }
+  .handover-search-toggle__action::before { content: "פתח"; }
+  .handover-search-shell[open] .handover-search-toggle__action::before { content: "סגור"; }
+  .handover-search { padding: 16px 12px; }
+  .handover-search-results__heading { flex-direction: column; gap: 8px; }
   .handover-search__fields { grid-template-columns: 1fr; }
   .handover-search__actions { width: 100%; }
   .handover-search__actions .button { flex: 1; }
