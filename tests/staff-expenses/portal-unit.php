@@ -482,6 +482,36 @@ try {
         portal_handover_normalize_resident($wrongStatusSource, 'test-project', 'Test Project') === null,
         'A Monday item with the wrong status was exposed as a resident.'
     );
+    $mergedHandoverProjects = portal_handover_merge_project_groups([
+        ['id' => 'project-a', 'title' => 'אביטל 13 מאנדיי.xlsx', 'archived' => false, 'deleted' => false],
+        ['id' => 'project-b', 'title' => '  אביטל   13 ', 'archived' => false, 'deleted' => false],
+        ['id' => 'project-c', 'title' => 'אביטל 13', 'archived' => true, 'deleted' => false],
+    ]);
+    $mergedHandoverProject = $mergedHandoverProjects['project-a'] ?? [];
+    portal_test_expect(
+        count($mergedHandoverProjects) === 1
+        && ($mergedHandoverProject['title'] ?? '') === 'אביטל 13'
+        && ($mergedHandoverProject['group_ids'] ?? []) === ['project-a', 'project-b'],
+        'Duplicate Monday project groups were not consolidated.'
+    );
+    portal_test_expect(
+        portal_handover_search_term('  Search   Resident ') === 'Search Resident'
+        && portal_handover_text_contains('Search Resident', 'resident'),
+        'Tenant handover search terms were not normalized or matched case-insensitively.'
+    );
+    $handoverSearchProjects = portal_handover_search_projects([
+        'search-project' => ['id' => 'search-project', 'title' => 'Search Project'],
+        'other-project' => ['id' => 'other-project', 'title' => 'Other Project'],
+    ], 'search');
+    $handoverSearchResidents = portal_handover_search_resident_matches([
+        '1003' => ['item_id' => '1003', 'project_id' => 'search-project', 'name' => 'Search Resident'],
+        '1004' => ['item_id' => '1004', 'project_id' => 'search-project', 'name' => 'Other Resident'],
+    ], 'Search Resident');
+    portal_test_expect(
+        array_keys($handoverSearchProjects) === ['search-project']
+        && array_keys($handoverSearchResidents) === [1003],
+        'Tenant handover project and resident filters failed.'
+    );
     $handoverRecipients = portal_handover_internal_recipients(['email' => 'worker@i-feel.co.il']);
     portal_test_expect(
         in_array('sagiv@i-feel.co.il', $handoverRecipients, true)
