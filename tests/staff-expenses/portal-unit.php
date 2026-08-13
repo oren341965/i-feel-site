@@ -653,14 +653,15 @@ try {
     );
     portal_test_expect(
         portal_handover_issue_label('electrical') === 'תקלת חשמל'
-        && portal_handover_issue_label('cabling') === 'תקלת כבילה'
-        && portal_handover_issue_label('contractor') === 'בעיית קבלנים (טיח או קופסא שבורה)'
+        && portal_handover_issue_label('cabling') === 'כבילה לא נכונה / תקלת כבילה'
+        && portal_handover_issue_label('contractor') === 'עבודת קבלן נדרשת (טיח, קופסה שבורה, קיר עקום וכו׳)'
+        && portal_handover_issue_label('other') === 'אחר'
         && portal_handover_issue_email_lines([
-            'issues' => [['type' => 'electrical'], ['type' => 'contractor']],
+            'issues' => [['type' => 'electrical'], ['type' => 'other', 'description' => 'קיר עקום']],
         ]) === [
             'מספר תקלות שצולמו בדירה: 2',
             'תקלה מס׳ 1: תקלת חשמל',
-            'תקלה מס׳ 2: בעיית קבלנים (טיח או קופסא שבורה)',
+            'תקלה מס׳ 2: אחר | פירוט: קיר עקום',
         ],
         'Apartment issue labels or email details are wrong.'
     );

@@ -299,7 +299,7 @@ try {
     $boilerSelectHtml = if ($boilerSelectMatch.Success) { $boilerSelectMatch.Groups[1].Value } else { "" }
     Assert-PortalTest ($handoverHtml -match 'סוג הדוד <b>\*</b>' -and $boilerSelectMatch.Success -and ([regex]::Matches($boilerSelectHtml, '<option value="(?:none|ava_dud|ir|switcher)">').Count -eq 4) -and $boilerSelectHtml -match 'value="none">אין דוד' -and $boilerSelectHtml -match 'value="ava_dud">AVA-DUD' -and $boilerSelectHtml -match 'value="ir">IR' -and $boilerSelectHtml -match 'value="switcher">סוויטשר' -and $handoverHtml -match 'name="handover_notes"[^>]*required') "The four required boiler choices or notes requirement were not rendered."
     Assert-PortalTest ($handoverHtml -match 'name="handover_controller_photo"[^>]*required') "Mandatory controller photo was not rendered."
-    Assert-PortalTest ($handoverHtml -match 'name="handover_issue_count" value="0"' -and $handoverHtml -match 'data-handover-issue-add' -and $handoverHtml -match 'data-handover-issue-photo' -and $handoverHtml -match 'value="electrical"' -and $handoverHtml -match 'value="cabling"' -and $handoverHtml -match 'value="contractor"') "Repeatable apartment issue photo controls were not rendered."
+    Assert-PortalTest ($handoverHtml -match 'name="handover_issue_count" value="0"' -and $handoverHtml -match 'data-handover-issue-add' -and $handoverHtml -match 'data-handover-issue-photo' -and $handoverHtml -match 'value="electrical"' -and $handoverHtml -match 'value="cabling"' -and $handoverHtml -match 'value="contractor"' -and $handoverHtml -match 'value="other"' -and $handoverHtml -match 'data-handover-issue-description') "Repeatable apartment issue photo controls or the custom issue option were not rendered."
     Assert-PortalTest ($handoverHtml -notmatch 'name="handover_switch_9"|name="handover_blinds"') "Legacy free-text switch fields are still rendered."
     $handoverCsrf = Get-CsrfFromHtml $handoverHtml
     $handoverTokenMatch = [regex]::Match($handoverHtml, 'name="handover_submission_token"\s+value="([a-f0-9]{64})"')
@@ -352,7 +352,8 @@ try {
         "-F", "handover_switch_photo_2=@$handoverImage;type=image/png", `
         "-F", "handover_issue_count=2", `
         "-F", "handover_issue_type_1=electrical", `
-        "-F", "handover_issue_type_2=contractor", `
+        "-F", "handover_issue_type_2=other", `
+        "-F", "handover_issue_description_2=Crooked wall requires contractor work", `
         "-F", "handover_issue_photo_1=@$handoverImage;type=image/png", `
         "-F", "handover_issue_photo_2=@$handoverImage;type=image/png", `
         "$baseUrl/staff-expenses/"
@@ -376,7 +377,8 @@ try {
         -and $handoverRecord.details.switch_9_units[1].location -eq "Kitchen" `
         -and $handoverRecord.details.issues.Count -eq 2 `
         -and $handoverRecord.details.issues[0].type -eq "electrical" `
-        -and $handoverRecord.details.issues[1].type -eq "contractor" `
+        -and $handoverRecord.details.issues[1].type -eq "other" `
+        -and $handoverRecord.details.issues[1].description -eq "Crooked wall requires contractor work" `
         -and $handoverRecord.details.component_panel_presence -eq "has_panels" `
         -and $handoverRecord.details.light_switch_count -eq 6 `
         -and $handoverRecord.details.light_switch_type_1_count -eq 2 `

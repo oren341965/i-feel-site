@@ -644,11 +644,20 @@
             const photoLabel = issue.querySelector('[data-handover-issue-photo-label]');
             const photo = issue.querySelector('[data-handover-issue-photo]');
             const type = issue.querySelector('[data-handover-issue-type]');
+            const descriptionField = issue.querySelector('[data-handover-issue-description-field]');
+            const description = issue.querySelector('[data-handover-issue-description]');
             if (legend) legend.textContent = `תקלה מס׳ ${number}`;
             if (photoHeading) photoHeading.innerHTML = `צילום תקלה מס׳ ${number} <b>*</b>`;
             if (photoLabel) photoLabel.textContent = `צילום תקלה מס׳ ${number}`;
             if (photo) photo.name = `handover_issue_photo_${number}`;
             if (type) type.name = `handover_issue_type_${number}`;
+            if (description) description.name = `handover_issue_description_${number}`;
+            if (descriptionField && description) {
+                const isOther = type?.value === 'other';
+                descriptionField.hidden = !isOther;
+                description.required = isOther;
+                if (!isOther) description.value = '';
+            }
         });
     };
     issueAddButton?.addEventListener('click', () => {
@@ -669,6 +678,10 @@
         if (!removeButton) return;
         removeButton.closest('[data-handover-issue]')?.remove();
         refreshIssues();
+    });
+    issueList?.addEventListener('change', (event) => {
+        const target = event.target instanceof Element ? event.target : null;
+        if (target?.matches('[data-handover-issue-type]')) refreshIssues();
     });
     refreshIssues();
 

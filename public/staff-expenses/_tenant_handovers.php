@@ -1305,8 +1305,9 @@ function portal_handover_issue_label(string $value): string
 {
     return [
         'electrical' => 'תקלת חשמל',
-        'cabling' => 'תקלת כבילה',
-        'contractor' => 'בעיית קבלנים (טיח או קופסא שבורה)',
+        'cabling' => 'כבילה לא נכונה / תקלת כבילה',
+        'contractor' => 'עבודת קבלן נדרשת (טיח, קופסה שבורה, קיר עקום וכו׳)',
+        'other' => 'אחר',
     ][$value] ?? '-';
 }
 
@@ -1321,7 +1322,9 @@ function portal_handover_issue_email_lines(array $details): array
         if (!is_array($issue)) {
             continue;
         }
-        $lines[] = 'תקלה מס׳ ' . ((int) $index + 1) . ': ' . portal_handover_issue_label((string) ($issue['type'] ?? ''));
+        $line = 'תקלה מס׳ ' . ((int) $index + 1) . ': ' . portal_handover_issue_label((string) ($issue['type'] ?? ''));
+        $description = trim((string) ($issue['description'] ?? ''));
+        $lines[] = $description !== '' ? $line . ' | פירוט: ' . $description : $line;
     }
     return $lines;
 }
@@ -1535,10 +1538,17 @@ function portal_handle_tenant_handover_post(array $user): void
     $issues = [];
     for ($index = 1; $index <= $issueCount; $index++) {
         $issueType = portal_post('handover_issue_type_' . $index, 40);
-        if (!in_array($issueType, ['electrical', 'cabling', 'contractor'], true)) {
+        $issueDescription = portal_post('handover_issue_description_' . $index, 500);
+        if (!in_array($issueType, ['electrical', 'cabling', 'contractor', 'other'], true)) {
             throw new RuntimeException('יש לבחור את סוג התקלה המצולמת מס׳ ' . $index . '.');
         }
-        $issues[] = ['type' => $issueType];
+        if ($issueType === 'other' && $issueDescription === '') {
+            throw new RuntimeException('יש לפרט את התקלה האחרת המצולמת מס׳ ' . $index . '.');
+        }
+        if ($issueType !== 'other') {
+            $issueDescription = '';
+        }
+        $issues[] = ['type' => $issueType, 'description' => $issueDescription];
     }
     if (!in_array($componentPanelPresence, ['has_panels', 'none'], true)) {
         throw new RuntimeException('יש לבחור אם קיימים פאנלים של תאורה או תריס בדירה.');
@@ -2091,7 +2101,7 @@ function portal_render_tenant_handover_form(array $user, array $projects, string
         </div>
         <section class="field--full handover-issues" aria-labelledby="handover-issues-title">
             <div class="handover-issues__heading">
-                <div><h3 id="handover-issues-title">צילום תקלות בדירה</h3><p>אם קיימת תקלה, הוסיפו צילום ובחרו את סוג התקלה מתחתיו. ניתן להוסיף צילום נוסף בכל פעם.</p></div>
+                <div><h3 id="handover-issues-title">צילום תקלות בדירה</h3><p>לכל תקלה ניתן להוסיף צילום נפרד: חשמל, כבילה לא נכונה, עבודת קבלן כמו קיר עקום, או תקלה אחרת עם פירוט חופשי. ניתן להוסיף צילום נוסף בכל פעם.</p></div>
                 <button type="button" class="button button--secondary button--small" data-handover-issue-add>+ הוספת תקלה</button>
             </div>
             <input type="hidden" name="handover_issue_count" value="0" data-handover-issue-count>
@@ -2101,7 +2111,8 @@ function portal_render_tenant_handover_form(array $user, array $projects, string
                     <legend data-handover-issue-legend></legend>
                     <div class="handover-issue__fields">
                         <div class="field"><span data-handover-issue-photo-heading>צילום התקלה <b>*</b></span><label class="receipt-action receipt-action--camera"><span class="receipt-action__icon" aria-hidden="true">📷</span><strong data-handover-issue-photo-label></strong><input class="receipt-input" type="file" accept="image/*" capture="environment" data-handover-issue-photo required></label></div>
-                        <label class="field"><span>סוג התקלה <b>*</b></span><select data-handover-issue-type required><option value="">בחירה</option><option value="electrical">תקלת חשמל</option><option value="cabling">תקלת כבילה</option><option value="contractor">בעיית קבלנים (טיח או קופסא שבורה)</option></select></label>
+                        <label class="field"><span>סוג התקלה <b>*</b></span><select data-handover-issue-type required><option value="">בחירה</option><option value="electrical">תקלת חשמל</option><option value="cabling">כבילה לא נכונה / תקלת כבילה</option><option value="contractor">עבודת קבלן נדרשת (טיח, קופסה שבורה, קיר עקום וכו׳)</option><option value="other">אחר — פירוט חופשי</option></select></label>
+                        <label class="field field--full" data-handover-issue-description-field hidden><span>פירוט התקלה האחרת <b>*</b></span><input type="text" maxlength="500" data-handover-issue-description></label>
                         <button type="button" class="button button--ghost button--small handover-issue__remove" data-handover-issue-remove>הסרת התקלה</button>
                     </div>
                 </fieldset>
