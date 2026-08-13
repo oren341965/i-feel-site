@@ -553,10 +553,14 @@ try {
         'Custom controller location was not normalized.'
     );
     portal_test_expect(
-        portal_handover_ready_label('ready_not_delivered') === 'מוכן ולא נמסר'
+        portal_handover_apartment_type_label('standard_central') === 'דירת סטנדרט — רק אזור מרכזי'
+        && portal_handover_apartment_type_label('upgraded') === 'דירה משודרגת'
+        && portal_handover_apartment_type_label('standard_corridor') === 'דירת סטנדרט + מסדרון'
+        && portal_handover_apartment_type_label('full') === 'דירה מלאה'
+        && portal_handover_ready_label('ready_not_delivered') === 'מוכן ולא נמסר'
         && portal_handover_ready_label('not_ready_not_delivered') === 'לא מוכן ולא נמסר'
         && portal_handover_ready_label('ready_delivered') === 'מוכן ונמסר ללקוח/נציג הלקוח',
-        'Tenant handover delivery status labels are wrong.'
+        'Tenant handover apartment type or delivery status labels are wrong.'
     );
     portal_test_expect(
         (portal_handover_send_resident([

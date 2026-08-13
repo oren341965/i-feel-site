@@ -1064,6 +1064,7 @@ function portal_handover_internal_email_body(array $handover): string
         'סיסמה ראשונית: ' . (string) ($credentials['password'] ?? ''),
         'קישור ענן ייעודי ללקוח: ' . ((string) ($details['cloud_link'] ?? '') ?: 'לא צורף'),
         '',
+        'סוג הדירה: ' . portal_handover_apartment_type_label((string) ($details['apartment_type'] ?? '')),
         'סטטוס המסירה: ' . portal_handover_ready_label((string) ($details['ready'] ?? '')),
         'נמסר ל: ' . ((string) ($details['recipient_name'] ?? '') ?: 'לא נמסר'),
         'חתימת מקבל המסירה: ' . (isset($handover['photos']['signature']) ? 'צורפה' : 'לא נדרשה'),
@@ -1226,6 +1227,16 @@ function portal_handover_send_resident(array $handover): array
         portal_handover_resident_email_html($handover)
     );
     return ['recipient' => $email, 'status' => $sent ? 'sent' : 'failed'];
+}
+
+function portal_handover_apartment_type_label(string $value): string
+{
+    return [
+        'standard_central' => 'דירת סטנדרט — רק אזור מרכזי',
+        'upgraded' => 'דירה משודרגת',
+        'standard_corridor' => 'דירת סטנדרט + מסדרון',
+        'full' => 'דירה מלאה',
+    ][$value] ?? '-';
 }
 
 function portal_handover_ready_label(string $value): string
@@ -1426,6 +1437,7 @@ function portal_handle_tenant_handover_post(array $user): void
         throw new RuntimeException('לדייר אין מספר טלפון תקין ב-Monday ולכן לא ניתן להפיק סיסמה.');
     }
 
+    $apartmentType = portal_post('handover_apartment_type', 40);
     $ready = portal_post('handover_ready', 30);
     $recipientName = portal_post('handover_recipient_name', 180);
     $recipientSignature = portal_post('handover_recipient_signature', 1400000);
@@ -1452,6 +1464,9 @@ function portal_handle_tenant_handover_post(array $user): void
     $hvacConnection = portal_post('handover_hvac_connection', 40);
     $boiler = portal_post('handover_boiler', 500);
     $notes = portal_post('handover_notes', 3000);
+    if (!in_array($apartmentType, ['standard_central', 'upgraded', 'standard_corridor', 'full'], true)) {
+        throw new RuntimeException('יש לבחור סוג דירה תקין.');
+    }
     if (!in_array($ready, ['ready_not_delivered', 'not_ready_not_delivered', 'ready_delivered'], true)) {
         throw new RuntimeException('יש לבחור סטטוס מסירה תקין.');
     }
@@ -1596,6 +1611,7 @@ function portal_handle_tenant_handover_post(array $user): void
             'resident' => $resident,
             'credentials' => $credentials,
             'details' => [
+                'apartment_type' => $apartmentType,
                 'ready' => $ready,
                 'recipient_name' => $recipientName,
                 'cloud_link' => $cloudLink,
@@ -1876,7 +1892,7 @@ function portal_render_tenant_handover_form(array $user, array $projects, string
             <h2>פרטי המסירה למילוי הטכנאי</h2>
             <p>לאחר בחירת פרויקט, בניין ודירה ייפתח כאן מיד הטופס המלא. אין צורך ללחוץ על כפתור נוסף.</p>
             <div class="handover-field-preview" aria-label="השדות שיופיעו בטופס">
-                <span>סטטוס המסירה</span><span>תאריך מסירה</span><span>מיקום וסוג קונטרולר</span>
+                <span>סוג הדירה</span><span>סטטוס המסירה</span><span>תאריך מסירה</span><span>מיקום וסוג קונטרולר</span>
                 <span>כמות מפסקי 9 וסיווג נפרד לכל מפסק</span><span>מפסק 24V לתריס כלוא</span><span>חיבור למזגן</span>
                 <span>סוג הדוד — 4 אפשרויות — והערות</span>
                 <span>פרטי הטכנאי</span><span>שני צילומי חובה</span><span>סיום ושליחה</span>
@@ -1906,6 +1922,16 @@ function portal_render_tenant_handover_form(array $user, array $projects, string
         <input type="hidden" name="handover_project_id" value="<?= portal_h($projectId) ?>">
         <input type="hidden" name="handover_resident_id" value="<?= portal_h($resident['item_id']) ?>">
         <div class="field--full handover-form-heading"><p class="eyebrow">שלב 2</p><h2>פרטי המסירה למילוי הטכנאי</h2><p>כל השדות בטופס הם שדות חובה. יש לצרף צילום קונטרולר וצילום נפרד לכל מפסק 9 שהוגדר.</p></div>
+        <label class="field field--full">
+            <span>סוג הדירה <b>*</b></span>
+            <select name="handover_apartment_type" required>
+                <option value="">בחירה</option>
+                <option value="standard_central">דירת סטנדרט — רק אזור מרכזי</option>
+                <option value="upgraded">דירה משודרגת</option>
+                <option value="standard_corridor">דירת סטנדרט + מסדרון</option>
+                <option value="full">דירה מלאה</option>
+            </select>
+        </label>
         <label class="field">
             <span>סטטוס המסירה <b>*</b></span>
             <select name="handover_ready" data-handover-ready required>
