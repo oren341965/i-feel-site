@@ -574,6 +574,18 @@ try {
         ],
         'Per-unit switch 9 email details are wrong.'
     );
+    portal_test_expect(
+        portal_handover_photo_keys([
+            'photos' => [
+                'switch_10' => ['storage_name' => 'switch-10.png'],
+                'controller' => ['storage_name' => 'controller.png'],
+                'switch_2' => ['storage_name' => 'switch-2.png'],
+                'switch_1' => ['storage_name' => 'switch-1.png'],
+                'untrusted' => ['storage_name' => 'ignored.png'],
+            ],
+        ]) === ['controller', 'switch_1', 'switch_2', 'switch_10'],
+        'Tenant handover photo keys were not filtered and ordered correctly.'
+    );
     $workStats = portal_work_report_stats([
         ['type' => 'installation', 'outcome' => 'completed', 'employee' => ['name' => 'Test Worker', 'email' => 'worker@i-feel.co.il'], 'attachments' => [[], []]],
         ['type' => 'service', 'outcome' => 'follow_up', 'employee' => ['name' => 'Test Worker', 'email' => 'worker@i-feel.co.il'], 'attachments' => [[]]],

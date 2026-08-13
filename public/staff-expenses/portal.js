@@ -203,9 +203,15 @@
             const legend = unit.querySelector('[data-handover-switch-9-legend]');
             const configuration = unit.querySelector('[data-handover-switch-9-configuration]');
             const location = unit.querySelector('[data-handover-switch-9-location]');
+            const photo = unit.querySelector('[data-handover-switch-9-photo]');
+            const photoHeading = unit.querySelector('[data-handover-switch-9-photo-heading]');
+            const photoLabel = unit.querySelector('[data-handover-switch-9-photo-label]');
             if (legend) legend.textContent = `מפסק 9 מס׳ ${number}`;
             if (configuration) configuration.name = `handover_switch_9_configuration_${number}`;
             if (location) location.name = `handover_switch_9_location_${number}`;
+            if (photo) photo.name = `handover_switch_photo_${number}`;
+            if (photoHeading) photoHeading.innerHTML = `צילום מפסק 9 מס׳ ${number} <b>*</b>`;
+            if (photoLabel) photoLabel.textContent = `צילום מפסק 9 מס׳ ${number} עם האייקונים`;
         });
     };
     switch9CountInput?.addEventListener('input', updateSwitch9Units);
@@ -231,14 +237,16 @@
     handoverForm?.addEventListener('submit', (event) => {
         const photoInputs = Array.from(handoverForm.querySelectorAll('input[type="file"]'));
         const photos = photoInputs.map((input) => input.files?.[0]).filter(Boolean);
-        if (photos.length !== 2) {
+        const switch9Count = Number.parseInt(switch9CountInput?.value || '0', 10);
+        const expectedPhotoCount = switch9Count + 1;
+        if (photoInputs.length !== expectedPhotoCount || photos.length !== expectedPhotoCount) {
             event.preventDefault();
-            window.alert('חובה לצרף צילום קונטרולר וצילום מפסק 9.');
+            window.alert(`חובה לצרף צילום קונטרולר וצילום נפרד לכל אחד מ-${switch9Count} מפסקי 9.`);
             return;
         }
         if (photos.some((file) => !file.type.startsWith('image/'))) {
             event.preventDefault();
-            window.alert('שני הקבצים חייבים להיות תמונות.');
+            window.alert('כל הקבצים חייבים להיות תמונות.');
             return;
         }
         if (photos.some((file) => file.size > 12 * 1024 * 1024)) {

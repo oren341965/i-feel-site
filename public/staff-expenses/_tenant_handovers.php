@@ -889,13 +889,32 @@ function portal_handover_attachment_path(array $handover, string $key): ?array
 function portal_handover_email_attachments(array $handover): array
 {
     $attachments = [];
-    foreach (['controller', 'switch'] as $key) {
+    foreach (portal_handover_photo_keys($handover) as $key) {
         $attachment = portal_handover_attachment_path($handover, $key);
         if ($attachment !== null) {
             $attachments[] = $attachment;
         }
     }
     return $attachments;
+}
+
+function portal_handover_photo_keys(array $handover): array
+{
+    $photos = is_array($handover['photos'] ?? null) ? $handover['photos'] : [];
+    $keys = [];
+    if (isset($photos['controller'])) {
+        $keys[] = 'controller';
+    }
+    if (isset($photos['switch'])) {
+        $keys[] = 'switch';
+    }
+    $switchKeys = array_values(array_filter(array_keys($photos), static function ($key): bool {
+        return is_string($key) && preg_match('/^switch_[1-9][0-9]*$/', $key) === 1;
+    }));
+    usort($switchKeys, static function (string $left, string $right): int {
+        return (int) substr($left, 7) <=> (int) substr($right, 7);
+    });
+    return array_merge($keys, $switchKeys);
 }
 
 function portal_handover_protected_url(array $handover, string $key): string
@@ -905,6 +924,23 @@ function portal_handover_protected_url(array $handover, string $key): string
         'handover_id' => (string) ($handover['id'] ?? ''),
         'file' => $key,
     ]);
+}
+
+function portal_handover_photo_email_lines(array $handover): array
+{
+    $lines = [];
+    foreach (portal_handover_photo_keys($handover) as $key) {
+        if ($key === 'controller') {
+            $label = 'צילום קונטרולר';
+        } elseif ($key === 'switch') {
+            $label = 'צילום מפסק 9';
+        } else {
+            $label = 'צילום מפסק 9 מס׳ ' . (int) substr($key, 7);
+        }
+        $lines[] = $label . ' (דורש כניסה לאזור העובדים):';
+        $lines[] = portal_handover_protected_url($handover, $key);
+    }
+    return $lines;
 }
 
 function portal_handover_internal_email_body(array $handover): string
@@ -946,10 +982,7 @@ function portal_handover_internal_email_body(array $handover): string
         'טכנאי: ' . (string) ($technician['name'] ?? ''),
         'דוא״ל טכנאי: ' . (string) ($technician['email'] ?? ''),
         '',
-        'צילום קונטרולר (דורש כניסה לאזור העובדים):',
-        portal_handover_protected_url($handover, 'controller'),
-        'צילום מפסק 9:',
-        portal_handover_protected_url($handover, 'switch'),
+    ], portal_handover_photo_email_lines($handover), [
         '',
         'התמונות מצורפות גם להודעה זו.',
     ]));
@@ -1228,7 +1261,14 @@ function portal_handle_tenant_handover_post(array $user): void
     portal_ensure_directory($recordDir);
     try {
         $controllerPhoto = portal_handover_save_photo($recordDir, $_FILES['handover_controller_photo'] ?? [], 'צילום הקונטרולר');
-        $switchPhoto = portal_handover_save_photo($recordDir, $_FILES['handover_switch_photo'] ?? [], 'צילום מפסק 9 עם האייקונים');
+        $photos = ['controller' => $controllerPhoto];
+        for ($index = 1; $index <= $switch9Count; $index++) {
+            $photos['switch_' . $index] = portal_handover_save_photo(
+                $recordDir,
+                $_FILES['handover_switch_photo_' . $index] ?? [],
+                'צילום מפסק 9 מס׳ ' . $index . ' עם האייקונים'
+            );
+        }
         $handover = [
             'id' => $handoverId,
             'created_at' => gmdate('c'),
@@ -1263,10 +1303,7 @@ function portal_handle_tenant_handover_post(array $user): void
                 'name' => portal_substr($technicianName, 0, 180),
                 'email' => $technicianEmail,
             ],
-            'photos' => [
-                'controller' => $controllerPhoto,
-                'switch' => $switchPhoto,
-            ],
+            'photos' => $photos,
             'notifications' => [
                 'internal' => ['recipients' => portal_handover_internal_recipients($user), 'sent' => [], 'failed' => []],
                 'resident' => ['recipient' => (string) ($resident['email'] ?? ''), 'status' => 'pending'],
@@ -1296,7 +1333,7 @@ function portal_handle_tenant_handover_post(array $user): void
         portal_audit('tenant_handover_submitted', [
             'handover_id' => $handoverId,
             'monday_item_hash' => hash('sha256', $itemId),
-            'photos' => 2,
+            'photos' => count($photos),
             'internal_email_ok' => $internalFailed === [],
             'resident_email_status' => $residentStatus,
         ]);
@@ -1320,7 +1357,7 @@ function portal_handle_handover_download(array $user): void
     portal_require_login();
     $handoverId = trim((string) ($_GET['handover_id'] ?? ''));
     $key = trim((string) ($_GET['file'] ?? ''));
-    if (!in_array($key, ['controller', 'switch'], true)) {
+    if ($key !== 'controller' && $key !== 'switch' && preg_match('/^switch_[1-9][0-9]*$/', $key) !== 1) {
         throw new RuntimeException('קובץ המסירה המבוקש אינו תקין.');
     }
     $handover = portal_load_handover($handoverId);
@@ -1517,7 +1554,7 @@ function portal_render_tenant_handover_form(array $user, array $projects, string
         <input type="hidden" name="handover_submission_token" value="<?= portal_h(portal_handover_submission_token()) ?>">
         <input type="hidden" name="handover_project_id" value="<?= portal_h($projectId) ?>">
         <input type="hidden" name="handover_resident_id" value="<?= portal_h($resident['item_id']) ?>">
-        <div class="field--full handover-form-heading"><p class="eyebrow">שלב 2</p><h2>פרטי המסירה למילוי הטכנאי</h2><p>כל השדות בטופס הם שדות חובה. מלאו את מצב ההתקנה, צרפו את שני הצילומים וסיימו בפעולת שמירה ושליחה אחת.</p></div>
+        <div class="field--full handover-form-heading"><p class="eyebrow">שלב 2</p><h2>פרטי המסירה למילוי הטכנאי</h2><p>כל השדות בטופס הם שדות חובה. יש לצרף צילום קונטרולר וצילום נפרד לכל מפסק 9 שהוגדר.</p></div>
         <label class="field">
             <span>סטטוס המסירה <b>*</b></span>
             <select name="handover_ready" required>
@@ -1548,6 +1585,7 @@ function portal_render_tenant_handover_form(array $user, array $projects, string
                 <div class="handover-switch-9-unit__fields">
                     <label class="field"><span>סוג מפסק 9 <b>*</b></span><select name="handover_switch_9_configuration_1" data-handover-switch-9-configuration required><option value="">בחירה</option><option value="light_9">9 לתאורה בלבד</option><option value="shutter_1_light_4">תריס אחד ו-4 תאורות</option><option value="shutter_2_light_2">2 תריסים ו-2 תאורות</option><option value="shutter_3">3 תריסים</option></select></label>
                     <label class="field"><span>מיקום מפסק 9 <b>*</b></span><input type="text" name="handover_switch_9_location_1" maxlength="300" data-handover-switch-9-location required></label>
+                    <div class="field field--full handover-switch-9-photo"><span data-handover-switch-9-photo-heading>צילום מפסק 9 מס׳ 1 <b>*</b></span><label class="receipt-action receipt-action--camera"><span class="receipt-action__icon" aria-hidden="true">📷</span><strong data-handover-switch-9-photo-label>צילום מפסק 9 מס׳ 1 עם האייקונים</strong><input class="receipt-input" type="file" name="handover_switch_photo_1" accept="image/*" capture="environment" data-handover-switch-9-photo required></label></div>
                 </div>
             </fieldset>
         </div>
@@ -1557,6 +1595,7 @@ function portal_render_tenant_handover_form(array $user, array $projects, string
                 <div class="handover-switch-9-unit__fields">
                     <label class="field"><span>סוג מפסק 9 <b>*</b></span><select data-handover-switch-9-configuration required><option value="">בחירה</option><option value="light_9">9 לתאורה בלבד</option><option value="shutter_1_light_4">תריס אחד ו-4 תאורות</option><option value="shutter_2_light_2">2 תריסים ו-2 תאורות</option><option value="shutter_3">3 תריסים</option></select></label>
                     <label class="field"><span>מיקום מפסק 9 <b>*</b></span><input type="text" maxlength="300" data-handover-switch-9-location required></label>
+                    <div class="field field--full handover-switch-9-photo"><span data-handover-switch-9-photo-heading>צילום מפסק 9 <b>*</b></span><label class="receipt-action receipt-action--camera"><span class="receipt-action__icon" aria-hidden="true">📷</span><strong data-handover-switch-9-photo-label></strong><input class="receipt-input" type="file" accept="image/*" capture="environment" data-handover-switch-9-photo required></label></div>
                 </div>
             </fieldset>
         </template>
@@ -1603,12 +1642,11 @@ function portal_render_tenant_handover_form(array $user, array $projects, string
         <div class="field"><span>שם הטכנאי <b>*</b></span><input type="text" value="<?= portal_h($profile['name'] ?? $user['display_name'] ?? '') ?>" readonly></div>
         <div class="field"><span>דוא״ל הטכנאי <b>*</b></span><input type="email" value="<?= portal_h($user['email'] ?? '') ?>" readonly dir="ltr"></div>
         <div class="field field--full">
-            <span>שני צילומי חובה <b>*</b></span>
-            <div class="receipt-actions">
-                <label class="receipt-action receipt-action--camera"><span class="receipt-action__icon" aria-hidden="true">📷</span><strong>צילום הקונטרולר *</strong><input class="receipt-input" type="file" name="handover_controller_photo" accept="image/*" capture="environment" required></label>
-                <label class="receipt-action receipt-action--camera"><span class="receipt-action__icon" aria-hidden="true">📷</span><strong>צילום מפסק 9 עם האייקונים *</strong><input class="receipt-input" type="file" name="handover_switch_photo" accept="image/*" capture="environment" required></label>
+            <span>צילום קונטרולר <b>*</b></span>
+            <div class="receipt-actions receipt-actions--single">
+                <label class="receipt-action receipt-action--camera"><span class="receipt-action__icon" aria-hidden="true">📷</span><strong>צילום הקונטרולר</strong><input class="receipt-input" type="file" name="handover_controller_photo" accept="image/*" capture="environment" required></label>
             </div>
-            <p class="form-note">התמונות נשמרות מחוץ ל-public_html ומצורפות רק למייל הפנימי.</p>
+            <p class="form-note">צילום הקונטרולר וכל צילומי מפסקי 9 נשמרים מחוץ ל-public_html ומצורפים רק למייל הפנימי.</p>
         </div>
         <div class="field--full submit-bar"><div><strong>פעולה אחת: שמירה ושליחה</strong><span>הנתונים ייטענו שוב מ-Monday לפני השמירה.</span></div><button type="submit" class="button button--primary" data-handover-submit <?= $credentials['password'] === '' ? 'disabled' : '' ?>>סיום ושליחה</button></div>
     </form>
