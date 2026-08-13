@@ -583,12 +583,14 @@
             const number = index + 1;
             const legend = unit.querySelector('[data-handover-switch-9-legend]');
             const configuration = unit.querySelector('[data-handover-switch-9-configuration]');
+            const configurationLabel = unit.querySelector('[data-handover-switch-9-configuration-label]');
             const location = unit.querySelector('[data-handover-switch-9-location]');
             const photo = unit.querySelector('[data-handover-switch-9-photo]');
             const photoHeading = unit.querySelector('[data-handover-switch-9-photo-heading]');
             const photoLabel = unit.querySelector('[data-handover-switch-9-photo-label]');
-            if (legend) legend.textContent = `מפסק 9 מס׳ ${number}`;
+            if (legend) legend.textContent = `מפסק 9 מס׳ ${number} — סיווג, מיקום וצילום`;
             if (configuration) configuration.name = `handover_switch_9_configuration_${number}`;
+            if (configurationLabel) configurationLabel.innerHTML = `סיווג מפסק 9 מס׳ ${number} <b>*</b>`;
             if (location) location.name = `handover_switch_9_location_${number}`;
             if (photo) photo.name = `handover_switch_photo_${number}`;
             if (photoHeading) photoHeading.innerHTML = `צילום מפסק 9 מס׳ ${number} <b>*</b>`;

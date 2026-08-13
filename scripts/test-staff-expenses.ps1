@@ -282,6 +282,8 @@ try {
     Assert-PortalTest ($handoverHtml -match 'type="url"[^>]*name="handover_cloud_link"' -and $handoverHtml -match 'data-handover-cloud-link') "Customer-specific cloud link field was not rendered."
     Assert-PortalTest ($handoverHtml -match 'name="handover_controller_location"[^>]*required' -and $handoverHtml -match 'name="handover_controller"[^>]*required' -and $handoverHtml -match 'name="handover_icons"[^>]*required') "Controller and icon requirements were not marked mandatory."
     Assert-PortalTest ($handoverHtml -match 'name="handover_switch_9_count"[^>]*min="1"[^>]*max="50"[^>]*required') "Switch 9 quantity field was not rendered."
+    Assert-PortalTest ($handoverHtml -match 'כמות מפסקי 9 בדירה' -and $handoverHtml -match 'לפי הכמות שתוזן ייפתח כרטיס חובה נפרד לכל מפסק 9') "Switch 9 quantity instructions were not rendered."
+    Assert-PortalTest ($handoverHtml -match 'סיווג מפסק 9 מס׳ 1' -and $handoverHtml -match 'data-handover-switch-9-configuration-label') "Per-switch classification fields were not rendered."
     Assert-PortalTest ($handoverHtml -match 'name="handover_switch_9_configuration_1"[^>]*required' -and $handoverHtml -match 'value="shutter_2_light_2"') "Per-unit switch 9 configuration choices were not rendered."
     Assert-PortalTest ($handoverHtml -match 'name="handover_switch_9_location_1"[^>]*required') "Per-unit switch 9 location field was not rendered."
     Assert-PortalTest ($handoverHtml -match 'name="handover_switch_photo_1"[^>]*data-handover-switch-9-photo[^>]*required') "Per-unit switch 9 photo field was not rendered."

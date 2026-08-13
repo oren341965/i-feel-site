@@ -1457,7 +1457,7 @@ function portal_handle_tenant_handover_post(array $user): void
         $configuration = portal_post('handover_switch_9_configuration_' . $index, 40);
         $location = portal_post('handover_switch_9_location_' . $index, 300);
         if (!in_array($configuration, ['light_9', 'shutter_1_light_4', 'shutter_2_light_2', 'shutter_3'], true)) {
-            throw new RuntimeException('יש לבחור את סוג מפסק 9 מס׳ ' . $index . '.');
+            throw new RuntimeException('יש לבחור את סיווג מפסק 9 מס׳ ' . $index . '.');
         }
         if ($location === '') {
             throw new RuntimeException('יש לפרט את מיקום מפסק 9 מס׳ ' . $index . '.');
@@ -1825,7 +1825,7 @@ function portal_render_tenant_handover_form(array $user, array $projects, string
             <p>לאחר בחירת פרויקט, בניין ודירה ייפתח כאן מיד הטופס המלא. אין צורך ללחוץ על כפתור נוסף.</p>
             <div class="handover-field-preview" aria-label="השדות שיופיעו בטופס">
                 <span>סטטוס המסירה</span><span>תאריך מסירה</span><span>מיקום וסוג קונטרולר</span>
-                <span>כמויות, סוגים ומיקומי מפסקים</span><span>מפסק 24V לתריס כלוא</span><span>חיבור למזגן</span>
+                <span>כמות מפסקי 9 וסיווג נפרד לכל מפסק</span><span>מפסק 24V לתריס כלוא</span><span>חיבור למזגן</span>
                 <span>דוד והערות</span>
                 <span>פרטי הטכנאי</span><span>שני צילומי חובה</span><span>סיום ושליחה</span>
             </div>
@@ -1898,14 +1898,15 @@ function portal_render_tenant_handover_form(array $user, array $projects, string
         <label class="field"><span>קונטרולר <b>*</b></span><select name="handover_controller" required><option value="">בחירה</option><option value="raspberry_pi">רספברי פיי</option><option value="ava_hab">AVA-HAB</option></select></label>
         <label class="field"><span>אייקונים במפסק <b>*</b></span><select name="handover_icons" required><option value="">בחירה</option><option value="done">בוצע</option><option value="not_done">לא בוצע</option><option value="partial">חלקי</option></select></label>
         <label class="field">
-            <span>כמות מפסקי 9 <b>*</b></span>
+            <span>כמות מפסקי 9 בדירה <b>*</b></span>
             <input type="number" name="handover_switch_9_count" value="1" min="1" max="50" step="1" inputmode="numeric" data-handover-switch-9-count required>
         </label>
+        <p class="field field--full form-note handover-switch-9-note">לפי הכמות שתוזן ייפתח כרטיס חובה נפרד לכל מפסק 9, ובו סיווג המפסק, מיקומו וצילום שלו.</p>
         <div class="field--full handover-switch-9-units" data-handover-switch-9-units>
             <fieldset class="handover-switch-9-unit" data-handover-switch-9-unit>
-                <legend data-handover-switch-9-legend>מפסק 9 מס׳ 1</legend>
+                <legend data-handover-switch-9-legend>מפסק 9 מס׳ 1 — סיווג, מיקום וצילום</legend>
                 <div class="handover-switch-9-unit__fields">
-                    <label class="field"><span>סוג מפסק 9 <b>*</b></span><select name="handover_switch_9_configuration_1" data-handover-switch-9-configuration required><option value="">בחירה</option><option value="light_9">9 לתאורה בלבד</option><option value="shutter_1_light_4">תריס אחד ו-4 תאורות</option><option value="shutter_2_light_2">2 תריסים ו-2 תאורות</option><option value="shutter_3">3 תריסים</option></select></label>
+                    <label class="field"><span data-handover-switch-9-configuration-label>סיווג מפסק 9 מס׳ 1 <b>*</b></span><select name="handover_switch_9_configuration_1" data-handover-switch-9-configuration required><option value="">בחירה</option><option value="light_9">9 לתאורה בלבד</option><option value="shutter_1_light_4">תריס אחד ו-4 תאורות</option><option value="shutter_2_light_2">2 תריסים ו-2 תאורות</option><option value="shutter_3">3 תריסים</option></select></label>
                     <label class="field"><span>מיקום מפסק 9 <b>*</b></span><input type="text" name="handover_switch_9_location_1" maxlength="300" data-handover-switch-9-location required></label>
                     <div class="field field--full handover-switch-9-photo"><span data-handover-switch-9-photo-heading>צילום מפסק 9 מס׳ 1 <b>*</b></span><label class="receipt-action receipt-action--camera"><span class="receipt-action__icon" aria-hidden="true">📷</span><strong data-handover-switch-9-photo-label>צילום מפסק 9 מס׳ 1 עם האייקונים</strong><input class="receipt-input" type="file" name="handover_switch_photo_1" accept="image/*" capture="environment" data-handover-switch-9-photo required></label></div>
                 </div>
@@ -1915,7 +1916,7 @@ function portal_render_tenant_handover_form(array $user, array $projects, string
             <fieldset class="handover-switch-9-unit" data-handover-switch-9-unit>
                 <legend data-handover-switch-9-legend></legend>
                 <div class="handover-switch-9-unit__fields">
-                    <label class="field"><span>סוג מפסק 9 <b>*</b></span><select data-handover-switch-9-configuration required><option value="">בחירה</option><option value="light_9">9 לתאורה בלבד</option><option value="shutter_1_light_4">תריס אחד ו-4 תאורות</option><option value="shutter_2_light_2">2 תריסים ו-2 תאורות</option><option value="shutter_3">3 תריסים</option></select></label>
+                    <label class="field"><span data-handover-switch-9-configuration-label>סיווג מפסק 9 <b>*</b></span><select data-handover-switch-9-configuration required><option value="">בחירה</option><option value="light_9">9 לתאורה בלבד</option><option value="shutter_1_light_4">תריס אחד ו-4 תאורות</option><option value="shutter_2_light_2">2 תריסים ו-2 תאורות</option><option value="shutter_3">3 תריסים</option></select></label>
                     <label class="field"><span>מיקום מפסק 9 <b>*</b></span><input type="text" maxlength="300" data-handover-switch-9-location required></label>
                     <div class="field field--full handover-switch-9-photo"><span data-handover-switch-9-photo-heading>צילום מפסק 9 <b>*</b></span><label class="receipt-action receipt-action--camera"><span class="receipt-action__icon" aria-hidden="true">📷</span><strong data-handover-switch-9-photo-label></strong><input class="receipt-input" type="file" accept="image/*" capture="environment" data-handover-switch-9-photo required></label></div>
                 </div>
