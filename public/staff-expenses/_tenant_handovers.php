@@ -1071,11 +1071,7 @@ function portal_handover_internal_email_body(array $handover): string
         'מיקום קונטרולר: ' . (string) ($details['controller_location'] ?? ''),
         'קונטרולר: ' . portal_handover_controller_label((string) ($details['controller'] ?? '')),
         'אייקונים במפסק: ' . portal_handover_icons_label((string) ($details['icons'] ?? '')),
-    ], portal_handover_switch_9_email_lines($details), portal_handover_issue_email_lines($details), [
-        'כמות מפסקי תאורה: ' . (string) ($details['light_switch_count'] ?? '-'),
-        'מיקומי מפסקי תאורה: ' . ((string) ($details['light_switch_location'] ?? '') ?: '-'),
-        'כמות מפסקי תריס: ' . (string) ($details['shutter_switch_count'] ?? '-'),
-        'מיקומי מפסקי תריס: ' . ((string) ($details['shutter_switch_location'] ?? ($details['blinds'] ?? '')) ?: '-'),
+    ], portal_handover_switch_9_email_lines($details), portal_handover_issue_email_lines($details), portal_handover_component_switch_email_lines($details), [
         'מפסק 24V לתריס כלוא: ' . portal_handover_captive_shutter_24v_label((string) ($details['captive_shutter_24v'] ?? '')),
         'חיבור למזגן: ' . portal_handover_hvac_connection_label((string) ($details['hvac_connection'] ?? '')),
         'דוד: ' . portal_handover_boiler_label((string) ($details['boiler'] ?? '')),
@@ -1319,6 +1315,43 @@ function portal_handover_issue_email_lines(array $details): array
     return $lines;
 }
 
+function portal_handover_component_switch_status_label(string $value): string
+{
+    return [
+        'operational_connected' => 'תקין ומחובר לקונטרולר',
+        'not_operational' => 'לא תקין',
+        'operational_not_connected' => 'תקין ולא מחובר לקונטרולר',
+        'other' => 'אחר',
+    ][$value] ?? '-';
+}
+
+function portal_handover_component_switch_email_lines(array $details): array
+{
+    if (array_key_exists('light_switch_type_1_count', $details)) {
+        $status = (string) ($details['component_switch_status'] ?? '');
+        $lines = [
+            'כמות מפסקי תאורה: ' . (string) ($details['light_switch_count'] ?? '-'),
+            'כמות מפסקי תאורה מסוג 1: ' . (string) ($details['light_switch_type_1_count'] ?? '-'),
+            'כמות מפסקי תאורה מסוג 2: ' . (string) ($details['light_switch_type_2_count'] ?? '-'),
+            'כמות מפסקי תאורה מסוג 3: ' . (string) ($details['light_switch_type_3_count'] ?? '-'),
+            'כמות מפסקי תריס בודדים: ' . (string) ($details['shutter_switch_count'] ?? '-'),
+            'סטטוס מפסקי תאורה ותריס: ' . portal_handover_component_switch_status_label($status),
+        ];
+        if ($status === 'other') {
+            $lines[] = 'פירוט סטטוס אחר: ' . ((string) ($details['component_switch_status_other'] ?? '') ?: '-');
+        }
+        return $lines;
+    }
+
+    // Backward-compatible output for handovers stored before the quantity breakdown replaced locations.
+    return [
+        'כמות מפסקי תאורה: ' . (string) ($details['light_switch_count'] ?? '-'),
+        'מיקומי מפסקי תאורה: ' . ((string) ($details['light_switch_location'] ?? '') ?: '-'),
+        'כמות מפסקי תריס: ' . (string) ($details['shutter_switch_count'] ?? '-'),
+        'מיקומי מפסקי תריס: ' . ((string) ($details['shutter_switch_location'] ?? ($details['blinds'] ?? '')) ?: '-'),
+    ];
+}
+
 function portal_handover_captive_shutter_24v_label(string $value): string
 {
     return [
@@ -1409,9 +1442,12 @@ function portal_handle_tenant_handover_post(array $user): void
     $switch9CountRaw = portal_post('handover_switch_9_count', 10);
     $issueCountRaw = portal_post('handover_issue_count', 10);
     $lightSwitchCountRaw = portal_post('handover_light_switch_count', 10);
+    $lightSwitchType1CountRaw = portal_post('handover_light_switch_type_1_count', 10);
+    $lightSwitchType2CountRaw = portal_post('handover_light_switch_type_2_count', 10);
+    $lightSwitchType3CountRaw = portal_post('handover_light_switch_type_3_count', 10);
     $shutterSwitchCountRaw = portal_post('handover_shutter_switch_count', 10);
-    $lightSwitchLocation = portal_post('handover_light_switch_location', 300);
-    $shutterSwitchLocation = portal_post('handover_shutter_switch_location', 300);
+    $componentSwitchStatus = portal_post('handover_component_switch_status', 40);
+    $componentSwitchStatusOther = portal_post('handover_component_switch_status_other', 500);
     $captiveShutter24v = portal_post('handover_captive_shutter_24v', 40);
     $hvacConnection = portal_post('handover_hvac_connection', 40);
     $boiler = portal_post('handover_boiler', 500);
@@ -1480,15 +1516,28 @@ function portal_handle_tenant_handover_post(array $user): void
         throw new RuntimeException('יש להזין כמות תקינה של מפסקי תאורה (0 עד 99).');
     }
     $lightSwitchCount = (int) $lightSwitchCountRaw;
-    if ($lightSwitchCount > 0 && $lightSwitchLocation === '') {
-        throw new RuntimeException('יש לפרט את מיקומי מפסקי התאורה.');
+    $lightSwitchTypeCounts = [];
+    foreach ([$lightSwitchType1CountRaw, $lightSwitchType2CountRaw, $lightSwitchType3CountRaw] as $index => $countRaw) {
+        if (!ctype_digit($countRaw) || (int) $countRaw > 99) {
+            throw new RuntimeException('יש להזין כמות תקינה של מפסקי תאורה מסוג ' . ($index + 1) . ' (0 עד 99).');
+        }
+        $lightSwitchTypeCounts[] = (int) $countRaw;
+    }
+    if (array_sum($lightSwitchTypeCounts) !== $lightSwitchCount) {
+        throw new RuntimeException('סך מפסקי התאורה חייב להיות שווה לסכום הכמויות מסוג 1, 2 ו-3.');
     }
     if (!ctype_digit($shutterSwitchCountRaw) || (int) $shutterSwitchCountRaw > 99) {
-        throw new RuntimeException('יש להזין כמות תקינה של מפסקי תריס (0 עד 99).');
+        throw new RuntimeException('יש להזין כמות תקינה של מפסקי תריס בודדים (0 עד 99).');
     }
     $shutterSwitchCount = (int) $shutterSwitchCountRaw;
-    if ($shutterSwitchCount > 0 && $shutterSwitchLocation === '') {
-        throw new RuntimeException('יש לפרט את מיקומי מפסקי התריס.');
+    if (!in_array($componentSwitchStatus, ['operational_connected', 'not_operational', 'operational_not_connected', 'other'], true)) {
+        throw new RuntimeException('יש לבחור סטטוס למפסקי התאורה והתריסים.');
+    }
+    if ($componentSwitchStatus === 'other' && $componentSwitchStatusOther === '') {
+        throw new RuntimeException('יש לפרט את הסטטוס האחר של מפסקי התאורה והתריסים.');
+    }
+    if ($componentSwitchStatus !== 'other') {
+        $componentSwitchStatusOther = '';
     }
     if (!in_array($captiveShutter24v, ['installed_activated', 'installed_not_activated', 'not_in_project'], true)) {
         throw new RuntimeException('יש לבחור את מצב מפסק 24V לתריס הכלוא.');
@@ -1558,9 +1607,12 @@ function portal_handle_tenant_handover_post(array $user): void
                 'switch_9_units' => $switch9Units,
                 'issues' => $issues,
                 'light_switch_count' => $lightSwitchCount,
-                'light_switch_location' => $lightSwitchLocation,
+                'light_switch_type_1_count' => $lightSwitchTypeCounts[0],
+                'light_switch_type_2_count' => $lightSwitchTypeCounts[1],
+                'light_switch_type_3_count' => $lightSwitchTypeCounts[2],
                 'shutter_switch_count' => $shutterSwitchCount,
-                'shutter_switch_location' => $shutterSwitchLocation,
+                'component_switch_status' => $componentSwitchStatus,
+                'component_switch_status_other' => $componentSwitchStatusOther,
                 'captive_shutter_24v' => $captiveShutter24v,
                 'hvac_connection' => $hvacConnection,
                 'boiler' => $boiler,
@@ -1922,16 +1974,41 @@ function portal_render_tenant_handover_form(array $user, array $projects, string
                 </div>
             </fieldset>
         </template>
+        <div class="field field--full handover-form-heading"><h3>מפסקי תאורה ותריסים</h3><p>יש לרשום כמויות בלבד — אין צורך לציין מיקומים. סך מפסקי התאורה צריך להתאים לסכום הכמויות מסוג 1, 2 ו-3.</p></div>
         <label class="field">
-            <span>כמות מפסקי תאורה <b>*</b></span>
-            <input type="number" name="handover_light_switch_count" min="0" max="99" step="1" inputmode="numeric" data-handover-component-count="light" required>
+            <span>סך מפסקי התאורה <b>*</b></span>
+            <input type="number" name="handover_light_switch_count" value="0" min="0" max="99" step="1" inputmode="numeric" required>
         </label>
-        <label class="field" data-handover-component-location="light" hidden><span>מיקומי מפסקי תאורה <b>*</b></span><input type="text" name="handover_light_switch_location" maxlength="300"></label>
         <label class="field">
-            <span>כמות מפסקי תריס <b>*</b></span>
-            <input type="number" name="handover_shutter_switch_count" min="0" max="99" step="1" inputmode="numeric" data-handover-component-count="shutter" required>
+            <span>כמות מפסקי תאורה מסוג 1 <b>*</b></span>
+            <input type="number" name="handover_light_switch_type_1_count" value="0" min="0" max="99" step="1" inputmode="numeric" required>
         </label>
-        <label class="field" data-handover-component-location="shutter" hidden><span>מיקומי מפסקי תריס <b>*</b></span><input type="text" name="handover_shutter_switch_location" maxlength="300"></label>
+        <label class="field">
+            <span>כמות מפסקי תאורה מסוג 2 <b>*</b></span>
+            <input type="number" name="handover_light_switch_type_2_count" value="0" min="0" max="99" step="1" inputmode="numeric" required>
+        </label>
+        <label class="field">
+            <span>כמות מפסקי תאורה מסוג 3 <b>*</b></span>
+            <input type="number" name="handover_light_switch_type_3_count" value="0" min="0" max="99" step="1" inputmode="numeric" required>
+        </label>
+        <label class="field">
+            <span>כמות מפסקי תריס בודדים <b>*</b></span>
+            <input type="number" name="handover_shutter_switch_count" value="0" min="0" max="99" step="1" inputmode="numeric" required>
+        </label>
+        <label class="field">
+            <span>סטטוס מפסקי התאורה והתריסים <b>*</b></span>
+            <select name="handover_component_switch_status" data-handover-component-switch-status required>
+                <option value="">בחירה</option>
+                <option value="operational_connected">תקין ומחובר לקונטרולר</option>
+                <option value="not_operational">לא תקין</option>
+                <option value="operational_not_connected">תקין ולא מחובר לקונטרולר</option>
+                <option value="other">אחר</option>
+            </select>
+        </label>
+        <label class="field field--full" data-handover-component-switch-status-other hidden>
+            <span>פירוט אחר <b>*</b></span>
+            <input type="text" name="handover_component_switch_status_other" maxlength="500">
+        </label>
         <label class="field">
             <span>מפסק 24V לתריס כלוא <b>*</b></span>
             <select name="handover_captive_shutter_24v" required>

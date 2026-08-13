@@ -599,6 +599,30 @@ try {
         && portal_handover_boiler_label('switcher') === 'סוויטשר',
         'Structured handover switch, HVAC, or boiler labels are wrong.'
     );
+    portal_test_expect(
+        portal_handover_component_switch_status_label('operational_connected') === 'תקין ומחובר לקונטרולר'
+        && portal_handover_component_switch_status_label('not_operational') === 'לא תקין'
+        && portal_handover_component_switch_status_label('operational_not_connected') === 'תקין ולא מחובר לקונטרולר'
+        && portal_handover_component_switch_status_label('other') === 'אחר'
+        && portal_handover_component_switch_email_lines([
+            'light_switch_count' => 6,
+            'light_switch_type_1_count' => 2,
+            'light_switch_type_2_count' => 3,
+            'light_switch_type_3_count' => 1,
+            'shutter_switch_count' => 4,
+            'component_switch_status' => 'other',
+            'component_switch_status_other' => 'נדרש ביקור נוסף',
+        ]) === [
+            'כמות מפסקי תאורה: 6',
+            'כמות מפסקי תאורה מסוג 1: 2',
+            'כמות מפסקי תאורה מסוג 2: 3',
+            'כמות מפסקי תאורה מסוג 3: 1',
+            'כמות מפסקי תריס בודדים: 4',
+            'סטטוס מפסקי תאורה ותריס: אחר',
+            'פירוט סטטוס אחר: נדרש ביקור נוסף',
+        ],
+        'Light and shutter switch quantity or status labels are wrong.'
+    );
     $switch9EmailLines = portal_handover_switch_9_email_lines([
         'switch_9_count' => 2,
         'switch_9_units' => [

@@ -601,20 +601,18 @@
     switch9CountInput?.addEventListener('change', updateSwitch9Units);
     updateSwitch9Units();
 
-    handoverForm?.querySelectorAll('[data-handover-component-count]').forEach((countInput) => {
-        const component = countInput.dataset.handoverComponentCount;
-        const locationField = handoverForm.querySelector(`[data-handover-component-location="${component}"]`);
-        const locationInput = locationField?.querySelector('input');
-        const updateComponentLocation = () => {
-            if (!locationField || !locationInput) return;
-            const hasComponents = Number.parseInt(countInput.value, 10) > 0;
-            locationField.hidden = !hasComponents;
-            locationInput.required = hasComponents;
-            if (!hasComponents) locationInput.value = '';
-        };
-        countInput.addEventListener('input', updateComponentLocation);
-        updateComponentLocation();
-    });
+    const componentSwitchStatus = handoverForm?.querySelector('[data-handover-component-switch-status]');
+    const componentSwitchStatusOtherField = handoverForm?.querySelector('[data-handover-component-switch-status-other]');
+    const componentSwitchStatusOtherInput = componentSwitchStatusOtherField?.querySelector('input');
+    const updateComponentSwitchStatusOther = () => {
+        if (!componentSwitchStatusOtherField || !componentSwitchStatusOtherInput) return;
+        const isOther = componentSwitchStatus?.value === 'other';
+        componentSwitchStatusOtherField.hidden = !isOther;
+        componentSwitchStatusOtherInput.required = isOther;
+        if (!isOther) componentSwitchStatusOtherInput.value = '';
+    };
+    componentSwitchStatus?.addEventListener('change', updateComponentSwitchStatusOther);
+    updateComponentSwitchStatusOther();
 
     const issueCountInput = handoverForm?.querySelector('[data-handover-issue-count]');
     const issueList = handoverForm?.querySelector('[data-handover-issue-list]');
