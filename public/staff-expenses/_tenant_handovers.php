@@ -1,9 +1,9 @@
 <?php
 declare(strict_types=1);
 
-const IFEEL_HANDOVER_BOARD_ID = '2732725332';
+const IFEEL_HANDOVER_BOARD_ID = '18399467324';
+const IFEEL_HANDOVER_SALES_BOARD_ID = '2732725332';
 const IFEEL_HANDOVER_API_VERSION = '2026-07';
-const IFEEL_HANDOVER_STATUS_LABEL = 'העברה לפרויקטים - דיירים';
 
 function portal_handover_config(string $constant, string $environment, string $fallback = ''): string
 {
@@ -27,6 +27,19 @@ function portal_handover_board_id(): string
     return $boardId;
 }
 
+function portal_handover_sales_board_id(): string
+{
+    $boardId = portal_handover_config(
+        'TENANT_HANDOVER_MONDAY_SALES_BOARD_ID',
+        'TENANT_HANDOVER_MONDAY_SALES_BOARD_ID',
+        IFEEL_HANDOVER_SALES_BOARD_ID
+    );
+    if (!preg_match('/^\d{1,20}$/', $boardId)) {
+        throw new RuntimeException('מזהה לוח המכירות המקושר אינו תקין.');
+    }
+    return $boardId;
+}
+
 function portal_handover_monday_token(): string
 {
     $token = portal_handover_config('TENANT_HANDOVER_MONDAY_TOKEN', 'TENANT_HANDOVER_MONDAY_TOKEN');
@@ -46,23 +59,28 @@ function portal_handover_api_version(): string
     return preg_match('/^20\d{2}-(?:01|04|07|10)$/', $version) ? $version : IFEEL_HANDOVER_API_VERSION;
 }
 
-function portal_handover_status_label(): string
-{
-    return portal_handover_config(
-        'TENANT_HANDOVER_MONDAY_STATUS_LABEL',
-        'TENANT_HANDOVER_MONDAY_STATUS_LABEL',
-        IFEEL_HANDOVER_STATUS_LABEL
-    );
-}
-
 function portal_handover_project_display_title(string $title): string
 {
     $title = trim((string) (preg_replace('/\s+/u', ' ', $title) ?? $title));
-    $withoutImportSuffix = preg_replace('/\s+(?:מאנדיי\s*)?\.?xlsx$/iu', '', $title);
+    $withoutImportSuffix = preg_replace('/(?:\s+(?:מאנדיי|מאנדי|monday))?\s*\.xls[xm]?$/iu', '', $title);
     if (is_string($withoutImportSuffix) && trim($withoutImportSuffix) !== '') {
         $title = trim($withoutImportSuffix);
     }
     return portal_substr($title, 0, 255);
+}
+
+function portal_handover_project_is_import_title(string $title): bool
+{
+    return preg_match('/\.xls[xm]?$/iu', trim($title)) === 1;
+}
+
+function portal_handover_project_is_excluded_title(string $title): bool
+{
+    $title = trim((string) (preg_replace('/\s+/u', ' ', $title) ?? $title));
+    return preg_match(
+        '/^(?:דיירים\s*-\s*(?:בהתקנה|התקנות\s+שהסתיימו)|facebook|פייסבוק|פניות\s+(?:מ)?אתר(?:\s+החברה)?|שם\s+הלקוח|תהליך\s+(?:ה)?מכירה\s+הסתיים|לידים?|leads?|לקוחות\s+פרטיים)$/iu',
+        $title
+    ) === 1;
 }
 
 function portal_handover_project_title_key(string $title): string
@@ -75,29 +93,58 @@ function portal_handover_project_title_key(string $title): string
 
 function portal_handover_merge_project_groups(array $groups): array
 {
-    $projects = [];
-    $projectIdsByTitle = [];
+    $buckets = [];
     foreach ($groups as $group) {
         if (!is_array($group) || ($group['archived'] ?? false) || ($group['deleted'] ?? false)) {
             continue;
         }
         $id = trim((string) ($group['id'] ?? ''));
-        $title = portal_handover_project_display_title((string) ($group['title'] ?? ''));
+        $rawTitle = trim((string) ($group['title'] ?? ''));
+        $title = portal_handover_project_display_title($rawTitle);
         $titleKey = portal_handover_project_title_key($title);
-        if ($id === '' || $title === '' || $titleKey === '' || !preg_match('/^[A-Za-z0-9_-]{1,128}$/', $id)) {
+        if (
+            $id === ''
+            || $title === ''
+            || $titleKey === ''
+            || !preg_match('/^[A-Za-z0-9_-]{1,128}$/', $id)
+            || in_array($id, ['topics', 'group_title'], true)
+            || portal_handover_project_is_excluded_title($rawTitle)
+        ) {
             continue;
         }
-        if (!isset($projectIdsByTitle[$titleKey])) {
-            $projectIdsByTitle[$titleKey] = $id;
-            $projects[$id] = ['id' => $id, 'title' => $title, 'group_ids' => [$id]];
+        $buckets[$titleKey][] = [
+            'id' => $id,
+            'title' => $title,
+            'is_import' => portal_handover_project_is_import_title($rawTitle),
+        ];
+    }
+
+    $projects = [];
+    foreach ($buckets as $candidates) {
+        $canonical = null;
+        foreach ($candidates as $candidate) {
+            if (!$candidate['is_import']) {
+                $canonical = $candidate;
+                break;
+            }
+        }
+        if ($canonical === null) {
             continue;
         }
-        $projectId = $projectIdsByTitle[$titleKey];
-        if (!in_array($id, $projects[$projectId]['group_ids'], true)) {
-            $projects[$projectId]['group_ids'][] = $id;
-        }
-        if (strlen($title) < strlen((string) $projects[$projectId]['title'])) {
-            $projects[$projectId]['title'] = $title;
+        $projectId = (string) $canonical['id'];
+        $canonicalGroupIds = array_values(array_unique(array_map(
+            static fn(array $candidate): string => (string) $candidate['id'],
+            array_filter($candidates, static fn(array $candidate): bool => !$candidate['is_import'])
+        )));
+        $projects[$projectId] = [
+            'id' => $projectId,
+            'title' => (string) $canonical['title'],
+            'group_ids' => $canonicalGroupIds,
+        ];
+        foreach ($candidates as $candidate) {
+            if (!$candidate['is_import'] && strlen((string) $candidate['title']) < strlen((string) $projects[$projectId]['title'])) {
+                $projects[$projectId]['title'] = (string) $candidate['title'];
+            }
         }
     }
     uasort($projects, static fn(array $a, array $b): int => strnatcasecmp($a['title'], $b['title']));
@@ -112,7 +159,13 @@ function portal_handover_test_monday_response(string $query, array $variables): 
             'groups' => [
                 ['id' => 'test-project', 'title' => 'פרויקט בדיקה', 'archived' => false, 'deleted' => false],
                 ['id' => 'duplicate-project', 'title' => '  פרויקט   בדיקה  ', 'archived' => false, 'deleted' => false],
+                ['id' => 'import-project', 'title' => 'פרויקט בדיקה מאנדי.xlsx', 'archived' => false, 'deleted' => false],
                 ['id' => 'search-project', 'title' => 'Search Project', 'archived' => false, 'deleted' => false],
+                ['id' => 'facebook-group', 'title' => 'Facebook', 'archived' => false, 'deleted' => false],
+                ['id' => 'website-leads', 'title' => 'פניות מאתר החברה', 'archived' => false, 'deleted' => false],
+                ['id' => 'import-only', 'title' => 'קובץ ישן.xls', 'archived' => false, 'deleted' => false],
+                ['id' => 'topics', 'title' => 'דיירים - בהתקנה', 'archived' => false, 'deleted' => false],
+                ['id' => 'group_title', 'title' => 'דיירים - התקנות שהסתיימו', 'archived' => false, 'deleted' => false],
                 ['id' => 'archived-project', 'title' => 'פרויקט בארכיון', 'archived' => true, 'deleted' => false],
             ],
         ]]]];
@@ -129,13 +182,21 @@ function portal_handover_test_monday_response(string $query, array $variables): 
                     'name' => 'Search Resident',
                     'group' => ['id' => 'search-project', 'title' => 'Search Project'],
                     'column_values' => [
-                        ['id' => 'numbers21', 'text' => '21'],
-                        ['id' => 'text8', 'text' => '2'],
-                        ['id' => 'phone', 'text' => '050-123-4567'],
-                        ['id' => '_____3', 'text' => 'resident@example.com'],
-                        ['id' => 'location7', 'text' => 'Test address'],
-                        ['id' => 'status', 'text' => IFEEL_HANDOVER_STATUS_LABEL],
+                        ['id' => 'lookup_mm0m2n3j', 'text' => ''],
+                        ['id' => 'text_mm0w7c0j', 'text' => '2'],
+                        ['id' => 'phone2', 'text' => '050-123-4567'],
+                        ['id' => 'email', 'text' => 'resident@example.com'],
                     ],
+                    'linked_items' => [[
+                        'id' => '9003',
+                        'column_values' => [
+                            ['id' => 'numbers21', 'text' => '21'],
+                            ['id' => 'text8', 'text' => ''],
+                            ['id' => 'phone', 'text' => ''],
+                            ['id' => '_____3', 'text' => ''],
+                            ['id' => 'location7', 'text' => 'Test address'],
+                        ],
+                    ]],
                 ]],
             ],
         ]]]];
@@ -156,13 +217,21 @@ function portal_handover_test_monday_response(string $query, array $variables): 
                     'id' => $itemId,
                     'name' => $residentName,
                     'column_values' => [
-                        ['id' => 'numbers21', 'text' => $apartment],
-                        ['id' => 'text8', 'text' => '2'],
-                        ['id' => 'phone', 'text' => '050-123-4567'],
-                        ['id' => '_____3', 'text' => 'resident@example.com'],
-                        ['id' => 'location7', 'text' => 'רחוב הבדיקה 1'],
-                        ['id' => 'status', 'text' => IFEEL_HANDOVER_STATUS_LABEL],
+                        ['id' => 'lookup_mm0m2n3j', 'text' => ''],
+                        ['id' => 'text_mm0w7c0j', 'text' => '2'],
+                        ['id' => 'phone2', 'text' => '050-123-4567'],
+                        ['id' => 'email', 'text' => 'resident@example.com'],
                     ],
+                    'linked_items' => [[
+                        'id' => '9' . $itemId,
+                        'column_values' => [
+                            ['id' => 'numbers21', 'text' => $apartment],
+                            ['id' => 'text8', 'text' => ''],
+                            ['id' => 'phone', 'text' => ''],
+                            ['id' => '_____3', 'text' => ''],
+                            ['id' => 'location7', 'text' => 'רחוב הבדיקה 1'],
+                        ],
+                    ]],
                 ]],
             ],
         ];
@@ -239,14 +308,14 @@ function portal_handover_session_cache(string $key, int $ttl, callable $loader, 
 
 function portal_handover_projects(bool $fresh = false): array
 {
-    return portal_handover_session_cache('projects', 60, static function (): array {
+    return portal_handover_session_cache('projects-dedicated-board', 60, static function (): array {
         $response = portal_handover_monday_request(
             'query HandoverProjects($boardIds: [ID!]) { boards(ids: $boardIds) { id groups { id title archived deleted } } }',
             ['boardIds' => [portal_handover_board_id()]]
         );
         $boards = $response['data']['boards'] ?? [];
         if (!is_array($boards) || !isset($boards[0]) || !is_array($boards[0])) {
-            throw new RuntimeException('לוח המכירות לא נמצא ב-Monday.');
+            throw new RuntimeException('לוח מחלקת פרויקטים - דיירים לא נמצא ב-Monday.');
         }
         return portal_handover_merge_project_groups(is_array($boards[0]['groups'] ?? null) ? $boards[0]['groups'] : []);
     }, $fresh);
@@ -262,22 +331,49 @@ function portal_handover_column_text(array $item, string $columnId): string
     return '';
 }
 
+function portal_handover_linked_column_text(array $item, string $columnId): string
+{
+    foreach (($item['linked_items'] ?? []) as $linkedItem) {
+        if (!is_array($linkedItem)) {
+            continue;
+        }
+        $value = portal_handover_column_text($linkedItem, $columnId);
+        if ($value !== '') {
+            return $value;
+        }
+    }
+    return '';
+}
+
 function portal_handover_normalize_resident(array $item, string $projectId, string $projectTitle, string $sourceGroupId = ''): ?array
 {
     $itemId = trim((string) ($item['id'] ?? ''));
     $name = trim((string) ($item['name'] ?? ''));
-    $apartment = portal_handover_column_text($item, 'numbers21');
-    $status = portal_handover_column_text($item, 'status');
+    $apartment = portal_handover_column_text($item, 'lookup_mm0m2n3j');
+    if ($apartment === '') {
+        $apartment = portal_handover_linked_column_text($item, 'numbers21');
+    }
     if (!preg_match('/^\d{1,20}$/', $itemId) || $name === '' || $apartment === '') {
         return null;
     }
-    if (portal_handover_status_label() !== '' && $status !== portal_handover_status_label()) {
-        return null;
+    $phoneText = portal_handover_column_text($item, 'phone2');
+    if ($phoneText === '') {
+        $phoneText = portal_handover_linked_column_text($item, 'phone');
     }
-    $phoneText = portal_handover_column_text($item, 'phone');
+    $emailText = strtolower(portal_handover_column_text($item, 'email'));
+    if ($emailText === '') {
+        $emailText = strtolower(portal_handover_linked_column_text($item, '_____3'));
+    }
     $phoneDigits = preg_replace('/\D+/', '', $phoneText) ?? '';
-    $emailText = strtolower(portal_handover_column_text($item, '_____3'));
     $email = filter_var($emailText, FILTER_VALIDATE_EMAIL) !== false ? $emailText : '';
+    $building = portal_handover_column_text($item, 'text_mm0w7c0j');
+    if ($building === '') {
+        $building = portal_handover_linked_column_text($item, 'text8');
+    }
+    $location = portal_handover_column_text($item, 'mirror3');
+    if ($location === '') {
+        $location = portal_handover_linked_column_text($item, 'location7');
+    }
     return [
         'item_id' => $itemId,
         'project_id' => $projectId,
@@ -285,11 +381,11 @@ function portal_handover_normalize_resident(array $item, string $projectId, stri
         'project_title' => portal_substr($projectTitle, 0, 255),
         'name' => portal_substr($name, 0, 180),
         'apartment' => portal_substr($apartment, 0, 40),
-        'building' => portal_substr(portal_handover_column_text($item, 'text8'), 0, 80),
+        'building' => portal_substr($building, 0, 80),
         'phone' => portal_substr($phoneText, 0, 80),
         'phone_digits' => portal_substr($phoneDigits, 0, 30),
         'email' => portal_substr($email, 0, 160),
-        'location' => portal_substr(portal_handover_column_text($item, 'location7'), 0, 300),
+        'location' => portal_substr($location, 0, 300),
     ];
 }
 
@@ -338,7 +434,7 @@ function portal_handover_residents_for_projects(array $projects, bool $fresh = f
     return portal_handover_session_cache($cacheKey, 30, static function () use ($sourceProjects): array {
         $sourceGroupIds = array_keys($sourceProjects);
         $query = <<<'GRAPHQL'
-query HandoverResidents($boardIds: [ID!], $groupIds: [String]) {
+query HandoverResidents($boardIds: [ID!], $groupIds: [String], $salesBoardId: ID!) {
   boards(ids: $boardIds) {
     groups(ids: $groupIds) {
       id
@@ -348,7 +444,11 @@ query HandoverResidents($boardIds: [ID!], $groupIds: [String]) {
         items {
           id
           name
-          column_values(ids: ["numbers21", "text8", "phone", "_____3", "location7", "status"]) { id text }
+          column_values(ids: ["lookup_mm0m2n3j", "text_mm0w7c0j", "phone2", "email", "mirror3"]) { id text }
+          linked_items(link_to_item_column_id: "connect_boards", linked_board_id: $salesBoardId) {
+            id
+            column_values(ids: ["numbers21", "text8", "phone", "_____3", "location7"]) { id text }
+          }
         }
       }
     }
@@ -358,6 +458,7 @@ GRAPHQL;
         $response = portal_handover_monday_request($query, [
             'boardIds' => [portal_handover_board_id()],
             'groupIds' => $sourceGroupIds,
+            'salesBoardId' => portal_handover_sales_board_id(),
         ]);
         $groups = $response['data']['boards'][0]['groups'] ?? null;
         if (!is_array($groups) || $groups === []) {
@@ -380,8 +481,8 @@ GRAPHQL;
             $pages = 1;
             while ($cursor !== null && $cursor !== '' && $pages < 20) {
                 $next = portal_handover_monday_request(
-                    'query HandoverResidentsNext($cursor: String!) { next_items_page(limit: 500, cursor: $cursor) { cursor items { id name column_values(ids: ["numbers21", "text8", "phone", "_____3", "location7", "status"]) { id text } } } }',
-                    ['cursor' => $cursor]
+                    'query HandoverResidentsNext($cursor: String!, $salesBoardId: ID!) { next_items_page(limit: 500, cursor: $cursor) { cursor items { id name column_values(ids: ["lookup_mm0m2n3j", "text_mm0w7c0j", "phone2", "email", "mirror3"]) { id text } linked_items(link_to_item_column_id: "connect_boards", linked_board_id: $salesBoardId) { id column_values(ids: ["numbers21", "text8", "phone", "_____3", "location7"]) { id text } } } } }',
+                    ['cursor' => $cursor, 'salesBoardId' => portal_handover_sales_board_id()]
                 );
                 $nextPage = $next['data']['next_items_page'] ?? null;
                 if (!is_array($nextPage)) {
@@ -499,7 +600,7 @@ function portal_handover_search_monday(array $projects, string $residentTerm, bo
             $rules[] = ['column_id' => 'name', 'compare_value' => [$residentTerm], 'operator' => 'contains_text'];
         }
         $query = <<<'GRAPHQL'
-query HandoverSearch($boardIds: [ID!], $queryParams: ItemsQuery) {
+query HandoverSearch($boardIds: [ID!], $queryParams: ItemsQuery, $salesBoardId: ID!) {
   boards(ids: $boardIds) {
     items_page(limit: 500, query_params: $queryParams) {
       cursor
@@ -507,7 +608,11 @@ query HandoverSearch($boardIds: [ID!], $queryParams: ItemsQuery) {
         id
         name
         group { id title }
-        column_values(ids: ["numbers21", "text8", "phone", "_____3", "location7", "status"]) { id text }
+        column_values(ids: ["lookup_mm0m2n3j", "text_mm0w7c0j", "phone2", "email", "mirror3"]) { id text }
+        linked_items(link_to_item_column_id: "connect_boards", linked_board_id: $salesBoardId) {
+          id
+          column_values(ids: ["numbers21", "text8", "phone", "_____3", "location7"]) { id text }
+        }
       }
     }
   }
@@ -516,6 +621,7 @@ GRAPHQL;
         $response = portal_handover_monday_request($query, [
             'boardIds' => [portal_handover_board_id()],
             'queryParams' => ['rules' => $rules, 'operator' => 'and'],
+            'salesBoardId' => portal_handover_sales_board_id(),
         ]);
         $page = $response['data']['boards'][0]['items_page'] ?? null;
         if (!is_array($page)) {
@@ -526,8 +632,8 @@ GRAPHQL;
         $pages = 1;
         while ($cursor !== null && $cursor !== '' && $pages < 20) {
             $next = portal_handover_monday_request(
-                'query HandoverSearchNext($cursor: String!) { next_items_page(limit: 500, cursor: $cursor) { cursor items { id name group { id title } column_values(ids: ["numbers21", "text8", "phone", "_____3", "location7", "status"]) { id text } } } }',
-                ['cursor' => $cursor]
+                'query HandoverSearchNext($cursor: String!, $salesBoardId: ID!) { next_items_page(limit: 500, cursor: $cursor) { cursor items { id name group { id title } column_values(ids: ["lookup_mm0m2n3j", "text_mm0w7c0j", "phone2", "email", "mirror3"]) { id text } linked_items(link_to_item_column_id: "connect_boards", linked_board_id: $salesBoardId) { id column_values(ids: ["numbers21", "text8", "phone", "_____3", "location7"]) { id text } } } } }',
+                ['cursor' => $cursor, 'salesBoardId' => portal_handover_sales_board_id()]
             );
             $nextPage = $next['data']['next_items_page'] ?? null;
             if (!is_array($nextPage)) {
@@ -1229,7 +1335,7 @@ function portal_render_tenant_handover_form(array $user, array $projects, string
     </form>
 
     <?php if ($projectId !== '' && $residents === []): ?>
-        <div class="alert alert--info">לא נמצאו בקבוצה פריטים עם סטטוס “<?= portal_h(portal_handover_status_label()) ?>” ומספר דירה.</div>
+        <div class="alert alert--info">לא נמצאו בקבוצת הפרויקט דיירים עם מספר דירה מקושר.</div>
     <?php endif; ?>
 
     <?php if ($resident === null): ?>

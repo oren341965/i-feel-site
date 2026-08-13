@@ -50,13 +50,13 @@ define('EXPENSE_PORTAL_ADMIN_EMAILS', [
 ]);
 
 define('TENANT_HANDOVER_MONDAY_TOKEN', 'SERVER_ONLY_MONDAY_TOKEN');
-define('TENANT_HANDOVER_MONDAY_BOARD_ID', '2732725332');
+define('TENANT_HANDOVER_MONDAY_BOARD_ID', '18399467324');
+define('TENANT_HANDOVER_MONDAY_SALES_BOARD_ID', '2732725332');
 define('TENANT_HANDOVER_MONDAY_API_VERSION', '2026-07');
-define('TENANT_HANDOVER_MONDAY_STATUS_LABEL', 'העברה לפרויקטים - דיירים');
 define('TENANT_HANDOVER_INTERNAL_RECIPIENTS', 'sagiv@i-feel.co.il,support@i-feel.co.il');
 ```
 
-לטוקן Monday נדרשת הרשאת `boards:read` ללוח המכירות בלבד. אפשר להשתמש ב-`MONDAY_API_TOKEN` הקיים במקום הקבוע הייעודי, אך אין לשמור אף טוקן ב-Git. המערכת שולפת את העמודות `numbers21`, `text8`, `phone`, `_____3`, `location7` ו-`status`, ומציגה רק פריטים שסטטוסם תואם להגדרה.
+לטוקן Monday נדרשת הרשאת `boards:read` ללוח `מחלקת פרויקטים - דיירים` וללוח המכירות המקושר. אפשר להשתמש ב-`MONDAY_API_TOKEN` הקיים במקום הקבוע הייעודי, אך אין לשמור אף טוקן ב-Git. רשימת הפרויקטים ושמות הדיירים נשלפים רק מהלוח הייעודי. טלפון ודוא״ל נקראים מהעמודות הישירות `phone2` ו-`email`; מספר דירה, בניין וכתובת נקראים מפריט המכירות המקושר דרך `connect_boards`. קבוצות תפעוליות כמו `דיירים - בהתקנה` אינן מוצגות כפרויקטים, ואין סינון לפי סטטוס מכירה.
 
 יש לוודא שפונקציית `mail()` של PHP פעילה ב-JetServer ושדואר מהכתובת `no-reply@i-feel.co.il` מורשה להישלח. יש לכלול את תיקיית `private_expenses` בגיבוי האחסון.
 

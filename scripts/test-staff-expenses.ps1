@@ -210,6 +210,7 @@ try {
     Assert-PortalTest ($handoverLandingHtml -match 'class="handover-field-preview"') "Tenant handover technician fields were not explained on the landing state."
     Assert-PortalTest (([regex]::Matches($handoverLandingHtml, 'value="test-project"')).Count -eq 1) "The canonical Monday project was not rendered exactly once."
     Assert-PortalTest ($handoverLandingHtml -notmatch 'value="duplicate-project"') "Duplicate Monday project groups were rendered more than once."
+    Assert-PortalTest ($handoverLandingHtml -notmatch 'value="(?:import-project|import-only|facebook-group|website-leads|topics|group_title)"') "Non-project Monday groups were exposed in the project selector."
     Assert-PortalTest ($handoverLandingHtml -match '<form method="post" class="detail-card handover-search"') "Tenant handover search is not isolated in a server-side POST form."
     Assert-PortalTest ($handoverLandingHtml -match 'name="handover_project_search"' -and $handoverLandingHtml -match 'name="handover_resident_search"') "Tenant handover project and resident search fields were not rendered."
 

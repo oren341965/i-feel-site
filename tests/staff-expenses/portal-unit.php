@@ -448,51 +448,66 @@ try {
         portal_work_report_recipient() === 'myhome@i-feel.co.il',
         'Work report recipient is not MyHome.'
     );
+    portal_test_expect(
+        IFEEL_HANDOVER_BOARD_ID === '18399467324'
+        && IFEEL_HANDOVER_SALES_BOARD_ID === '2732725332',
+        'Tenant handovers are not mapped to the dedicated residents board and its linked sales board.'
+    );
     $handoverResident = portal_handover_normalize_resident([
         'id' => '12345',
         'name' => 'Test Resident',
         'column_values' => [
-            ['id' => 'numbers21', 'text' => '7'],
-            ['id' => 'text8', 'text' => '2'],
-            ['id' => 'phone', 'text' => '050-123-4567'],
-            ['id' => '_____3', 'text' => 'Resident@Example.com'],
-            ['id' => 'location7', 'text' => 'Test address'],
-            ['id' => 'status', 'text' => IFEEL_HANDOVER_STATUS_LABEL],
+            ['id' => 'lookup_mm0m2n3j', 'text' => ''],
+            ['id' => 'text_mm0w7c0j', 'text' => '2'],
+            ['id' => 'phone2', 'text' => '050-123-4567'],
+            ['id' => 'email', 'text' => 'Resident@Example.com'],
+            ['id' => 'status', 'text' => 'נא לבחור'],
         ],
+        'linked_items' => [[
+            'id' => '54321',
+            'column_values' => [
+                ['id' => 'numbers21', 'text' => '7'],
+                ['id' => 'text8', 'text' => ''],
+                ['id' => 'phone', 'text' => ''],
+                ['id' => '_____3', 'text' => ''],
+                ['id' => 'location7', 'text' => 'Test address'],
+            ],
+        ]],
     ], 'test-project', 'Test Project');
     portal_test_expect(
         $handoverResident !== null
         && ($handoverResident['email'] ?? '') === 'resident@example.com'
         && ($handoverResident['phone_digits'] ?? '') === '0501234567',
-        'Monday resident normalization failed.'
+        'Dedicated Monday resident normalization failed.'
     );
     portal_test_expect(
         portal_handover_credentials($handoverResident)['password'] === '0501234567',
         'Tenant handover credentials were not derived from the resident phone.'
     );
-    $wrongStatusSource = [
+    $lifecycleStatusSource = [
         'id' => '54321',
-        'name' => 'Not a resident',
+        'name' => 'Lifecycle Resident',
         'column_values' => [
-            ['id' => 'numbers21', 'text' => '9'],
-            ['id' => 'status', 'text' => 'ליד חדש'],
+            ['id' => 'lookup_mm0m2n3j', 'text' => '9'],
+            ['id' => 'status', 'text' => 'התקנה הסתיימה'],
         ],
     ];
     portal_test_expect(
-        portal_handover_normalize_resident($wrongStatusSource, 'test-project', 'Test Project') === null,
-        'A Monday item with the wrong status was exposed as a resident.'
+        portal_handover_normalize_resident($lifecycleStatusSource, 'test-project', 'Test Project') !== null,
+        'A resident on the dedicated board was incorrectly filtered by lifecycle status.'
     );
     $mergedHandoverProjects = portal_handover_merge_project_groups([
         ['id' => 'project-a', 'title' => 'אביטל 13 מאנדיי.xlsx', 'archived' => false, 'deleted' => false],
         ['id' => 'project-b', 'title' => '  אביטל   13 ', 'archived' => false, 'deleted' => false],
         ['id' => 'project-c', 'title' => 'אביטל 13', 'archived' => true, 'deleted' => false],
+        ['id' => 'topics', 'title' => 'דיירים - בהתקנה', 'archived' => false, 'deleted' => false],
     ]);
-    $mergedHandoverProject = $mergedHandoverProjects['project-a'] ?? [];
+    $mergedHandoverProject = $mergedHandoverProjects['project-b'] ?? [];
     portal_test_expect(
         count($mergedHandoverProjects) === 1
         && ($mergedHandoverProject['title'] ?? '') === 'אביטל 13'
-        && ($mergedHandoverProject['group_ids'] ?? []) === ['project-a', 'project-b'],
-        'Duplicate Monday project groups were not consolidated.'
+        && ($mergedHandoverProject['group_ids'] ?? []) === ['project-b'],
+        'Non-project and import groups were not excluded from the dedicated board.'
     );
     portal_test_expect(
         portal_handover_search_term('  Search   Resident ') === 'Search Resident'
