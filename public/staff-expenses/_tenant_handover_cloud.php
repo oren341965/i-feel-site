@@ -120,7 +120,7 @@ function portal_handover_google_access_token(): string
     $header = portal_handover_google_base64url((string) json_encode(['alg' => 'RS256', 'typ' => 'JWT']));
     $claims = portal_handover_google_base64url((string) json_encode([
         'iss' => $credentials['client_email'],
-        'scope' => 'https://www.googleapis.com/auth/drive.readonly https://www.googleapis.com/auth/spreadsheets.readonly',
+        'scope' => 'https://www.googleapis.com/auth/drive.readonly https://www.googleapis.com/auth/spreadsheets',
         'aud' => $credentials['token_uri'],
         'iat' => $now - 30,
         'exp' => $now + 3300,
@@ -197,6 +197,47 @@ function portal_handover_google_get_json(string $url): array
     if ($curlError !== '' || $status < 200 || $status >= 300 || !is_array($decoded)) {
         error_log('[i-feel tenant handovers] google_request_failed status=' . $status);
         throw new RuntimeException('לא ניתן לקרוא כרגע את קובץ הענן ב-Google Drive.');
+    }
+    return $decoded;
+}
+
+function portal_handover_google_post_json(string $url, array $payload): array
+{
+    $host = strtolower((string) parse_url($url, PHP_URL_HOST));
+    if ($host !== 'sheets.googleapis.com') {
+        throw new RuntimeException('כתובת Google Sheets אינה מורשית.');
+    }
+    $token = portal_handover_google_access_token();
+    if ($token === '' || !function_exists('curl_init')) {
+        throw new RuntimeException('חיבור הכתיבה ל-Google Sheets טרם הוגדר בשרת.');
+    }
+    $body = json_encode($payload, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+    if (!is_string($body)) {
+        throw new RuntimeException('לא ניתן להכין את עדכון קובץ כתובות הענן.');
+    }
+    $handle = curl_init($url);
+    curl_setopt_array($handle, [
+        CURLOPT_POST => true,
+        CURLOPT_HTTPHEADER => [
+            'Authorization: Bearer ' . $token,
+            'Accept: application/json',
+            'Content-Type: application/json; charset=utf-8',
+        ],
+        CURLOPT_POSTFIELDS => $body,
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_CONNECTTIMEOUT => 5,
+        CURLOPT_TIMEOUT => 20,
+        CURLOPT_FOLLOWLOCATION => false,
+        CURLOPT_MAXREDIRS => 0,
+    ]);
+    $responseBody = curl_exec($handle);
+    $status = (int) curl_getinfo($handle, CURLINFO_HTTP_CODE);
+    $curlError = curl_error($handle);
+    curl_close($handle);
+    $decoded = is_string($responseBody) ? json_decode($responseBody, true) : null;
+    if ($curlError !== '' || $status < 200 || $status >= 300 || !is_array($decoded)) {
+        error_log('[i-feel tenant handovers] google_write_failed status=' . $status);
+        throw new RuntimeException('לא ניתן לסמן כרגע את כתובת הענן בקובץ Google Sheets.');
     }
     return $decoded;
 }
@@ -460,46 +501,308 @@ function portal_handover_cloud_match(array $resident, array $values): array
     return ['status' => 'found', 'link' => (string) $bestLinks[0]];
 }
 
-function portal_handover_cloud_lookup(array $resident, bool $fresh = false): array
+function portal_handover_cloud_pool_sheet(): array
 {
-    if ((string) getenv('IFEEL_PORTAL_TEST_MODE') === '1') {
-        return [
-            'status' => 'found',
-            'link' => 'https://cloud.example.com/customer/' . rawurlencode((string) ($resident['item_id'] ?? 'unknown')),
-            'source' => 'google_drive',
+    return [
+        'spreadsheet_id' => portal_handover_config(
+            'TENANT_HANDOVER_CLOUD_POOL_SPREADSHEET_ID',
+            'TENANT_HANDOVER_CLOUD_POOL_SPREADSHEET_ID',
+            '1X5KFYRBez0n3oSvjhAxMnKbbbvydL3B4-i0u34aaexY'
+        ),
+        'sheet' => portal_handover_config(
+            'TENANT_HANDOVER_CLOUD_POOL_SHEET',
+            'TENANT_HANDOVER_CLOUD_POOL_SHEET',
+            'homeassistant-tunnels.csv'
+        ),
+        'range' => 'A1:F1000',
+    ];
+}
+
+function portal_handover_cloud_pool_test_entries(array $resident): array
+{
+    $entries = [];
+    for ($index = 1; $index <= 10; $index++) {
+        $entries[] = [
+            'row' => $index + 1,
+            'name' => 'test-pool-' . $index,
+            'link' => 'https://cloud.example.com/pool/' . str_pad((string) $index, 3, '0', STR_PAD_LEFT),
+            'sheet_status' => '',
         ];
     }
-    $itemId = trim((string) ($resident['item_id'] ?? ''));
-    $cacheKey = 'cloud-link-' . hash('sha256', $itemId . "\n" . (string) ($resident['project_id'] ?? ''));
-    $lookup = static function () use ($resident, $fresh): array {
-        try {
-            $sheet = portal_handover_cloud_sheet_for_resident($resident, $fresh);
-            if ($sheet === []) {
-                return ['status' => 'source_missing', 'link' => '', 'source' => 'google_drive'];
-            }
-            $values = portal_handover_google_sheet_values($sheet, $fresh);
-            $match = portal_handover_cloud_match($resident, $values);
-            $match['source'] = 'google_drive';
-            return $match;
-        } catch (Throwable $error) {
-            error_log('[i-feel tenant handovers] cloud_lookup_failed');
-            return ['status' => 'unavailable', 'link' => '', 'source' => 'google_drive'];
-        }
-    };
-    if ($fresh) {
-        return $lookup();
+    return $entries;
+}
+
+function portal_handover_cloud_pool_entries(array $values): array
+{
+    if ($values === []) {
+        return [];
     }
-    return portal_handover_session_cache($cacheKey, 120, $lookup);
+    $headerRow = null;
+    $columns = [];
+    foreach (array_slice($values, 0, 10, true) as $rowIndex => $row) {
+        if (!is_array($row)) {
+            continue;
+        }
+        $linkColumn = portal_handover_cloud_column($row, ['الموقع', 'site', 'url', 'link', 'קישור', 'כתובת ענן']);
+        $nameColumn = portal_handover_cloud_column($row, ['الاسم', 'name', 'שם']);
+        if ($linkColumn !== null && $nameColumn !== null) {
+            $headerRow = (int) $rowIndex;
+            $columns = [
+                'name' => $nameColumn,
+                'link' => $linkColumn,
+                'status' => portal_handover_cloud_column($row, ['סטטוס', 'status', 'الحالة']),
+            ];
+            break;
+        }
+    }
+    if ($headerRow === null) {
+        return [];
+    }
+    $entries = [];
+    foreach (array_slice($values, $headerRow + 1, null, true) as $rowIndex => $row) {
+        if (!is_array($row)) {
+            continue;
+        }
+        $link = portal_handover_cloud_link(portal_handover_cloud_row_value($row, $columns['link']));
+        if ($link === '') {
+            continue;
+        }
+        $status = portal_handover_cloud_cell_key(portal_handover_cloud_row_value($row, $columns['status']));
+        $entries[] = [
+            'row' => (int) $rowIndex + 1,
+            'name' => portal_substr(portal_handover_cloud_row_value($row, $columns['name']), 0, 180),
+            'link' => $link,
+            'sheet_status' => $status,
+        ];
+    }
+    return $entries;
+}
+
+function portal_handover_cloud_pool_values(bool $fresh = false): array
+{
+    $sheet = portal_handover_cloud_pool_sheet();
+    if (
+        preg_match('/^[A-Za-z0-9_-]{20,160}$/', (string) $sheet['spreadsheet_id']) !== 1
+        || trim((string) $sheet['sheet']) === ''
+    ) {
+        throw new RuntimeException('הגדרת מאגר כתובות הענן אינה תקינה.');
+    }
+    return portal_handover_google_sheet_values($sheet, $fresh);
+}
+
+function portal_handover_cloud_allocation_key(array $resident): string
+{
+    $board = portal_handover_board_id();
+    $itemId = trim((string) ($resident['item_id'] ?? ''));
+    if ($itemId === '') {
+        throw new RuntimeException('לא ניתן לזהות את הדייר לצורך הקצאת כתובת ענן.');
+    }
+    return hash('sha256', $board . "\n" . $itemId);
+}
+
+function portal_handover_cloud_allocations_file(): string
+{
+    return portal_storage_root() . DIRECTORY_SEPARATOR . 'tenant-cloud-allocations.json';
+}
+
+function portal_handover_cloud_with_allocation_lock(callable $callback)
+{
+    $lockPath = portal_storage_root() . DIRECTORY_SEPARATOR . 'tenant-cloud-allocations.lock';
+    $handle = fopen($lockPath, 'c+');
+    if ($handle === false || !flock($handle, LOCK_EX)) {
+        if (is_resource($handle)) {
+            fclose($handle);
+        }
+        throw new RuntimeException('לא ניתן לנעול את מאגר כתובות הענן להקצאה בטוחה.');
+    }
+    @chmod($lockPath, 0600);
+    try {
+        return $callback();
+    } finally {
+        flock($handle, LOCK_UN);
+        fclose($handle);
+    }
+}
+
+function portal_handover_cloud_allocate(array $resident, array $entries): array
+{
+    $allocationKey = portal_handover_cloud_allocation_key($resident);
+    return portal_handover_cloud_with_allocation_lock(static function () use ($resident, $entries, $allocationKey): array {
+        $file = portal_handover_cloud_allocations_file();
+        $ledger = portal_json_read($file, ['version' => 1, 'allocations' => []]);
+        $allocations = is_array($ledger['allocations'] ?? null) ? $ledger['allocations'] : [];
+        $existing = $allocations[$allocationKey] ?? null;
+        if (is_array($existing) && portal_handover_cloud_link((string) ($existing['link'] ?? '')) !== '') {
+            return $existing;
+        }
+
+        $unavailable = [];
+        foreach ($allocations as $allocation) {
+            if (!is_array($allocation)) {
+                continue;
+            }
+            $link = portal_handover_cloud_link((string) ($allocation['link'] ?? ''));
+            if ($link !== '') {
+                $unavailable[$link] = true;
+            }
+        }
+        $usedStatuses = ['assigned', 'allocated', 'used', 'reserved', 'הוקצה', 'שמור', 'مخصص', 'محجوز'];
+        $selected = null;
+        foreach ($entries as $entry) {
+            if (!is_array($entry)) {
+                continue;
+            }
+            $link = portal_handover_cloud_link((string) ($entry['link'] ?? ''));
+            $status = (string) ($entry['sheet_status'] ?? '');
+            if ($link !== '' && !isset($unavailable[$link]) && !in_array($status, $usedStatuses, true)) {
+                $selected = $entry;
+                break;
+            }
+        }
+        if (!is_array($selected)) {
+            throw new RuntimeException('לא נותרה כתובת ענן פנויה במאגר של אריק.');
+        }
+        $allocation = [
+            'key' => $allocationKey,
+            'state' => 'reserved',
+            'link' => (string) $selected['link'],
+            'pool_name' => (string) ($selected['name'] ?? ''),
+            'pool_row' => (int) ($selected['row'] ?? 0),
+            'pool_spreadsheet_id' => (string) portal_handover_cloud_pool_sheet()['spreadsheet_id'],
+            'pool_sheet' => (string) portal_handover_cloud_pool_sheet()['sheet'],
+            'resident_ref' => hash('sha256', (string) ($resident['item_id'] ?? '')),
+            'reserved_at' => gmdate('c'),
+            'assigned_at' => null,
+            'handover_id' => null,
+            'sheet_sync' => 'pending',
+        ];
+        $allocations[$allocationKey] = $allocation;
+        $ledger['version'] = 1;
+        $ledger['allocations'] = $allocations;
+        portal_json_write($file, $ledger);
+        return $allocation;
+    });
+}
+
+function portal_handover_cloud_mark_pool_row(array $allocation, string $handoverId): void
+{
+    $configuredSheet = portal_handover_cloud_pool_sheet();
+    $sheet = [
+        'spreadsheet_id' => (string) ($allocation['pool_spreadsheet_id'] ?? $configuredSheet['spreadsheet_id']),
+        'sheet' => (string) ($allocation['pool_sheet'] ?? $configuredSheet['sheet']),
+    ];
+    $row = (int) ($allocation['pool_row'] ?? 0);
+    if ($row < 2) {
+        throw new RuntimeException('שורת כתובת הענן שהוקצתה אינה תקינה.');
+    }
+    $sheetName = (string) $sheet['sheet'];
+    $currentValues = portal_handover_google_sheet_values([
+        'spreadsheet_id' => (string) $sheet['spreadsheet_id'],
+        'sheet' => $sheetName,
+        'range' => 'A' . $row . ':F' . $row,
+    ], true);
+    $currentLink = portal_handover_cloud_link((string) ($currentValues[0][1] ?? ''));
+    if ($currentLink === '' || !hash_equals((string) ($allocation['link'] ?? ''), $currentLink)) {
+        throw new RuntimeException('שורת כתובת הענן השתנתה מאז ההקצאה ולא תסומן אוטומטית.');
+    }
+    $quotedSheet = "'" . str_replace("'", "''", $sheetName) . "'";
+    $url = 'https://sheets.googleapis.com/v4/spreadsheets/'
+        . rawurlencode((string) $sheet['spreadsheet_id'])
+        . '/values:batchUpdate';
+    portal_handover_google_post_json($url, [
+        'valueInputOption' => 'RAW',
+        'data' => [
+            [
+                'range' => $quotedSheet . '!C1:F1',
+                'values' => [['סטטוס', 'הוקצה בתאריך', 'מזהה הקצאה', 'מספר מסירה']],
+            ],
+            [
+                'range' => $quotedSheet . '!C' . $row . ':F' . $row,
+                'values' => [[
+                    'הוקצה',
+                    gmdate('c'),
+                    substr((string) ($allocation['key'] ?? ''), 0, 20),
+                    $handoverId,
+                ]],
+            ],
+        ],
+    ]);
+}
+
+function portal_handover_cloud_finalize(array $resident, string $handoverId): array
+{
+    $allocationKey = portal_handover_cloud_allocation_key($resident);
+    $allocation = portal_handover_cloud_with_allocation_lock(static function () use ($allocationKey, $handoverId): array {
+        $file = portal_handover_cloud_allocations_file();
+        $ledger = portal_json_read($file, ['version' => 1, 'allocations' => []]);
+        $allocations = is_array($ledger['allocations'] ?? null) ? $ledger['allocations'] : [];
+        $allocation = $allocations[$allocationKey] ?? null;
+        if (!is_array($allocation)) {
+            throw new RuntimeException('לא נמצאה כתובת הענן שנשמרה לדייר.');
+        }
+        $allocation['state'] = 'assigned';
+        $allocation['assigned_at'] = gmdate('c');
+        $allocation['handover_id'] = $handoverId;
+        $allocation['sheet_sync'] = 'pending';
+        $allocations[$allocationKey] = $allocation;
+        $ledger['allocations'] = $allocations;
+        portal_json_write($file, $ledger);
+        return $allocation;
+    });
+
+    $synced = false;
+    if ((string) getenv('IFEEL_PORTAL_TEST_MODE') === '1') {
+        $synced = true;
+    } else {
+        try {
+            portal_handover_cloud_mark_pool_row($allocation, $handoverId);
+            $synced = true;
+        } catch (Throwable $error) {
+            error_log('[i-feel tenant handovers] cloud_pool_mark_pending handover=' . $handoverId);
+        }
+    }
+    if ($synced) {
+        $allocation['sheet_sync'] = 'synced';
+        portal_handover_cloud_with_allocation_lock(static function () use ($allocationKey, $allocation): void {
+            $file = portal_handover_cloud_allocations_file();
+            $ledger = portal_json_read($file, ['version' => 1, 'allocations' => []]);
+            $allocations = is_array($ledger['allocations'] ?? null) ? $ledger['allocations'] : [];
+            $allocations[$allocationKey] = $allocation;
+            $ledger['allocations'] = $allocations;
+            portal_json_write($file, $ledger);
+        });
+    }
+    return $allocation;
+}
+
+function portal_handover_cloud_lookup(array $resident, bool $fresh = false): array
+{
+    try {
+        $entries = (string) getenv('IFEEL_PORTAL_TEST_MODE') === '1'
+            ? portal_handover_cloud_pool_test_entries($resident)
+            : portal_handover_cloud_pool_entries(portal_handover_cloud_pool_values($fresh));
+        if ($entries === []) {
+            return ['status' => 'invalid_pool', 'link' => '', 'source' => 'google_drive_pool'];
+        }
+        $allocation = portal_handover_cloud_allocate($resident, $entries);
+        return [
+            'status' => 'found',
+            'link' => (string) ($allocation['link'] ?? ''),
+            'source' => 'google_drive_pool',
+            'allocation_state' => (string) ($allocation['state'] ?? 'reserved'),
+        ];
+    } catch (Throwable $error) {
+        error_log('[i-feel tenant handovers] cloud_pool_allocation_failed');
+        return ['status' => 'unavailable', 'link' => '', 'source' => 'google_drive_pool'];
+    }
 }
 
 function portal_handover_cloud_lookup_message(array $lookup): string
 {
     $messages = [
-        'found' => 'קישור הענן נמצא בגיליון Google Drive של הפרויקט ויצורף אוטומטית למייל הדייר.',
-        'ambiguous' => 'נמצאו כמה קישורי ענן אפשריים לדייר. יש לתקן את הרישום בגיליון הפרויקט לפני המסירה.',
-        'invalid_sheet' => 'מבנה גיליון הפרויקט אינו כולל את עמודות הדייר וקישור הענן הנדרשות.',
-        'not_found' => 'לא נמצא קישור ענן תואם לדייר בגיליון הפרויקט.',
-        'source_missing' => 'לא הוגדר או לא נמצא גיליון Google Drive מתאים לפרויקט זה.',
+        'found' => 'כתובת ענן ייחודית נשמרה זמנית לדייר זה ממאגר הכתובות של אריק. בסיום המסירה היא תסומן כמוקצית ולא תוכל לשמש דייר אחר.',
+        'invalid_pool' => 'מבנה מאגר כתובות הענן אינו תקין או שאינו מכיל כתובות.',
+        'unavailable' => 'לא ניתן להקצות כרגע כתובת ענן פנויה. נסו שוב כשיש חיבור.',
     ];
     $status = (string) ($lookup['status'] ?? '');
     return $messages[$status] ?? 'לא ניתן לטעון כרגע את קישור הענן מ-Google Drive. נסו שוב כשיש חיבור.';

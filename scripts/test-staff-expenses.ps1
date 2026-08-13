@@ -288,7 +288,7 @@ try {
     Assert-PortalTest ($handoverHtml -match 'name="handover_apartment_type"[^>]*required' -and $handoverHtml -match 'value="standard_central"' -and $handoverHtml -match 'value="upgraded"' -and $handoverHtml -match 'value="standard_corridor"' -and $handoverHtml -match 'value="full"') "The four mandatory apartment types were not rendered."
     Assert-PortalTest ($handoverHtml -match 'name="handover_ready"[^>]*required' -and $handoverHtml -match 'value="ready_not_delivered"' -and $handoverHtml -match 'value="not_ready_not_delivered"' -and $handoverHtml -match 'value="ready_delivered"' -and $handoverHtml -notmatch 'value="delivered_with_app_link"') "Delivery status choices were not replaced with the required three options."
     Assert-PortalTest ($handoverHtml -match 'name="handover_recipient_name"' -and $handoverHtml -match 'name="handover_recipient_signature"' -and $handoverHtml -match 'data-handover-signature-canvas') "Delivered handover recipient name and signature controls were not rendered."
-    Assert-PortalTest ($handoverHtml -match 'data-handover-cloud-link-field[^>]*data-handover-cloud-available="1"' -and $handoverHtml -match 'data-handover-cloud-link[^>]*>https://cloud\.example\.com/customer/1001<' -and $handoverHtml -match 'data-handover-cloud-copy' -and $handoverHtml -match 'פתיחת הקישור' -and $handoverHtml -match 'Google Drive' -and $handoverHtml -notmatch 'name="handover_cloud_link"') "Customer-specific cloud link was not shown read-only to the authenticated technician."
+    Assert-PortalTest ($handoverHtml -match 'data-handover-cloud-link-field[^>]*data-handover-cloud-available="1"' -and $handoverHtml -match 'data-handover-cloud-link[^>]*>https://cloud\.example\.com/pool/001<' -and $handoverHtml -match 'data-handover-cloud-copy' -and $handoverHtml -match 'פתיחת הקישור' -and $handoverHtml -match 'homeassistant-tunnels' -and $handoverHtml -notmatch 'name="handover_cloud_link"') "A unique pool address was not reserved and shown read-only to the authenticated technician."
     Assert-PortalTest ($handoverHtml -match 'name="handover_controller_location"[^>]*required' -and $handoverHtml -match 'name="handover_controller"[^>]*required' -and $handoverHtml -match 'name="handover_icons"[^>]*required') "Controller and icon requirements were not marked mandatory."
     Assert-PortalTest ($handoverHtml -match 'name="handover_switch_9_count"[^>]*min="1"[^>]*max="50"[^>]*required') "Switch 9 quantity field was not rendered."
     Assert-PortalTest ($handoverHtml -match 'כמות מפסקי 9 בדירה' -and $handoverHtml -match 'לפי הכמות שתוזן ייפתח כרטיס חובה נפרד לכל מפסק 9') "Switch 9 quantity instructions were not rendered."
@@ -316,6 +316,18 @@ try {
     $handoverClientIdMatch = [regex]::Match($handoverHtml, 'name="handover_client_id"\s+value="([a-f0-9]{32})"')
     Assert-PortalTest $handoverClientIdMatch.Success "Tenant handover client ID was not rendered."
     $handoverClientId = $handoverClientIdMatch.Groups[1].Value
+
+    $allocationLedgerPath = Join-Path $storagePath "tenant-cloud-allocations.json"
+    $reservedLedger = Get-Content -Raw -Encoding utf8 $allocationLedgerPath | ConvertFrom-Json
+    $firstReservation = @($reservedLedger.allocations.PSObject.Properties.Value | Where-Object { $_.link -eq "https://cloud.example.com/pool/001" })
+    Assert-PortalTest ($firstReservation.Count -eq 1 -and $firstReservation[0].state -eq "reserved") "Opening a resident did not create a temporary locked cloud address reservation."
+
+    Invoke-PortalCurl `
+        "-o", $responseBody, `
+        "-b", $employeeCookies, `
+        "$baseUrl/staff-expenses/?tab=handovers&handover_project=test-project&handover_building=2&handover_resident=1002" | Out-Null
+    $secondResidentHtml = Get-Content -Raw -Encoding utf8 $responseBody
+    Assert-PortalTest ($secondResidentHtml -match 'data-handover-cloud-link[^>]*>https://cloud\.example\.com/pool/002<') "A second resident was not given a different reserved cloud address."
 
     $headers = Invoke-PortalCurl `
         "-D", "-", `
@@ -376,7 +388,11 @@ try {
     Assert-PortalTest ($handoverRecord.source.item_id -eq "1001") "Tenant handover did not retain the verified Monday item ID."
     Assert-PortalTest ($handoverRecord.credentials.password -eq "0501234567") "Tenant handover credentials were not stored correctly."
     Assert-PortalTest ($handoverRecord.details.apartment_type -eq "standard_corridor" -and $handoverRecord.details.ready -eq "ready_delivered" -and $handoverRecord.details.recipient_name -eq "Test Customer Representative") "Tenant handover apartment type, delivery status, or recipient name was not stored correctly."
-    Assert-PortalTest ($handoverRecord.details.cloud_link -eq "https://cloud.example.com/customer/1001") "Tenant handover did not ignore the forged browser link and retain the Google Drive source value."
+    Assert-PortalTest ($handoverRecord.details.cloud_link -eq "https://cloud.example.com/pool/001") "Tenant handover did not ignore the forged browser link and retain the reserved pool address."
+    Assert-PortalTest ($handoverRecord.details.cloud_allocation.state -eq "assigned" -and $handoverRecord.details.cloud_allocation.sheet_sync -eq "synced") "Completed handover did not record the permanent cloud allocation state."
+    $assignedLedger = Get-Content -Raw -Encoding utf8 $allocationLedgerPath | ConvertFrom-Json
+    $assignedAllocation = @($assignedLedger.allocations.PSObject.Properties.Value | Where-Object { $_.link -eq "https://cloud.example.com/pool/001" })
+    Assert-PortalTest ($assignedAllocation.Count -eq 1 -and $assignedAllocation[0].state -eq "assigned" -and $assignedAllocation[0].handover_id -eq $handoverSubmitResponse.handoverId -and $assignedAllocation[0].sheet_sync -eq "synced") "Completed cloud address was not locked permanently against reuse."
     Assert-PortalTest (
         $handoverRecord.details.switch_9_count -eq 2 `
         -and $handoverRecord.details.switch_9_units.Count -eq 2 `

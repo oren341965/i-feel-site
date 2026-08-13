@@ -582,7 +582,7 @@
         if (handoverCloudLinkField) {
             const cloudAvailable = handoverCloudLinkField.dataset.handoverCloudAvailable === '1';
             handoverReady.setCustomValidity(isDelivered && !cloudAvailable
-                ? 'לא נמצא קישור ענן מאומת לדייר בקובץ Google Drive של הפרויקט.'
+                ? 'לא ניתן להקצות לדייר כתובת פנויה ממאגר כתובות הענן.'
                 : '');
         }
         if (handoverRecipientFields && handoverRecipientName) {

@@ -1695,6 +1695,14 @@ function portal_handle_tenant_handover_post(array $user): void
             ],
         ];
         portal_save_handover($handover);
+        if ($isDelivered) {
+            $cloudAllocation = portal_handover_cloud_finalize($resident, $handoverId);
+            $handover['details']['cloud_allocation'] = [
+                'state' => (string) ($cloudAllocation['state'] ?? 'assigned'),
+                'sheet_sync' => (string) ($cloudAllocation['sheet_sync'] ?? 'pending'),
+            ];
+            portal_save_handover($handover);
+        }
         unset($_SESSION['portal_handover_submission_token']);
 
         try {
@@ -2030,7 +2038,7 @@ function portal_render_tenant_handover_form(array $user, array $projects, string
                     <span class="handover-cloud-source__copy-status" data-handover-cloud-copy-status role="status" aria-live="polite"></span>
                 </div>
             <?php endif; ?>
-            <small class="form-note">הקישור מוצג לטכנאי כדי להגדיר את הקונטרולר באפליקציה. הוא נשלף בצד השרת מקובץ הפרויקט ב-Google Drive, ללא גישה לרשימת הלקוחות.</small>
+            <small class="form-note">הכתובת הוקצתה זמנית ממאגר homeassistant-tunnels כדי להגדיר את הקונטרולר באפליקציה. בסיום ושליחה היא תינעל לדייר זה ותסומן כמוקצית, ללא חשיפת מאגר הכתובות המלא.</small>
         </section>
         <label class="field"><span>תאריך מסירה <b>*</b></span><input type="date" name="handover_date" value="<?= portal_h(date('Y-m-d')) ?>" required></label>
         <label class="field">
