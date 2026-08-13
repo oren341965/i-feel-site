@@ -943,6 +943,7 @@ function portal_handover_internal_email_body(array $handover): string
         'מיקום מפסקי תאורה: ' . (string) ($details['light_switch_location'] ?? '-'),
         'מיקום מפסק תריס: ' . (string) ($details['shutter_switch_location'] ?? ($details['blinds'] ?? '-')),
         'מפסק 24V לתריס כלוא: ' . portal_handover_captive_shutter_24v_label((string) ($details['captive_shutter_24v'] ?? '')),
+        'חיבור למזגן: ' . portal_handover_hvac_connection_label((string) ($details['hvac_connection'] ?? '')),
         'דוד: ' . (string) ($details['boiler'] ?? ''),
         'הערות: ' . (string) ($details['notes'] ?? ''),
         '',
@@ -1058,6 +1059,16 @@ function portal_handover_captive_shutter_24v_label(string $value): string
     ][$value] ?? '-';
 }
 
+function portal_handover_hvac_connection_label(string $value): string
+{
+    return [
+        'none' => 'אין חיבור למזגן',
+        'ir' => 'חיבור באמצעות IR',
+        'dry_contact_panel_9' => 'חיבור באמצעות מגע יבש מפאנל 9',
+        'micromodule' => 'חיבור באמצעות מיקרומודול',
+    ][$value] ?? '-';
+}
+
 function portal_handover_controller_location(string $value, string $other): string
 {
     $labels = [
@@ -1101,6 +1112,7 @@ function portal_handle_tenant_handover_post(array $user): void
     $lightSwitchLocation = portal_post('handover_light_switch_location', 300);
     $shutterSwitchLocation = portal_post('handover_shutter_switch_location', 300);
     $captiveShutter24v = portal_post('handover_captive_shutter_24v', 40);
+    $hvacConnection = portal_post('handover_hvac_connection', 40);
     if ($ready !== '' && !in_array($ready, ['ready', 'not_ready', 'delivered'], true)) {
         throw new RuntimeException('סטטוס המוכנות אינו תקין.');
     }
@@ -1133,6 +1145,9 @@ function portal_handle_tenant_handover_post(array $user): void
     }
     if (!in_array($captiveShutter24v, ['installed_activated', 'installed_not_activated', 'not_in_project'], true)) {
         throw new RuntimeException('יש לבחור את מצב מפסק 24V לתריס הכלוא.');
+    }
+    if (!in_array($hvacConnection, ['none', 'ir', 'dry_contact_panel_9', 'micromodule'], true)) {
+        throw new RuntimeException('יש לבחור את סוג החיבור למזגן.');
     }
 
     $profile = portal_employee_profile($user);
@@ -1176,6 +1191,7 @@ function portal_handle_tenant_handover_post(array $user): void
                 'light_switch_location' => $lightSwitchLocation,
                 'shutter_switch_location' => $shutterSwitchLocation,
                 'captive_shutter_24v' => $captiveShutter24v,
+                'hvac_connection' => $hvacConnection,
                 'boiler' => portal_post('handover_boiler', 500),
                 'notes' => portal_post('handover_notes', 3000),
             ],
@@ -1410,7 +1426,7 @@ function portal_render_tenant_handover_form(array $user, array $projects, string
             <p>לאחר בחירת פרויקט, בניין ודירה ייפתח כאן מיד הטופס המלא. אין צורך ללחוץ על כפתור נוסף.</p>
             <div class="handover-field-preview" aria-label="השדות שיופיעו בטופס">
                 <span>מוכן לפרוטוקול</span><span>תאריך מסירה</span><span>מיקום וסוג קונטרולר</span>
-                <span>תצורת ומיקום מפסק 9</span><span>מפסקי תאורה ותריס</span><span>מפסק 24V לתריס כלוא</span>
+                <span>תצורת ומיקום מפסק 9</span><span>מפסקי תאורה ותריס</span><span>מפסק 24V לתריס כלוא</span><span>חיבור למזגן</span>
                 <span>דוד והערות</span>
                 <span>פרטי הטכנאי</span><span>שני צילומי חובה</span><span>סיום ושליחה</span>
             </div>
@@ -1478,6 +1494,16 @@ function portal_render_tenant_handover_form(array $user, array $projects, string
                 <option value="installed_activated">יש והופעל</option>
                 <option value="installed_not_activated">יש ולא הופעל</option>
                 <option value="not_in_project">אין בפרויקט</option>
+            </select>
+        </label>
+        <label class="field">
+            <span>חיבור למזגן <b>*</b></span>
+            <select name="handover_hvac_connection" required>
+                <option value="">בחירה</option>
+                <option value="none">אין חיבור למזגן</option>
+                <option value="ir">חיבור באמצעות IR</option>
+                <option value="dry_contact_panel_9">חיבור באמצעות מגע יבש מפאנל 9</option>
+                <option value="micromodule">חיבור באמצעות מיקרומודול</option>
             </select>
         </label>
         <label class="field"><span>דוד</span><input type="text" name="handover_boiler" maxlength="500"></label>
