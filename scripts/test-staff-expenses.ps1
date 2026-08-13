@@ -288,15 +288,16 @@ try {
     Assert-PortalTest ($handoverHtml -match 'name="handover_switch_9_configuration_1"[^>]*required' -and $handoverHtml -match 'value="shutter_2_light_2"') "Per-unit switch 9 configuration choices were not rendered."
     Assert-PortalTest ($handoverHtml -match 'name="handover_switch_9_location_1"[^>]*required') "Per-unit switch 9 location field was not rendered."
     Assert-PortalTest ($handoverHtml -match 'name="handover_switch_photo_1"[^>]*data-handover-switch-9-photo[^>]*required') "Per-unit switch 9 photo field was not rendered."
-    Assert-PortalTest ($handoverHtml -match 'name="handover_light_switch_count"[^>]*min="0"[^>]*max="99"[^>]*required' -and $handoverHtml -match 'name="handover_light_switch_type_1_count"[^>]*required' -and $handoverHtml -match 'name="handover_light_switch_type_2_count"[^>]*required' -and $handoverHtml -match 'name="handover_light_switch_type_3_count"[^>]*required') "Light switch total and per-type quantity fields were not rendered."
-    Assert-PortalTest ($handoverHtml -match 'name="handover_shutter_switch_count"[^>]*min="0"[^>]*max="99"[^>]*required' -and $handoverHtml -match 'כמות מפסקי תריס בודדים') "Single shutter switch quantity field was not rendered."
-    Assert-PortalTest ($handoverHtml -match 'name="handover_component_switch_status"[^>]*required' -and $handoverHtml -match 'value="operational_connected"' -and $handoverHtml -match 'value="not_operational"' -and $handoverHtml -match 'value="operational_not_connected"' -and $handoverHtml -match 'data-handover-component-switch-status-other') "Component switch status choices or custom detail field were not rendered."
+    Assert-PortalTest ($handoverHtml -match 'name="handover_component_panel_presence"[^>]*required' -and $handoverHtml -match 'value="has_panels"' -and $handoverHtml -match 'value="none"' -and $handoverHtml -match 'data-handover-component-panels') "Panel presence choices, including none, were not rendered."
+    Assert-PortalTest ($handoverHtml -match 'name="handover_light_switch_count"[^>]*min="0"[^>]*max="99"' -and $handoverHtml -match 'name="handover_light_switch_type_1_count"' -and $handoverHtml -match 'name="handover_light_switch_type_2_count"' -and $handoverHtml -match 'name="handover_light_switch_type_3_count"') "Light panel total and per-type quantity fields were not rendered."
+    Assert-PortalTest ($handoverHtml -match 'name="handover_shutter_switch_count"[^>]*min="0"[^>]*max="99"' -and $handoverHtml -match 'כמות פאנלי תריס') "Shutter panel quantity field was not rendered."
+    Assert-PortalTest ($handoverHtml -match 'name="handover_component_switch_status"' -and $handoverHtml -match 'value="operational_connected"' -and $handoverHtml -match 'value="not_operational"' -and $handoverHtml -match 'value="operational_not_connected"' -and $handoverHtml -match 'data-handover-component-switch-status-other') "Panel status choices or custom detail field were not rendered."
     Assert-PortalTest ($handoverHtml -notmatch 'name="handover_light_switch_location"|name="handover_shutter_switch_location"') "Obsolete light or shutter switch location fields are still rendered."
     Assert-PortalTest ($handoverHtml -match 'name="handover_captive_shutter_24v"[^>]*required' -and $handoverHtml -match 'value="not_in_project"') "Captive shutter 24V choices were not rendered."
     Assert-PortalTest ($handoverHtml -match 'name="handover_hvac_connection"[^>]*required' -and $handoverHtml -match 'value="none"' -and $handoverHtml -match 'value="ir"' -and $handoverHtml -match 'value="dry_contact_panel_9"' -and $handoverHtml -match 'value="micromodule"') "HVAC connection choices were not rendered."
     $boilerSelectMatch = [regex]::Match($handoverHtml, '<select name="handover_boiler"[^>]*>(.*?)</select>', [Text.RegularExpressions.RegexOptions]::Singleline)
     $boilerSelectHtml = if ($boilerSelectMatch.Success) { $boilerSelectMatch.Groups[1].Value } else { "" }
-    Assert-PortalTest ($handoverHtml -match 'סוג הדוד <b>\*</b>' -and $boilerSelectMatch.Success -and ([regex]::Matches($boilerSelectHtml, '<option value="(?:avatto|domex|none|switcher)">').Count -eq 4) -and $boilerSelectHtml -match 'value="avatto"' -and $boilerSelectHtml -match 'value="domex"' -and $boilerSelectHtml -match 'value="none"' -and $boilerSelectHtml -match 'value="switcher"' -and $handoverHtml -match 'name="handover_notes"[^>]*required') "The four required boiler choices or notes requirement were not rendered."
+    Assert-PortalTest ($handoverHtml -match 'סוג הדוד <b>\*</b>' -and $boilerSelectMatch.Success -and ([regex]::Matches($boilerSelectHtml, '<option value="(?:none|ava_dud|ir|switcher)">').Count -eq 4) -and $boilerSelectHtml -match 'value="none">אין דוד' -and $boilerSelectHtml -match 'value="ava_dud">AVA-DUD' -and $boilerSelectHtml -match 'value="ir">IR' -and $boilerSelectHtml -match 'value="switcher">סוויטשר' -and $handoverHtml -match 'name="handover_notes"[^>]*required') "The four required boiler choices or notes requirement were not rendered."
     Assert-PortalTest ($handoverHtml -match 'name="handover_controller_photo"[^>]*required') "Mandatory controller photo was not rendered."
     Assert-PortalTest ($handoverHtml -match 'name="handover_issue_count" value="0"' -and $handoverHtml -match 'data-handover-issue-add' -and $handoverHtml -match 'data-handover-issue-photo' -and $handoverHtml -match 'value="electrical"' -and $handoverHtml -match 'value="cabling"' -and $handoverHtml -match 'value="contractor"') "Repeatable apartment issue photo controls were not rendered."
     Assert-PortalTest ($handoverHtml -notmatch 'name="handover_switch_9"|name="handover_blinds"') "Legacy free-text switch fields are still rendered."
@@ -335,6 +336,7 @@ try {
         "-F", "handover_switch_9_location_1=Entrance", `
         "-F", "handover_switch_9_configuration_2=light_9", `
         "-F", "handover_switch_9_location_2=Kitchen", `
+        "-F", "handover_component_panel_presence=has_panels", `
         "-F", "handover_light_switch_count=6", `
         "-F", "handover_light_switch_type_1_count=2", `
         "-F", "handover_light_switch_type_2_count=3", `
@@ -343,7 +345,7 @@ try {
         "-F", "handover_component_switch_status=operational_connected", `
         "-F", "handover_captive_shutter_24v=installed_activated", `
         "-F", "handover_hvac_connection=dry_contact_panel_9", `
-        "-F", "handover_boiler=switcher", `
+        "-F", "handover_boiler=ava_dud", `
         "-F", "handover_notes=Integration test", `
         "-F", "handover_controller_photo=@$handoverImage;type=image/png", `
         "-F", "handover_switch_photo_1=@$handoverImage;type=image/png", `
@@ -375,6 +377,7 @@ try {
         -and $handoverRecord.details.issues.Count -eq 2 `
         -and $handoverRecord.details.issues[0].type -eq "electrical" `
         -and $handoverRecord.details.issues[1].type -eq "contractor" `
+        -and $handoverRecord.details.component_panel_presence -eq "has_panels" `
         -and $handoverRecord.details.light_switch_count -eq 6 `
         -and $handoverRecord.details.light_switch_type_1_count -eq 2 `
         -and $handoverRecord.details.light_switch_type_2_count -eq 3 `
@@ -384,7 +387,7 @@ try {
         -and $handoverRecord.details.component_switch_status_other -eq "" `
         -and $handoverRecord.details.captive_shutter_24v -eq "installed_activated" `
         -and $handoverRecord.details.hvac_connection -eq "dry_contact_panel_9" `
-        -and $handoverRecord.details.boiler -eq "switcher"
+        -and $handoverRecord.details.boiler -eq "ava_dud"
     ) "Structured handover switch and HVAC details were not stored correctly."
     Assert-PortalTest (
         @($handoverRecord.photos.PSObject.Properties).Count -eq 6 `

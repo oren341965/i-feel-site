@@ -601,18 +601,33 @@
     switch9CountInput?.addEventListener('change', updateSwitch9Units);
     updateSwitch9Units();
 
+    const componentPanelPresence = handoverForm?.querySelector('[data-handover-component-panel-presence]');
+    const componentPanels = handoverForm?.querySelector('[data-handover-component-panels]');
     const componentSwitchStatus = handoverForm?.querySelector('[data-handover-component-switch-status]');
     const componentSwitchStatusOtherField = handoverForm?.querySelector('[data-handover-component-switch-status-other]');
     const componentSwitchStatusOtherInput = componentSwitchStatusOtherField?.querySelector('input');
     const updateComponentSwitchStatusOther = () => {
         if (!componentSwitchStatusOtherField || !componentSwitchStatusOtherInput) return;
-        const isOther = componentSwitchStatus?.value === 'other';
+        const isOther = componentPanelPresence?.value === 'has_panels' && componentSwitchStatus?.value === 'other';
         componentSwitchStatusOtherField.hidden = !isOther;
         componentSwitchStatusOtherInput.required = isOther;
         if (!isOther) componentSwitchStatusOtherInput.value = '';
     };
+    const updateComponentPanels = () => {
+        if (!componentPanels || !componentSwitchStatus) return;
+        const hasPanels = componentPanelPresence?.value === 'has_panels';
+        componentPanels.hidden = !hasPanels;
+        componentPanels.querySelectorAll('input[type="number"]').forEach((input) => {
+            input.required = hasPanels;
+            if (!hasPanels) input.value = '0';
+        });
+        componentSwitchStatus.required = hasPanels;
+        if (!hasPanels) componentSwitchStatus.value = '';
+        updateComponentSwitchStatusOther();
+    };
+    componentPanelPresence?.addEventListener('change', updateComponentPanels);
     componentSwitchStatus?.addEventListener('change', updateComponentSwitchStatusOther);
-    updateComponentSwitchStatusOther();
+    updateComponentPanels();
 
     const issueCountInput = handoverForm?.querySelector('[data-handover-issue-count]');
     const issueList = handoverForm?.querySelector('[data-handover-issue-list]');

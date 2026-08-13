@@ -597,9 +597,9 @@ try {
         && portal_handover_hvac_connection_label('ir') === 'חיבור באמצעות IR'
         && portal_handover_hvac_connection_label('dry_contact_panel_9') === 'חיבור באמצעות מגע יבש מפאנל 9'
         && portal_handover_hvac_connection_label('micromodule') === 'חיבור באמצעות מיקרומודול'
-        && portal_handover_boiler_label('avatto') === 'AVATTO'
-        && portal_handover_boiler_label('domex') === 'DOMEX'
-        && portal_handover_boiler_label('none') === 'אין'
+        && portal_handover_boiler_label('none') === 'אין דוד'
+        && portal_handover_boiler_label('ava_dud') === 'AVA-DUD'
+        && portal_handover_boiler_label('ir') === 'IR'
         && portal_handover_boiler_label('switcher') === 'סוויטשר',
         'Structured handover switch, HVAC, or boiler labels are wrong.'
     );
@@ -608,7 +608,11 @@ try {
         && portal_handover_component_switch_status_label('not_operational') === 'לא תקין'
         && portal_handover_component_switch_status_label('operational_not_connected') === 'תקין ולא מחובר לקונטרולר'
         && portal_handover_component_switch_status_label('other') === 'אחר'
+        && portal_handover_component_switch_status_label('not_applicable') === 'אין פאנלים'
+        && portal_handover_component_panel_presence_label('has_panels') === 'יש פאנלים'
+        && portal_handover_component_panel_presence_label('none') === 'אין'
         && portal_handover_component_switch_email_lines([
+            'component_panel_presence' => 'has_panels',
             'light_switch_count' => 6,
             'light_switch_type_1_count' => 2,
             'light_switch_type_2_count' => 3,
@@ -617,14 +621,19 @@ try {
             'component_switch_status' => 'other',
             'component_switch_status_other' => 'נדרש ביקור נוסף',
         ]) === [
-            'כמות מפסקי תאורה: 6',
-            'כמות מפסקי תאורה מסוג 1: 2',
-            'כמות מפסקי תאורה מסוג 2: 3',
-            'כמות מפסקי תאורה מסוג 3: 1',
-            'כמות מפסקי תריס בודדים: 4',
-            'סטטוס מפסקי תאורה ותריס: אחר',
+            'פאנלים של תאורה ותריס: יש פאנלים',
+            'סך פאנלי התאורה: 6',
+            'כמות פאנלי תאורה מסוג 1: 2',
+            'כמות פאנלי תאורה מסוג 2: 3',
+            'כמות פאנלי תאורה מסוג 3: 1',
+            'כמות פאנלי תריס: 4',
+            'סטטוס הפאנלים: אחר',
             'פירוט סטטוס אחר: נדרש ביקור נוסף',
-        ],
+        ]
+        && portal_handover_component_switch_email_lines([
+            'component_panel_presence' => 'none',
+            'light_switch_type_1_count' => 0,
+        ]) === ['פאנלים של תאורה ותריס: אין'],
         'Light and shutter switch quantity or status labels are wrong.'
     );
     $switch9EmailLines = portal_handover_switch_9_email_lines([
