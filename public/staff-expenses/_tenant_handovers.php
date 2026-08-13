@@ -1074,7 +1074,7 @@ function portal_handover_internal_email_body(array $handover): string
     ], portal_handover_switch_9_email_lines($details), portal_handover_issue_email_lines($details), portal_handover_component_switch_email_lines($details), [
         'מפסק 24V לתריס כלוא: ' . portal_handover_captive_shutter_24v_label((string) ($details['captive_shutter_24v'] ?? '')),
         'חיבור למזגן: ' . portal_handover_hvac_connection_label((string) ($details['hvac_connection'] ?? '')),
-        'דוד: ' . portal_handover_boiler_label((string) ($details['boiler'] ?? '')),
+        'סוג הדוד: ' . portal_handover_boiler_label((string) ($details['boiler'] ?? '')),
         'הערות: ' . (string) ($details['notes'] ?? ''),
         '',
         'טכנאי: ' . (string) ($technician['name'] ?? ''),
@@ -1878,7 +1878,7 @@ function portal_render_tenant_handover_form(array $user, array $projects, string
             <div class="handover-field-preview" aria-label="השדות שיופיעו בטופס">
                 <span>סטטוס המסירה</span><span>תאריך מסירה</span><span>מיקום וסוג קונטרולר</span>
                 <span>כמות מפסקי 9 וסיווג נפרד לכל מפסק</span><span>מפסק 24V לתריס כלוא</span><span>חיבור למזגן</span>
-                <span>דוד והערות</span>
+                <span>סוג הדוד — 4 אפשרויות — והערות</span>
                 <span>פרטי הטכנאי</span><span>שני צילומי חובה</span><span>סיום ושליחה</span>
             </div>
         </section>
@@ -2029,7 +2029,7 @@ function portal_render_tenant_handover_form(array $user, array $projects, string
             </select>
         </label>
         <label class="field">
-            <span>דוד <b>*</b></span>
+            <span>סוג הדוד <b>*</b></span>
             <select name="handover_boiler" required>
                 <option value="">בחירה</option>
                 <option value="avatto">AVATTO</option>
@@ -2037,6 +2037,7 @@ function portal_render_tenant_handover_form(array $user, array $projects, string
                 <option value="none">אין</option>
                 <option value="switcher">סוויטשר</option>
             </select>
+            <small class="form-note">יש לבחור אחת מארבע האפשרויות: AVATTO, DOMEX, אין או סוויטשר.</small>
         </label>
         <label class="field field--full"><span>הערות <b>*</b></span><textarea name="handover_notes" rows="4" maxlength="3000" placeholder="אם אין הערות, יש לכתוב: אין" required></textarea></label>
         <div class="field"><span>שם הטכנאי <b>*</b></span><input type="text" value="<?= portal_h($profile['name'] ?? $user['display_name'] ?? '') ?>" readonly></div>
