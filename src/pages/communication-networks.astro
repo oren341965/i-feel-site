@@ -10,11 +10,69 @@ const meta = {
   ogDescription: "",
   ogUrl: "https://i-feel.co.il/communication-networks/",
   ogImage: "https://i-feel.co.il/assets/og-cover.jpg",
-  jsonLd: "{\"@context\":\"https://schema.org\",\"@graph\":[{\"@type\":[\"LocalBusiness\",\"HomeAndConstructionBusiness\"],\"@id\":\"https://i-feel.co.il/#business\",\"name\":\"i-feel\",\"url\":\"https://i-feel.co.il/\",\"telephone\":\"+972-3-508-9553\",\"email\":\"sales@i-feel.co.il\",\"address\":{\"@type\":\"PostalAddress\",\"streetAddress\":\"אימבר 14\",\"addressLocality\":\"פתח תקווה\",\"postalCode\":\"4951148\",\"addressCountry\":\"IL\"},\"geo\":{\"@type\":\"GeoCoordinates\",\"latitude\":32.09124,\"longitude\":34.88762}},{\"@type\":\"BreadcrumbList\",\"itemListElement\":[{\"@type\":\"ListItem\",\"position\":1,\"name\":\"דף הבית\",\"item\":\"https://i-feel.co.il/\"},{\"@type\":\"ListItem\",\"position\":2,\"name\":\"רשתות תקשורת\",\"item\":\"https://i-feel.co.il/communication-networks/\"}]}]}"
+  jsonLd: JSON.stringify({
+    '@context': 'https://schema.org',
+    '@graph': [
+      {
+        '@type': ['LocalBusiness', 'HomeAndConstructionBusiness'],
+        '@id': 'https://i-feel.co.il/#business',
+        name: 'i-feel',
+        url: 'https://i-feel.co.il/',
+        telephone: '+972-3-508-9553',
+        email: 'sales@i-feel.co.il',
+        address: {
+          '@type': 'PostalAddress',
+          streetAddress: 'אימבר 14',
+          addressLocality: 'פתח תקווה',
+          postalCode: '4951148',
+          addressCountry: 'IL'
+        },
+        geo: { '@type': 'GeoCoordinates', latitude: 32.09124, longitude: 34.88762 }
+      },
+      {
+        '@type': 'BreadcrumbList',
+        itemListElement: [
+          { '@type': 'ListItem', position: 1, name: 'דף הבית', item: 'https://i-feel.co.il/' },
+          { '@type': 'ListItem', position: 2, name: 'רשתות תקשורת', item: 'https://i-feel.co.il/communication-networks/' }
+        ]
+      },
+      {
+        '@type': 'VideoObject',
+        '@id': 'https://i-feel.co.il/communication-networks/#v-smart-lock-dry-contact',
+        name: 'חיבור מנעול חכם במגע יבש למערכת הבית החכם | I FEEL',
+        description: 'הדגמה מפרויקט של I FEEL לחיבור מנעול חכם באמצעות מגע יבש למערכת הבית החכם, לאפליקציה, לאינטרקום ולתרחישי פתיחת דלת.',
+        uploadDate: '2026-08-13T07:37:08Z',
+        thumbnailUrl: 'https://i.ytimg.com/vi/CRJVLtIC38M/hqdefault.jpg',
+        contentUrl: 'https://www.youtube.com/watch?v=CRJVLtIC38M',
+        embedUrl: 'https://www.youtube-nocookie.com/embed/CRJVLtIC38M',
+        inLanguage: 'he-IL',
+        publisher: { '@id': 'https://i-feel.co.il/#business' }
+      }
+    ]
+  })
 };
 ---
 <BaseLayout {...meta}>
   <Fragment set:html={content} />
+  <section id="smart-lock-video" class="py-12 lg:py-16 scroll-mt-32" aria-labelledby="smart-lock-video-title">
+    <div class="max-w-6xl mx-auto px-4 grid lg:grid-cols-[minmax(0,320px)_1fr] gap-8 items-center">
+      <div class="bg-brand-900 rounded-2xl border border-brand-800 shadow-lg flex justify-center p-4">
+        <div class="w-full max-w-[300px] rounded-xl overflow-hidden" style="aspect-ratio:9/16;">
+          <iframe loading="lazy" class="w-full h-full" src="https://www.youtube-nocookie.com/embed/CRJVLtIC38M" title="חיבור מנעול חכם במגע יבש למערכת הבית החכם | I FEEL" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        </div>
+      </div>
+      <div>
+        <p class="text-sm font-extrabold text-accent-600">אינטרקום, בקרת כניסה ובית חכם</p>
+        <h2 id="smart-lock-video-title" class="mt-2 text-3xl md:text-4xl font-extrabold text-brand-900">חיבור מנעול חכם במגע יבש למערכת השליטה</h2>
+        <p class="mt-4 text-lg leading-8 text-brand-700">מגע יבש מאפשר למערכת הבית החכם לתת פקודת פתיחה למנעול בלי להחליף את מנגנון הבקרה שלו. בפרויקט המוצג שילבנו את פתיחת הדלת במערכת השליטה, כך שאפשר לחבר אותה לאפליקציה, לאינטרקום ולתרחישים חכמים.</p>
+        <div class="mt-6 flex flex-wrap gap-3">
+          <a href="/smart-home/" class="inline-flex items-center justify-center bg-brand-900 hover:bg-brand-800 text-white px-6 py-3 rounded-lg font-bold">מערכת בית חכם מלאה</a>
+          <a href="/akuvox-mega-city-50/" class="inline-flex items-center justify-center bg-white hover:bg-brand-50 text-brand-900 px-6 py-3 rounded-lg font-bold border border-brand-200">תכנון אינטרקום ובקרת כניסה</a>
+          <a href="/contactus/" class="inline-flex items-center justify-center bg-accent-500 hover:bg-accent-600 text-white px-6 py-3 rounded-lg font-bold shadow-sm">דברו איתנו על הפרויקט</a>
+        </div>
+      </div>
+    </div>
+  </section>
   <section class="bg-brand-50 border-y border-brand-100 py-12 lg:py-16" aria-labelledby="aruba-ap27-installation-title">
     <div class="max-w-6xl mx-auto px-4 grid lg:grid-cols-2 gap-8 items-center">
       <figure class="overflow-hidden rounded-2xl border border-brand-100 bg-white shadow-sm">
