@@ -233,15 +233,59 @@
         updateComponentLocation();
     });
 
+    const issueCountInput = handoverForm?.querySelector('[data-handover-issue-count]');
+    const issueList = handoverForm?.querySelector('[data-handover-issue-list]');
+    const issueTemplate = handoverForm?.querySelector('[data-handover-issue-template]');
+    const issueAddButton = handoverForm?.querySelector('[data-handover-issue-add]');
+    const refreshIssues = () => {
+        if (!issueCountInput || !issueList) return;
+        const issues = Array.from(issueList.querySelectorAll('[data-handover-issue]'));
+        issueCountInput.value = String(issues.length);
+        issues.forEach((issue, index) => {
+            const number = index + 1;
+            const legend = issue.querySelector('[data-handover-issue-legend]');
+            const photoHeading = issue.querySelector('[data-handover-issue-photo-heading]');
+            const photoLabel = issue.querySelector('[data-handover-issue-photo-label]');
+            const photo = issue.querySelector('[data-handover-issue-photo]');
+            const type = issue.querySelector('[data-handover-issue-type]');
+            if (legend) legend.textContent = `תקלה מס׳ ${number}`;
+            if (photoHeading) photoHeading.innerHTML = `צילום תקלה מס׳ ${number} <b>*</b>`;
+            if (photoLabel) photoLabel.textContent = `צילום תקלה מס׳ ${number}`;
+            if (photo) photo.name = `handover_issue_photo_${number}`;
+            if (type) type.name = `handover_issue_type_${number}`;
+        });
+    };
+    issueAddButton?.addEventListener('click', () => {
+        if (!issueList || !issueTemplate) return;
+        if (issueList.querySelectorAll('[data-handover-issue]').length >= 15) {
+            window.alert('ניתן להוסיף עד 15 צילומי תקלות במסירה אחת.');
+            return;
+        }
+        const issue = issueTemplate.content.firstElementChild?.cloneNode(true);
+        if (!issue) return;
+        issueList.appendChild(issue);
+        refreshIssues();
+        issue.querySelector('[data-handover-issue-photo]')?.focus();
+    });
+    issueList?.addEventListener('click', (event) => {
+        const target = event.target instanceof Element ? event.target : null;
+        const removeButton = target?.closest('[data-handover-issue-remove]');
+        if (!removeButton) return;
+        removeButton.closest('[data-handover-issue]')?.remove();
+        refreshIssues();
+    });
+    refreshIssues();
+
     const handoverSubmit = handoverForm?.querySelector('[data-handover-submit]');
     handoverForm?.addEventListener('submit', (event) => {
         const photoInputs = Array.from(handoverForm.querySelectorAll('input[type="file"]'));
         const photos = photoInputs.map((input) => input.files?.[0]).filter(Boolean);
         const switch9Count = Number.parseInt(switch9CountInput?.value || '0', 10);
-        const expectedPhotoCount = switch9Count + 1;
+        const issueCount = Number.parseInt(issueCountInput?.value || '0', 10);
+        const expectedPhotoCount = switch9Count + issueCount + 1;
         if (photoInputs.length !== expectedPhotoCount || photos.length !== expectedPhotoCount) {
             event.preventDefault();
-            window.alert(`חובה לצרף צילום קונטרולר וצילום נפרד לכל אחד מ-${switch9Count} מפסקי 9.`);
+            window.alert('יש לצרף צילום קונטרולר, צילום לכל מפסק 9 וצילום לכל תקלה שנוספה.');
             return;
         }
         if (photos.some((file) => !file.type.startsWith('image/'))) {

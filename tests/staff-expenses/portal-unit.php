@@ -575,15 +575,31 @@ try {
         'Per-unit switch 9 email details are wrong.'
     );
     portal_test_expect(
+        portal_handover_issue_label('electrical') === 'תקלת חשמל'
+        && portal_handover_issue_label('cabling') === 'תקלת כבילה'
+        && portal_handover_issue_label('contractor') === 'בעיית קבלנים (טיח או קופסא שבורה)'
+        && portal_handover_issue_email_lines([
+            'issues' => [['type' => 'electrical'], ['type' => 'contractor']],
+        ]) === [
+            'מספר תקלות שצולמו בדירה: 2',
+            'תקלה מס׳ 1: תקלת חשמל',
+            'תקלה מס׳ 2: בעיית קבלנים (טיח או קופסא שבורה)',
+        ],
+        'Apartment issue labels or email details are wrong.'
+    );
+    portal_test_expect(
         portal_handover_photo_keys([
             'photos' => [
                 'switch_10' => ['storage_name' => 'switch-10.png'],
                 'controller' => ['storage_name' => 'controller.png'],
                 'switch_2' => ['storage_name' => 'switch-2.png'],
                 'switch_1' => ['storage_name' => 'switch-1.png'],
+                'issue_10' => ['storage_name' => 'issue-10.png'],
+                'issue_2' => ['storage_name' => 'issue-2.png'],
+                'issue_1' => ['storage_name' => 'issue-1.png'],
                 'untrusted' => ['storage_name' => 'ignored.png'],
             ],
-        ]) === ['controller', 'switch_1', 'switch_2', 'switch_10'],
+        ]) === ['controller', 'switch_1', 'switch_2', 'switch_10', 'issue_1', 'issue_2', 'issue_10'],
         'Tenant handover photo keys were not filtered and ordered correctly.'
     );
     $workStats = portal_work_report_stats([

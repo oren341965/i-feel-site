@@ -914,7 +914,13 @@ function portal_handover_photo_keys(array $handover): array
     usort($switchKeys, static function (string $left, string $right): int {
         return (int) substr($left, 7) <=> (int) substr($right, 7);
     });
-    return array_merge($keys, $switchKeys);
+    $issueKeys = array_values(array_filter(array_keys($photos), static function ($key): bool {
+        return is_string($key) && preg_match('/^issue_[1-9][0-9]*$/', $key) === 1;
+    }));
+    usort($issueKeys, static function (string $left, string $right): int {
+        return (int) substr($left, 6) <=> (int) substr($right, 6);
+    });
+    return array_merge($keys, $switchKeys, $issueKeys);
 }
 
 function portal_handover_protected_url(array $handover, string $key): string
@@ -934,8 +940,10 @@ function portal_handover_photo_email_lines(array $handover): array
             $label = 'צילום קונטרולר';
         } elseif ($key === 'switch') {
             $label = 'צילום מפסק 9';
-        } else {
+        } elseif (str_starts_with($key, 'switch_')) {
             $label = 'צילום מפסק 9 מס׳ ' . (int) substr($key, 7);
+        } else {
+            $label = 'צילום תקלה בדירה מס׳ ' . (int) substr($key, 6);
         }
         $lines[] = $label . ' (דורש כניסה לאזור העובדים):';
         $lines[] = portal_handover_protected_url($handover, $key);
@@ -969,7 +977,7 @@ function portal_handover_internal_email_body(array $handover): string
         'מיקום קונטרולר: ' . (string) ($details['controller_location'] ?? ''),
         'קונטרולר: ' . portal_handover_controller_label((string) ($details['controller'] ?? '')),
         'אייקונים במפסק: ' . portal_handover_icons_label((string) ($details['icons'] ?? '')),
-    ], portal_handover_switch_9_email_lines($details), [
+    ], portal_handover_switch_9_email_lines($details), portal_handover_issue_email_lines($details), [
         'כמות מפסקי תאורה: ' . (string) ($details['light_switch_count'] ?? '-'),
         'מיקומי מפסקי תאורה: ' . ((string) ($details['light_switch_location'] ?? '') ?: '-'),
         'כמות מפסקי תריס: ' . (string) ($details['shutter_switch_count'] ?? '-'),
@@ -1113,6 +1121,31 @@ function portal_handover_switch_9_email_lines(array $details): array
     ];
 }
 
+function portal_handover_issue_label(string $value): string
+{
+    return [
+        'electrical' => 'תקלת חשמל',
+        'cabling' => 'תקלת כבילה',
+        'contractor' => 'בעיית קבלנים (טיח או קופסא שבורה)',
+    ][$value] ?? '-';
+}
+
+function portal_handover_issue_email_lines(array $details): array
+{
+    $issues = is_array($details['issues'] ?? null) ? $details['issues'] : [];
+    if ($issues === []) {
+        return ['תקלות בדירה: אין תקלות שצולמו'];
+    }
+    $lines = ['מספר תקלות שצולמו בדירה: ' . count($issues)];
+    foreach ($issues as $index => $issue) {
+        if (!is_array($issue)) {
+            continue;
+        }
+        $lines[] = 'תקלה מס׳ ' . ((int) $index + 1) . ': ' . portal_handover_issue_label((string) ($issue['type'] ?? ''));
+    }
+    return $lines;
+}
+
 function portal_handover_captive_shutter_24v_label(string $value): string
 {
     return [
@@ -1180,6 +1213,7 @@ function portal_handle_tenant_handover_post(array $user): void
     $controller = portal_post('handover_controller', 40);
     $icons = portal_post('handover_icons', 40);
     $switch9CountRaw = portal_post('handover_switch_9_count', 10);
+    $issueCountRaw = portal_post('handover_issue_count', 10);
     $lightSwitchCountRaw = portal_post('handover_light_switch_count', 10);
     $shutterSwitchCountRaw = portal_post('handover_shutter_switch_count', 10);
     $lightSwitchLocation = portal_post('handover_light_switch_location', 300);
@@ -1218,6 +1252,18 @@ function portal_handle_tenant_handover_post(array $user): void
             throw new RuntimeException('יש לפרט את מיקום מפסק 9 מס׳ ' . $index . '.');
         }
         $switch9Units[] = ['configuration' => $configuration, 'location' => $location];
+    }
+    if (!ctype_digit($issueCountRaw) || (int) $issueCountRaw > 15) {
+        throw new RuntimeException('מספר צילומי התקלות אינו תקין (0 עד 15).');
+    }
+    $issueCount = (int) $issueCountRaw;
+    $issues = [];
+    for ($index = 1; $index <= $issueCount; $index++) {
+        $issueType = portal_post('handover_issue_type_' . $index, 40);
+        if (!in_array($issueType, ['electrical', 'cabling', 'contractor'], true)) {
+            throw new RuntimeException('יש לבחור את סוג התקלה המצולמת מס׳ ' . $index . '.');
+        }
+        $issues[] = ['type' => $issueType];
     }
     if (!ctype_digit($lightSwitchCountRaw) || (int) $lightSwitchCountRaw > 99) {
         throw new RuntimeException('יש להזין כמות תקינה של מפסקי תאורה (0 עד 99).');
@@ -1269,6 +1315,13 @@ function portal_handle_tenant_handover_post(array $user): void
                 'צילום מפסק 9 מס׳ ' . $index . ' עם האייקונים'
             );
         }
+        for ($index = 1; $index <= $issueCount; $index++) {
+            $photos['issue_' . $index] = portal_handover_save_photo(
+                $recordDir,
+                $_FILES['handover_issue_photo_' . $index] ?? [],
+                'צילום תקלה בדירה מס׳ ' . $index
+            );
+        }
         $handover = [
             'id' => $handoverId,
             'created_at' => gmdate('c'),
@@ -1290,6 +1343,7 @@ function portal_handle_tenant_handover_post(array $user): void
                 'icons' => $icons,
                 'switch_9_count' => $switch9Count,
                 'switch_9_units' => $switch9Units,
+                'issues' => $issues,
                 'light_switch_count' => $lightSwitchCount,
                 'light_switch_location' => $lightSwitchLocation,
                 'shutter_switch_count' => $shutterSwitchCount,
@@ -1357,7 +1411,12 @@ function portal_handle_handover_download(array $user): void
     portal_require_login();
     $handoverId = trim((string) ($_GET['handover_id'] ?? ''));
     $key = trim((string) ($_GET['file'] ?? ''));
-    if ($key !== 'controller' && $key !== 'switch' && preg_match('/^switch_[1-9][0-9]*$/', $key) !== 1) {
+    if (
+        $key !== 'controller'
+        && $key !== 'switch'
+        && preg_match('/^switch_[1-9][0-9]*$/', $key) !== 1
+        && preg_match('/^issue_[1-9][0-9]*$/', $key) !== 1
+    ) {
         throw new RuntimeException('קובץ המסירה המבוקש אינו תקין.');
     }
     $handover = portal_load_handover($handoverId);
@@ -1648,6 +1707,24 @@ function portal_render_tenant_handover_form(array $user, array $projects, string
             </div>
             <p class="form-note">צילום הקונטרולר וכל צילומי מפסקי 9 נשמרים מחוץ ל-public_html ומצורפים רק למייל הפנימי.</p>
         </div>
+        <section class="field--full handover-issues" aria-labelledby="handover-issues-title">
+            <div class="handover-issues__heading">
+                <div><h3 id="handover-issues-title">צילום תקלות בדירה</h3><p>אם קיימת תקלה, הוסיפו צילום ובחרו את סוג התקלה מתחתיו. ניתן להוסיף צילום נוסף בכל פעם.</p></div>
+                <button type="button" class="button button--secondary button--small" data-handover-issue-add>+ הוספת תקלה</button>
+            </div>
+            <input type="hidden" name="handover_issue_count" value="0" data-handover-issue-count>
+            <div class="handover-issue-list" data-handover-issue-list aria-live="polite"></div>
+            <template data-handover-issue-template>
+                <fieldset class="handover-issue" data-handover-issue>
+                    <legend data-handover-issue-legend></legend>
+                    <div class="handover-issue__fields">
+                        <div class="field"><span data-handover-issue-photo-heading>צילום התקלה <b>*</b></span><label class="receipt-action receipt-action--camera"><span class="receipt-action__icon" aria-hidden="true">📷</span><strong data-handover-issue-photo-label></strong><input class="receipt-input" type="file" accept="image/*" capture="environment" data-handover-issue-photo required></label></div>
+                        <label class="field"><span>סוג התקלה <b>*</b></span><select data-handover-issue-type required><option value="">בחירה</option><option value="electrical">תקלת חשמל</option><option value="cabling">תקלת כבילה</option><option value="contractor">בעיית קבלנים (טיח או קופסא שבורה)</option></select></label>
+                        <button type="button" class="button button--ghost button--small handover-issue__remove" data-handover-issue-remove>הסרת התקלה</button>
+                    </div>
+                </fieldset>
+            </template>
+        </section>
         <div class="field--full submit-bar"><div><strong>פעולה אחת: שמירה ושליחה</strong><span>הנתונים ייטענו שוב מ-Monday לפני השמירה.</span></div><button type="submit" class="button button--primary" data-handover-submit <?= $credentials['password'] === '' ? 'disabled' : '' ?>>סיום ושליחה</button></div>
     </form>
     <?php

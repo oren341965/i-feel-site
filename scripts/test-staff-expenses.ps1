@@ -284,6 +284,7 @@ try {
     Assert-PortalTest ($handoverHtml -match 'name="handover_hvac_connection"[^>]*required' -and $handoverHtml -match 'value="none"' -and $handoverHtml -match 'value="ir"' -and $handoverHtml -match 'value="dry_contact_panel_9"' -and $handoverHtml -match 'value="micromodule"') "HVAC connection choices were not rendered."
     Assert-PortalTest ($handoverHtml -match 'name="handover_boiler"[^>]*required' -and $handoverHtml -match 'value="avatto"' -and $handoverHtml -match 'value="domex"' -and $handoverHtml -match 'value="none"' -and $handoverHtml -match 'value="switcher"' -and $handoverHtml -match 'name="handover_notes"[^>]*required') "Boiler choices or notes requirement were not rendered."
     Assert-PortalTest ($handoverHtml -match 'name="handover_controller_photo"[^>]*required') "Mandatory controller photo was not rendered."
+    Assert-PortalTest ($handoverHtml -match 'name="handover_issue_count" value="0"' -and $handoverHtml -match 'data-handover-issue-add' -and $handoverHtml -match 'data-handover-issue-photo' -and $handoverHtml -match 'value="electrical"' -and $handoverHtml -match 'value="cabling"' -and $handoverHtml -match 'value="contractor"') "Repeatable apartment issue photo controls were not rendered."
     Assert-PortalTest ($handoverHtml -notmatch 'name="handover_switch_9"|name="handover_blinds"') "Legacy free-text switch fields are still rendered."
     $handoverCsrf = Get-CsrfFromHtml $handoverHtml
     $handoverTokenMatch = [regex]::Match($handoverHtml, 'name="handover_submission_token"\s+value="([a-f0-9]{64})"')
@@ -321,6 +322,11 @@ try {
         "-F", "handover_controller_photo=@$handoverImage;type=image/png", `
         "-F", "handover_switch_photo_1=@$handoverImage;type=image/png", `
         "-F", "handover_switch_photo_2=@$handoverImage;type=image/png", `
+        "-F", "handover_issue_count=2", `
+        "-F", "handover_issue_type_1=electrical", `
+        "-F", "handover_issue_type_2=contractor", `
+        "-F", "handover_issue_photo_1=@$handoverImage;type=image/png", `
+        "-F", "handover_issue_photo_2=@$handoverImage;type=image/png", `
         "$baseUrl/staff-expenses/"
     Assert-PortalTest ($headers -match "HTTP/1\.1 303") "Tenant handover submission was not accepted."
     $handoverMetadata = @(Get-ChildItem -LiteralPath (Join-Path $storagePath "tenant-handovers") -Recurse -Filter "metadata.json")
@@ -336,6 +342,9 @@ try {
         -and $handoverRecord.details.switch_9_units[0].location -eq "Entrance" `
         -and $handoverRecord.details.switch_9_units[1].configuration -eq "light_9" `
         -and $handoverRecord.details.switch_9_units[1].location -eq "Kitchen" `
+        -and $handoverRecord.details.issues.Count -eq 2 `
+        -and $handoverRecord.details.issues[0].type -eq "electrical" `
+        -and $handoverRecord.details.issues[1].type -eq "contractor" `
         -and $handoverRecord.details.light_switch_count -eq "2" `
         -and $handoverRecord.details.light_switch_location -eq "Living room, Bedroom" `
         -and $handoverRecord.details.shutter_switch_count -eq "1" `
@@ -345,11 +354,13 @@ try {
         -and $handoverRecord.details.boiler -eq "switcher"
     ) "Structured handover switch and HVAC details were not stored correctly."
     Assert-PortalTest (
-        @($handoverRecord.photos.PSObject.Properties).Count -eq 3 `
+        @($handoverRecord.photos.PSObject.Properties).Count -eq 5 `
         -and $null -ne $handoverRecord.photos.controller `
         -and $null -ne $handoverRecord.photos.switch_1 `
-        -and $null -ne $handoverRecord.photos.switch_2
-    ) "Tenant handover did not preserve the controller and one photo per switch 9."
+        -and $null -ne $handoverRecord.photos.switch_2 `
+        -and $null -ne $handoverRecord.photos.issue_1 `
+        -and $null -ne $handoverRecord.photos.issue_2
+    ) "Tenant handover did not preserve the controller, switch 9, and apartment issue photos."
     Assert-PortalTest ($handoverRecord.notifications.resident.status -eq "sent") "Resident handover email status was not recorded."
     Assert-PortalTest ($handoverRecord.notifications.internal.failed.Count -eq 0) "Internal handover email status was not recorded as successful."
     $handoverDownloadStatus = Invoke-PortalCurl `
@@ -364,6 +375,12 @@ try {
         "-b", $employeeCookies, `
         "$baseUrl/staff-expenses/?action=handover_download&handover_id=$($handoverRecord.id)&file=switch_2"
     Assert-PortalTest ($handoverSwitchDownloadStatus -eq "200") "Authenticated employee could not open the second switch 9 photo."
+    $handoverIssueDownloadStatus = Invoke-PortalCurl `
+        "-o", $responseBody, `
+        "-w", "%{http_code}", `
+        "-b", $employeeCookies, `
+        "$baseUrl/staff-expenses/?action=handover_download&handover_id=$($handoverRecord.id)&file=issue_2"
+    Assert-PortalTest ($handoverIssueDownloadStatus -eq "200") "Authenticated employee could not open the second apartment issue photo."
 
     $csrf = Get-CsrfFromHtml $html
 
