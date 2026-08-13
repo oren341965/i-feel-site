@@ -1,6 +1,244 @@
 (() => {
     'use strict';
 
+    const offlineDatabaseName = 'ifeel-staff-offline-v1';
+    const offlineDatabaseVersion = 1;
+    const handoverQueueStore = 'handoverQueue';
+    const offlineSupported = 'serviceWorker' in navigator && 'indexedDB' in window;
+    const offlineStatus = document.querySelector('[data-handover-offline-status]');
+    const offlineTitle = offlineStatus?.querySelector('[data-handover-offline-title]');
+    const offlineMessage = offlineStatus?.querySelector('[data-handover-offline-message]');
+    const offlineQueueBadge = offlineStatus?.querySelector('[data-handover-offline-queue]');
+    let offlineRegistration = null;
+    let activeHandoverQueueId = '';
+
+    const openOfflineDatabase = () => new Promise((resolve, reject) => {
+        const request = indexedDB.open(offlineDatabaseName, offlineDatabaseVersion);
+        request.onupgradeneeded = () => {
+            const database = request.result;
+            if (!database.objectStoreNames.contains(handoverQueueStore)) {
+                database.createObjectStore(handoverQueueStore, { keyPath: 'id' });
+            }
+        };
+        request.onsuccess = () => resolve(request.result);
+        request.onerror = () => reject(request.error || new Error('לא ניתן לפתוח את האחסון המקומי.'));
+    });
+
+    const saveOfflineHandover = async (entry) => {
+        const database = await openOfflineDatabase();
+        return new Promise((resolve, reject) => {
+            const transaction = database.transaction(handoverQueueStore, 'readwrite');
+            transaction.objectStore(handoverQueueStore).put(entry);
+            transaction.oncomplete = () => {
+                database.close();
+                resolve();
+            };
+            transaction.onerror = () => reject(transaction.error || new Error('לא ניתן לשמור את המסירה במכשיר.'));
+        });
+    };
+
+    const offlineQueueCount = async () => {
+        if (!offlineSupported) return 0;
+        const database = await openOfflineDatabase();
+        return new Promise((resolve, reject) => {
+            const transaction = database.transaction(handoverQueueStore, 'readonly');
+            const request = transaction.objectStore(handoverQueueStore).count();
+            request.onsuccess = () => resolve(request.result || 0);
+            request.onerror = () => reject(request.error || new Error('לא ניתן לקרוא את תור המסירות.'));
+            transaction.oncomplete = () => database.close();
+        });
+    };
+
+    const setOfflineStatus = (state, title, message) => {
+        if (!offlineStatus) return;
+        offlineStatus.classList.remove('is-online', 'is-offline', 'is-ready', 'is-error', 'is-syncing');
+        if (state) offlineStatus.classList.add(state);
+        if (offlineTitle) offlineTitle.textContent = title;
+        if (offlineMessage) offlineMessage.textContent = message;
+    };
+
+    const refreshOfflineQueueBadge = async (providedCount = null) => {
+        if (!offlineQueueBadge) return;
+        const count = providedCount === null ? await offlineQueueCount() : providedCount;
+        offlineQueueBadge.hidden = count < 1;
+        offlineQueueBadge.textContent = count === 1 ? 'מסירה אחת ממתינה לסנכרון' : `${count} מסירות ממתינות לסנכרון`;
+    };
+
+    const handoverFormEntry = (form) => {
+        const formData = new FormData(form);
+        const fields = [];
+        const files = [];
+        formData.forEach((value, name) => {
+            if (value instanceof File) {
+                if (value.size > 0) {
+                    files.push({
+                        name,
+                        blob: value,
+                        fileName: value.name,
+                        type: value.type,
+                        lastModified: value.lastModified,
+                    });
+                }
+                return;
+            }
+            fields.push({ name, value: String(value) });
+        });
+        const valueFor = (name) => fields.find((field) => field.name === name)?.value || '';
+        const currentUrl = new URL(window.location.href);
+        const submitUrl = new URL(form.getAttribute('action') || currentUrl.href, currentUrl.href);
+        return {
+            id: valueFor('handover_client_id'),
+            createdAt: Date.now(),
+            url: submitUrl.href,
+            pageUrl: currentUrl.href,
+            projectId: valueFor('handover_project_id'),
+            residentId: valueFor('handover_resident_id'),
+            building: currentUrl.searchParams.get('handover_building') || '',
+            fields,
+            files,
+        };
+    };
+
+    const requestHandoverSync = async () => {
+        if (!offlineRegistration || !navigator.onLine) return;
+        try {
+            if ('sync' in offlineRegistration) {
+                await offlineRegistration.sync.register('tenant-handover-sync');
+            }
+        } catch (error) {
+            // The active page also asks the worker to sync, so Background Sync
+            // registration is an optional enhancement rather than a blocker.
+        }
+        (offlineRegistration.active || offlineRegistration.waiting)?.postMessage({ type: 'SYNC_HANDOVER_QUEUE' });
+    };
+
+    const storeHandoverPageOffline = (url, html) => new Promise((resolve, reject) => {
+        const worker = offlineRegistration?.active || offlineRegistration?.waiting;
+        if (!worker) {
+            reject(new Error('offline-worker-unavailable'));
+            return;
+        }
+        const channel = new MessageChannel();
+        const timeout = window.setTimeout(() => reject(new Error('offline-cache-timeout')), 15000);
+        channel.port1.onmessage = (event) => {
+            window.clearTimeout(timeout);
+            if (event.data?.ok) resolve();
+            else reject(new Error('offline-cache-failed'));
+        };
+        worker.postMessage({ type: 'CACHE_HANDOVER_PAGE', url, html }, [channel.port2]);
+    });
+
+    const cacheCurrentHandoverPage = () => {
+        const form = document.querySelector('[data-handover-form]');
+        if (!form) return;
+        storeHandoverPageOffline(
+            window.location.href,
+            `<!doctype html>\n${document.documentElement.outerHTML}`
+        ).catch(() => undefined);
+        setOfflineStatus(
+            navigator.onLine ? 'is-ready' : 'is-offline',
+            navigator.onLine ? 'הטופס מוכן לעבודה ללא קליטה' : 'עובדים כעת ללא קליטה',
+            navigator.onLine
+                ? 'אפשר להמשיך גם אם החיבור ייעלם. הטופס והתמונות יישמרו במכשיר עד לסנכרון.'
+                : 'מלאו כרגיל. בסיום המסירה תישמר במכשיר ותישלח אוטומטית לאחר חזרת האינטרנט.'
+        );
+    };
+
+    const updateConnectionStatus = async () => {
+        const hasForm = Boolean(document.querySelector('[data-handover-form]'));
+        const pending = await offlineQueueCount().catch(() => 0);
+        await refreshOfflineQueueBadge(pending).catch(() => undefined);
+        if (!offlineSupported) {
+            setOfflineStatus('is-error', 'מצב ללא קליטה אינו נתמך בדפדפן זה', 'יש לפתוח את אזור העובדים ב-Chrome, Edge או Safari מעודכן.');
+            return;
+        }
+        if (!navigator.onLine) {
+            setOfflineStatus(
+                'is-offline',
+                hasForm ? 'עובדים כעת ללא קליטה' : 'אין חיבור — לא נמצא טופס דייר שמור',
+                hasForm
+                    ? 'מלאו כרגיל. בסיום המסירה תישמר במכשיר ותישלח אוטומטית לאחר חזרת האינטרנט.'
+                    : 'יש לפתוח טופס דייר אחד בזמן חיבור לפני כניסה לאזור ללא קליטה.'
+            );
+            return;
+        }
+        if (pending > 0) {
+            setOfflineStatus('is-syncing', 'החיבור חזר — מסנכרן מסירות', 'אין לסגור את העמוד עד לסיום הסנכרון.');
+            return;
+        }
+        setOfflineStatus(
+            hasForm ? 'is-ready' : 'is-online',
+            hasForm ? 'הטופס מוכן לעבודה ללא קליטה' : 'מחובר לאינטרנט',
+            hasForm
+                ? 'אפשר להמשיך גם אם החיבור ייעלם. הטופס והתמונות יישמרו במכשיר עד לסנכרון.'
+                : 'בחרו פרויקט ודייר ופתחו את הטופס פעם אחת כדי להכין אותו לעבודה ללא קליטה.'
+        );
+    };
+
+    if (offlineSupported) {
+        navigator.serviceWorker.addEventListener('message', async (event) => {
+            const data = event.data || {};
+            if (data.type === 'HANDOVER_QUEUE_STATUS') {
+                await refreshOfflineQueueBadge(Number(data.pending || 0));
+                if (data.syncing) setOfflineStatus('is-syncing', 'מסנכרן מסירות שמורות', 'הנתונים והתמונות מועלים כעת לשרת.');
+            }
+            if (data.type === 'HANDOVER_SYNC_SUCCESS') {
+                await refreshOfflineQueueBadge();
+                setOfflineStatus(
+                    data.notificationsSent === false ? 'is-error' : 'is-ready',
+                    data.notificationsSent === false ? 'המסירה נשמרה — הודעת דוא״ל דורשת בדיקה' : 'המסירה סונכרנה בהצלחה',
+                    `מספר מסירה: ${data.handoverId || 'נשמר בשרת'}`
+                );
+                const submit = document.querySelector('[data-handover-submit]');
+                if (submit && (!activeHandoverQueueId || activeHandoverQueueId === data.queueId)) {
+                    submit.disabled = true;
+                    submit.textContent = 'נשמר ונשלח';
+                }
+                if (activeHandoverQueueId === data.queueId) {
+                    window.setTimeout(() => {
+                        window.location.href = `/staff-expenses/?tab=handovers&submitted=${encodeURIComponent(data.handoverId || '')}`;
+                    }, 1200);
+                }
+            }
+            if (data.type === 'HANDOVER_SYNC_AUTH_REQUIRED') {
+                setOfflineStatus('is-error', 'המסירה שמורה — נדרשת כניסה מחדש', 'התחברו שוב לאזור העובדים. לאחר הכניסה הסנכרון יימשך אוטומטית.');
+            }
+            if (data.type === 'HANDOVER_SYNC_ERROR') {
+                setOfflineStatus('is-error', 'המסירה נשארה שמורה במכשיר', data.message || 'הסנכרון ינסה שוב אוטומטית כאשר החיבור יהיה יציב.');
+                const submit = document.querySelector('[data-handover-submit]');
+                if (submit && activeHandoverQueueId === data.queueId) {
+                    submit.disabled = true;
+                    submit.textContent = 'נשמר וממתין לסנכרון';
+                }
+            }
+        });
+
+        navigator.serviceWorker.register('/staff-expenses/offline-worker.js', { scope: '/staff-expenses/' })
+            .then(async (registration) => {
+                offlineRegistration = registration;
+                await navigator.serviceWorker.ready;
+                cacheCurrentHandoverPage();
+                await updateConnectionStatus();
+                if (navigator.onLine) await requestHandoverSync();
+            })
+            .catch(() => setOfflineStatus('is-error', 'לא ניתן להכין מצב ללא קליטה', 'רעננו את העמוד בזמן שיש חיבור ונסו שוב.'));
+
+        window.addEventListener('online', async () => {
+            await updateConnectionStatus();
+            await requestHandoverSync();
+        });
+        window.addEventListener('offline', updateConnectionStatus);
+
+        document.querySelectorAll('form').forEach((candidate) => {
+            if (candidate.querySelector('input[name="action"][value="logout"]')) {
+                candidate.addEventListener('submit', () => {
+                    (offlineRegistration?.active || offlineRegistration?.waiting)?.postMessage({ type: 'CLEAR_OFFLINE_HANDOVERS' });
+                    indexedDB.deleteDatabase(offlineDatabaseName);
+                });
+            }
+        });
+    }
+
     const reportType = document.getElementById('report-type');
     const sections = Array.from(document.querySelectorAll('[data-report-section]'));
 
@@ -164,6 +402,64 @@
         control.addEventListener('change', () => handoverSelector.requestSubmit());
     });
 
+    const offlinePrepareButton = handoverSelector?.querySelector('[data-handover-offline-prepare]');
+    const offlinePrepareNote = handoverSelector?.querySelector('[data-handover-offline-prepare-note]');
+    offlinePrepareButton?.addEventListener('click', async () => {
+        if (!navigator.onLine) {
+            window.alert('הכנת פרויקט חדש דורשת חיבור. טפסים שכבר הוכנו ממשיכים לעבוד ללא קליטה.');
+            return;
+        }
+        if (!offlineSupported || !offlineRegistration) {
+            window.alert('מצב Offline עדיין לא מוכן. המתינו מספר שניות או רעננו את העמוד.');
+            return;
+        }
+        const projectId = handoverSelector.querySelector('[name="handover_project"]')?.value || '';
+        const residentIds = Array.from(handoverSelector.querySelectorAll('[data-handover-offline-resident-id]'))
+            .map((item) => item.dataset.handoverOfflineResidentId || '')
+            .filter(Boolean);
+        if (!projectId || residentIds.length < 1) {
+            window.alert('יש לבחור פרויקט הכולל דיירים לפני ההכנה לעבודה ללא קליטה.');
+            return;
+        }
+
+        offlinePrepareButton.disabled = true;
+        const originalLabel = offlinePrepareButton.textContent;
+        let prepared = 0;
+        try {
+            await storeHandoverPageOffline(
+                window.location.href,
+                `<!doctype html>\n${document.documentElement.outerHTML}`
+            );
+            for (const residentId of residentIds) {
+                offlinePrepareButton.textContent = `מכין ${prepared + 1} מתוך ${residentIds.length}…`;
+                setOfflineStatus('is-syncing', 'מכין את הפרויקט לעבודה ללא קליטה', `${prepared} מתוך ${residentIds.length} טפסי דיירים נשמרו במכשיר.`);
+                const residentUrl = new URL('/staff-expenses/', window.location.origin);
+                residentUrl.searchParams.set('tab', 'handovers');
+                residentUrl.searchParams.set('handover_project', projectId);
+                residentUrl.searchParams.set('handover_resident', residentId);
+                const response = await fetch(residentUrl.href, {
+                    credentials: 'include',
+                    cache: 'no-store',
+                    headers: { 'X-Ifeel-Offline-Prepare': '1' },
+                });
+                if (!response.ok || response.headers.get('X-Ifeel-Offline-Cache') !== 'handover') {
+                    throw new Error('offline-project-fetch-failed');
+                }
+                const html = await response.text();
+                if (!html.includes('data-handover-form')) throw new Error('offline-project-form-missing');
+                await storeHandoverPageOffline(residentUrl.href, html);
+                prepared += 1;
+            }
+            offlinePrepareButton.textContent = 'הפרויקט מוכן ללא קליטה';
+            if (offlinePrepareNote) offlinePrepareNote.textContent = `${prepared} טפסי דיירים נשמרו במכשיר זה. ניתן לעבור ביניהם גם ללא אינטרנט.`;
+            setOfflineStatus('is-ready', 'הפרויקט מוכן לעבודה ללא קליטה', `${prepared} טפסי דיירים זמינים במכשיר. מסירות חדשות יישמרו ויסתנכרנו אוטומטית.`);
+        } catch (error) {
+            offlinePrepareButton.disabled = false;
+            offlinePrepareButton.textContent = originalLabel;
+            setOfflineStatus('is-error', 'הכנת הפרויקט נעצרה', `${prepared} מתוך ${residentIds.length} טפסים נשמרו. ודאו שהחיבור יציב ונסו שוב.`);
+        }
+    });
+
     const handoverLocation = document.querySelector('[data-handover-location]');
     const handoverLocationOther = document.querySelector('[data-handover-location-other]');
     const handoverLocationOtherInput = handoverLocationOther?.querySelector('input');
@@ -309,6 +605,36 @@
         if (photos.some((file) => file.size > 12 * 1024 * 1024)) {
             event.preventDefault();
             window.alert('כל תמונה חייבת להיות קטנה מ-12MB.');
+            return;
+        }
+        if (offlineSupported) {
+            event.preventDefault();
+            const entry = handoverFormEntry(handoverForm);
+            if (!entry.id || !entry.projectId || !entry.residentId) {
+                window.alert('לא ניתן להכין את המסירה לשמירה מקומית. רעננו את הטופס ונסו שוב.');
+                return;
+            }
+            if (handoverSubmit) {
+                handoverSubmit.disabled = true;
+                handoverSubmit.textContent = navigator.onLine ? 'שומר ומסנכרן…' : 'שומר במכשיר…';
+            }
+            saveOfflineHandover(entry).then(async () => {
+                activeHandoverQueueId = entry.id;
+                await refreshOfflineQueueBadge();
+                setOfflineStatus(
+                    navigator.onLine ? 'is-syncing' : 'is-offline',
+                    navigator.onLine ? 'המסירה נשמרה במכשיר ומסתנכרנת' : 'המסירה נשמרה במכשיר',
+                    navigator.onLine ? 'הנתונים והתמונות מועלים כעת לשרת.' : 'אפשר לצאת מהשטח. הסנכרון יתחיל אוטומטית לאחר חזרת האינטרנט.'
+                );
+                if (handoverSubmit && !navigator.onLine) handoverSubmit.textContent = 'נשמר וממתין לחיבור';
+                await requestHandoverSync();
+            }).catch(() => {
+                if (handoverSubmit) {
+                    handoverSubmit.disabled = false;
+                    handoverSubmit.textContent = 'סיום ושליחה';
+                }
+                setOfflineStatus('is-error', 'השמירה במכשיר נכשלה', 'אין לסגור את הטופס. פנו שטח אחסון במכשיר ונסו שוב.');
+            });
             return;
         }
         if (handoverSubmit) {

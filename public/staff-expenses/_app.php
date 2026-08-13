@@ -197,6 +197,9 @@ try {
         'work_stats' => 'סטטיסטיקת עבודות',
     ];
     $pageTitle = $pageTitles[$tab] ?? 'דיווח חדש';
+    if ($tab === 'handovers') {
+        header('X-Ifeel-Offline-Cache: handover');
+    }
     portal_page_start($pageTitle, $user);
     portal_nav($tab, $user);
     portal_render_birthday_banner($user);
@@ -234,6 +237,18 @@ try {
     }
     portal_page_end();
 } catch (Throwable $error) {
+    if (function_exists('portal_handover_is_async_submission') && portal_handover_is_async_submission()) {
+        http_response_code(422);
+        header('Content-Type: application/json; charset=UTF-8');
+        header('Cache-Control: no-store, private, max-age=0');
+        echo json_encode([
+            'ok' => false,
+            'error' => $error instanceof RuntimeException
+                ? $error->getMessage()
+                : 'לא ניתן לסנכרן כרגע. המסירה נשארה שמורה במכשיר ותישלח בניסיון הבא.',
+        ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+        exit;
+    }
     $requestId = bin2hex(random_bytes(6));
     header('X-Ifeel-Portal-Status: runtime-error');
     error_log('[i-feel staff expenses] request=' . $requestId . ' ' . $error->getMessage());

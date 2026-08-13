@@ -484,6 +484,11 @@ try {
         portal_handover_credentials($handoverResident)['password'] === '0501234567',
         'Tenant handover credentials were not derived from the resident phone.'
     );
+    portal_test_expect(
+        preg_match('/^[a-f0-9]{32}$/', portal_new_handover_client_id()) === 1
+        && is_file($repositoryRoot . '/public/staff-expenses/offline-worker.js'),
+        'Tenant handover offline identity or worker is missing.'
+    );
     $lifecycleStatusSource = [
         'id' => '54321',
         'name' => 'Lifecycle Resident',

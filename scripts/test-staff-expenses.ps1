@@ -204,8 +204,10 @@ try {
     Assert-PortalTest ($html -match 'id="camera-receipts"[^>]*capture="environment"') "Mobile receipt camera input is missing."
     Assert-PortalTest ($html -match '<option value="purchases">') "Travel purchases category is missing."
 
-    Invoke-PortalCurl "-o", $responseBody, "-b", $employeeCookies, "$baseUrl/staff-expenses/?tab=handovers" | Out-Null
+    $headers = Invoke-PortalCurl "-D", "-", "-o", $responseBody, "-b", $employeeCookies, "$baseUrl/staff-expenses/?tab=handovers"
     $handoverLandingHtml = Get-Content -Raw -Encoding utf8 $responseBody
+    Assert-PortalTest ($headers -match "(?im)^X-Ifeel-Offline-Cache: handover") "Tenant handover page was not marked for the authenticated offline cache."
+    Assert-PortalTest ($handoverLandingHtml -match 'data-handover-offline-status') "Tenant handover offline readiness status was not rendered."
     Assert-PortalTest ($handoverLandingHtml -match 'class="detail-card handover-awaiting-card"') "Tenant handover technician-step preview was not rendered before resident selection."
     Assert-PortalTest ($handoverLandingHtml -match 'class="handover-field-preview"') "Tenant handover technician fields were not explained on the landing state."
     Assert-PortalTest (([regex]::Matches($handoverLandingHtml, 'value="test-project"')).Count -eq 1) "The canonical Monday project was not rendered exactly once."
@@ -219,6 +221,7 @@ try {
     Invoke-PortalCurl "-o", $responseBody, "-b", $employeeCookies, "$baseUrl/staff-expenses/?tab=handovers&handover_project=test-project" | Out-Null
     $handoverProjectHtml = Get-Content -Raw -Encoding utf8 $responseBody
     Assert-PortalTest ($handoverProjectHtml -match 'name="handover_resident"' -and $handoverProjectHtml -match 'value="1001"') "Tenant residents were not listed immediately after selecting a project."
+    Assert-PortalTest ($handoverProjectHtml -match 'data-handover-offline-prepare' -and $handoverProjectHtml -match 'data-handover-offline-resident-id="1001"') "Project-level offline preparation controls were not rendered."
     Assert-PortalTest ($handoverProjectHtml -match 'name="handover_building" data-handover-autosubmit>' -and $handoverProjectHtml -notmatch 'name="handover_building"[^>]*required') "The optional building filter still blocks direct resident selection."
     Invoke-PortalCurl "-o", $responseBody, "-b", $employeeCookies, "$baseUrl/staff-expenses/?tab=handovers&handover_project=test-project&handover_building=15&handover_resident=1001" | Out-Null
     $handoverStaleSelectionHtml = Get-Content -Raw -Encoding utf8 $responseBody
@@ -268,6 +271,7 @@ try {
         "$baseUrl/staff-expenses/?tab=handovers&handover_project=test-project&handover_building=2&handover_resident=1001" | Out-Null
     $handoverHtml = Get-Content -Raw -Encoding utf8 $responseBody
     Assert-PortalTest ($handoverHtml -match 'name="action" value="submit_tenant_handover"') "Tenant handover form was not rendered."
+    Assert-PortalTest ($handoverHtml -match 'name="handover_client_id"\s+value="[a-f0-9]{32}"') "Tenant handover offline idempotency key was not rendered."
     Assert-PortalTest ($handoverHtml -match 'name="handover_resident"[^>]*data-handover-autosubmit') "Resident selection does not open the technician form automatically."
     Assert-PortalTest ($handoverHtml -match 'resident@example\.com') "Authenticated handover form omitted the Monday resident email."
     Assert-PortalTest ($handoverHtml -match '0501234567') "Authenticated handover form omitted the derived initial password."
@@ -291,15 +295,21 @@ try {
     $handoverTokenMatch = [regex]::Match($handoverHtml, 'name="handover_submission_token"\s+value="([a-f0-9]{64})"')
     Assert-PortalTest $handoverTokenMatch.Success "Tenant handover replay-protection token was not rendered."
     $handoverToken = $handoverTokenMatch.Groups[1].Value
+    $handoverClientIdMatch = [regex]::Match($handoverHtml, 'name="handover_client_id"\s+value="([a-f0-9]{32})"')
+    Assert-PortalTest $handoverClientIdMatch.Success "Tenant handover client ID was not rendered."
+    $handoverClientId = $handoverClientIdMatch.Groups[1].Value
 
     $headers = Invoke-PortalCurl `
         "-D", "-", `
         "-o", $responseBody, `
         "-b", $employeeCookies, `
         "-c", $employeeCookies, `
+        "-H", "Accept: application/json", `
+        "-H", "X-Ifeel-Offline-Queue: 1", `
         "-F", "csrf=$handoverCsrf", `
         "-F", "action=submit_tenant_handover", `
         "-F", "handover_submission_token=$handoverToken", `
+        "-F", "handover_client_id=$handoverClientId", `
         "-F", "handover_project_id=test-project", `
         "-F", "handover_resident_id=1001", `
         "-F", "handover_ready=delivered_with_app_link", `
@@ -330,10 +340,13 @@ try {
         "-F", "handover_issue_photo_1=@$handoverImage;type=image/png", `
         "-F", "handover_issue_photo_2=@$handoverImage;type=image/png", `
         "$baseUrl/staff-expenses/"
-    Assert-PortalTest ($headers -match "HTTP/1\.1 303") "Tenant handover submission was not accepted."
+    Assert-PortalTest ($headers -match "HTTP/1\.1 200" -and $headers -match "(?im)^Content-Type: application/json") "Queued tenant handover submission was not accepted as JSON."
+    $handoverSubmitResponse = Get-Content -Raw -Encoding utf8 $responseBody | ConvertFrom-Json
+    Assert-PortalTest ($handoverSubmitResponse.ok -eq $true -and -not [string]::IsNullOrWhiteSpace($handoverSubmitResponse.handoverId)) "Queued tenant handover response did not confirm the saved handover."
     $handoverMetadata = @(Get-ChildItem -LiteralPath (Join-Path $storagePath "tenant-handovers") -Recurse -Filter "metadata.json")
     Assert-PortalTest ($handoverMetadata.Count -eq 1) "Expected one stored tenant handover."
     $handoverRecord = Get-Content -Raw -Encoding utf8 $handoverMetadata[0].FullName | ConvertFrom-Json
+    Assert-PortalTest ($handoverRecord.client_id -eq $handoverClientId) "Tenant handover did not retain the offline idempotency key."
     Assert-PortalTest ($handoverRecord.source.item_id -eq "1001") "Tenant handover did not retain the verified Monday item ID."
     Assert-PortalTest ($handoverRecord.credentials.password -eq "0501234567") "Tenant handover credentials were not stored correctly."
     Assert-PortalTest ($handoverRecord.details.ready -eq "delivered_with_app_link") "Tenant handover delivery status was not stored correctly."
@@ -366,6 +379,20 @@ try {
     ) "Tenant handover did not preserve the controller, switch 9, and apartment issue photos."
     Assert-PortalTest ($handoverRecord.notifications.resident.status -eq "sent") "Resident handover email status was not recorded."
     Assert-PortalTest ($handoverRecord.notifications.internal.failed.Count -eq 0) "Internal handover email status was not recorded as successful."
+    $duplicateHeaders = Invoke-PortalCurl `
+        "-D", "-", `
+        "-o", $responseBody, `
+        "-b", $employeeCookies, `
+        "-H", "Accept: application/json", `
+        "-H", "X-Ifeel-Offline-Queue: 1", `
+        "-F", "csrf=$handoverCsrf", `
+        "-F", "action=submit_tenant_handover", `
+        "-F", "handover_client_id=$handoverClientId", `
+        "$baseUrl/staff-expenses/"
+    $duplicateResponse = Get-Content -Raw -Encoding utf8 $responseBody | ConvertFrom-Json
+    $handoverMetadataAfterRetry = @(Get-ChildItem -LiteralPath (Join-Path $storagePath "tenant-handovers") -Recurse -Filter "metadata.json")
+    Assert-PortalTest ($duplicateHeaders -match "HTTP/1\.1 200" -and $duplicateResponse.duplicate -eq $true) "Offline retry was not recognized as an idempotent duplicate."
+    Assert-PortalTest ($handoverMetadataAfterRetry.Count -eq 1) "Offline retry created a duplicate tenant handover."
     $handoverDownloadStatus = Invoke-PortalCurl `
         "-o", $responseBody, `
         "-w", "%{http_code}", `

@@ -32,6 +32,7 @@ function portal_page_start(string $title, ?array $user = null): void
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#1769aa">
     <meta name="robots" content="noindex,nofollow,noarchive,nosnippet,noimageindex">
     <title><?= portal_h($fullTitle) ?></title>
     <link rel="icon" type="image/png" href="/assets/favicon.png">

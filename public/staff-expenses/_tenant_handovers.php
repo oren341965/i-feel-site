@@ -864,6 +864,38 @@ function portal_handover_verify_submission_token(string $token): void
     }
 }
 
+function portal_handover_is_async_submission(): bool
+{
+    return trim((string) ($_SERVER['HTTP_X_IFEEL_OFFLINE_QUEUE'] ?? '')) === '1';
+}
+
+function portal_handover_async_response(array $payload, int $status = 200): never
+{
+    http_response_code($status);
+    header('Content-Type: application/json; charset=UTF-8');
+    header('Cache-Control: no-store, private, max-age=0');
+    echo json_encode($payload, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+    exit;
+}
+
+function portal_new_handover_client_id(): string
+{
+    return bin2hex(random_bytes(16));
+}
+
+function portal_handover_existing_client_submission(string $clientId, string $technicianEmail): ?array
+{
+    foreach (portal_all_handovers() as $handover) {
+        if (
+            hash_equals((string) ($handover['client_id'] ?? ''), $clientId)
+            && portal_normalize_company_email((string) ($handover['technician']['email'] ?? '')) === $technicianEmail
+        ) {
+            return $handover;
+        }
+    }
+    return null;
+}
+
 function portal_handover_attachment_path(array $handover, string $key): ?array
 {
     $attachment = $handover['photos'][$key] ?? null;
@@ -1294,6 +1326,23 @@ function portal_handover_controller_location(string $value, string $other): stri
 function portal_handle_tenant_handover_post(array $user): void
 {
     portal_verify_csrf();
+    $clientId = strtolower(portal_post('handover_client_id', 64));
+    if (preg_match('/^[a-f0-9]{32}$/', $clientId) !== 1) {
+        throw new RuntimeException('מזהה השמירה המקומית אינו תקין. יש לרענן את טופס המסירה ולנסות שוב.');
+    }
+    $technicianEmail = portal_normalize_company_email((string) ($user['email'] ?? ''));
+    if ($technicianEmail === null) {
+        throw new RuntimeException('לא ניתן לזהות את כתובת הדוא״ל הארגונית של הטכנאי.');
+    }
+    $existing = portal_handover_existing_client_submission($clientId, $technicianEmail);
+    if ($existing !== null) {
+        $existingId = (string) ($existing['id'] ?? '');
+        if (portal_handover_is_async_submission()) {
+            portal_handover_async_response(['ok' => true, 'handoverId' => $existingId, 'duplicate' => true]);
+        }
+        portal_flash_set('success', 'המסירה כבר נשמרה ונשלחה. מספר מסירה: ' . $existingId);
+        portal_redirect(['tab' => 'handovers', 'submitted' => $existingId]);
+    }
     portal_handover_verify_submission_token(portal_post('handover_submission_token', 64));
     $groupId = portal_post('handover_project_id', 128);
     $itemId = portal_post('handover_resident_id', 20);
@@ -1401,10 +1450,6 @@ function portal_handle_tenant_handover_post(array $user): void
     }
 
     $profile = portal_employee_profile($user);
-    $technicianEmail = portal_normalize_company_email((string) ($user['email'] ?? ''));
-    if ($technicianEmail === null) {
-        throw new RuntimeException('לא ניתן לזהות את כתובת הדוא״ל הארגונית של הטכנאי.');
-    }
     $technicianName = trim((string) ($profile['name'] ?? $user['display_name'] ?? ''));
     if ($technicianName === '') {
         $technicianName = $technicianEmail;
@@ -1432,6 +1477,7 @@ function portal_handle_tenant_handover_post(array $user): void
         }
         $handover = [
             'id' => $handoverId,
+            'client_id' => $clientId,
             'created_at' => gmdate('c'),
             'updated_at' => gmdate('c'),
             'source' => [
@@ -1506,6 +1552,13 @@ function portal_handle_tenant_handover_post(array $user): void
                 ? 'המסירה נשמרה, התמונות אובטחו וההודעות נשלחו. מספר מסירה: ' . $handoverId
                 : 'המסירה והתמונות נשמרו, אך לפחות הודעת דוא״ל אחת דורשת טיפול ידני. מספר מסירה: ' . $handoverId
         );
+        if (portal_handover_is_async_submission()) {
+            portal_handover_async_response([
+                'ok' => true,
+                'handoverId' => $handoverId,
+                'notificationsSent' => $allSent,
+            ]);
+        }
         portal_redirect(['tab' => 'handovers', 'submitted' => $handoverId]);
     } catch (Throwable $error) {
         if (!is_file(portal_handover_file($handoverId))) {
@@ -1647,6 +1700,15 @@ function portal_render_tenant_handover_form(array $user, array $projects, string
         </div>
     </section>
 
+    <div class="handover-offline-status" data-handover-offline-status role="status" aria-live="polite">
+        <span class="handover-offline-status__dot" aria-hidden="true"></span>
+        <div>
+            <strong data-handover-offline-title>בודק זמינות לעבודה ללא קליטה…</strong>
+            <span data-handover-offline-message>לאחר פתיחת טופס דייר אחד בזמן חיבור, ניתן להמשיך למלא ולצלם גם ללא אינטרנט.</span>
+        </div>
+        <span class="handover-offline-status__queue" data-handover-offline-queue hidden></span>
+    </div>
+
     <?php portal_render_tenant_handover_search($search, $searchOutcome); ?>
 
     <form method="get" class="detail-card form-grid handover-selector" data-handover-selector autocomplete="off">
@@ -1680,7 +1742,16 @@ function portal_render_tenant_handover_form(array $user, array $projects, string
                     <?php endforeach; ?>
                 </select>
             </label>
-            <div class="field field--actions"><button type="submit" class="button button--secondary">טעינת טופס המסירה</button></div>
+            <div class="field field--actions handover-selector__actions">
+                <button type="submit" class="button button--secondary">טעינת טופס המסירה</button>
+                <button type="button" class="button button--ghost" data-handover-offline-prepare>הכנת הפרויקט לעבודה ללא קליטה</button>
+                <small class="form-note" data-handover-offline-prepare-note>הפעולה שומרת במכשיר זה רק את טפסי הדיירים בפרויקט שנבחר.</small>
+            </div>
+            <div hidden data-handover-offline-resident-list>
+                <?php foreach ($residents as $candidate): ?>
+                    <span data-handover-offline-resident-id="<?= portal_h($candidate['item_id']) ?>"></span>
+                <?php endforeach; ?>
+            </div>
         <?php endif; ?>
     </form>
 
@@ -1720,6 +1791,7 @@ function portal_render_tenant_handover_form(array $user, array $projects, string
         <input type="hidden" name="csrf" value="<?= portal_h(portal_csrf_token()) ?>">
         <input type="hidden" name="action" value="submit_tenant_handover">
         <input type="hidden" name="handover_submission_token" value="<?= portal_h(portal_handover_submission_token()) ?>">
+        <input type="hidden" name="handover_client_id" value="<?= portal_h(portal_new_handover_client_id()) ?>">
         <input type="hidden" name="handover_project_id" value="<?= portal_h($projectId) ?>">
         <input type="hidden" name="handover_resident_id" value="<?= portal_h($resident['item_id']) ?>">
         <div class="field--full handover-form-heading"><p class="eyebrow">שלב 2</p><h2>פרטי המסירה למילוי הטכנאי</h2><p>כל השדות בטופס הם שדות חובה. יש לצרף צילום קונטרולר וצילום נפרד לכל מפסק 9 שהוגדר.</p></div>
@@ -1839,7 +1911,7 @@ function portal_render_tenant_handover_form(array $user, array $projects, string
                 </fieldset>
             </template>
         </section>
-        <div class="field--full submit-bar"><div><strong>פעולה אחת: שמירה ושליחה</strong><span>הנתונים ייטענו שוב מ-Monday לפני השמירה.</span></div><button type="submit" class="button button--primary" data-handover-submit <?= $credentials['password'] === '' ? 'disabled' : '' ?>>סיום ושליחה</button></div>
+        <div class="field--full submit-bar"><div><strong>פעולה אחת: שמירה ושליחה</strong><span>ללא קליטה, הטופס והתמונות נשמרים במכשיר ומסתנכרנים אוטומטית לאחר חזרת האינטרנט.</span></div><button type="submit" class="button button--primary" data-handover-submit <?= $credentials['password'] === '' ? 'disabled' : '' ?>>סיום ושליחה</button></div>
     </form>
     <?php
 }
