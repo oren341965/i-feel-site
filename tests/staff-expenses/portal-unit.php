@@ -482,6 +482,18 @@ try {
         portal_handover_normalize_resident($wrongStatusSource, 'test-project', 'Test Project') === null,
         'A Monday item with the wrong status was exposed as a resident.'
     );
+    $mergedHandoverProjects = portal_handover_merge_project_groups([
+        ['id' => 'project-a', 'title' => 'אביטל 13 מאנדיי.xlsx', 'archived' => false, 'deleted' => false],
+        ['id' => 'project-b', 'title' => '  אביטל   13 ', 'archived' => false, 'deleted' => false],
+        ['id' => 'project-c', 'title' => 'אביטל 13', 'archived' => true, 'deleted' => false],
+    ]);
+    $mergedHandoverProject = $mergedHandoverProjects['project-a'] ?? [];
+    portal_test_expect(
+        count($mergedHandoverProjects) === 1
+        && ($mergedHandoverProject['title'] ?? '') === 'אביטל 13'
+        && ($mergedHandoverProject['group_ids'] ?? []) === ['project-a', 'project-b'],
+        'Duplicate Monday project groups were not consolidated.'
+    );
     $handoverRecipients = portal_handover_internal_recipients(['email' => 'worker@i-feel.co.il']);
     portal_test_expect(
         in_array('sagiv@i-feel.co.il', $handoverRecipients, true)

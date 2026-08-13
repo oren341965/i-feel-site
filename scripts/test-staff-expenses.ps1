@@ -204,12 +204,20 @@ try {
     Assert-PortalTest ($html -match 'id="camera-receipts"[^>]*capture="environment"') "Mobile receipt camera input is missing."
     Assert-PortalTest ($html -match '<option value="purchases">') "Travel purchases category is missing."
 
+    Invoke-PortalCurl "-o", $responseBody, "-b", $employeeCookies, "$baseUrl/staff-expenses/?tab=handovers" | Out-Null
+    $handoverLandingHtml = Get-Content -Raw -Encoding utf8 $responseBody
+    Assert-PortalTest ($handoverLandingHtml -match 'class="detail-card handover-awaiting-card"') "Tenant handover technician-step preview was not rendered before resident selection."
+    Assert-PortalTest ($handoverLandingHtml -match 'class="handover-field-preview"') "Tenant handover technician fields were not explained on the landing state."
+    Assert-PortalTest (([regex]::Matches($handoverLandingHtml, 'value="test-project"')).Count -eq 1) "The canonical Monday project was not rendered exactly once."
+    Assert-PortalTest ($handoverLandingHtml -notmatch 'value="duplicate-project"') "Duplicate Monday project groups were rendered more than once."
+
     Invoke-PortalCurl `
         "-o", $responseBody, `
         "-b", $employeeCookies, `
         "$baseUrl/staff-expenses/?tab=handovers&handover_project=test-project&handover_building=2&handover_resident=1001" | Out-Null
     $handoverHtml = Get-Content -Raw -Encoding utf8 $responseBody
     Assert-PortalTest ($handoverHtml -match 'name="action" value="submit_tenant_handover"') "Tenant handover form was not rendered."
+    Assert-PortalTest ($handoverHtml -match 'name="handover_resident"[^>]*data-handover-autosubmit') "Resident selection does not open the technician form automatically."
     Assert-PortalTest ($handoverHtml -match 'resident@example\.com') "Authenticated handover form omitted the Monday resident email."
     Assert-PortalTest ($handoverHtml -match '0501234567') "Authenticated handover form omitted the derived initial password."
     Assert-PortalTest ($handoverHtml -notmatch 'name="handover_resident_email"|name="handover_resident_phone"') "Resident PII was trusted through client-editable fields."
