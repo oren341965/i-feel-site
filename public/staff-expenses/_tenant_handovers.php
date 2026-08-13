@@ -1143,20 +1143,22 @@ function portal_handle_tenant_handover_post(array $user): void
     $shutterSwitchLocation = portal_post('handover_shutter_switch_location', 300);
     $captiveShutter24v = portal_post('handover_captive_shutter_24v', 40);
     $hvacConnection = portal_post('handover_hvac_connection', 40);
+    $boiler = portal_post('handover_boiler', 500);
+    $notes = portal_post('handover_notes', 3000);
     if (!in_array($ready, ['delivered_with_app_link', 'completed_without_app_link', 'ready_for_delivery', 'not_ready_return_required'], true)) {
         throw new RuntimeException('יש לבחור סטטוס מסירה תקין.');
     }
     if (!portal_valid_date($date)) {
         throw new RuntimeException('תאריך המסירה אינו תקין.');
     }
-    if ($controllerLocationKey !== '' && $controllerLocation === '') {
-        throw new RuntimeException('יש לפרט את מיקום הקונטרולר.');
+    if (!in_array($controllerLocationKey, ['communications_cabinet', 'developer_rep', 'ifeel', 'other'], true) || $controllerLocation === '') {
+        throw new RuntimeException('יש לבחור ולפרט את מיקום הקונטרולר.');
     }
-    if ($controller !== '' && !in_array($controller, ['raspberry_pi', 'ava_hab'], true)) {
-        throw new RuntimeException('סוג הקונטרולר אינו תקין.');
+    if (!in_array($controller, ['raspberry_pi', 'ava_hab'], true)) {
+        throw new RuntimeException('יש לבחור סוג קונטרולר תקין.');
     }
-    if ($icons !== '' && !in_array($icons, ['done', 'not_done', 'partial'], true)) {
-        throw new RuntimeException('סטטוס האייקונים אינו תקין.');
+    if (!in_array($icons, ['done', 'not_done', 'partial'], true)) {
+        throw new RuntimeException('יש לבחור סטטוס אייקונים תקין.');
     }
     if (!ctype_digit($switch9CountRaw) || (int) $switch9CountRaw < 1 || (int) $switch9CountRaw > 50) {
         throw new RuntimeException('יש להזין כמות תקינה של מפסקי 9 (1 עד 50).');
@@ -1193,6 +1195,12 @@ function portal_handle_tenant_handover_post(array $user): void
     }
     if (!in_array($hvacConnection, ['none', 'ir', 'dry_contact_panel_9', 'micromodule'], true)) {
         throw new RuntimeException('יש לבחור את סוג החיבור למזגן.');
+    }
+    if ($boiler === '') {
+        throw new RuntimeException('יש למלא את פרטי הדוד.');
+    }
+    if ($notes === '') {
+        throw new RuntimeException('יש למלא את שדה ההערות. אם אין הערות, ניתן לכתוב "אין".');
     }
 
     $profile = portal_employee_profile($user);
@@ -1238,8 +1246,8 @@ function portal_handle_tenant_handover_post(array $user): void
                 'shutter_switch_location' => $shutterSwitchLocation,
                 'captive_shutter_24v' => $captiveShutter24v,
                 'hvac_connection' => $hvacConnection,
-                'boiler' => portal_post('handover_boiler', 500),
-                'notes' => portal_post('handover_notes', 3000),
+                'boiler' => $boiler,
+                'notes' => $notes,
             ],
             'technician' => [
                 'name' => portal_substr($technicianName, 0, 180),
@@ -1499,7 +1507,7 @@ function portal_render_tenant_handover_form(array $user, array $projects, string
         <input type="hidden" name="handover_submission_token" value="<?= portal_h(portal_handover_submission_token()) ?>">
         <input type="hidden" name="handover_project_id" value="<?= portal_h($projectId) ?>">
         <input type="hidden" name="handover_resident_id" value="<?= portal_h($resident['item_id']) ?>">
-        <div class="field--full handover-form-heading"><p class="eyebrow">שלב 2</p><h2>פרטי המסירה למילוי הטכנאי</h2><p>מלאו את מצב ההתקנה, צרפו את שני הצילומים וסיימו בפעולת שמירה ושליחה אחת.</p></div>
+        <div class="field--full handover-form-heading"><p class="eyebrow">שלב 2</p><h2>פרטי המסירה למילוי הטכנאי</h2><p>כל השדות בטופס הם שדות חובה. מלאו את מצב ההתקנה, צרפו את שני הצילומים וסיימו בפעולת שמירה ושליחה אחת.</p></div>
         <label class="field">
             <span>סטטוס המסירה <b>*</b></span>
             <select name="handover_ready" required>
@@ -1512,14 +1520,14 @@ function portal_render_tenant_handover_form(array $user, array $projects, string
         </label>
         <label class="field"><span>תאריך מסירה <b>*</b></span><input type="date" name="handover_date" value="<?= portal_h(date('Y-m-d')) ?>" required></label>
         <label class="field">
-            <span>מיקום קונטרולר</span>
-            <select name="handover_controller_location" data-handover-location>
+            <span>מיקום קונטרולר <b>*</b></span>
+            <select name="handover_controller_location" data-handover-location required>
                 <option value="">בחירה</option><option value="communications_cabinet">ארון תקשורת</option><option value="developer_rep">אחראי הפרויקט מטעם היזם</option><option value="ifeel">בחברת I Feel</option><option value="other">אחר</option>
             </select>
         </label>
         <label class="field" data-handover-location-other hidden><span>מיקום אחר <b>*</b></span><input type="text" name="handover_controller_location_other" maxlength="300"></label>
-        <label class="field"><span>קונטרולר</span><select name="handover_controller"><option value="">בחירה</option><option value="raspberry_pi">רספברי פיי</option><option value="ava_hab">AVA-HAB</option></select></label>
-        <label class="field"><span>אייקונים במפסק</span><select name="handover_icons"><option value="">בחירה</option><option value="done">בוצע</option><option value="not_done">לא בוצע</option><option value="partial">חלקי</option></select></label>
+        <label class="field"><span>קונטרולר <b>*</b></span><select name="handover_controller" required><option value="">בחירה</option><option value="raspberry_pi">רספברי פיי</option><option value="ava_hab">AVA-HAB</option></select></label>
+        <label class="field"><span>אייקונים במפסק <b>*</b></span><select name="handover_icons" required><option value="">בחירה</option><option value="done">בוצע</option><option value="not_done">לא בוצע</option><option value="partial">חלקי</option></select></label>
         <label class="field">
             <span>כמות מפסקי 9 <b>*</b></span>
             <input type="number" name="handover_switch_9_count" value="1" min="1" max="50" step="1" inputmode="numeric" data-handover-switch-9-count required>
@@ -1571,15 +1579,15 @@ function portal_render_tenant_handover_form(array $user, array $projects, string
                 <option value="micromodule">חיבור באמצעות מיקרומודול</option>
             </select>
         </label>
-        <label class="field"><span>דוד</span><input type="text" name="handover_boiler" maxlength="500"></label>
-        <label class="field field--full"><span>הערות</span><textarea name="handover_notes" rows="4" maxlength="3000"></textarea></label>
-        <div class="field"><span>שם הטכנאי</span><input type="text" value="<?= portal_h($profile['name'] ?? $user['display_name'] ?? '') ?>" readonly></div>
-        <div class="field"><span>דוא״ל הטכנאי</span><input type="email" value="<?= portal_h($user['email'] ?? '') ?>" readonly dir="ltr"></div>
+        <label class="field"><span>דוד <b>*</b></span><input type="text" name="handover_boiler" maxlength="500" required></label>
+        <label class="field field--full"><span>הערות <b>*</b></span><textarea name="handover_notes" rows="4" maxlength="3000" placeholder="אם אין הערות, יש לכתוב: אין" required></textarea></label>
+        <div class="field"><span>שם הטכנאי <b>*</b></span><input type="text" value="<?= portal_h($profile['name'] ?? $user['display_name'] ?? '') ?>" readonly></div>
+        <div class="field"><span>דוא״ל הטכנאי <b>*</b></span><input type="email" value="<?= portal_h($user['email'] ?? '') ?>" readonly dir="ltr"></div>
         <div class="field field--full">
             <span>שני צילומי חובה <b>*</b></span>
             <div class="receipt-actions">
-                <label class="receipt-action receipt-action--camera"><span class="receipt-action__icon" aria-hidden="true">📷</span><strong>צילום הקונטרולר</strong><input class="receipt-input" type="file" name="handover_controller_photo" accept="image/*" capture="environment" required></label>
-                <label class="receipt-action receipt-action--camera"><span class="receipt-action__icon" aria-hidden="true">📷</span><strong>צילום מפסק 9 עם האייקונים</strong><input class="receipt-input" type="file" name="handover_switch_photo" accept="image/*" capture="environment" required></label>
+                <label class="receipt-action receipt-action--camera"><span class="receipt-action__icon" aria-hidden="true">📷</span><strong>צילום הקונטרולר *</strong><input class="receipt-input" type="file" name="handover_controller_photo" accept="image/*" capture="environment" required></label>
+                <label class="receipt-action receipt-action--camera"><span class="receipt-action__icon" aria-hidden="true">📷</span><strong>צילום מפסק 9 עם האייקונים *</strong><input class="receipt-input" type="file" name="handover_switch_photo" accept="image/*" capture="environment" required></label>
             </div>
             <p class="form-note">התמונות נשמרות מחוץ ל-public_html ומצורפות רק למייל הפנימי.</p>
         </div>

@@ -273,6 +273,7 @@ try {
     Assert-PortalTest ($handoverHtml -match '0501234567') "Authenticated handover form omitted the derived initial password."
     Assert-PortalTest ($handoverHtml -notmatch 'name="handover_resident_email"|name="handover_resident_phone"') "Resident PII was trusted through client-editable fields."
     Assert-PortalTest ($handoverHtml -match 'name="handover_ready"[^>]*required' -and $handoverHtml -match 'value="delivered_with_app_link"' -and $handoverHtml -match 'value="completed_without_app_link"' -and $handoverHtml -match 'value="ready_for_delivery"' -and $handoverHtml -match 'value="not_ready_return_required"') "Delivery status choices were not rendered."
+    Assert-PortalTest ($handoverHtml -match 'name="handover_controller_location"[^>]*required' -and $handoverHtml -match 'name="handover_controller"[^>]*required' -and $handoverHtml -match 'name="handover_icons"[^>]*required') "Controller and icon requirements were not marked mandatory."
     Assert-PortalTest ($handoverHtml -match 'name="handover_switch_9_count"[^>]*min="1"[^>]*max="50"[^>]*required') "Switch 9 quantity field was not rendered."
     Assert-PortalTest ($handoverHtml -match 'name="handover_switch_9_configuration_1"[^>]*required' -and $handoverHtml -match 'value="shutter_2_light_2"') "Per-unit switch 9 configuration choices were not rendered."
     Assert-PortalTest ($handoverHtml -match 'name="handover_switch_9_location_1"[^>]*required') "Per-unit switch 9 location field was not rendered."
@@ -280,6 +281,9 @@ try {
     Assert-PortalTest ($handoverHtml -match 'name="handover_shutter_switch_count"[^>]*min="0"[^>]*max="99"[^>]*required' -and $handoverHtml -match 'name="handover_shutter_switch_location"') "Shutter switch quantity and location fields were not rendered."
     Assert-PortalTest ($handoverHtml -match 'name="handover_captive_shutter_24v"[^>]*required' -and $handoverHtml -match 'value="not_in_project"') "Captive shutter 24V choices were not rendered."
     Assert-PortalTest ($handoverHtml -match 'name="handover_hvac_connection"[^>]*required' -and $handoverHtml -match 'value="none"' -and $handoverHtml -match 'value="ir"' -and $handoverHtml -match 'value="dry_contact_panel_9"' -and $handoverHtml -match 'value="micromodule"') "HVAC connection choices were not rendered."
+    Assert-PortalTest ($handoverHtml -match 'name="handover_boiler"[^>]*required' -and $handoverHtml -match 'name="handover_notes"[^>]*required') "Boiler and notes requirements were not marked mandatory."
+    $mandatoryPhotoLabels = [regex]::Matches($handoverHtml, '<label class="receipt-action receipt-action--camera">.*?<strong>[^<]+ \*</strong>', [Text.RegularExpressions.RegexOptions]::Singleline)
+    Assert-PortalTest ($mandatoryPhotoLabels.Count -eq 2) "Mandatory photo asterisks were not rendered."
     Assert-PortalTest ($handoverHtml -notmatch 'name="handover_switch_9"|name="handover_blinds"') "Legacy free-text switch fields are still rendered."
     $handoverCsrf = Get-CsrfFromHtml $handoverHtml
     $handoverTokenMatch = [regex]::Match($handoverHtml, 'name="handover_submission_token"\s+value="([a-f0-9]{64})"')
