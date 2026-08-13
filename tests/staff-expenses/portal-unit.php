@@ -555,6 +555,21 @@ try {
         && portal_handover_hvac_connection_label('micromodule') === 'חיבור באמצעות מיקרומודול',
         'Structured handover switch or HVAC labels are wrong.'
     );
+    $switch9EmailLines = portal_handover_switch_9_email_lines([
+        'switch_9_count' => 2,
+        'switch_9_units' => [
+            ['configuration' => 'shutter_2_light_2', 'location' => 'כניסה'],
+            ['configuration' => 'light_9', 'location' => 'סלון'],
+        ],
+    ]);
+    portal_test_expect(
+        $switch9EmailLines === [
+            'כמות מפסקי 9: 2',
+            'מפסק 9 מס׳ 1: 2 תריסים ו-2 תאורות | מיקום: כניסה',
+            'מפסק 9 מס׳ 2: 9 לתאורה בלבד | מיקום: סלון',
+        ],
+        'Per-unit switch 9 email details are wrong.'
+    );
     $workStats = portal_work_report_stats([
         ['type' => 'installation', 'outcome' => 'completed', 'employee' => ['name' => 'Test Worker', 'email' => 'worker@i-feel.co.il'], 'attachments' => [[], []]],
         ['type' => 'service', 'outcome' => 'follow_up', 'employee' => ['name' => 'Test Worker', 'email' => 'worker@i-feel.co.il'], 'attachments' => [[]]],

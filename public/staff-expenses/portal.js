@@ -178,6 +178,55 @@
     updateHandoverLocation();
 
     const handoverForm = document.querySelector('[data-handover-form]');
+    const switch9CountInput = handoverForm?.querySelector('[data-handover-switch-9-count]');
+    const switch9Units = handoverForm?.querySelector('[data-handover-switch-9-units]');
+    const switch9Template = handoverForm?.querySelector('[data-handover-switch-9-template]');
+    const updateSwitch9Units = () => {
+        if (!switch9CountInput || !switch9Units || !switch9Template) return;
+        const parsedCount = Number.parseInt(switch9CountInput.value, 10);
+        if (!Number.isFinite(parsedCount)) return;
+        const count = Math.max(1, Math.min(50, parsedCount));
+        if (String(count) !== switch9CountInput.value) switch9CountInput.value = String(count);
+
+        let units = Array.from(switch9Units.querySelectorAll('[data-handover-switch-9-unit]'));
+        while (units.length < count) {
+            const unit = switch9Template.content.firstElementChild?.cloneNode(true);
+            if (!unit) break;
+            switch9Units.appendChild(unit);
+            units.push(unit);
+        }
+        while (units.length > count) {
+            units.pop()?.remove();
+        }
+        units.forEach((unit, index) => {
+            const number = index + 1;
+            const legend = unit.querySelector('[data-handover-switch-9-legend]');
+            const configuration = unit.querySelector('[data-handover-switch-9-configuration]');
+            const location = unit.querySelector('[data-handover-switch-9-location]');
+            if (legend) legend.textContent = `מפסק 9 מס׳ ${number}`;
+            if (configuration) configuration.name = `handover_switch_9_configuration_${number}`;
+            if (location) location.name = `handover_switch_9_location_${number}`;
+        });
+    };
+    switch9CountInput?.addEventListener('input', updateSwitch9Units);
+    switch9CountInput?.addEventListener('change', updateSwitch9Units);
+    updateSwitch9Units();
+
+    handoverForm?.querySelectorAll('[data-handover-component-count]').forEach((countInput) => {
+        const component = countInput.dataset.handoverComponentCount;
+        const locationField = handoverForm.querySelector(`[data-handover-component-location="${component}"]`);
+        const locationInput = locationField?.querySelector('input');
+        const updateComponentLocation = () => {
+            if (!locationField || !locationInput) return;
+            const hasComponents = Number.parseInt(countInput.value, 10) > 0;
+            locationField.hidden = !hasComponents;
+            locationInput.required = hasComponents;
+            if (!hasComponents) locationInput.value = '';
+        };
+        countInput.addEventListener('input', updateComponentLocation);
+        updateComponentLocation();
+    });
+
     const handoverSubmit = handoverForm?.querySelector('[data-handover-submit]');
     handoverForm?.addEventListener('submit', (event) => {
         const photoInputs = Array.from(handoverForm.querySelectorAll('input[type="file"]'));
