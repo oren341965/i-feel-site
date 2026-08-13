@@ -539,6 +539,13 @@ try {
         'Custom controller location was not normalized.'
     );
     portal_test_expect(
+        portal_handover_ready_label('delivered_with_app_link') === 'נמסר עם קישור לאפליקציה'
+        && portal_handover_ready_label('completed_without_app_link') === 'הסתיים ללא קישור לאפליקציה'
+        && portal_handover_ready_label('ready_for_delivery') === 'מוכן למסירה'
+        && portal_handover_ready_label('not_ready_return_required') === 'לא מוכן — יש לחזור',
+        'Tenant handover delivery status labels are wrong.'
+    );
+    portal_test_expect(
         portal_handover_switch_9_label('shutter_2_light_2') === '2 תריסים ו-2 תאורות'
         && portal_handover_captive_shutter_24v_label('installed_activated') === 'יש והופעל'
         && portal_handover_captive_shutter_24v_label('not_in_project') === 'אין בפרויקט'

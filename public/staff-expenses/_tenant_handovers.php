@@ -928,7 +928,7 @@ function portal_handover_internal_email_body(array $handover): string
         'שם משתמש: ' . (string) ($credentials['username'] ?? ''),
         'סיסמה ראשונית: ' . (string) ($credentials['password'] ?? ''),
         '',
-        'מוכן לפרוטוקול: ' . portal_handover_ready_label((string) ($details['ready'] ?? '')),
+        'סטטוס המסירה: ' . portal_handover_ready_label((string) ($details['ready'] ?? '')),
         'תאריך מסירה: ' . (string) ($details['date'] ?? ''),
         'מיקום קונטרולר: ' . (string) ($details['controller_location'] ?? ''),
         'קונטרולר: ' . portal_handover_controller_label((string) ($details['controller'] ?? '')),
@@ -1027,7 +1027,16 @@ function portal_handover_send_resident(array $handover): array
 
 function portal_handover_ready_label(string $value): string
 {
-    return ['ready' => 'מוכן', 'not_ready' => 'לא מוכן', 'delivered' => 'נמסר'][$value] ?? '-';
+    return [
+        'delivered_with_app_link' => 'נמסר עם קישור לאפליקציה',
+        'completed_without_app_link' => 'הסתיים ללא קישור לאפליקציה',
+        'ready_for_delivery' => 'מוכן למסירה',
+        'not_ready_return_required' => 'לא מוכן — יש לחזור',
+        // Backward-compatible labels for handovers stored before the status list was expanded.
+        'ready' => 'מוכן',
+        'not_ready' => 'לא מוכן',
+        'delivered' => 'נמסר',
+    ][$value] ?? '-';
 }
 
 function portal_handover_controller_label(string $value): string
@@ -1113,8 +1122,8 @@ function portal_handle_tenant_handover_post(array $user): void
     $shutterSwitchLocation = portal_post('handover_shutter_switch_location', 300);
     $captiveShutter24v = portal_post('handover_captive_shutter_24v', 40);
     $hvacConnection = portal_post('handover_hvac_connection', 40);
-    if ($ready !== '' && !in_array($ready, ['ready', 'not_ready', 'delivered'], true)) {
-        throw new RuntimeException('סטטוס המוכנות אינו תקין.');
+    if (!in_array($ready, ['delivered_with_app_link', 'completed_without_app_link', 'ready_for_delivery', 'not_ready_return_required'], true)) {
+        throw new RuntimeException('יש לבחור סטטוס מסירה תקין.');
     }
     if (!portal_valid_date($date)) {
         throw new RuntimeException('תאריך המסירה אינו תקין.');
@@ -1425,7 +1434,7 @@ function portal_render_tenant_handover_form(array $user, array $projects, string
             <h2>פרטי המסירה למילוי הטכנאי</h2>
             <p>לאחר בחירת פרויקט, בניין ודירה ייפתח כאן מיד הטופס המלא. אין צורך ללחוץ על כפתור נוסף.</p>
             <div class="handover-field-preview" aria-label="השדות שיופיעו בטופס">
-                <span>מוכן לפרוטוקול</span><span>תאריך מסירה</span><span>מיקום וסוג קונטרולר</span>
+                <span>סטטוס המסירה</span><span>תאריך מסירה</span><span>מיקום וסוג קונטרולר</span>
                 <span>תצורת ומיקום מפסק 9</span><span>מפסקי תאורה ותריס</span><span>מפסק 24V לתריס כלוא</span><span>חיבור למזגן</span>
                 <span>דוד והערות</span>
                 <span>פרטי הטכנאי</span><span>שני צילומי חובה</span><span>סיום ושליחה</span>
@@ -1455,8 +1464,14 @@ function portal_render_tenant_handover_form(array $user, array $projects, string
         <input type="hidden" name="handover_resident_id" value="<?= portal_h($resident['item_id']) ?>">
         <div class="field--full handover-form-heading"><p class="eyebrow">שלב 2</p><h2>פרטי המסירה למילוי הטכנאי</h2><p>מלאו את מצב ההתקנה, צרפו את שני הצילומים וסיימו בפעולת שמירה ושליחה אחת.</p></div>
         <label class="field">
-            <span>מוכן לפרוטוקול</span>
-            <select name="handover_ready"><option value="">בחירה</option><option value="ready">מוכן</option><option value="not_ready">לא מוכן</option><option value="delivered">נמסר</option></select>
+            <span>סטטוס המסירה <b>*</b></span>
+            <select name="handover_ready" required>
+                <option value="">בחירה</option>
+                <option value="delivered_with_app_link">נמסר עם קישור לאפליקציה</option>
+                <option value="completed_without_app_link">הסתיים ללא קישור לאפליקציה</option>
+                <option value="ready_for_delivery">מוכן למסירה</option>
+                <option value="not_ready_return_required">לא מוכן — יש לחזור</option>
+            </select>
         </label>
         <label class="field"><span>תאריך מסירה <b>*</b></span><input type="date" name="handover_date" value="<?= portal_h(date('Y-m-d')) ?>" required></label>
         <label class="field">
