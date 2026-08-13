@@ -158,4 +158,48 @@
             submitButton.textContent = 'שומר ומעלה מסמכים...';
         }
     });
+
+    const handoverSelector = document.querySelector('[data-handover-selector]');
+    handoverSelector?.querySelectorAll('[data-handover-autosubmit]').forEach((control) => {
+        control.addEventListener('change', () => handoverSelector.requestSubmit());
+    });
+
+    const handoverLocation = document.querySelector('[data-handover-location]');
+    const handoverLocationOther = document.querySelector('[data-handover-location-other]');
+    const handoverLocationOtherInput = handoverLocationOther?.querySelector('input');
+    const updateHandoverLocation = () => {
+        if (!handoverLocation || !handoverLocationOther || !handoverLocationOtherInput) return;
+        const isOther = handoverLocation.value === 'other';
+        handoverLocationOther.hidden = !isOther;
+        handoverLocationOtherInput.required = isOther;
+        if (!isOther) handoverLocationOtherInput.value = '';
+    };
+    handoverLocation?.addEventListener('change', updateHandoverLocation);
+    updateHandoverLocation();
+
+    const handoverForm = document.querySelector('[data-handover-form]');
+    const handoverSubmit = handoverForm?.querySelector('[data-handover-submit]');
+    handoverForm?.addEventListener('submit', (event) => {
+        const photoInputs = Array.from(handoverForm.querySelectorAll('input[type="file"]'));
+        const photos = photoInputs.map((input) => input.files?.[0]).filter(Boolean);
+        if (photos.length !== 2) {
+            event.preventDefault();
+            window.alert('חובה לצרף צילום קונטרולר וצילום מפסק 9.');
+            return;
+        }
+        if (photos.some((file) => !file.type.startsWith('image/'))) {
+            event.preventDefault();
+            window.alert('שני הקבצים חייבים להיות תמונות.');
+            return;
+        }
+        if (photos.some((file) => file.size > 12 * 1024 * 1024)) {
+            event.preventDefault();
+            window.alert('כל תמונה חייבת להיות קטנה מ-12MB.');
+            return;
+        }
+        if (handoverSubmit) {
+            handoverSubmit.disabled = true;
+            handoverSubmit.textContent = 'שומר ושולח...';
+        }
+    });
 })();

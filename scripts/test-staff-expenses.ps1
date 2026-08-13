@@ -18,6 +18,7 @@ $replayCookies = Join-Path $testRoot "magic-replay-cookies.txt"
 $adminCookies = Join-Path $testRoot "admin-cookies.txt"
 $responseBody = Join-Path $testRoot "response-body.txt"
 $fixture = Join-Path $repositoryRoot "tests\staff-expenses\fixtures\receipt.pdf"
+$handoverImage = Join-Path $repositoryRoot "public\assets\ifeel-logo.png"
 $router = "tests\staff-expenses\router.php"
 $publicRoot = "public"
 $process = $null
@@ -119,6 +120,10 @@ try {
     Assert-PortalTest ($headers -notmatch "(?im)^Location:") "Login page returned an unexpected redirect."
     Assert-PortalTest ($headers -match "(?im)^Content-Security-Policy:") "CSP header is missing."
     Assert-PortalTest ($html -match 'name="action" value="request_email_code"') "Email login form was not rendered."
+    Invoke-PortalCurl "-o", $responseBody, "$baseUrl/staff-expenses/?tab=handovers&handover_project=test-project&handover_resident=1001" | Out-Null
+    $privateHtml = Get-Content -Raw -Encoding utf8 $responseBody
+    Assert-PortalTest ($privateHtml -match 'name="action" value="request_email_code"') "Unauthenticated handover request did not require login."
+    Assert-PortalTest ($privateHtml -notmatch 'resident@example\.com|050-123-4567') "Resident PII leaked before employee authentication."
     $csrf = Get-CsrfFromHtml $html
 
     Invoke-PortalCurl `
@@ -198,6 +203,59 @@ try {
     Assert-PortalTest ($html -notmatch 'name="department"') "Department field was not removed."
     Assert-PortalTest ($html -match 'id="camera-receipts"[^>]*capture="environment"') "Mobile receipt camera input is missing."
     Assert-PortalTest ($html -match '<option value="purchases">') "Travel purchases category is missing."
+
+    Invoke-PortalCurl `
+        "-o", $responseBody, `
+        "-b", $employeeCookies, `
+        "$baseUrl/staff-expenses/?tab=handovers&handover_project=test-project&handover_building=2&handover_resident=1001" | Out-Null
+    $handoverHtml = Get-Content -Raw -Encoding utf8 $responseBody
+    Assert-PortalTest ($handoverHtml -match 'name="action" value="submit_tenant_handover"') "Tenant handover form was not rendered."
+    Assert-PortalTest ($handoverHtml -match 'resident@example\.com') "Authenticated handover form omitted the Monday resident email."
+    Assert-PortalTest ($handoverHtml -match '0501234567') "Authenticated handover form omitted the derived initial password."
+    Assert-PortalTest ($handoverHtml -notmatch 'name="handover_resident_email"|name="handover_resident_phone"') "Resident PII was trusted through client-editable fields."
+    $handoverCsrf = Get-CsrfFromHtml $handoverHtml
+    $handoverTokenMatch = [regex]::Match($handoverHtml, 'name="handover_submission_token"\s+value="([a-f0-9]{64})"')
+    Assert-PortalTest $handoverTokenMatch.Success "Tenant handover replay-protection token was not rendered."
+    $handoverToken = $handoverTokenMatch.Groups[1].Value
+
+    $headers = Invoke-PortalCurl `
+        "-D", "-", `
+        "-o", $responseBody, `
+        "-b", $employeeCookies, `
+        "-c", $employeeCookies, `
+        "-F", "csrf=$handoverCsrf", `
+        "-F", "action=submit_tenant_handover", `
+        "-F", "handover_submission_token=$handoverToken", `
+        "-F", "handover_project_id=test-project", `
+        "-F", "handover_resident_id=1001", `
+        "-F", "handover_ready=delivered", `
+        "-F", "handover_date=2026-08-13", `
+        "-F", "handover_controller_location=communications_cabinet", `
+        "-F", "handover_controller=raspberry_pi", `
+        "-F", "handover_icons=done", `
+        "-F", "handover_switch_9=Completed", `
+        "-F", "handover_blinds=Completed", `
+        "-F", "handover_boiler=Completed", `
+        "-F", "handover_notes=Integration test", `
+        "-F", "handover_controller_photo=@$handoverImage;type=image/png", `
+        "-F", "handover_switch_photo=@$handoverImage;type=image/png", `
+        "$baseUrl/staff-expenses/"
+    Assert-PortalTest ($headers -match "HTTP/1\.1 303") "Tenant handover submission was not accepted."
+    $handoverMetadata = @(Get-ChildItem -LiteralPath (Join-Path $storagePath "tenant-handovers") -Recurse -Filter "metadata.json")
+    Assert-PortalTest ($handoverMetadata.Count -eq 1) "Expected one stored tenant handover."
+    $handoverRecord = Get-Content -Raw -Encoding utf8 $handoverMetadata[0].FullName | ConvertFrom-Json
+    Assert-PortalTest ($handoverRecord.source.item_id -eq "1001") "Tenant handover did not retain the verified Monday item ID."
+    Assert-PortalTest ($handoverRecord.credentials.password -eq "0501234567") "Tenant handover credentials were not stored correctly."
+    Assert-PortalTest (@($handoverRecord.photos.PSObject.Properties).Count -eq 2) "Tenant handover did not preserve both required photos."
+    Assert-PortalTest ($handoverRecord.notifications.resident.status -eq "sent") "Resident handover email status was not recorded."
+    Assert-PortalTest ($handoverRecord.notifications.internal.failed.Count -eq 0) "Internal handover email status was not recorded as successful."
+    $handoverDownloadStatus = Invoke-PortalCurl `
+        "-o", $responseBody, `
+        "-w", "%{http_code}", `
+        "-b", $employeeCookies, `
+        "$baseUrl/staff-expenses/?action=handover_download&handover_id=$($handoverRecord.id)&file=controller"
+    Assert-PortalTest ($handoverDownloadStatus -eq "200") "Authenticated employee could not open a protected handover photo."
+
     $csrf = Get-CsrfFromHtml $html
 
     $headers = Invoke-PortalCurl `
@@ -219,7 +277,7 @@ try {
         "$baseUrl/staff-expenses/"
     Assert-PortalTest ($headers -match "HTTP/1\.1 303") "Vehicle report was not accepted."
 
-    $metadataFiles = @(Get-ChildItem -LiteralPath $storagePath -Recurse -Filter "metadata.json")
+    $metadataFiles = @(Get-ChildItem -LiteralPath (Join-Path $storagePath "records") -Recurse -Filter "metadata.json")
     Assert-PortalTest ($metadataFiles.Count -eq 1) "Expected one stored vehicle report."
     $vehicleRecord = Get-Content -Raw -Encoding utf8 $metadataFiles[0].FullName | ConvertFrom-Json
     Assert-PortalTest ($vehicleRecord.employee.email -eq "worker@i-feel.co.il") "Verified email was not bound to the report."
@@ -333,7 +391,7 @@ try {
         "$baseUrl/staff-expenses/"
     Assert-PortalTest ($headers -match "HTTP/1\.1 303") "Travel report was not accepted."
 
-    $metadataFiles = @(Get-ChildItem -LiteralPath $storagePath -Recurse -Filter "metadata.json")
+    $metadataFiles = @(Get-ChildItem -LiteralPath (Join-Path $storagePath "records") -Recurse -Filter "metadata.json")
     Assert-PortalTest ($metadataFiles.Count -eq 2) "Expected two stored reports."
     $travelRecord = $metadataFiles |
         ForEach-Object { Get-Content -Raw -Encoding utf8 $_.FullName | ConvertFrom-Json } |

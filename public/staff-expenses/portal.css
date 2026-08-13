@@ -201,6 +201,12 @@ input[readonly] { background: #f3f5f8; }
 .vehicle-deadline .status { width: fit-content; }
 .vehicle-card__meta { margin: 0; }
 .tab--vehicle { background: #eef8f2; color: #17653a; border-color: #b8dfc8; }
+.tab--handover { background: #fff7e8; color: #7a4b00; border-color: #efd39a; }
+.handover-selector { grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); align-items: end; }
+.handover-selector .field--actions { align-self: end; }
+.handover-resident-card { border-color: #efd39a; background: linear-gradient(135deg, #fffdf8, #fff8e8); }
+.handover-resident-card .credential-item { border-color: #e6c16f; background: #fffaf0; }
+.handover-resident-card .credential-item strong { font-family: Consolas, "Courier New", monospace; }
 .vehicle-hero { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 18px; margin-bottom: 18px; padding: 24px; border: 1px solid #b8dfc8; border-radius: 18px; background: linear-gradient(135deg, #f7fff9, #edf8ff); box-shadow: var(--shadow); }
 .vehicle-hero h2 { margin: 2px 0 8px; font-size: 1.5rem; }
 .vehicle-hero__stats { grid-column: 1 / -1; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; }

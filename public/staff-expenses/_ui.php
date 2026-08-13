@@ -46,7 +46,7 @@ function portal_page_start(string $title, ?array $user = null): void
                 <img src="/assets/ifeel-logo.png" alt="I Feel" class="brand-logo">
                 <div>
                     <strong>אזור עובדים</strong>
-                    <span>דיווח הוצאות ומסמכים</span>
+                    <span>הוצאות, מסמכים ומסירות</span>
                 </div>
             </div>
             <div class="user-block">
