@@ -28,6 +28,7 @@
 | מסך שליטה — Control4 ו-Home Assistant | בית חכם ו-KNX | `v2Bj4gMtvUs` | — |
 | בקרת מבנה BMS במשרדי ישקר בגוש תפן | BMS | `nxX_o_RmnDc` | `/structure-control/projects/iscar/` |
 | חיבור מנעול חכם במגע יבש למערכת הבית החכם | BMS | `UmMtj2TJpf0` | — |
+| הטמעה אדריכלית של מפסקי Siemens בקיר | סרטוני פרויקטים | `_OqHvR2HzEs` | — |
 
 ---
 
