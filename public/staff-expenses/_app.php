@@ -11,6 +11,7 @@ require_once __DIR__ . '/_records.php';
 require_once __DIR__ . '/_labels.php';
 require_once __DIR__ . '/_notifications.php';
 require_once __DIR__ . '/_work_reports.php';
+require_once __DIR__ . '/_tenant_handovers.php';
 require_once __DIR__ . '/_history.php';
 require_once __DIR__ . '/_profile.php';
 require_once __DIR__ . '/_form.php';
@@ -146,6 +147,9 @@ try {
         if (portal_post('action', 60) === 'submit_work_report') {
             portal_handle_work_report_post($user);
         }
+        if (portal_post('action', 60) === 'submit_tenant_handover') {
+            portal_handle_tenant_handover_post($user);
+        }
         portal_handle_post($user);
     }
 
@@ -162,12 +166,15 @@ try {
     if ($action === 'vehicle_document_download') {
         portal_handle_vehicle_document_download($user);
     }
+    if ($action === 'handover_download') {
+        portal_handle_handover_download($user);
+    }
 
     $tab = trim((string) ($_GET['tab'] ?? 'new'));
-    if (($user['role'] ?? '') !== 'admin' && !in_array($tab, ['new', 'history', 'work', 'profile', 'my_vehicle'], true)) {
+    if (($user['role'] ?? '') !== 'admin' && !in_array($tab, ['new', 'history', 'work', 'handovers', 'profile', 'my_vehicle'], true)) {
         $tab = 'new';
     }
-    if (!in_array($tab, ['new', 'history', 'work', 'profile', 'my_vehicle', 'work_stats', 'reports', 'employees', 'vehicles'], true)) {
+    if (!in_array($tab, ['new', 'history', 'work', 'handovers', 'profile', 'my_vehicle', 'work_stats', 'reports', 'employees', 'vehicles'], true)) {
         $tab = 'new';
     }
     if ($tab === 'my_vehicle' && portal_vehicles_for_employee($user) === []) {
@@ -183,6 +190,7 @@ try {
         'profile' => 'הפרטים והרכב שלי',
         'my_vehicle' => 'הרכב שלי',
         'work' => 'סיום התקנה או שירות',
+        'handovers' => 'מסירות דיירים',
         'work_stats' => 'סטטיסטיקת עבודות',
     ];
     $pageTitle = $pageTitles[$tab] ?? 'דיווח חדש';
@@ -205,6 +213,8 @@ try {
         portal_render_my_vehicle_page($user, $flash);
     } elseif ($tab === 'work') {
         portal_render_work_report_form($user, $flash);
+    } elseif ($tab === 'handovers') {
+        portal_render_tenant_handovers($user, $flash);
     } elseif ($tab === 'work_stats') {
         portal_render_work_report_stats($flash);
     } else {

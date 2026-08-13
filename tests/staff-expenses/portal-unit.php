@@ -33,6 +33,7 @@ require_once $repositoryRoot . '/public/staff-expenses/_labels.php';
 require_once $repositoryRoot . '/public/staff-expenses/_records.php';
 require_once $repositoryRoot . '/public/staff-expenses/_notifications.php';
 require_once $repositoryRoot . '/public/staff-expenses/_work_reports.php';
+require_once $repositoryRoot . '/public/staff-expenses/_tenant_handovers.php';
 require_once $repositoryRoot . '/public/staff-expenses/_history.php';
 require_once $repositoryRoot . '/public/staff-expenses/_readiness.php';
 
@@ -446,6 +447,51 @@ try {
     portal_test_expect(
         portal_work_report_recipient() === 'myhome@i-feel.co.il',
         'Work report recipient is not MyHome.'
+    );
+    $handoverResident = portal_handover_normalize_resident([
+        'id' => '12345',
+        'name' => 'Test Resident',
+        'column_values' => [
+            ['id' => 'numbers21', 'text' => '7'],
+            ['id' => 'text8', 'text' => '2'],
+            ['id' => 'phone', 'text' => '050-123-4567'],
+            ['id' => '_____3', 'text' => 'Resident@Example.com'],
+            ['id' => 'location7', 'text' => 'Test address'],
+            ['id' => 'status', 'text' => IFEEL_HANDOVER_STATUS_LABEL],
+        ],
+    ], 'test-project', 'Test Project');
+    portal_test_expect(
+        $handoverResident !== null
+        && ($handoverResident['email'] ?? '') === 'resident@example.com'
+        && ($handoverResident['phone_digits'] ?? '') === '0501234567',
+        'Monday resident normalization failed.'
+    );
+    portal_test_expect(
+        portal_handover_credentials($handoverResident)['password'] === '0501234567',
+        'Tenant handover credentials were not derived from the resident phone.'
+    );
+    $wrongStatusSource = [
+        'id' => '54321',
+        'name' => 'Not a resident',
+        'column_values' => [
+            ['id' => 'numbers21', 'text' => '9'],
+            ['id' => 'status', 'text' => 'ליד חדש'],
+        ],
+    ];
+    portal_test_expect(
+        portal_handover_normalize_resident($wrongStatusSource, 'test-project', 'Test Project') === null,
+        'A Monday item with the wrong status was exposed as a resident.'
+    );
+    $handoverRecipients = portal_handover_internal_recipients(['email' => 'worker@i-feel.co.il']);
+    portal_test_expect(
+        in_array('sagiv@i-feel.co.il', $handoverRecipients, true)
+        && in_array('support@i-feel.co.il', $handoverRecipients, true)
+        && in_array('worker@i-feel.co.il', $handoverRecipients, true),
+        'Tenant handover recipients are incomplete.'
+    );
+    portal_test_expect(
+        portal_handover_controller_location('other', 'חדר שירות') === 'אחר: חדר שירות',
+        'Custom controller location was not normalized.'
     );
     $workStats = portal_work_report_stats([
         ['type' => 'installation', 'outcome' => 'completed', 'employee' => ['name' => 'Test Worker', 'email' => 'worker@i-feel.co.il'], 'attachments' => [[], []]],

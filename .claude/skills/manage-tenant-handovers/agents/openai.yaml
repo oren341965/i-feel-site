@@ -1,0 +1,4 @@
+interface:
+  display_name: "מסירות דיירים"
+  short_description: "ניהול מאובטח של מסירות דיירים ב-I Feel"
+  default_prompt: "Use $manage-tenant-handovers to implement or operate the I Feel tenant-handover workflow safely."

@@ -15,7 +15,7 @@ if (!function_exists('str_contains')) {
     }
 }
 
-const IFEEL_PORTAL_VERSION = '1.5.0';
+const IFEEL_PORTAL_VERSION = '1.6.0';
 const IFEEL_PORTAL_SESSION = 'ifeel_staff_expenses';
 const IFEEL_PORTAL_IDLE_TIMEOUT = 3600;
 const IFEEL_PORTAL_MAX_FILES = 20;
