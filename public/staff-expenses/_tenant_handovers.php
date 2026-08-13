@@ -1022,11 +1022,23 @@ function portal_handover_cloud_link(string $value): string
     if ($value === '') {
         return '';
     }
+    if (
+        !str_contains($value, '://')
+        && preg_match('/^[A-Za-z0-9](?:[A-Za-z0-9.-]{0,251}[A-Za-z0-9])?\.[A-Za-z]{2,63}(?:\/[^\s]*)?$/', $value) === 1
+    ) {
+        $value = 'https://' . $value;
+    }
     if (strlen($value) > 2000 || filter_var($value, FILTER_VALIDATE_URL) === false) {
         return '';
     }
     $parts = parse_url($value);
-    if (!is_array($parts) || strtolower((string) ($parts['scheme'] ?? '')) !== 'https' || trim((string) ($parts['host'] ?? '')) === '') {
+    if (
+        !is_array($parts)
+        || strtolower((string) ($parts['scheme'] ?? '')) !== 'https'
+        || trim((string) ($parts['host'] ?? '')) === ''
+        || isset($parts['user'])
+        || isset($parts['pass'])
+    ) {
         return '';
     }
     return $value;
@@ -1456,8 +1468,7 @@ function portal_handle_tenant_handover_post(array $user): void
     $ready = portal_post('handover_ready', 30);
     $recipientName = portal_post('handover_recipient_name', 180);
     $recipientSignature = portal_post('handover_recipient_signature', 1400000);
-    $cloudLinkInput = portal_post('handover_cloud_link', 2000);
-    $cloudLink = portal_handover_cloud_link($cloudLinkInput);
+    $cloudLink = '';
     $date = portal_post('handover_date', 20);
     $controllerLocationKey = portal_post('handover_controller_location', 40);
     $controllerLocation = portal_handover_controller_location(
@@ -1487,11 +1498,12 @@ function portal_handle_tenant_handover_post(array $user): void
         throw new RuntimeException('יש לבחור סטטוס מסירה תקין.');
     }
     $isDelivered = $ready === 'ready_delivered';
-    if ($cloudLinkInput !== '' && $cloudLink === '') {
-        throw new RuntimeException('קישור הענן חייב להיות כתובת HTTPS תקינה.');
-    }
-    if ($isDelivered && $cloudLink === '') {
-        throw new RuntimeException('יש לצרף את קישור הענן הייעודי של הלקוח.');
+    if ($isDelivered) {
+        $cloudLookup = portal_handover_cloud_lookup($resident, true);
+        $cloudLink = portal_handover_cloud_link((string) ($cloudLookup['link'] ?? ''));
+        if ($cloudLink === '') {
+            throw new RuntimeException(portal_handover_cloud_lookup_message($cloudLookup));
+        }
     }
     if ($isDelivered && $recipientName === '') {
         throw new RuntimeException('יש למלא את שם האדם שאליו נמסרה המערכת.');
@@ -1938,7 +1950,13 @@ function portal_render_tenant_handover_form(array $user, array $projects, string
         </section>
         <?php return; ?>
     <?php endif; ?>
-    <?php $credentials = portal_handover_credentials($resident); $profile = portal_employee_profile($user); ?>
+    <?php
+    $credentials = portal_handover_credentials($resident);
+    $profile = portal_employee_profile($user);
+    $cloudLookup = portal_handover_cloud_lookup($resident);
+    $cloudAvailable = (string) ($cloudLookup['status'] ?? '') === 'found'
+        && portal_handover_cloud_link((string) ($cloudLookup['link'] ?? '')) !== '';
+    ?>
     <section class="detail-card handover-resident-card">
         <h2>פרטי הדייר ופרטי הכניסה</h2>
         <div class="detail-grid">
@@ -1998,11 +2016,11 @@ function portal_render_tenant_handover_form(array $user, array $projects, string
                 <button type="button" class="button button--ghost button--small" data-handover-signature-clear>ניקוי חתימה</button>
             </div>
         </section>
-        <label class="field field--full" data-handover-cloud-link-field hidden>
+        <section class="field field--full handover-cloud-source <?= $cloudAvailable ? 'handover-cloud-source--ready' : 'handover-cloud-source--missing' ?>" data-handover-cloud-link-field data-handover-cloud-available="<?= $cloudAvailable ? '1' : '0' ?>" hidden>
             <span>קישור ענן ייעודי ללקוח <b>*</b></span>
-            <input type="url" name="handover_cloud_link" maxlength="2000" inputmode="url" autocomplete="off" dir="ltr" placeholder="https://..." data-handover-cloud-link>
-            <small class="form-note">יש להעתיק את הקישור הייעודי מרישום הקונטרולר בענן. הקישור יישמר עם המסירה ויישלח ללקוח.</small>
-        </label>
+            <strong><?= portal_h(portal_handover_cloud_lookup_message($cloudLookup)) ?></strong>
+            <small class="form-note">הקישור נשלף בצד השרת מקובץ הפרויקט ב-Google Drive. אין הקלדה ידנית ואין גישה לרשימת הלקוחות.</small>
+        </section>
         <label class="field"><span>תאריך מסירה <b>*</b></span><input type="date" name="handover_date" value="<?= portal_h(date('Y-m-d')) ?>" required></label>
         <label class="field">
             <span>מיקום קונטרולר <b>*</b></span>

@@ -12,6 +12,7 @@ require_once __DIR__ . '/_labels.php';
 require_once __DIR__ . '/_notifications.php';
 require_once __DIR__ . '/_work_reports.php';
 require_once __DIR__ . '/_tenant_handovers.php';
+require_once __DIR__ . '/_tenant_handover_cloud.php';
 require_once __DIR__ . '/_history.php';
 require_once __DIR__ . '/_profile.php';
 require_once __DIR__ . '/_form.php';

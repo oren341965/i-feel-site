@@ -88,6 +88,14 @@ try {
         "-t", $publicRoot,
         $router
     )
+
+    # Codex/CI may inject both PATH and Path. Windows PowerShell's Start-Process
+    # treats those names case-insensitively and otherwise throws before PHP starts.
+    $normalizedProcessPath = $env:PATH
+    [Environment]::SetEnvironmentVariable("PATH", $null, "Process")
+    [Environment]::SetEnvironmentVariable("Path", $null, "Process")
+    [Environment]::SetEnvironmentVariable("PATH", $normalizedProcessPath, "Process")
+
     $process = Start-Process `
         -FilePath $PhpExecutable `
         -ArgumentList $phpArguments `
@@ -280,7 +288,7 @@ try {
     Assert-PortalTest ($handoverHtml -match 'name="handover_apartment_type"[^>]*required' -and $handoverHtml -match 'value="standard_central"' -and $handoverHtml -match 'value="upgraded"' -and $handoverHtml -match 'value="standard_corridor"' -and $handoverHtml -match 'value="full"') "The four mandatory apartment types were not rendered."
     Assert-PortalTest ($handoverHtml -match 'name="handover_ready"[^>]*required' -and $handoverHtml -match 'value="ready_not_delivered"' -and $handoverHtml -match 'value="not_ready_not_delivered"' -and $handoverHtml -match 'value="ready_delivered"' -and $handoverHtml -notmatch 'value="delivered_with_app_link"') "Delivery status choices were not replaced with the required three options."
     Assert-PortalTest ($handoverHtml -match 'name="handover_recipient_name"' -and $handoverHtml -match 'name="handover_recipient_signature"' -and $handoverHtml -match 'data-handover-signature-canvas') "Delivered handover recipient name and signature controls were not rendered."
-    Assert-PortalTest ($handoverHtml -match 'type="url"[^>]*name="handover_cloud_link"' -and $handoverHtml -match 'data-handover-cloud-link') "Customer-specific cloud link field was not rendered."
+    Assert-PortalTest ($handoverHtml -match 'data-handover-cloud-link-field[^>]*data-handover-cloud-available="1"' -and $handoverHtml -match 'Google Drive' -and $handoverHtml -notmatch 'name="handover_cloud_link"') "Customer-specific cloud link was not resolved server-side from Google Drive."
     Assert-PortalTest ($handoverHtml -match 'name="handover_controller_location"[^>]*required' -and $handoverHtml -match 'name="handover_controller"[^>]*required' -and $handoverHtml -match 'name="handover_icons"[^>]*required') "Controller and icon requirements were not marked mandatory."
     Assert-PortalTest ($handoverHtml -match 'name="handover_switch_9_count"[^>]*min="1"[^>]*max="50"[^>]*required') "Switch 9 quantity field was not rendered."
     Assert-PortalTest ($handoverHtml -match 'כמות מפסקי 9 בדירה' -and $handoverHtml -match 'לפי הכמות שתוזן ייפתח כרטיס חובה נפרד לכל מפסק 9') "Switch 9 quantity instructions were not rendered."
@@ -325,8 +333,8 @@ try {
         "-F", "handover_apartment_type=standard_corridor", `
         "-F", "handover_ready=ready_delivered", `
         "-F", "handover_recipient_name=Test Customer Representative", `
-        "-F", "handover_recipient_signature=$handoverSignatureData", `
-        "-F", "handover_cloud_link=https://cloud.example.com/customer/1001", `
+        "--form-string", "handover_recipient_signature=$handoverSignatureData", `
+        "-F", "handover_cloud_link=https://attacker.invalid/forged", `
         "-F", "handover_date=2026-08-13", `
         "-F", "handover_controller_location=communications_cabinet", `
         "-F", "handover_controller=raspberry_pi", `
@@ -357,8 +365,9 @@ try {
         "-F", "handover_issue_photo_1=@$handoverImage;type=image/png", `
         "-F", "handover_issue_photo_2=@$handoverImage;type=image/png", `
         "$baseUrl/staff-expenses/"
-    Assert-PortalTest ($headers -match "HTTP/1\.1 200" -and $headers -match "(?im)^Content-Type: application/json") "Queued tenant handover submission was not accepted as JSON."
-    $handoverSubmitResponse = Get-Content -Raw -Encoding utf8 $responseBody | ConvertFrom-Json
+    $handoverSubmitBody = Get-Content -Raw -Encoding utf8 $responseBody
+    Assert-PortalTest ($headers -match "HTTP/1\.1 200" -and $headers -match "(?im)^Content-Type: application/json") "Queued tenant handover submission was not accepted as JSON. Response: $handoverSubmitBody"
+    $handoverSubmitResponse = $handoverSubmitBody | ConvertFrom-Json
     Assert-PortalTest ($handoverSubmitResponse.ok -eq $true -and -not [string]::IsNullOrWhiteSpace($handoverSubmitResponse.handoverId)) "Queued tenant handover response did not confirm the saved handover."
     $handoverMetadata = @(Get-ChildItem -LiteralPath (Join-Path $storagePath "tenant-handovers") -Recurse -Filter "metadata.json")
     Assert-PortalTest ($handoverMetadata.Count -eq 1) "Expected one stored tenant handover."
@@ -367,7 +376,7 @@ try {
     Assert-PortalTest ($handoverRecord.source.item_id -eq "1001") "Tenant handover did not retain the verified Monday item ID."
     Assert-PortalTest ($handoverRecord.credentials.password -eq "0501234567") "Tenant handover credentials were not stored correctly."
     Assert-PortalTest ($handoverRecord.details.apartment_type -eq "standard_corridor" -and $handoverRecord.details.ready -eq "ready_delivered" -and $handoverRecord.details.recipient_name -eq "Test Customer Representative") "Tenant handover apartment type, delivery status, or recipient name was not stored correctly."
-    Assert-PortalTest ($handoverRecord.details.cloud_link -eq "https://cloud.example.com/customer/1001") "Tenant handover cloud link was not stored correctly."
+    Assert-PortalTest ($handoverRecord.details.cloud_link -eq "https://cloud.example.com/customer/1001") "Tenant handover did not ignore the forged browser link and retain the Google Drive source value."
     Assert-PortalTest (
         $handoverRecord.details.switch_9_count -eq 2 `
         -and $handoverRecord.details.switch_9_units.Count -eq 2 `

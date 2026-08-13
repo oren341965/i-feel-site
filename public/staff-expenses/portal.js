@@ -476,7 +476,6 @@
     const handoverForm = document.querySelector('[data-handover-form]');
     const handoverReady = handoverForm?.querySelector('[data-handover-ready]');
     const handoverCloudLinkField = handoverForm?.querySelector('[data-handover-cloud-link-field]');
-    const handoverCloudLink = handoverForm?.querySelector('[data-handover-cloud-link]');
     const handoverRecipientFields = handoverForm?.querySelector('[data-handover-recipient-fields]');
     const handoverRecipientName = handoverForm?.querySelector('[data-handover-recipient-name]');
     const handoverSignatureCanvas = handoverForm?.querySelector('[data-handover-signature-canvas]');
@@ -542,10 +541,12 @@
     const updateHandoverDelivery = () => {
         if (!handoverReady) return;
         const isDelivered = handoverReady.value === 'ready_delivered';
-        if (handoverCloudLinkField && handoverCloudLink) {
+        if (handoverCloudLinkField) {
             handoverCloudLinkField.hidden = !isDelivered;
-            handoverCloudLink.required = isDelivered;
-            if (!isDelivered) handoverCloudLink.value = '';
+            const cloudAvailable = handoverCloudLinkField.dataset.handoverCloudAvailable === '1';
+            handoverReady.setCustomValidity(isDelivered && !cloudAvailable
+                ? 'לא נמצא קישור ענן מאומת לדייר בקובץ Google Drive של הפרויקט.'
+                : '');
         }
         if (handoverRecipientFields && handoverRecipientName) {
             handoverRecipientFields.hidden = !isDelivered;
