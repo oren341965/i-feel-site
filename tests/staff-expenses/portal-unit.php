@@ -541,8 +541,12 @@ try {
     portal_test_expect(
         portal_handover_switch_9_label('shutter_2_light_2') === '2 תריסים ו-2 תאורות'
         && portal_handover_captive_shutter_24v_label('installed_activated') === 'יש והופעל'
-        && portal_handover_captive_shutter_24v_label('not_in_project') === 'אין בפרויקט',
-        'Structured handover switch labels are wrong.'
+        && portal_handover_captive_shutter_24v_label('not_in_project') === 'אין בפרויקט'
+        && portal_handover_hvac_connection_label('none') === 'אין חיבור למזגן'
+        && portal_handover_hvac_connection_label('ir') === 'חיבור באמצעות IR'
+        && portal_handover_hvac_connection_label('dry_contact_panel_9') === 'חיבור באמצעות מגע יבש מפאנל 9'
+        && portal_handover_hvac_connection_label('micromodule') === 'חיבור באמצעות מיקרומודול',
+        'Structured handover switch or HVAC labels are wrong.'
     );
     $workStats = portal_work_report_stats([
         ['type' => 'installation', 'outcome' => 'completed', 'employee' => ['name' => 'Test Worker', 'email' => 'worker@i-feel.co.il'], 'attachments' => [[], []]],
