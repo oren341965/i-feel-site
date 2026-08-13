@@ -40,7 +40,21 @@ const smartLockVideoObject = `,
       \"publisher\": { \"@id\": \"https://i-feel.co.il/#business\" }
     }`;
 
-meta.jsonLd = meta.jsonLd.replace("\n  ]\n}", `${iscarVideoObject}${smartLockVideoObject}\n  ]\n}`);
+const siemensSwitchVideoObject = `,
+    {
+      \"@type\": \"VideoObject\",
+      \"@id\": \"https://i-feel.co.il/video/#v-siemens-switch-wall-integration\",
+      \"name\": \"הטמעה אדריכלית של מפסקי Siemens בקיר\",
+      \"description\": \"שילוב אדריכלי נקי ומדויק של מפסקי Siemens בקיר כחלק ממערכת הבית החכם של I FEEL.\",
+      \"uploadDate\": \"2026-08-13\",
+      \"thumbnailUrl\": \"https://i.ytimg.com/vi/_OqHvR2HzEs/hqdefault.jpg\",
+      \"contentUrl\": \"https://www.youtube.com/watch?v=_OqHvR2HzEs\",
+      \"embedUrl\": \"https://www.youtube-nocookie.com/embed/_OqHvR2HzEs\",
+      \"inLanguage\": \"he-IL\",
+      \"publisher\": { \"@id\": \"https://i-feel.co.il/#business\" }
+    }`;
+
+meta.jsonLd = meta.jsonLd.replace("\n  ]\n}", `${iscarVideoObject}${smartLockVideoObject}${siemensSwitchVideoObject}\n  ]\n}`);
 ---
 <BaseLayout {...meta}>
   <Fragment set:html={content} />
