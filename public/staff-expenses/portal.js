@@ -477,15 +477,87 @@
     const handoverReady = handoverForm?.querySelector('[data-handover-ready]');
     const handoverCloudLinkField = handoverForm?.querySelector('[data-handover-cloud-link-field]');
     const handoverCloudLink = handoverForm?.querySelector('[data-handover-cloud-link]');
-    const updateHandoverCloudLink = () => {
-        if (!handoverReady || !handoverCloudLinkField || !handoverCloudLink) return;
-        const needsCloudLink = handoverReady.value === 'delivered_with_app_link';
-        handoverCloudLinkField.hidden = !needsCloudLink;
-        handoverCloudLink.required = needsCloudLink;
-        if (!needsCloudLink) handoverCloudLink.value = '';
+    const handoverRecipientFields = handoverForm?.querySelector('[data-handover-recipient-fields]');
+    const handoverRecipientName = handoverForm?.querySelector('[data-handover-recipient-name]');
+    const handoverSignatureCanvas = handoverForm?.querySelector('[data-handover-signature-canvas]');
+    const handoverSignatureValue = handoverForm?.querySelector('[data-handover-signature-value]');
+    const handoverSignatureClear = handoverForm?.querySelector('[data-handover-signature-clear]');
+    const handoverSignatureHint = handoverForm?.querySelector('[data-handover-signature-hint]');
+    const signatureContext = handoverSignatureCanvas?.getContext('2d');
+    let signatureDrawing = false;
+    let signatureHasInk = false;
+
+    const clearHandoverSignature = () => {
+        if (!handoverSignatureCanvas || !signatureContext) return;
+        signatureContext.fillStyle = '#ffffff';
+        signatureContext.fillRect(0, 0, handoverSignatureCanvas.width, handoverSignatureCanvas.height);
+        signatureContext.strokeStyle = '#10233f';
+        signatureContext.lineWidth = 4;
+        signatureContext.lineCap = 'round';
+        signatureContext.lineJoin = 'round';
+        signatureHasInk = false;
+        if (handoverSignatureValue) handoverSignatureValue.value = '';
+        if (handoverSignatureHint) handoverSignatureHint.hidden = false;
     };
-    handoverReady?.addEventListener('change', updateHandoverCloudLink);
-    updateHandoverCloudLink();
+
+    const signaturePoint = (event) => {
+        const bounds = handoverSignatureCanvas.getBoundingClientRect();
+        return {
+            x: (event.clientX - bounds.left) * handoverSignatureCanvas.width / bounds.width,
+            y: (event.clientY - bounds.top) * handoverSignatureCanvas.height / bounds.height,
+        };
+    };
+
+    handoverSignatureCanvas?.addEventListener('pointerdown', (event) => {
+        if (!signatureContext) return;
+        event.preventDefault();
+        signatureDrawing = true;
+        signatureHasInk = true;
+        handoverSignatureCanvas.setPointerCapture?.(event.pointerId);
+        const point = signaturePoint(event);
+        signatureContext.beginPath();
+        signatureContext.moveTo(point.x, point.y);
+        signatureContext.lineTo(point.x + 0.1, point.y + 0.1);
+        signatureContext.stroke();
+        if (handoverSignatureHint) handoverSignatureHint.hidden = true;
+    });
+    handoverSignatureCanvas?.addEventListener('pointermove', (event) => {
+        if (!signatureDrawing || !signatureContext) return;
+        event.preventDefault();
+        const point = signaturePoint(event);
+        signatureContext.lineTo(point.x, point.y);
+        signatureContext.stroke();
+    });
+    const finishHandoverSignature = () => {
+        if (!signatureDrawing || !handoverSignatureCanvas || !handoverSignatureValue) return;
+        signatureDrawing = false;
+        handoverSignatureValue.value = signatureHasInk ? handoverSignatureCanvas.toDataURL('image/png') : '';
+    };
+    handoverSignatureCanvas?.addEventListener('pointerup', finishHandoverSignature);
+    handoverSignatureCanvas?.addEventListener('pointercancel', finishHandoverSignature);
+    handoverSignatureCanvas?.addEventListener('pointerleave', finishHandoverSignature);
+    handoverSignatureClear?.addEventListener('click', clearHandoverSignature);
+    clearHandoverSignature();
+
+    const updateHandoverDelivery = () => {
+        if (!handoverReady) return;
+        const isDelivered = handoverReady.value === 'ready_delivered';
+        if (handoverCloudLinkField && handoverCloudLink) {
+            handoverCloudLinkField.hidden = !isDelivered;
+            handoverCloudLink.required = isDelivered;
+            if (!isDelivered) handoverCloudLink.value = '';
+        }
+        if (handoverRecipientFields && handoverRecipientName) {
+            handoverRecipientFields.hidden = !isDelivered;
+            handoverRecipientName.required = isDelivered;
+            if (!isDelivered) {
+                handoverRecipientName.value = '';
+                clearHandoverSignature();
+            }
+        }
+    };
+    handoverReady?.addEventListener('change', updateHandoverDelivery);
+    updateHandoverDelivery();
 
     const switch9CountInput = handoverForm?.querySelector('[data-handover-switch-9-count]');
     const switch9Units = handoverForm?.querySelector('[data-handover-switch-9-units]');
@@ -587,6 +659,16 @@
 
     const handoverSubmit = handoverForm?.querySelector('[data-handover-submit]');
     handoverForm?.addEventListener('submit', (event) => {
+        if (handoverReady?.value === 'ready_delivered') {
+            if (signatureHasInk && handoverSignatureCanvas && handoverSignatureValue && !handoverSignatureValue.value) {
+                handoverSignatureValue.value = handoverSignatureCanvas.toDataURL('image/png');
+            }
+            if (!handoverRecipientName?.value.trim() || !handoverSignatureValue?.value.startsWith('data:image/png;base64,')) {
+                event.preventDefault();
+                window.alert('במסירה ללקוח או לנציג חובה למלא את שם המקבל ולהחתים אותו על המסך.');
+                return;
+            }
+        }
         const photoInputs = Array.from(handoverForm.querySelectorAll('input[type="file"]'));
         const photos = photoInputs.map((input) => input.files?.[0]).filter(Boolean);
         const switch9Count = Number.parseInt(switch9CountInput?.value || '0', 10);

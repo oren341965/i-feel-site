@@ -489,6 +489,15 @@ try {
         && is_file($repositoryRoot . '/public/staff-expenses/offline-worker.js'),
         'Tenant handover offline identity or worker is missing.'
     );
+    $signatureTestDir = $storagePath . DIRECTORY_SEPARATOR . 'signature-test';
+    portal_ensure_directory($signatureTestDir);
+    $signatureData = 'data:image/png;base64,' . base64_encode((string) file_get_contents($repositoryRoot . '/public/assets/ifeel-logo.png'));
+    $savedSignature = portal_handover_save_signature($signatureTestDir, $signatureData);
+    portal_test_expect(
+        ($savedSignature['mime'] ?? '') === 'image/png'
+        && is_file($signatureTestDir . DIRECTORY_SEPARATOR . 'files' . DIRECTORY_SEPARATOR . ($savedSignature['storage_name'] ?? '')),
+        'Tenant handover recipient signature was not validated and stored.'
+    );
     $lifecycleStatusSource = [
         'id' => '54321',
         'name' => 'Lifecycle Resident',
@@ -544,11 +553,17 @@ try {
         'Custom controller location was not normalized.'
     );
     portal_test_expect(
-        portal_handover_ready_label('delivered_with_app_link') === 'נמסר עם קישור לאפליקציה'
-        && portal_handover_ready_label('completed_without_app_link') === 'הסתיים ללא קישור לאפליקציה'
-        && portal_handover_ready_label('ready_for_delivery') === 'מוכן למסירה'
-        && portal_handover_ready_label('not_ready_return_required') === 'לא מוכן — יש לחזור',
+        portal_handover_ready_label('ready_not_delivered') === 'מוכן ולא נמסר'
+        && portal_handover_ready_label('not_ready_not_delivered') === 'לא מוכן ולא נמסר'
+        && portal_handover_ready_label('ready_delivered') === 'מוכן ונמסר ללקוח/נציג הלקוח',
         'Tenant handover delivery status labels are wrong.'
+    );
+    portal_test_expect(
+        (portal_handover_send_resident([
+            'details' => ['ready' => 'ready_not_delivered'],
+            'resident' => ['email' => 'resident@example.com'],
+        ])['status'] ?? '') === 'skipped',
+        'A handover that was not delivered would send an email to the resident.'
     );
     portal_test_expect(
         portal_handover_cloud_link('https://cloud.example.com/customer/1001') === 'https://cloud.example.com/customer/1001'
@@ -622,9 +637,10 @@ try {
                 'issue_10' => ['storage_name' => 'issue-10.png'],
                 'issue_2' => ['storage_name' => 'issue-2.png'],
                 'issue_1' => ['storage_name' => 'issue-1.png'],
+                'signature' => ['storage_name' => 'signature.png'],
                 'untrusted' => ['storage_name' => 'ignored.png'],
             ],
-        ]) === ['controller', 'switch_1', 'switch_2', 'switch_10', 'issue_1', 'issue_2', 'issue_10'],
+        ]) === ['controller', 'switch_1', 'switch_2', 'switch_10', 'issue_1', 'issue_2', 'issue_10', 'signature'],
         'Tenant handover photo keys were not filtered and ordered correctly.'
     );
     $workStats = portal_work_report_stats([

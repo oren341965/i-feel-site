@@ -19,6 +19,7 @@ $adminCookies = Join-Path $testRoot "admin-cookies.txt"
 $responseBody = Join-Path $testRoot "response-body.txt"
 $fixture = Join-Path $repositoryRoot "tests\staff-expenses\fixtures\receipt.pdf"
 $handoverImage = Join-Path $repositoryRoot "public\assets\ifeel-logo.png"
+$handoverSignatureData = "data:image/png;base64," + [Convert]::ToBase64String([IO.File]::ReadAllBytes($handoverImage))
 $router = "tests\staff-expenses\router.php"
 $publicRoot = "public"
 $process = $null
@@ -276,7 +277,8 @@ try {
     Assert-PortalTest ($handoverHtml -match 'resident@example\.com') "Authenticated handover form omitted the Monday resident email."
     Assert-PortalTest ($handoverHtml -match '0501234567') "Authenticated handover form omitted the derived initial password."
     Assert-PortalTest ($handoverHtml -notmatch 'name="handover_resident_email"|name="handover_resident_phone"') "Resident PII was trusted through client-editable fields."
-    Assert-PortalTest ($handoverHtml -match 'name="handover_ready"[^>]*required' -and $handoverHtml -match 'value="delivered_with_app_link"' -and $handoverHtml -match 'value="completed_without_app_link"' -and $handoverHtml -match 'value="ready_for_delivery"' -and $handoverHtml -match 'value="not_ready_return_required"') "Delivery status choices were not rendered."
+    Assert-PortalTest ($handoverHtml -match 'name="handover_ready"[^>]*required' -and $handoverHtml -match 'value="ready_not_delivered"' -and $handoverHtml -match 'value="not_ready_not_delivered"' -and $handoverHtml -match 'value="ready_delivered"' -and $handoverHtml -notmatch 'value="delivered_with_app_link"') "Delivery status choices were not replaced with the required three options."
+    Assert-PortalTest ($handoverHtml -match 'name="handover_recipient_name"' -and $handoverHtml -match 'name="handover_recipient_signature"' -and $handoverHtml -match 'data-handover-signature-canvas') "Delivered handover recipient name and signature controls were not rendered."
     Assert-PortalTest ($handoverHtml -match 'type="url"[^>]*name="handover_cloud_link"' -and $handoverHtml -match 'data-handover-cloud-link') "Customer-specific cloud link field was not rendered."
     Assert-PortalTest ($handoverHtml -match 'name="handover_controller_location"[^>]*required' -and $handoverHtml -match 'name="handover_controller"[^>]*required' -and $handoverHtml -match 'name="handover_icons"[^>]*required') "Controller and icon requirements were not marked mandatory."
     Assert-PortalTest ($handoverHtml -match 'name="handover_switch_9_count"[^>]*min="1"[^>]*max="50"[^>]*required') "Switch 9 quantity field was not rendered."
@@ -312,7 +314,9 @@ try {
         "-F", "handover_client_id=$handoverClientId", `
         "-F", "handover_project_id=test-project", `
         "-F", "handover_resident_id=1001", `
-        "-F", "handover_ready=delivered_with_app_link", `
+        "-F", "handover_ready=ready_delivered", `
+        "-F", "handover_recipient_name=Test Customer Representative", `
+        "-F", "handover_recipient_signature=$handoverSignatureData", `
         "-F", "handover_cloud_link=https://cloud.example.com/customer/1001", `
         "-F", "handover_date=2026-08-13", `
         "-F", "handover_controller_location=communications_cabinet", `
@@ -349,7 +353,7 @@ try {
     Assert-PortalTest ($handoverRecord.client_id -eq $handoverClientId) "Tenant handover did not retain the offline idempotency key."
     Assert-PortalTest ($handoverRecord.source.item_id -eq "1001") "Tenant handover did not retain the verified Monday item ID."
     Assert-PortalTest ($handoverRecord.credentials.password -eq "0501234567") "Tenant handover credentials were not stored correctly."
-    Assert-PortalTest ($handoverRecord.details.ready -eq "delivered_with_app_link") "Tenant handover delivery status was not stored correctly."
+    Assert-PortalTest ($handoverRecord.details.ready -eq "ready_delivered" -and $handoverRecord.details.recipient_name -eq "Test Customer Representative") "Tenant handover delivery status or recipient name was not stored correctly."
     Assert-PortalTest ($handoverRecord.details.cloud_link -eq "https://cloud.example.com/customer/1001") "Tenant handover cloud link was not stored correctly."
     Assert-PortalTest (
         $handoverRecord.details.switch_9_count -eq 2 `
@@ -370,8 +374,9 @@ try {
         -and $handoverRecord.details.boiler -eq "switcher"
     ) "Structured handover switch and HVAC details were not stored correctly."
     Assert-PortalTest (
-        @($handoverRecord.photos.PSObject.Properties).Count -eq 5 `
+        @($handoverRecord.photos.PSObject.Properties).Count -eq 6 `
         -and $null -ne $handoverRecord.photos.controller `
+        -and $null -ne $handoverRecord.photos.signature `
         -and $null -ne $handoverRecord.photos.switch_1 `
         -and $null -ne $handoverRecord.photos.switch_2 `
         -and $null -ne $handoverRecord.photos.issue_1 `
@@ -411,6 +416,12 @@ try {
         "-b", $employeeCookies, `
         "$baseUrl/staff-expenses/?action=handover_download&handover_id=$($handoverRecord.id)&file=issue_2"
     Assert-PortalTest ($handoverIssueDownloadStatus -eq "200") "Authenticated employee could not open the second apartment issue photo."
+    $handoverSignatureDownloadStatus = Invoke-PortalCurl `
+        "-o", $responseBody, `
+        "-w", "%{http_code}", `
+        "-b", $employeeCookies, `
+        "$baseUrl/staff-expenses/?action=handover_download&handover_id=$($handoverRecord.id)&file=signature"
+    Assert-PortalTest ($handoverSignatureDownloadStatus -eq "200") "Authenticated employee could not open the recipient signature."
 
     $csrf = Get-CsrfFromHtml $html
 

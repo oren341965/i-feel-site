@@ -206,6 +206,14 @@ input[readonly] { background: #f3f5f8; }
 .handover-selector .field--actions { align-self: end; }
 .handover-selector__actions { display: grid; gap: 8px; }
 .handover-selector__actions .form-note { margin: 0; line-height: 1.4; }
+.handover-recipient { display: grid; grid-template-columns: minmax(0, .75fr) minmax(0, 1.25fr); gap: 16px; padding: 18px; border: 1px solid #e0bd65; border-radius: 14px; background: #fffaf0; }
+.handover-recipient__heading { grid-column: 1 / -1; }
+.handover-recipient__heading h3 { margin: 0; }
+.handover-recipient__heading p { margin: 4px 0 0; color: var(--muted); }
+.handover-signature-field { align-content: start; }
+.handover-signature-pad { position: relative; min-height: 150px; overflow: hidden; border: 2px dashed #a9b9c9; border-radius: 12px; background: #fff; touch-action: none; }
+.handover-signature-pad canvas { display: block; width: 100%; height: 150px; cursor: crosshair; touch-action: none; }
+.handover-signature-pad__hint { position: absolute; inset: 0; display: grid; place-items: center; pointer-events: none; color: #7a899b; font-weight: 700; }
 .handover-offline-status { display: flex; align-items: center; gap: 12px; margin: 0 0 18px; padding: 13px 16px; border: 1px solid #bad5e8; border-radius: 14px; background: #f2f8fc; color: #174d74; }
 .handover-offline-status__dot { flex: 0 0 auto; width: 11px; height: 11px; border-radius: 50%; background: #6c8498; box-shadow: 0 0 0 4px rgba(108, 132, 152, .14); }
 .handover-offline-status > div { display: grid; gap: 2px; min-width: 0; }
@@ -274,6 +282,7 @@ input[readonly] { background: #f3f5f8; }
 .handover-resident-card .credential-item { border-color: #e6c16f; background: #fffaf0; }
 .handover-resident-card .credential-item strong { font-family: Consolas, "Courier New", monospace; }
 @media (max-width: 760px) {
+  .handover-recipient { grid-template-columns: 1fr; }
   .handover-offline-status { align-items: flex-start; flex-wrap: wrap; }
   .handover-offline-status__dot { margin-top: 4px; }
   .handover-offline-status__queue { width: 100%; margin-inline-start: 23px; text-align: center; }

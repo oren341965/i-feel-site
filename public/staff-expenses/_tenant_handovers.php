@@ -846,6 +846,36 @@ function portal_handover_save_photo(string $recordDir, array $file, string $labe
     return $saved[0];
 }
 
+function portal_handover_save_signature(string $recordDir, string $dataUrl): array
+{
+    if (preg_match('/^data:image\/png;base64,([A-Za-z0-9+\/=]+)$/', $dataUrl, $match) !== 1) {
+        throw new RuntimeException('חתימת מקבל המסירה אינה תקינה. יש לחתום מחדש.');
+    }
+    $binary = base64_decode($match[1], true);
+    if (!is_string($binary) || strlen($binary) < 100 || strlen($binary) > 1024 * 1024 || substr($binary, 0, 8) !== "\x89PNG\r\n\x1a\n") {
+        throw new RuntimeException('חתימת מקבל המסירה אינה תקינה. יש לחתום מחדש.');
+    }
+    $imageInfo = @getimagesizefromstring($binary);
+    if (!is_array($imageInfo) || ($imageInfo['mime'] ?? '') !== 'image/png' || (int) ($imageInfo[0] ?? 0) < 1 || (int) ($imageInfo[1] ?? 0) < 1) {
+        throw new RuntimeException('חתימת מקבל המסירה אינה תקינה. יש לחתום מחדש.');
+    }
+    $filesDir = $recordDir . DIRECTORY_SEPARATOR . 'files';
+    portal_ensure_directory($filesDir);
+    $storageName = bin2hex(random_bytes(16)) . '.png';
+    $destination = $filesDir . DIRECTORY_SEPARATOR . $storageName;
+    if (file_put_contents($destination, $binary, LOCK_EX) !== strlen($binary)) {
+        throw new RuntimeException('לא ניתן לשמור את חתימת מקבל המסירה.');
+    }
+    @chmod($destination, 0600);
+    return [
+        'original_name' => 'recipient-signature.png',
+        'storage_name' => $storageName,
+        'mime' => 'image/png',
+        'size' => strlen($binary),
+        'sha256' => hash('sha256', $binary),
+    ];
+}
+
 function portal_handover_submission_token(): string
 {
     $token = $_SESSION['portal_handover_submission_token'] ?? '';
@@ -952,7 +982,8 @@ function portal_handover_photo_keys(array $handover): array
     usort($issueKeys, static function (string $left, string $right): int {
         return (int) substr($left, 6) <=> (int) substr($right, 6);
     });
-    return array_merge($keys, $switchKeys, $issueKeys);
+    $signatureKeys = isset($photos['signature']) ? ['signature'] : [];
+    return array_merge($keys, $switchKeys, $issueKeys, $signatureKeys);
 }
 
 function portal_handover_protected_url(array $handover, string $key): string
@@ -974,6 +1005,8 @@ function portal_handover_photo_email_lines(array $handover): array
             $label = 'צילום מפסק 9';
         } elseif (str_starts_with($key, 'switch_')) {
             $label = 'צילום מפסק 9 מס׳ ' . (int) substr($key, 7);
+        } elseif ($key === 'signature') {
+            $label = 'חתימת מקבל המסירה';
         } else {
             $label = 'צילום תקלה בדירה מס׳ ' . (int) substr($key, 6);
         }
@@ -1016,7 +1049,7 @@ function portal_handover_internal_email_body(array $handover): string
     $credentials = is_array($handover['credentials'] ?? null) ? $handover['credentials'] : [];
     $details = is_array($handover['details'] ?? null) ? $handover['details'] : [];
     return implode("\r\n", array_merge([
-        'מסירת דייר הושלמה ונשמרה במערכת העובדים.',
+        'דיווח סטטוס מסירה נשמר במערכת העובדים.',
         '',
         'מספר מסירה: ' . (string) ($handover['id'] ?? ''),
         'פרויקט: ' . (string) ($resident['project_title'] ?? ''),
@@ -1032,6 +1065,8 @@ function portal_handover_internal_email_body(array $handover): string
         'קישור ענן ייעודי ללקוח: ' . ((string) ($details['cloud_link'] ?? '') ?: 'לא צורף'),
         '',
         'סטטוס המסירה: ' . portal_handover_ready_label((string) ($details['ready'] ?? '')),
+        'נמסר ל: ' . ((string) ($details['recipient_name'] ?? '') ?: 'לא נמסר'),
+        'חתימת מקבל המסירה: ' . (isset($handover['photos']['signature']) ? 'צורפה' : 'לא נדרשה'),
         'תאריך מסירה: ' . (string) ($details['date'] ?? ''),
         'מיקום קונטרולר: ' . (string) ($details['controller_location'] ?? ''),
         'קונטרולר: ' . portal_handover_controller_label((string) ($details['controller'] ?? '')),
@@ -1157,7 +1192,7 @@ function portal_handover_send_internal(array $handover, array $user): array
     foreach ($recipients as $recipient) {
         $recipientOk = true;
         foreach ($batches as $index => $batch) {
-            $subject = 'מסירה הושלמה — ' . (string) ($handover['resident']['project_title'] ?? '')
+            $subject = 'סטטוס מסירה — ' . (string) ($handover['resident']['project_title'] ?? '')
                 . ' · דירה ' . (string) ($handover['resident']['apartment'] ?? '')
                 . (count($batches) > 1 ? ' · קבצים ' . ($index + 1) . '/' . count($batches) : '');
             if (!portal_send_mail_with_attachments($recipient, $subject, portal_handover_internal_email_body($handover), $batch)) {
@@ -1176,6 +1211,9 @@ function portal_handover_send_internal(array $handover, array $user): array
 
 function portal_handover_send_resident(array $handover): array
 {
+    if ((string) ($handover['details']['ready'] ?? '') !== 'ready_delivered') {
+        return ['recipient' => '', 'status' => 'skipped'];
+    }
     $email = strtolower(trim((string) ($handover['resident']['email'] ?? '')));
     if ($email === '' || $email === 'support@i-feel.co.il' || filter_var($email, FILTER_VALIDATE_EMAIL) === false) {
         return ['recipient' => '', 'status' => 'skipped'];
@@ -1197,11 +1235,14 @@ function portal_handover_send_resident(array $handover): array
 function portal_handover_ready_label(string $value): string
 {
     return [
+        'ready_not_delivered' => 'מוכן ולא נמסר',
+        'not_ready_not_delivered' => 'לא מוכן ולא נמסר',
+        'ready_delivered' => 'מוכן ונמסר ללקוח/נציג הלקוח',
+        // Backward-compatible labels for handovers stored before the status list was replaced.
         'delivered_with_app_link' => 'נמסר עם קישור לאפליקציה',
         'completed_without_app_link' => 'הסתיים ללא קישור לאפליקציה',
         'ready_for_delivery' => 'מוכן למסירה',
         'not_ready_return_required' => 'לא מוכן — יש לחזור',
-        // Backward-compatible labels for handovers stored before the status list was expanded.
         'ready' => 'מוכן',
         'not_ready' => 'לא מוכן',
         'delivered' => 'נמסר',
@@ -1353,6 +1394,8 @@ function portal_handle_tenant_handover_post(array $user): void
     }
 
     $ready = portal_post('handover_ready', 30);
+    $recipientName = portal_post('handover_recipient_name', 180);
+    $recipientSignature = portal_post('handover_recipient_signature', 1400000);
     $cloudLinkInput = portal_post('handover_cloud_link', 2000);
     $cloudLink = portal_handover_cloud_link($cloudLinkInput);
     $date = portal_post('handover_date', 20);
@@ -1373,14 +1416,25 @@ function portal_handle_tenant_handover_post(array $user): void
     $hvacConnection = portal_post('handover_hvac_connection', 40);
     $boiler = portal_post('handover_boiler', 500);
     $notes = portal_post('handover_notes', 3000);
-    if (!in_array($ready, ['delivered_with_app_link', 'completed_without_app_link', 'ready_for_delivery', 'not_ready_return_required'], true)) {
+    if (!in_array($ready, ['ready_not_delivered', 'not_ready_not_delivered', 'ready_delivered'], true)) {
         throw new RuntimeException('יש לבחור סטטוס מסירה תקין.');
     }
+    $isDelivered = $ready === 'ready_delivered';
     if ($cloudLinkInput !== '' && $cloudLink === '') {
         throw new RuntimeException('קישור הענן חייב להיות כתובת HTTPS תקינה.');
     }
-    if ($ready === 'delivered_with_app_link' && $cloudLink === '') {
+    if ($isDelivered && $cloudLink === '') {
         throw new RuntimeException('יש לצרף את קישור הענן הייעודי של הלקוח.');
+    }
+    if ($isDelivered && $recipientName === '') {
+        throw new RuntimeException('יש למלא את שם האדם שאליו נמסרה המערכת.');
+    }
+    if ($isDelivered && $recipientSignature === '') {
+        throw new RuntimeException('יש לצרף את חתימת האדם שאליו נמסרה המערכת.');
+    }
+    if (!$isDelivered) {
+        $recipientName = '';
+        $recipientSignature = '';
     }
     if (!portal_valid_date($date)) {
         throw new RuntimeException('תאריך המסירה אינו תקין.');
@@ -1461,6 +1515,9 @@ function portal_handle_tenant_handover_post(array $user): void
     try {
         $controllerPhoto = portal_handover_save_photo($recordDir, $_FILES['handover_controller_photo'] ?? [], 'צילום הקונטרולר');
         $photos = ['controller' => $controllerPhoto];
+        if ($isDelivered) {
+            $photos['signature'] = portal_handover_save_signature($recordDir, $recipientSignature);
+        }
         for ($index = 1; $index <= $switch9Count; $index++) {
             $photos['switch_' . $index] = portal_handover_save_photo(
                 $recordDir,
@@ -1491,6 +1548,7 @@ function portal_handle_tenant_handover_post(array $user): void
             'credentials' => $credentials,
             'details' => [
                 'ready' => $ready,
+                'recipient_name' => $recipientName,
                 'cloud_link' => $cloudLink,
                 'date' => $date,
                 'controller_location' => $controllerLocation,
@@ -1576,6 +1634,7 @@ function portal_handle_handover_download(array $user): void
     if (
         $key !== 'controller'
         && $key !== 'switch'
+        && $key !== 'signature'
         && preg_match('/^switch_[1-9][0-9]*$/', $key) !== 1
         && preg_match('/^issue_[1-9][0-9]*$/', $key) !== 1
     ) {
@@ -1799,12 +1858,30 @@ function portal_render_tenant_handover_form(array $user, array $projects, string
             <span>סטטוס המסירה <b>*</b></span>
             <select name="handover_ready" data-handover-ready required>
                 <option value="">בחירה</option>
-                <option value="delivered_with_app_link">נמסר עם קישור לאפליקציה</option>
-                <option value="completed_without_app_link">הסתיים ללא קישור לאפליקציה</option>
-                <option value="ready_for_delivery">מוכן למסירה</option>
-                <option value="not_ready_return_required">לא מוכן — יש לחזור</option>
+                <option value="ready_not_delivered">מוכן ולא נמסר</option>
+                <option value="not_ready_not_delivered">לא מוכן ולא נמסר</option>
+                <option value="ready_delivered">מוכן ונמסר ללקוח/נציג הלקוח</option>
             </select>
         </label>
+        <section class="field--full handover-recipient" data-handover-recipient-fields hidden aria-labelledby="handover-recipient-title">
+            <div class="handover-recipient__heading">
+                <h3 id="handover-recipient-title">אישור קבלת המסירה</h3>
+                <p>יש למלא את שם הלקוח או הנציג שקיבל את המערכת ולהחתים אותו על המסך.</p>
+            </div>
+            <label class="field">
+                <span>שם מקבל המסירה <b>*</b></span>
+                <input type="text" name="handover_recipient_name" maxlength="180" autocomplete="name" data-handover-recipient-name>
+            </label>
+            <div class="field handover-signature-field">
+                <span>חתימת מקבל המסירה <b>*</b></span>
+                <div class="handover-signature-pad" data-handover-signature-pad>
+                    <canvas width="640" height="220" data-handover-signature-canvas aria-label="משטח חתימה"></canvas>
+                    <span class="handover-signature-pad__hint" data-handover-signature-hint>יש לחתום בתוך המסגרת</span>
+                </div>
+                <input type="hidden" name="handover_recipient_signature" data-handover-signature-value>
+                <button type="button" class="button button--ghost button--small" data-handover-signature-clear>ניקוי חתימה</button>
+            </div>
+        </section>
         <label class="field field--full" data-handover-cloud-link-field hidden>
             <span>קישור ענן ייעודי ללקוח <b>*</b></span>
             <input type="url" name="handover_cloud_link" maxlength="2000" inputmode="url" autocomplete="off" dir="ltr" placeholder="https://..." data-handover-cloud-link>
