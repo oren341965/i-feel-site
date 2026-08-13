@@ -211,8 +211,18 @@ try {
     Assert-PortalTest (([regex]::Matches($handoverLandingHtml, 'value="test-project"')).Count -eq 1) "The canonical Monday project was not rendered exactly once."
     Assert-PortalTest ($handoverLandingHtml -notmatch 'value="duplicate-project"') "Duplicate Monday project groups were rendered more than once."
     Assert-PortalTest ($handoverLandingHtml -notmatch 'value="(?:import-project|import-only|facebook-group|website-leads|topics|group_title)"') "Non-project Monday groups were exposed in the project selector."
-    Assert-PortalTest ($handoverLandingHtml -match '<form method="post" class="detail-card handover-search"') "Tenant handover search is not isolated in a server-side POST form."
+    Assert-PortalTest ($handoverLandingHtml -match '<details class="detail-card handover-search-shell"[^>]*data-handover-search-shell(?![^>]*\sopen(?:\s|>))') "Tenant handover search is not collapsed on the landing state."
+    Assert-PortalTest ($handoverLandingHtml -match '<summary class="handover-search-toggle">' -and $handoverLandingHtml -match 'class="handover-search-toggle__text"') "Tenant handover compact search toggle was not rendered."
+    Assert-PortalTest ($handoverLandingHtml -match '<form method="post" class="handover-search"') "Tenant handover search is not isolated in a server-side POST form."
     Assert-PortalTest ($handoverLandingHtml -match 'name="handover_project_search"' -and $handoverLandingHtml -match 'name="handover_resident_search"') "Tenant handover project and resident search fields were not rendered."
+
+    Invoke-PortalCurl "-o", $responseBody, "-b", $employeeCookies, "$baseUrl/staff-expenses/?tab=handovers&handover_project=test-project" | Out-Null
+    $handoverProjectHtml = Get-Content -Raw -Encoding utf8 $responseBody
+    Assert-PortalTest ($handoverProjectHtml -match 'name="handover_resident"' -and $handoverProjectHtml -match 'value="1001"') "Tenant residents were not listed immediately after selecting a project."
+    Assert-PortalTest ($handoverProjectHtml -match 'name="handover_building" data-handover-autosubmit>' -and $handoverProjectHtml -notmatch 'name="handover_building"[^>]*required') "The optional building filter still blocks direct resident selection."
+    Invoke-PortalCurl "-o", $responseBody, "-b", $employeeCookies, "$baseUrl/staff-expenses/?tab=handovers&handover_project=test-project&handover_building=15&handover_resident=1001" | Out-Null
+    $handoverStaleSelectionHtml = Get-Content -Raw -Encoding utf8 $responseBody
+    Assert-PortalTest ($handoverStaleSelectionHtml -match 'id="tenant-handover-form"' -and $handoverStaleSelectionHtml -notmatch 'class="alert alert--error"') "A stale building selection prevented the valid resident handover form from loading."
 
     $handoverSearchCsrf = Get-CsrfFromHtml $handoverLandingHtml
     $headers = Invoke-PortalCurl `
@@ -229,6 +239,7 @@ try {
     Assert-PortalTest ($headers -notmatch 'Search\+Project|Search%20Project|Search\+Resident|Search%20Resident') "Resident search terms leaked into the redirect URL."
     Invoke-PortalCurl "-o", $responseBody, "-b", $employeeCookies, "$baseUrl/staff-expenses/?tab=handovers&handover_search=1" | Out-Null
     $handoverSearchHtml = Get-Content -Raw -Encoding utf8 $responseBody
+    Assert-PortalTest ($handoverSearchHtml -match '<details class="detail-card handover-search-shell"[^>]*data-handover-search-shell[^>]*\sopen(?:\s|>)') "Tenant handover search did not remain open while results were active."
     Assert-PortalTest ($handoverSearchHtml -match 'class="detail-card handover-search-results"') "Tenant handover search results were not rendered."
     Assert-PortalTest ($handoverSearchHtml -match 'Search Project' -and $handoverSearchHtml -match 'Search Resident') "Combined project and resident search did not return the matching Monday resident."
     Assert-PortalTest ($handoverSearchHtml -match 'handover_project=search-project[^"&]*&amp;handover_resident=1003|handover_project=search-project[^"&]*&handover_resident=1003') "Search result did not link to the verified tenant handover form."
