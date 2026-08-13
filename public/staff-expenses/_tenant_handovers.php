@@ -112,6 +112,7 @@ function portal_handover_test_monday_response(string $query, array $variables): 
             'groups' => [
                 ['id' => 'test-project', 'title' => 'פרויקט בדיקה', 'archived' => false, 'deleted' => false],
                 ['id' => 'duplicate-project', 'title' => '  פרויקט   בדיקה  ', 'archived' => false, 'deleted' => false],
+                ['id' => 'search-project', 'title' => 'Search Project', 'archived' => false, 'deleted' => false],
                 ['id' => 'archived-project', 'title' => 'פרויקט בארכיון', 'archived' => true, 'deleted' => false],
             ],
         ]]]];
@@ -119,12 +120,33 @@ function portal_handover_test_monday_response(string $query, array $variables): 
     if (str_contains($query, 'HandoverResidentsNext')) {
         return ['data' => ['next_items_page' => ['cursor' => null, 'items' => []]]];
     }
+    if (str_contains($query, 'HandoverSearch')) {
+        return ['data' => ['boards' => [[
+            'items_page' => [
+                'cursor' => null,
+                'items' => [[
+                    'id' => '1003',
+                    'name' => 'Search Resident',
+                    'group' => ['id' => 'search-project', 'title' => 'Search Project'],
+                    'column_values' => [
+                        ['id' => 'numbers21', 'text' => '21'],
+                        ['id' => 'text8', 'text' => '2'],
+                        ['id' => 'phone', 'text' => '050-123-4567'],
+                        ['id' => '_____3', 'text' => 'resident@example.com'],
+                        ['id' => 'location7', 'text' => 'Test address'],
+                        ['id' => 'status', 'text' => IFEEL_HANDOVER_STATUS_LABEL],
+                    ],
+                ]],
+            ],
+        ]]]];
+    }
     $groupIds = is_array($variables['groupIds'] ?? null) ? $variables['groupIds'] : [];
     $groups = [];
     foreach ($groupIds as $groupId) {
         $groupId = (string) $groupId;
-        $itemId = $groupId === 'duplicate-project' ? '1002' : '1001';
-        $apartment = $groupId === 'duplicate-project' ? '13' : '12';
+        $itemId = $groupId === 'duplicate-project' ? '1002' : ($groupId === 'search-project' ? '1003' : '1001');
+        $apartment = $groupId === 'duplicate-project' ? '13' : ($groupId === 'search-project' ? '21' : '12');
+        $residentName = $groupId === 'duplicate-project' ? 'דייר בדיקה נוסף' : ($groupId === 'search-project' ? 'Search Resident' : 'דייר בדיקה');
         $groups[] = [
             'id' => $groupId,
             'title' => 'פרויקט בדיקה',
@@ -132,7 +154,7 @@ function portal_handover_test_monday_response(string $query, array $variables): 
                 'cursor' => null,
                 'items' => [[
                     'id' => $itemId,
-                    'name' => $groupId === 'duplicate-project' ? 'דייר בדיקה נוסף' : 'דייר בדיקה',
+                    'name' => $residentName,
                     'column_values' => [
                         ['id' => 'numbers21', 'text' => $apartment],
                         ['id' => 'text8', 'text' => '2'],
@@ -290,22 +312,31 @@ function portal_handover_parse_residents(array $items, string $projectId, string
     return $residents;
 }
 
-function portal_handover_residents(string $groupId, bool $fresh = false): array
+function portal_handover_residents_for_projects(array $projects, bool $fresh = false): array
 {
-    if (!preg_match('/^[A-Za-z0-9_-]{1,128}$/', $groupId)) {
-        throw new InvalidArgumentException('הפרויקט שנבחר אינו תקין.');
+    $sourceProjects = [];
+    foreach ($projects as $projectId => $project) {
+        if (!is_array($project) || !is_string($projectId) || !preg_match('/^[A-Za-z0-9_-]{1,128}$/', $projectId)) {
+            continue;
+        }
+        $sourceGroupIds = is_array($project['group_ids'] ?? null) ? $project['group_ids'] : [$projectId];
+        foreach (array_unique($sourceGroupIds) as $sourceGroupId) {
+            if (!is_string($sourceGroupId) || !preg_match('/^[A-Za-z0-9_-]{1,128}$/', $sourceGroupId)) {
+                continue;
+            }
+            $sourceProjects[$sourceGroupId] = [
+                'id' => $projectId,
+                'title' => (string) ($project['title'] ?? ''),
+            ];
+        }
     }
-    $projects = portal_handover_projects($fresh);
-    if (!isset($projects[$groupId])) {
-        throw new RuntimeException('הפרויקט שנבחר אינו קיים או אינו פעיל.');
+    if ($sourceProjects === []) {
+        return [];
     }
-    $project = $projects[$groupId];
-    $sourceGroupIds = is_array($project['group_ids'] ?? null) ? $project['group_ids'] : [$groupId];
-    $sourceGroupIds = array_values(array_filter(array_unique($sourceGroupIds), static fn($id): bool => is_string($id) && preg_match('/^[A-Za-z0-9_-]{1,128}$/', $id) === 1));
-    if ($sourceGroupIds === []) {
-        throw new RuntimeException('לקבוצת הפרויקט אין מזהה Monday תקין.');
-    }
-    return portal_handover_session_cache('residents-' . hash('sha256', $groupId), 30, static function () use ($groupId, $project, $sourceGroupIds): array {
+    ksort($sourceProjects, SORT_NATURAL | SORT_FLAG_CASE);
+    $cacheKey = 'residents-batch-' . hash('sha256', implode("\n", array_keys($sourceProjects)));
+    return portal_handover_session_cache($cacheKey, 30, static function () use ($sourceProjects): array {
+        $sourceGroupIds = array_keys($sourceProjects);
         $query = <<<'GRAPHQL'
 query HandoverResidents($boardIds: [ID!], $groupIds: [String]) {
   boards(ids: $boardIds) {
@@ -342,6 +373,7 @@ GRAPHQL;
             if (!isset($expectedGroups[$sourceGroupId])) {
                 continue;
             }
+            $project = $sourceProjects[$sourceGroupId];
             $page = is_array($sourceGroup['items_page'] ?? null) ? $sourceGroup['items_page'] : [];
             $items = is_array($page['items'] ?? null) ? $page['items'] : [];
             $cursor = is_string($page['cursor'] ?? null) ? $page['cursor'] : null;
@@ -360,16 +392,32 @@ GRAPHQL;
                 $cursor = is_string($nextPage['cursor'] ?? null) ? $nextPage['cursor'] : null;
                 $pages++;
             }
-            foreach (portal_handover_parse_residents($items, $groupId, (string) $project['title'], $sourceGroupId) as $itemId => $resident) {
+            foreach (portal_handover_parse_residents($items, (string) $project['id'], (string) $project['title'], $sourceGroupId) as $itemId => $resident) {
                 $residents[$itemId] = $resident;
             }
         }
         uasort($residents, static function (array $a, array $b): int {
+            $project = strnatcasecmp((string) $a['project_title'], (string) $b['project_title']);
+            if ($project !== 0) {
+                return $project;
+            }
             $building = strnatcasecmp((string) $a['building'], (string) $b['building']);
             return $building !== 0 ? $building : strnatcasecmp((string) $a['apartment'], (string) $b['apartment']);
         });
         return $residents;
     }, $fresh);
+}
+
+function portal_handover_residents(string $groupId, bool $fresh = false): array
+{
+    if (!preg_match('/^[A-Za-z0-9_-]{1,128}$/', $groupId)) {
+        throw new InvalidArgumentException('הפרויקט שנבחר אינו תקין.');
+    }
+    $projects = portal_handover_projects($fresh);
+    if (!isset($projects[$groupId])) {
+        throw new RuntimeException('הפרויקט שנבחר אינו קיים או אינו פעיל.');
+    }
+    return portal_handover_residents_for_projects([$groupId => $projects[$groupId]], $fresh);
 }
 
 function portal_handover_resident(string $groupId, string $itemId, bool $fresh = false): array
@@ -382,6 +430,205 @@ function portal_handover_resident(string $groupId, string $itemId, bool $fresh =
         throw new RuntimeException('הדייר שנבחר אינו משויך לפרויקט או אינו מוכן להעברה.');
     }
     return $residents[$itemId];
+}
+
+function portal_handover_search_term(string $value): string
+{
+    $value = trim((string) (preg_replace('/\s+/u', ' ', $value) ?? $value));
+    return portal_substr($value, 0, 100);
+}
+
+function portal_handover_text_contains(string $value, string $term): bool
+{
+    if ($term === '') {
+        return true;
+    }
+    if (function_exists('mb_stripos')) {
+        return mb_stripos($value, $term, 0, 'UTF-8') !== false;
+    }
+    return stripos($value, $term) !== false;
+}
+
+function portal_handover_search_projects(array $projects, string $projectTerm): array
+{
+    $projectTerm = portal_handover_search_term($projectTerm);
+    if ($projectTerm === '') {
+        return $projects;
+    }
+    return array_filter($projects, static function ($project) use ($projectTerm): bool {
+        return is_array($project) && portal_handover_text_contains((string) ($project['title'] ?? ''), $projectTerm);
+    });
+}
+
+function portal_handover_search_resident_matches(array $residents, string $residentTerm): array
+{
+    $residentTerm = portal_handover_search_term($residentTerm);
+    if ($residentTerm === '') {
+        return $residents;
+    }
+    return array_filter($residents, static function ($resident) use ($residentTerm): bool {
+        return is_array($resident) && portal_handover_text_contains((string) ($resident['name'] ?? ''), $residentTerm);
+    });
+}
+
+function portal_handover_search_monday(array $projects, string $residentTerm, bool $fresh = false): array
+{
+    $sourceProjects = [];
+    foreach ($projects as $projectId => $project) {
+        if (!is_array($project) || !is_string($projectId) || !preg_match('/^[A-Za-z0-9_-]{1,128}$/', $projectId)) {
+            continue;
+        }
+        $sourceGroupIds = is_array($project['group_ids'] ?? null) ? $project['group_ids'] : [$projectId];
+        foreach (array_unique($sourceGroupIds) as $sourceGroupId) {
+            if (is_string($sourceGroupId) && preg_match('/^[A-Za-z0-9_-]{1,128}$/', $sourceGroupId)) {
+                $sourceProjects[$sourceGroupId] = ['id' => $projectId, 'title' => (string) ($project['title'] ?? '')];
+            }
+        }
+    }
+    if ($sourceProjects === []) {
+        return [];
+    }
+    ksort($sourceProjects, SORT_NATURAL | SORT_FLAG_CASE);
+    $residentTerm = portal_handover_search_term($residentTerm);
+    $cacheKey = 'resident-search-' . hash('sha256', implode("\n", array_keys($sourceProjects)) . "\n" . $residentTerm);
+    return portal_handover_session_cache($cacheKey, 30, static function () use ($sourceProjects, $residentTerm): array {
+        $rules = [
+            ['column_id' => 'group', 'compare_value' => array_keys($sourceProjects), 'operator' => 'any_of'],
+        ];
+        if ($residentTerm !== '') {
+            $rules[] = ['column_id' => 'name', 'compare_value' => [$residentTerm], 'operator' => 'contains_text'];
+        }
+        $query = <<<'GRAPHQL'
+query HandoverSearch($boardIds: [ID!], $queryParams: ItemsQuery) {
+  boards(ids: $boardIds) {
+    items_page(limit: 500, query_params: $queryParams) {
+      cursor
+      items {
+        id
+        name
+        group { id title }
+        column_values(ids: ["numbers21", "text8", "phone", "_____3", "location7", "status"]) { id text }
+      }
+    }
+  }
+}
+GRAPHQL;
+        $response = portal_handover_monday_request($query, [
+            'boardIds' => [portal_handover_board_id()],
+            'queryParams' => ['rules' => $rules, 'operator' => 'and'],
+        ]);
+        $page = $response['data']['boards'][0]['items_page'] ?? null;
+        if (!is_array($page)) {
+            throw new RuntimeException('לא התקבלו תוצאות חיפוש תקינות מ-Monday.');
+        }
+        $items = is_array($page['items'] ?? null) ? $page['items'] : [];
+        $cursor = is_string($page['cursor'] ?? null) ? $page['cursor'] : null;
+        $pages = 1;
+        while ($cursor !== null && $cursor !== '' && $pages < 20) {
+            $next = portal_handover_monday_request(
+                'query HandoverSearchNext($cursor: String!) { next_items_page(limit: 500, cursor: $cursor) { cursor items { id name group { id title } column_values(ids: ["numbers21", "text8", "phone", "_____3", "location7", "status"]) { id text } } } }',
+                ['cursor' => $cursor]
+            );
+            $nextPage = $next['data']['next_items_page'] ?? null;
+            if (!is_array($nextPage)) {
+                break;
+            }
+            $items = array_merge($items, is_array($nextPage['items'] ?? null) ? $nextPage['items'] : []);
+            $cursor = is_string($nextPage['cursor'] ?? null) ? $nextPage['cursor'] : null;
+            $pages++;
+        }
+        $residents = [];
+        foreach ($items as $item) {
+            if (!is_array($item)) {
+                continue;
+            }
+            $sourceGroupId = trim((string) ($item['group']['id'] ?? ''));
+            if (!isset($sourceProjects[$sourceGroupId])) {
+                continue;
+            }
+            $project = $sourceProjects[$sourceGroupId];
+            $resident = portal_handover_normalize_resident($item, (string) $project['id'], (string) $project['title'], $sourceGroupId);
+            if ($resident !== null && ($residentTerm === '' || portal_handover_text_contains((string) $resident['name'], $residentTerm))) {
+                $residents[$resident['item_id']] = $resident;
+            }
+        }
+        uasort($residents, static function (array $a, array $b): int {
+            $project = strnatcasecmp((string) $a['project_title'], (string) $b['project_title']);
+            if ($project !== 0) {
+                return $project;
+            }
+            $name = strnatcasecmp((string) $a['name'], (string) $b['name']);
+            return $name !== 0 ? $name : strnatcasecmp((string) $a['apartment'], (string) $b['apartment']);
+        });
+        return $residents;
+    }, $fresh);
+}
+
+function portal_handover_search_residents(array $projects, string $projectTerm, string $residentTerm, bool $fresh = false): array
+{
+    $projectTerm = portal_handover_search_term($projectTerm);
+    $residentTerm = portal_handover_search_term($residentTerm);
+    if ($projectTerm === '' && $residentTerm === '') {
+        return ['results' => [], 'total' => 0, 'truncated' => false];
+    }
+    $matchingProjects = portal_handover_search_projects($projects, $projectTerm);
+    if ($matchingProjects === []) {
+        return ['results' => [], 'total' => 0, 'truncated' => false];
+    }
+    $matches = portal_handover_search_resident_matches(
+        portal_handover_search_monday($matchingProjects, $residentTerm, $fresh),
+        $residentTerm
+    );
+    $total = count($matches);
+    return [
+        'results' => array_slice($matches, 0, 100, true),
+        'total' => $total,
+        'truncated' => $total > 100,
+    ];
+}
+
+function portal_handover_search_state(): array
+{
+    $active = trim((string) ($_GET['handover_search'] ?? '')) === '1';
+    $state = is_array($_SESSION['portal_handover_search'] ?? null) ? $_SESSION['portal_handover_search'] : [];
+    if (!$active || (int) ($state['created_at'] ?? 0) < time() - 900) {
+        if ($state !== [] && (int) ($state['created_at'] ?? 0) < time() - 900) {
+            unset($_SESSION['portal_handover_search']);
+        }
+        return ['active' => false, 'project' => '', 'resident' => ''];
+    }
+    return [
+        'active' => true,
+        'project' => portal_handover_search_term((string) ($state['project'] ?? '')),
+        'resident' => portal_handover_search_term((string) ($state['resident'] ?? '')),
+    ];
+}
+
+function portal_handle_tenant_handover_search_post(array $user): never
+{
+    portal_verify_csrf();
+    if (portal_post('handover_search_clear', 10) === '1') {
+        unset($_SESSION['portal_handover_search']);
+        portal_redirect(['tab' => 'handovers']);
+    }
+    $projectTerm = portal_handover_search_term(portal_post('handover_project_search', 100));
+    $residentTerm = portal_handover_search_term(portal_post('handover_resident_search', 100));
+    if ($projectTerm === '' && $residentTerm === '') {
+        unset($_SESSION['portal_handover_search']);
+        portal_flash_set('error', 'יש להזין שם פרויקט, שם דייר או את שניהם.');
+        portal_redirect(['tab' => 'handovers']);
+    }
+    $_SESSION['portal_handover_search'] = [
+        'project' => $projectTerm,
+        'resident' => $residentTerm,
+        'created_at' => time(),
+    ];
+    portal_audit('tenant_handover_search', [
+        'project_filter' => $projectTerm !== '',
+        'resident_filter' => $residentTerm !== '',
+        'actor' => hash('sha256', strtolower((string) ($user['email'] ?? ''))),
+    ]);
+    portal_redirect(['tab' => 'handovers', 'handover_search' => '1']);
 }
 
 function portal_handover_credentials(array $resident): array
@@ -851,7 +1098,79 @@ function portal_handle_handover_download(array $user): void
     exit;
 }
 
-function portal_render_tenant_handover_form(array $user, array $projects, string $projectId, array $residents, string $building, ?array $resident): void
+function portal_render_tenant_handover_search(array $search, array $outcome): void
+{
+    $active = (bool) ($search['active'] ?? false);
+    $projectTerm = (string) ($search['project'] ?? '');
+    $residentTerm = (string) ($search['resident'] ?? '');
+    $results = is_array($outcome['results'] ?? null) ? $outcome['results'] : [];
+    $total = (int) ($outcome['total'] ?? 0);
+    ?>
+    <form method="post" class="detail-card handover-search" data-handover-search>
+        <input type="hidden" name="csrf" value="<?= portal_h(portal_csrf_token()) ?>">
+        <input type="hidden" name="action" value="search_tenant_handovers">
+        <div class="handover-search__heading">
+            <div><p class="eyebrow">חיפוש במסירות בלבד</p><h2>איתור פרויקט או דייר</h2></div>
+            <p>אפשר לחפש לפי שם הפרויקט, לפי שם הדייר או לשלב בין שניהם. החיפוש אינו מחפש בשאר האתר.</p>
+        </div>
+        <div class="form-grid handover-search__fields">
+            <label class="field">
+                <span>שם הפרויקט</span>
+                <input type="search" name="handover_project_search" value="<?= portal_h($projectTerm) ?>" maxlength="100" autocomplete="off" placeholder="לדוגמה: הראשונים 15">
+            </label>
+            <label class="field">
+                <span>שם הדייר</span>
+                <input type="search" name="handover_resident_search" value="<?= portal_h($residentTerm) ?>" maxlength="100" autocomplete="off" placeholder="שם פרטי או שם מלא">
+            </label>
+            <div class="field field--actions handover-search__actions">
+                <button type="submit" class="button button--primary">חיפוש</button>
+                <?php if ($active): ?><button type="submit" name="handover_search_clear" value="1" class="button button--secondary" formnovalidate>ניקוי</button><?php endif; ?>
+            </div>
+        </div>
+        <p class="form-note">שמות הדיירים נשלחים לשרת בלבד, אינם נכתבים בכתובת העמוד ואינם מצטרפים למנוע החיפוש של האתר.</p>
+    </form>
+
+    <?php if ($active && isset($outcome['error'])): ?>
+        <div class="alert alert--error" role="alert"><?= portal_h((string) $outcome['error']) ?></div>
+    <?php elseif ($active): ?>
+        <section class="detail-card handover-search-results" aria-live="polite">
+            <div class="handover-search-results__heading">
+                <div><p class="eyebrow">תוצאות החיפוש</p><h2><?= portal_h((string) $total) ?> תוצאות</h2></div>
+                <?php if (!empty($outcome['truncated'])): ?><span class="status-pill status-pending">מוצגות 100 הראשונות — מומלץ לצמצם את החיפוש</span><?php endif; ?>
+            </div>
+            <?php if ($results === []): ?>
+                <div class="empty-cell">לא נמצאו דיירים התואמים לחיפוש.</div>
+            <?php else: ?>
+                <div class="table-wrap"><table class="records-table">
+                    <thead><tr><th>פרויקט</th><th>בניין</th><th>דירה</th><th>שם הדייר</th><th></th></tr></thead>
+                    <tbody>
+                    <?php foreach ($results as $candidate): ?>
+                        <?php
+                        $params = [
+                            'tab' => 'handovers',
+                            'handover_project' => (string) ($candidate['project_id'] ?? ''),
+                            'handover_resident' => (string) ($candidate['item_id'] ?? ''),
+                        ];
+                        if ((string) ($candidate['building'] ?? '') !== '') {
+                            $params['handover_building'] = (string) $candidate['building'];
+                        }
+                        ?>
+                        <tr>
+                            <td><?= portal_h($candidate['project_title'] ?? '') ?></td>
+                            <td><?= portal_h($candidate['building'] ?? '—') ?></td>
+                            <td><?= portal_h($candidate['apartment'] ?? '') ?></td>
+                            <td><strong><?= portal_h($candidate['name'] ?? '') ?></strong></td>
+                            <td><a class="button button--secondary button--small" href="<?= portal_h(portal_url($params)) ?>">פתיחת טופס המסירה</a></td>
+                        </tr>
+                    <?php endforeach; ?>
+                    </tbody>
+                </table></div>
+            <?php endif; ?>
+        </section>
+    <?php endif;
+}
+
+function portal_render_tenant_handover_form(array $user, array $projects, string $projectId, array $residents, string $building, ?array $resident, array $search, array $searchOutcome): void
 {
     $buildings = [];
     foreach ($residents as $candidate) {
@@ -871,6 +1190,8 @@ function portal_render_tenant_handover_form(array $user, array $projects, string
             <p>הדיירים נטענים בזמן אמת מ-Monday. פרטי לקוח ותמונות נשמרים רק באחסון הפרטי של אזור העובדים.</p>
         </div>
     </section>
+
+    <?php portal_render_tenant_handover_search($search, $searchOutcome); ?>
 
     <form method="get" class="detail-card form-grid handover-selector" data-handover-selector>
         <input type="hidden" name="tab" value="handovers">
@@ -987,6 +1308,8 @@ function portal_render_tenant_handovers(array $user, ?array $flash): void
     $projects = [];
     $residents = [];
     $resident = null;
+    $search = portal_handover_search_state();
+    $searchOutcome = ['results' => [], 'total' => 0, 'truncated' => false];
     try {
         $projects = portal_handover_projects();
         if ($projectId !== '') {
@@ -1002,8 +1325,25 @@ function portal_render_tenant_handovers(array $user, ?array $flash): void
         error_log('[i-feel tenant handovers] render_failed');
         ?><div class="alert alert--error" role="alert"><?= portal_h($error->getMessage()) ?></div><?php
     }
+    if (!empty($search['active']) && $projects !== []) {
+        try {
+            $searchOutcome = portal_handover_search_residents(
+                $projects,
+                (string) ($search['project'] ?? ''),
+                (string) ($search['resident'] ?? '')
+            );
+        } catch (Throwable $error) {
+            error_log('[i-feel tenant handovers] search_failed');
+            $searchOutcome = [
+                'results' => [],
+                'total' => 0,
+                'truncated' => false,
+                'error' => 'לא ניתן להשלים כרגע את החיפוש ב-Monday. נסו שוב בעוד רגע.',
+            ];
+        }
+    }
 
-    portal_render_tenant_handover_form($user, $projects, $projectId, $residents, $building, $resident);
+    portal_render_tenant_handover_form($user, $projects, $projectId, $residents, $building, $resident, $search, $searchOutcome);
     $history = portal_handovers_for_user($user);
     ?>
     <section class="detail-card">

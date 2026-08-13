@@ -210,6 +210,45 @@ try {
     Assert-PortalTest ($handoverLandingHtml -match 'class="handover-field-preview"') "Tenant handover technician fields were not explained on the landing state."
     Assert-PortalTest (([regex]::Matches($handoverLandingHtml, 'value="test-project"')).Count -eq 1) "The canonical Monday project was not rendered exactly once."
     Assert-PortalTest ($handoverLandingHtml -notmatch 'value="duplicate-project"') "Duplicate Monday project groups were rendered more than once."
+    Assert-PortalTest ($handoverLandingHtml -match '<form method="post" class="detail-card handover-search"') "Tenant handover search is not isolated in a server-side POST form."
+    Assert-PortalTest ($handoverLandingHtml -match 'name="handover_project_search"' -and $handoverLandingHtml -match 'name="handover_resident_search"') "Tenant handover project and resident search fields were not rendered."
+
+    $handoverSearchCsrf = Get-CsrfFromHtml $handoverLandingHtml
+    $headers = Invoke-PortalCurl `
+        "-D", "-", `
+        "-o", $responseBody, `
+        "-b", $employeeCookies, `
+        "-c", $employeeCookies, `
+        "--data-urlencode", "csrf=$handoverSearchCsrf", `
+        "--data-urlencode", "action=search_tenant_handovers", `
+        "--data-urlencode", "handover_project_search=Search Project", `
+        "--data-urlencode", "handover_resident_search=Search Resident", `
+        "$baseUrl/staff-expenses/"
+    Assert-PortalTest ($headers -match 'HTTP/1\.1 303' -and $headers -match 'handover_search=1') "Combined tenant handover search was not accepted."
+    Assert-PortalTest ($headers -notmatch 'Search\+Project|Search%20Project|Search\+Resident|Search%20Resident') "Resident search terms leaked into the redirect URL."
+    Invoke-PortalCurl "-o", $responseBody, "-b", $employeeCookies, "$baseUrl/staff-expenses/?tab=handovers&handover_search=1" | Out-Null
+    $handoverSearchHtml = Get-Content -Raw -Encoding utf8 $responseBody
+    Assert-PortalTest ($handoverSearchHtml -match 'class="detail-card handover-search-results"') "Tenant handover search results were not rendered."
+    Assert-PortalTest ($handoverSearchHtml -match 'Search Project' -and $handoverSearchHtml -match 'Search Resident') "Combined project and resident search did not return the matching Monday resident."
+    Assert-PortalTest ($handoverSearchHtml -match 'handover_project=search-project[^"&]*&amp;handover_resident=1003|handover_project=search-project[^"&]*&handover_resident=1003') "Search result did not link to the verified tenant handover form."
+    $handoverSearchCases = @(
+        @{ Project = "Search Project"; Resident = ""; Label = "project-only" },
+        @{ Project = ""; Resident = "Search Resident"; Label = "resident-only" }
+    )
+    foreach ($searchCase in $handoverSearchCases) {
+        Invoke-PortalCurl `
+            "-o", $responseBody, `
+            "-b", $employeeCookies, `
+            "-c", $employeeCookies, `
+            "--data-urlencode", "csrf=$handoverSearchCsrf", `
+            "--data-urlencode", "action=search_tenant_handovers", `
+            "--data-urlencode", "handover_project_search=$($searchCase.Project)", `
+            "--data-urlencode", "handover_resident_search=$($searchCase.Resident)", `
+            "$baseUrl/staff-expenses/" | Out-Null
+        Invoke-PortalCurl "-o", $responseBody, "-b", $employeeCookies, "$baseUrl/staff-expenses/?tab=handovers&handover_search=1" | Out-Null
+        $handoverSearchHtml = Get-Content -Raw -Encoding utf8 $responseBody
+        Assert-PortalTest ($handoverSearchHtml -match 'Search Project' -and $handoverSearchHtml -match 'Search Resident') "The $($searchCase.Label) tenant handover search did not return the expected resident."
+    }
 
     Invoke-PortalCurl `
         "-o", $responseBody, `

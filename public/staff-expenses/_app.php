@@ -150,6 +150,9 @@ try {
         if (portal_post('action', 60) === 'submit_tenant_handover') {
             portal_handle_tenant_handover_post($user);
         }
+        if (portal_post('action', 60) === 'search_tenant_handovers') {
+            portal_handle_tenant_handover_search_post($user);
+        }
         portal_handle_post($user);
     }
 
