@@ -217,6 +217,9 @@ input[readonly] { background: #f3f5f8; }
 .handover-cloud-source { gap: 7px; padding: 16px 18px; border: 1px solid; border-radius: 13px; }
 .handover-cloud-source > span { color: inherit; }
 .handover-cloud-source > strong { line-height: 1.55; }
+.handover-cloud-source__link { direction: ltr; padding: 12px 14px; overflow-wrap: anywhere; border: 1px solid currentColor; border-radius: 10px; background: rgba(255, 255, 255, .82); color: #10233f; font-family: Consolas, monospace; font-size: .91rem; text-align: left; user-select: all; }
+.handover-cloud-source__actions { display: flex; flex-wrap: wrap; align-items: center; gap: 9px; }
+.handover-cloud-source__copy-status { font-size: .84rem; font-weight: 700; }
 .handover-cloud-source--ready { border-color: #9bd2b0; background: #effaf3; color: #17623a; }
 .handover-cloud-source--missing { border-color: #e1a4a4; background: #fff3f3; color: #8d2727; }
 .handover-offline-status { display: flex; align-items: center; gap: 12px; margin: 0 0 18px; padding: 13px 16px; border: 1px solid #bad5e8; border-radius: 14px; background: #f2f8fc; color: #174d74; }

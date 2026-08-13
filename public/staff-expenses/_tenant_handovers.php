@@ -1956,6 +1956,9 @@ function portal_render_tenant_handover_form(array $user, array $projects, string
     $cloudLookup = portal_handover_cloud_lookup($resident);
     $cloudAvailable = (string) ($cloudLookup['status'] ?? '') === 'found'
         && portal_handover_cloud_link((string) ($cloudLookup['link'] ?? '')) !== '';
+    $cloudLinkForTechnician = $cloudAvailable
+        ? portal_handover_cloud_link((string) ($cloudLookup['link'] ?? ''))
+        : '';
     ?>
     <section class="detail-card handover-resident-card">
         <h2>פרטי הדייר ופרטי הכניסה</h2>
@@ -2016,10 +2019,18 @@ function portal_render_tenant_handover_form(array $user, array $projects, string
                 <button type="button" class="button button--ghost button--small" data-handover-signature-clear>ניקוי חתימה</button>
             </div>
         </section>
-        <section class="field field--full handover-cloud-source <?= $cloudAvailable ? 'handover-cloud-source--ready' : 'handover-cloud-source--missing' ?>" data-handover-cloud-link-field data-handover-cloud-available="<?= $cloudAvailable ? '1' : '0' ?>" hidden>
+        <section class="field field--full handover-cloud-source <?= $cloudAvailable ? 'handover-cloud-source--ready' : 'handover-cloud-source--missing' ?>" data-handover-cloud-link-field data-handover-cloud-available="<?= $cloudAvailable ? '1' : '0' ?>">
             <span>קישור ענן ייעודי ללקוח <b>*</b></span>
             <strong><?= portal_h(portal_handover_cloud_lookup_message($cloudLookup)) ?></strong>
-            <small class="form-note">הקישור נשלף בצד השרת מקובץ הפרויקט ב-Google Drive. אין הקלדה ידנית ואין גישה לרשימת הלקוחות.</small>
+            <?php if ($cloudAvailable): ?>
+                <div class="handover-cloud-source__link" dir="ltr" data-handover-cloud-link><?= portal_h($cloudLinkForTechnician) ?></div>
+                <div class="handover-cloud-source__actions">
+                    <button type="button" class="button button--small" data-handover-cloud-copy>העתקת הקישור</button>
+                    <a class="button button--ghost button--small" href="<?= portal_h($cloudLinkForTechnician) ?>" target="_blank" rel="noopener noreferrer">פתיחת הקישור</a>
+                    <span class="handover-cloud-source__copy-status" data-handover-cloud-copy-status role="status" aria-live="polite"></span>
+                </div>
+            <?php endif; ?>
+            <small class="form-note">הקישור מוצג לטכנאי כדי להגדיר את הקונטרולר באפליקציה. הוא נשלף בצד השרת מקובץ הפרויקט ב-Google Drive, ללא גישה לרשימת הלקוחות.</small>
         </section>
         <label class="field"><span>תאריך מסירה <b>*</b></span><input type="date" name="handover_date" value="<?= portal_h(date('Y-m-d')) ?>" required></label>
         <label class="field">

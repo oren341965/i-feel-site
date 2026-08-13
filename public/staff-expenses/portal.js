@@ -476,6 +476,9 @@
     const handoverForm = document.querySelector('[data-handover-form]');
     const handoverReady = handoverForm?.querySelector('[data-handover-ready]');
     const handoverCloudLinkField = handoverForm?.querySelector('[data-handover-cloud-link-field]');
+    const handoverCloudLink = handoverForm?.querySelector('[data-handover-cloud-link]');
+    const handoverCloudCopy = handoverForm?.querySelector('[data-handover-cloud-copy]');
+    const handoverCloudCopyStatus = handoverForm?.querySelector('[data-handover-cloud-copy-status]');
     const handoverRecipientFields = handoverForm?.querySelector('[data-handover-recipient-fields]');
     const handoverRecipientName = handoverForm?.querySelector('[data-handover-recipient-name]');
     const handoverSignatureCanvas = handoverForm?.querySelector('[data-handover-signature-canvas]');
@@ -538,11 +541,45 @@
     handoverSignatureClear?.addEventListener('click', clearHandoverSignature);
     clearHandoverSignature();
 
+    handoverCloudCopy?.addEventListener('click', async () => {
+        const value = handoverCloudLink?.textContent?.trim() || '';
+        if (!value) return;
+        try {
+            let copied = false;
+            if (navigator.clipboard?.writeText) {
+                try {
+                    await navigator.clipboard.writeText(value);
+                    copied = true;
+                } catch {
+                    // Offline/non-secure contexts can reject the modern clipboard API.
+                }
+            }
+            if (!copied) {
+                const helper = document.createElement('textarea');
+                helper.value = value;
+                helper.setAttribute('readonly', '');
+                helper.style.position = 'fixed';
+                helper.style.opacity = '0';
+                document.body.appendChild(helper);
+                try {
+                    helper.select();
+                    copied = document.execCommand('copy');
+                } finally {
+                    helper.remove();
+                }
+            }
+            if (!copied) throw new Error('copy failed');
+            handoverCloudCopy.textContent = 'הקישור הועתק';
+            if (handoverCloudCopyStatus) handoverCloudCopyStatus.textContent = 'אפשר להדביק אותו כעת בהגדרת הקונטרולר.';
+        } catch {
+            if (handoverCloudCopyStatus) handoverCloudCopyStatus.textContent = 'לא ניתן להעתיק אוטומטית. לחצו לחיצה ארוכה על הקישור והעתיקו אותו.';
+        }
+    });
+
     const updateHandoverDelivery = () => {
         if (!handoverReady) return;
         const isDelivered = handoverReady.value === 'ready_delivered';
         if (handoverCloudLinkField) {
-            handoverCloudLinkField.hidden = !isDelivered;
             const cloudAvailable = handoverCloudLinkField.dataset.handoverCloudAvailable === '1';
             handoverReady.setCustomValidity(isDelivered && !cloudAvailable
                 ? 'לא נמצא קישור ענן מאומת לדייר בקובץ Google Drive של הפרויקט.'
