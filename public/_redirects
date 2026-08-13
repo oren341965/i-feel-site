@@ -9,7 +9,9 @@
 # ---- Service / customer-area pages ----
 /qr/                         /service-and-maintenance/   301
 /service-2/                  /service-and-maintenance/   301
-/שירותי-ענן/                  /service-and-maintenance/   301
+/שירותי-ענן/                  /risco-cloud-subscription/  301
+/cloud-servise/              /risco-cloud-subscription/  301
+/risco/                      /risco-cloud-subscription/  301
 /contact-us/                 /contactus/                  301
 
 # ---- Media / press ----

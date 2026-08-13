@@ -9,7 +9,7 @@
   # Service / customer-area legacy routes.
   RewriteRule ^qr/?$ /service-and-maintenance/ [R=301,L]
   RewriteRule ^service-2/?$ /service-and-maintenance/ [R=301,L]
-  RewriteRule ^שירותי-ענן/?$ /service-and-maintenance/ [R=301,L]
+  RewriteRule ^שירותי-ענן/?$ /risco-cloud-subscription/ [R=301,L]
   RewriteRule ^contact-us/?$ /contactus/ [R=301,L]
 
   # Media / press.
@@ -303,7 +303,7 @@
   RewriteRule ^wireless-smart-home/?$ /smart-home/ [R=301,L]
   RewriteRule ^lp/?$ /contactus/ [R=301,L]
   RewriteRule ^partners/?$ /brands-and-technologies/ [R=301,L]
-  RewriteRule ^risco/?$ /communication-networks/ [R=301,L]
+  RewriteRule ^risco/?$ /risco-cloud-subscription/ [R=301,L]
   RewriteRule ^thank-you-page/?$ - [G]
   RewriteRule ^shop/?$ - [G]
   RewriteRule ^checkout/?$ - [G]
@@ -312,7 +312,7 @@
   RewriteRule ^legend/?$ - [G]
   RewriteRule ^jobs/?$ /contactus/ [R=301,L]
   RewriteRule ^cloud/?$ /service-and-maintenance/ [R=301,L]
-  RewriteRule ^cloud-servise/?$ /service-and-maintenance/ [R=301,L]
+  RewriteRule ^cloud-servise/?$ /risco-cloud-subscription/ [R=301,L]
   RewriteRule ^תקנון-אתר/?$ - [G]
   RewriteRule ^פתיחת-קריאת-שירות/?$ /service-and-maintenance/ [R=301,L,NE]
   RewriteRule ^מדיניות-פרטיות/?$ - [G]

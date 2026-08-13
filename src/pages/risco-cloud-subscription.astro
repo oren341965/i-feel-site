@@ -1,0 +1,36 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import content from '../page-html/risco-cloud-subscription.html?raw';
+
+const faq = [
+  { question: 'האם החיוב של RISCO חודשי?', answer: 'לא לפי מודל החיוב הנוכחי שמפרסמת RISCO. מנוי שירותי הענן הוא שנתי, והמחיר תלוי בחבילה שנבחרה ומוצג לפני הרכישה או החידוש.' },
+  { question: 'כמה עולה מנוי iRISCO?', answer: 'המחיר נקבע לפי החבילה ומספר האתרים ומוצג בתוך iRISCO או בחנות האפליקציות לפני התשלום. המחיר שמופיע בעת הרכישה הוא המחיר המחייב וכולל מע״מ לפי RISCO.' },
+  { question: 'מה קורה אם לא מחדשים את מנוי הענן?', answer: 'האזעקה המקומית אמורה להמשיך לפעול לפי התצורה שלה, כולל לוח המקשים, הגלאים והסירנה. גישה מרחוק, התראות ותכונות iRISCO עלולות להיפסק. חיבור למוקד או ל-SIM הוא שירות נפרד ויש לבדוק אותו מול הספק.' },
+  { question: 'האם 50 ₪ לחודש ל-i-feel כוללים את מנוי RISCO?', answer: 'לא. הצעת השירות הפרטית של i-feel לשנת 2026 מציינת ששירותי ענן, דמי מנוי ורישיונות תוכנה אינם כלולים. אלה חיובים נפרדים, אלא אם נכתב אחרת במפורש בהסכם האישי.' },
+  { question: 'מי מטפל בבעיה באפליקציה ומי מטפל בחיוב?', answer: 'i-feel יכולה לסייע בהגדרת האתר, המשתמש והתקשורת למערכת שהותקנה או משויכת אליה. בעיית חיוב, ביטול או חשבונית מטופלת אצל הגורם שגבה את התשלום: Apple, Google, RISCO או המשווק.' }
+];
+
+const jsonLd = JSON.stringify({
+  '@context': 'https://schema.org',
+  '@graph': [
+    { '@type': ['LocalBusiness', 'HomeAndConstructionBusiness'], '@id': 'https://i-feel.co.il/#business', name: 'i-feel', alternateName: 'i-feel מערכות בקרת מבנה ובית חכם', url: 'https://i-feel.co.il/', logo: 'https://i-feel.co.il/assets/ifeel-logo.png', image: 'https://i-feel.co.il/assets/ifeel-logo.png', telephone: '+972-3-508-9553', email: 'sales@i-feel.co.il', priceRange: '₪₪₪', address: { '@type': 'PostalAddress', streetAddress: 'אימבר 14', addressLocality: 'פתח תקווה', addressRegion: 'מחוז המרכז', postalCode: '4951148', addressCountry: 'IL' }, areaServed: { '@type': 'Country', name: 'Israel', sameAs: 'https://www.wikidata.org/wiki/Q801' } },
+    { '@type': 'WebPage', '@id': 'https://i-feel.co.il/risco-cloud-subscription/#page', url: 'https://i-feel.co.il/risco-cloud-subscription/', name: 'שירותי ענן RISCO ומנוי iRISCO', description: 'מדריך ללקוחות RISCO: מה כולל מנוי iRISCO, חיוב שנתי, תשלום וחידוש, עבודה מקומית וההבדל מול מוקד והסכם השירות של i-feel.', inLanguage: 'he-IL', about: { '@type': 'SoftwareApplication', name: 'iRISCO', applicationCategory: 'SecurityApplication' }, isPartOf: { '@id': 'https://i-feel.co.il/#website' } },
+    { '@type': 'BreadcrumbList', itemListElement: [{ '@type': 'ListItem', position: 1, name: 'דף הבית', item: 'https://i-feel.co.il/' }, { '@type': 'ListItem', position: 2, name: 'שירות לקוחות', item: 'https://i-feel.co.il/service-and-maintenance/' }, { '@type': 'ListItem', position: 3, name: 'שירותי ענן RISCO', item: 'https://i-feel.co.il/risco-cloud-subscription/' }] },
+    { '@type': 'FAQPage', mainEntity: faq.map((item) => ({ '@type': 'Question', name: item.question, acceptedAnswer: { '@type': 'Answer', text: item.answer } })) }
+  ]
+});
+
+const meta = {
+  title: 'שירותי ענן RISCO ומנוי iRISCO | חיוב, תשלום וחידוש | i-feel',
+  description: 'מדריך ללקוחות RISCO: מנוי iRISCO, חיוב שנתי, תשלום וחידוש, מה עובד מקומית ומה ההבדל מול מוקד והסכם שירות. i-feel 03-508-9553.',
+  canonical: 'https://i-feel.co.il/risco-cloud-subscription/',
+  ogTitle: 'שירותי ענן RISCO ומנוי iRISCO | i-feel',
+  ogDescription: 'מה כולל מנוי iRISCO, איך בודקים חיוב וחידוש, מה ממשיך לעבוד מקומית ומי מטפל בתשלום או בתקלה.',
+  ogUrl: 'https://i-feel.co.il/risco-cloud-subscription/',
+  ogImage: 'https://i-feel.co.il/assets/articles/smart-home-alarm-system.jpg',
+  jsonLd
+};
+---
+<BaseLayout {...meta}>
+  <Fragment set:html={content} />
+</BaseLayout>

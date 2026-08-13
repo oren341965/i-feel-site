@@ -776,13 +776,14 @@ export const articles: Article[] = [
     title: 'מערכת אזעקה לבית חכם: אבטחה חכמה שמדברת עם כל הבית',
     description: 'מערכת אזעקה בבית חכם אינה פועלת לבד. כשהיא מחוברת למצלמות, תאורה, אינטרקום, תריסים ו-Home Assistant, היא יוצרת שכבת אבטחה חכמה, פתוחה ומתקדמת.',
     category: 'אבטחה',
-    updated: '2026-07-08',
+    updated: '2026-08-13',
     image: '/assets/articles/smart-home-alarm-system.jpg',
     imageAlt: 'מסך בקרה ואינטרקום חכם עם פאנל מגע מותקנים בקיר — פרויקט בית חכם של i-feel בהרצליה פיתוח',
     related: [
       { label: 'מצלמות אבטחה לבית חכם', href: '/articles/smart-home-security-cameras/' },
       { label: 'הבית החכם — הכול עובד יחד', href: '/articles/smart-home-everything-works-together/' },
       { label: 'פתרונות בית חכם', href: '/smart-home/' },
+      { label: 'מנוי iRISCO ושירותי ענן', href: '/risco-cloud-subscription/' },
     ],
     sections: [
       {
