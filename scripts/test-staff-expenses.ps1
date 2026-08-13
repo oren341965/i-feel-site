@@ -216,6 +216,14 @@ try {
     Assert-PortalTest ($handoverLandingHtml -match '<form method="post" class="handover-search"') "Tenant handover search is not isolated in a server-side POST form."
     Assert-PortalTest ($handoverLandingHtml -match 'name="handover_project_search"' -and $handoverLandingHtml -match 'name="handover_resident_search"') "Tenant handover project and resident search fields were not rendered."
 
+    Invoke-PortalCurl "-o", $responseBody, "-b", $employeeCookies, "$baseUrl/staff-expenses/?tab=handovers&handover_project=test-project" | Out-Null
+    $handoverProjectHtml = Get-Content -Raw -Encoding utf8 $responseBody
+    Assert-PortalTest ($handoverProjectHtml -match 'name="handover_resident"' -and $handoverProjectHtml -match 'value="1001"') "Tenant residents were not listed immediately after selecting a project."
+    Assert-PortalTest ($handoverProjectHtml -match 'name="handover_building" data-handover-autosubmit>' -and $handoverProjectHtml -notmatch 'name="handover_building"[^>]*required') "The optional building filter still blocks direct resident selection."
+    Invoke-PortalCurl "-o", $responseBody, "-b", $employeeCookies, "$baseUrl/staff-expenses/?tab=handovers&handover_project=test-project&handover_building=15&handover_resident=1001" | Out-Null
+    $handoverStaleSelectionHtml = Get-Content -Raw -Encoding utf8 $responseBody
+    Assert-PortalTest ($handoverStaleSelectionHtml -match 'id="tenant-handover-form"' -and $handoverStaleSelectionHtml -notmatch 'class="alert alert--error"') "A stale building selection prevented the valid resident handover form from loading."
+
     $handoverSearchCsrf = Get-CsrfFromHtml $handoverLandingHtml
     $headers = Invoke-PortalCurl `
         "-D", "-", `

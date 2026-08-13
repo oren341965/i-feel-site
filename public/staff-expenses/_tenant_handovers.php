@@ -1294,6 +1294,9 @@ function portal_render_tenant_handover_form(array $user, array $projects, string
     }
     $buildings = array_keys($buildings);
     usort($buildings, 'strnatcasecmp');
+    if ($building !== '' && !in_array($building, $buildings, true)) {
+        $building = '';
+    }
     $residentId = (string) ($resident['item_id'] ?? '');
     ?>
     <section class="page-heading page-heading--compact">
@@ -1306,7 +1309,7 @@ function portal_render_tenant_handover_form(array $user, array $projects, string
 
     <?php portal_render_tenant_handover_search($search, $searchOutcome); ?>
 
-    <form method="get" class="detail-card form-grid handover-selector" data-handover-selector>
+    <form method="get" class="detail-card form-grid handover-selector" data-handover-selector autocomplete="off">
         <input type="hidden" name="tab" value="handovers">
         <label class="field">
             <span>פרויקט <b>*</b></span>
@@ -1319,21 +1322,21 @@ function portal_render_tenant_handover_form(array $user, array $projects, string
         </label>
         <?php if ($projectId !== '' && $buildings !== []): ?>
             <label class="field">
-                <span>בניין <b>*</b></span>
-                <select name="handover_building" data-handover-autosubmit required>
-                    <option value="">בחירת בניין</option>
+                <span>בניין (סינון)</span>
+                <select name="handover_building" data-handover-autosubmit>
+                    <option value="">כל הבניינים</option>
                     <?php foreach ($buildings as $option): ?><option value="<?= portal_h($option) ?>" <?= $building === $option ? 'selected' : '' ?>>בניין <?= portal_h($option) ?></option><?php endforeach; ?>
                 </select>
             </label>
         <?php endif; ?>
-        <?php if ($projectId !== '' && ($buildings === [] || $building !== '')): ?>
+        <?php if ($projectId !== '' && $residents !== []): ?>
             <label class="field">
-                <span>דירה <b>*</b></span>
+                <span>דייר / דירה <b>*</b></span>
                 <select name="handover_resident" data-handover-autosubmit required>
-                    <option value="">בחירת דירה</option>
+                    <option value="">בחירת דייר</option>
                     <?php foreach ($residents as $candidate): ?>
-                        <?php if ($buildings !== [] && (string) $candidate['building'] !== $building) { continue; } ?>
-                        <option value="<?= portal_h($candidate['item_id']) ?>" <?= $residentId === $candidate['item_id'] ? 'selected' : '' ?>>דירה <?= portal_h($candidate['apartment']) ?> · <?= portal_h($candidate['name']) ?></option>
+                        <?php if ($building !== '' && (string) $candidate['building'] !== $building) { continue; } ?>
+                        <option value="<?= portal_h($candidate['item_id']) ?>" <?= $residentId === $candidate['item_id'] ? 'selected' : '' ?>><?= $building === '' && (string) $candidate['building'] !== '' ? 'בניין ' . portal_h($candidate['building']) . ' · ' : '' ?>דירה <?= portal_h($candidate['apartment']) ?> · <?= portal_h($candidate['name']) ?></option>
                     <?php endforeach; ?>
                 </select>
             </label>
@@ -1430,7 +1433,7 @@ function portal_render_tenant_handovers(array $user, ?array $flash): void
             if ($residentId !== '') {
                 $resident = portal_handover_resident($projectId, $residentId);
                 if ($building !== '' && (string) $resident['building'] !== $building) {
-                    $resident = null;
+                    $building = (string) $resident['building'];
                 }
             }
         }
