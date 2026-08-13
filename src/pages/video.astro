@@ -40,7 +40,21 @@ const smartLockVideoObject = `,
       \"publisher\": { \"@id\": \"https://i-feel.co.il/#business\" }
     }`;
 
-meta.jsonLd = meta.jsonLd.replace("\n  ]\n}", `${iscarVideoObject}${smartLockVideoObject}\n  ]\n}`);
+const dualZoneReceiverVideoObject = `,
+    {
+      \"@type\": \"VideoObject\",
+      \"@id\": \"https://i-feel.co.il/video/#v-dual-zone-receiver\",
+      \"name\": \"איך מפעילים שני אזורים יחד ברסיבר Denon HEOS | I FEEL\",
+      \"description\": \"מדריך להפעלה משותפת של MAIN ZONE ו-ZONE 2 ברסיבר Denon HEOS, כדי להשמיע אותה מוזיקה בשני החללים בפעולה אחת.\",
+      \"uploadDate\": \"2026-08-13T09:32:17Z\",
+      \"thumbnailUrl\": \"https://i.ytimg.com/vi/gA6qPET8H10/hqdefault.jpg\",
+      \"contentUrl\": \"https://www.youtube.com/watch?v=gA6qPET8H10\",
+      \"embedUrl\": \"https://www.youtube-nocookie.com/embed/gA6qPET8H10\",
+      \"inLanguage\": \"he-IL\",
+      \"publisher\": { \"@id\": \"https://i-feel.co.il/#business\" }
+    }`;
+
+meta.jsonLd = meta.jsonLd.replace("\n  ]\n}", `${iscarVideoObject}${smartLockVideoObject}${dualZoneReceiverVideoObject}\n  ]\n}`);
 ---
 <BaseLayout {...meta}>
   <Fragment set:html={content} />
