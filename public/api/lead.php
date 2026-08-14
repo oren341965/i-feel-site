@@ -67,6 +67,24 @@ function redirect_back(string $status, ?string $proof = null): never
     exit;
 }
 
+function issue_conversion_proof(string $leadId): string
+{
+    $proof = bin2hex(random_bytes(32));
+    $_SESSION['ads_conversion_proof'] = [
+        'hash' => hash('sha256', $proof),
+        'expires_at' => time() + 300,
+        'monday_item_id' => $leadId,
+    ];
+    return $proof;
+}
+
+function fallback_counts_as_valid_lead(): bool
+{
+    $configured = getenv('LEAD_FALLBACK_COUNTS_AS_VALID');
+    return is_string($configured)
+        && in_array(strtolower(trim($configured)), ['1', 'true', 'yes'], true);
+}
+
 function monday_request(string $query, array $variables, string $token): array
 {
     $payload = json_encode([
@@ -299,18 +317,14 @@ try {
         $token
     );
 
-    $conversionProof = bin2hex(random_bytes(32));
-    $_SESSION['ads_conversion_proof'] = [
-        'hash' => hash('sha256', $conversionProof),
-        'expires_at' => time() + 300,
-        'monday_item_id' => (string) $itemId,
-    ];
-
-    redirect_back('sent', $conversionProof);
+    redirect_back('sent', issue_conversion_proof((string) $itemId));
 } catch (Throwable $error) {
     error_log('[i-feel lead form] ' . $error->getMessage());
 
     if (fallback_mail($lead, $error->getMessage(), $marketing)) {
+        if (fallback_counts_as_valid_lead()) {
+            redirect_back('sent-mail', issue_conversion_proof('mail-' . bin2hex(random_bytes(16))));
+        }
         redirect_back('sent-mail');
     }
 
