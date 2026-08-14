@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 const DEFAULT_BOARD_ID = '2732725332';
 const DEFAULT_FALLBACK_EMAIL = 'sales@i-feel.co.il';
+const MONDAY_API_VERSION = '2026-07';
 
 function start_lead_session(): void
 {
@@ -80,7 +81,7 @@ function monday_request(string $query, array $variables, string $token): array
         CURLOPT_HTTPHEADER => [
             'Authorization: ' . $token,
             'Content-Type: application/json',
-            'API-Version: 2025-01',
+            'API-Version: ' . MONDAY_API_VERSION,
         ],
         CURLOPT_POSTFIELDS => $payload,
         CURLOPT_RETURNTRANSFER => true,
@@ -290,14 +291,21 @@ try {
         throw new RuntimeException('Monday item was not created');
     }
 
-    monday_request(
-        'mutation ($itemId: ID!, $body: String!) { create_update(item_id: $itemId, body: $body) { id } }',
-        [
-            'itemId' => $itemId,
-            'body' => $updateBody,
-        ],
-        $token
-    );
+    // The Monday item is the durable lead record. A temporary failure while
+    // attaching the descriptive update must not route the same lead to email
+    // or suppress its conversion after the item was already created.
+    try {
+        monday_request(
+            'mutation ($itemId: ID!, $body: String!) { create_update(item_id: $itemId, body: $body) { id } }',
+            [
+                'itemId' => $itemId,
+                'body' => $updateBody,
+            ],
+            $token
+        );
+    } catch (Throwable $updateError) {
+        error_log('[i-feel lead form] Monday item ' . $itemId . ' created, but update failed: ' . $updateError->getMessage());
+    }
 
     $conversionProof = bin2hex(random_bytes(32));
     $_SESSION['ads_conversion_proof'] = [
