@@ -73,8 +73,23 @@ const {
         if (thankYou && ['1', 'sent', 'sent-mail'].indexOf(leadStatus) !== -1) {
           thankYou.classList.remove('hidden');
           thankYou.scrollIntoView({ block: 'center' });
-          adsConversion('form');
-          gtag('event', 'generate_lead', { page_path: location.pathname });
+          var proof = params.get('conversion_proof');
+          if (leadStatus === 'sent' && proof) {
+            var body = new URLSearchParams({ proof: proof });
+            fetch('/api/consume-conversion.php', {
+              method: 'POST',
+              credentials: 'same-origin',
+              headers: { 'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8' },
+              body: body.toString()
+            }).then(function (response) {
+              return response.ok ? response.json() : { eligible: false };
+            }).then(function (result) {
+              if (result && result.eligible === true) {
+                adsConversion('form');
+                gtag('event', 'generate_lead', { page_path: location.pathname });
+              }
+            }).catch(function () {});
+          }
         } else if (formError && ['missing', 'bad-email', 'error'].indexOf(leadStatus) !== -1) {
           formError.classList.remove('hidden');
           formError.scrollIntoView({ block: 'center' });
