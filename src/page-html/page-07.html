@@ -27,9 +27,20 @@
     const thankYou = document.getElementById('thank-you');
     if (thankYou && ['1', 'sent', 'sent-mail'].includes(leadStatus || '')) {
       thankYou.classList.remove('hidden');
-      if (typeof gtag === 'function') {
-        gtag('event', 'conversion', { send_to: 'AW-18038181913/az2mCJjbtcYcEJmgo5lD' });
-        gtag('event', 'generate_lead', { page_path: location.pathname });
+      const proof = params.get('conversion_proof');
+      if (leadStatus === 'sent' && proof) {
+        fetch('/api/consume-conversion.php', {
+          method: 'POST',
+          credentials: 'same-origin',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8' },
+          body: new URLSearchParams({ proof }).toString()
+        }).then((response) => response.ok ? response.json() : { eligible: false })
+          .then((result) => {
+            if (result?.eligible === true && typeof gtag === 'function') {
+              gtag('event', 'conversion', { send_to: 'AW-18038181913/az2mCJjbtcYcEJmgo5lD' });
+              gtag('event', 'generate_lead', { page_path: location.pathname });
+            }
+          }).catch(() => {});
       }
     }
 

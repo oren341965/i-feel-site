@@ -4,6 +4,23 @@ declare(strict_types=1);
 const DEFAULT_BOARD_ID = '2732725332';
 const DEFAULT_FALLBACK_EMAIL = 'sales@i-feel.co.il';
 
+function start_lead_session(): void
+{
+    if (session_status() === PHP_SESSION_ACTIVE) {
+        return;
+    }
+
+    session_name('ifeel_lead');
+    session_set_cookie_params([
+        'lifetime' => 0,
+        'path' => '/',
+        'secure' => true,
+        'httponly' => true,
+        'samesite' => 'Lax',
+    ]);
+    session_start();
+}
+
 // Server-local secrets (MONDAY_API_TOKEN etc.) live in config.php next to this
 // file. It is uploaded straight to the server and never committed to git.
 if (is_file(__DIR__ . '/config.php')) {
@@ -28,7 +45,7 @@ function field(string $key, int $max = 4000): string
     return $value;
 }
 
-function redirect_back(string $status): never
+function redirect_back(string $status, ?string $proof = null): never
 {
     // Landing pages pass redirect_to so the visitor stays on the page that converted.
     // Only local, slash-delimited paths are accepted; anything else falls back to /contactus/.
@@ -40,7 +57,12 @@ function redirect_back(string $status): never
         $target = $to;
     }
 
-    $location = $target . '?' . http_build_query(['lead' => $status]);
+    $query = ['lead' => $status];
+    if ($proof !== null) {
+        $query['conversion_proof'] = $proof;
+    }
+
+    $location = $target . '?' . http_build_query($query);
     header('Location: ' . $location, true, 303);
     exit;
 }
@@ -145,6 +167,8 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     echo 'Method not allowed';
     exit;
 }
+
+start_lead_session();
 
 if (field('website', 200) !== '') {
     redirect_back('sent');
@@ -275,7 +299,14 @@ try {
         $token
     );
 
-    redirect_back('sent');
+    $conversionProof = bin2hex(random_bytes(32));
+    $_SESSION['ads_conversion_proof'] = [
+        'hash' => hash('sha256', $conversionProof),
+        'expires_at' => time() + 300,
+        'monday_item_id' => (string) $itemId,
+    ];
+
+    redirect_back('sent', $conversionProof);
 } catch (Throwable $error) {
     error_log('[i-feel lead form] ' . $error->getMessage());
 

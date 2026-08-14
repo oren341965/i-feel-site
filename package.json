@@ -8,6 +8,7 @@
     "check:content-freshness": "node scripts/check-content-freshness.mjs",
     "check:build": "node scripts/validate-build.mjs",
     "test:youtube": "node --test tests/youtube-uploader.test.mjs",
+    "test:lead-conversion": "node --test tests/lead-conversion-proof.test.mjs",
     "youtube:verify": "node --use-system-ca scripts/youtube-uploader.mjs --verify-channel",
     "youtube:upload": "node --use-system-ca scripts/youtube-uploader.mjs --upload",
     "build": "node scripts/check-content-freshness.mjs && astro build && node scripts/generate-og-images.mjs && node scripts/validate-build.mjs",
