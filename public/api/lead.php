@@ -80,6 +80,7 @@ function issue_conversion_proof(string $leadId): string
 
 function fallback_counts_as_valid_lead(): bool
 {
+    // Disabled by default: email delivery alone is not proof of a Monday lead.
     $configured = getenv('LEAD_FALLBACK_COUNTS_AS_VALID');
     return is_string($configured)
         && in_array(strtolower(trim($configured)), ['1', 'true', 'yes'], true);
