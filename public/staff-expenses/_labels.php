@@ -90,6 +90,7 @@ function portal_nav(string $tab, array $user): void
             <a href="<?= portal_h(portal_url(['tab' => 'my_vehicle'])) ?>" class="tab tab--vehicle<?= $tab === 'my_vehicle' ? ' is-active' : '' ?>">🚙 הרכב שלי</a>
         <?php endif; ?>
         <a href="<?= portal_h(portal_url(['tab' => 'handovers'])) ?>" class="tab tab--handover<?= $tab === 'handovers' ? ' is-active' : '' ?>">מסירות דיירים</a>
+        <a href="<?= portal_h(portal_base_path()) ?>mcohome.php" class="tab<?= $tab === 'mcohome' ? ' is-active' : '' ?>">תקלות MCOHome</a>
         <a href="<?= portal_h(portal_installation_form_url()) ?>" class="tab" target="_blank" rel="noopener noreferrer">סיום התקנה ↗</a>
         <?php if (($user['role'] ?? '') === 'admin'): ?>
             <a href="<?= portal_h(portal_url(['tab' => 'reports'])) ?>" class="tab<?= $tab === 'reports' ? ' is-active' : '' ?>">דיווחים ומסמכים</a>
