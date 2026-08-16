@@ -6,6 +6,7 @@ require_once __DIR__ . '/_ui.php';
 require_once __DIR__ . '/_email_auth.php';
 require_once __DIR__ . '/_employees.php';
 require_once __DIR__ . '/_vehicles.php';
+require_once __DIR__ . '/_work_reports.php';
 require_once __DIR__ . '/_labels.php';
 require_once __DIR__ . '/_mcohome_faults.php';
 

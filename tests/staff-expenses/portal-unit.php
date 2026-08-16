@@ -50,6 +50,15 @@ try {
         strpos($mcohomeHelperSource, 'mb_substr(') === false,
         'MCOHome must not require the optional mbstring extension at runtime.'
     );
+    $mcohomePageSource = (string) file_get_contents($repositoryRoot . '/public/staff-expenses/mcohome.php');
+    $mcohomeWorkReportsInclude = strpos($mcohomePageSource, "require_once __DIR__ . '/_work_reports.php';");
+    $mcohomeLabelsInclude = strpos($mcohomePageSource, "require_once __DIR__ . '/_labels.php';");
+    portal_test_expect(
+        $mcohomeWorkReportsInclude !== false
+        && $mcohomeLabelsInclude !== false
+        && $mcohomeWorkReportsInclude < $mcohomeLabelsInclude,
+        'MCOHome must load navigation dependencies before _labels.php.'
+    );
 
     portal_test_expect(
         portal_normalize_company_email('Worker@I-FEEL.CO.IL') === 'worker@i-feel.co.il',
