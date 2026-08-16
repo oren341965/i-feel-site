@@ -36,8 +36,21 @@ require_once $repositoryRoot . '/public/staff-expenses/_work_reports.php';
 require_once $repositoryRoot . '/public/staff-expenses/_tenant_handovers.php';
 require_once $repositoryRoot . '/public/staff-expenses/_history.php';
 require_once $repositoryRoot . '/public/staff-expenses/_readiness.php';
+require_once $repositoryRoot . '/public/staff-expenses/_mcohome_faults.php';
 
 try {
+    $_POST['mcohome_test_value'] = '  abcdef  ';
+    portal_test_expect(
+        mcohome_post_value('mcohome_test_value', 3) === 'abc',
+        'MCOHome form values must use the portal substring compatibility helper.'
+    );
+    unset($_POST['mcohome_test_value']);
+    $mcohomeHelperSource = (string) file_get_contents($repositoryRoot . '/public/staff-expenses/_mcohome_faults.php');
+    portal_test_expect(
+        strpos($mcohomeHelperSource, 'mb_substr(') === false,
+        'MCOHome must not require the optional mbstring extension at runtime.'
+    );
+
     portal_test_expect(
         portal_normalize_company_email('Worker@I-FEEL.CO.IL') === 'worker@i-feel.co.il',
         'Company email normalization failed.'

@@ -36,7 +36,7 @@ function mcohome_post_value(string $key, int $max = 500): string
     if (is_array($value)) {
         return '';
     }
-    return mb_substr(trim((string) $value), 0, $max);
+    return portal_substr(trim((string) $value), 0, $max);
 }
 
 function mcohome_storage_root(): string
@@ -101,7 +101,7 @@ function mcohome_save_media(string $eventId, array $files): array
         if (!isset($allowed[$mime])) {
             throw new RuntimeException('מותר לצרף תמונות JPG/PNG/WEBP/HEIC וסרטוני MP4/MOV/WEBM בלבד.');
         }
-        $original = mb_substr(trim((string) ($file['name'] ?? 'media')), 0, 160);
+        $original = portal_substr(trim((string) ($file['name'] ?? 'media')), 0, 160);
         $stored = bin2hex(random_bytes(16)) . '.' . $allowed[$mime];
         $target = $dir . DIRECTORY_SEPARATOR . $stored;
         if (!move_uploaded_file($tmp, $target)) {
