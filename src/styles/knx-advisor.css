@@ -409,7 +409,7 @@
 .advisor-wizard-top { padding: 1.25rem clamp(1rem, 4vw, 2.25rem); border-bottom: 1px solid var(--advisor-line); background: #fff; position: sticky; top: 76px; z-index: 20; }
 .advisor-progress-meta { display: flex; justify-content: space-between; gap: 1rem; margin-bottom: .6rem; color: var(--advisor-muted); font-size: .9rem; }
 .advisor-progress-track { height: 8px; border-radius: 999px; background: #e8eef5; overflow: hidden; }
-.advisor-progress-bar { height: 100%; width: 0; border-radius: inherit; background: linear-gradient(90deg, var(--advisor-gold), #edc76f); transition: width .25s ease; }
+.advisor-progress-bar { height: 100%; width: 100%; transform: scaleX(0); transform-origin: right center; will-change: transform; border-radius: inherit; background: linear-gradient(90deg, var(--advisor-gold), #edc76f); transition: transform .25s ease; }
 .advisor-draft-state { display: inline-flex; align-items: center; gap: .35rem; color: #44705e; }
 
 .advisor-panel { padding: clamp(1.25rem, 4vw, 2.5rem); }
