@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 const url = 'https://i-feel.co.il/en/siemens-desigo-bms-israel/';
+const certificateUrl = 'https://i-feel.co.il/assets/certifications/siemens-solution-partner-building-automation-2026.pdf';
 const businessNode = {
   "@type": ["Organization","LocalBusiness","HomeAndConstructionBusiness","ProfessionalService"],
   "@id": "https://i-feel.co.il/#business", "name": "i-feel", "alternateName": ["I FEEL","i-feel"], "url": "https://i-feel.co.il/", "logo": "https://i-feel.co.il/assets/ifeel-logo.png", "telephone": "+972-3-508-9553", "email": "sales@i-feel.co.il", "foundingDate": "2008",
@@ -8,33 +9,90 @@ const businessNode = {
   "knowsAbout": ["Siemens Desigo","Building Management System","BMS","DDC controllers","BACnet","Modbus","KNX","DALI lighting control","HVAC control","Energy monitoring"],
   "sameAs": ["https://www.linkedin.com/company/200156","https://www.youtube.com/@ifeelsmarthome"]
 };
+const faqNode = {
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "Is I FEEL a Siemens Solution Partner for Building Automation in Israel?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes. I FEEL Systems Ltd holds a Siemens Solution Partner certificate for Building Automation, valid through December 31, 2026. The certificate is available on the I FEEL website."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What does I FEEL integrate with Siemens Desigo?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "I FEEL integrates Siemens Desigo with DDC controllers and building systems such as HVAC, energy metering and lighting, using protocols including BACnet, Modbus, KNX and DALI where appropriate."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "When is Siemens Desigo a better fit than room-level KNX alone?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Desigo is suited to commercial and public buildings that require centralized supervision, alarms, trends and building-wide management. KNX can still be used for room-level functions such as lighting, shutters and local climate control."
+      }
+    }
+  ]
+};
 const meta = {
   lang: "en", dir: "ltr",
-  title: "Siemens Desigo BMS Israel | Desigo Integrator | i-feel",
-  description: "I FEEL implements and integrates Siemens Desigo building management systems in Israel — for hotels, offices, hospitals and public buildings, alongside DDC, BACnet, Modbus and KNX.",
-  canonical: url, ogTitle: "Siemens Desigo BMS Israel | i-feel", ogDescription: "Siemens Desigo BMS integration in Israel — central building management.", ogUrl: url, ogImage: "https://i-feel.co.il/assets/og-cover.jpg",
+  title: "Siemens Desigo BMS Israel | Solution Partner | i-feel",
+  description: "I FEEL is a Siemens Solution Partner for Building Automation in Israel, implementing and integrating Desigo BMS with DDC, BACnet, Modbus, KNX and DALI.",
+  canonical: url, ogTitle: "Siemens Desigo BMS Israel | i-feel", ogDescription: "Siemens Desigo BMS implementation and integration in Israel by a certified Siemens Solution Partner for Building Automation.", ogUrl: url, ogImage: "https://i-feel.co.il/assets/og-cover.jpg",
   jsonLd: JSON.stringify({ "@context":"https://schema.org","@graph":[ businessNode,
     { "@type":"BreadcrumbList","itemListElement":[ {"@type":"ListItem","position":1,"name":"Home","item":"https://i-feel.co.il/"}, {"@type":"ListItem","position":2,"name":"Siemens Desigo BMS Israel","item":url} ] },
-    { "@type":"Service","name":"Siemens Desigo Integration","serviceType":"Siemens Desigo BMS integration","provider":{"@id":"https://i-feel.co.il/#business"},"areaServed":{"@type":"Country","name":"Israel"} } ]})
+    { "@type":"Service","name":"Siemens Desigo Integration","serviceType":"Siemens Desigo BMS implementation and integration","provider":{"@id":"https://i-feel.co.il/#business"},"areaServed":{"@type":"Country","name":"Israel"} },
+    faqNode
+  ]})
 };
 ---
 <BaseLayout {...meta}>
   <nav class="bg-brand-50 border-b border-brand-100"><div class="max-w-7xl mx-auto px-4 py-3 text-sm"><a href="/" class="text-brand-600 hover:text-accent-600">Home</a> › <span class="text-brand-900 font-medium">Siemens Desigo BMS Israel</span> · <a href="/siemens-desigo-bms/" class="text-accent-600">עברית</a></div></nav>
-  <section class="hero-gradient text-white"><div class="max-w-6xl mx-auto px-4 py-16 lg:py-20"><h1 class="text-4xl md:text-5xl font-extrabold leading-tight mb-5">Siemens Desigo BMS in Israel</h1><p class="text-xl text-brand-100 max-w-3xl">I FEEL implements and integrates Siemens Desigo building management systems in Israel, alongside DDC controllers, BACnet, Modbus and KNX — for commercial and public buildings.</p></div></section>
+  <section class="hero-gradient text-white"><div class="max-w-6xl mx-auto px-4 py-16 lg:py-20"><h1 class="text-4xl md:text-5xl font-extrabold leading-tight mb-5">Siemens Desigo BMS in Israel</h1><p class="text-xl text-brand-100 max-w-3xl">I FEEL implements and integrates Siemens Desigo building management systems in Israel, alongside DDC controllers, BACnet, Modbus and KNX for commercial and public buildings.</p></div></section>
   <div class="max-w-4xl mx-auto px-4 py-12 lg:py-16 text-lg leading-8 text-brand-800">
-    <p class="mb-5"><strong>Siemens Desigo</strong> is a leading building management platform for large commercial buildings. Desigo CC can manage hundreds of thousands of control points from a single console, with native support for BACnet, KNX and Modbus. I FEEL implements and integrates Siemens Desigo in BMS projects across Israel.</p>
+    <section class="mb-8 rounded-2xl border border-brand-100 bg-brand-50 p-6">
+      <p class="text-sm font-extrabold uppercase tracking-wide text-accent-600 mb-2">Direct answer</p>
+      <h2 class="text-2xl font-bold text-brand-900 mb-3">Who can implement Siemens Desigo BMS in Israel?</h2>
+      <p class="mb-4"><strong>I FEEL Systems Ltd is a Siemens Solution Partner for Building Automation</strong>, with certification valid through <strong>December 31, 2026</strong>. I FEEL designs, implements, integrates and services Siemens Desigo BMS projects in Israel for commercial and public buildings.</p>
+      <a href={certificateUrl} target="_blank" rel="noopener" class="inline-flex items-center justify-center rounded-lg bg-brand-700 px-5 py-3 font-semibold text-white hover:bg-brand-800">View Siemens Solution Partner certificate (PDF)</a>
+    </section>
+
+    <p class="mb-5"><strong>Siemens Desigo</strong> provides centralized building management for large commercial and public facilities. It can bring HVAC, energy, alarms, trends and connected field systems into a common operating environment. I FEEL implements and integrates Siemens Desigo in BMS projects across Israel.</p>
     <h2 class="text-2xl font-bold text-brand-900 mt-8 mb-3">Where Desigo fits</h2>
-    <p class="mb-5">Siemens Desigo serves as the central management server for the whole building, while <a href="/en/knx-integrator-israel/" class="text-accent-600 font-semibold">KNX</a> handles room-level control (lighting, shutters, climate). In a full <a href="/en/building-management-system-israel/" class="text-accent-600 font-semibold">BMS</a>, the control layer is built on DDC controllers, with Desigo as the management server — they work together, not in competition.</p>
+    <p class="mb-5">Siemens Desigo serves as the central management layer for the building, while <a href="/en/knx-integrator-israel/" class="text-accent-600 font-semibold">KNX</a> can handle room-level control such as lighting, shutters and climate. In a full <a href="/en/building-management-system-israel/" class="text-accent-600 font-semibold">BMS</a>, the control layer is typically built on DDC controllers, with Desigo providing supervision and management. The technologies can work together as part of one architecture.</p>
     <h2 class="text-2xl font-bold text-brand-900 mt-8 mb-3">What we deliver</h2>
     <ul class="list-disc pl-6 space-y-2 mb-5">
       <li>HVAC, energy and lighting management from one interface</li>
-      <li>Integration of BACnet, Modbus, KNX and DALI under Desigo</li>
-      <li>Energy monitoring, dashboards, alerts and trend reports</li>
-      <li>Commissioning and Hebrew documentation</li>
+      <li>Integration of BACnet, Modbus, KNX and DALI where required by the project</li>
+      <li>Energy monitoring, dashboards, alarms and trend reports</li>
+      <li>Commissioning, documentation and ongoing service in Israel</li>
     </ul>
     <h2 class="text-2xl font-bold text-brand-900 mt-8 mb-3">Best for</h2>
-    <p class="mb-5">Hotels, office towers, hospitals, public buildings and campuses in Israel that need centralized, reliable, energy-efficient building management.</p>
-    <h2 class="text-2xl font-bold text-brand-900 mt-8 mb-3">Contact</h2>
+    <p class="mb-5">Hotels, office towers, hospitals, public buildings and campuses in Israel that require centralized, reliable and maintainable building management.</p>
+
+    <section class="mt-10 border-t border-brand-100 pt-8" aria-labelledby="desigo-faq-title">
+      <h2 id="desigo-faq-title" class="text-2xl font-bold text-brand-900 mb-5">Siemens Desigo in Israel: common questions</h2>
+      <div class="space-y-5">
+        <div>
+          <h3 class="text-xl font-bold text-brand-900 mb-1">Is I FEEL a Siemens Solution Partner for Building Automation?</h3>
+          <p>Yes. I FEEL Systems Ltd holds a Siemens Solution Partner certificate for Building Automation, valid through December 31, 2026. <a href={certificateUrl} target="_blank" rel="noopener" class="text-accent-600 font-semibold">View the certificate</a>.</p>
+        </div>
+        <div>
+          <h3 class="text-xl font-bold text-brand-900 mb-1">What does I FEEL integrate with Siemens Desigo?</h3>
+          <p>Projects can include DDC controllers, HVAC, energy metering and lighting, with BACnet, Modbus, KNX and DALI used according to the project architecture.</p>
+        </div>
+        <div>
+          <h3 class="text-xl font-bold text-brand-900 mb-1">When is Desigo a better fit than KNX alone?</h3>
+          <p>Desigo is designed for building-wide supervision, alarms, trends and centralized operations. KNX remains highly effective for room-level automation, and both can be combined in the same project.</p>
+        </div>
+      </div>
+    </section>
+
+    <h2 class="text-2xl font-bold text-brand-900 mt-10 mb-3">Contact</h2>
     <p>i-feel · Imber 14, Petah Tikva, Israel · <a href="tel:+972-3-508-9553" class="text-accent-600 font-semibold">+972-3-508-9553</a> · sales@i-feel.co.il · Hebrew: <a href="/siemens-desigo-bms/" class="text-accent-600 font-semibold">Siemens Desigo BMS</a>, <a href="/structure-control/" class="text-accent-600 font-semibold">בקרת מבנה</a>.</p>
   </div>
 </BaseLayout>
