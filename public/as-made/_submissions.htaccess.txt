@@ -1,0 +1,2 @@
+# להעתיק ל-public_html/as-made/_submissions/.htaccess — חוסם גישה ישירה לארכיון
+Require all denied
