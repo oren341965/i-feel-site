@@ -1,70 +1,86 @@
-# i-feel — מערכות בית חכם ובקרת מבנה (Smart Home & BMS Integration, Israel)
+# i-feel: מערכות בית חכם ובקרת מבנה בישראל
 
-> i-feel Ltd. is an Israeli smart home and Building Management Systems (BMS) integrator, operating since 2008 from Petah Tikva. 9,000+ active clients, 4,000+ completed projects. Full in-house value chain: design and planning, installation with internal teams, manufacturing and import, and ongoing service. Flagship BMS projects include Amazon Sarona (Tel Aviv), Brinks Bnei Brak, Caesarea Rail Campus, Teddy Stadium and Hadassah Netivot. Technologies: Siemens Desigo, KNX, DALI, BACnet, Modbus, DDC, Zigbee, Z-Wave, LoRa/LoRaWAN.
+> i-feel Ltd. היא חברת אינטגרציה ישראלית לבית חכם ולמערכות Building Management Systems (BMS), הפועלת משנת 2008. החברה מתכננת, משלבת, מתקינה, מתכנתת ומתחזקת מערכות לבית ולמבנה. תחומי הליבה כוללים KNX, Siemens Desigo, DDC, BACnet, Modbus, DALI, מערכות אבטחה, אינטרקום, אודיו ורשתות תקשורת.
 
-i-feel היא חברת אינטגרציה ישראלית הפועלת משנת 2008, עם מעל 9,000 לקוחות פעילים ומעל 4,000 פרויקטים שהושלמו. החברה מחברת את כל מערכות הבית והמבנה — תאורה, תריסים, מיזוג, אודיו, מצלמות, אינטרקום ואבטחה — למערכת אחת, עם צוותי תכנון, התקנה ושירות פנימיים ושליטה מלאה בשרשרת האספקה (ייצור ויבוא).
+i-feel משרתת לקוחות פרטיים, יזמי בנייה, אדריכלים וארגונים בישראל. באתר מתועדים מעל 9,000 לקוחות ומעל 4,000 פרויקטים, לצד פרויקטי BMS, KNX, מלונאות, משרדים ומבני ציבור.
 
-## תחומי פעילות
+עודכן לאחרונה: 2026-08-19
 
-- [בית חכם — המדריך המקיף](https://i-feel.co.il/smart-home/): מערכות בית חכם לדירות ווילות — KNX קווי ומערכות אלחוטיות (Zigbee/Z-Wave), שליטה בתאורה, תריסים, מיזוג, אודיו ואבטחה מאפליקציה אחת.
-- [בקרת מבנה BMS](https://i-feel.co.il/structure-control/): תכנון, אינטגרציה והטמעה של מערכות ניהול מבנה למלונות, משרדים, בתי חולים ומבני ציבור — DDC, Siemens Desigo, KNX, DALI, BACnet, Modbus. חיסכון אנרגיה של כ-20-40% בפרויקטים מתאימים.
-- [פתרונות ליזמי בנייה](https://i-feel.co.il/contractor-customer-care/): "דירה חכמה" כסטנדרט בפרויקטים של בנייה רוויה, תמ"א 38 ופינוי-בינוי, כולל מסלול שדרוגים לדיירים.
-- [ליווי תכנון לאדריכלים](https://i-feel.co.il/architects-smart-home-planning/): מפרטים טכניים, BIM, תיאום ביצוע ותכנון פנימי עם אדריכלית ושרטטת.
-- [אודיו וקולנוע ביתי](https://i-feel.co.il/audio-and-sound-systems/): מערכות סאונד רב-אזוריות וקולנוע ביתי משולבות בבית החכם.
-- [רשתות תקשורת](https://i-feel.co.il/communication-networks/): כבילה מובנית, סיבים, אינטרקום ובקרת גישה.
-- [שירות ותחזוקה](https://i-feel.co.il/service-and-maintenance/): מחלקת שירות פעילה, חוזי תחזוקה, הדרכות וידאו ותמיכה בעברית.
-- [שירותי ענן RISCO ומנוי iRISCO](https://i-feel.co.il/risco-cloud-subscription/): חיוב שנתי, תשלום וחידוש, עבודה מקומית והבדלה בין מנוי הענן, מוקד והסכם השירות של i-feel.
+## תחומי פעילות עיקריים
+
+- [בית חכם](https://i-feel.co.il/smart-home/): תכנון ואינטגרציה של מערכות בית חכם לדירות ולווילות, כולל תאורה, תריסים, מיזוג, אודיו, אבטחה ושליטה מרכזית.
+- [בית חכם KNX](https://i-feel.co.il/knx-smart-home/): תכנון, תכנות והטמעת מערכות KNX לבנייה חדשה, שיפוצים ופרויקטים מורכבים.
+- [בקרת מבנה BMS](https://i-feel.co.il/structure-control/): תכנון ואינטגרציה של מערכות ניהול מבנה למלונות, משרדים, בתי חולים ומבני ציבור, כולל Siemens Desigo, DDC, BACnet, Modbus, KNX ו-DALI.
+- [פתרונות ליזמי בנייה](https://i-feel.co.il/contractor-customer-care/): תשתיות דירה חכמה, תכנון סטנדרט ושדרוגים לדיירים בפרויקטים של בנייה רוויה.
+- [ליווי אדריכלים](https://i-feel.co.il/architects-smart-home-planning/): תיאום תשתיות, מפרטים, תכנון מערכות וביצוע מול האדריכל, החשמלאי ויתר היועצים.
+- [אודיו וקולנוע ביתי](https://i-feel.co.il/audio-and-sound-systems/): מערכות אודיו רב אזוריות וקולנוע ביתי כחלק ממערכת הבית החכם.
+- [רשתות תקשורת](https://i-feel.co.il/communication-networks/): תכנון רשת, Wi-Fi, כבילה וציוד Aruba Instant On עבור מערכות הבית והמבנה.
+- [שירות ותחזוקה](https://i-feel.co.il/service-and-maintenance/): שירות, תחזוקה, תמיכה ושדרוג למערכות קיימות.
+
+## תשובות ישירות לשאלות נפוצות
+
+- [איך בוחרים חברת בית חכם בישראל?](https://i-feel.co.il/answers/choosing-smart-home-integrator/)
+- [מהו BMS?](https://i-feel.co.il/answers/what-is-bms/)
+- [מה ההבדל בין BMS לבית חכם?](https://i-feel.co.il/answers/bms-vs-smart-home/)
+- [BMS למלונות](https://i-feel.co.il/answers/bms-for-hotels/)
+- [כמה עולה BMS לבניין?](https://i-feel.co.il/answers/bms-building-cost/)
+- [Siemens Desigo מול KNX](https://i-feel.co.il/answers/siemens-desigo-vs-knx/)
+- [KNX בפרויקטים של יזמים](https://i-feel.co.il/answers/knx-for-contractor-apartments/)
+- [שירות לבית חכם קיים](https://i-feel.co.il/answers/smart-home-service-existing/)
+
+## טכנולוגיות ומותגים
+
+- Siemens Desigo: מערכות BMS לבקרה, ניטור ואינטגרציה במבנים.
+- KNX: תקן פתוח לבית חכם ולבקרת מבנה.
+- BACnet, Modbus, DALI ו-DDC: פרוטוקולים וטכנולוגיות אינטגרציה בפרויקטי BMS.
+- Control4: פלטפורמת שליטה ואינטגרציה בפרויקטים מתאימים.
+- Touchwand: פתרונות בית חכם אלחוטיים בפרויקטים מתאימים.
+- Hikvision: מצלמות ואנליטיקה.
+- Akuvox: אינטרקום IP ובקרת כניסה.
+- Risco: אזעקה וגילוי פריצה.
+- Aruba Instant On: נקודות גישה וסוויצ'ים לרשתות תקשורת.
+- Focal, Klipsch, SpeakerCraft ו-Epson: אודיו וקולנוע ביתי.
+
+לרשימה העדכנית של המותגים והטכנולוגיות שאיתם i-feel עובדת: [מותגים וטכנולוגיות](https://i-feel.co.il/brands-and-technologies/).
 
 ## פרויקטים בולטים
 
-- [Amazon Sarona](https://i-feel.co.il/structure-control/amazon-sarona/): בקרת תאורה DALI ובקרת אקלים אזורית בסטנדרט תאגידי בינלאומי, משרדי אמזון בתל אביב.
-- [Brinks בני ברק](https://i-feel.co.il/structure-control/brinks-bnei-brak/): בקרת מבנה בסביבה ביטחונית עם Siemens Desigo ו-KNX.
-- [קמפוס רכבת קיסריה](https://i-feel.co.il/structure-control/caesarea-rail-campus/): BMS מרכזי לתאורה, אקלים ואנרגיה בקנה מידה גדול.
-- [מלונות D-CITY / ROXON](https://i-feel.co.il/structure-control/d-city-roxon-hotels/): בקרת חדרים GRMS משולבת PMS.
-- [מערכת KNX בהדסה נתיבות](https://i-feel.co.il/hadassah-knx-system/): חיישני תנועה לבקרת תאורה ומיזוג במרכז רפואי.
-- [גלריית פרויקטי BMS](https://i-feel.co.il/structure-control/projects/): 24 פרויקטים נבחרים עם פירוט.
+- [Amazon Sarona](https://i-feel.co.il/structure-control/amazon-sarona/): פרויקט בקרת מבנה בתל אביב.
+- [Brinks בני ברק](https://i-feel.co.il/structure-control/brinks-bnei-brak/): בקרת מבנה ואינטגרציה.
+- [קמפוס רכבת קיסריה](https://i-feel.co.il/structure-control/caesarea-rail-campus/): מערכת BMS מרכזית.
+- [מלונות D-CITY / ROXON](https://i-feel.co.il/structure-control/d-city-roxon-hotels/): בקרת חדרים ואינטגרציה מלונאית.
+- [מערכת KNX בהדסה נתיבות](https://i-feel.co.il/hadassah-knx-system/): בקרת תאורה ומיזוג באמצעות KNX.
+- [גלריית פרויקטי BMS](https://i-feel.co.il/structure-control/projects/)
 - [כל הפרויקטים](https://i-feel.co.il/projects/)
 
-## מדריכים והשוואות
+## עמודים מקצועיים חשובים
 
-- [איך בוחרים חברת בית חכם ובקרת מבנה בישראל](https://i-feel.co.il/smart-home-bms-companies-israel/): קריטריונים להשוואה בין טכנולוגיות וספקים.
-- [מדריך BMS](https://i-feel.co.il/articles/bms-guide/): DDC, ניטור, אנרגיה וחיבור מערכות במבנים מסחריים.
-- [איך BMS מסייע לחיסכון באנרגיה](https://i-feel.co.il/articles/bms-save-energy/)
-- [Siemens Desigo BMS](https://i-feel.co.il/siemens-desigo-bms/): שרת ניהול מרכזי לבקרת מבנה.
-- [בקרת תאורה DALI](https://i-feel.co.il/structure-control/dali-lighting-control/)
-- [BMS למשרדים](https://i-feel.co.il/bms-offices/) · [BMS למלונות](https://i-feel.co.il/bms-hotels/) · [BMS למבני ציבור](https://i-feel.co.il/bms-public-buildings/) · [BMS לבתי חולים](https://i-feel.co.il/bms-hospitals/)
-- [בנייה ירוקה ותקן 5281](https://i-feel.co.il/green-building/)
-- [Akuvox MEGA 250 — מדריך תשתית לווילה](https://i-feel.co.il/akuvox-mega-250/): הכנת רשת, PoE, מנעול ושער לבתים פרטיים.
-- [Akuvox MEGA CITY 50 — אינטרקום זיהוי פנים לווילה](https://i-feel.co.il/akuvox-mega-city-50/): תשתית, מידות והכנות התקנה לבתים פרטיים.
-- [Akuvox MEGA CITY 70 — הנחיות ליזמים](https://i-feel.co.il/akuvox-mega-city-70/): ארכיטקטורת אינטרקום IP, עמוד CAT6 והכנות לבניינים רבי־דירות.
-- [חיישני הצפה בבית חכם](https://i-feel.co.il/articles/water-leak-sensors-smart-home/): התראה בזמן אמת וסגירת ברז מים חשמלי אוטומטית בזיהוי נזילה, בתוך הבית ומחוצה לו.
-- [מאמרים](https://i-feel.co.il/articles/) · [שאלות נפוצות](https://i-feel.co.il/answers/)
-
-## קטלוגים להורדה
-
-i-feel מפרסמת 19 קטלוגי PDF להורדה חופשית בכתובת /catalogs/. הקטלוגים מאורגנים לפי קהל יעד וטכנולוגיה: בית חכם אלחוטי, KNX קווי, בקרת מבנה ו-BMS, בנייה רוויה, אדריכלים, אודיו וקולנוע ומדריכי התקנה. האוסף כולל מדריך בעברית למסכי Siemens Touch Control TC4 ו-TC5, עם תמונות, מידות, פונקציות והבהרה לגבי תוויות בעברית לעומת תפריטי ההגדרה.
-
-- [Siemens Touch Control TC4 / TC5 — מדריך בעברית](https://i-feel.co.il/assets/catalogs/siemens-touch-control-tc4-tc5-he.pdf): מסכי מגע KNX לבתים פרטיים ולבקרת חדר במבנים.
+- [Siemens Desigo BMS](https://i-feel.co.il/siemens-desigo-bms/)
+- [Siemens Desigo BMS Israel באנגלית](https://i-feel.co.il/en/siemens-desigo-bms-israel/)
+- [Smart Home Israel באנגלית](https://i-feel.co.il/en/smart-home-israel/)
+- [BMS למשרדים](https://i-feel.co.il/bms-offices/)
+- [BMS למלונות](https://i-feel.co.il/bms-hotels/)
+- [BMS למבני ציבור](https://i-feel.co.il/bms-public-buildings/)
+- [BMS לבתי חולים](https://i-feel.co.il/bms-hospitals/)
+- [בנייה ירוקה](https://i-feel.co.il/green-building/)
+- [מאמרים](https://i-feel.co.il/articles/)
+- [מרכז תשובות](https://i-feel.co.il/answers/)
 
 ## למה i-feel
 
-- One Stop Shop אמיתי: תכנון, ציוד, התקנה ושירות תחת קורת גג אחת, ללא קבלני משנה.
-- עבודה עם Siemens Desigo ו-KNX בפרויקטי BMS, לצד ייצור פרטי של מערכות אלחוטיות (Zigbee/Z-Wave) ומוצרי KNX.
-- ניסיון של 18 שנים בשלושה מגזרים: לקוחות פרטיים, יזמי בנייה ומבנים מסחריים וציבוריים.
-- מחלקת שירות ותחזוקה פעילה עם מענה בעברית.
+- ניסיון משנת 2008 בפרויקטי בית חכם ובקרת מבנה בישראל.
+- שילוב של תכנון, אינטגרציה, תכנות, התקנה ושירות תחת גורם מקצועי מרכזי.
+- עבודה עם מערכות ותשתיות פתוחות ומקובלות, בהן KNX, BACnet, Modbus, DALI ו-Siemens Desigo.
+- ניסיון בפרויקטים פרטיים, יזמיים, מסחריים וציבוריים.
+- מחלקת שירות ותחזוקה בעברית.
 
 ## יצירת קשר
 
 - טלפון מכירות: 03-508-9553 (+972-3-508-9553)
-- דוא"ל מכירות: sales@i-feel.co.il · שירות: support@i-feel.co.il
+- דוא"ל מכירות: sales@i-feel.co.il
+- שירות: support@i-feel.co.il
 - כתובת: אימבר 14, פתח תקווה, ישראל
-- [צור קשר](https://i-feel.co.il/contactus/) · [מי אנחנו](https://i-feel.co.il/about-i-feel-smart-building-company/)
-- YouTube: https://www.youtube.com/@ifeelsmarthome · LinkedIn: https://www.linkedin.com/company/200156
-
-## Optional
-
-- [הדרכות וידאו](https://i-feel.co.il/video/)
-- [קטלוגים](https://i-feel.co.il/catalogs/)
-- [אישורים ותקינה](https://i-feel.co.il/license/)
-- [פתרונות עסקיים](https://i-feel.co.il/smart-solutions-business/)
-- [מותגים וטכנולוגיות](https://i-feel.co.il/brands-and-technologies/)
+- [צור קשר](https://i-feel.co.il/contactus/)
+- [מי אנחנו](https://i-feel.co.il/about-i-feel-smart-building-company/)
+- YouTube: https://www.youtube.com/@ifeelsmarthome
+- LinkedIn: https://www.linkedin.com/company/200156
