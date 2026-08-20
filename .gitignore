@@ -43,3 +43,7 @@ public/api/config.php
 
 # Per-machine local dev config (each machine has its own cwd/path)
 .claude/launch.json
+
+# Local read-only AI manager snapshots and temporary normalized data
+.ai-manager-data/
+.skill-validation-deps/

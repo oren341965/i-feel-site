@@ -1,0 +1,7 @@
+interface:
+  display_name: "I Feel AI Sales Manager"
+  short_description: "Read-only sales pipeline health and priorities"
+  default_prompt: "Use $ai-sales-manager to audit the I Feel sales pipeline in read-only mode."
+
+policy:
+  allow_implicit_invocation: true
