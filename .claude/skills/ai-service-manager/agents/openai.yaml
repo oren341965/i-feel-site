@@ -1,0 +1,7 @@
+interface:
+  display_name: "I Feel AI Service Manager"
+  short_description: "Read-only service operations and quality audit"
+  default_prompt: "Use $ai-service-manager to audit I Feel service operations in read-only mode."
+
+policy:
+  allow_implicit_invocation: true
