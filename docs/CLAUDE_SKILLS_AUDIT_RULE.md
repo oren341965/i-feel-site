@@ -1,0 +1,1 @@
+Do not duplicate Claude skills. Existing skill + maturity state controls whether Codex calls, monitors, extends, or leaves it untouched.
