@@ -316,6 +316,12 @@ Contents+Pull requests = RW); Allow auto-merge מופעל בריפו; branch pro
 - `new-page` — יצירת דף חדש (כולל עדכון sitemap ידני)
 - `morning-briefing-ifeel` — מפעיל את הסקיל כחלק מהבריפינג של 06:00
 
+## חוזה חיבור ל־AI Sales Manager
+
+כאשר `ai-sales-manager` מפעיל את הסקיל במסגרת maturity 0, קבל רק משוב מצטבר וללא PII על דפים שיצרו qualified leads, search terms שהמירו, objections, סוגי פרויקטים שנמכרו, מתחרים ופערי תוכן. הצע לכל היותר שיפור אחד מבוסס ראיות; `NO_CHANGE` הוא פלט תקין.
+
+במצב מתוזמר זה אין לשנות קוד, לפתוח משימת Monday, לשלוח טיוטת Gmail או להפעיל את מסלול ה־auto-publish. החזר הצעה בלבד עם מקור הראיה, timestamp ורמת confidence. מסלול התיקון והפרסום הרגיל של הסקיל נשאר ללא שינוי כאשר אורן מפעיל ומאשר אותו בנפרד.
+
 ## הפרשים מ-2.0 ל-3.0
 
 | תחום | 2.0 | 3.0 |

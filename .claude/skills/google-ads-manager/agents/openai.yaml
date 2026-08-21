@@ -1,0 +1,7 @@
+interface:
+  display_name: "I Feel Google Ads Manager"
+  short_description: "Dry-run qualified-lead Google Ads audit"
+  default_prompt: "Use $google-ads-manager to audit I Feel Google Ads in maturity-0 read-only mode."
+
+policy:
+  allow_implicit_invocation: true

@@ -1,0 +1,36 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://i-feel.co.il/schemas/ai-sales-bus-message-v1.json",
+  "title": "I Feel AI Sales file-bridge message",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "schemaVersion", "createdAt", "source", "target", "type", "payload"],
+  "properties": {
+    "id": { "type": "string", "minLength": 8, "maxLength": 128 },
+    "schemaVersion": { "const": 1 },
+    "createdAt": { "type": "string", "format": "date-time" },
+    "correlationId": { "type": ["string", "null"], "maxLength": 128 },
+    "source": { "enum": ["codex", "claude", "maya-agent", "ai-sales-manager"] },
+    "target": { "enum": ["codex", "claude", "maya-agent", "ai-sales-manager"] },
+    "type": { "enum": ["judgment_request", "judgment_response", "task", "result", "approval"] },
+    "payload": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "caseReference": { "type": ["string", "null"], "maxLength": 128 },
+        "question": { "type": ["string", "null"], "maxLength": 2000 },
+        "facts": {
+          "type": "array",
+          "maxItems": 50,
+          "items": { "type": "string", "maxLength": 500 }
+        },
+        "decision": { "type": ["string", "null"], "maxLength": 1000 },
+        "confidence": { "type": ["number", "null"], "minimum": 0, "maximum": 1 },
+        "rationale": { "type": ["string", "null"], "maxLength": 2000 },
+        "proposedAction": { "type": ["string", "null"], "maxLength": 1000 },
+        "approvalRequired": { "type": "boolean" },
+        "approvalStatus": { "enum": ["not_required", "pending", "approved", "rejected"] }
+      }
+    }
+  }
+}

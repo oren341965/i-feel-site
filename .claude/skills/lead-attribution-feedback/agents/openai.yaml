@@ -1,0 +1,7 @@
+interface:
+  display_name: "I Feel Lead Attribution Feedback"
+  short_description: "External multi-touch sales attribution dry run"
+  default_prompt: "Use $lead-attribution-feedback to audit I Feel attribution without changing Monday or external systems."
+
+policy:
+  allow_implicit_invocation: true

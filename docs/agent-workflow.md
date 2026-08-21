@@ -151,3 +151,11 @@ Token הרישום הוא חד-פעמי וסודי. אין להעתיק אותו
 - לאחר ההעלאה נבדקים דף הבית, sitemap, robots ו-llms.
 
 אם runner המשרד אינו מחובר, ה-deploy נשאר בתור ואינו עוקף את GitHub.
+
+## AI Sales בשני מחשבים
+
+מחשב אורן מריץ את Codex, Claude, `ai-sales-manager` ואת ה־runtime המקומי. ה־SQLite הפעיל נשאר מקומי תחת `C:\ifeel-sales` ואינו מסונכרן דרך Dropbox. מחשב Maya מריץ Claude, `maya-agent` ו־Obsidian. התקנת runtime או Task Scheduler היא שלב נפרד ואינה חלק מעדכון הסקילים.
+
+שני המחשבים רשאים להשתמש ב־Dropbox Obsidian Vault משותף. כל מחשב מגדיר `VAULT_ROOT` לנתיב המקומי שלו; אין להכניס נתיב משתמש קשיח לריפו. המבנה המוצע וה־file-bridge מתועדים תחת `ai-sales-manager/references/vault-layout.md`.
+
+ה־Vault משמש להודעות ול־snapshots מצטברים בלבד. אין לשמור בו DB חי, secrets, פרטי קשר של לקוחות או תוכן גולמי של מיילים/WhatsApp. הודעות מזוהות באמצעות ID בלתי משתנה, נדחות אם הן stale או כפולות, ואינן מועברות ל־`processed` ב־maturity 0.

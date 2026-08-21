@@ -13,6 +13,10 @@ Write reports in concise Hebrew. Lead with the operational conclusion, then evid
 7. **תובנות AI** — at most five evidence-linked observations. Label uncertain explanations as hypotheses.
 8. **שלוש פעולות ניהוליות** — concrete, bounded actions for the next working period. Recommendations are not Monday mutations.
 
+## Full-system daily brief
+
+For an orchestration dry run, keep the existing pipeline sections and append concise sections for target progress, Google Ads, Meta Ads, daily website/SEO improvement, project video/social reuse, Maya/plans, referrals, existing-customer revenue, service-quality signals, handoff/closeout, capacity and one highest-value action. Show `CONNECTION_MISSING`, `MISSING_LOCAL`, `CAPACITY_THRESHOLD_MISSING`, `CAPACITY_BLOCKED` and `NO_CHANGE` literally when applicable. End with the maturity-0 post-run self-check.
+
 ## Dry-run additions
 
 Show the exact thresholds, closed/lost mapping, authoritative date and owner fields, expected/fetched item counts, page count, pagination completeness, unique-ID reconciliation, mapping warnings, and invalid dates. Do not save a snapshot or distribute the report by default.

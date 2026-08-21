@@ -1,0 +1,296 @@
+import assert from 'node:assert/strict';
+import { readFile } from 'node:fs/promises';
+import { resolve } from 'node:path';
+import test from 'node:test';
+
+import { runEveningCloseDryRun } from '../.claude/skills/ai-sales-manager/scripts/evening-close.mjs';
+import { runMorningDryRun } from '../.claude/skills/ai-sales-manager/scripts/morning-run.mjs';
+import {
+  DAILY_BRIEF_SECTIONS,
+  GOOGLE_ADS_AUDIT_CHECKS,
+  META_ADS_AUDIT_CHECKS,
+  ORCHESTRATED_COMPONENTS,
+  authorizeOperation,
+  createJudgmentRequest,
+  evaluateCapacity,
+  evaluateJudgmentResponse,
+  evaluateLiveConnection,
+  findForbiddenDataKeys,
+  mergeAttribution,
+  orchestrateSalesSystem,
+  validateBusMessage,
+} from '../.claude/skills/ai-sales-manager/scripts/orchestrate-sales-system.mjs';
+
+const REPO = resolve(import.meta.dirname, '..');
+const NOW = '2026-08-21T06:10:00.000Z';
+
+function busMessage(overrides = {}) {
+  return {
+    id: 'message-0001',
+    schemaVersion: 1,
+    createdAt: '2026-08-21T06:00:00.000Z',
+    source: 'codex',
+    target: 'claude',
+    type: 'judgment_request',
+    payload: {
+      caseReference: 'monday-item-123',
+      question: 'Which revenue engine best fits the bounded facts?',
+      facts: ['Source category is unknown', 'Planning stage was supplied'],
+      approvalRequired: true,
+      approvalStatus: 'pending',
+    },
+    ...overrides,
+  };
+}
+
+test('v2 orchestration keeps the existing manager as parent and includes every required domain', () => {
+  const availableSkills = ORCHESTRATED_COMPONENTS.map(({ name }) => name);
+  const result = orchestrateSalesSystem({ availableSkills });
+
+  assert.equal(result.mode, 'DRY_RUN');
+  assert.equal(result.maturity, 0);
+  assert.equal(result.components.find(({ name }) => name === 'ai-sales-manager').role, 'orchestrator');
+  assert.equal(result.components.every(({ status }) => status === 'READY'), true);
+  assert.deepEqual(result.dailyBriefSections, [...DAILY_BRIEF_SECTIONS]);
+  for (const section of [
+    'google_ads', 'meta_ads', 'daily_website_improvement', 'daily_seo',
+    'project_video_and_social_reuse', 'maya_and_plans', 'referral_opportunities',
+    'existing_customer_revenue', 'service_quality_signals', 'project_handoff_and_closeout',
+  ]) assert.equal(result.dailyBriefSections.includes(section), true, section);
+});
+
+test('Google and Meta require verified live connections', () => {
+  assert.equal(evaluateLiveConnection().status, 'CONNECTION_MISSING');
+  assert.equal(evaluateLiveConnection({ connected: true, liveVerified: false }).status, 'CONNECTION_MISSING');
+  assert.equal(evaluateLiveConnection({ connected: true, liveVerified: true }).status, 'CONNECTED_READ_ONLY');
+
+  const result = orchestrateSalesSystem();
+  assert.equal(result.connections.googleAds.status, 'CONNECTION_MISSING');
+  assert.equal(result.connections.metaAds.status, 'CONNECTION_MISSING');
+  assert.equal(result.connections.googleAds.accountId, '251-497-1872');
+  assert.deepEqual(result.connections.googleAds.auditChecks, [...GOOGLE_ADS_AUDIT_CHECKS]);
+  assert.deepEqual(result.connections.metaAds.auditChecks, [...META_ADS_AUDIT_CHECKS]);
+  assert.equal(result.connections.googleAds.historicalReference.referenceOnly, true);
+});
+
+test('maturity 0 blocks all protected external operations', () => {
+  const capacity = evaluateCapacity({
+    plansToProposalBusinessDays: 2,
+    activeUnownedLeads: 1,
+    unownedLeadThreshold: 5,
+  });
+  for (const operation of [
+    { externalWrite: true },
+    { irreversible: true },
+    { budgetChange: true },
+    { mondayMutation: true },
+  ]) {
+    assert.deepEqual(authorizeOperation(operation, { maturity: 0, capacity }), {
+      allowed: false,
+      status: 'MATURITY_0_DRY_RUN',
+    });
+  }
+});
+
+test('capacity blocks budget growth for delay or too many unowned leads', () => {
+  const delayed = evaluateCapacity({ plansToProposalBusinessDays: 8, activeUnownedLeads: 0 });
+  assert.equal(delayed.status, 'CAPACITY_BLOCKED');
+  assert.equal(delayed.budgetGrowthAllowed, false);
+
+  const unowned = evaluateCapacity({
+    plansToProposalBusinessDays: 2,
+    activeUnownedLeads: 6,
+    unownedLeadThreshold: 5,
+  });
+  assert.equal(unowned.status, 'CAPACITY_BLOCKED');
+  assert.equal(unowned.budgetGrowthAllowed, false);
+});
+
+test('missing capacity threshold X is never guessed and forbids budget growth', () => {
+  const capacity = evaluateCapacity({ plansToProposalBusinessDays: 2, activeUnownedLeads: 1 });
+  assert.equal(capacity.status, 'CAPACITY_THRESHOLD_MISSING');
+  assert.equal(capacity.thresholdMissing, true);
+  assert.equal(capacity.budgetGrowthAllowed, false);
+  assert.equal('guessedThreshold' in capacity, false);
+});
+
+test('Monday remains read-only and structurally untouched', () => {
+  const result = orchestrateSalesSystem({
+    mondayBoardId: '2732725332',
+    requestedMondayStructuralChange: true,
+  });
+  assert.equal(result.monday.boardId, '2732725332');
+  assert.equal(result.monday.structuralChangesAllowed, false);
+  assert.equal(result.monday.enrichmentStoredExternally, true);
+  assert.equal(result.preRunChecks.passed, false);
+  assert.equal(result.preRunChecks.issues.includes('MONDAY_STRUCTURE_CHANGE_FORBIDDEN'), true);
+});
+
+test('attribution preserves first and last touch, human referrer, gclid and fbclid', () => {
+  const merged = mergeAttribution({
+    monday_item_id: '123',
+    how_did_you_hear: 'architect referral',
+    first_touch: 'referral',
+    last_touch: 'organic',
+    referrer: 'architect-network',
+    gclid: 'gclid-first',
+  }, {
+    monday_item_id: '123',
+    first_touch: 'meta',
+    last_touch: 'meta-retargeting',
+    referrer: 'facebook.com',
+    gclid: '',
+    fbclid: 'fbclid-later',
+    utm_campaign: 'retargeting',
+  });
+
+  assert.equal(merged.first_touch, 'referral');
+  assert.equal(merged.last_touch, 'meta-retargeting');
+  assert.equal(merged.how_did_you_hear, 'architect referral');
+  assert.equal(merged.referrer, 'architect-network');
+  assert.equal(merged.gclid, 'gclid-first');
+  assert.equal(merged.fbclid, 'fbclid-later');
+});
+
+test('Vault file bridge rejects duplicate and stale messages', () => {
+  assert.equal(validateBusMessage(busMessage(), {
+    now: NOW,
+    seenIds: ['message-0001'],
+  }).status, 'BUS_MESSAGE_DUPLICATE');
+
+  assert.equal(validateBusMessage(busMessage({
+    id: 'message-stale',
+    createdAt: '2026-08-18T06:00:00.000Z',
+  }), { now: NOW, maxAgeMinutes: 60 }).status, 'BUS_MESSAGE_STALE');
+
+  assert.equal(validateBusMessage(busMessage(), { now: NOW }).status, 'BUS_MESSAGE_ACCEPTED');
+});
+
+test('approval-required operations cannot execute without approval', () => {
+  const denied = authorizeOperation({ approvalRequired: true, approvalStatus: 'pending' }, {
+    maturity: 1,
+    capacity: { budgetGrowthAllowed: true },
+  });
+  assert.deepEqual(denied, { allowed: false, status: 'APPROVAL_REQUIRED' });
+
+  const orchestrated = orchestrateSalesSystem({
+    requestedOperations: [{ id: 'send-proposal', approvalRequired: true, approvalStatus: 'pending' }],
+  });
+  assert.deepEqual(orchestrated.operationDecisions[0], {
+    id: 'send-proposal', allowed: false, status: 'APPROVAL_REQUIRED',
+  });
+});
+
+test('daily website improvement is an explicit sales orchestration engine and NO_CHANGE is valid', () => {
+  const result = orchestrateSalesSystem();
+  assert.equal(result.dailyWebsiteImprovement.included, true);
+  assert.equal(result.dailyWebsiteImprovement.resultContract, 'ONE_EVIDENCE_BACKED_IMPROVEMENT_OR_NO_CHANGE');
+  assert.equal(result.dailyWebsiteImprovement.acceptedSalesFeedback.includes('qualified_lead_pages'), true);
+  assert.equal(result.dailyWebsiteImprovement.acceptedSalesFeedback.includes('content_gaps'), true);
+});
+
+test('component registry has no duplicate skill and introduces only the three approved skills', () => {
+  const names = ORCHESTRATED_COMPONENTS.map(({ name }) => name);
+  assert.equal(new Set(names).size, names.length);
+  assert.deepEqual(
+    ORCHESTRATED_COMPONENTS.filter(({ ownership }) => ownership === 'new-required').map(({ name }) => name),
+    ['google-ads-manager', 'meta-ads-manager', 'lead-attribution-feedback'],
+  );
+  assert.equal(
+    ORCHESTRATED_COMPONENTS.find(({ name }) => name === 'ai-sales-manager').ownership,
+    'existing-local',
+  );
+
+  const result = orchestrateSalesSystem({ availableSkills: ['ai-sales-manager'] });
+  assert.equal(result.components.find(({ name }) => name === 'service-revenue-audit').status, 'MISSING_LOCAL');
+});
+
+test('bus messages and runtime examples reject or omit secrets and raw PII', async () => {
+  const forbiddenMessage = busMessage({
+    id: 'message-pii',
+    payload: { phone: 'synthetic', approvalRequired: false, approvalStatus: 'not_required' },
+  });
+  assert.equal(validateBusMessage(forbiddenMessage, { now: NOW }).status, 'BUS_MESSAGE_FORBIDDEN_DATA');
+  const piiInFacts = busMessage({
+    id: 'message-pii-facts',
+    payload: {
+      facts: ['Contact synthetic@example.invalid or 050-123-4567'],
+      approvalRequired: false,
+      approvalStatus: 'not_required',
+    },
+  });
+  assert.equal(validateBusMessage(piiInFacts, { now: NOW }).status, 'BUS_MESSAGE_FORBIDDEN_DATA');
+
+  const config = JSON.parse(await readFile(resolve(
+    REPO,
+    '.claude/skills/ai-sales-manager/runtime/config.example.json',
+  ), 'utf8'));
+  assert.deepEqual(findForbiddenDataKeys(config), []);
+  const configText = JSON.stringify(config).toLowerCase();
+  for (const forbidden of ['client_secret', 'access_token', 'password', 'customer@example']) {
+    assert.equal(configText.includes(forbidden), false, forbidden);
+  }
+
+  const result = orchestrateSalesSystem({ customerName: 'Synthetic Customer', email: 'synthetic@example.invalid' });
+  const resultText = JSON.stringify(result);
+  assert.equal(resultText.includes('Synthetic Customer'), false);
+  assert.equal(resultText.includes('synthetic@example.invalid'), false);
+});
+
+test('morning and evening runtime skeletons remain dry-run only', async () => {
+  const morning = await runMorningDryRun();
+  assert.equal(morning.mode, 'DRY_RUN');
+  assert.equal(morning.postRunSelfCheck.externalActionsPerformed, false);
+  assert.equal(morning.connections.googleAds.status, 'CONNECTION_MISSING');
+  assert.equal(morning.connections.metaAds.status, 'CONNECTION_MISSING');
+
+  const evening = runEveningCloseDryRun({ processedMessageIds: ['message-0001'] });
+  assert.equal(evening.mode, 'DRY_RUN');
+  assert.equal(evening.stateWritePerformed, false);
+  assert.equal(evening.archivePerformed, false);
+  assert.equal(evening.vaultSnapshotWritten, false);
+});
+
+test('Claude phase A stays file-based with approval gating and no direct API', () => {
+  const result = orchestrateSalesSystem();
+  assert.equal(result.claudeBridge.phase, 'FILE_BRIDGE');
+  assert.equal(result.claudeBridge.directApiEnabled, false);
+  assert.equal(result.claudeBridge.approvalRule, 'EXECUTE_ONLY_WHEN_NOT_REQUIRED_OR_APPROVED');
+
+  const request = createJudgmentRequest({
+    id: 'judgment-0001',
+    createdAt: NOW,
+    caseReference: 'monday-item-123',
+    question: 'Is this bounded case qualified?',
+    facts: ['Synthetic aggregate fact'],
+    approvalRequired: true,
+  });
+  assert.equal(request.type, 'judgment_request');
+  assert.equal(request.payload.approvalStatus, 'pending');
+
+  const pendingResponse = {
+    ...busMessage({
+      id: 'judgment-response-0001',
+      source: 'claude',
+      target: 'codex',
+      type: 'judgment_response',
+      correlationId: 'judgment-0001',
+    }),
+    payload: {
+      decision: 'Synthetic recommendation',
+      confidence: 0.8,
+      approvalRequired: true,
+      approvalStatus: 'pending',
+    },
+  };
+  assert.deepEqual(evaluateJudgmentResponse(pendingResponse, {
+    now: NOW,
+    expectedCorrelationId: 'judgment-0001',
+  }), { accepted: true, executable: false, status: 'APPROVAL_REQUIRED' });
+
+  pendingResponse.payload.approvalStatus = 'approved';
+  assert.deepEqual(evaluateJudgmentResponse(pendingResponse, {
+    now: NOW,
+    expectedCorrelationId: 'judgment-0001',
+  }), { accepted: true, executable: true, status: 'JUDGMENT_RESPONSE_READY' });
+});

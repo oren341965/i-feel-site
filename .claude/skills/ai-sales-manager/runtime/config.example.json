@@ -1,0 +1,53 @@
+{
+  "schemaVersion": 1,
+  "maturity": 0,
+  "timezone": "Asia/Jerusalem",
+  "runtimeRoot": "C:\\ifeel-sales",
+  "vaultRootEnvironmentVariable": "VAULT_ROOT",
+  "mondayBoardId": "2732725332",
+  "googleAdsAccountId": "251-497-1872",
+  "availableSkills": [
+    "ai-sales-manager",
+    "ai-service-manager",
+    "google-ads-manager",
+    "meta-ads-manager",
+    "lead-attribution-feedback",
+    "daily-seo-crawl",
+    "new-page",
+    "deploy-ifeel",
+    "verify-live",
+    "gallery-add",
+    "video-add",
+    "private-home-case-study",
+    "mailing-list-collector",
+    "autopilot-ifeel"
+  ],
+  "connections": {
+    "googleAds": {
+      "connected": false,
+      "liveVerified": false
+    },
+    "metaAds": {
+      "connected": false,
+      "liveVerified": false
+    }
+  },
+  "capacity": {
+    "activeUnownedLeadThreshold": null
+  },
+  "schedule": {
+    "morningCollectLocalTime": "06:00",
+    "deterministicChecksLocalTime": "06:05",
+    "claudeQueueLocalTime": "06:10",
+    "eveningCloseLocalTime": "17:30"
+  },
+  "localDirectories": [
+    "data",
+    "state",
+    "cache",
+    "jobs",
+    "bus",
+    "logs",
+    "config"
+  ]
+}

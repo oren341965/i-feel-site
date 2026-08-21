@@ -1,0 +1,36 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://i-feel.co.il/schemas/ai-sales-state-v1.json",
+  "title": "I Feel AI Sales aggregate state",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "updatedAt", "maturity", "capacity", "processedMessageIds"],
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "updatedAt": { "type": "string", "format": "date-time" },
+    "maturity": { "const": 0 },
+    "lastMorningRunAt": { "type": ["string", "null"], "format": "date-time" },
+    "lastEveningCloseAt": { "type": ["string", "null"], "format": "date-time" },
+    "capacity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "budgetGrowthAllowed"],
+      "properties": {
+        "status": {
+          "enum": [
+            "CAPACITY_OK",
+            "CAPACITY_BLOCKED",
+            "CAPACITY_THRESHOLD_MISSING",
+            "CAPACITY_INPUT_MISSING"
+          ]
+        },
+        "budgetGrowthAllowed": { "type": "boolean" }
+      }
+    },
+    "processedMessageIds": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": { "type": "string", "minLength": 1, "maxLength": 128 }
+    }
+  }
+}
