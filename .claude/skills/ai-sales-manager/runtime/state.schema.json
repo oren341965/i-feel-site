@@ -1,0 +1,65 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://i-feel.co.il/schemas/ai-sales-state-v1.json",
+  "title": "I Feel AI Sales local runtime state",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "last_morning_run",
+    "maturity",
+    "vault_status",
+    "monday_snapshot_status",
+    "monday_snapshot_generated_at",
+    "monday_open",
+    "monday_exception_leads",
+    "monday_no_owner",
+    "google_ads_status",
+    "meta_ads_status",
+    "attribution_status",
+    "capacity_status",
+    "maya_status",
+    "baseline_started_on",
+    "baseline_duration_days",
+    "automatic_scaling_allowed",
+    "last_request_id"
+  ],
+  "properties": {
+    "schema_version": { "const": 1 },
+    "last_morning_run": { "type": "string", "format": "date-time" },
+    "maturity": { "const": 0 },
+    "vault_status": { "enum": ["READY", "MISSING", "INVALID"] },
+    "monday_snapshot_status": { "enum": ["LOCAL_SNAPSHOT_READ_ONLY", "CONNECTION_MISSING"] },
+    "monday_snapshot_generated_at": {
+      "type": ["string", "null"],
+      "format": "date-time"
+    },
+    "monday_open": { "type": ["integer", "null"], "minimum": 0 },
+    "monday_exception_leads": { "type": ["integer", "null"], "minimum": 0 },
+    "monday_no_owner": { "type": ["integer", "null"], "minimum": 0 },
+    "google_ads_status": { "enum": ["CONNECTED_READ_ONLY", "CONNECTION_MISSING"] },
+    "meta_ads_status": { "enum": ["CONNECTED_READ_ONLY", "CONNECTION_MISSING"] },
+    "attribution_status": { "enum": ["LOCAL_SNAPSHOT_READ_ONLY", "CONNECTION_MISSING"] },
+    "capacity_status": {
+      "enum": [
+        "CAPACITY_OK",
+        "CAPACITY_BLOCKED",
+        "CAPACITY_THRESHOLD_MISSING",
+        "CAPACITY_INPUT_MISSING"
+      ]
+    },
+    "maya_status": {
+      "enum": [
+        "CONNECTED_DRY_RUN",
+        "WAITING_FOR_MANAGER_RESPONSE",
+        "WAITING_FOR_MAYA",
+        "NOT_STARTED",
+        "CONNECTION_MISSING"
+      ]
+    },
+    "baseline_started_on": { "type": "string", "format": "date" },
+    "baseline_duration_days": { "const": 90 },
+    "automatic_scaling_allowed": { "const": false },
+    "last_request_id": { "type": "string", "minLength": 8, "maxLength": 128 }
+  }
+}

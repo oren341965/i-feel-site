@@ -1,0 +1,39 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://i-feel.co.il/schemas/ai-sales-morning-log-v1.json",
+  "title": "I Feel AI Sales morning-run local log",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "generated_at",
+    "job",
+    "mode",
+    "maturity",
+    "summary",
+    "artifacts",
+    "protected_actions"
+  ],
+  "properties": {
+    "schema_version": { "const": 1 },
+    "generated_at": { "type": "string", "format": "date-time" },
+    "job": { "const": "morning-run" },
+    "mode": { "const": "DRY_RUN" },
+    "maturity": { "const": 0 },
+    "summary": { "type": "object" },
+    "artifacts": { "type": "object" },
+    "protected_actions": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["monday_write", "external_send", "google_meta_write", "budget_change", "irreversible_action", "automatic_scaling"],
+      "properties": {
+        "monday_write": { "const": false },
+        "external_send": { "const": false },
+        "google_meta_write": { "const": false },
+        "budget_change": { "const": false },
+        "irreversible_action": { "const": false },
+        "automatic_scaling": { "const": false }
+      }
+    }
+  }
+}

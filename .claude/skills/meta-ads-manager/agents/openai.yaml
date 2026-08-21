@@ -1,0 +1,7 @@
+interface:
+  display_name: "I Feel Meta Ads Manager"
+  short_description: "Dry-run Meta qualified-lead advertising audit"
+  default_prompt: "Use $meta-ads-manager to audit I Feel Meta advertising in maturity-0 read-only mode."
+
+policy:
+  allow_implicit_invocation: true

@@ -1,0 +1,7 @@
+interface:
+  display_name: "I Feel AI Sales Manager"
+  short_description: "Dry-run sales orchestration and pipeline audit"
+  default_prompt: "Use $ai-sales-manager to run a maturity-0 I Feel sales-system audit without external writes."
+
+policy:
+  allow_implicit_invocation: true
