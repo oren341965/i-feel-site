@@ -1,0 +1,1 @@
+Audit sources: GitHub .claude/skills, Drive ifeel-skills-register, healthcheck logs, and local Codex audit. Classify existing skills and prevent duplication. Existing skill maturity always gates execution.
