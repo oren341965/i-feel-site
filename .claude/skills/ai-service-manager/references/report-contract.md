@@ -23,7 +23,7 @@ Write reports in concise Hebrew and lead with the operational conclusion.
 
 ## Dry-run additions
 
-Show threshold values, terminal-status mapping, critical override mapping, main/subitem coverage, pagination completeness, relevant-population denominators, reconciliation checks, and invalid dates skipped. Do not save or send anything by default.
+Show threshold values, terminal-status mapping, critical override mapping, expected/fetched main-item and subitem counts, page count, pagination completeness, omitted containers, relevant-population denominators, reconciliation checks, mapping warnings, and invalid dates. Do not retain or send operational details by default.
 
 ## Language rules
 

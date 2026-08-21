@@ -15,11 +15,11 @@ Write reports in concise Hebrew. Lead with the operational conclusion, then evid
 
 ## Dry-run additions
 
-Show the exact thresholds, closed/lost mapping, authoritative date and owner fields, pagination coverage, reconciliation checks, and any records skipped because of invalid dates. Do not save a snapshot or distribute the report by default.
+Show the exact thresholds, closed/lost mapping, authoritative date and owner fields, expected/fetched item counts, page count, pagination completeness, unique-ID reconciliation, mapping warnings, and invalid dates. Do not save a snapshot or distribute the report by default.
 
 ## Individual report
 
-Show only the selected owner's workload, exceptions, priority queue, and trend. Keep team-wide customer rows out. If an item has multiple owners, say so.
+Show only the selected owner's current workload, exceptions, and priority queue. Keep team-wide customer rows out. If an item has multiple owners, say so. The default aggregate snapshot does not retain employee identities, so say `אין בסיס השוואה אישי מאושר` rather than inventing an owner trend. A personal trend requires a separately approved, access-controlled pseudonymous employee-history design.
 
 ## Language rules
 

@@ -7,6 +7,7 @@ The deterministic analyzer is the source of truth for calculation.
 - `INACTIVE_DAYS = 14`
 - `NEW_UNATTENDED_DAYS = 1`
 - Business time zone: `Asia/Jerusalem`
+- A visit date without a time is due at the end of that calendar day in `Asia/Jerusalem`, including DST. Invalid dates are missing data.
 
 ## Population
 
@@ -22,7 +23,7 @@ The deterministic analyzer is the source of truth for calculation.
 - `overdueVisit`: an open item with a valid scheduled visit in the past and no completed-visit evidence.
 - `noOwner`: no accountable service owner; a generic queue owner alone still counts here.
 - `missingTechnician`: technician is required or a visit is scheduled, but no technician is assigned.
-- `inactive`: last update older than 14 days, or missing with an old creation date.
+- `inactive`: last update older than 14 days or missing.
 - `waitingCustomer`: status is explicitly customer-dependent.
 - `internalBottleneck`: an open internal-treatment state is inactive or overdue; do not include waiting-customer states.
 - `repeatVisit`: explicit return-visit marker or FTR is explicitly no.
@@ -44,11 +45,11 @@ Start each open case at 100 and deduct:
 - 10 missing summary
 - 5 payment follow-up
 
-Clamp to 0–100. Overall service health is the mean of open-case scores. Resolved and cancelled items do not inflate the score.
+Clamp to 0–100. Overall service health is the mean of open-case scores. Resolved and cancelled items do not inflate the score. If no records were analyzed, return `null` and set `analysisComplete=false`.
 
 ## Data Quality Score
 
-Award 20 points each for present status, owner, created date, last update, and category. Report technician, visit-date, FTR, summary, and survey coverage separately on their relevant populations. Missing FTR is unknown, not failure.
+Award 20 points each for present status, accountable owner, created date, last update, and category. Coverage is `{numerator, denominator, rate}`; a zero denominator yields `rate=null`, never 100%. Report technician, visit-date, FTR, summary, and survey coverage separately on their relevant populations. Missing FTR is unknown, not failure.
 
 ## Priority score
 
@@ -65,11 +66,11 @@ For open cases add:
 - 10 internal bottleneck
 - 5 payment follow-up
 
-Sort descending, then oldest update, then item ID. The priority ranks operational attention; it is not a customer-value score.
+Sort descending, then oldest update, then item ID. The priority ranks operational attention; it is not a customer-value score. A customer-waiting case with no other positive-priority flag belongs only in `waitingCustomerQueue`, not the management priority queue.
 
 ## Technician metrics
 
-For each actual technician report assigned relevant cases, completed visits, FTR yes/no/unknown, FTR rate only where known, repeat visits, and missing summaries. Include sample size and field coverage. Do not compare technicians when known FTR sample size is below five; describe the data only.
+For each actual technician report non-cancelled assigned cases, cancelled assignments separately, completed visits, FTR yes/no/unknown, FTR rate only where known, repeat visits, missing summaries, and collaborative cases. Repeat-visit and missing-summary evidence is measured across all relevant completed visits, including closed cases; only the action queue is open-only. Include sample size and field coverage. Do not compare technicians when known FTR sample size is below five; describe the data only.
 
 ## Knowledge-gap detection
 
@@ -81,6 +82,10 @@ Choose one bounded improvement from the largest controllable exception bucket, u
 
 ## Snapshot and trend
 
-Snapshots contain aggregate counts, health/data-quality scores, field coverage, technician aggregates, and category aggregates only. They exclude customer names, contacts, addresses, notes, and priority rows.
+Snapshots contain aggregate counts, health/data-quality scores, field coverage, overall FTR counts/rate, and container-mapping totals only. They exclude customer and employee names, contacts, addresses, item IDs, notes, technician/category breakdowns, and priority rows.
 
-Compare only matching board IDs and schema versions. Positive exception deltas mean deterioration; positive health/data-quality/FTR deltas mean improvement.
+Compare only matching board IDs, schema versions, timezone, thresholds, and status/population mappings. Positive exception deltas mean deterioration; positive health/data-quality/FTR deltas mean improvement. Return no trend and state the incompatibility reason when the fingerprint differs.
+
+## Input completeness
+
+In live mode require board ID, expected/fetched main-item counts, fetched subitem count, page count, and `paginationComplete=true`. Counts and unique IDs must reconcile. Remove declared container parents when their subitems are the case population and report source records, omitted containers, and analyzed cases. Malformed input, partial pagination, duplicate IDs, invalid config, or unresolved mappings stop or explicitly warn; empty offline input returns null scores rather than perfect health.
