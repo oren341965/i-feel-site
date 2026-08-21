@@ -1,0 +1,1 @@
+During Claude skills audit, do not create duplicate functional skills beyond the four explicitly approved missing components.
