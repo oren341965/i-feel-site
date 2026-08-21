@@ -1,0 +1,1 @@
+Full Claude-skill inventory is required before expanding the AI Sales Manager. Existing skills must be reused and maturity rules respected.
