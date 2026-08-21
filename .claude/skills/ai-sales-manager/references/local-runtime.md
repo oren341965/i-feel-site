@@ -15,6 +15,7 @@ C:\ifeel-sales\
 
 - Keep the active SQLite database under `data\` and back it up locally according to an approved retention policy.
 - Keep configuration without credentials in `config\`; credentials must use an approved secret store or environment variables.
-- Set `VAULT_ROOT` separately on each computer.
+- Set `VAULT_ROOT` in each machine's local `config.json`; never commit the machine-specific path.
 - Copy aggregate snapshots to the Vault only after a future maturity/approval change.
-- `morning-run.mjs` and `evening-close.mjs` are dry-run skeletons. They print proposals and do not create, archive or send anything.
+- `morning-run.mjs` may write `state/system-state.json`, one daily local log, and one idempotent dry-run request under `${VAULT_ROOT}/AI-Sales/_bus/to-claude`. It performs no external send or platform mutation.
+- `evening-close.mjs` remains proposal-only and does not archive or move messages at maturity 0.

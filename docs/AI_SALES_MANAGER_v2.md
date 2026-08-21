@@ -40,7 +40,7 @@ Initial targets are provisional until a 90-day baseline exists:
 
 ## Runtime and Vault
 
-The runtime template targets `C:\ifeel-sales` but is not installed by this integration. The Vault root is resolved from `VAULT_ROOT`; no user-specific Dropbox path is committed. See the manager's `references/local-runtime.md`, `references/vault-layout.md` and runtime schemas.
+The runtime targets `C:\ifeel-sales`. The machine-local config resolves `VAULT_ROOT`; no user-specific Dropbox path is committed. Vault Integration v1 may create only the documented `AI-Sales` tree, local state/log files and idempotent dry-run requests. See the manager's `references/local-runtime.md`, `references/vault-layout.md` and runtime schemas.
 
 ## Daily cycle
 

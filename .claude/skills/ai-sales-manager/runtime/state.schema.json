@@ -1,36 +1,34 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://i-feel.co.il/schemas/ai-sales-state-v1.json",
-  "title": "I Feel AI Sales aggregate state",
+  "title": "I Feel AI Sales local runtime state",
   "type": "object",
   "additionalProperties": false,
-  "required": ["schemaVersion", "updatedAt", "maturity", "capacity", "processedMessageIds"],
+  "required": [
+    "schema_version",
+    "last_morning_run",
+    "maturity",
+    "vault_status",
+    "google_ads_status",
+    "meta_ads_status",
+    "capacity_status",
+    "last_request_id"
+  ],
   "properties": {
-    "schemaVersion": { "const": 1 },
-    "updatedAt": { "type": "string", "format": "date-time" },
+    "schema_version": { "const": 1 },
+    "last_morning_run": { "type": "string", "format": "date-time" },
     "maturity": { "const": 0 },
-    "lastMorningRunAt": { "type": ["string", "null"], "format": "date-time" },
-    "lastEveningCloseAt": { "type": ["string", "null"], "format": "date-time" },
-    "capacity": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": ["status", "budgetGrowthAllowed"],
-      "properties": {
-        "status": {
-          "enum": [
-            "CAPACITY_OK",
-            "CAPACITY_BLOCKED",
-            "CAPACITY_THRESHOLD_MISSING",
-            "CAPACITY_INPUT_MISSING"
-          ]
-        },
-        "budgetGrowthAllowed": { "type": "boolean" }
-      }
+    "vault_status": { "enum": ["READY", "MISSING", "INVALID"] },
+    "google_ads_status": { "enum": ["CONNECTED_READ_ONLY", "CONNECTION_MISSING"] },
+    "meta_ads_status": { "enum": ["CONNECTED_READ_ONLY", "CONNECTION_MISSING"] },
+    "capacity_status": {
+      "enum": [
+        "CAPACITY_OK",
+        "CAPACITY_BLOCKED",
+        "CAPACITY_THRESHOLD_MISSING",
+        "CAPACITY_INPUT_MISSING"
+      ]
     },
-    "processedMessageIds": {
-      "type": "array",
-      "uniqueItems": true,
-      "items": { "type": "string", "minLength": 1, "maxLength": 128 }
-    }
+    "last_request_id": { "type": "string", "minLength": 8, "maxLength": 128 }
   }
 }

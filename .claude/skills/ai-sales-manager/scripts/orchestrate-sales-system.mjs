@@ -266,26 +266,43 @@ export function validateBusMessage(message, options = {}) {
     return { accepted: false, status: 'BUS_MESSAGE_INVALID' };
   }
 
-  const required = ['id', 'schemaVersion', 'createdAt', 'source', 'target', 'type', 'payload'];
+  const runtimeV1 = hasValue(message.schema_version) || hasValue(message.request_id);
+  const required = runtimeV1
+    ? ['request_id', 'schema_version', 'generated_at', 'source', 'type', 'payload', 'max_age_hours']
+    : ['id', 'schemaVersion', 'createdAt', 'source', 'target', 'type', 'payload'];
   if (required.some((field) => !hasValue(message[field]))) {
     return { accepted: false, status: 'BUS_MESSAGE_INVALID' };
   }
-  if (message.schemaVersion !== 1 || typeof message.payload !== 'object' || Array.isArray(message.payload)) {
+  const schemaVersion = runtimeV1 ? message.schema_version : message.schemaVersion;
+  if (schemaVersion !== 1 || typeof message.payload !== 'object' || Array.isArray(message.payload)) {
     return { accepted: false, status: 'BUS_MESSAGE_INVALID' };
   }
+  if (runtimeV1 && (
+    !/^morning-sales-judgment-\d{4}-\d{2}-\d{2}$/.test(String(message.request_id))
+    || message.source !== 'codex'
+    || message.type !== 'MORNING_SALES_JUDGMENT_REQUEST'
+    || message.dry_run !== true
+    || message.approval_required !== false
+    || typeof message.max_age_hours !== 'number'
+  )) return { accepted: false, status: 'BUS_MESSAGE_POLICY_INVALID' };
 
   const seenIds = new Set(options.seenIds ?? []);
-  if (seenIds.has(String(message.id))) {
+  const messageId = runtimeV1 ? message.request_id : message.id;
+  if (seenIds.has(String(messageId))) {
     return { accepted: false, status: 'BUS_MESSAGE_DUPLICATE' };
   }
 
   const now = new Date(options.now ?? Date.now());
-  const createdAt = new Date(message.createdAt);
+  const createdAt = new Date(runtimeV1 ? message.generated_at : message.createdAt);
   if (Number.isNaN(now.getTime()) || Number.isNaN(createdAt.getTime())) {
     return { accepted: false, status: 'BUS_MESSAGE_INVALID_TIMESTAMP' };
   }
   const ageMinutes = (now.getTime() - createdAt.getTime()) / 60_000;
-  const maxAgeMinutes = options.maxAgeMinutes ?? 24 * 60;
+  const messageMaxAge = runtimeV1 ? finiteNonNegativeNumber(message.max_age_hours) : null;
+  if (runtimeV1 && (messageMaxAge === null || messageMaxAge === 0)) {
+    return { accepted: false, status: 'BUS_MESSAGE_INVALID_MAX_AGE' };
+  }
+  const maxAgeMinutes = options.maxAgeMinutes ?? (messageMaxAge === null ? 24 * 60 : messageMaxAge * 60);
   if (ageMinutes > maxAgeMinutes || ageMinutes < -5) {
     return { accepted: false, status: 'BUS_MESSAGE_STALE' };
   }
@@ -417,7 +434,13 @@ export function orchestrateSalesSystem(input = {}) {
       mondayStructureChanged: false,
       fields: [...ATTRIBUTION_FIELDS],
     },
-    vault: {
+    vault: input.vault ?? {
+      status: 'MISSING',
+      root: null,
+      obsidianDetected: false,
+      busReady: false,
+      writable: false,
+      foldersChecked: [],
       rootEnvironmentVariable: SALES_SYSTEM_CONSTANTS.vaultRootEnvironmentVariable,
       liveDatabaseAllowed: false,
       snapshotsOnly: true,
@@ -434,6 +457,8 @@ export function orchestrateSalesSystem(input = {}) {
       mondayMutationsPerformed: false,
       budgetChangesPerformed: false,
       irreversibleActionsPerformed: false,
+      internalStateWritesAllowed: true,
+      dryRunBusWritesAllowed: true,
     },
   };
 }

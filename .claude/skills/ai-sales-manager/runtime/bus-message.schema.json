@@ -2,34 +2,104 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://i-feel.co.il/schemas/ai-sales-bus-message-v1.json",
   "title": "I Feel AI Sales file-bridge message",
-  "type": "object",
-  "additionalProperties": false,
-  "required": ["id", "schemaVersion", "createdAt", "source", "target", "type", "payload"],
-  "properties": {
-    "id": { "type": "string", "minLength": 8, "maxLength": 128 },
-    "schemaVersion": { "const": 1 },
-    "createdAt": { "type": "string", "format": "date-time" },
-    "correlationId": { "type": ["string", "null"], "maxLength": 128 },
-    "source": { "enum": ["codex", "claude", "maya-agent", "ai-sales-manager"] },
-    "target": { "enum": ["codex", "claude", "maya-agent", "ai-sales-manager"] },
-    "type": { "enum": ["judgment_request", "judgment_response", "task", "result", "approval"] },
-    "payload": {
+  "oneOf": [
+    { "$ref": "#/$defs/morningJudgmentRequest" },
+    { "$ref": "#/$defs/legacyBridgeMessage" }
+  ],
+  "$defs": {
+    "morningJudgmentRequest": {
       "type": "object",
       "additionalProperties": false,
+      "required": [
+        "schema_version",
+        "request_id",
+        "generated_at",
+        "max_age_hours",
+        "source",
+        "type",
+        "dry_run",
+        "approval_required",
+        "payload"
+      ],
       "properties": {
-        "caseReference": { "type": ["string", "null"], "maxLength": 128 },
-        "question": { "type": ["string", "null"], "maxLength": 2000 },
-        "facts": {
-          "type": "array",
-          "maxItems": 50,
-          "items": { "type": "string", "maxLength": 500 }
-        },
-        "decision": { "type": ["string", "null"], "maxLength": 1000 },
-        "confidence": { "type": ["number", "null"], "minimum": 0, "maximum": 1 },
-        "rationale": { "type": ["string", "null"], "maxLength": 2000 },
-        "proposedAction": { "type": ["string", "null"], "maxLength": 1000 },
-        "approvalRequired": { "type": "boolean" },
-        "approvalStatus": { "enum": ["not_required", "pending", "approved", "rejected"] }
+        "schema_version": { "const": 1 },
+        "request_id": { "type": "string", "pattern": "^morning-sales-judgment-[0-9]{4}-[0-9]{2}-[0-9]{2}$" },
+        "generated_at": { "type": "string", "format": "date-time" },
+        "max_age_hours": { "type": "number", "exclusiveMinimum": 0, "maximum": 168 },
+        "source": { "const": "codex" },
+        "type": { "const": "MORNING_SALES_JUDGMENT_REQUEST" },
+        "dry_run": { "const": true },
+        "approval_required": { "const": false },
+        "payload": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "current_target_status",
+            "google_status",
+            "meta_status",
+            "capacity_status",
+            "website_improvement_status",
+            "judgment_items"
+          ],
+          "properties": {
+            "current_target_status": { "type": "string", "maxLength": 128 },
+            "google_status": { "type": "string", "maxLength": 128 },
+            "meta_status": { "type": "string", "maxLength": 128 },
+            "capacity_status": { "type": "string", "maxLength": 128 },
+            "website_improvement_status": { "type": "string", "maxLength": 128 },
+            "judgment_items": {
+              "type": "array",
+              "maxItems": 50,
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["reference", "question", "facts"],
+                "properties": {
+                  "reference": { "type": "string", "maxLength": 128 },
+                  "question": { "type": "string", "maxLength": 1000 },
+                  "facts": {
+                    "type": "array",
+                    "maxItems": 25,
+                    "items": { "type": "string", "maxLength": 500 }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "legacyBridgeMessage": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "schemaVersion", "createdAt", "source", "target", "type", "payload"],
+      "properties": {
+        "id": { "type": "string", "minLength": 8, "maxLength": 128 },
+        "schemaVersion": { "const": 1 },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "correlationId": { "type": ["string", "null"], "maxLength": 128 },
+        "source": { "enum": ["codex", "claude", "maya-agent", "ai-sales-manager"] },
+        "target": { "enum": ["codex", "claude", "maya-agent", "ai-sales-manager"] },
+        "type": { "enum": ["judgment_request", "judgment_response", "task", "result", "approval"] },
+        "payload": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "caseReference": { "type": ["string", "null"], "maxLength": 128 },
+            "question": { "type": ["string", "null"], "maxLength": 2000 },
+            "facts": {
+              "type": "array",
+              "maxItems": 50,
+              "items": { "type": "string", "maxLength": 500 }
+            },
+            "decision": { "type": ["string", "null"], "maxLength": 1000 },
+            "confidence": { "type": ["number", "null"], "minimum": 0, "maximum": 1 },
+            "rationale": { "type": ["string", "null"], "maxLength": 2000 },
+            "proposedAction": { "type": ["string", "null"], "maxLength": 1000 },
+            "approvalRequired": { "type": "boolean" },
+            "approvalStatus": { "enum": ["not_required", "pending", "approved", "rejected"] }
+          }
+        }
       }
     }
   }

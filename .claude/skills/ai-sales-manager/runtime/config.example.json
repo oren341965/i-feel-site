@@ -4,6 +4,7 @@
   "timezone": "Asia/Jerusalem",
   "runtimeRoot": "C:\\ifeel-sales",
   "vaultRootEnvironmentVariable": "VAULT_ROOT",
+  "VAULT_ROOT": null,
   "mondayBoardId": "2732725332",
   "googleAdsAccountId": "251-497-1872",
   "availableSkills": [

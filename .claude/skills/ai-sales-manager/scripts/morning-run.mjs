@@ -3,6 +3,7 @@ import { resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import { orchestrateSalesSystem } from './orchestrate-sales-system.mjs';
+import { persistMorningArtifacts, prepareVault } from './vault-runtime.mjs';
 
 const DEFAULT_CONFIG = fileURLToPath(new URL('../runtime/config.example.json', import.meta.url));
 
@@ -15,8 +16,10 @@ function parseArgs(argv) {
   }
   return { configPath };
 }
-export async function runMorningDryRun({ configPath = DEFAULT_CONFIG } = {}) {
+export async function runMorningDryRun({ configPath = DEFAULT_CONFIG, now } = {}) {
   const config = JSON.parse(await readFile(configPath, 'utf8'));
+  const vault = await prepareVault(config, { createMissing: true });
+  if (vault.status !== 'READY') throw new Error(`Vault validation failed: ${vault.status} (${vault.reason})`);
   const result = orchestrateSalesSystem({
     mondayBoardId: config.mondayBoardId,
     availableSkills: config.availableSkills,
@@ -26,13 +29,17 @@ export async function runMorningDryRun({ configPath = DEFAULT_CONFIG } = {}) {
       unownedLeadThreshold: config.capacity?.activeUnownedLeadThreshold,
     },
     connections: config.connections,
+    vault,
   });
+
+  const artifacts = await persistMorningArtifacts(config, result, vault, { now });
 
   return {
     job: 'morning-run',
     scheduledLocalTime: config.schedule?.morningCollectLocalTime ?? '06:00',
     runtimeRoot: config.runtimeRoot,
     ...result,
+    artifacts,
   };
 }
 

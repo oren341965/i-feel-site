@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
-import { readFile } from 'node:fs/promises';
-import { resolve } from 'node:path';
+import { mkdir, readFile, readdir, rm, writeFile } from 'node:fs/promises';
+import { join, resolve } from 'node:path';
 import test from 'node:test';
 
 import { runEveningCloseDryRun } from '../.claude/skills/ai-sales-manager/scripts/evening-close.mjs';
@@ -20,9 +20,41 @@ import {
   orchestrateSalesSystem,
   validateBusMessage,
 } from '../.claude/skills/ai-sales-manager/scripts/orchestrate-sales-system.mjs';
+import {
+  VAULT_RELATIVE_FOLDERS,
+  buildMorningJudgmentRequest,
+  prepareVault,
+} from '../.claude/skills/ai-sales-manager/scripts/vault-runtime.mjs';
 
 const REPO = resolve(import.meta.dirname, '..');
 const NOW = '2026-08-21T06:10:00.000Z';
+let fixtureCounter = 0;
+
+async function createVaultRuntimeFixture(t, options = {}) {
+  fixtureCounter += 1;
+  const root = resolve(REPO, `.ai-manager-data/vault-v1-test-${process.pid}-${fixtureCounter}`);
+  const runtimeRoot = join(root, 'runtime');
+  const vaultRoot = join(root, 'vault');
+  await mkdir(vaultRoot, { recursive: true });
+  if (options.withObsidian !== false) await mkdir(join(vaultRoot, '.obsidian'), { recursive: true });
+  await mkdir(join(runtimeRoot, 'config'), { recursive: true });
+  const config = JSON.parse(await readFile(resolve(
+    REPO,
+    '.claude/skills/ai-sales-manager/runtime/config.example.json',
+  ), 'utf8'));
+  config.runtimeRoot = runtimeRoot;
+  config.VAULT_ROOT = vaultRoot;
+  const configPath = join(runtimeRoot, 'config', 'config.json');
+  await writeFile(configPath, JSON.stringify(config), 'utf8');
+  t.after(async () => {
+    const privateRoot = resolve(REPO, '.ai-manager-data');
+    if (!root.startsWith(`${privateRoot}\\`) && !root.startsWith(`${privateRoot}/`)) {
+      throw new Error('unsafe Vault fixture cleanup path');
+    }
+    await rm(root, { recursive: true, force: true });
+  });
+  return { config, configPath, root, runtimeRoot, vaultRoot };
+}
 
 function busMessage(overrides = {}) {
   return {
@@ -164,6 +196,10 @@ test('Vault file bridge rejects duplicate and stale messages', () => {
   }), { now: NOW, maxAgeMinutes: 60 }).status, 'BUS_MESSAGE_STALE');
 
   assert.equal(validateBusMessage(busMessage(), { now: NOW }).status, 'BUS_MESSAGE_ACCEPTED');
+
+  const runtimeResult = orchestrateSalesSystem();
+  const runtimeMessage = buildMorningJudgmentRequest(runtimeResult, { now: '2026-08-20T06:00:00.000Z' });
+  assert.equal(validateBusMessage(runtimeMessage, { now: '2026-08-21T07:00:00.000Z' }).status, 'BUS_MESSAGE_STALE');
 });
 
 test('approval-required operations cannot execute without approval', () => {
@@ -237,18 +273,69 @@ test('bus messages and runtime examples reject or omit secrets and raw PII', asy
   assert.equal(resultText.includes('synthetic@example.invalid'), false);
 });
 
-test('morning and evening runtime skeletons remain dry-run only', async () => {
-  const morning = await runMorningDryRun();
+test('morning runtime activates the Vault, writes bounded artifacts, and stays dry-run only', async (t) => {
+  const fixture = await createVaultRuntimeFixture(t);
+  const morning = await runMorningDryRun({ configPath: fixture.configPath, now: NOW });
   assert.equal(morning.mode, 'DRY_RUN');
+  assert.equal(morning.vault.status, 'READY');
+  assert.equal(morning.vault.root, fixture.vaultRoot);
+  assert.equal(morning.vault.obsidianDetected, true);
+  assert.equal(morning.vault.busReady, true);
+  assert.equal(morning.vault.writable, true);
+  assert.equal(morning.vault.foldersChecked.length, VAULT_RELATIVE_FOLDERS.length);
   assert.equal(morning.postRunSelfCheck.externalActionsPerformed, false);
   assert.equal(morning.connections.googleAds.status, 'CONNECTION_MISSING');
   assert.equal(morning.connections.metaAds.status, 'CONNECTION_MISSING');
+
+  const state = JSON.parse(await readFile(morning.artifacts.stateFile, 'utf8'));
+  assert.equal(state.schema_version, 1);
+  assert.equal(state.vault_status, 'READY');
+  assert.equal(state.last_request_id, 'morning-sales-judgment-2026-08-21');
+  const log = JSON.parse(await readFile(morning.artifacts.logFile, 'utf8'));
+  assert.equal(log.protected_actions.monday_write, false);
+  assert.equal(log.protected_actions.external_send, false);
+  assert.equal(log.protected_actions.google_meta_write, false);
+  const request = JSON.parse(await readFile(morning.artifacts.toClaudeFile, 'utf8'));
+  assert.deepEqual({
+    schema_version: request.schema_version,
+    source: request.source,
+    type: request.type,
+    dry_run: request.dry_run,
+    approval_required: request.approval_required,
+    max_age_hours: request.max_age_hours,
+  }, {
+    schema_version: 1,
+    source: 'codex',
+    type: 'MORNING_SALES_JUDGMENT_REQUEST',
+    dry_run: true,
+    approval_required: false,
+    max_age_hours: 24,
+  });
+  assert.deepEqual(request.payload.judgment_items, []);
+
+  const repeated = await runMorningDryRun({ configPath: fixture.configPath, now: NOW });
+  assert.equal(repeated.artifacts.busFileCreated, false);
+  assert.equal(repeated.artifacts.idempotentReuse, true);
+  assert.equal((await readdir(join(fixture.vaultRoot, 'AI-Sales', '_bus', 'to-claude'))).length, 1);
 
   const evening = runEveningCloseDryRun({ processedMessageIds: ['message-0001'] });
   assert.equal(evening.mode, 'DRY_RUN');
   assert.equal(evening.stateWritePerformed, false);
   assert.equal(evening.archivePerformed, false);
   assert.equal(evening.vaultSnapshotWritten, false);
+});
+
+test('Vault validation reports MISSING or INVALID before writing', async (t) => {
+  const missingRoot = resolve(REPO, `.ai-manager-data/missing-vault-${process.pid}-${Date.now()}`);
+  const missing = await prepareVault({ VAULT_ROOT: missingRoot });
+  assert.equal(missing.status, 'MISSING');
+  assert.equal(missing.foldersCreated.length, 0);
+
+  const fixture = await createVaultRuntimeFixture(t, { withObsidian: false });
+  const invalid = await prepareVault(fixture.config);
+  assert.equal(invalid.status, 'INVALID');
+  assert.equal(invalid.reason, 'OBSIDIAN_MARKER_NOT_FOUND');
+  assert.equal(invalid.foldersCreated.length, 0);
 });
 
 test('Claude phase A stays file-based with approval gating and no direct API', () => {

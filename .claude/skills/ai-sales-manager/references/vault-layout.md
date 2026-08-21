@@ -1,6 +1,6 @@
 # Shared Vault layout template
 
-Resolve the Vault root only from the `VAULT_ROOT` environment variable. Do not assume a user profile, Dropbox account name or drive letter, and do not create these paths during maturity 0.
+Resolve the Vault root from the `VAULT_ROOT` value in the runtime config. Do not assume a user profile, Dropbox account name or drive letter. At maturity 0 the runtime may create only the exact `AI-Sales` structure below after verifying that the root exists and contains `.obsidian`.
 
 ```text
 ${VAULT_ROOT}/

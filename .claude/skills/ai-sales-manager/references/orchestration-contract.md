@@ -19,6 +19,7 @@ Every newly introduced component starts at maturity 0:
 - return `CONNECTION_MISSING` otherwise;
 - produce reports, proposals and file-bridge requests only;
 - perform no external send, Monday mutation, campaign write, budget change or irreversible action;
+- permit schema-valid local state/log writes and idempotent dry-run requests only inside the configured `AI-Sales` bus;
 - run a post-run self-check stating that no protected action occurred.
 
 `autopilot-ifeel` and repository approval rules take precedence whenever they are stricter.
@@ -29,7 +30,7 @@ Every newly introduced component starts at maturity 0:
 2. At 06:05 run deterministic checks, including the capacity rule.
 3. At 06:10 place ambiguous cases in `_bus/to-claude/` using the bus schema.
 4. Produce one concise brief for Oren. `NO_CHANGE` is valid for the website engine.
-5. At 17:30 propose an aggregate state close and processed-message archive. Maturity 0 does not write either action.
+5. Persist the local morning state/log and one idempotent dry-run judgment request. At 17:30 propose an aggregate state close and processed-message archive; maturity 0 does not perform that archive.
 
 ## Capacity
 
