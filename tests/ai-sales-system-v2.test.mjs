@@ -287,6 +287,8 @@ test('morning runtime activates the Vault, writes bounded artifacts, and stays d
   assert.equal(morning.connections.googleAds.status, 'CONNECTION_MISSING');
   assert.equal(morning.connections.metaAds.status, 'CONNECTION_MISSING');
   assert.equal(morning.googleAdsReadOnly, null);
+  assert.equal(morning.mayaConnection.status, 'NOT_STARTED');
+  assert.equal(morning.maya.status, 'NOT_STARTED');
 
   const state = JSON.parse(await readFile(morning.artifacts.stateFile, 'utf8'));
   assert.equal(state.schema_version, 1);
@@ -353,6 +355,7 @@ test('morning runtime includes verified Google Ads live-read evidence and keeps 
   assert.equal(collectorCalls, 1);
   assert.equal(morning.connections.googleAds.status, 'CONNECTED_READ_ONLY');
   assert.equal(morning.googleAdsReadOnly.account.metrics.spend, 12.5);
+  assert.equal(morning.maya.externalActionsAllowed, false);
   assert.equal(morning.postRunSelfCheck.externalActionsPerformed, false);
   assert.equal(morning.postRunSelfCheck.budgetChangesPerformed, false);
 });

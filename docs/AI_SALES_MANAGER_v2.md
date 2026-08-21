@@ -58,7 +58,7 @@ Budget growth is forbidden if plans-to-proposal exceeds 7 business days, active 
 
 1. Local dry-run contracts, schemas and tests.
 2. Install Oren runtime and configure `VAULT_ROOT` without scheduling.
-3. Install/reload shared skills and Maya Vault conventions on Maya's computer.
+3. Install/reload shared skills and Maya Vault conventions on Maya's computer. The repository now provides `install-maya-runtime.ps1` and an idempotent maturity-0 Vault handshake; execution on Maya's computer and Cowork skill installation remain separate workstation steps.
 4. Verify Google/Meta read connections and the Drive enrichment schema.
 5. Run a synthetic dry run, then a live read-only dry run.
 6. Review the first daily brief before any scheduling or maturity increase.

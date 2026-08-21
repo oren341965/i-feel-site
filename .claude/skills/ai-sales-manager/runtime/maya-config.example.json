@@ -1,0 +1,50 @@
+{
+  "schemaVersion": 1,
+  "maturity": 0,
+  "timezone": "Asia/Jerusalem",
+  "runtimeRoot": "C:\\ifeel-maya",
+  "VAULT_ROOT": null,
+  "identity": {
+    "role": "maya-agent",
+    "machineId": null
+  },
+  "skills": {
+    "operationalSource": "CLAUDE_COWORK",
+    "vaultNotesDirectory": "Skills",
+    "required": [
+      "maya-admin",
+      "maya-whatsapp",
+      "maya-billing-control",
+      "maya-email-maintenance"
+    ],
+    "installationStatus": "CONNECTION_MISSING"
+  },
+  "connections": {
+    "gmail": {
+      "connected": false,
+      "readOnly": true,
+      "draftsAllowed": false,
+      "externalSendsAllowed": false
+    },
+    "monday": {
+      "connected": false,
+      "readOnly": true,
+      "writesAllowed": false
+    },
+    "whatsapp": {
+      "connected": false,
+      "readOnly": true,
+      "draftsAllowed": false,
+      "externalSendsAllowed": false
+    }
+  },
+  "localDirectories": [
+    "data",
+    "state",
+    "cache",
+    "jobs",
+    "bus",
+    "logs",
+    "config"
+  ]
+}

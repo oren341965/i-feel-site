@@ -3,6 +3,7 @@ import { resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import { orchestrateSalesSystem } from './orchestrate-sales-system.mjs';
+import { inspectMayaConnection } from './maya-vault-bridge.mjs';
 import { persistMorningArtifacts, prepareVault } from './vault-runtime.mjs';
 import { collectGoogleAdsReadOnly } from '../../google-ads-manager/scripts/google-ads-readonly.mjs';
 
@@ -33,6 +34,10 @@ export async function runMorningDryRun({
   if (googleAdsReadOnly && googleAdsReadOnly.connection?.status !== 'CONNECTED_READ_ONLY') {
     throw new Error('Google Ads live-read verification failed closed');
   }
+  const mayaConnection = await inspectMayaConnection({
+    configPath,
+    now: new Date(now ?? Date.now()),
+  });
   const result = orchestrateSalesSystem({
     mondayBoardId: config.mondayBoardId,
     availableSkills: config.availableSkills,
@@ -42,6 +47,7 @@ export async function runMorningDryRun({
       unownedLeadThreshold: config.capacity?.activeUnownedLeadThreshold,
     },
     connections: config.connections,
+    mayaConnection,
     vault,
   });
 
@@ -53,6 +59,7 @@ export async function runMorningDryRun({
     runtimeRoot: config.runtimeRoot,
     ...result,
     googleAdsReadOnly,
+    mayaConnection,
     artifacts,
   };
 }

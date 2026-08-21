@@ -415,6 +415,13 @@ export function orchestrateSalesSystem(input = {}) {
         auditChecks: [...META_ADS_AUDIT_CHECKS],
       },
     },
+    maya: {
+      status: input.mayaConnection?.status ?? 'CONNECTION_MISSING',
+      busReady: input.mayaConnection?.vault?.status === 'READY',
+      coworkSkillsInstalled: false,
+      externalActionsAllowed: false,
+      mondayWritesAllowed: false,
+    },
     capacity,
     components,
     dailyWebsiteImprovement: {
