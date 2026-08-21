@@ -14,6 +14,14 @@ Operate only as a child of `ai-sales-manager`. Read [../ai-sales-manager/referen
 3. Read the manager's capacity result and attribution confidence.
 4. If live access is absent or unverified, return `CONNECTION_MISSING` and stop platform analysis.
 
+The canonical maturity-0 connector is `scripts/meta-ads-readonly.mjs`. It requires an explicitly verified Graph API version, `act_<digits>` ad-account ID and a protected machine-local credential file. It deliberately has no default API version. The connector exposes only HTTP `GET` for an allowlist of ad-account reporting resources and keeps credentials out of URLs.
+
+Verify a configured connection with:
+
+```powershell
+node .claude/skills/meta-ads-manager/scripts/meta-ads-readonly.mjs --config C:\ifeel-sales\config\config.json
+```
+
 ## Analysis
 
 - Facebook and Instagram campaigns and ad sets;
@@ -36,3 +44,5 @@ Compare Meta with Google using qualified leads, proposal rate, win rate, revenue
 ## Output and self-check
 
 Return connection status, evidence time, funnel metrics, creative/audience findings, bounded recommendations, capacity status and approval requirements. Finish by asserting that no platform write, budget change or external send occurred.
+
+When both `connected` and `liveVerified` are true in the machine-local runtime configuration, `morning-run.mjs` invokes this connector and exposes the live read under `metaAdsReadOnly`. Lead-form retrieval stays `CONNECTION_MISSING` until the Page/form permissions are separately configured and verified.

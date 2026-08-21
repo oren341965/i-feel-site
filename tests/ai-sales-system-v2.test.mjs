@@ -287,6 +287,7 @@ test('morning runtime activates the Vault, writes bounded artifacts, and stays d
   assert.equal(morning.connections.googleAds.status, 'CONNECTION_MISSING');
   assert.equal(morning.connections.metaAds.status, 'CONNECTION_MISSING');
   assert.equal(morning.googleAdsReadOnly, null);
+  assert.equal(morning.metaAdsReadOnly, null);
   assert.equal(morning.mayaConnection.status, 'NOT_STARTED');
   assert.equal(morning.maya.status, 'NOT_STARTED');
 
@@ -326,6 +327,38 @@ test('morning runtime activates the Vault, writes bounded artifacts, and stays d
   assert.equal(evening.stateWritePerformed, false);
   assert.equal(evening.archivePerformed, false);
   assert.equal(evening.vaultSnapshotWritten, false);
+});
+
+test('morning runtime includes verified Meta live-read evidence and keeps writes blocked', async (t) => {
+  const fixture = await createVaultRuntimeFixture(t);
+  fixture.config.connections.metaAds.connected = true;
+  fixture.config.connections.metaAds.liveVerified = true;
+  fixture.config.connections.metaAds.readOnly = true;
+  await writeFile(fixture.configPath, JSON.stringify(fixture.config), 'utf8');
+  let collectorCalls = 0;
+  const morning = await runMorningDryRun({
+    configPath: fixture.configPath,
+    now: NOW,
+    metaAdsCollector: async ({ configPath, now }) => {
+      collectorCalls += 1;
+      assert.equal(configPath, fixture.configPath);
+      assert.equal(now.toISOString(), NOW);
+      return {
+        mode: 'READ_ONLY',
+        connection: { status: 'CONNECTED_READ_ONLY', adAccountId: 'act_123' },
+        insights: [{ spend: 10, actions: { lead: 1 } }],
+        campaigns: [],
+        adSets: [],
+        ads: [],
+        safety: { mutationMethodsAvailable: false, platformWrites: 0, budgetChanges: 0 },
+      };
+    },
+  });
+  assert.equal(collectorCalls, 1);
+  assert.equal(morning.connections.metaAds.status, 'CONNECTED_READ_ONLY');
+  assert.equal(morning.metaAdsReadOnly.insights[0].spend, 10);
+  assert.equal(morning.postRunSelfCheck.externalActionsPerformed, false);
+  assert.equal(morning.postRunSelfCheck.budgetChangesPerformed, false);
 });
 
 test('morning runtime includes verified Google Ads live-read evidence and keeps writes blocked', async (t) => {

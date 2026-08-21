@@ -35,7 +35,11 @@
     },
     "metaAds": {
       "connected": false,
-      "liveVerified": false
+      "liveVerified": false,
+      "readOnly": true,
+      "apiVersion": null,
+      "adAccountId": null,
+      "accessCredentialFile": null
     }
   },
   "capacity": {

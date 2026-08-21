@@ -6,6 +6,7 @@ import { orchestrateSalesSystem } from './orchestrate-sales-system.mjs';
 import { inspectMayaConnection } from './maya-vault-bridge.mjs';
 import { persistMorningArtifacts, prepareVault } from './vault-runtime.mjs';
 import { collectGoogleAdsReadOnly } from '../../google-ads-manager/scripts/google-ads-readonly.mjs';
+import { collectMetaAdsReadOnly } from '../../meta-ads-manager/scripts/meta-ads-readonly.mjs';
 
 const DEFAULT_CONFIG = fileURLToPath(new URL('../runtime/config.example.json', import.meta.url));
 
@@ -22,6 +23,7 @@ export async function runMorningDryRun({
   configPath = DEFAULT_CONFIG,
   now,
   googleAdsCollector = collectGoogleAdsReadOnly,
+  metaAdsCollector = collectMetaAdsReadOnly,
 } = {}) {
   const config = JSON.parse(await readFile(configPath, 'utf8'));
   const vault = await prepareVault(config, { createMissing: true });
@@ -33,6 +35,14 @@ export async function runMorningDryRun({
     : null;
   if (googleAdsReadOnly && googleAdsReadOnly.connection?.status !== 'CONNECTED_READ_ONLY') {
     throw new Error('Google Ads live-read verification failed closed');
+  }
+  const metaAdsConfigured = config.connections?.metaAds?.connected === true
+    && config.connections?.metaAds?.liveVerified === true;
+  const metaAdsReadOnly = metaAdsConfigured
+    ? await metaAdsCollector({ configPath, now: new Date(now ?? Date.now()) })
+    : null;
+  if (metaAdsReadOnly && metaAdsReadOnly.connection?.status !== 'CONNECTED_READ_ONLY') {
+    throw new Error('Meta Ads live-read verification failed closed');
   }
   const mayaConnection = await inspectMayaConnection({
     configPath,
@@ -59,6 +69,7 @@ export async function runMorningDryRun({
     runtimeRoot: config.runtimeRoot,
     ...result,
     googleAdsReadOnly,
+    metaAdsReadOnly,
     mayaConnection,
     artifacts,
   };
