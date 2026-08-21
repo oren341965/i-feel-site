@@ -26,7 +26,12 @@
   "connections": {
     "googleAds": {
       "connected": false,
-      "liveVerified": false
+      "liveVerified": false,
+      "readOnly": true,
+      "apiVersion": "v25",
+      "loginCustomerId": null,
+      "serviceAccountCredentialFile": null,
+      "developerCredentialFile": null
     },
     "metaAds": {
       "connected": false,

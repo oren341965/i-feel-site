@@ -4,6 +4,7 @@ import { fileURLToPath } from 'node:url';
 
 import { orchestrateSalesSystem } from './orchestrate-sales-system.mjs';
 import { persistMorningArtifacts, prepareVault } from './vault-runtime.mjs';
+import { collectGoogleAdsReadOnly } from '../../google-ads-manager/scripts/google-ads-readonly.mjs';
 
 const DEFAULT_CONFIG = fileURLToPath(new URL('../runtime/config.example.json', import.meta.url));
 
@@ -16,10 +17,22 @@ function parseArgs(argv) {
   }
   return { configPath };
 }
-export async function runMorningDryRun({ configPath = DEFAULT_CONFIG, now } = {}) {
+export async function runMorningDryRun({
+  configPath = DEFAULT_CONFIG,
+  now,
+  googleAdsCollector = collectGoogleAdsReadOnly,
+} = {}) {
   const config = JSON.parse(await readFile(configPath, 'utf8'));
   const vault = await prepareVault(config, { createMissing: true });
   if (vault.status !== 'READY') throw new Error(`Vault validation failed: ${vault.status} (${vault.reason})`);
+  const googleAdsConfigured = config.connections?.googleAds?.connected === true
+    && config.connections?.googleAds?.liveVerified === true;
+  const googleAdsReadOnly = googleAdsConfigured
+    ? await googleAdsCollector({ configPath, now: new Date(now ?? Date.now()) })
+    : null;
+  if (googleAdsReadOnly && googleAdsReadOnly.connection?.status !== 'CONNECTED_READ_ONLY') {
+    throw new Error('Google Ads live-read verification failed closed');
+  }
   const result = orchestrateSalesSystem({
     mondayBoardId: config.mondayBoardId,
     availableSkills: config.availableSkills,
@@ -39,6 +52,7 @@ export async function runMorningDryRun({ configPath = DEFAULT_CONFIG, now } = {}
     scheduledLocalTime: config.schedule?.morningCollectLocalTime ?? '06:00',
     runtimeRoot: config.runtimeRoot,
     ...result,
+    googleAdsReadOnly,
     artifacts,
   };
 }

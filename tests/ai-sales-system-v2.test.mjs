@@ -286,6 +286,7 @@ test('morning runtime activates the Vault, writes bounded artifacts, and stays d
   assert.equal(morning.postRunSelfCheck.externalActionsPerformed, false);
   assert.equal(morning.connections.googleAds.status, 'CONNECTION_MISSING');
   assert.equal(morning.connections.metaAds.status, 'CONNECTION_MISSING');
+  assert.equal(morning.googleAdsReadOnly, null);
 
   const state = JSON.parse(await readFile(morning.artifacts.stateFile, 'utf8'));
   assert.equal(state.schema_version, 1);
@@ -323,6 +324,37 @@ test('morning runtime activates the Vault, writes bounded artifacts, and stays d
   assert.equal(evening.stateWritePerformed, false);
   assert.equal(evening.archivePerformed, false);
   assert.equal(evening.vaultSnapshotWritten, false);
+});
+
+test('morning runtime includes verified Google Ads live-read evidence and keeps writes blocked', async (t) => {
+  const fixture = await createVaultRuntimeFixture(t);
+  fixture.config.connections.googleAds.connected = true;
+  fixture.config.connections.googleAds.liveVerified = true;
+  fixture.config.connections.googleAds.readOnly = true;
+  await writeFile(fixture.configPath, JSON.stringify(fixture.config), 'utf8');
+  let collectorCalls = 0;
+  const morning = await runMorningDryRun({
+    configPath: fixture.configPath,
+    now: NOW,
+    googleAdsCollector: async ({ configPath, now }) => {
+      collectorCalls += 1;
+      assert.equal(configPath, fixture.configPath);
+      assert.equal(now.toISOString(), NOW);
+      return {
+        mode: 'READ_ONLY',
+        connection: { status: 'CONNECTED_READ_ONLY', accountId: '2514971872' },
+        account: { currencyCode: 'ILS', metrics: { spend: 12.5, conversions: 2 } },
+        campaigns: [],
+        searchTerms: [],
+        safety: { mutationMethodsAvailable: false, platformWrites: 0, budgetChanges: 0 },
+      };
+    },
+  });
+  assert.equal(collectorCalls, 1);
+  assert.equal(morning.connections.googleAds.status, 'CONNECTED_READ_ONLY');
+  assert.equal(morning.googleAdsReadOnly.account.metrics.spend, 12.5);
+  assert.equal(morning.postRunSelfCheck.externalActionsPerformed, false);
+  assert.equal(morning.postRunSelfCheck.budgetChangesPerformed, false);
 });
 
 test('Vault validation reports MISSING or INVALID before writing', async (t) => {
