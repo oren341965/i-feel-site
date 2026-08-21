@@ -40,6 +40,14 @@
       "apiVersion": null,
       "adAccountId": null,
       "accessCredentialFile": null
+    },
+    "attribution": {
+      "connected": false,
+      "sourceVerified": false,
+      "readOnly": true,
+      "sourceType": "LOCAL_JSON_EXPORT",
+      "sourceFile": null,
+      "maxAgeHours": 168
     }
   },
   "capacity": {

@@ -1,0 +1,46 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://i-feel.co.il/schemas/attribution-snapshot-v1.json",
+  "title": "I Feel approved lead-attribution export",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "generated_at", "source", "rows"],
+  "properties": {
+    "schema_version": { "const": 1 },
+    "generated_at": { "type": "string", "format": "date-time" },
+    "source": { "const": "approved_attribution_export" },
+    "rows": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["monday_item_id", "evidence_timestamp", "confidence"],
+        "properties": {
+          "monday_item_id": { "type": ["string", "integer"], "pattern": "^[0-9]+$", "minimum": 0 },
+          "evidence_timestamp": { "type": "string", "format": "date-time" },
+          "confidence": { "enum": ["LOW", "MEDIUM", "HIGH", "low", "medium", "high"] },
+          "how_did_you_hear": { "type": ["string", "number"] },
+          "first_touch": { "type": ["string", "number"] },
+          "last_touch": { "type": ["string", "number"] },
+          "referrer": { "type": ["string", "number"] },
+          "gclid": { "type": ["string", "number"] },
+          "fbclid": { "type": ["string", "number"] },
+          "utm_source": { "type": ["string", "number"] },
+          "utm_medium": { "type": ["string", "number"] },
+          "utm_campaign": { "type": ["string", "number"] },
+          "phone_source": { "type": ["string", "number"] },
+          "whatsapp_source": { "type": ["string", "number"] },
+          "revenue_engine": { "type": ["string", "number"] },
+          "electrical_planning_stage": { "type": ["string", "number"] },
+          "qualification": { "type": ["string", "number"] },
+          "competitor": { "type": ["string", "number"] },
+          "potential_value": { "type": "number", "minimum": 0 },
+          "loss_reason": { "type": ["string", "number"] },
+          "proposal": { "type": "boolean" },
+          "won": { "type": "boolean" },
+          "revenue": { "type": "number", "minimum": 0 }
+        }
+      }
+    }
+  }
+}

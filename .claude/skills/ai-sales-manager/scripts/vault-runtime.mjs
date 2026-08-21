@@ -207,6 +207,7 @@ export async function persistMorningArtifacts(config, result, vault, options = {
     vault_status: vault.status,
     google_ads_status: result.connections.googleAds.status,
     meta_ads_status: result.connections.metaAds.status,
+    attribution_status: result.attribution.status,
     capacity_status: result.capacity.status,
     last_request_id: request.request_id,
   };
@@ -225,6 +226,7 @@ export async function persistMorningArtifacts(config, result, vault, options = {
       vault_status: vault.status,
       google_ads_status: result.connections.googleAds.status,
       meta_ads_status: result.connections.metaAds.status,
+      attribution_status: result.attribution.status,
       capacity_status: result.capacity.status,
       website_improvement_status: 'NO_CHANGE',
     },

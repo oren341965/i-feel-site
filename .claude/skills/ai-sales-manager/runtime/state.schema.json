@@ -11,6 +11,7 @@
     "vault_status",
     "google_ads_status",
     "meta_ads_status",
+    "attribution_status",
     "capacity_status",
     "last_request_id"
   ],
@@ -21,6 +22,7 @@
     "vault_status": { "enum": ["READY", "MISSING", "INVALID"] },
     "google_ads_status": { "enum": ["CONNECTED_READ_ONLY", "CONNECTION_MISSING"] },
     "meta_ads_status": { "enum": ["CONNECTED_READ_ONLY", "CONNECTION_MISSING"] },
+    "attribution_status": { "enum": ["LOCAL_SNAPSHOT_READ_ONLY", "CONNECTION_MISSING"] },
     "capacity_status": {
       "enum": [
         "CAPACITY_OK",

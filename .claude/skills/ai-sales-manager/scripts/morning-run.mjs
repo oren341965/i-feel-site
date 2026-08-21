@@ -7,6 +7,7 @@ import { inspectMayaConnection } from './maya-vault-bridge.mjs';
 import { persistMorningArtifacts, prepareVault } from './vault-runtime.mjs';
 import { collectGoogleAdsReadOnly } from '../../google-ads-manager/scripts/google-ads-readonly.mjs';
 import { collectMetaAdsReadOnly } from '../../meta-ads-manager/scripts/meta-ads-readonly.mjs';
+import { collectAttributionReadOnly } from '../../lead-attribution-feedback/scripts/attribution-readonly.mjs';
 
 const DEFAULT_CONFIG = fileURLToPath(new URL('../runtime/config.example.json', import.meta.url));
 
@@ -24,6 +25,7 @@ export async function runMorningDryRun({
   now,
   googleAdsCollector = collectGoogleAdsReadOnly,
   metaAdsCollector = collectMetaAdsReadOnly,
+  attributionCollector = collectAttributionReadOnly,
 } = {}) {
   const config = JSON.parse(await readFile(configPath, 'utf8'));
   const vault = await prepareVault(config, { createMissing: true });
@@ -44,6 +46,14 @@ export async function runMorningDryRun({
   if (metaAdsReadOnly && metaAdsReadOnly.connection?.status !== 'CONNECTED_READ_ONLY') {
     throw new Error('Meta Ads live-read verification failed closed');
   }
+  const attributionConfigured = config.connections?.attribution?.connected === true
+    && config.connections?.attribution?.sourceVerified === true;
+  const attributionReadOnly = attributionConfigured
+    ? await attributionCollector({ configPath, now: new Date(now ?? Date.now()) })
+    : null;
+  if (attributionReadOnly && attributionReadOnly.connection?.status !== 'LOCAL_SNAPSHOT_READ_ONLY') {
+    throw new Error('Attribution read-only verification failed closed');
+  }
   const mayaConnection = await inspectMayaConnection({
     configPath,
     now: new Date(now ?? Date.now()),
@@ -57,6 +67,7 @@ export async function runMorningDryRun({
       unownedLeadThreshold: config.capacity?.activeUnownedLeadThreshold,
     },
     connections: config.connections,
+    attributionConnection: attributionReadOnly?.connection,
     mayaConnection,
     vault,
   });
@@ -70,6 +81,7 @@ export async function runMorningDryRun({
     ...result,
     googleAdsReadOnly,
     metaAdsReadOnly,
+    attributionReadOnly,
     mayaConnection,
     artifacts,
   };

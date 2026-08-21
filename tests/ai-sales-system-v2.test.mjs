@@ -288,12 +288,15 @@ test('morning runtime activates the Vault, writes bounded artifacts, and stays d
   assert.equal(morning.connections.metaAds.status, 'CONNECTION_MISSING');
   assert.equal(morning.googleAdsReadOnly, null);
   assert.equal(morning.metaAdsReadOnly, null);
+  assert.equal(morning.attributionReadOnly, null);
+  assert.equal(morning.attribution.status, 'CONNECTION_MISSING');
   assert.equal(morning.mayaConnection.status, 'NOT_STARTED');
   assert.equal(morning.maya.status, 'NOT_STARTED');
 
   const state = JSON.parse(await readFile(morning.artifacts.stateFile, 'utf8'));
   assert.equal(state.schema_version, 1);
   assert.equal(state.vault_status, 'READY');
+  assert.equal(state.attribution_status, 'CONNECTION_MISSING');
   assert.equal(state.last_request_id, 'morning-sales-judgment-2026-08-21');
   const log = JSON.parse(await readFile(morning.artifacts.logFile, 'utf8'));
   assert.equal(log.protected_actions.monday_write, false);

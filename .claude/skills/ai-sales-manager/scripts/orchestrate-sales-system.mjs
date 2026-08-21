@@ -437,6 +437,7 @@ export function orchestrateSalesSystem(input = {}) {
       ],
     },
     attribution: {
+      status: input.attributionConnection?.status ?? 'CONNECTION_MISSING',
       storage: 'EXTERNAL_BY_MONDAY_ITEM_ID',
       mondayStructureChanged: false,
       fields: [...ATTRIBUTION_FIELDS],

@@ -30,3 +30,9 @@ Support at least: `how_did_you_hear`, `first_touch`, `last_touch`, `referrer`, `
 Produce structured, confidence-labeled aggregate feedback for `google-ads-manager`, `meta-ads-manager`, daily website/SEO, professional referrals and `ai-sales-manager`.
 
 At maturity 0, do not write to Monday, Google, Meta or the external attribution store. Finish with a self-check confirming that the result was a dry run and contained no raw PII.
+
+## Local read-only adapter
+
+`scripts/attribution-readonly.mjs` validates an approved JSON export under the configured runtime `data` directory against `runtime/attribution-snapshot.schema.json`. The export must use schema version 1, contain source-timestamped rows keyed by `monday_item_id`, label every row `LOW`, `MEDIUM` or `HIGH` confidence, and contain no raw PII. The adapter rejects stale files, future evidence, unknown fields and paths outside the runtime data directory; it performs no source, Monday or external writes.
+
+This adapter is a safe local boundary for synthetic and approved exports. It is not a live Google Drive connection. Keep `connections.attribution.connected=false` and `sourceVerified=false` until an approved export is actually present and verified.
