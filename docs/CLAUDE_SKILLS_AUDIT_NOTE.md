@@ -1,0 +1,1 @@
+Audit Claude skills before further implementation. Source locations include repository .claude/skills and Drive skill registers. Classify every skill as sales core, sales support, website growth, operations support, independent, or duplicate risk.
