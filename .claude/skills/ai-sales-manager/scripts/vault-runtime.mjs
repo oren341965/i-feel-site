@@ -142,6 +142,7 @@ export function buildMorningJudgmentRequest(result, options = {}) {
   if (Number.isNaN(generatedAt.getTime())) throw new Error('Invalid morning-run timestamp');
   const date = dateInTimezone(generatedAt, options.timezone ?? 'Asia/Jerusalem');
   const requestId = `morning-sales-judgment-${date}`;
+  const mondaySnapshot = result.mondaySnapshotReadOnly;
   const message = {
     schema_version: 1,
     request_id: requestId,
@@ -152,7 +153,17 @@ export function buildMorningJudgmentRequest(result, options = {}) {
     dry_run: true,
     approval_required: false,
     payload: {
-      current_target_status: 'NO_LIVE_TARGET_DATA',
+      current_target_status: mondaySnapshot?.connection?.status ?? 'NO_LIVE_TARGET_DATA',
+      monday_snapshot_generated_at: mondaySnapshot?.connection?.snapshotGeneratedAt ?? null,
+      monday_counts: mondaySnapshot ? {
+        open: mondaySnapshot.counts.open,
+        exception_leads: mondaySnapshot.counts.exceptionLeads,
+        overdue: mondaySnapshot.counts.overdue,
+        no_next_action: mondaySnapshot.counts.noNextAction,
+        no_owner: mondaySnapshot.counts.noOwner,
+      } : null,
+      monday_health_score: mondaySnapshot?.healthScore ?? null,
+      monday_data_quality_score: mondaySnapshot?.dataQualityScore ?? null,
       google_status: result.connections.googleAds.status,
       meta_status: result.connections.metaAds.status,
       capacity_status: result.capacity.status,
@@ -184,6 +195,48 @@ function assertNoForbiddenData(value, label) {
   if (findings.length > 0) throw new Error(`${label} contains forbidden data: ${findings.join(', ')}`);
 }
 
+export function buildDailyOrenBrief(result, options = {}) {
+  const generatedAt = new Date(options.now ?? Date.now());
+  if (Number.isNaN(generatedAt.getTime())) throw new Error('Invalid daily brief timestamp');
+  const date = dateInTimezone(generatedAt, options.timezone ?? 'Asia/Jerusalem');
+  const ready = result.components.filter(({ status }) => status === 'READY').map(({ name }) => name);
+  const readyRemote = result.components.filter(({ status }) => status === 'READY_REMOTE').map(({ name }) => name);
+  const missing = result.components.filter(({ status }) => status === 'MISSING_LOCAL').map(({ name }) => name);
+  const capacityReasons = result.capacity.reasons.length > 0
+    ? result.capacity.reasons.join(', ')
+    : 'none';
+  const mondaySnapshot = result.mondaySnapshotReadOnly;
+  const mondayLine = mondaySnapshot
+    ? `Monday snapshot: LOCAL_SNAPSHOT_READ_ONLY מ-${mondaySnapshot.connection.snapshotGeneratedAt}; פתוחים ${mondaySnapshot.counts.open}; חריגים ${mondaySnapshot.counts.exceptionLeads}; באיחור ${mondaySnapshot.counts.overdue}; ללא אחראי ${mondaySnapshot.counts.noOwner}; health ${mondaySnapshot.healthScore}/100; data quality ${mondaySnapshot.dataQualityScore}/100; אינו חיבור live.`
+    : 'Monday snapshot: CONNECTION_MISSING; אין baseline מצרפי מאומת בריצת הבוקר.';
+  const lines = [
+    `# בריף אורן — ${date}`,
+    '',
+    `מצב: DRY_RUN / maturity ${result.maturity}; לא בוצעה פעולה חיצונית.`,
+    `Baseline: 90 יום מ-${result.baseline.startedOn ?? date}; scaling אוטומטי חסום.`,
+    `מאיה: ${result.maya.status}; Vault bus: ${result.maya.busReady ? 'READY' : 'NOT_READY'}; Maya stack קיים בלבד.`,
+    mondayLine,
+    `Google Ads: ${result.connections.googleAds.status}; Meta: ${result.connections.metaAds.status}; attribution: ${result.attribution.status}.`,
+    `קיבולת: ${result.capacity.status}; budget growth: BLOCKED; סיבות: ${capacityReasons}.`,
+    'פרסום: מותר להמליץ כבר עכשיו על waste ברור, תיקון tracking ו-negative keywords; אין שינוי קמפיין או תקציב.',
+    `אתר/SEO: daily-seo-crawl מחובר למנוע; תוצאת היום: ${result.dailyWebsiteImprovement.resultContract === 'ONE_EVIDENCE_BACKED_IMPROVEMENT_OR_NO_CHANGE' ? 'NO_CHANGE עד ראיה חיה' : 'REVIEW'}.`,
+    `סקילים מקומיים מחוברים (${ready.length}): ${ready.join(', ') || 'none'}.`,
+    `סקילי מאיה מרוחקים (${readyRemote.length}): ${readyRemote.join(', ') || 'none'}.`,
+    `חיבורים/סקילים משלימים חסרים: ${missing.join(', ') || 'none'}.`,
+    '',
+    '## סדר עדיפות להיום',
+    '1. לאשר/להגדיר סף קיבולת X ונתוני backlog לפני כל המלצת צמיחה.',
+    '2. להשלים credentials חסרים ולאמת Google/Meta בקריאה בלבד.',
+    '3. לספק export attribution מאושר ללא PII, keyed by monday_item_id.',
+    '4. לבדוק תשובת Claude ב-to-codex; התשובה נשארת review-only.',
+    '',
+    'Guardrails: אין כתיבת Monday, אין email/WhatsApp, אין שינוי Google/Meta, אין פרסום, אין push/PR/merge.',
+  ];
+  const brief = `${lines.join('\n')}\n`;
+  assertNoForbiddenData({ brief }, 'daily brief');
+  return brief;
+}
+
 export async function persistMorningArtifacts(config, result, vault, options = {}) {
   if (vault.status !== 'READY') throw new Error(`Vault is not ready: ${vault.status}`);
   const runtimeRoot = resolve(config.runtimeRoot);
@@ -198,6 +251,7 @@ export async function persistMorningArtifacts(config, result, vault, options = {
   });
   const requestPath = join(vault.root, 'AI-Sales', '_bus', 'to-claude', `${request.request_id}.json`);
   const busWrite = await writeBusMessageOnce(requestPath, request, request.generated_at);
+  const date = request.request_id.slice(-10);
 
   const statePath = join(stateDirectory, 'system-state.json');
   const state = {
@@ -205,17 +259,31 @@ export async function persistMorningArtifacts(config, result, vault, options = {
     last_morning_run: request.generated_at,
     maturity: result.maturity,
     vault_status: vault.status,
+    monday_snapshot_status: result.mondaySnapshotReadOnly?.connection?.status ?? 'CONNECTION_MISSING',
+    monday_snapshot_generated_at: result.mondaySnapshotReadOnly?.connection?.snapshotGeneratedAt ?? null,
+    monday_open: result.mondaySnapshotReadOnly?.counts?.open ?? null,
+    monday_exception_leads: result.mondaySnapshotReadOnly?.counts?.exceptionLeads ?? null,
+    monday_no_owner: result.mondaySnapshotReadOnly?.counts?.noOwner ?? null,
     google_ads_status: result.connections.googleAds.status,
     meta_ads_status: result.connections.metaAds.status,
     attribution_status: result.attribution.status,
     capacity_status: result.capacity.status,
+    maya_status: result.maya.status,
+    baseline_started_on: result.baseline.startedOn ?? date,
+    baseline_duration_days: result.baseline.durationDays,
+    automatic_scaling_allowed: false,
     last_request_id: request.request_id,
   };
   assertNoForbiddenData(state, 'state');
   await writeFile(statePath, `${JSON.stringify(state, null, 2)}\n`, 'utf8');
 
-  const date = request.request_id.slice(-10);
   const logPath = join(logsDirectory, `morning-run-${date}.json`);
+  const briefPath = join(logsDirectory, `daily-oren-brief-${date}.md`);
+  const brief = buildDailyOrenBrief(result, {
+    now: request.generated_at,
+    timezone: config.timezone,
+  });
+  await writeFile(briefPath, brief, 'utf8');
   const log = {
     schema_version: 1,
     generated_at: request.generated_at,
@@ -224,15 +292,22 @@ export async function persistMorningArtifacts(config, result, vault, options = {
     maturity: result.maturity,
     summary: {
       vault_status: vault.status,
+      monday_snapshot_status: result.mondaySnapshotReadOnly?.connection?.status ?? 'CONNECTION_MISSING',
+      monday_snapshot_generated_at: result.mondaySnapshotReadOnly?.connection?.snapshotGeneratedAt ?? null,
+      monday_open: result.mondaySnapshotReadOnly?.counts?.open ?? null,
+      monday_exception_leads: result.mondaySnapshotReadOnly?.counts?.exceptionLeads ?? null,
+      monday_no_owner: result.mondaySnapshotReadOnly?.counts?.noOwner ?? null,
       google_ads_status: result.connections.googleAds.status,
       meta_ads_status: result.connections.metaAds.status,
       attribution_status: result.attribution.status,
       capacity_status: result.capacity.status,
+      maya_status: result.maya.status,
       website_improvement_status: 'NO_CHANGE',
     },
     artifacts: {
       state_file: statePath,
       log_file: logPath,
+      daily_oren_brief_file: briefPath,
       to_claude_file: requestPath,
       request_id: request.request_id,
       bus_file_created: busWrite.created,
@@ -244,6 +319,7 @@ export async function persistMorningArtifacts(config, result, vault, options = {
       google_meta_write: false,
       budget_change: false,
       irreversible_action: false,
+      automatic_scaling: false,
     },
   };
   assertNoForbiddenData(log, 'log');
@@ -252,6 +328,7 @@ export async function persistMorningArtifacts(config, result, vault, options = {
   return {
     stateFile: statePath,
     logFile: logPath,
+    dailyOrenBriefFile: briefPath,
     toClaudeFile: requestPath,
     requestId: request.request_id,
     busFileCreated: busWrite.created,

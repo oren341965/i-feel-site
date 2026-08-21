@@ -1,6 +1,6 @@
 # Sales board contract
 
-Verified against Monday on 2026-08-20. Re-read live metadata on every run because labels and columns can change.
+Verified against Monday on 2026-08-21. Re-read live metadata on every run because labels and columns can change.
 
 ## Identity
 
@@ -36,6 +36,16 @@ Treat the board's `status` column metadata as authoritative. The following label
 - `העברה לפרויקטים - דיירים`
 
 Treat `עסקה לא נסגרה` as cancelled/lost, not open and not successfully closed. Do not assume that ordinal numbers in labels are complete or strictly sequential.
+
+### Maya plans follow-up stages
+
+The following exact active `status` labels were verified live on 2026-08-21 and form Maya's mandatory plans queue:
+
+- `2. בקשה לקבלת התכניות`
+- `3. המתנה לקבלת תכניות`
+- `4. קבלת תכניות`
+
+Every open item in one of these stages requires a current `timeline` next action and a follow-up outcome. Re-read the live labels before each run and stop with a mapping warning if any label is missing or renamed; do not approximate a match from the ordinal number alone.
 
 If Monday metadata returns an explicit done flag, preserve it as `statusDone`. The normalized `isClosed` and `isCancelled` booleans override label inference.
 

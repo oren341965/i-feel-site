@@ -5,10 +5,13 @@ import test from 'node:test';
 
 import {
   createManagerHandshake,
+  createManagerSystemTestResponse,
   createMayaReadyResponse,
   emitManagerHandshake,
   emitMayaReady,
   inspectMayaConnection,
+  respondToMayaSystemTests,
+  validateMayaSystemTestEvent,
 } from '../.claude/skills/ai-sales-manager/scripts/maya-vault-bridge.mjs';
 
 const REPO = resolve(import.meta.dirname, '..');
@@ -76,6 +79,52 @@ test('Maya bridge messages are bounded maturity-0 tasks and correlated results',
   assert.equal(response.type, 'result');
   assert.equal(response.payload.decision, 'MAYA_WORKSTATION_READY_DRY_RUN');
   assert.equal(JSON.stringify(response).includes('@'), false);
+});
+
+test('manager idempotently answers the deployed Maya SYSTEM_TEST protocol', async (t) => {
+  const { vaultRoot, managerConfigPath } = await fixture(t);
+  await emitManagerHandshake({ configPath: managerConfigPath, now: NOW });
+  const event = {
+    schema_version: 1,
+    event_id: 'a123f57b-a16f-4256-80e7-af2c8761e823',
+    generated_at: NOW.toISOString(),
+    source: 'maya-agent',
+    event_type: 'SYSTEM_TEST',
+    monday_item_id: null,
+    customer_name: null,
+    channel: 'vault',
+    summary: 'Maya computer can write to shared Vault',
+    classification: 'loop-test',
+    requires_manager_judgment: false,
+    requires_oren_approval: false,
+    attachments: [],
+    source_reference: 'manager-to-maya-bootstrap-2026-08-21',
+    dry_run: true,
+    maturity: 0,
+    mode: 'REPORT_ONLY',
+  };
+  assert.equal(validateMayaSystemTestEvent(event, { now: NOW }).accepted, true);
+  const response = createManagerSystemTestResponse({ event, now: NOW });
+  assert.equal(response.type, 'SYSTEM_TEST_RESPONSE');
+  assert.equal(response.source_event_id, event.event_id);
+  assert.equal(response.external_actions_performed, false);
+
+  const eventPath = join(vaultRoot, 'AI-Sales', '_bus', 'maya-to-manager', 'system-test.json');
+  await writeFile(eventPath, JSON.stringify(event), 'utf8');
+  const waiting = await inspectMayaConnection({ configPath: managerConfigPath, now: NOW });
+  assert.equal(waiting.status, 'WAITING_FOR_MANAGER_RESPONSE');
+
+  const first = await respondToMayaSystemTests({ configPath: managerConfigPath, now: NOW });
+  assert.equal(first.testsAccepted, 1);
+  assert.equal(first.responsesCreated, 1);
+  assert.equal(first.connection.status, 'CONNECTED_DRY_RUN');
+  assert.equal(first.connection.standaloneMayaAgentSkillCreated, false);
+  assert.equal(first.safety.externalSends, 0);
+
+  const second = await respondToMayaSystemTests({ configPath: managerConfigPath, now: NOW });
+  assert.equal(second.responsesCreated, 0);
+  assert.equal(second.responsesReused, 1);
+  assert.equal(second.connection.managerSystemTestResponse.sourceEventId, event.event_id);
 });
 
 test('Maya bridge rejects invalid identity and installer contains no scheduler or connector activation', async (t) => {

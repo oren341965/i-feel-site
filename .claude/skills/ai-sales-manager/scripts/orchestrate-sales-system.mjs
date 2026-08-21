@@ -50,22 +50,71 @@ export const META_ADS_AUDIT_CHECKS = Object.freeze([
   'proposal_and_win_attribution',
 ]);
 
+export const MAYA_STACK_SKILLS = Object.freeze([
+  'maya-admin',
+  'maya-whatsapp',
+  'maya-billing-control',
+  'maya-email-maintenance',
+]);
+
+export const MAYA_PLANS_FOLLOWUP_STATUSES = Object.freeze([
+  '2. בקשה לקבלת התכניות',
+  '3. המתנה לקבלת תכניות',
+  '4. קבלת תכניות',
+]);
+
+export const MAYA_PLANS_FOLLOWUP_RESULTS = Object.freeze([
+  'REQUEST_CONFIRMED',
+  'PROMISED_DATE',
+  'PLANS_RECEIVED',
+  'FILES_INCOMPLETE',
+  'NO_RESPONSE',
+  'NEEDS_OREN',
+]);
+
+export const IMMEDIATE_OPTIMIZATION_RECOMMENDATIONS = Object.freeze([
+  'CLEAR_WASTE',
+  'TRACKING_REPAIR',
+  'NEGATIVE_KEYWORD_CANDIDATES',
+]);
+
+export const WEEKLY_VIDEO_UPDATE_ROUTES = Object.freeze({
+  BMS: Object.freeze([
+    'electrical_consultants',
+    'electrical_contractors',
+    'siemens_professionals',
+  ]),
+  MULTIFAMILY: Object.freeze([
+    'developers',
+    'multifamily_electrical_consultants',
+  ]),
+  VILLA: Object.freeze(['architects']),
+});
+
 export const ORCHESTRATED_COMPONENTS = Object.freeze([
   { name: 'ai-sales-manager', ownership: 'existing-local', role: 'orchestrator' },
   { name: 'ai-service-manager', ownership: 'existing-local', role: 'service-signal' },
   { name: 'google-ads-manager', ownership: 'new-required', role: 'paid-media' },
   { name: 'meta-ads-manager', ownership: 'new-required', role: 'paid-media' },
   { name: 'lead-attribution-feedback', ownership: 'new-required', role: 'attribution' },
+  { name: 'audit-bms-quotes', ownership: 'existing', role: 'proposal-quality' },
+  { name: 'content-inbox', ownership: 'existing', role: 'content-signal' },
   { name: 'daily-seo-crawl', ownership: 'existing', role: 'website-growth' },
   { name: 'new-page', ownership: 'existing', role: 'website-growth' },
   { name: 'deploy-ifeel', ownership: 'existing', role: 'website-delivery' },
   { name: 'verify-live', ownership: 'existing', role: 'website-verification' },
+  { name: 'expense-file', ownership: 'existing', role: 'commercial-cost-signal' },
   { name: 'gallery-add', ownership: 'existing', role: 'project-content' },
   { name: 'video-add', ownership: 'existing', role: 'project-content' },
   { name: 'private-home-case-study', ownership: 'existing', role: 'project-content' },
   { name: 'mailing-list-collector', ownership: 'existing', role: 'existing-customers' },
+  { name: 'manage-tenant-handovers', ownership: 'existing', role: 'project-handoff' },
+  { name: 'procurement-po-tracker', ownership: 'existing', role: 'capacity-signal' },
   { name: 'autopilot-ifeel', ownership: 'existing', role: 'safety-governance' },
-  { name: 'maya-agent', ownership: 'external-existing', role: 'maya' },
+  { name: 'maya-admin', ownership: 'external-existing', role: 'maya-front-office' },
+  { name: 'maya-whatsapp', ownership: 'external-existing', role: 'maya-front-office' },
+  { name: 'maya-billing-control', ownership: 'external-existing', role: 'maya-billing' },
+  { name: 'maya-email-maintenance', ownership: 'external-existing', role: 'maya-front-office' },
   { name: 'developer-outreach', ownership: 'external-existing', role: 'referrals' },
   { name: 'plans-chase', ownership: 'external-existing', role: 'plans' },
   { name: 'ifeel-plans-intake', ownership: 'external-existing', role: 'plans' },
@@ -173,6 +222,22 @@ export function evaluateCapacity(input = {}) {
   if (threshold !== null && activeUnowned !== null && activeUnowned > threshold) {
     reasons.push('ACTIVE_UNOWNED_LEADS_OVER_THRESHOLD');
   }
+  const booleanStops = [
+    ['qualifiedLeadResponseSlaBreached', 'QUALIFIED_LEAD_RESPONSE_SLA_BREACHED'],
+    ['followupBacklogExceeded', 'FOLLOWUP_BACKLOG_OVER_CAPACITY'],
+    ['plansBacklogExceeded', 'PLANS_BACKLOG_OVER_CAPACITY'],
+    ['meetingsBacklogExceeded', 'MEETINGS_BACKLOG_OVER_CAPACITY'],
+    ['proposalsBacklogExceeded', 'PROPOSALS_BACKLOG_OVER_CAPACITY'],
+    ['ownerCoverageIncomplete', 'ACTIVE_OPPORTUNITY_OWNER_MISSING'],
+    ['responseTimeDegrading', 'RESPONSE_TIME_DEGRADING'],
+    ['proposalCycleDegrading', 'TIME_TO_PROPOSAL_DEGRADING'],
+    ['serviceBacklogRisk', 'SERVICE_BACKLOG_RISK'],
+  ];
+  for (const [field, reason] of booleanStops) {
+    if (input[field] === true) reasons.push(reason);
+  }
+  if (input.attributionTrusted === false) reasons.push('ATTRIBUTION_NOT_TRUSTED');
+  if (input.dataQualityTrusted === false) reasons.push('DATA_QUALITY_NOT_TRUSTED');
 
   if (reasons.length > 0) {
     return {
@@ -359,8 +424,63 @@ function componentInventory(availableSkills = []) {
   const available = new Set(availableSkills.filter((name) => typeof name === 'string'));
   return ORCHESTRATED_COMPONENTS.map((component) => ({
     ...component,
-    status: available.has(component.name) ? 'READY' : 'MISSING_LOCAL',
+    status: available.has(component.name)
+      ? component.ownership === 'external-existing' ? 'READY_REMOTE' : 'READY'
+      : 'MISSING_LOCAL',
   }));
+}
+
+export function planWeeklyVideoCustomerUpdate(input = {}) {
+  const category = String(input.category ?? '').trim().toUpperCase();
+  const audiences = WEEKLY_VIDEO_UPDATE_ROUTES[category] ?? null;
+  const targetUrl = input.siteUrl || input.youtubeUrl || null;
+  let status = 'NO_VIDEO_READY';
+  if (category && audiences === null) status = 'CATEGORY_REVIEW_REQUIRED';
+  else if (audiences && !targetUrl) status = 'SOURCE_LINK_REQUIRED';
+  else if (audiences && targetUrl) status = 'DRAFT_REQUIRED';
+
+  return {
+    status,
+    owner: 'maya-email-maintenance',
+    cadence: 'WEEKLY_ROTATING_RECIPIENT_COHORT',
+    category: category || null,
+    audiences: audiences ? [...audiences] : [],
+    targetUrl,
+    messageContract: 'TWO_TO_FOUR_SENTENCES_AND_ONE_LINK',
+    audienceBuilder: 'mailing-list-collector',
+    allowedMailingPermissions: ['explicit-consent', 'customer-exception-documented'],
+    deduplicationKey: 'NORMALIZED_EMAIL_PLUS_VIDEO_URL',
+    draftOnly: true,
+    approvalRequired: true,
+    sendAllowed: false,
+  };
+}
+
+export function evaluateMayaPlansFollowup(item = {}) {
+  const itemStatus = String(item.status ?? '').trim();
+  const required = MAYA_PLANS_FOLLOWUP_STATUSES.includes(itemStatus);
+  if (!required) return { required: false, status: 'NOT_IN_PLANS_FOLLOWUP_STAGE' };
+
+  const hasNextAction = Boolean(item.nextAction);
+  const result = String(item.followupResult ?? '').trim().toUpperCase();
+  const validResult = MAYA_PLANS_FOLLOWUP_RESULTS.includes(result);
+  const completenessChecked = itemStatus !== '4. קבלת תכניות'
+    || item.plansCompletenessChecked === true;
+  const issues = [];
+  if (!hasNextAction) issues.push('NEXT_ACTION_MISSING');
+  if (!validResult) issues.push('FOLLOWUP_RESULT_MISSING');
+  if (!completenessChecked) issues.push('PLANS_COMPLETENESS_NOT_CHECKED');
+
+  return {
+    required: true,
+    status: issues.length === 0 ? 'FOLLOWUP_CURRENT' : 'MAYA_FOLLOWUP_REQUIRED',
+    owner: 'maya-admin',
+    communicationSkills: ['maya-email-maintenance', 'maya-whatsapp'],
+    nextActionSource: 'timeline',
+    issues,
+    externalSendAllowed: false,
+    mondayWriteAllowed: false,
+  };
 }
 
 export function orchestrateSalesSystem(input = {}) {
@@ -368,7 +488,12 @@ export function orchestrateSalesSystem(input = {}) {
   const capacity = evaluateCapacity(input.capacity);
   const googleAds = evaluateLiveConnection(input.connections?.googleAds);
   const metaAds = evaluateLiveConnection(input.connections?.metaAds);
-  const components = componentInventory(input.availableSkills);
+  const mayaStack = new Set(input.mayaStack?.availableSkills ?? []);
+  const availableSkills = [
+    ...(Array.isArray(input.availableSkills) ? input.availableSkills : []),
+    ...mayaStack,
+  ];
+  const components = componentInventory(availableSkills);
   const requestedOperations = Array.isArray(input.requestedOperations) ? input.requestedOperations : [];
   const operationDecisions = requestedOperations.map((operation) => ({
     id: String(operation?.id ?? 'unnamed-operation'),
@@ -415,17 +540,55 @@ export function orchestrateSalesSystem(input = {}) {
         auditChecks: [...META_ADS_AUDIT_CHECKS],
       },
     },
+    baseline: {
+      startedOn: input.baseline?.startedOn ?? null,
+      durationDays: 90,
+      automaticScalingAllowed: false,
+      automaticBudgetOptimizationAllowed: false,
+      immediateRecommendationsAllowed: [...IMMEDIATE_OPTIMIZATION_RECOMMENDATIONS],
+      recommendationOnly: true,
+    },
+    paidMediaPolicy: {
+      scalingAllowed: false,
+      platformWritesAllowed: false,
+      mayRecommendClearWasteNow: true,
+      mayRecommendTrackingRepairNow: true,
+      mayRecommendNegativeKeywordsNow: true,
+      capacityMustPassBeforeFutureGrowthRecommendation: true,
+    },
     maya: {
       status: input.mayaConnection?.status ?? 'CONNECTION_MISSING',
       busReady: input.mayaConnection?.vault?.status === 'READY',
-      coworkSkillsInstalled: false,
+      protocol: 'MAYA_VAULT_BRIDGE_V1',
+      existingStackOnly: true,
+      standaloneMayaAgentSkillCreated: false,
+      stackSkills: MAYA_STACK_SKILLS.map((name) => ({
+        name,
+        status: mayaStack.has(name) ? 'READY_REMOTE' : 'CONNECTION_MISSING',
+      })),
       externalActionsAllowed: false,
       mondayWritesAllowed: false,
     },
+    mayaPlansFollowup: {
+      mandatory: true,
+      owner: 'maya-admin',
+      trackedStatuses: [...MAYA_PLANS_FOLLOWUP_STATUSES],
+      allowedResults: [...MAYA_PLANS_FOLLOWUP_RESULTS],
+      includeEveryMatchingOpenItem: true,
+      nextActionSource: 'timeline',
+      plansReceivedCompletenessCheckRequired: true,
+      externalActionsAllowed: false,
+      mondayWritesAllowed: false,
+    },
+    weeklyVideoCustomerUpdate: planWeeklyVideoCustomerUpdate(input.weeklyVideoCustomerUpdate),
     capacity,
     components,
     dailyWebsiteImprovement: {
       included: true,
+      workers: ['daily-seo-crawl', 'new-page', 'deploy-ifeel', 'verify-live'],
+      dailyRunIncluded: true,
+      repositoryWorkflowRequired: true,
+      automaticPublishAllowed: false,
       resultContract: 'ONE_EVIDENCE_BACKED_IMPROVEMENT_OR_NO_CHANGE',
       acceptedSalesFeedback: [
         'qualified_lead_pages',

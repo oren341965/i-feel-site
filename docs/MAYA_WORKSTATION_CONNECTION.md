@@ -55,3 +55,13 @@ node .claude/skills/ai-sales-manager/scripts/maya-vault-bridge.mjs `
 ```
 
 `CONNECTED_DRY_RUN` proves only that both machines can read and write their own immutable bus messages. Gmail, Monday and WhatsApp remain `CONNECTION_MISSING` until separately configured and approved.
+
+The deployed Maya stack may instead send the runtime-v1 `SYSTEM_TEST` event documented in `MAYA_AGENT_CONFIG.md`. Oren acknowledges every valid event idempotently with:
+
+```powershell
+node .claude/skills/ai-sales-manager/scripts/maya-vault-bridge.mjs `
+  --config C:\ifeel-sales\config\config.json `
+  --respond-system-tests
+```
+
+This creates one `SYSTEM_TEST_RESPONSE` per `source_event_id`, performs no external action and does not create a `maya-agent` skill.

@@ -25,13 +25,14 @@
     "protected_actions": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["monday_write", "external_send", "google_meta_write", "budget_change", "irreversible_action"],
+      "required": ["monday_write", "external_send", "google_meta_write", "budget_change", "irreversible_action", "automatic_scaling"],
       "properties": {
         "monday_write": { "const": false },
         "external_send": { "const": false },
         "google_meta_write": { "const": false },
         "budget_change": { "const": false },
-        "irreversible_action": { "const": false }
+        "irreversible_action": { "const": false },
+        "automatic_scaling": { "const": false }
       }
     }
   }

@@ -13,6 +13,9 @@ Act as the factual, objective parent orchestrator for I Feel sales. Preserve the
 - For supplied normalized JSON or a what-if calculation, read the scoring reference; read the board contract only if mapping needs review.
 - For snapshot trend analysis, read the scoring and report references. Do not query Monday unless the user asked for current data.
 - For a full-system run, read [references/orchestration-contract.md](references/orchestration-contract.md). Read [references/vault-layout.md](references/vault-layout.md) only for the shared file bridge and [references/local-runtime.md](references/local-runtime.md) only for Oren runtime installation or operation.
+- For Maya's plans follow-up queue, read the exact live stages in [references/board-contract.md](references/board-contract.md) and the mandatory follow-up contract in [references/orchestration-contract.md](references/orchestration-contract.md).
+- For a newly published project video or the weekly customer micro-update, read the project-video routing in [references/orchestration-contract.md](references/orchestration-contract.md) and use the existing `mailing-list-collector` for the consent-eligible audience.
+- For every quote or proposal that is generated, detected in sent mail, or prepared for external delivery, read the quote-to-Monday reconciliation gate in [references/orchestration-contract.md](references/orchestration-contract.md) and the live board mapping in [references/board-contract.md](references/board-contract.md).
 - For skill maintenance, inspect only the resource being changed and its callers, then run the validation commands below.
 
 ## Read-only workflow
@@ -41,14 +44,17 @@ Act as the factual, objective parent orchestrator for I Feel sales. Preserve the
 
 1. Read the shared skill-maturity register when configured. Missing maturity state means level 0, never a higher permission.
 2. Run the existing Monday audit without changing its analyzer or board structure.
+   A strictly validated aggregate snapshot under the local runtime state directory may feed a later
+   unattended dry run as `LOCAL_SNAPSHOT_READ_ONLY`; it never proves or changes `liveVerified`.
 3. Discover configured repo/Vault skills. Call existing implementations; return `MISSING_LOCAL` for unresolved optional skills and never create a twin during a run.
 4. Read external attribution by `monday_item_id` when the approved store exists.
-5. Ask `google-ads-manager` and `meta-ads-manager` for live-read audits only after verified connections; otherwise record `CONNECTION_MISSING`.
-6. Feed aggregate sales evidence to the daily website/SEO engine: qualified-lead pages, converting terms, objections, selling project types, competitors and content gaps. Accept one evidence-backed proposal or `NO_CHANGE`.
-7. Coordinate project video/social reuse, Maya, plans intake/chase, professional referrals, existing-customer revenue, service-quality signals, project handoff and project closeout when their existing skills are available.
-8. Evaluate the capacity rule before any paid-media growth recommendation. Never guess threshold X.
-9. Queue ambiguous qualification, intent, copy, creative or loss analysis for Claude through the phase-A file bridge. Read only strictly validated, current and correlated responses from `to-codex`; keep every response review-only at maturity 0. Do not enable a direct Claude API.
-10. Produce one daily brief and complete the post-run self-check. At maturity 0, the runtime may write only schema-valid local state/log files and one idempotent dry-run request under `AI-Sales/_bus/to-claude`. It must not archive/process messages, send externally, mutate Monday or change ads.
+5. Reconcile every outgoing quote against Monday board `2732725332` before marking its workflow complete. If another system already sent it, reconcile immediately when detected. A missing or ambiguous match remains an open exception; never treat recipient name alone as proof of a match.
+6. Ask `google-ads-manager` and `meta-ads-manager` for live-read audits only after verified connections; otherwise record `CONNECTION_MISSING`.
+7. Feed aggregate sales evidence to the daily website/SEO engine: qualified-lead pages, converting terms, objections, selling project types, competitors and content gaps. Accept one evidence-backed proposal or `NO_CHANGE`.
+8. Coordinate project video/social reuse, the existing Maya stack (`maya-admin`, `maya-whatsapp`, `maya-billing-control`, `maya-email-maintenance`), plans intake/chase, professional referrals, existing-customer revenue, service-quality signals, project handoff and project closeout when their existing skills are available. Every open Monday item in a request-for-plans, waiting-for-plans or plans-received stage belongs to Maya's mandatory plans follow-up queue until it advances with a documented outcome and next action. Each newly published BMS, multifamily or villa project video must create the weekly targeted micro-update plan defined in the orchestration contract; Maya owns the approved email execution through `maya-email-maintenance`. Never create a standalone `maya-agent` skill; that string may appear only as a legacy bus identity.
+9. Evaluate the capacity rule before any paid-media growth recommendation. Never guess threshold X.
+10. Queue ambiguous qualification, intent, copy, creative or loss analysis for Claude through the phase-A file bridge. Read only strictly validated, current and correlated responses from `to-codex`; keep every response review-only at maturity 0. Do not enable a direct Claude API.
+11. Produce one local Daily Oren Brief and complete the post-run self-check. At maturity 0, the runtime may write only schema-valid local state/log/brief files, one idempotent dry-run request under `AI-Sales/_bus/to-claude`, and one idempotent `SYSTEM_TEST_RESPONSE` per valid Maya `source_event_id`. It must not archive/process messages, send externally, mutate Monday or change ads.
 
 ## Operating modes
 
@@ -70,14 +76,22 @@ Act as the factual, objective parent orchestrator for I Feel sales. Preserve the
 - Redact secrets and customer PII. Do not print raw Monday responses or item updates.
 - Do not report scores when `analysisComplete=false`, coverage has a null denominator, or live pagination did not reconcile.
 - Sending a report, creating an automation, installing the skill globally, or performing any Monday mutation requires a separate explicit user request. A schedule also requires an accepted live dry run.
+- A project-video micro-update stays a draft at maturity 0. Maya may send it only after explicit approval, only to a consent-eligible deduplicated cohort, and must rotate to different eligible recipients each week while honoring suppression and prior-send history.
+- Maya's plans queue is mandatory for all three configured plans stages. Missing or overdue `timeline`, no recorded result, or plans received without a completeness check and next step is an operational exception; it never silently drops from the queue. At maturity 0, the queue prepares drafts and recommendations only, and an external message or Monday update still requires explicit authorization.
+- Quote reconciliation never grants permission to send or resend a quote or to mutate Monday. With explicit Monday-write authorization, update the strong match or create one missing customer record, preserve the live schema and labels, and verify the result by read-back; never fabricate a required email, phone or other identifier.
 - Google Ads account `251-497-1872` and Meta both require a verified live connection. Missing access is `CONNECTION_MISSING`, not simulated data.
+- Keep a 90-day baseline from local installation. Automatic scaling and automatic budget optimization stay disabled, while report-only recommendations for clear waste, tracking repair and negative-keyword candidates are allowed immediately.
 - Optimize paid media by qualified leads, proposals, wins and revenue, not raw conversion or raw CPL.
 - Forbid budget growth on `CAPACITY_BLOCKED`, `CAPACITY_THRESHOLD_MISSING`, untrusted tracking or insufficient attribution.
 - Keep active SQLite state local under the separately installed `C:\ifeel-sales` runtime. Dropbox receives snapshots only, never the live database.
+- Read a configured Monday aggregate snapshot only from `C:\ifeel-sales\state`, require the exact
+  board/schema/count reconciliation and freshness limit, reject operational rows or PII, and keep
+  the live Monday connection gate unchanged.
 - Resolve the shared Vault from `VAULT_ROOT`; do not hard-code a Dropbox user path.
 - Execute a Claude-proposed operation only when approval is not required or is approved, and only when maturity and repository policy also allow it.
 - At maturity 0, no external write, external send, irreversible action, Monday mutation or autonomous budget change is permitted.
-- The only maturity-0 write exception is internal AI Sales bookkeeping: `C:\ifeel-sales\state`, `C:\ifeel-sales\logs`, and dry-run bus requests inside `${VAULT_ROOT}/AI-Sales`. Never write elsewhere in the Vault.
+- The only maturity-0 write exception is internal AI Sales bookkeeping: `C:\ifeel-sales\state`, `C:\ifeel-sales\logs`, dry-run judgment requests, and one idempotent `SYSTEM_TEST_RESPONSE` per valid Maya event inside `${VAULT_ROOT}/AI-Sales`. Never write elsewhere in the Vault.
+- Install or repair Oren's local runtime with `scripts/workstations/install-oren-sales-runtime.ps1`; it merges missing non-secret defaults, preserves connection paths, discovers the canonical repo skills, installs no Task Scheduler job and keeps maturity 0.
 
 ## Validation and handoff
 

@@ -13,17 +13,53 @@
     "google-ads-manager",
     "meta-ads-manager",
     "lead-attribution-feedback",
+    "audit-bms-quotes",
+    "content-inbox",
     "daily-seo-crawl",
     "new-page",
     "deploy-ifeel",
     "verify-live",
+    "expense-file",
     "gallery-add",
     "video-add",
     "private-home-case-study",
     "mailing-list-collector",
+    "manage-tenant-handovers",
+    "procurement-po-tracker",
     "autopilot-ifeel"
   ],
+  "mayaStack": {
+    "mode": "EXISTING_ONLY",
+    "standaloneMayaAgentSkillAllowed": false,
+    "availableSkills": [
+      "maya-admin",
+      "maya-whatsapp",
+      "maya-billing-control",
+      "maya-email-maintenance"
+    ]
+  },
+  "baseline": {
+    "startedOn": null,
+    "durationDays": 90,
+    "automaticScalingAllowed": false,
+    "automaticBudgetOptimizationAllowed": false,
+    "immediateRecommendationsAllowed": [
+      "CLEAR_WASTE",
+      "TRACKING_REPAIR",
+      "NEGATIVE_KEYWORD_CANDIDATES"
+    ]
+  },
   "connections": {
+    "monday": {
+      "connected": false,
+      "liveVerified": false,
+      "readOnly": true,
+      "boardId": "2732725332",
+      "snapshotFile": null,
+      "snapshotMaxAgeHours": 168,
+      "writesAllowed": false,
+      "structuralChangesAllowed": false
+    },
     "googleAds": {
       "connected": false,
       "liveVerified": false,
@@ -51,7 +87,16 @@
     }
   },
   "capacity": {
-    "activeUnownedLeadThreshold": null
+    "activeUnownedLeadThreshold": null,
+    "plansToProposalMaxBusinessDays": 7,
+    "requireTrustedAttribution": true,
+    "requireTrustedDataQuality": true
+  },
+  "websiteImprovement": {
+    "enabled": true,
+    "dailySeoSkill": "daily-seo-crawl",
+    "resultContract": "ONE_EVIDENCE_BACKED_IMPROVEMENT_OR_NO_CHANGE",
+    "automaticPublishAllowed": false
   },
   "schedule": {
     "morningCollectLocalTime": "06:00",

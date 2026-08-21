@@ -11,12 +11,15 @@ const REQUIRED_MAYA_SKILLS = Object.freeze([
   'maya-email-maintenance',
 ]);
 
+const MAYA_SYSTEM_TEST_MAX_AGE_HOURS = 168;
+
 function parseArgs(argv) {
   let configPath = null;
   let action = null;
   const actionFlags = new Map([
     ['--emit-manager-handshake', 'emit-manager-handshake'],
     ['--emit-maya-ready', 'emit-maya-ready'],
+    ['--respond-system-tests', 'respond-system-tests'],
     ['--check', 'check'],
   ]);
   for (let index = 0; index < argv.length; index += 1) {
@@ -97,6 +100,90 @@ function validateCreatedMessage(message, now) {
   const validation = validateBusMessage(message, { now: now.toISOString() });
   if (!validation.accepted) throw new Error(`Maya bridge message failed validation: ${validation.status}`);
   return message;
+}
+
+function boundedId(value, label) {
+  const id = String(value ?? '');
+  if (!/^[a-zA-Z0-9][a-zA-Z0-9._:-]{0,127}$/.test(id)) {
+    throw new Error(`${label} must be a bounded safe identifier`);
+  }
+  return id;
+}
+
+export function validateMayaSystemTestEvent(message, options = {}) {
+  if (!message || typeof message !== 'object' || Array.isArray(message)) {
+    return { accepted: false, status: 'MAYA_SYSTEM_TEST_INVALID' };
+  }
+  try {
+    boundedId(message.event_id, 'event_id');
+    if (message.schema_version !== 1
+      || message.source !== 'maya-agent'
+      || message.event_type !== 'SYSTEM_TEST'
+      || message.dry_run !== true
+      || message.maturity !== 0
+      || message.requires_manager_judgment !== false
+      || message.requires_oren_approval !== false
+      || !Array.isArray(message.attachments)
+      || message.attachments.length !== 0) {
+      throw new Error('Maya SYSTEM_TEST route or safety fields are invalid');
+    }
+    const now = new Date(options.now ?? Date.now());
+    const generatedAt = new Date(message.generated_at);
+    if (Number.isNaN(now.getTime()) || Number.isNaN(generatedAt.getTime())) {
+      throw new Error('Maya SYSTEM_TEST timestamp is invalid');
+    }
+    const ageHours = (now.getTime() - generatedAt.getTime()) / 3_600_000;
+    if (ageHours > (options.maxAgeHours ?? MAYA_SYSTEM_TEST_MAX_AGE_HOURS) || ageHours < -(5 / 60)) {
+      return { accepted: false, status: 'MAYA_SYSTEM_TEST_STALE' };
+    }
+    const text = [message.summary, message.classification, message.channel]
+      .filter((value) => typeof value === 'string')
+      .join(' ');
+    if (text.length > 2000 || /\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}\b/i.test(text)) {
+      throw new Error('Maya SYSTEM_TEST contains forbidden or unbounded text');
+    }
+  } catch (error) {
+    return { accepted: false, status: 'MAYA_SYSTEM_TEST_INVALID', reason: error.message };
+  }
+  return { accepted: true, status: 'MAYA_SYSTEM_TEST_ACCEPTED' };
+}
+
+export function createManagerSystemTestResponse({ event, now = new Date() }) {
+  const validation = validateMayaSystemTestEvent(event, { now });
+  if (!validation.accepted) throw new Error(validation.status);
+  const sourceEventId = boundedId(event.event_id, 'source_event_id');
+  return {
+    schema_version: 1,
+    task_id: `system-test-response-${sourceEventId}`,
+    generated_at: now.toISOString(),
+    source: 'ai-sales-manager',
+    target: 'maya-stack',
+    type: 'SYSTEM_TEST_RESPONSE',
+    priority: 'normal',
+    monday_item_id: null,
+    customer: null,
+    instruction: 'Shared Vault handshake acknowledged. No external action is authorized or requested.',
+    due_at: null,
+    approval_required: false,
+    approval_status: 'not_required',
+    source_context: 'MAYA_VAULT_BRIDGE_V1',
+    source_event_id: sourceEventId,
+    max_age_hours: 168,
+    status: 'CONNECTED_DRY_RUN',
+    dry_run: true,
+    maturity: 0,
+    external_actions_performed: false,
+    monday_writes_performed: false,
+  };
+}
+
+function isManagerSystemTestResponse(message) {
+  return message?.schema_version === 1
+    && message?.source === 'ai-sales-manager'
+    && message?.type === 'SYSTEM_TEST_RESPONSE'
+    && message?.dry_run === true
+    && message?.maturity === 0
+    && typeof message?.source_event_id === 'string';
 }
 
 export function createManagerHandshake(now = new Date(), timezone = 'Asia/Jerusalem') {
@@ -191,7 +278,9 @@ async function readMessages(directory, now) {
       const message = JSON.parse(await readFile(path, 'utf8'));
       const validation = validateBusMessage(message, { now: now.toISOString() });
       if (validation.accepted) messages.push({ path, message });
-      else warnings.push({ path, status: validation.status });
+      else if (validateMayaSystemTestEvent(message, { now }).accepted || isManagerSystemTestResponse(message)) {
+        // Runtime-v1 Maya handshake messages are inspected by the dedicated reader below.
+      } else warnings.push({ path, status: validation.status });
     } catch {
       warnings.push({ path, status: 'BUS_MESSAGE_UNREADABLE' });
     }
@@ -200,10 +289,55 @@ async function readMessages(directory, now) {
   return { messages, warnings };
 }
 
+async function readSystemTestMessages(directory, now, kind) {
+  const messages = [];
+  const warnings = [];
+  for (const name of await readdir(directory)) {
+    if (!name.endsWith('.json')) continue;
+    const path = join(directory, name);
+    try {
+      const message = JSON.parse(await readFile(path, 'utf8'));
+      if (kind === 'event') {
+        if (message?.event_type !== 'SYSTEM_TEST') continue;
+        const validation = validateMayaSystemTestEvent(message, { now });
+        if (!validation.accepted) warnings.push({ path, status: validation.status });
+        else messages.push({ path, message });
+      } else if (message?.type === 'SYSTEM_TEST_RESPONSE') {
+        if (!isManagerSystemTestResponse(message)) warnings.push({ path, status: 'MAYA_SYSTEM_TEST_RESPONSE_INVALID' });
+        else messages.push({ path, message });
+      }
+    } catch {
+      warnings.push({ path, status: 'MAYA_SYSTEM_TEST_UNREADABLE' });
+    }
+  }
+  const timestamp = ({ message }) => message.generated_at ?? '';
+  messages.sort((left, right) => timestamp(right).localeCompare(timestamp(left)));
+  return { messages, warnings };
+}
+
+async function writeSystemTestResponseOnce(directory, response) {
+  const path = join(directory, `manager-to-maya-${response.task_id}.json`);
+  try {
+    await writeFile(path, `${JSON.stringify(response, null, 2)}\n`, { encoding: 'utf8', flag: 'wx' });
+    return { path, created: true, idempotentReuse: false };
+  } catch (error) {
+    if (error?.code !== 'EEXIST') throw error;
+    const existing = JSON.parse(await readFile(path, 'utf8'));
+    if (!isManagerSystemTestResponse(existing)
+      || existing.task_id !== response.task_id
+      || existing.source_event_id !== response.source_event_id) {
+      throw new Error('Existing SYSTEM_TEST_RESPONSE identity mismatch');
+    }
+    return { path, created: false, idempotentReuse: true };
+  }
+}
+
 export async function inspectMayaConnection({ configPath, now = new Date() }) {
   const runtime = await loadMayaBridgeConfig(configPath);
   const manager = await readMessages(runtime.managerToMaya, now);
   const maya = await readMessages(runtime.mayaToManager, now);
+  const systemTests = await readSystemTestMessages(runtime.mayaToManager, now, 'event');
+  const systemResponses = await readSystemTestMessages(runtime.managerToMaya, now, 'response');
   const request = manager.messages.find(({ message }) => (
     message.source === 'ai-sales-manager'
       && message.target === 'maya-agent'
@@ -217,20 +351,73 @@ export async function inspectMayaConnection({ configPath, now = new Date() }) {
         && message.correlationId === request.message.id
     )) ?? null
     : null;
+  const systemTest = systemTests.messages[0] ?? null;
+  const systemResponse = systemTest
+    ? systemResponses.messages.find(({ message }) => message.source_event_id === systemTest.message.event_id) ?? null
+    : null;
   return {
     schemaVersion: 1,
     mode: 'DRY_RUN',
     maturity: 0,
-    status: response ? 'CONNECTED_DRY_RUN' : request ? 'WAITING_FOR_MAYA' : 'NOT_STARTED',
+    status: response || systemResponse
+      ? 'CONNECTED_DRY_RUN'
+      : systemTest
+        ? 'WAITING_FOR_MANAGER_RESPONSE'
+        : request
+          ? 'WAITING_FOR_MAYA'
+          : 'NOT_STARTED',
     vault: { status: 'READY', root: runtime.vaultRoot },
     managerRequest: request ? { id: request.message.id, path: request.path } : null,
     mayaResponse: response ? { id: response.message.id, path: response.path } : null,
-    warnings: [...manager.warnings, ...maya.warnings],
+    systemTest: systemTest ? { eventId: systemTest.message.event_id, path: systemTest.path } : null,
+    managerSystemTestResponse: systemResponse ? {
+      taskId: systemResponse.message.task_id,
+      sourceEventId: systemResponse.message.source_event_id,
+      path: systemResponse.path,
+    } : null,
+    requiredExistingSkills: [...REQUIRED_MAYA_SKILLS],
+    standaloneMayaAgentSkillCreated: false,
+    warnings: [
+      ...manager.warnings,
+      ...maya.warnings,
+      ...systemTests.warnings,
+      ...systemResponses.warnings,
+    ],
     safety: {
       externalSends: 0,
       mondayWrites: 0,
       messagesMovedOrDeleted: 0,
     },
+  };
+}
+
+export async function respondToMayaSystemTests({ configPath, now = new Date() }) {
+  const runtime = await loadMayaBridgeConfig(configPath);
+  const systemTests = await readSystemTestMessages(runtime.mayaToManager, now, 'event');
+  const systemResponses = await readSystemTestMessages(runtime.managerToMaya, now, 'response');
+  const writes = [];
+  for (const test of systemTests.messages) {
+    const existing = systemResponses.messages.find(({ message }) => (
+      message.source_event_id === test.message.event_id
+    ));
+    if (existing) {
+      writes.push({ path: existing.path, created: false, idempotentReuse: true });
+      continue;
+    }
+    const response = createManagerSystemTestResponse({ event: test.message, now });
+    writes.push(await writeSystemTestResponseOnce(runtime.managerToMaya, response));
+  }
+  return {
+    schemaVersion: 1,
+    mode: 'DRY_RUN',
+    maturity: 0,
+    testsAccepted: systemTests.messages.length,
+    responsesCreated: writes.filter(({ created }) => created).length,
+    responsesReused: writes.filter(({ idempotentReuse }) => idempotentReuse).length,
+    writes,
+    warnings: systemTests.warnings,
+    connection: await inspectMayaConnection({ configPath, now }),
+    safety: { externalSends: 0, mondayWrites: 0, messagesMovedOrDeleted: 0 },
   };
 }
 
@@ -263,7 +450,9 @@ if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.ur
       ? await emitManagerHandshake({ configPath })
       : action === 'emit-maya-ready'
         ? await emitMayaReady({ configPath })
-        : await inspectMayaConnection({ configPath });
+        : action === 'respond-system-tests'
+          ? await respondToMayaSystemTests({ configPath })
+          : await inspectMayaConnection({ configPath });
     process.stdout.write(`${JSON.stringify(result, null, 2)}\n`);
   } catch (error) {
     process.stderr.write(`${error.message}\n`);

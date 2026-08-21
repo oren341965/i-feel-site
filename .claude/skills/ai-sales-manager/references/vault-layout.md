@@ -29,4 +29,6 @@ One writer owns a message until it is atomically finalized. Consumers identify m
 
 The Maya workstation connection uses legacy schema-valid `task` and `result` messages. The manager writes only to `manager-to-maya`; Maya writes only to `maya-to-manager`. At maturity 0 neither side moves, deletes, edits or executes a message. A correlated response proves `CONNECTED_DRY_RUN`; it does not prove Gmail, Monday, WhatsApp or Cowork skill installation.
 
+The current v1 loop test may also arrive as a `SYSTEM_TEST` event from the legacy `maya-agent` bus identity. The manager writes one `SYSTEM_TEST_RESPONSE` keyed by `source_event_id`. This acknowledges Vault connectivity only and never creates a standalone `maya-agent` skill.
+
 Claude returns legacy schema-valid `judgment_response` messages to `to-codex`, correlated to the current `morning-sales-judgment-YYYY-MM-DD` request. The maturity-0 reader validates route, timestamp, correlation, bounded fields, PII absence and duplicate responses. It exposes metadata for review only; it never executes the response or moves/deletes a bus file.

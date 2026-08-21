@@ -8,13 +8,19 @@ import { runMorningDryRun } from '../.claude/skills/ai-sales-manager/scripts/mor
 import {
   DAILY_BRIEF_SECTIONS,
   GOOGLE_ADS_AUDIT_CHECKS,
+  IMMEDIATE_OPTIMIZATION_RECOMMENDATIONS,
+  MAYA_PLANS_FOLLOWUP_RESULTS,
+  MAYA_PLANS_FOLLOWUP_STATUSES,
   META_ADS_AUDIT_CHECKS,
   ORCHESTRATED_COMPONENTS,
+  WEEKLY_VIDEO_UPDATE_ROUTES,
   authorizeOperation,
   createJudgmentRequest,
   evaluateCapacity,
   evaluateJudgmentResponse,
   evaluateLiveConnection,
+  evaluateMayaPlansFollowup,
+  planWeeklyVideoCustomerUpdate,
   findForbiddenDataKeys,
   mergeAttribution,
   orchestrateSalesSystem,
@@ -82,7 +88,9 @@ test('v2 orchestration keeps the existing manager as parent and includes every r
   assert.equal(result.mode, 'DRY_RUN');
   assert.equal(result.maturity, 0);
   assert.equal(result.components.find(({ name }) => name === 'ai-sales-manager').role, 'orchestrator');
-  assert.equal(result.components.every(({ status }) => status === 'READY'), true);
+  assert.equal(result.components.every(({ status }) => status !== 'MISSING_LOCAL'), true);
+  assert.equal(result.components.some(({ name }) => name === 'maya-agent'), false);
+  assert.equal(result.maya.standaloneMayaAgentSkillCreated, false);
   assert.deepEqual(result.dailyBriefSections, [...DAILY_BRIEF_SECTIONS]);
   for (const section of [
     'google_ads', 'meta_ads', 'daily_website_improvement', 'daily_seo',
@@ -144,6 +152,20 @@ test('missing capacity threshold X is never guessed and forbids budget growth', 
   assert.equal(capacity.thresholdMissing, true);
   assert.equal(capacity.budgetGrowthAllowed, false);
   assert.equal('guessedThreshold' in capacity, false);
+});
+
+test('capacity stop rule covers operational backlog and untrusted evidence', () => {
+  const result = evaluateCapacity({
+    activeUnownedLeads: 0,
+    unownedLeadThreshold: 5,
+    plansToProposalBusinessDays: 2,
+    followupBacklogExceeded: true,
+    attributionTrusted: false,
+  });
+  assert.equal(result.status, 'CAPACITY_BLOCKED');
+  assert.equal(result.budgetGrowthAllowed, false);
+  assert.equal(result.reasons.includes('FOLLOWUP_BACKLOG_OVER_CAPACITY'), true);
+  assert.equal(result.reasons.includes('ATTRIBUTION_NOT_TRUSTED'), true);
 });
 
 test('Monday remains read-only and structurally untouched', () => {
@@ -223,6 +245,92 @@ test('daily website improvement is an explicit sales orchestration engine and NO
   assert.equal(result.dailyWebsiteImprovement.resultContract, 'ONE_EVIDENCE_BACKED_IMPROVEMENT_OR_NO_CHANGE');
   assert.equal(result.dailyWebsiteImprovement.acceptedSalesFeedback.includes('qualified_lead_pages'), true);
   assert.equal(result.dailyWebsiteImprovement.acceptedSalesFeedback.includes('content_gaps'), true);
+  assert.equal(result.dailyWebsiteImprovement.workers.includes('daily-seo-crawl'), true);
+  assert.equal(result.dailyWebsiteImprovement.automaticPublishAllowed, false);
+});
+
+test('weekly project-video update routes each video to Maya and a consent-eligible rotating audience', () => {
+  const bms = planWeeklyVideoCustomerUpdate({
+    category: 'BMS',
+    siteUrl: 'https://i-feel.co.il/video/',
+  });
+  assert.equal(bms.status, 'DRAFT_REQUIRED');
+  assert.equal(bms.owner, 'maya-email-maintenance');
+  assert.deepEqual(bms.audiences, [...WEEKLY_VIDEO_UPDATE_ROUTES.BMS]);
+  assert.deepEqual(bms.allowedMailingPermissions, [
+    'explicit-consent', 'customer-exception-documented',
+  ]);
+  assert.equal(bms.cadence, 'WEEKLY_ROTATING_RECIPIENT_COHORT');
+  assert.equal(bms.approvalRequired, true);
+  assert.equal(bms.sendAllowed, false);
+
+  assert.deepEqual(
+    planWeeklyVideoCustomerUpdate({ category: 'MULTIFAMILY', youtubeUrl: 'https://youtu.be/example' }).audiences,
+    [...WEEKLY_VIDEO_UPDATE_ROUTES.MULTIFAMILY],
+  );
+  assert.deepEqual(
+    planWeeklyVideoCustomerUpdate({ category: 'VILLA', siteUrl: 'https://i-feel.co.il/video/' }).audiences,
+    ['architects'],
+  );
+
+  const result = orchestrateSalesSystem({
+    weeklyVideoCustomerUpdate: { category: 'VILLA', siteUrl: 'https://i-feel.co.il/video/' },
+  });
+  assert.equal(result.weeklyVideoCustomerUpdate.status, 'DRAFT_REQUIRED');
+  assert.equal(result.weeklyVideoCustomerUpdate.draftOnly, true);
+});
+
+test('every plans-stage item belongs to Maya follow-up until result, next action and completeness are current', () => {
+  for (const status of MAYA_PLANS_FOLLOWUP_STATUSES) {
+    const evaluation = evaluateMayaPlansFollowup({ status });
+    assert.equal(evaluation.required, true, status);
+    assert.equal(evaluation.status, 'MAYA_FOLLOWUP_REQUIRED', status);
+    assert.equal(evaluation.issues.includes('NEXT_ACTION_MISSING'), true, status);
+    assert.equal(evaluation.issues.includes('FOLLOWUP_RESULT_MISSING'), true, status);
+  }
+
+  const received = evaluateMayaPlansFollowup({
+    status: '4. קבלת תכניות',
+    nextAction: '2026-08-24T20:59:59.999Z',
+    followupResult: 'PLANS_RECEIVED',
+  });
+  assert.equal(received.issues.includes('PLANS_COMPLETENESS_NOT_CHECKED'), true);
+
+  const current = evaluateMayaPlansFollowup({
+    status: '4. קבלת תכניות',
+    nextAction: '2026-08-24T20:59:59.999Z',
+    followupResult: 'PLANS_RECEIVED',
+    plansCompletenessChecked: true,
+  });
+  assert.equal(current.status, 'FOLLOWUP_CURRENT');
+  assert.deepEqual(current.issues, []);
+  assert.equal(current.externalSendAllowed, false);
+  assert.equal(current.mondayWriteAllowed, false);
+
+  assert.deepEqual(
+    evaluateMayaPlansFollowup({ status: '6. תיאום פגישה עם הלקוח' }),
+    { required: false, status: 'NOT_IN_PLANS_FOLLOWUP_STAGE' },
+  );
+
+  const result = orchestrateSalesSystem();
+  assert.equal(result.mayaPlansFollowup.mandatory, true);
+  assert.deepEqual(result.mayaPlansFollowup.trackedStatuses, [...MAYA_PLANS_FOLLOWUP_STATUSES]);
+  assert.deepEqual(result.mayaPlansFollowup.allowedResults, [...MAYA_PLANS_FOLLOWUP_RESULTS]);
+  assert.equal(result.mayaPlansFollowup.includeEveryMatchingOpenItem, true);
+});
+
+test('90-day baseline permits immediate waste recommendations but never automatic scaling', () => {
+  const result = orchestrateSalesSystem({ baseline: { startedOn: '2026-08-21' } });
+  assert.equal(result.baseline.startedOn, '2026-08-21');
+  assert.equal(result.baseline.durationDays, 90);
+  assert.equal(result.baseline.automaticScalingAllowed, false);
+  assert.deepEqual(result.baseline.immediateRecommendationsAllowed, [
+    ...IMMEDIATE_OPTIMIZATION_RECOMMENDATIONS,
+  ]);
+  assert.equal(result.paidMediaPolicy.mayRecommendClearWasteNow, true);
+  assert.equal(result.paidMediaPolicy.mayRecommendTrackingRepairNow, true);
+  assert.equal(result.paidMediaPolicy.mayRecommendNegativeKeywordsNow, true);
+  assert.equal(result.paidMediaPolicy.platformWritesAllowed, false);
 });
 
 test('component registry has no duplicate skill and introduces only the three approved skills', () => {
@@ -299,11 +407,18 @@ test('morning runtime activates the Vault, writes bounded artifacts, and stays d
   assert.equal(state.schema_version, 1);
   assert.equal(state.vault_status, 'READY');
   assert.equal(state.attribution_status, 'CONNECTION_MISSING');
+  assert.equal(state.automatic_scaling_allowed, false);
+  assert.equal(state.baseline_duration_days, 90);
   assert.equal(state.last_request_id, 'morning-sales-judgment-2026-08-21');
   const log = JSON.parse(await readFile(morning.artifacts.logFile, 'utf8'));
   assert.equal(log.protected_actions.monday_write, false);
   assert.equal(log.protected_actions.external_send, false);
   assert.equal(log.protected_actions.google_meta_write, false);
+  assert.equal(log.protected_actions.automatic_scaling, false);
+  const brief = await readFile(morning.artifacts.dailyOrenBriefFile, 'utf8');
+  assert.match(brief, /בריף אורן/);
+  assert.match(brief, /scaling אוטומטי חסום/);
+  assert.match(brief, /daily-seo-crawl/);
   const request = JSON.parse(await readFile(morning.artifacts.toClaudeFile, 'utf8'));
   assert.deepEqual({
     schema_version: request.schema_version,
