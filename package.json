@@ -9,7 +9,7 @@
     "check:build": "node scripts/validate-build.mjs",
     "test:youtube": "node --test tests/youtube-uploader.test.mjs",
     "test:lead-conversion": "node --test tests/lead-conversion-proof.test.mjs",
-    "test:ai-managers": "node --test tests/ai-sales-manager.test.mjs tests/ai-service-manager.test.mjs tests/ai-manager-cli-security.test.mjs tests/ai-sales-system-v2.test.mjs tests/google-ads-readonly.test.mjs tests/meta-ads-readonly.test.mjs tests/maya-vault-bridge.test.mjs tests/attribution-readonly.test.mjs",
+    "test:ai-managers": "node --test tests/ai-sales-manager.test.mjs tests/ai-service-manager.test.mjs tests/ai-manager-cli-security.test.mjs tests/ai-sales-system-v2.test.mjs tests/google-ads-readonly.test.mjs tests/meta-ads-readonly.test.mjs tests/maya-vault-bridge.test.mjs tests/attribution-readonly.test.mjs tests/claude-vault-bridge.test.mjs",
     "youtube:verify": "node --use-system-ca scripts/youtube-uploader.mjs --verify-channel",
     "youtube:upload": "node --use-system-ca scripts/youtube-uploader.mjs --upload",
     "build": "node scripts/check-content-freshness.mjs && astro build && node scripts/generate-og-images.mjs && node scripts/validate-build.mjs",

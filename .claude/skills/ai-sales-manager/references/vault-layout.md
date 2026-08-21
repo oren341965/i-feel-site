@@ -28,3 +28,5 @@ Only snapshots and schema-valid messages belong in Dropbox. Never place the live
 One writer owns a message until it is atomically finalized. Consumers identify messages by immutable ID, reject stale or duplicate messages, and move a message to `processed` only at an approved writable maturity level. Avoid simultaneous editing of the same Obsidian note from both computers.
 
 The Maya workstation connection uses legacy schema-valid `task` and `result` messages. The manager writes only to `manager-to-maya`; Maya writes only to `maya-to-manager`. At maturity 0 neither side moves, deletes, edits or executes a message. A correlated response proves `CONNECTED_DRY_RUN`; it does not prove Gmail, Monday, WhatsApp or Cowork skill installation.
+
+Claude returns legacy schema-valid `judgment_response` messages to `to-codex`, correlated to the current `morning-sales-judgment-YYYY-MM-DD` request. The maturity-0 reader validates route, timestamp, correlation, bounded fields, PII absence and duplicate responses. It exposes metadata for review only; it never executes the response or moves/deletes a bus file.

@@ -47,7 +47,7 @@ Act as the factual, objective parent orchestrator for I Feel sales. Preserve the
 6. Feed aggregate sales evidence to the daily website/SEO engine: qualified-lead pages, converting terms, objections, selling project types, competitors and content gaps. Accept one evidence-backed proposal or `NO_CHANGE`.
 7. Coordinate project video/social reuse, Maya, plans intake/chase, professional referrals, existing-customer revenue, service-quality signals, project handoff and project closeout when their existing skills are available.
 8. Evaluate the capacity rule before any paid-media growth recommendation. Never guess threshold X.
-9. Queue ambiguous qualification, intent, copy, creative or loss analysis for Claude through the phase-A file bridge. Do not enable a direct Claude API.
+9. Queue ambiguous qualification, intent, copy, creative or loss analysis for Claude through the phase-A file bridge. Read only strictly validated, current and correlated responses from `to-codex`; keep every response review-only at maturity 0. Do not enable a direct Claude API.
 10. Produce one daily brief and complete the post-run self-check. At maturity 0, the runtime may write only schema-valid local state/log files and one idempotent dry-run request under `AI-Sales/_bus/to-claude`. It must not archive/process messages, send externally, mutate Monday or change ads.
 
 ## Operating modes

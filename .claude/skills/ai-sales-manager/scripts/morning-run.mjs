@@ -4,6 +4,7 @@ import { fileURLToPath } from 'node:url';
 
 import { orchestrateSalesSystem } from './orchestrate-sales-system.mjs';
 import { inspectMayaConnection } from './maya-vault-bridge.mjs';
+import { inspectClaudeJudgmentResponses } from './claude-vault-bridge.mjs';
 import { persistMorningArtifacts, prepareVault } from './vault-runtime.mjs';
 import { collectGoogleAdsReadOnly } from '../../google-ads-manager/scripts/google-ads-readonly.mjs';
 import { collectMetaAdsReadOnly } from '../../meta-ads-manager/scripts/meta-ads-readonly.mjs';
@@ -26,6 +27,7 @@ export async function runMorningDryRun({
   googleAdsCollector = collectGoogleAdsReadOnly,
   metaAdsCollector = collectMetaAdsReadOnly,
   attributionCollector = collectAttributionReadOnly,
+  claudeResponseInspector = inspectClaudeJudgmentResponses,
 } = {}) {
   const config = JSON.parse(await readFile(configPath, 'utf8'));
   const vault = await prepareVault(config, { createMissing: true });
@@ -73,6 +75,11 @@ export async function runMorningDryRun({
   });
 
   const artifacts = await persistMorningArtifacts(config, result, vault, { now });
+  const claudeJudgment = await claudeResponseInspector({
+    configPath,
+    expectedCorrelationId: artifacts.requestId,
+    now: new Date(now ?? Date.now()),
+  });
 
   return {
     job: 'morning-run',
@@ -83,6 +90,7 @@ export async function runMorningDryRun({
     metaAdsReadOnly,
     attributionReadOnly,
     mayaConnection,
+    claudeJudgment,
     artifacts,
   };
 }

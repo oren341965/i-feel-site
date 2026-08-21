@@ -292,6 +292,8 @@ test('morning runtime activates the Vault, writes bounded artifacts, and stays d
   assert.equal(morning.attribution.status, 'CONNECTION_MISSING');
   assert.equal(morning.mayaConnection.status, 'NOT_STARTED');
   assert.equal(morning.maya.status, 'NOT_STARTED');
+  assert.equal(morning.claudeJudgment.status, 'WAITING_FOR_CLAUDE');
+  assert.equal(morning.claudeJudgment.safety.executionAllowed, false);
 
   const state = JSON.parse(await readFile(morning.artifacts.stateFile, 'utf8'));
   assert.equal(state.schema_version, 1);
