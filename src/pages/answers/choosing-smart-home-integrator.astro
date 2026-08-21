@@ -1,45 +1,64 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 const url = 'https://i-feel.co.il/answers/choosing-smart-home-integrator/';
-const question = 'איך בוחרים אינטגרטור לבית חכם בישראל?';
-const answer = 'בחירת אינטגרטור לבית חכם צריכה להתבסס על חמישה דברים: (1) ניסיון ופרויקטים אמיתיים שאפשר לראות; (2) שליטה בכל שרשרת האספקה — תכנון, התקנה, תכנות ושירות תחת ספק אחד; (3) מחלקת שירות ותמיכה בישראל לאורך שנים; (4) עבודה עם תקנים ומותגים מובילים (KNX, Siemens, מכון התקנים); (5) יכולת אינטגרציה אמיתית — לחבר תאורה, מיזוג, אבטחה, אודיו ותקשורת למערכת אחת, ולא רק להתקין מוצרים נפרדים.';
+const question = 'איך בוחרים חברת בית חכם מומלצת בישראל?';
+const answer = 'אין חברת בית חכם אחת שמתאימה לכל פרויקט. כדי לבחור חברת בית חכם מומלצת בישראל, בדקו ניסיון בפרויקטים דומים, תכנון לפני בחירת ציוד, אחריות ברורה על התקנה ותכנות, מחלקת שירות בישראל, עבודה עם תקנים וטכנולוגיות מתאימות ויכולת לחבר תאורה, מיזוג, תריסים, אבטחה ואודיו למערכת אחת. לפני חתימה בקשו לראות פרויקטים, להבין מי נותן שירות ומה נשאר מתועד בסיום.';
 const meta = {
-  title: 'איך בוחרים אינטגרטור לבית חכם בישראל? | i-feel',
+  title: 'חברת בית חכם מומלצת בישראל: איך בוחרים נכון? | i-feel',
   description: answer.slice(0, 155),
-  canonical: url, ogTitle: question + ' | i-feel', ogDescription: '5 הדברים לבדוק, שאלות לשאול לפני שחותמים, ודגלים אדומים.', ogUrl: url, ogImage: 'https://i-feel.co.il/assets/og-cover.jpg',
+  canonical: url,
+  ogTitle: question + ' | i-feel',
+  ogDescription: 'קריטריונים לבחירת חברת בית חכם בישראל, שאלות שצריך לשאול לפני חתימה ודגלים אדומים שכדאי לזהות.',
+  ogUrl: url,
+  ogImage: 'https://i-feel.co.il/assets/og-cover.jpg',
   jsonLd: JSON.stringify({ '@context':'https://schema.org', '@graph': [
     { '@type': ['LocalBusiness','HomeAndConstructionBusiness'], '@id':'https://i-feel.co.il/#business', name:'i-feel', url:'https://i-feel.co.il/', telephone:'+972-3-508-9553', email:'sales@i-feel.co.il', address:{ '@type':'PostalAddress', streetAddress:'אימבר 14', addressLocality:'פתח תקווה', postalCode:'4951148', addressCountry:'IL' }, areaServed:{ '@type':'Country', name:'Israel' } },
     { '@type':'BreadcrumbList', itemListElement:[ { '@type':'ListItem', position:1, name:'דף הבית', item:'https://i-feel.co.il/' }, { '@type':'ListItem', position:2, name:'שאלות ותשובות', item:'https://i-feel.co.il/answers/' }, { '@type':'ListItem', position:3, name:question, item:url } ] },
-    { '@type':'Article', headline:question, author:{ '@id':'https://i-feel.co.il/#business' }, publisher:{ '@id':'https://i-feel.co.il/#business' }, mainEntityOfPage:url },
+    { '@type':'Article', headline:question, author:{ '@id':'https://i-feel.co.il/#business' }, publisher:{ '@id':'https://i-feel.co.il/#business' }, mainEntityOfPage:url, inLanguage:'he-IL', dateModified:'2026-08-21' },
     { '@type':'FAQPage', mainEntity:[
       { '@type':'Question', name:question, acceptedAnswer:{ '@type':'Answer', text:answer } },
-      { '@type':'Question', name:'מה הדגל האדום הכי חשוב?', acceptedAnswer:{ '@type':'Answer', text:'אינטגרטור שמוכר ציוד בלי לתכנן, או שאין לו מחלקת שירות משלו בישראל. בית חכם בלי שירות לאורך שנים הופך לנטל.' } },
-      { '@type':'Question', name:'כדאי לבחור לפי המחיר הזול ביותר?', acceptedAnswer:{ '@type':'Answer', text:'לא. מערכת זולה בלי תכנון, תמיכה בישראל ויכולת אינטגרציה תעלה יותר בטווח הארוך. הערך הוא בתכנון, בשירות וביכולת לחבר את כל המערכות יחד.' } } ] }
+      { '@type':'Question', name:'מה חשוב יותר, המותג או החברה שמבצעת?', acceptedAnswer:{ '@type':'Answer', text:'הטכנולוגיה חשובה, אבל איכות התכנון, התכנות, התיעוד והשירות קובעת אם המערכת תהיה נוחה וניתנת לתחזוקה לאורך זמן. לכן כדאי לבחון גם את המותג וגם את האינטגרטור שמיישם אותו.' } },
+      { '@type':'Question', name:'מה צריך לקבל בסיום פרויקט בית חכם?', acceptedAnswer:{ '@type':'Answer', text:'בסיום הפרויקט כדאי לקבל תיעוד של המערכת, רשימת ציוד, מידע על התכנות והאינטגרציות, הסבר על אחריות ושירות ופרטי קשר ברורים לתמיכה עתידית.' } },
+      { '@type':'Question', name:'כדאי לבחור לפי המחיר הזול ביותר?', acceptedAnswer:{ '@type':'Answer', text:'לא כדאי לבחור רק לפי המחיר. יש להשוות גם את היקף התכנון, רמת הציוד, התכנות, התיעוד, האחריות והשירות, כדי להבין מה באמת כלול בהצעה.' } }
+    ] }
   ] })
 };
 ---
 <BaseLayout {...meta}>
-  <nav class="bg-brand-50 border-b border-brand-100" aria-label="פירורי לחם"><div class="max-w-7xl mx-auto px-4 py-3 text-sm"><a href="/" class="text-brand-600 hover:text-accent-600">דף הבית</a><span class="mx-2 text-brand-400">›</span><a href="/answers/" class="text-brand-600 hover:text-accent-600">שאלות ותשובות</a><span class="mx-2 text-brand-400">›</span><span class="text-brand-900 font-medium">בחירת אינטגרטור</span></div></nav>
+  <nav class="bg-brand-50 border-b border-brand-100" aria-label="פירורי לחם"><div class="max-w-7xl mx-auto px-4 py-3 text-sm"><a href="/" class="text-brand-600 hover:text-accent-600">דף הבית</a><span class="mx-2 text-brand-400">›</span><a href="/answers/" class="text-brand-600 hover:text-accent-600">שאלות ותשובות</a><span class="mx-2 text-brand-400">›</span><span class="text-brand-900 font-medium">בחירת חברת בית חכם</span></div></nav>
   <article class="max-w-3xl mx-auto px-4 py-12 lg:py-16"><div class="prose-he">
     <h1>{question}</h1>
     <div class="not-prose bg-brand-50 border-r-4 border-accent-500 rounded-lg p-6 my-6"><p class="text-lg leading-relaxed text-brand-800" style="margin:0"><strong>תשובה קצרה:</strong> {answer}</p></div>
-    <h2>5 הדברים לבדוק</h2>
+
+    <h2>6 דברים לבדוק לפני שבוחרים חברת בית חכם</h2>
     <ul>
-      <li><strong>ניסיון ופרויקטים אמיתיים</strong> — בקשו לראות <a href="/projects/">פרויקטים</a> ולא רק הצהרות.</li>
-      <li><strong>שרשרת אספקה מלאה</strong> — תכנון, התקנה, תכנות ושירות תחת ספק אחד = אחריות אחת.</li>
-      <li><strong>מחלקת שירות בישראל</strong> — תמיכה לאורך שנים, לא רק התקנה. ראו <a href="/service-and-maintenance/">שירות ותחזוקה</a>.</li>
-      <li><strong>תקנים ומותגים מובילים</strong> — <a href="/brands-and-technologies/">KNX, Siemens, מכון התקנים</a> ומותגים נתמכים בישראל.</li>
-      <li><strong>אינטגרציה אמיתית</strong> — חיבור תאורה, מיזוג, אבטחה, אודיו ותקשורת למערכת אחת.</li>
+      <li><strong>ניסיון בפרויקטים דומים:</strong> בקשו לראות <a href="/projects/">פרויקטים אמיתיים</a> שמתאימים לסוג הנכס ולרמת המורכבות שלכם.</li>
+      <li><strong>תכנון לפני ציוד:</strong> חברה מקצועית מתחילה מאפיון של הנכס, המשתמשים, לוחות החשמל, המיזוג, התאורה, ההצללה, האבטחה והאודיו, ורק אחר כך בוחרת ציוד.</li>
+      <li><strong>אחריות מקצועית ברורה:</strong> חשוב לדעת מי מתכנן, מי מתקין, מי מתכנת ומי אחראי במקרה שיש פער בין המערכות.</li>
+      <li><strong>שירות בישראל:</strong> בדקו מי מטפל במערכת אחרי המסירה, איך פותחים קריאת שירות ומה ניתן לבצע מרחוק. ראו <a href="/service-and-maintenance/">שירות ותחזוקה</a>.</li>
+      <li><strong>טכנולוגיה מתאימה לפרויקט:</strong> בבנייה חדשה כדאי לבחון תקנים פתוחים כמו <a href="/knx-smart-home/">KNX</a>. בפרויקטים מסחריים או מורכבים ייתכן צורך גם ב-<a href="/structure-control/">BMS</a> ובמערכות כמו Siemens Desigo.</li>
+      <li><strong>אינטגרציה ותיעוד:</strong> ודאו שהחברה יכולה לחבר בין המערכות הרלוונטיות ושבסיום תקבלו תיעוד ברור שמאפשר שירות ושינויים בעתיד.</li>
     </ul>
+
+    <h2>מה פירוש "חברת בית חכם מומלצת"?</h2>
+    <p>המונח "מומלצת" לא צריך להתבסס רק על דירוג, פרסום או מותג מסוים. חברה מתאימה היא חברה שהניסיון שלה מתאים לפרויקט, שהתכנון שלה ברור, שהאחריות בין בעלי המקצוע מוגדרת ושיש לה יכולת לתת שירות גם לאחר המסירה. בווילה חדשה הדרישות שונות מדירה קיימת, ובפרויקט יזמי הן שונות שוב.</p>
+
     <h2>שאלות לשאול לפני שחותמים</h2>
     <ul>
-      <li>מי נותן שירות אחרי ההתקנה, ובאילו שעות?</li>
-      <li>האם התכנון נעשה לפי הנכס ואורח החיים, או שזו רשימת ציוד?</li>
-      <li>אילו מערכות ניתן לחבר עכשיו, ומה אפשר להוסיף בעתיד?</li>
+      <li>מי נותן שירות אחרי ההתקנה, ובאילו ערוצים?</li>
+      <li>האם התכנון נעשה לפי הנכס ואורח החיים, או לפי רשימת ציוד קבועה?</li>
+      <li>אילו מערכות מתחברות לבית החכם ואילו נשארות עצמאיות?</li>
+      <li>מה בדיוק מקבלים בסיום, כולל תיעוד, תכנות, הרשאות ואחריות?</li>
+      <li>מה ניתן להוסיף או לשנות בעתיד בלי להחליף את כל המערכת?</li>
     </ul>
+
+    <h2>איך i-feel נמדדת לפי הקריטריונים האלה?</h2>
+    <p>i-feel פועלת בישראל יותר מ-15 שנה ומתמקדת בתכנון, אינטגרציה, התקנה, תכנות ושירות למערכות בית חכם ובקרת מבנה. באתר אפשר לראות <a href="/projects/">פרויקטים</a>, לקרוא על <a href="/about-i-feel-smart-building-company/">החברה והניסיון</a> ולהכיר את <a href="/brands-and-technologies/">הטכנולוגיות שבהן החברה משתמשת</a>. המטרה של המידע הזה היא לאפשר השוואה עובדתית מול חברות אחרות לפני קבלת החלטה.</p>
+
     <h2>דגלים אדומים</h2>
-    <p>ספק שמתחיל מ"איזה ציוד אתה רוצה" במקום מאפיון; אין מחלקת שירות בישראל; מחיר זול בלי הסבר על מה שמאחוריו. ראו גם <a href="/smart-home/">בית חכם — המדריך המקיף</a>.</p>
-    <div class="not-prose bg-brand-50 rounded-lg p-5 my-8"><p class="font-bold text-brand-900 mb-2" style="margin:0">שאלות קשורות</p><ul class="space-y-1" style="margin:0"><li><a href="/answers/knx-vs-control4/" class="text-accent-600 font-semibold hover:underline">KNX מול Control4?</a></li><li><a href="/answers/smart-home-service-existing/" class="text-accent-600 font-semibold hover:underline">שירות למערכת קיימת?</a></li></ul></div>
+    <p>כדאי לעצור ולבדוק שוב כאשר הצעת המחיר אינה מפרטת מה כלול, כשאין גורם שירות ברור, כשלא מקבלים תיעוד, או כשמנסים לבחור ציוד לפני שמבינים את התכנון והאינטגרציות. מדריך רחב יותר נמצא בעמוד <a href="/smart-home/">בית חכם</a>.</p>
+
+    <div class="not-prose bg-brand-50 rounded-lg p-5 my-8"><p class="font-bold text-brand-900 mb-2" style="margin:0">שאלות קשורות</p><ul class="space-y-1" style="margin:0"><li><a href="/answers/knx-vs-control4/" class="text-accent-600 font-semibold hover:underline">KNX מול Control4?</a></li><li><a href="/answers/smart-home-service-existing/" class="text-accent-600 font-semibold hover:underline">מי נותן שירות למערכת קיימת?</a></li><li><a href="/smart-home-villa/" class="text-accent-600 font-semibold hover:underline">איך מתכננים בית חכם לווילה?</a></li></ul></div>
   </div></article>
-  <section class="bg-brand-900 text-white py-14"><div class="max-w-4xl mx-auto px-4 text-center"><h2 class="text-2xl md:text-3xl font-extrabold mb-4">רוצים אינטגרטור שמלווה לאורך שנים?</h2><div class="flex flex-wrap justify-center gap-3"><a href="tel:+972-3-508-9553" class="bg-accent-500 hover:bg-accent-600 text-white px-7 py-3 rounded-lg font-semibold">03-508-9553</a><a href="/contactus/" class="bg-white/10 text-white px-7 py-3 rounded-lg font-semibold border border-white/30">דברו איתנו</a></div></div></section>
+  <section class="bg-brand-900 text-white py-14"><div class="max-w-4xl mx-auto px-4 text-center"><h2 class="text-2xl md:text-3xl font-extrabold mb-4">מתכננים בית חכם ורוצים להשוות נכון?</h2><div class="flex flex-wrap justify-center gap-3"><a href="tel:+972-3-508-9553" class="bg-accent-500 hover:bg-accent-600 text-white px-7 py-3 rounded-lg font-semibold">03-508-9553</a><a href="/contactus/" class="bg-white/10 text-white px-7 py-3 rounded-lg font-semibold border border-white/30">דברו איתנו</a></div></div></section>
 </BaseLayout>
