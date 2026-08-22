@@ -24,7 +24,7 @@ Version 1 plans and verifies filing and prepares exception emails. It does not c
 
 ### WhatsApp
 
-- Read only `סיכומי התקנות ות משלוח` through Oren's authenticated membership in a user-visible session or approved Business API connection.
+- Open WhatsApp Web in Oren's authenticated browser session and navigate to the exact group `סיכומי התקנות ות משלוח`; the worker performs the download rather than asking Oren to attach the files manually. Follow [whatsapp-web-intake.md](whatsapp-web-intake.md).
 - Capture the stable message ID, timestamp, caption, sender identifier needed for audit, and attachment reference.
 - Map the sender to a verified organizational email address for exception routing. If that mapping is missing or uncertain, stop at `needs-review`.
 - Do not open unrelated chats, send acknowledgements, react, delete, or mark the workflow complete.
