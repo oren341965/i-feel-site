@@ -43,6 +43,8 @@ Extract these fields from the visible document, keeping the image as the authori
 - `documentType`: must clearly be `תעודת משלוח`.
 - `documentNumber`: the number printed beside the document type.
 - `description`: a short, factual summary of the main supplied items or work, without prices or personal details.
+- `supplierName`: the printed supplier name when it is clear; optional metadata that never selects a customer folder.
+- `documentDate`: the printed document date when it is clear; optional metadata in ISO `YYYY-MM-DD` form that never selects a customer folder.
 
 The unique number beside `מפתח` is the primary routing identity. A customer can have several projects, and the displayed customer name can differ from the Dropbox folder name. A matching project key therefore outranks a name mismatch. Never substitute the delivery-note number, `מזהה`, company registration number, phone number, item code, or another visible number for `מפתח`.
 
@@ -68,6 +70,8 @@ Search using the normalized `מפתח` project key. A candidate destination is v
 Deduplicate identical returned paths before counting matches. Route only when exactly one valid path remains. Search rank, customer-name similarity, namespace, or a familiar parent folder does not resolve multiple exact matches.
 
 Prefer `path_display` for the upload and report when Dropbox returns it; otherwise retain the exact tool-ready path. Do not strip namespace prefixes from tool results.
+
+When using a locally synced Dropbox folder, resolve and verify the account's sync root first. Search only inside that root, require the candidate to be an existing directory whose final component is `תעודות משלוח`, and require its path to contain the project key as a standalone digit token. Resolve the final destination before copying and reject it if it escapes the verified root. A local copy is a Dropbox write and follows the same approval, duplicate, no-overwrite, and verification rules.
 
 ## Duplicate keys
 

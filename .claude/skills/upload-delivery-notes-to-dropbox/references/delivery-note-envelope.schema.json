@@ -38,6 +38,7 @@
           "documentType": { "type": ["string", "null"], "maxLength": 100 },
           "documentNumber": { "type": ["string", "null"], "maxLength": 100 },
           "documentDate": { "type": ["string", "null"], "format": "date" },
+          "supplierName": { "type": ["string", "null"], "maxLength": 200 },
           "description": { "type": ["string", "null"], "maxLength": 500 },
           "contentHash": {
             "type": ["string", "null"],

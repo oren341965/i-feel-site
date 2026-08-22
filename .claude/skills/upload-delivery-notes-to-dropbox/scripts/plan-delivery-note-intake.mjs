@@ -98,6 +98,21 @@ function normalizeDocumentType(value) {
   return text === 'תעודת משלוח' || text === 'delivery note' ? 'delivery-note' : null;
 }
 
+function normalizeDocumentDate(value) {
+  const text = cleanText(value);
+  const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(text);
+  if (!match) return null;
+  const year = Number(match[1]);
+  const month = Number(match[2]);
+  const day = Number(match[3]);
+  const parsed = new Date(Date.UTC(year, month - 1, day));
+  return parsed.getUTCFullYear() === year
+    && parsed.getUTCMonth() === month - 1
+    && parsed.getUTCDate() === day
+    ? text
+    : null;
+}
+
 function safeLabel(value, maxLength = 100) {
   const text = cleanText(value)
     .replace(/[\u0000-\u001f<>:"/\\|?*]/g, '_')
@@ -214,6 +229,8 @@ export function planDeliveryNoteIntake(envelope) {
     const documentNumber = normalizeDocumentNumber(record.documentNumber);
     const documentType = normalizeDocumentType(record.documentType);
     const customerName = safeLabel(record.customerName, 100);
+    const supplierName = safeLabel(record.supplierName, 100);
+    const documentDate = normalizeDocumentDate(record.documentDate);
     const description = safeLabel(record.description, 120);
     const senderEmail = normalizeEmail(record.senderEmail);
     const sourceGroup = cleanText(record.sourceGroup);
@@ -277,14 +294,14 @@ export function planDeliveryNoteIntake(envelope) {
       if (blockingReasons.length === 0 && notificationDraft.recipients.length === 2) {
         return {
           index, source, sourceId, status: 'notification-required', reasons,
-          projectKey, customerName, documentType, documentNumber, notificationDraft,
+          projectKey, customerName, supplierName, documentDate, documentType, documentNumber, notificationDraft,
         };
       }
     }
     if (reasons.length > 0) {
       return {
         index, source, sourceId, status: 'needs-review', reasons,
-        projectKey, customerName, documentType, documentNumber,
+        projectKey, customerName, supplierName, documentDate, documentType, documentNumber,
         candidateDestinations: matches,
         notificationDraft,
       };
@@ -292,7 +309,7 @@ export function planDeliveryNoteIntake(envelope) {
 
     return {
       index, source, sourceId, status: 'ready', reasons: [], projectKey,
-      customerName, documentType, documentNumber, description,
+      customerName, supplierName, documentDate, documentType, documentNumber, description,
       originalFileName: file.name, destinationFileName, destinationFolder, destinationPath,
     };
   });

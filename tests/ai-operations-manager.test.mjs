@@ -35,6 +35,8 @@ function record(overrides = {}) {
     senderEmail: 'installer@example.invalid',
     originalFileName: 'delivery-note-7788.pdf',
     customerName: 'לקוחה לדוגמה',
+    supplierName: 'ספק לדוגמה',
+    documentDate: '2026-08-20',
     documentType: 'תעודת משלוח',
     documentNumber: '7788',
     description: 'ציוד תקשורת והתקנה',
@@ -58,6 +60,8 @@ test('operations planner routes by the exact project key and creates a descripti
   assert.equal(result.counts.ready, 1);
   assert.equal(result.records[0].status, 'ready');
   assert.equal(result.records[0].projectKey, '45001');
+  assert.equal(result.records[0].supplierName, 'ספק לדוגמה');
+  assert.equal(result.records[0].documentDate, '2026-08-20');
   assert.equal(
     result.records[0].destinationPath,
     '/Installation/customers/example-45001/תעודות משלוח/לקוחה לדוגמה - תעודת משלוח 7788 - ציוד תקשורת והתקנה.pdf',
