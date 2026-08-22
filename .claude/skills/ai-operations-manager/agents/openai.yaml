@@ -1,4 +1,7 @@
 interface:
   display_name: "I Feel AI Operations Manager"
-  short_description: "Delivery-note intake and operations control"
-  default_prompt: "Use $ai-operations-manager to review and file new I Feel delivery notes."
+  short_description: "Orchestrates I Feel operations specialist skills"
+  default_prompt: "Use $ai-operations-manager to coordinate an I Feel operations workflow."
+
+policy:
+  allow_implicit_invocation: true

@@ -7,13 +7,13 @@ import test from 'node:test';
 import {
   normalizeCustomerNumber,
   planDeliveryNoteIntake,
-} from '../.claude/skills/ai-operations-manager/scripts/plan-delivery-note-intake.mjs';
+} from '../.claude/skills/upload-delivery-notes-to-dropbox/scripts/plan-delivery-note-intake.mjs';
 
 const NOW = '2026-08-22T09:00:00.000Z';
 const HASH_A = 'a'.repeat(64);
 const HASH_B = 'b'.repeat(64);
 const REPO = resolve(import.meta.dirname, '..');
-const SCRIPT = resolve(REPO, '.claude/skills/ai-operations-manager/scripts/plan-delivery-note-intake.mjs');
+const SCRIPT = resolve(REPO, '.claude/skills/upload-delivery-notes-to-dropbox/scripts/plan-delivery-note-intake.mjs');
 
 function envelope(overrides = {}) {
   return {
