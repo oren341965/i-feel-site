@@ -6,25 +6,44 @@
   "required": ["generatedAt", "records", "customerFolders"],
   "properties": {
     "generatedAt": { "type": "string", "format": "date-time" },
+    "sourceContext": {
+      "type": "object",
+      "properties": {
+        "whatsAppGroupName": { "type": "string", "minLength": 1, "maxLength": 200 }
+      },
+      "additionalProperties": false
+    },
+    "notificationContext": {
+      "type": "object",
+      "properties": {
+        "oraEmail": { "type": "string", "format": "email", "maxLength": 320 }
+      },
+      "additionalProperties": false
+    },
     "records": {
       "type": "array",
       "maxItems": 10000,
       "items": {
         "type": "object",
-        "required": ["source", "sourceId", "originalFileName", "customerNumberCandidates"],
+        "required": ["source", "sourceId", "originalFileName", "customerName", "documentType", "documentNumber", "description", "projectKeyCandidates"],
         "properties": {
           "source": { "enum": ["email", "whatsapp"] },
           "sourceId": { "type": "string", "minLength": 1, "maxLength": 500 },
+          "sourceGroup": { "type": "string", "maxLength": 200 },
+          "senderEmail": { "type": ["string", "null"], "format": "email", "maxLength": 320 },
           "receivedAt": { "type": "string", "format": "date-time" },
           "originalFileName": { "type": "string", "minLength": 1, "maxLength": 255 },
           "mimeType": { "type": "string", "maxLength": 200 },
+          "customerName": { "type": ["string", "null"], "maxLength": 200 },
+          "documentType": { "type": ["string", "null"], "maxLength": 100 },
           "documentNumber": { "type": ["string", "null"], "maxLength": 100 },
           "documentDate": { "type": ["string", "null"], "format": "date" },
+          "description": { "type": ["string", "null"], "maxLength": 500 },
           "contentHash": {
             "type": ["string", "null"],
             "pattern": "^[a-fA-F0-9]{64}$"
           },
-          "customerNumberCandidates": {
+          "projectKeyCandidates": {
             "type": "array",
             "maxItems": 20,
             "items": {
@@ -66,8 +85,12 @@
         "properties": {
           "sourceId": { "type": "string" },
           "contentHash": { "type": "string", "pattern": "^[a-fA-F0-9]{64}$" },
-          "customerNumber": { "type": "string" },
-          "documentNumber": { "type": "string" }
+          "projectKey": { "type": "string" },
+          "customerNumber": { "type": "string", "description": "Legacy alias for projectKey" },
+          "documentNumber": { "type": "string" },
+          "fileName": { "type": "string" },
+          "path": { "type": "string" },
+          "pathDisplay": { "type": "string" }
         },
         "additionalProperties": false
       },

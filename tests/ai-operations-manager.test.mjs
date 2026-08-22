@@ -18,6 +18,8 @@ const SCRIPT = resolve(REPO, '.claude/skills/ai-operations-manager/scripts/plan-
 function envelope(overrides = {}) {
   return {
     generatedAt: NOW,
+    sourceContext: { whatsAppGroupName: 'סיכומי התקנות ות משלוח' },
+    notificationContext: { oraEmail: 'ora@example.invalid' },
     records: [],
     customerFolders: [],
     existingDocuments: [],
@@ -27,17 +29,22 @@ function envelope(overrides = {}) {
 
 function record(overrides = {}) {
   return {
-    source: 'email',
+    source: 'whatsapp',
     sourceId: 'message-1',
+    sourceGroup: 'סיכומי התקנות ות משלוח',
+    senderEmail: 'installer@example.invalid',
     originalFileName: 'delivery-note-7788.pdf',
+    customerName: 'לקוחה לדוגמה',
+    documentType: 'תעודת משלוח',
     documentNumber: '7788',
+    description: 'ציוד תקשורת והתקנה',
     contentHash: HASH_A,
-    customerNumberCandidates: [{ value: '45-001', evidence: 'subject' }],
+    projectKeyCandidates: [{ value: '45-001', evidence: 'document-key-field' }],
     ...overrides,
   };
 }
 
-test('operations planner routes only to one exact customer-number delivery-note folder', () => {
+test('operations planner routes by the exact project key and creates a descriptive filename', () => {
   const result = planDeliveryNoteIntake(envelope({
     records: [record()],
     customerFolders: [
@@ -50,21 +57,22 @@ test('operations planner routes only to one exact customer-number delivery-note 
   assert.equal(normalizeCustomerNumber('45-001'), '45001');
   assert.equal(result.counts.ready, 1);
   assert.equal(result.records[0].status, 'ready');
+  assert.equal(result.records[0].projectKey, '45001');
   assert.equal(
     result.records[0].destinationPath,
-    '/Installation/customers/example-45001/תעודות משלוח/delivery-note-7788.pdf',
+    '/Installation/customers/example-45001/תעודות משלוח/לקוחה לדוגמה - תעודת משלוח 7788 - ציוד תקשורת והתקנה.pdf',
   );
 });
 
-test('operations planner sends conflicting numbers and ambiguous exact folders to review', () => {
+test('operations planner sends conflicting project keys and ambiguous exact folders to review', () => {
   const conflict = planDeliveryNoteIntake(envelope({
-    records: [record({ customerNumberCandidates: [
-      { value: '45001', evidence: 'caption' },
-      { value: '45002', evidence: 'document' },
+    records: [record({ projectKeyCandidates: [
+      { value: '45001', evidence: 'document-key-field' },
+      { value: '45002', evidence: 'document-key-field' },
     ] })],
   }));
   assert.equal(conflict.records[0].status, 'needs-review');
-  assert.ok(conflict.records[0].reasons.includes('CONFLICTING_CUSTOMER_NUMBERS'));
+  assert.ok(conflict.records[0].reasons.includes('CONFLICTING_PROJECT_KEYS'));
 
   const ambiguous = planDeliveryNoteIntake(envelope({
     records: [record()],
@@ -75,6 +83,50 @@ test('operations planner sends conflicting numbers and ambiguous exact folders t
   }));
   assert.equal(ambiguous.records[0].status, 'needs-review');
   assert.ok(ambiguous.records[0].reasons.includes('AMBIGUOUS_CUSTOMER_FOLDER'));
+});
+
+test('missing or unmatched project keys prepare the prescribed email to Ora and the sender', () => {
+  const missing = planDeliveryNoteIntake(envelope({
+    records: [record({ projectKeyCandidates: [] })],
+  }));
+  assert.equal(missing.records[0].status, 'notification-required');
+  assert.equal(missing.counts.notificationRequired, 1);
+  assert.deepEqual(missing.records[0].notificationDraft.recipients, [
+    'ora@example.invalid', 'installer@example.invalid',
+  ]);
+  assert.equal(
+    missing.records[0].notificationDraft.body,
+    'שימו לב- לקוח ללא תיק בדרופבוקס !!!!',
+  );
+  assert.equal(missing.records[0].notificationDraft.attachOriginal, true);
+
+  const unmatched = planDeliveryNoteIntake(envelope({ records: [record()] }));
+  assert.equal(unmatched.records[0].status, 'notification-required');
+  assert.ok(unmatched.records[0].reasons.includes('CUSTOMER_FOLDER_NOT_FOUND'));
+});
+
+test('unclear document type or number prepares the resend email with the original attachment', () => {
+  const result = planDeliveryNoteIntake(envelope({
+    records: [record({ documentType: null, documentNumber: null })],
+    customerFolders: [
+      { objectType: 'folder', pathDisplay: '/Installation/customers/example-45001/תעודות משלוח' },
+    ],
+  }));
+
+  assert.equal(result.records[0].status, 'notification-required');
+  assert.equal(result.records[0].notificationDraft.body, 'נא לשלוח שנית- התעודה לא היתה ברורה');
+  assert.equal(result.records[0].notificationDraft.attachOriginal, true);
+});
+
+test('notification stays in review when Ora or the organizational sender address is missing', () => {
+  const result = planDeliveryNoteIntake(envelope({
+    notificationContext: {},
+    records: [record({ projectKeyCandidates: [], senderEmail: null })],
+  }));
+
+  assert.equal(result.records[0].status, 'needs-review');
+  assert.ok(result.records[0].reasons.includes('MISSING_ORA_EMAIL'));
+  assert.ok(result.records[0].reasons.includes('MISSING_SENDER_EMAIL'));
 });
 
 test('operations planner catches prior and in-batch duplicates without uploading', () => {

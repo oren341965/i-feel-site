@@ -2,7 +2,7 @@ import { readFile, stat, writeFile } from 'node:fs/promises';
 import { relative, resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
 
-export const PLAN_VERSION = 1;
+export const PLAN_VERSION = 2;
 
 const REPO_ROOT = resolve(import.meta.dirname, '../../../../');
 const PRIVATE_ROOT = resolve(REPO_ROOT, '.ai-manager-data/operations');
@@ -11,6 +11,9 @@ const MAX_RECORDS = 10_000;
 const MAX_FOLDERS = 100_000;
 const SUPPORTED_SOURCES = new Set(['email', 'whatsapp']);
 const SUPPORTED_EXTENSIONS = new Set(['.pdf', '.jpg', '.jpeg', '.png', '.webp', '.heic', '.heif']);
+const DEFAULT_WHATSAPP_GROUP = 'סיכומי התקנות ות משלוח';
+const MISSING_FOLDER_MESSAGE = 'שימו לב- לקוח ללא תיק בדרופבוקס !!!!';
+const UNCLEAR_DOCUMENT_MESSAGE = 'נא לשלוח שנית- התעודה לא היתה ברורה';
 
 function requireArray(value, name, max) {
   if (!Array.isArray(value)) throw new TypeError(`${name} must be an array`);
@@ -68,15 +71,39 @@ function matchingFolders(folders, customerNumber) {
   return [...unique.values()];
 }
 
-function candidateNumbers(record) {
+function projectKeyNumbers(record) {
   const raw = [];
-  if (record?.customerNumber !== undefined) raw.push(record.customerNumber);
-  if (Array.isArray(record?.customerNumberCandidates)) {
-    for (const candidate of record.customerNumberCandidates) {
+  if (record?.projectKey !== undefined) raw.push(record.projectKey);
+  if (Array.isArray(record?.projectKeyCandidates)) {
+    for (const candidate of record.projectKeyCandidates) {
       raw.push(candidate && typeof candidate === 'object' ? candidate.value : candidate);
     }
   }
   return [...new Set(raw.map(normalizeCustomerNumber).filter(Boolean))];
+}
+
+function normalizeEmail(value) {
+  const text = cleanText(value).toLowerCase();
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(text) && text.length <= 320 ? text : null;
+}
+
+function normalizeDocumentNumber(value) {
+  const text = cleanText(value).replace(/\s+/g, '');
+  return /^[\p{L}\d][\p{L}\d./-]{1,49}$/u.test(text) ? text : null;
+}
+
+function normalizeDocumentType(value) {
+  const text = cleanText(value).normalize('NFC').toLocaleLowerCase('he').replace(/[_-]+/g, ' ').replace(/\s+/g, ' ');
+  return text === 'תעודת משלוח' || text === 'delivery note' ? 'delivery-note' : null;
+}
+
+function safeLabel(value, maxLength = 100) {
+  const text = cleanText(value)
+    .replace(/[\u0000-\u001f<>:"/\\|?*]/g, '_')
+    .replace(/\s+/g, ' ')
+    .replace(/[. ]+$/g, '')
+    .trim();
+  return text ? text.slice(0, maxLength) : null;
 }
 
 function safeFileName(value) {
@@ -87,10 +114,19 @@ function safeFileName(value) {
     .trim();
   if (!cleaned) return null;
   const extension = cleaned.includes('.') ? `.${cleaned.split('.').at(-1).toLowerCase()}` : '';
-  if (!SUPPORTED_EXTENSIONS.has(extension)) return { name: cleaned.slice(0, 180), supported: false };
+  if (!SUPPORTED_EXTENSIONS.has(extension)) return { name: cleaned.slice(0, 180), extension, supported: false };
   const stemLength = Math.max(1, 180 - extension.length);
   const stem = cleaned.slice(0, -extension.length).slice(0, stemLength);
-  return { name: `${stem}${extension}`, supported: true };
+  if (!stem) return null;
+  return { name: `${stem}${extension}`, extension, supported: true };
+}
+
+function descriptiveFileName({ customerName, documentNumber, description, sourceFile }) {
+  if (!sourceFile?.supported || !customerName || !documentNumber || !description) return null;
+  const suffix = sourceFile.extension;
+  const prefix = `${customerName} - תעודת משלוח ${documentNumber} - `;
+  const descriptionLimit = Math.max(1, 180 - prefix.length - suffix.length);
+  return `${prefix}${description.slice(0, descriptionLimit)}${suffix}`;
 }
 
 function documentKey(customerNumber, documentNumber) {
@@ -102,12 +138,35 @@ function addReason(reasonCounts, reason) {
   reasonCounts[reason] = (reasonCounts[reason] ?? 0) + 1;
 }
 
+function uniqueEmails(values) {
+  return [...new Set(values.map(normalizeEmail).filter(Boolean))];
+}
+
+function buildNotificationDraft({ issues, oraEmail, senderEmail }) {
+  const messages = [];
+  if (issues.includes('MISSING_PROJECT_KEY') || issues.includes('CUSTOMER_FOLDER_NOT_FOUND')) {
+    messages.push(MISSING_FOLDER_MESSAGE);
+  }
+  if (issues.includes('UNCLEAR_DOCUMENT_TYPE') || issues.includes('UNCLEAR_DOCUMENT_NUMBER') || issues.includes('MISSING_CUSTOMER_NAME')) {
+    messages.push(UNCLEAR_DOCUMENT_MESSAGE);
+  }
+  if (messages.length === 0) return null;
+  const recipients = uniqueEmails([oraEmail, senderEmail]);
+  const subject = messages.length > 1
+    ? 'טיפול נדרש: תעודת משלוח'
+    : messages[0] === MISSING_FOLDER_MESSAGE
+      ? 'טיפול נדרש: לקוח ללא תיק בדרופבוקס'
+      : 'טיפול נדרש: תעודה לא ברורה';
+  return { recipients, subject, body: messages.join('\n\n'), attachOriginal: true };
+}
+
 function aggregateSummary(records, generatedAt) {
-  const counts = { total: records.length, ready: 0, duplicate: 0, needsReview: 0 };
+  const counts = { total: records.length, ready: 0, duplicate: 0, notificationRequired: 0, needsReview: 0 };
   const reasonCounts = {};
   for (const record of records) {
     if (record.status === 'ready') counts.ready += 1;
     if (record.status === 'duplicate') counts.duplicate += 1;
+    if (record.status === 'notification-required') counts.notificationRequired += 1;
     if (record.status === 'needs-review') counts.needsReview += 1;
     for (const reason of record.reasons) addReason(reasonCounts, reason);
   }
@@ -123,15 +182,24 @@ export function planDeliveryNoteIntake(envelope) {
   const existing = requireArray(envelope.existingDocuments ?? [], 'existingDocuments', MAX_FOLDERS);
   const generatedAt = cleanText(envelope.generatedAt);
   if (!generatedAt || Number.isNaN(Date.parse(generatedAt))) throw new TypeError('generatedAt must be an ISO date-time');
+  const expectedWhatsAppGroup = cleanText(envelope.sourceContext?.whatsAppGroupName) || DEFAULT_WHATSAPP_GROUP;
+  const oraEmail = normalizeEmail(envelope.notificationContext?.oraEmail);
 
   const priorSources = new Set(existing.map((entry) => cleanText(entry?.sourceId)).filter(Boolean));
   const priorHashes = new Set(existing.map((entry) => normalizeHash(entry?.contentHash)).filter(Boolean));
   const priorDocuments = new Set(existing.map((entry) => {
-    return documentKey(normalizeCustomerNumber(entry?.customerNumber), entry?.documentNumber);
+    return documentKey(
+      normalizeCustomerNumber(entry?.projectKey ?? entry?.customerNumber),
+      normalizeDocumentNumber(entry?.documentNumber),
+    );
   }).filter(Boolean));
+  const priorPaths = new Set(existing.map((entry) => {
+    return cleanText(entry?.pathDisplay) || cleanText(entry?.path);
+  }).filter(Boolean).map((path) => path.normalize('NFC').toLocaleLowerCase('he')));
   const seenSources = new Set();
   const seenHashes = new Set();
   const seenDocuments = new Set();
+  const seenPaths = new Set();
 
   const plannedRecords = records.map((record, index) => {
     if (!record || typeof record !== 'object' || Array.isArray(record)) {
@@ -140,16 +208,27 @@ export function planDeliveryNoteIntake(envelope) {
     const source = cleanText(record.source).toLowerCase();
     const sourceId = cleanText(record.sourceId);
     const hash = normalizeHash(record.contentHash);
-    const numbers = candidateNumbers(record);
-    const customerNumber = numbers.length === 1 ? numbers[0] : null;
-    const docKey = documentKey(customerNumber, record.documentNumber);
+    const projectKeys = projectKeyNumbers(record);
+    const projectKey = projectKeys.length === 1 ? projectKeys[0] : null;
+    const documentNumber = normalizeDocumentNumber(record.documentNumber);
+    const documentType = normalizeDocumentType(record.documentType);
+    const customerName = safeLabel(record.customerName, 100);
+    const description = safeLabel(record.description, 120);
+    const senderEmail = normalizeEmail(record.senderEmail);
+    const sourceGroup = cleanText(record.sourceGroup);
+    const docKey = documentKey(projectKey, documentNumber);
     const reasons = [];
 
     if (!SUPPORTED_SOURCES.has(source)) reasons.push('UNSUPPORTED_SOURCE');
     if (!sourceId) reasons.push('MISSING_SOURCE_ID');
+    if (source === 'whatsapp' && sourceGroup !== expectedWhatsAppGroup) reasons.push('WRONG_WHATSAPP_GROUP');
     if (record.contentHash && !hash) reasons.push('INVALID_CONTENT_HASH');
-    if (numbers.length === 0) reasons.push('MISSING_CUSTOMER_NUMBER');
-    if (numbers.length > 1) reasons.push('CONFLICTING_CUSTOMER_NUMBERS');
+    if (projectKeys.length === 0) reasons.push('MISSING_PROJECT_KEY');
+    if (projectKeys.length > 1) reasons.push('CONFLICTING_PROJECT_KEYS');
+    if (!customerName) reasons.push('MISSING_CUSTOMER_NAME');
+    if (!documentType) reasons.push('UNCLEAR_DOCUMENT_TYPE');
+    if (!documentNumber) reasons.push('UNCLEAR_DOCUMENT_NUMBER');
+    if (!description) reasons.push('MISSING_DESCRIPTION');
 
     const duplicateReasons = [];
     if (sourceId && (priorSources.has(sourceId) || seenSources.has(sourceId))) duplicateReasons.push('DUPLICATE_SOURCE');
@@ -164,30 +243,56 @@ export function planDeliveryNoteIntake(envelope) {
     if (!file) reasons.push('MISSING_ORIGINAL_FILENAME');
     else if (!file.supported) reasons.push('UNSUPPORTED_ATTACHMENT');
 
-    const matches = customerNumber ? matchingFolders(folders, customerNumber) : [];
-    if (customerNumber && matches.length === 0) reasons.push('CUSTOMER_FOLDER_NOT_FOUND');
-    if (customerNumber && matches.length > 1) reasons.push('AMBIGUOUS_CUSTOMER_FOLDER');
+    const matches = projectKey ? matchingFolders(folders, projectKey) : [];
+    if (projectKey && matches.length === 0) reasons.push('CUSTOMER_FOLDER_NOT_FOUND');
+    if (projectKey && matches.length > 1) reasons.push('AMBIGUOUS_CUSTOMER_FOLDER');
+
+    const destinationFileName = descriptiveFileName({ customerName, documentNumber, description, sourceFile: file });
+    const destinationFolder = matches.length === 1 ? matches[0] : null;
+    const destinationPath = destinationFolder && destinationFileName
+      ? `${destinationFolder.replace(/\/+$/, '')}/${destinationFileName}`
+      : null;
+    const destinationKey = destinationPath?.normalize('NFC').toLocaleLowerCase('he') ?? null;
+    if (destinationKey && (priorPaths.has(destinationKey) || seenPaths.has(destinationKey))) {
+      duplicateReasons.push('DUPLICATE_DESTINATION_PATH');
+    }
+    if (destinationKey) seenPaths.add(destinationKey);
 
     if (duplicateReasons.length > 0) {
       return {
         index, source, sourceId, status: 'duplicate', reasons: duplicateReasons,
-        customerNumber, documentNumber: cleanText(record.documentNumber) || null,
+        projectKey, documentNumber,
       };
+    }
+
+    const notificationDraft = buildNotificationDraft({ issues: reasons, oraEmail, senderEmail });
+    if (notificationDraft) {
+      if (!oraEmail) reasons.push('MISSING_ORA_EMAIL');
+      if (!senderEmail) reasons.push('MISSING_SENDER_EMAIL');
+      const blockingReasons = reasons.filter((reason) => ![
+        'MISSING_PROJECT_KEY', 'CUSTOMER_FOLDER_NOT_FOUND', 'MISSING_CUSTOMER_NAME',
+        'UNCLEAR_DOCUMENT_TYPE', 'UNCLEAR_DOCUMENT_NUMBER',
+      ].includes(reason));
+      if (blockingReasons.length === 0 && notificationDraft.recipients.length === 2) {
+        return {
+          index, source, sourceId, status: 'notification-required', reasons,
+          projectKey, customerName, documentType, documentNumber, notificationDraft,
+        };
+      }
     }
     if (reasons.length > 0) {
       return {
         index, source, sourceId, status: 'needs-review', reasons,
-        customerNumber, documentNumber: cleanText(record.documentNumber) || null,
+        projectKey, customerName, documentType, documentNumber,
         candidateDestinations: matches,
+        notificationDraft,
       };
     }
 
-    const destinationFolder = matches[0];
     return {
-      index, source, sourceId, status: 'ready', reasons: [], customerNumber,
-      documentNumber: cleanText(record.documentNumber) || null,
-      originalFileName: file.name, destinationFolder,
-      destinationPath: `${destinationFolder.replace(/\/+$/, '')}/${file.name}`,
+      index, source, sourceId, status: 'ready', reasons: [], projectKey,
+      customerName, documentType, documentNumber, description,
+      originalFileName: file.name, destinationFileName, destinationFolder, destinationPath,
     };
   });
 

@@ -6,11 +6,12 @@ Use this reference only for I Feel delivery-note intake and filing.
 
 For each new delivery-note attachment from the designated WhatsApp group or mail belonging to `office@i-feel.co.il`, produce exactly one outcome:
 
-- `ready`: one unambiguous customer number, one exact existing Dropbox `תעודות משלוח` folder, and no duplicate evidence.
-- `duplicate`: the source item, content hash, or customer-number plus delivery-note-number key was already seen.
+- `ready`: one unambiguous `מפתח` project key, one exact existing Dropbox `תעודות משלוח` folder, clear customer/document metadata, and no duplicate evidence.
+- `duplicate`: the source item, content hash, destination path, or project-key plus delivery-note-number key was already seen.
+- `notification-required`: the customer key is missing/unmatched or the document type/number is unclear, and an exception email can be prepared for Ora and the verified organizational sender.
 - `needs-review`: any evidence, routing, attachment, or duplicate uncertainty remains.
 
-Version 1 plans and verifies filing. It does not create folders, send notifications, or run unattended.
+Version 1 plans and verifies filing and prepares exception emails. It does not create folders, send notifications without approval, or run unattended.
 
 ## Source collection
 
@@ -23,8 +24,9 @@ Version 1 plans and verifies filing. It does not create folders, send notificati
 
 ### WhatsApp
 
-- Read only the designated delivery-note group in an authenticated, user-visible session or approved Business API connection.
+- Read only `סיכומי התקנות ות משלוח` through Oren's authenticated membership in a user-visible session or approved Business API connection.
 - Capture the stable message ID, timestamp, caption, sender identifier needed for audit, and attachment reference.
+- Map the sender to a verified organizational email address for exception routing. If that mapping is missing or uncertain, stop at `needs-review`.
 - Do not open unrelated chats, send acknowledgements, react, delete, or mark the workflow complete.
 - If no supported WhatsApp connection is available, report the gap and continue with the email source; never claim the group was checked.
 
@@ -32,28 +34,36 @@ Version 1 plans and verifies filing. It does not create folders, send notificati
 
 Accept PDF and common still-image formats when their bytes can be retrieved without conversion. Treat other formats as `UNSUPPORTED_ATTACHMENT`. OCR may assist extraction, but the source document remains authoritative and must be uploaded unchanged.
 
-## Customer-number evidence
+## Document fields and routing priority
 
-Collect candidates from explicit source evidence such as the message caption, mail subject/body, filename, or visible document fields. Normalize a candidate only when it contains digits plus optional spaces or hyphens. Strip separators and preserve leading zeroes.
+Extract these fields from the visible document, keeping the image as the authoritative source:
 
-Until the final message convention is confirmed, one unique normalized number is sufficient for a dry-run candidate, but any conflicting number sends the record to review. Never infer the number from a customer name, sender, address, product, or nearby Dropbox result.
+- `customerName`: the name printed for the customer.
+- `projectKeyCandidates`: numbers printed beside the label `מפתח` only.
+- `documentType`: must clearly be `תעודת משלוח`.
+- `documentNumber`: the number printed beside the document type.
+- `description`: a short, factual summary of the main supplied items or work, without prices or personal details.
 
-Record candidates as:
+The unique number beside `מפתח` is the primary routing identity. A customer can have several projects, and the displayed customer name can differ from the Dropbox folder name. A matching project key therefore outranks a name mismatch. Never substitute the delivery-note number, `מזהה`, company registration number, phone number, item code, or another visible number for `מפתח`.
+
+Normalize a project key only when it contains digits plus optional spaces or hyphens. Strip separators and preserve leading zeroes. Multiple readable values beside `מפתח` are conflicting evidence and require review.
+
+Record key candidates as:
 
 ```json
 {
   "value": "45001",
-  "evidence": "message-caption"
+  "evidence": "document-key-field"
 }
 ```
 
 ## Exact Dropbox routing
 
-Search using the normalized customer number. A candidate destination is valid only when:
+Search using the normalized `מפתח` project key. A candidate destination is valid only when:
 
 1. It is a folder result.
 2. Its final path component is exactly `תעודות משלוח`.
-3. Its full displayed path contains the customer number as a standalone digit token. For example, `45001` must not match `145001`.
+3. Its full displayed path contains the project key as a standalone digit token. For example, `45001` must not match `145001`.
 
 Deduplicate identical returned paths before counting matches. Route only when exactly one valid path remains. Search rank, customer-name similarity, namespace, or a familiar parent folder does not resolve multiple exact matches.
 
@@ -65,9 +75,38 @@ Evaluate in this order:
 
 1. Stable source message or attachment ID.
 2. SHA-256 of the original attachment bytes.
-3. Exact tuple of normalized customer number plus delivery-note number.
+3. Exact tuple of normalized project key plus delivery-note number.
+4. Exact final Dropbox destination path.
 
 A strong exact match is `duplicate`; do not upload it again. Similar filenames, nearby dates, or matching suppliers alone are not enough to declare a duplicate—send those cases to review if they create doubt.
+
+## Descriptive Dropbox filename
+
+Keep the original bytes and extension, but replace an unhelpful camera/WhatsApp filename with:
+
+```text
+<customerName> - תעודת משלוח <documentNumber> - <description>.<original-extension>
+```
+
+The filename must contain the printed customer name, delivery-note number, and a concise factual description. Sanitize invalid path characters and keep the total filename bounded. The customer name is used for readability only; it does not override the project key used for routing.
+
+## Exception emails
+
+For each exception, prepare one email addressed to both Ora and the verified organizational sender. Attach the original image of the document. Do not send until the exact recipients, body, and attachment are approved.
+
+- Missing `מפתח`, a general/unusable key, or a key with no Dropbox project folder:
+
+  ```text
+  שימו לב- לקוח ללא תיק בדרופבוקס !!!!
+  ```
+
+- Unclear document type or delivery-note number:
+
+  ```text
+  נא לשלוח שנית- התעודה לא היתה ברורה
+  ```
+
+If both exception classes apply, include both lines in one email to the same recipients. If Ora's address or the sender's verified organizational address is unavailable, keep the record in `needs-review`; do not guess a recipient.
 
 ## Normalized private envelope
 
@@ -76,16 +115,27 @@ Conform to [delivery-note-envelope.schema.json](delivery-note-envelope.schema.js
 ```json
 {
   "generatedAt": "2026-08-22T09:00:00.000Z",
+  "sourceContext": {
+    "whatsAppGroupName": "סיכומי התקנות ות משלוח"
+  },
+  "notificationContext": {
+    "oraEmail": "ora@example.invalid"
+  },
   "records": [
     {
-      "source": "email",
+      "source": "whatsapp",
       "sourceId": "synthetic-message-1",
+      "sourceGroup": "סיכומי התקנות ות משלוח",
+      "senderEmail": "installer@example.invalid",
       "receivedAt": "2026-08-22T08:30:00.000Z",
       "originalFileName": "delivery-note-7788.pdf",
+      "customerName": "לקוחה לדוגמה",
+      "documentType": "תעודת משלוח",
       "documentNumber": "7788",
+      "description": "ציוד תקשורת והתקנה",
       "contentHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-      "customerNumberCandidates": [
-        { "value": "45001", "evidence": "mail-subject" }
+      "projectKeyCandidates": [
+        { "value": "45001", "evidence": "document-key-field" }
       ]
     }
   ],
@@ -103,7 +153,7 @@ Store real envelopes only below `.ai-manager-data/operations/tmp/`. They are ope
 
 ## Write approval and verification
 
-Before upload, present one bounded mutation plan containing each source ID, original filename, and exact destination. Approval covers only that plan. Any changed destination, new record, overwrite, folder creation, retry after an ambiguous failure, or move/delete requires a new decision consistent with the active connector policy.
+Before upload or email send, present one bounded mutation plan containing each source ID, descriptive filename and exact destination, or the recipients, message text and attachment. Approval covers only that plan. Any changed destination/recipient/body, new record, overwrite, folder creation, retry after an ambiguous failure, or move/delete requires a new decision consistent with the active connector policy.
 
 After each successful upload, record the returned Dropbox file ID and displayed path in the transient run result. For partial success, report successful and failed items separately. Never mark a source item as filed solely because the upload call was attempted.
 
@@ -113,7 +163,7 @@ An optional retained summary may contain only:
 
 - run timestamp and bounded source window;
 - source coverage flags;
-- total, ready, duplicate, review, uploaded, and failed counts;
+- total, ready, duplicate, notification, review, uploaded, emailed, and failed counts;
 - review reason counts;
 - connector identity domains when operationally needed.
 
