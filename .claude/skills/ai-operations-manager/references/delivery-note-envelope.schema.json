@@ -1,0 +1,78 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://i-feel.co.il/schemas/ai-operations-delivery-note-envelope.schema.json",
+  "title": "I Feel delivery-note intake envelope",
+  "type": "object",
+  "required": ["generatedAt", "records", "customerFolders"],
+  "properties": {
+    "generatedAt": { "type": "string", "format": "date-time" },
+    "records": {
+      "type": "array",
+      "maxItems": 10000,
+      "items": {
+        "type": "object",
+        "required": ["source", "sourceId", "originalFileName", "customerNumberCandidates"],
+        "properties": {
+          "source": { "enum": ["email", "whatsapp"] },
+          "sourceId": { "type": "string", "minLength": 1, "maxLength": 500 },
+          "receivedAt": { "type": "string", "format": "date-time" },
+          "originalFileName": { "type": "string", "minLength": 1, "maxLength": 255 },
+          "mimeType": { "type": "string", "maxLength": 200 },
+          "documentNumber": { "type": ["string", "null"], "maxLength": 100 },
+          "documentDate": { "type": ["string", "null"], "format": "date" },
+          "contentHash": {
+            "type": ["string", "null"],
+            "pattern": "^[a-fA-F0-9]{64}$"
+          },
+          "customerNumberCandidates": {
+            "type": "array",
+            "maxItems": 20,
+            "items": {
+              "type": "object",
+              "required": ["value", "evidence"],
+              "properties": {
+                "value": { "type": "string", "minLength": 1, "maxLength": 50 },
+                "evidence": { "type": "string", "minLength": 1, "maxLength": 100 }
+              },
+              "additionalProperties": false
+            }
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "customerFolders": {
+      "type": "array",
+      "maxItems": 100000,
+      "items": {
+        "type": "object",
+        "properties": {
+          "path": { "type": "string", "minLength": 1 },
+          "pathDisplay": { "type": "string", "minLength": 1 },
+          "objectType": { "type": "string" }
+        },
+        "anyOf": [
+          { "required": ["path"] },
+          { "required": ["pathDisplay"] }
+        ],
+        "additionalProperties": false
+      }
+    },
+    "existingDocuments": {
+      "type": "array",
+      "maxItems": 100000,
+      "items": {
+        "type": "object",
+        "properties": {
+          "sourceId": { "type": "string" },
+          "contentHash": { "type": "string", "pattern": "^[a-fA-F0-9]{64}$" },
+          "customerNumber": { "type": "string" },
+          "documentNumber": { "type": "string" }
+        },
+        "additionalProperties": false
+      },
+      "default": []
+    }
+  },
+  "additionalProperties": false
+}
