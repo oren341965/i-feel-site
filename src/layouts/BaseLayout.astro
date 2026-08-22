@@ -66,6 +66,38 @@ const siteIdentityJsonLd = JSON.stringify({
   name: 'i-feel',
   alternateName: ['I FEEL', 'i-feel', 'איי פיל', 'i-feel מערכות בקרת מבנה ובית חכם'],
   url: 'https://i-feel.co.il/',
+  description: 'Israeli smart home and building management systems integrator specializing in KNX, Siemens Desigo, DALI and related building-control technologies.',
+  telephone: '+972-3-508-9553',
+  email: 'sales@i-feel.co.il',
+  foundingDate: '2008',
+  address: {
+    '@type': 'PostalAddress',
+    streetAddress: 'Imber 14',
+    addressLocality: 'Petah Tikva',
+    postalCode: '4951148',
+    addressCountry: 'IL'
+  },
+  areaServed: {
+    '@type': 'Country',
+    name: 'Israel'
+  },
+  contactPoint: [
+    {
+      '@type': 'ContactPoint',
+      contactType: 'sales',
+      telephone: '+972-3-508-9553',
+      email: 'sales@i-feel.co.il',
+      areaServed: 'IL',
+      availableLanguage: ['he', 'en']
+    },
+    {
+      '@type': 'ContactPoint',
+      contactType: 'customer service',
+      email: 'support@i-feel.co.il',
+      areaServed: 'IL',
+      availableLanguage: ['he', 'en']
+    }
+  ],
   sameAs: [
     'https://www.facebook.com/SmarthomeIsrael',
     'https://www.instagram.com/ifeelisrael',
