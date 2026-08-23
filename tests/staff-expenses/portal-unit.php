@@ -39,6 +39,19 @@ require_once $repositoryRoot . '/public/staff-expenses/_readiness.php';
 require_once $repositoryRoot . '/public/staff-expenses/_mcohome_faults.php';
 
 try {
+    $portalCss = (string) file_get_contents($repositoryRoot . '/public/staff-expenses/portal.css');
+    portal_test_expect(
+        str_contains($portalCss, '--bg: #000000;')
+        && str_contains($portalCss, 'background: var(--bg);')
+        && str_contains($portalCss, 'color: var(--page-text);'),
+        'The employee portal must use a black page background with readable page headings.'
+    );
+    $portalAppSource = (string) file_get_contents($repositoryRoot . '/public/staff-expenses/_app.php');
+    portal_test_expect(
+        str_contains($portalAppSource, 'background:#000;color:#10233f'),
+        'The standalone maintenance page must use the employee portal black background.'
+    );
+
     $_POST['mcohome_test_value'] = '  abcdef  ';
     portal_test_expect(
         mcohome_post_value('mcohome_test_value', 3) === 'abc',
