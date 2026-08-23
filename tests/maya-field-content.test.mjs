@@ -77,6 +77,13 @@ test('skill keeps customer service images separate and routes publishable media 
   assert.match(reference, /1–2 שורות/);
   assert.match(scheduledTask, /once every five minutes/);
   assert.match(scheduledTask, /at most one consolidated photo-and-field-note request/);
+  assert.match(scheduledTask, /must not invoke `Edit`/);
+  assert.match(scheduledTask, /verified recent direct WhatsApp conversation as the duplicate ledger/);
+  assert.match(scheduledTask, /do not download media/i);
+  assert.match(reference, /filesystem read-only/);
+  assert.match(reference, /If that conversation cannot be read, do not send/);
+  assert.doesNotMatch(reference, /Store a local request key/);
+  assert.doesNotMatch(skill, /record a PII-free request fingerprint locally/);
   assert.match(reference, /Customer-supplied service images do not enter the marketing pipeline/);
   assert.match(reference, /Never delete `Raw`/);
   assert.match(reference, /publication rights/i);

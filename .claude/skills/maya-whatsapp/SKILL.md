@@ -27,7 +27,7 @@ Use the existing Maya WhatsApp session on Maya's workstation. The shared `ai-sal
 
 ## Daily field-content gate
 
-At `15:00` in `Asia/Jerusalem`, once per local date, inspect the live technician schedule and request photos plus a short field note from every technician who had field assignments that day. The existing five-minute `maya-whatsapp` scheduled task owns the clock; use local state so only one daily run can complete and a retry touches only unresolved recipients. The five-minute cadence must never become a five-minute message cadence.
+At `15:00` in `Asia/Jerusalem`, once per local date, inspect the live technician schedule and request photos plus a short field note from every technician who had field assignments that day. The existing five-minute `maya-whatsapp` scheduled task owns the clock. Use the verified recent direct WhatsApp conversation as the duplicate ledger and touch only unresolved recipients. If that conversation cannot be read, fail closed and do not send. The five-minute cadence must never become a five-minute message cadence.
 
 Read [references/field-content-daily.md](references/field-content-daily.md) before this mode. Use `scripts/field-content-daily.mjs` for month-tab resolution, date-block extraction, technician-column discovery, phone redaction and deterministic request keys.
 
@@ -40,7 +40,7 @@ The standing authorization is narrow:
 ## Received media
 
 - Keep the original files. Never delete or overwrite `Raw`.
-- Technician field photos enter `AI-Sales/Content/Incoming` through the workflow in the reference.
+- Technician field photos enter `AI-Sales/Content/Incoming` through the separate approved media-intake workflow in the reference. The unattended scheduler must not download media or write files.
 - Customer service images stay operational and are not marketing assets unless separate written publication rights are recorded.
 - Run duplicate, integrity, resolution, orientation and duration checks locally before requesting any qualitative judgment.
 - Positive copy must be factual. Do not invent products, savings, scope, customer satisfaction or project results.
@@ -50,5 +50,5 @@ The standing authorization is narrow:
 
 - Use the exact direct chat of the verified employee or customer. Never send to a group for this workflow.
 - Send within the permitted Israeli business-hours window and never on Shabbat or a holiday.
-- After a send, verify the message appears in the intended chat, record a PII-free request fingerprint locally, and report only bounded aggregate results to `ai-sales-manager`.
+- After a send, verify that the message appears in the intended chat and keep only a bounded in-memory result for that invocation. The unattended scheduler must not invoke `Edit`, write local state, write to the Vault or Bus, download media, or mutate Monday.
 - A failed or ambiguous send is a blocker, not a success. Do not retry a verified delivery.

@@ -21,12 +21,12 @@ For each technician column:
 1. Collect today's non-empty field assignments. Exclude leave, office-only, vehicle, doctor, equipment-pickup and other clearly non-site notes. Keep ambiguous entries in `NEEDS_REVIEW` instead of sending a strange request.
 2. Remove customer phone numbers from the outgoing text. Include only the minimum recognizable site/project wording needed by that technician.
 3. Resolve an exact direct WhatsApp contact matching the verified employee directory or a previously verified employee chat. A same-name guess is forbidden.
-4. Read today's recent messages in that direct chat. If a photo-and-note request for the same site already exists, record `DUPLICATE_SKIPPED`.
+4. Read today's recent messages in that direct chat. If the chat cannot be read, stop for that recipient. If a photo-and-note request for the same site already exists, keep `DUPLICATE_SKIPPED` only in memory for the current invocation.
 5. Send one consolidated message per technician, not one message per row:
 
    `היי {שם}, לפי הלו״ז היית היום ב{אתרים}. אנא שלח/י כאן 5–10 תמונות חדות מכל אתר: תמונה רחבה, כמה פרטי ביצוע ולוח/ארון אם רלוונטי. הוסף/י גם 1–2 שורות: מה בוצע היום, מה כדאי להדגיש והאם נשאר משהו פתוח. בלי פנים, מספרי בית או רכב, מסמכים, קודים, QR או פרטי אבטחה. התמונות וההערה נשמרות לבדיקה פנימית; פרסום נעשה רק לאחר בדיקה ואישור. תודה, מאיה, i-feel.`
 
-6. Verify delivery in the intended chat. Store a local request key derived from date, technician and sanitized site; never store a phone number in shared state or Bus messages.
+6. Verify delivery in the intended chat. The visible verified message is the duplicate evidence for later scheduled invocations. Do not persist a request key from the unattended scheduler.
 
 ## Customer image requests
 
@@ -40,7 +40,7 @@ Customer-supplied service images do not enter the marketing pipeline unless sepa
 
 ## Intake and media safety
 
-For verified technician media, create a safe project key and use:
+Media download and processing are a separate interactive or explicitly approved intake workflow, not part of the unattended WhatsApp scheduler. For verified technician media, that separate workflow may create a safe project key and use:
 
 ```text
 AI-Sales/Content/Incoming/<YYYY-MM-DD>/<project-key>/Raw/
@@ -65,18 +65,8 @@ Use AI judgment only after deterministic checks, and only for selecting the stro
 
 Classify a publishable set as `BMS`, `MULTIFAMILY` or `VILLA`; use `NEEDS_REVIEW` when the category is not evidenced. Invoke `ifeel-project-video` for the short branded video and require its frame-level visual QA. Route the verified output to `video-add` for the official YouTube/site workflow. Website merge/deploy and any exceptional public channel still follow their own approval rules.
 
-## Local state and reporting
+## Scheduled-run state and reporting
 
-Keep operational state under `C:\ifeel-maya\state`, never in the live Dropbox database. Track per local date and request key:
+The unattended five-minute task is filesystem read-only. It must not invoke `Edit`, update its skill or configuration, create or change `C:\ifeel-maya\state`, write to the Vault or Bus, update Monday, or download media. It may read existing local configuration and read-only fingerprints when available, but the verified recent direct WhatsApp conversation is the authoritative duplicate ledger. If that conversation cannot be read, do not send.
 
-- planned;
-- sent and verified;
-- duplicate skipped;
-- blocked contact;
-- blocked WhatsApp access;
-- received-media count;
-- technician field-note received;
-- privacy review status;
-- video status and published URL when available.
-
-Report to the manager only aggregates and bounded references. Never include names, phone numbers, addresses, chat text or image binaries.
+Keep only bounded in-memory counts for the current invocation: planned, sent-and-verified, duplicate-skipped, blocked-contact and blocked-WhatsApp-access. Do not persist a scheduled-run report. A separate interactive audit may persist an approved aggregate result without names, phone numbers, addresses, chat text or image binaries.
