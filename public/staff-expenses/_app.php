@@ -32,7 +32,7 @@ function portal_render_maintenance_page(?string $requestId = null): never
   <meta name="robots" content="noindex,nofollow,noarchive">
   <title>אזור העובדים | I Feel</title>
   <style>
-    *{box-sizing:border-box}body{margin:0;min-height:100vh;display:grid;place-items:center;background:#f4f7fb;color:#10233f;font-family:Arial,"Heebo",sans-serif;padding:24px}.card{width:min(560px,100%);background:#fff;border:1px solid #dbe4ef;border-radius:20px;padding:36px;box-shadow:0 18px 45px rgba(16,35,63,.12);text-align:center}.logo{width:86px;height:auto;margin-bottom:20px}h1{font-size:30px;margin:0 0 12px}p{font-size:17px;line-height:1.65;margin:0 0 24px;color:#52657d}.button{display:inline-block;background:#1769aa;color:#fff;text-decoration:none;font-weight:700;padding:12px 22px;border-radius:10px}.note{margin-top:22px;font-size:14px;color:#6b7b90}
+    *{box-sizing:border-box}body{margin:0;min-height:100vh;display:grid;place-items:center;background:#000;color:#10233f;font-family:Arial,"Heebo",sans-serif;padding:24px}.card{width:min(560px,100%);background:#fff;border:1px solid #dbe4ef;border-radius:20px;padding:36px;box-shadow:0 18px 45px rgba(16,35,63,.12);text-align:center}.logo{width:86px;height:auto;margin-bottom:20px}h1{font-size:30px;margin:0 0 12px}p{font-size:17px;line-height:1.65;margin:0 0 24px;color:#52657d}.button{display:inline-block;background:#1769aa;color:#fff;text-decoration:none;font-weight:700;padding:12px 22px;border-radius:10px}.note{margin-top:22px;font-size:14px;color:#6b7b90}
   </style>
 </head>
 <body>
