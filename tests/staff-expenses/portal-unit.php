@@ -42,9 +42,13 @@ try {
     $portalCss = (string) file_get_contents($repositoryRoot . '/public/staff-expenses/portal.css');
     portal_test_expect(
         str_contains($portalCss, '--bg: #000000;')
+        && str_contains($portalCss, '--page-text: #ffffff;')
+        && str_contains($portalCss, '--page-muted: #f1f5f9;')
         && str_contains($portalCss, 'background: var(--bg);')
-        && str_contains($portalCss, 'color: var(--page-text);'),
-        'The employee portal must use a black page background with readable page headings.'
+        && str_contains($portalCss, 'color: var(--page-text);')
+        && str_contains($portalCss, 'font-weight: 900;')
+        && str_contains($portalCss, 'text-shadow:'),
+        'The employee portal must use a black page background with strong high-contrast page text.'
     );
     $portalAppSource = (string) file_get_contents($repositoryRoot . '/public/staff-expenses/_app.php');
     portal_test_expect(
