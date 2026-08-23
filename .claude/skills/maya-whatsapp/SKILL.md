@@ -1,6 +1,6 @@
 ---
 name: maya-whatsapp
-description: Operate Maya's approved I Feel WhatsApp workflow for inbound triage, bounded customer follow-up, and the daily 15:00 technician field-photo request sourced from the live technician schedule. Use only on Maya's workstation with the verified WhatsApp session; never for bulk marketing or an unverified contact.
+description: Operate Maya's approved I Feel WhatsApp workflow for inbound triage, bounded customer follow-up, and the daily 15:00 technician field-photo and field-note request sourced from the live technician schedule. Use only on Maya's workstation with the verified WhatsApp session; never for bulk marketing or an unverified contact.
 ---
 
 # Maya WhatsApp
@@ -27,13 +27,13 @@ Use the existing Maya WhatsApp session on Maya's workstation. The shared `ai-sal
 
 ## Daily field-content gate
 
-At `15:00` in `Asia/Jerusalem`, once per local date, inspect the live technician schedule and request photos from technicians who had field assignments that day. The existing once-per-minute `maya-whatsapp` scheduled task owns the clock; use local state so only one daily run can complete and a retry touches only unresolved recipients.
+At `15:00` in `Asia/Jerusalem`, once per local date, inspect the live technician schedule and request photos plus a short field note from every technician who had field assignments that day. The existing five-minute `maya-whatsapp` scheduled task owns the clock; use local state so only one daily run can complete and a retry touches only unresolved recipients. The five-minute cadence must never become a five-minute message cadence.
 
 Read [references/field-content-daily.md](references/field-content-daily.md) before this mode. Use `scripts/field-content-daily.mjs` for month-tab resolution, date-block extraction, technician-column discovery, phone redaction and deterministic request keys.
 
 The standing authorization is narrow:
 
-- Direct employee messages asking for today's field photos are approved at 15:00.
+- One direct employee message per eligible technician asking for today's field photos and a short factual field note is approved at 15:00.
 - A customer image request is approved only when today's schedule explicitly records that the customer must send images for service, damage, `AS MADE` or another documented operational need.
 - This authorization does not cover advertising, prices, promises, broadcast lists, customer marketing or publication of received media.
 

@@ -21,10 +21,10 @@ For each technician column:
 1. Collect today's non-empty field assignments. Exclude leave, office-only, vehicle, doctor, equipment-pickup and other clearly non-site notes. Keep ambiguous entries in `NEEDS_REVIEW` instead of sending a strange request.
 2. Remove customer phone numbers from the outgoing text. Include only the minimum recognizable site/project wording needed by that technician.
 3. Resolve an exact direct WhatsApp contact matching the verified employee directory or a previously verified employee chat. A same-name guess is forbidden.
-4. Read today's recent messages in that direct chat. If a photo request for the same site already exists, record `DUPLICATE_SKIPPED`.
+4. Read today's recent messages in that direct chat. If a photo-and-note request for the same site already exists, record `DUPLICATE_SKIPPED`.
 5. Send one consolidated message per technician, not one message per row:
 
-   `היי {שם}, לפי הלו״ז היית היום ב{אתרים}. אנא שלח/י כאן 5–10 תמונות חדות מכל אתר: תמונה רחבה, כמה פרטי ביצוע ולוח/ארון אם רלוונטי. בלי פנים, מספרי בית או רכב, מסמכים, קודים, QR או פרטי אבטחה. התמונות נשמרות לבדיקה פנימית; פרסום נעשה רק לאחר בדיקה ואישור. תודה, מאיה, i-feel.`
+   `היי {שם}, לפי הלו״ז היית היום ב{אתרים}. אנא שלח/י כאן 5–10 תמונות חדות מכל אתר: תמונה רחבה, כמה פרטי ביצוע ולוח/ארון אם רלוונטי. הוסף/י גם 1–2 שורות: מה בוצע היום, מה כדאי להדגיש והאם נשאר משהו פתוח. בלי פנים, מספרי בית או רכב, מסמכים, קודים, QR או פרטי אבטחה. התמונות וההערה נשמרות לבדיקה פנימית; פרסום נעשה רק לאחר בדיקה ואישור. תודה, מאיה, i-feel.`
 
 6. Verify delivery in the intended chat. Store a local request key derived from date, technician and sanitized site; never store a phone number in shared state or Bus messages.
 
@@ -75,6 +75,7 @@ Keep operational state under `C:\ifeel-maya\state`, never in the live Dropbox da
 - blocked contact;
 - blocked WhatsApp access;
 - received-media count;
+- technician field-note received;
 - privacy review status;
 - video status and published URL when available.
 

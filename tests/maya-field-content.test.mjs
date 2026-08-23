@@ -70,8 +70,13 @@ test('skill keeps customer service images separate and routes publishable media 
   const { readFile } = await import('node:fs/promises');
   const skill = await readFile(new URL('../.claude/skills/maya-whatsapp/SKILL.md', import.meta.url), 'utf8');
   const reference = await readFile(new URL('../.claude/skills/maya-whatsapp/references/field-content-daily.md', import.meta.url), 'utf8');
+  const scheduledTask = await readFile(new URL('../agent-config/maya-scheduled-tasks/maya-whatsapp/SKILL.md', import.meta.url), 'utf8');
   assert.match(skill, /ifeel-project-video/);
   assert.match(skill, /video-add/);
+  assert.match(skill, /five-minute/);
+  assert.match(reference, /1–2 שורות/);
+  assert.match(scheduledTask, /once every five minutes/);
+  assert.match(scheduledTask, /at most one consolidated photo-and-field-note request/);
   assert.match(reference, /Customer-supplied service images do not enter the marketing pipeline/);
   assert.match(reference, /Never delete `Raw`/);
   assert.match(reference, /publication rights/i);

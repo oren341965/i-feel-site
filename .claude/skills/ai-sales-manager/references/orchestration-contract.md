@@ -119,7 +119,7 @@ At maturity 0 the output is a draft, audience counts, route evidence and an appr
 
 ## Daily technician field-content intake
 
-The existing `maya-whatsapp` scheduled task evaluates a daily gate at 15:00 in `Asia/Jerusalem`. It reads the current month tab of spreadsheet `1_r2WSYvpUWlBRz_6yX5Yqr5KKUAOVNpte6CoZYttdII`, finds only the current date block and sends one consolidated direct photo request to each verified technician with field assignments. It never edits the spreadsheet and never creates a second scheduler.
+The existing `maya-whatsapp` scheduled task runs every five minutes and evaluates a daily gate at 15:00 in `Asia/Jerusalem`. It reads the current month tab of spreadsheet `1_r2WSYvpUWlBRz_6yX5Yqr5KKUAOVNpte6CoZYttdII`, finds only the current date block and sends one consolidated direct request for photos plus a short factual field note to each verified technician with field assignments. Local idempotency limits this to one request per eligible technician per local date. It never edits the spreadsheet and never creates a second scheduler.
 
 The employee request scope was explicitly approved on 2026-08-23. A customer may be asked for operational images only when today's schedule explicitly records that open need and the verified direct conversation shows no duplicate or opt-out. Customer service images never become marketing media without separate written publication rights.
 
