@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "timezone": "Asia/Jerusalem",
+  "schedule": {
+    "startLocalTime": "15:00",
+    "catchUpUntilLocalTime": "18:00",
+    "runOncePerLocalDate": true
+  },
+  "spreadsheet": {
+    "spreadsheetId": "1_r2WSYvpUWlBRz_6yX5Yqr5KKUAOVNpte6CoZYttdII",
+    "tabSelection": "JERUSALEM_MONTH_FROM_LIVE_METADATA",
+    "dateColumn": "B",
+    "firstTechnicianColumn": "C",
+    "technicianColumnsEndAtFirstBlankHeader": true,
+    "readOnly": true
+  },
+  "whatsapp": {
+    "verifiedMayaSessionRequired": true,
+    "directChatsOnly": true,
+    "employeeContactResolution": "EXACT_VERIFIED_EMPLOYEE_CHAT",
+    "readConversationBeforeSend": true,
+    "verifyDelivery": true
+  },
+  "content": {
+    "incomingRelativePath": "AI-Sales/Content/Incoming",
+    "neverDeleteRaw": true,
+    "publicationRightsRequired": true,
+    "projectVideoSkill": "ifeel-project-video",
+    "publishSkill": "video-add"
+  }
+}

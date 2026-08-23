@@ -117,6 +117,14 @@ The existing `mailing-list-collector` builds the audience from verified I Feel s
 
 At maturity 0 the output is a draft, audience counts, route evidence and an approval request only. The actual email send is Maya's responsibility after explicit approval. Record only aggregate send results and a bounded campaign reference in the sales state; do not place recipient addresses or raw email bodies in the Vault, logs or committed artifacts.
 
+## Daily technician field-content intake
+
+The existing `maya-whatsapp` scheduled task evaluates a daily gate at 15:00 in `Asia/Jerusalem`. It reads the current month tab of spreadsheet `1_r2WSYvpUWlBRz_6yX5Yqr5KKUAOVNpte6CoZYttdII`, finds only the current date block and sends one consolidated direct photo request to each verified technician with field assignments. It never edits the spreadsheet and never creates a second scheduler.
+
+The employee request scope was explicitly approved on 2026-08-23. A customer may be asked for operational images only when today's schedule explicitly records that open need and the verified direct conversation shows no duplicate or opt-out. Customer service images never become marketing media without separate written publication rights.
+
+Received technician media enters `AI-Sales/Content/Incoming` with immutable `Raw`, local deterministic quality checks and privacy review. Shared state and Bus messages contain only aggregate counts and bounded references, never names, phones, addresses, chat bodies or image binaries. A safe, rights-cleared project set routes to the existing `ifeel-project-video` skill and then to `video-add`; missing skills or unknown rights are blockers, not permission to improvise or publish.
+
 ## Claude file bridge
 
 Codex places a structured judgment request in `_bus/to-claude/`. Claude returns a structured response through `_bus/to-codex/`. Before accepting a response, verify schema, timestamp, message ID, correlation ID and idempotency. Execute a proposed operation only when `approval_required=false` or `approval_status=approved`, and only when maturity and repository policy also permit it.
