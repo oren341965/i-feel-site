@@ -11,7 +11,7 @@ header('Referrer-Policy: no-referrer');
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="robots" content="noindex,nofollow,noarchive,nosnippet,noimageindex">
-  <title>אזור לקוחות והטבות | I Feel</title>
+  <title>אזור דיירים, לקוחות והטבות | I Feel</title>
   <meta name="description" content="אזור מאובטח ללקוחות פרויקטים ולקבוצות עובדים נבחרות של I Feel">
   <link rel="stylesheet" href="/customer-benefits/styles.css?v=1">
 </head>
@@ -22,7 +22,7 @@ header('Referrer-Policy: no-referrer');
     <span class="secure">● גישה מאובטחת לקבוצות זכאיות</span>
   </div>
   <div class="shell hero">
-    <p class="eyebrow">אזור לקוחות והטבות</p>
+    <p class="eyebrow">אזור דיירים, לקוחות והטבות</p>
     <h1>הטבות מיוחדות ללקוחות ולקבוצות נבחרות</h1>
     <p>האזור מרכז מסלולים ייעודיים ללקוחות של יזמי בנייה ולעובדים שמגיעים באמצעות חברה או ועד עובדים. פרטי ההטבה מוצגים רק לאחר אימות ההשתייכות לקבוצה.</p>
   </div>
@@ -47,6 +47,14 @@ header('Referrer-Policy: no-referrer');
         <ul><li>מבצע ייחודי לכל קבוצה</li><li>אימות באמצעות דואר ארגוני</li><li>תוכן שאינו פתוח לציבור הרחב</li></ul>
       </article>
     </div>
+    <section class="active-group" aria-labelledby="neve-shuster-title">
+      <div>
+        <p class="eyebrow" style="color:#8d672e">פרויקט דיירים פעיל</p>
+        <h3 id="neve-shuster-title">שכונת הפרדס, רעננה</h3>
+        <p>אזור ייעודי לדיירי נווה שוסטר / קבוצת דניה סיבוס: המפרט בדירה, חבילות ומחירי שדרוג, שינויי תכניות, פתרונות רשת ואודיו, מצב שבת וחגים, סרטוני הדרכה, אנשי קשר והפלייר להורדה. הכניסה באמצעות הדוא״ל הרשום בפרויקט וקוד חד־פעמי.</p>
+      </div>
+      <a class="button button--primary" href="/neve-shuster/">כניסה לאזור הדיירים</a>
+    </section>
     <section class="active-group" aria-labelledby="mt-law-title">
       <div><p class="eyebrow" style="color:#8d672e">קבוצה פעילה</p><h3 id="mt-law-title">עובדי מרקמן טומשין ושות׳</h3><p>הטבה בלעדית לעובדי המשרד. הכניסה באמצעות כתובת המסתיימת ב-@mt-law.co.il וקוד חד פעמי שנשלח אליה.</p></div>
       <a class="button button--primary" href="/customer-benefits/mt-law/">כניסה לעמוד הקבוצה</a>
