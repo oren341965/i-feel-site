@@ -89,7 +89,7 @@ Act as the factual, objective parent orchestrator for I Feel sales. Preserve the
   the live Monday connection gate unchanged.
 - Resolve the shared Vault from `VAULT_ROOT`; do not hard-code a Dropbox user path.
 - Execute a Claude-proposed operation only when approval is not required or is approved, and only when maturity and repository policy also allow it.
-- At maturity 0, no external write, external send, irreversible action, Monday mutation or autonomous budget change is permitted.
+- At maturity 0, no external write, external send, irreversible action, Monday mutation or autonomous budget change is permitted except Maya's explicitly approved standing front-office scope: low-risk Gmail organization and bounded routine customer acknowledgements/follow-ups defined in the canonical `maya-email-maintenance` and `maya-whatsapp` skills. This narrow exception does not authorize deletion, marketing, prices, commitments, complaints, calendar actions, Monday writes or any other maturity increase.
 - The only maturity-0 write exception is internal AI Sales bookkeeping: `C:\ifeel-sales\state`, `C:\ifeel-sales\logs`, dry-run judgment requests, and one idempotent `SYSTEM_TEST_RESPONSE` per valid Maya event inside `${VAULT_ROOT}/AI-Sales`. Never write elsewhere in the Vault.
 - Install or repair Oren's local runtime with `scripts/workstations/install-oren-sales-runtime.ps1`; it merges missing non-secret defaults, preserves connection paths, discovers the canonical repo skills, installs no Task Scheduler job and keeps maturity 0.
 

@@ -15,29 +15,42 @@ if ([string]::IsNullOrWhiteSpace($RepositoryPath)) {
 
 $resolvedRepository = [IO.Path]::GetFullPath($RepositoryPath)
 $resolvedOutput = [IO.Path]::GetFullPath($OutputPath)
-$sourceSkill = Join-Path $resolvedRepository ".claude\skills\maya-whatsapp"
-$sourceTask = Join-Path $resolvedRepository "agent-config\maya-scheduled-tasks\maya-whatsapp\SKILL.md"
+$sourceSkills = @("maya-whatsapp", "maya-email-maintenance")
+$sourceTasks = @("maya-whatsapp", "maya-email-maintenance")
 
-foreach ($required in @($sourceSkill, $sourceTask)) {
+foreach ($required in @(
+    $sourceSkills | ForEach-Object { Join-Path $resolvedRepository ".claude\skills\$_" }
+    $sourceTasks | ForEach-Object { Join-Path $resolvedRepository "agent-config\maya-scheduled-tasks\$_\SKILL.md" }
+)) {
     if (-not (Test-Path -LiteralPath $required)) {
         throw "Required source is missing: $required"
     }
 }
 
-$skillFiles = Get-ChildItem -LiteralPath $sourceSkill -Recurse -File | ForEach-Object {
-    $relativePath = $_.FullName.Substring($sourceSkill.Length).TrimStart('\')
-    [ordered]@{
-        kind = "skill"
-        relativePath = $relativePath
-        contentBase64 = [Convert]::ToBase64String([IO.File]::ReadAllBytes($_.FullName))
+$skillFiles = $sourceSkills | ForEach-Object {
+    $skillName = $_
+    $sourceSkill = Join-Path $resolvedRepository ".claude\skills\$skillName"
+    Get-ChildItem -LiteralPath $sourceSkill -Recurse -File | ForEach-Object {
+        $relativePath = $_.FullName.Substring($sourceSkill.Length).TrimStart('\')
+        [ordered]@{
+            kind = "skill"
+            skillName = $skillName
+            relativePath = $relativePath
+            contentBase64 = [Convert]::ToBase64String([IO.File]::ReadAllBytes($_.FullName))
+        }
     }
 }
-$taskFile = [ordered]@{
-    kind = "scheduled-task"
-    relativePath = "SKILL.md"
-    contentBase64 = [Convert]::ToBase64String([IO.File]::ReadAllBytes($sourceTask))
+$taskFiles = $sourceTasks | ForEach-Object {
+    $taskName = $_
+    $sourceTask = Join-Path $resolvedRepository "agent-config\maya-scheduled-tasks\$taskName\SKILL.md"
+    [ordered]@{
+        kind = "scheduled-task"
+        taskName = $taskName
+        relativePath = "SKILL.md"
+        contentBase64 = [Convert]::ToBase64String([IO.File]::ReadAllBytes($sourceTask))
+    }
 }
-$payloadJson = @($skillFiles) + @($taskFile) | ConvertTo-Json -Depth 5 -Compress
+$payloadJson = @($skillFiles) + @($taskFiles) | ConvertTo-Json -Depth 5 -Compress
 $payloadBase64 = [Convert]::ToBase64String([Text.Encoding]::UTF8.GetBytes($payloadJson))
 
 $installerTemplate = @'
@@ -57,15 +70,20 @@ if ($resolvedRuntime -eq $driveRoot -or $resolvedRuntime -eq $userRoot) {
 }
 
 $claudeHome = Join-Path $userRoot ".claude"
-$targetSkill = Join-Path $claudeHome "skills\maya-whatsapp"
-$targetTask = Join-Path $claudeHome "scheduled-tasks\maya-whatsapp\SKILL.md"
+$targetSkillsRoot = Join-Path $claudeHome "skills"
+$targetTasksRoot = Join-Path $claudeHome "scheduled-tasks"
+$targetSkill = Join-Path $targetSkillsRoot "maya-whatsapp"
+$targetEmailSkill = Join-Path $targetSkillsRoot "maya-email-maintenance"
+$targetTask = Join-Path $targetTasksRoot "maya-whatsapp\SKILL.md"
+$targetEmailTask = Join-Path $targetTasksRoot "maya-email-maintenance\SKILL.md"
 $taskPromptWasPresent = Test-Path -LiteralPath $targetTask -PathType Leaf
+$emailTaskPromptWasPresent = Test-Path -LiteralPath $targetEmailTask -PathType Leaf
 $backupRoot = Join-Path $userRoot ".ifeel-agent-backups\$(Get-Date -Format 'yyyyMMdd-HHmmss')-maya-field-content"
 $runtimeConfigRoot = Join-Path $resolvedRuntime "config"
 $runtimeStateRoot = Join-Path $resolvedRuntime "state"
 $targetConfig = Join-Path $runtimeConfigRoot "field-content.json"
 
-foreach ($directory in @($backupRoot, (Split-Path $targetSkill -Parent), (Split-Path $targetTask -Parent), $runtimeConfigRoot, $runtimeStateRoot)) {
+foreach ($directory in @($backupRoot, $targetSkillsRoot, (Split-Path $targetTask -Parent), (Split-Path $targetEmailTask -Parent), $runtimeConfigRoot, $runtimeStateRoot)) {
     if ($PSCmdlet.ShouldProcess($directory, "Create directory")) {
         New-Item -ItemType Directory -Path $directory -Force | Out-Null
     }
@@ -78,6 +96,13 @@ if (Test-Path -LiteralPath $targetSkill) {
         Copy-Item -LiteralPath $targetSkill -Destination $skillBackup -Recurse
     }
 }
+if (Test-Path -LiteralPath $targetEmailSkill) {
+    $skillBackup = Join-Path $backupRoot "skills\maya-email-maintenance"
+    if ($PSCmdlet.ShouldProcess($targetEmailSkill, "Back up existing skill to $skillBackup")) {
+        New-Item -ItemType Directory -Path (Split-Path $skillBackup -Parent) -Force | Out-Null
+        Copy-Item -LiteralPath $targetEmailSkill -Destination $skillBackup -Recurse
+    }
+}
 if ($taskPromptWasPresent) {
     $taskBackup = Join-Path $backupRoot "scheduled-tasks\maya-whatsapp\SKILL.md"
     if ($PSCmdlet.ShouldProcess($targetTask, "Back up scheduled-task prompt to $taskBackup")) {
@@ -85,19 +110,33 @@ if ($taskPromptWasPresent) {
         Copy-Item -LiteralPath $targetTask -Destination $taskBackup
     }
 }
+if ($emailTaskPromptWasPresent) {
+    $taskBackup = Join-Path $backupRoot "scheduled-tasks\maya-email-maintenance\SKILL.md"
+    if ($PSCmdlet.ShouldProcess($targetEmailTask, "Back up scheduled-task prompt to $taskBackup")) {
+        New-Item -ItemType Directory -Path (Split-Path $taskBackup -Parent) -Force | Out-Null
+        Copy-Item -LiteralPath $targetEmailTask -Destination $taskBackup
+    }
+}
 
 $payloadJson = [Text.Encoding]::UTF8.GetString([Convert]::FromBase64String($payloadBase64))
 $files = $payloadJson | ConvertFrom-Json
 foreach ($file in $files) {
     if ($file.kind -eq "skill") {
-        $target = Join-Path $targetSkill $file.relativePath
+        if ($file.skillName -notin @("maya-whatsapp", "maya-email-maintenance")) {
+            throw "Unexpected managed skill: $($file.skillName)"
+        }
+        $allowedRoot = [IO.Path]::GetFullPath((Join-Path $targetSkillsRoot $file.skillName))
+        $target = Join-Path $allowedRoot $file.relativePath
     } elseif ($file.kind -eq "scheduled-task") {
-        $target = $targetTask
+        if ($file.taskName -notin @("maya-whatsapp", "maya-email-maintenance")) {
+            throw "Unexpected managed scheduled task: $($file.taskName)"
+        }
+        $allowedRoot = [IO.Path]::GetFullPath((Join-Path $targetTasksRoot $file.taskName))
+        $target = Join-Path $allowedRoot $file.relativePath
     } else {
         throw "Unexpected payload kind: $($file.kind)"
     }
     $resolvedTarget = [IO.Path]::GetFullPath($target)
-    $allowedRoot = if ($file.kind -eq "skill") { [IO.Path]::GetFullPath($targetSkill) } else { [IO.Path]::GetFullPath((Split-Path $targetTask -Parent)) }
     if (-not $resolvedTarget.StartsWith($allowedRoot, [StringComparison]::OrdinalIgnoreCase)) {
         throw "Payload path escapes its target root: $resolvedTarget"
     }
@@ -130,9 +169,12 @@ $metadata = [ordered]@{
     installedAt = (Get-Date).ToString("o")
     runtimeRoot = $resolvedRuntime
     skillPath = $targetSkill
+    emailSkillPath = $targetEmailSkill
     scheduledTaskPrompt = $targetTask
+    emailScheduledTaskPrompt = $targetEmailTask
     existingTaskPromptDetected = $taskPromptWasPresent
-    scheduleRegistrationRequired = -not $taskPromptWasPresent
+    existingEmailTaskPromptDetected = $emailTaskPromptWasPresent
+    scheduleRegistrationRequired = -not ($taskPromptWasPresent -and $emailTaskPromptWasPresent)
     scheduleBackendVerificationRequired = $true
     intendedDailyLocalTime = "15:00"
     timezone = "Asia/Jerusalem"

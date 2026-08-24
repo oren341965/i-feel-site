@@ -17,9 +17,11 @@ Use the existing Maya WhatsApp session on Maya's workstation. The shared `ai-sal
 
 ## Core customer rules
 
-- Customer replies, follow-ups and operational requests require an explicit approval scope. The only standing exception added by this skill is the narrow daily field-content scope below.
+- Oren granted a standing approval on `2026-08-24` for bounded routine customer communication. Maya may send: acknowledgement of a new inbound lead or customer message; a factual status request for a lead, proposal, plans or open project; and a request for missing operational information. This approval does not authorize any other external action.
+- Before sending, require an exact verified contact match, read the recent direct conversation, confirm an open operational need, and reject an opt-out or a substantially equivalent recent message. A proactive follow-up is limited to one per customer in seven days and at most two unanswered attempts. A new inbound customer message may receive one prompt acknowledgement.
 - Never quote or change a price, promise a deadline, admit liability, or make a technical commitment. Escalate those cases to a human.
 - Treat threats, legal language, safety incidents, severe dissatisfaction, repeated failures and requests to stop contact as red flags. Do not send an automated reply.
+- Never use the standing scope for marketing, broadcasts, appointment invitations, calendar changes or outreach to a new unverified recipient. Prepare a draft for anything outside the allowed categories.
 - Do not delete chats or media, block contacts, change WhatsApp settings, or use unsupported scraping.
 - Identify the Monday item by a strong customer identifier, normally the verified phone number. A similar name is not sufficient.
 - Ordinary customer communication is limited to `09:00-18:00` Sunday through Thursday in `Asia/Jerusalem`; never send on Shabbat or an Israeli holiday.

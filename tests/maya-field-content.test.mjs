@@ -88,3 +88,22 @@ test('skill keeps customer service images separate and routes publishable media 
   assert.match(reference, /Never delete `Raw`/);
   assert.match(reference, /publication rights/i);
 });
+
+test('Maya standing communication scope is bounded and scheduled Gmail maintenance stays deletion-free', async () => {
+  const { readFile } = await import('node:fs/promises');
+  const whatsapp = await readFile(new URL('../.claude/skills/maya-whatsapp/SKILL.md', import.meta.url), 'utf8');
+  const email = await readFile(new URL('../.claude/skills/maya-email-maintenance/SKILL.md', import.meta.url), 'utf8');
+  const emailTask = await readFile(new URL('../agent-config/maya-scheduled-tasks/maya-email-maintenance/SKILL.md', import.meta.url), 'utf8');
+
+  for (const skill of [whatsapp, email]) {
+    assert.match(skill, /one per customer in seven days|one message per customer in seven days/);
+    assert.match(skill, /at most two unanswered attempts/);
+    assert.match(skill, /exact verified contact|verify the exact thread and recipient/);
+    assert.match(skill, /marketing/);
+    assert.match(skill, /calendar/);
+  }
+  assert.match(email, /must not permanently delete or trash mail/);
+  assert.match(emailTask, /once every three hours/);
+  assert.match(emailTask, /must not request local-file `Edit` access/);
+  assert.match(emailTask, /alter Monday/);
+});
