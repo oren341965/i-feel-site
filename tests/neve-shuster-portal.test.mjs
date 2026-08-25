@@ -32,6 +32,12 @@ test('standard, audio and activation copy stays within the approved technology s
   assert.doesNotMatch(index, /Home\s*Assistant|Schneider|\bKNX\b|G9yoryz8T9A|מכירים את המסך/iu);
 });
 
+test('Neve Shuster uses the rectangular TouchWand switch artwork', () => {
+  assert.equal((index.match(/touchwand-panel-9-rectangular\.webp/g) || []).length, 2);
+  assert.match(index, /'panel9-rectangular\.webp'/);
+  assert.doesNotMatch(index, /touchwand-panel-9\.jpg|'panel9\.jpg'/);
+});
+
 test('price list matches the approved 2.7.26 project price sheet', () => {
   const priceList = index.slice(index.indexOf('$priceGroups = ['), index.indexOf('$contacts = ['));
   const expectedPrices = [
