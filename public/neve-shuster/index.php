@@ -69,7 +69,7 @@ $priceGroups = [
     [
         'title' => 'חשמל חכם, תקן Z-Wave בתדר 916 המותקן בישראל',
         'rows' => [
-            ['TW601090-916-R-WA', 'מפסק זכוכית טאץ Z-Wave עד 9 לחצנים TouchWand, כולל חיישן קרבה משולב, 6 מעגלים להזנות ישירות ועד 3 תרחישים', 'דורש 0 במפסק מהחשמלאי + קופסת עומק 3 מקום שוכב', '1,225', 'panel9.jpg'],
+            ['TW601090-916-R-WA', 'מפסק זכוכית טאץ Z-Wave עד 9 לחצנים TouchWand, כולל חיישן קרבה משולב, 6 מעגלים להזנות ישירות ועד 3 תרחישים', 'דורש 0 במפסק מהחשמלאי + קופסת עומק 3 מקום שוכב', '1,225', 'panel9-rectangular.webp'],
             ['Glasswand 1-b w', 'מפסק זכוכית טאץ מהודר עם לחצן בודד לתאורה, חיווי אור בהפעלה, ללא כיתוב, בצבע לבן', 'דורש 0 במפסק התאורה מצד החשמלאי', '550', 'glass-1b.jpg'],
             ['Glasswand 2-b w', 'מפסק זכוכית טאץ מהודר עם 2 לחצנים לתאורה, חיווי אור בהפעלה, ללא כיתוב, בצבע לבן', 'דורש 0 במפסק התאורה מצד החשמלאי', '563', 'glass-2b.jpg'],
             ['Glasswand 3-b w', 'מפסק זכוכית טאץ מהודר עם 3 לחצנים לתאורה, חיווי אור בהפעלה, ללא כיתוב, בצבע לבן', 'דורש 0 במפסק התאורה מצד החשמלאי', '575', 'glass-3b.jpg'],
@@ -186,7 +186,7 @@ if ($user === null) {
   <div class="shell entry">
     <section class="card">
       <figure class="panel-figure">
-        <img src="/neve-shuster/assets/touchwand-panel-9.jpg" alt="Panel 9, מפסק זכוכית טאץ TouchWand בעל 9 לחצנים, המפסק המותקן בכל דירה בפרויקט" width="1100" height="705">
+        <img src="/neve-shuster/assets/touchwand-panel-9-rectangular.webp" alt="Panel 9, מפסק זכוכית טאץ מלבני TouchWand בעל 9 לחצנים, המפסק המותקן בכל דירה בפרויקט" width="1200" height="770">
         <figcaption><strong>Panel 9</strong> — המפסק שמותקן בכל דירה בפרויקט. 6 הפעלות ישירות ועד 3 תרחישים, בתקן Z-Wave.</figcaption>
       </figure>
       <h2>כך נכנסים לאזור הדיירים</h2>
@@ -294,7 +294,7 @@ nsh_head('אזור דיירי שכונת הפרדס, רעננה | I Feel');
       <h2>מה כלול בסטנדרט בכל דירה</h2>
       <p class="lead">בכל דירה מותקנת מערכת TouchWand אלחוטית בתקן Z-Wave, עם שליטה גם באמצעות SmartSphere.</p>
       <div class="split" style="margin:20px 0 6px">
-        <img src="/neve-shuster/assets/touchwand-panel-9.jpg" alt="מפסק זכוכית טאץ TouchWand בעל 9 לחצנים, המפסק המותקן בדירות הפרויקט" loading="lazy" width="1100" height="705">
+        <img src="/neve-shuster/assets/touchwand-panel-9-rectangular.webp" alt="מפסק זכוכית טאץ מלבני TouchWand בעל 9 לחצנים, המפסק המותקן בדירות הפרויקט" loading="lazy" width="1200" height="770">
         <div>
           <h3 style="margin-top:0">מפסק מעוצב ליד הכניסה</h3>
           <p>שליטה בתאורה ובתריס הוויטרינה.</p>
