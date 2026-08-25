@@ -29,6 +29,7 @@
 | בקרת מבנה BMS במשרדי ישקר בגוש תפן | BMS | `nxX_o_RmnDc` | `/structure-control/projects/iscar/` |
 | חיבור מנעול חכם במגע יבש למערכת הבית החכם | הדרכות שימוש | `CRJVLtIC38M` | `/communication-networks/#smart-lock-video` |
 | הפעלה משותפת של אזור ראשי ואזור משני ברסיבר Denon HEOS | חדרי ישיבות ואודיו | `_d_DDG-Ee5Q` | `/audio-and-sound-systems/#dual-zone-receiver-video` |
+| מסך 10 אינץ׳ לשליטה בכלל מערכות הבית החכם | בית חכם ו-KNX | `AV4FfQJQqH8` | `/smart-home/#ten-inch-control-screen` |
 
 ---
 

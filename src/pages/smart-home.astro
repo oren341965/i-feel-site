@@ -14,6 +14,9 @@ const enrichedContent = accurateIntegratorCopy.replace(
   '<section id="choose-smart-home-company"><h2>איך בוחרים חברת בית חכם בישראל?</h2><p><strong>התשובה הקצרה:</strong> בוחרים חברה לפי איכות התכנון, הטכנולוגיה, ניסיון האינטגרציה והשירות שאחרי המסירה — לא לפי מספר המתגים או האפליקציה בלבד. בבנייה חדשה חשוב לבדוק ניסיון ב-<a href="/knx-smart-home/">KNX</a>, יכולת לתאם חשמל, מיזוג, אבטחה, אודיו ורשתות תחת תכנון אחד, ומחלקת <a href="/service-and-maintenance/">שירות ותחזוקה</a> פעילה בישראל. בפרויקטים גדולים או מסחריים חשוב לבדוק גם ניסיון ב-<a href="/structure-control/">BMS ובקרת מבנה</a>. להשוואה מסודרת ראו <a href="/smart-home-bms-companies-israel/">מדריך לבחירת חברת בית חכם ובקרת מבנה בישראל</a>.</p></section><section id="integrator">'
 );
 
+const tenInchScreenSection = '<section id="ten-inch-control-screen"><h2>מסך 10 אינץ׳ לשליטה מרכזית בבית החכם</h2><div class="not-prose mt-6 bg-brand-900 rounded-2xl p-4 md:p-6 flex justify-center"><div class="w-full max-w-[300px] rounded-xl overflow-hidden" style="aspect-ratio:9/16;"><iframe loading="lazy" class="w-full h-full" src="https://www.youtube-nocookie.com/embed/AV4FfQJQqH8" title="מסך 10 אינץ׳ לשליטה בכל מערכות הבית החכם — I FEEL" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div></div><p>מסך שליטה מרכזי בגודל 10 אינץ׳ מאפשר להפעיל מממשק אחד את התאורה, המיזוג, התריסים, המוזיקה, האבטחה והתרחישים בכל חדרי הבית. כך אין צורך לעבור בין אפליקציות נפרדות, וכל בני הבית מקבלים דרך הפעלה ברורה ונוחה.</p><p><a href="/contactus/">דברו איתנו לתכנון מסך שליטה ומערכת בית חכם מלאה</a>.</p></section>';
+const smartHomeContent = enrichedContent.replace('</div></article>', `${tenInchScreenSection}</div></article>`);
+
 const meta = {
   title: "בית חכם בישראל | KNX, אינטגרציה ומחירים | i-feel",
   description: "בית חכם בישראל — מדריך מקיף ל-KNX, השוואה ל-Zigbee, ניתוח חדר-חדר ומחירים. i-feel, אימבר 14, פתח תקווה. שיחת ייעוץ ראשונית 03-508-9553.",
@@ -24,9 +27,25 @@ const meta = {
   ogImage: "https://i-feel.co.il/projects/knx-smart-home-central-moshav/09-smart-living-room-knx.jpg",
   jsonLd: "{\n  \"@context\": \"https://schema.org\",\n  \"@graph\": [\n    {\n      \"@type\": [\"LocalBusiness\", \"HomeAndConstructionBusiness\"],\n      \"@id\": \"https://i-feel.co.il/#business\",\n      \"name\": \"i-feel\",\n      \"alternateName\": \"i-feel מערכות בקרת מבנה ובית חכם\",\n      \"url\": \"https://i-feel.co.il/\",\n      \"logo\": \"https://i-feel.co.il/assets/ifeel-logo.png\",\n      \"image\": \"https://i-feel.co.il/assets/ifeel-logo.png\",\n      \"telephone\": \"+972-3-508-9553\",\n      \"email\": \"sales@i-feel.co.il\",\n      \"priceRange\": \"₪₪₪\",\n      \"address\": {\n        \"@type\": \"PostalAddress\",\n        \"streetAddress\": \"אימבר 14\",\n        \"addressLocality\": \"פתח תקווה\",\n        \"addressRegion\": \"מחוז המרכז\",\n        \"postalCode\": \"4951148\",\n        \"addressCountry\": \"IL\"\n      },\n      \"geo\": {\n        \"@type\": \"GeoCoordinates\",\n        \"latitude\": 32.09124,\n        \"longitude\": 34.88762\n      },\n      \"openingHoursSpecification\": [\n        {\n          \"@type\": \"OpeningHoursSpecification\",\n          \"dayOfWeek\": [\"Sunday\",\"Monday\",\"Tuesday\",\"Wednesday\",\"Thursday\"],\n          \"opens\": \"09:00\",\n          \"closes\": \"18:00\"\n        }\n      ],\n      \"areaServed\": {\n        \"@type\": \"Country\",\n        \"name\": \"Israel\",\n        \"sameAs\": \"https://www.wikidata.org/wiki/Q801\"\n      },\n      \"sameAs\": [\n        \"https://www.facebook.com/SmarthomeIsrael\",\n        \"https://www.instagram.com/ifeelisrael\",\n        \"https://www.linkedin.com/company/200156\"\n      ]\n    },\n    {\n      \"@type\": \"BreadcrumbList\",\n      \"itemListElement\": [\n        { \"@type\": \"ListItem\", \"position\": 1, \"name\": \"דף הבית\", \"item\": \"https://i-feel.co.il/\" },\n        { \"@type\": \"ListItem\", \"position\": 2, \"name\": \"בית חכם\", \"item\": \"https://i-feel.co.il/smart-home/\" }\n      ]\n    },\n    {\n      \"@type\": \"Article\",\n      \"headline\": \"בית חכם בישראל — המדריך המקיף ל-KNX, פרוטוקולים ומחירים\",\n      \"description\": \"המדריך השלם לבית חכם בישראל. השוואת KNX, Zigbee ו-Z-Wave. ניתוח חדר-חדר, תקן ישראלי, וטווחי מחירים — מאת i-feel.\",\n      \"image\": \"https://i-feel.co.il/projects/knx-smart-home-central-moshav/09-smart-living-room-knx.jpg\",\n      \"author\": { \"@type\": \"Organization\", \"name\": \"i-feel\", \"url\": \"https://i-feel.co.il/\" },\n      \"publisher\": { \"@id\": \"https://i-feel.co.il/#business\" },\n      \"datePublished\": \"2026-05-22\",\n      \"dateModified\": \"2026-08-13\",\n      \"mainEntityOfPage\": \"https://i-feel.co.il/smart-home/\"\n    }\n  ]\n}"
 };
+
+const tenInchScreenVideoObject = `,
+    {
+      "@type": "VideoObject",
+      "@id": "https://i-feel.co.il/smart-home/#ten-inch-control-screen-video",
+      "name": "מסך 10 אינץ׳ לשליטה בכל מערכות הבית החכם | I FEEL",
+      "description": "הדגמה של מסך שליטה מרכזי בגודל 10 אינץ׳, שמרכז תאורה, מיזוג, תריסים, מוזיקה, אבטחה ותרחישים בבית החכם.",
+      "uploadDate": "2026-08-25T11:07:46Z",
+      "thumbnailUrl": "https://i.ytimg.com/vi/AV4FfQJQqH8/hqdefault.jpg",
+      "contentUrl": "https://www.youtube.com/watch?v=AV4FfQJQqH8",
+      "embedUrl": "https://www.youtube-nocookie.com/embed/AV4FfQJQqH8",
+      "inLanguage": "he-IL",
+      "publisher": { "@id": "https://i-feel.co.il/#business" }
+    }`;
+
+meta.jsonLd = meta.jsonLd.replace("\n  ]\n}", `${tenInchScreenVideoObject}\n  ]\n}`);
 ---
 <BaseLayout {...meta}>
-  <Fragment set:html={enrichedContent} />
+  <Fragment set:html={smartHomeContent} />
   <KnxFieldGallery />
   <KnxAdvisorCta />
 </BaseLayout>
