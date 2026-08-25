@@ -27,6 +27,19 @@ Use the existing Maya WhatsApp session on Maya's workstation. The shared `ai-sal
 - Ordinary customer communication is limited to `09:00-18:00` Sunday through Thursday in `Asia/Jerusalem`; never send on Shabbat or an Israeli holiday.
 - Apply the installed `maya-admin` skill when the workflow requires its administrative rules. If it is missing, report the dependency instead of inventing a substitute.
 
+## Voice-note and phone-complaint forwarding to Oren (standing permission)
+
+Oren granted a narrow standing permission to relay two specific customer signals to himself only. It authorizes nothing else — no customer reply, no other recipient, no Monday change, no deletion.
+
+- **Verify Oren's chat first.** Resolve Oren's direct chat by a pre-approved phone number or a stable contact identifier configured for Maya's workstation; a matching display name alone is never sufficient. If Oren's identity cannot be verified, do not forward anything and report `OREN_CONTACT_UNVERIFIED`.
+- **New customer voice note.** When a customer sends a new voice message, verify the conversation and the sender, then relay the original voice message to Oren's verified chat only using WhatsApp's native Forward. Never download, transcode, or re-upload the audio; forward the original item so nothing is copied through local storage.
+- **"Maya isn't answering the phone."** When a customer writes that Maya is not answering by phone, send Oren a short internal alert containing the customer name, the message time, and the fact that the customer asked for a phone callback. If the customer also attached a voice note, forward that original voice note to Oren as well.
+- **Forward to Oren only.** Never forward or relay these items to any other person, group, or channel.
+- **Do not reply to the customer.** These signals are relayed to Oren silently; automated customer replies stay out of scope and follow the ordinary draft-and-escalate rules.
+- **Deduplicate by the original message id.** Each original customer message is forwarded to Oren at most once. Use the recent Oren chat as the duplicate ledger and skip anything already relayed. If that ledger cannot be read, fail closed and do not forward.
+- **Keep Monday and media untouched.** Make no Monday write and no deletion for this permission. This forwarding path does not download media or write files.
+- **Vault result only.** Persist to the Vault only a bounded aggregate result of this pass — counts of voice notes forwarded, phone-complaint alerts sent, duplicates skipped and blockers. Never store message content, phone numbers, customer identifiers or the audio file.
+
 ## Daily field-content gate
 
 At `15:00` in `Asia/Jerusalem`, once per local date, inspect the live technician schedule and request photos plus a short field note from every technician who had field assignments that day. The existing five-minute `maya-whatsapp` scheduled task owns the clock. Use the verified recent direct WhatsApp conversation as the duplicate ledger and touch only unresolved recipients. If that conversation cannot be read, fail closed and do not send. The five-minute cadence must never become a five-minute message cadence.
