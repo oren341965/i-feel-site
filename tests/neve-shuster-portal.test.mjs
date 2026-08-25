@@ -32,6 +32,43 @@ test('standard, audio and activation copy stays within the approved technology s
   assert.doesNotMatch(index, /Home\s*Assistant|Schneider|\bKNX\b|G9yoryz8T9A|מכירים את המסך/iu);
 });
 
+test('Neve Shuster uses the rectangular TouchWand switch artwork', () => {
+  assert.equal((index.match(/touchwand-panel-9-rectangular\.webp/g) || []).length, 2);
+  assert.match(index, /'panel9-rectangular\.webp'/);
+  assert.doesNotMatch(index, /touchwand-panel-9\.jpg|'panel9\.jpg'/);
+});
+
+test('price list matches the approved 2.7.26 project price sheet', () => {
+  const priceList = index.slice(index.indexOf('$priceGroups = ['), index.indexOf('$contacts = ['));
+  const expectedPrices = [
+    ['TW601090-916-R-WA', '1,225'],
+    ['Glasswand 1-b w', '550'],
+    ['Glasswand 2-b w', '563'],
+    ['Glasswand 3-b w', '575'],
+    ['Glasswand 2-shut w', '575'],
+    ['129020', '580'],
+    ['TW303100-916-E', '463'],
+    ['IFW008', '562'],
+    ['TW303200-916-E', '550'],
+    ['זוג רמקולים קדמיים סטליטיים', '5,620'],
+    ['סאונדבר אלחוטי איכותי', '1,500 עד 3,750'],
+    ['גלאי מגנט או גלאי נפח אלחוטי', '460'],
+    ['גלאי עשן אלחוטי', '480'],
+    ['גלאי הצפה אלחוטי', '430'],
+    ['מערכת אזעקה אלחוטית עם גלאי מגנט בדלת וגלאי נפח פנימי', '3,000'],
+  ];
+
+  for (const [label, price] of expectedPrices) {
+    const escapedLabel = label.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const escapedPrice = price.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    assert.match(priceList, new RegExp(`${escapedLabel}[^\\r\\n]*'${escapedPrice}'`), `wrong price for ${label}`);
+  }
+
+  assert.doesNotMatch(priceList, /16A GLASS|IFW-ICON|IFW-BLACK|WiComm Pro|6,744|4,500|3,600/);
+  assert.match(priceList, /בעלות 220 ש"ח בתוספת מע"מ/);
+  assert.match(index, /התשלום אינו כולל את עבודת החשמלאי מטעם קבלן החשמל בפרויקט/);
+});
+
 test('quote form collects the requested building, apartment and interest fields', () => {
   assert.match(index, /<select name="building"[^>]*required>/);
   assert.match(index, /\$buildingNumber = 1; \$buildingNumber <= 5; \$buildingNumber\+\+/);

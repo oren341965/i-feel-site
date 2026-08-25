@@ -54,7 +54,21 @@ const dualZoneReceiverVideoObject = `,
       \"publisher\": { \"@id\": \"https://i-feel.co.il/#business\" }
     }`;
 
-meta.jsonLd = meta.jsonLd.replace("\n  ]\n}", `${iscarVideoObject}${smartLockVideoObject}${dualZoneReceiverVideoObject}\n  ]\n}`);
+const tenInchSmartHomeScreenVideoObject = `,
+    {
+      "@type": "VideoObject",
+      "@id": "https://i-feel.co.il/video/#v-ten-inch-smart-home-screen",
+      "name": "מסך 10 אינץ׳ לשליטה בכל מערכות הבית החכם | I FEEL",
+      "description": "הדגמה של מסך שליטה מרכזי בגודל 10 אינץ׳, שמרכז תאורה, מיזוג, תריסים, מוזיקה, אבטחה ותרחישים בבית החכם.",
+      "uploadDate": "2026-08-25T11:07:46Z",
+      "thumbnailUrl": "https://i.ytimg.com/vi/AV4FfQJQqH8/hqdefault.jpg",
+      "contentUrl": "https://www.youtube.com/watch?v=AV4FfQJQqH8",
+      "embedUrl": "https://www.youtube-nocookie.com/embed/AV4FfQJQqH8",
+      "inLanguage": "he-IL",
+      "publisher": { "@id": "https://i-feel.co.il/#business" }
+    }`;
+
+meta.jsonLd = meta.jsonLd.replace("\n  ]\n}", `${iscarVideoObject}${smartLockVideoObject}${dualZoneReceiverVideoObject}${tenInchSmartHomeScreenVideoObject}\n  ]\n}`);
 ---
 <BaseLayout {...meta}>
   <Fragment set:html={content} />
