@@ -24,7 +24,7 @@ test('Neve Shuster hero uses the approved content and project facts', () => {
 
 test('standard, audio and activation copy stays within the approved technology stack', () => {
   assert.match(index, /מפסק מעוצב ליד הכניסה<\/strong><span>שליטה בתאורה ובתריס הוויטרינה\.<\/span>/);
-  assert.match(index, /שליטה במערכת החכמה באמצעות אפליקציית TouchWand/);
+  assert.match(index, /שליטה מהטלפון<\/strong><span>שליטה במערכת החכמה באמצעות אפליקציית TouchWand\.<\/span>/);
   assert.match(index, /אודיו לבית<\/h3>/);
   assert.match(index, /רמקולים שקועים בתקרה, סאונדבר לסלון או מערכת אודיו מלאה\./);
   assert.match(index, /איך מפעילים את הבית החכם\?/);

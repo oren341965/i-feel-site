@@ -306,7 +306,7 @@ nsh_head('אזור דיירי שכונת הפרדס, רעננה | I Feel');
       </div>
       <div class="grid">
         <div class="tile"><strong>מפסק מעוצב ליד הכניסה</strong><span>שליטה בתאורה ובתריס הוויטרינה.</span></div>
-        <div class="tile"><strong>שליטה מהטלפון</strong><span>שליטה במערכת החכמה באמצעות אפליקציית TouchWand וממשק SmartSphere.</span></div>
+        <div class="tile"><strong>שליטה מהטלפון</strong><span>שליטה במערכת החכמה באמצעות אפליקציית TouchWand.</span></div>
         <div class="tile"><strong>TouchWand + Z-Wave + SmartSphere</strong><span>מערכת אחת לתפעול, לתרחישים ולהרחבות שתבחרו להוסיף לדירה.</span></div>
       </div>
     </section>
