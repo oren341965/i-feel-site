@@ -135,6 +135,8 @@ table.am-t{border-collapse:collapse;width:100%;min-width:1080px;font-size:14px}
   font-size:15px;padding:8px 20px;border-radius:8px;margin-bottom:20px}
 .am-gate-box h1{margin:0 0 4px;font-size:clamp(21px,4.2vw,29px);color:var(--nv);line-height:1.3}
 .am-gate-box h1 span{display:block;font-size:.66em;font-weight:600;color:#5b6b7f}
+.am-gate-intro{margin:14px auto 0;max-width:480px;font-size:15px;color:#44536a;line-height:1.55}
+.am-gate-intro span{display:block;margin-top:5px;font-size:14px;color:var(--mut)}
 .am-gate-q{margin:20px 0 14px;font-size:18px;font-weight:700;color:var(--tx)}
 .am-gate-q span{display:block;font-size:15px;font-weight:600;color:var(--mut)}
 .am-gate-btns{display:grid;grid-template-columns:1fr 1fr;gap:13px}

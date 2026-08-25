@@ -87,7 +87,20 @@ if (articleWords < 900) errors.push(`new article: only ${articleWords} rendered 
 const sitemap = await readFile(path.join(distRoot, 'sitemap.xml'), 'utf8');
 if (!sitemap.includes('https://i-feel.co.il/articles/bms-retrofit-existing-building/')) errors.push('sitemap: new article is missing');
 
-console.log(`[build-qa] pages=${htmlFiles.length} uniqueOgImages=${ogImages.size} jsonLdBlocks=${jsonLdBlocks} articleWords=${articleWords} homepageDescription=${homepageDescription.length}`);
+const asMade = await readFile(path.join(distRoot, 'as-made/index.html'), 'utf8');
+const asMadeRobots = attrContent(asMade, 'meta', 'robots');
+if (/\bnoindex\b/i.test(asMadeRobots)) errors.push('as-made: hub must be indexable');
+if (!asMade.includes('תוכנית העדות') || !asMade.includes('אס מייד')) errors.push('as-made: discoverability aliases are missing');
+if (!sitemap.includes('https://i-feel.co.il/as-made/')) errors.push('sitemap: AS-MADE hub is missing');
+if (!homepage.includes('href="/as-made/"')) errors.push('homepage: footer link to AS-MADE hub is missing');
+
+const searchRecords = JSON.parse(await readFile(path.join(distRoot, 'search-index.json'), 'utf8'));
+const asMadeSearchRecord = searchRecords.find((record) => record.url === '/as-made/');
+if (!asMadeSearchRecord) errors.push('search index: AS-MADE hub is missing');
+const indexedAsMadeForms = searchRecords.filter((record) => record.url.startsWith('/as-made/') && record.url !== '/as-made/');
+if (indexedAsMadeForms.length > 0) errors.push(`search index: expected only the AS-MADE hub, found ${indexedAsMadeForms.length} indexed forms`);
+
+console.log(`[build-qa] pages=${htmlFiles.length} searchRecords=${searchRecords.length} uniqueOgImages=${ogImages.size} jsonLdBlocks=${jsonLdBlocks} articleWords=${articleWords} homepageDescription=${homepageDescription.length}`);
 if (errors.length > 0) {
   for (const error of errors) console.error(`[build-qa] ${error}`);
   process.exit(1);
