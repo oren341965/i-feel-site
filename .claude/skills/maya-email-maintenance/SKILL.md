@@ -32,6 +32,25 @@ Keep Maya's work inbox small, classified and actionable without losing customer 
 8. Archive only messages that are clearly low-risk and fully handled: newsletters, routine automated notifications, obvious marketing clutter and completed administrative traffic. Leave uncertain messages in the inbox and report them.
 9. Use the verified Gmail message/thread state and the existing `processed` label as the unattended checkpoint. A retry must be idempotent and must not create duplicate drafts, repeat a send or repeat label/archive actions. Do not require local-file `Edit` access for the scheduled pass.
 
+## Monday-trigger routing guard
+
+`MONDAY IS A TRIGGER, NEVER A RECIPIENT.` Treat a Monday notification only as a signal to inspect the referenced board item; it is never the customer's message or a reply destination.
+
+- Before creating any draft, extract the referenced `board_id` and `item_id`, read the authoritative Monday item, and identify the customer, stage, requested action, next action, owner and strongly verified contact details.
+- Read the customer's most recent direct Gmail or WhatsApp conversation when it is available and required for context. Keep the Monday notification thread separate from the customer thread.
+- Never reply in a Monday notification thread and never put `monday.com`, `notifications@monday.com`, an automation sender, or another Monday-controlled address in `To`, `CC` or `BCC`.
+- Validate that every proposed recipient is the exact contact matched to the Monday item and is not a Monday domain. If Monday appears in any recipient field, return `WRONG_RECIPIENT`, quarantine only bounded hashes and counts locally, and create no draft.
+- If the customer or direct thread cannot be matched unambiguously, return `NEEDS_OREN`; create no draft and send nothing.
+- Enforce deduplication, opt-out, no more than one proactive follow-up in seven days, and no more than two unanswered attempts before drafting.
+- Route plans requested or awaited to a plans follow-up; when plans were received, verify completeness and prepare a technical handoff instead of requesting them again. Route service or complaints to Support, employee tasks internally, and never reply to Monday.
+
+## Unattended-run controls
+
+- Exit quickly with `COMPLETED_NO_ACTION` when the checkpoint window has no delta.
+- Use one run lock and a bounded runtime. A timeout is a normal blocker result, not permission to continue indefinitely.
+- Never wait for human approval inside an unattended run. Put the approval in the approved local queue and finish with an explicit status.
+- Release the run lock in `finally` for every outcome, including timeout, connector failure, `WRONG_RECIPIENT` and `NEEDS_OREN`.
+
 ## Standing routine-customer scope
 
 Maya may send from the verified Maya mailbox only inside an existing customer or lead thread, and only for:
