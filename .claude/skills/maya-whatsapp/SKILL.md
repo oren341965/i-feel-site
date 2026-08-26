@@ -15,6 +15,14 @@ Use the existing Maya WhatsApp session on Maya's workstation. The shared `ai-sal
 4. Before sending, read the recent direct conversation and the relevant operational record. Reject a duplicate request or an opt-out.
 5. During the daily execution window, run the field-content gate described below.
 
+## Browser and unattended-run controls
+
+- Use one already-open, verified WhatsApp Business tab. Never open a new WhatsApp tab from an unattended invocation.
+- If the existing tab is owned by another live browser session, return `WHATSAPP_SESSION_CLAIM_BLOCKED`. A session-claim failure is a blocker, never a reason to create a duplicate tab.
+- Exit quickly with `COMPLETED_NO_ACTION` when there is no new conversation delta and the daily gate is not due.
+- Use one run lock and a bounded runtime. Never wait for approval inside an unattended run; queue the approval and end with an explicit status.
+- Release the run lock in `finally` on success, timeout, missing access, session-claim failure or any other blocker.
+
 ## Core customer rules
 
 - Oren granted a standing approval on `2026-08-24` for bounded routine customer communication. Maya may send: acknowledgement of a new inbound lead or customer message; a factual status request for a lead, proposal, plans or open project; and a request for missing operational information. This approval does not authorize any other external action.
@@ -24,6 +32,7 @@ Use the existing Maya WhatsApp session on Maya's workstation. The shared `ai-sal
 - Never use the standing scope for marketing, broadcasts, appointment invitations, calendar changes or outreach to a new unverified recipient. Prepare a draft for anything outside the allowed categories.
 - Do not delete chats or media, block contacts, change WhatsApp settings, or use unsupported scraping.
 - Identify the Monday item by a strong customer identifier, normally the verified phone number. A similar name is not sufficient.
+- Treat Monday as a trigger and operational record only, never as a message recipient. Never send or draft a reply to a Monday notification thread or address. Validate the direct customer or employee recipient independently; `WRONG_RECIPIENT` blocks the action.
 - Ordinary customer communication is limited to `09:00-18:00` Sunday through Thursday in `Asia/Jerusalem`; never send on Shabbat or an Israeli holiday.
 - Apply the installed `maya-admin` skill when the workflow requires its administrative rules. If it is missing, report the dependency instead of inventing a substitute.
 
