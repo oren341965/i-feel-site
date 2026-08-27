@@ -569,3 +569,33 @@ test('Claude phase A stays file-based with approval gating and no direct API', (
     expectedCorrelationId: 'judgment-0001',
   }), { accepted: true, executable: true, status: 'JUDGMENT_RESPONSE_READY' });
 });
+
+test('sales manager entrypoint is a bounded router with explicit authority and lifecycle contracts', async () => {
+  const skillRoot = resolve(REPO, '.claude/skills/ai-sales-manager');
+  const router = await readFile(resolve(skillRoot, 'SKILL.md'), 'utf8');
+  const references = [
+    'architecture.md',
+    'roles-and-authority.md',
+    'component-lifecycle.md',
+    'safety-and-approvals.md',
+    'phase-1-audit.md',
+    'validation-and-handoff.md',
+  ];
+
+  assert.ok(router.length < 7000, 'SKILL.md must stay a concise router');
+  for (const reference of references) {
+    assert.match(router, new RegExp(`references/${reference.replaceAll('.', '\\.')}`));
+    await readFile(resolve(skillRoot, 'references', reference), 'utf8');
+  }
+
+  const roles = await readFile(resolve(skillRoot, 'references/roles-and-authority.md'), 'utf8');
+  for (const role of ['Oren', 'Maya', 'Claude', 'Monday', 'Vault', 'GitHub']) {
+    assert.match(roles, new RegExp(`## ${role}`));
+  }
+
+  const lifecycle = await readFile(resolve(skillRoot, 'references/component-lifecycle.md'), 'utf8');
+  for (const decision of ['## KEEP', '## REWRITE', '## RETIRE', '## DEFER']) {
+    assert.match(lifecycle, new RegExp(decision));
+  }
+  assert.match(lifecycle, /`customer-payment-collection` \| DEFER/);
+});
