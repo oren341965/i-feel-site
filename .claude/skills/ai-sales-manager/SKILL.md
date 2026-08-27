@@ -17,6 +17,7 @@ description: Orchestrate I Feel's maturity-0 sales system and deterministic read
 - For Vault or Bus work, read [references/vault-layout.md](references/vault-layout.md). For local runtime or installer work, read [references/local-runtime.md](references/local-runtime.md).
 - Before any action beyond local read-only analysis, read [references/safety-and-approvals.md](references/safety-and-approvals.md).
 - For maintenance or handoff, read [references/phase-1-audit.md](references/phase-1-audit.md) and [references/validation-and-handoff.md](references/validation-and-handoff.md).
+- For Oren-machine commissioning after Phase 1, read [references/phase-2-local-core.md](references/phase-2-local-core.md) and run the no-write preflight before the full morning runtime.
 
 ## Non-negotiable invariants
 
@@ -36,6 +37,7 @@ description: Orchestrate I Feel's maturity-0 sales system and deterministic read
 - Pipeline analysis: `scripts/analyze-sales.mjs`
 - Full-system dry run: `scripts/orchestrate-sales-system.mjs`
 - Local morning dry run: `scripts/morning-run.mjs`
+- No-write source preflight: `scripts/preflight-readonly.mjs`
 - Vault boundaries: `scripts/vault-runtime.mjs`, `scripts/maya-vault-bridge.mjs`, and `scripts/claude-vault-bridge.mjs`
 
 Missing evidence or authority is a blocker, not permission to simulate success.
