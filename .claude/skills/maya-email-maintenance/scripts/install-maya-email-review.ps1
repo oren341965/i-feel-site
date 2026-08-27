@@ -1,7 +1,7 @@
 [CmdletBinding(SupportsShouldProcess)]
 param(
     [Parameter()]
-    [string]$RepositoryPath = (Resolve-Path (Join-Path $PSScriptRoot "..\..")).Path,
+    [string]$RepositoryPath = (Resolve-Path (Join-Path $PSScriptRoot "..\..\..\..")).Path,
 
     [Parameter()]
     [string]$EmailRuntimeRoot = (Join-Path ([Environment]::GetFolderPath("UserProfile")) "ifeel-maya-gmail")
