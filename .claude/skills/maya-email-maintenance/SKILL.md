@@ -43,6 +43,7 @@ Keep Maya's work inbox small, classified and actionable without losing customer 
 - If the customer or direct thread cannot be matched unambiguously, return `NEEDS_OREN`; create no draft and send nothing.
 - Enforce deduplication, opt-out, no more than one proactive follow-up in seven days, and no more than two unanswered attempts before drafting.
 - Route plans requested or awaited to a plans follow-up; when plans were received, verify completeness and prepare a technical handoff instead of requesting them again. Route service or complaints to Support, employee tasks internally, and never reply to Monday.
+- The canonical guarded writer is `scripts/draft_writer.py`; its verified evidence contract and the integrated Routine template in `references/maya-integrated-customer-operations.md` are mandatory. A local runtime copy is not authoritative and must be installed from these files with `scripts/workstations/install-maya-email-review.ps1` after merge approval.
 
 ## Unattended-run controls
 
