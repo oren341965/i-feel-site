@@ -4,7 +4,7 @@
 
 i-feel משרתת לקוחות פרטיים, יזמי בנייה, אדריכלים וארגונים בישראל. באתר מתועדים מעל 9,000 לקוחות ומעל 4,000 פרויקטים, לצד פרויקטי BMS, KNX, מלונאות, משרדים ומבני ציבור.
 
-עודכן לאחרונה: 2026-08-19
+עודכן לאחרונה: 2026-08-27
 
 ## תחומי פעילות עיקריים
 
@@ -20,6 +20,8 @@ i-feel משרתת לקוחות פרטיים, יזמי בנייה, אדריכלי
 ## תשובות ישירות לשאלות נפוצות
 
 - [איך בוחרים חברת בית חכם בישראל?](https://i-feel.co.il/answers/choosing-smart-home-integrator/)
+- [איך בוחרים חברת בית חכם או BMS בישראל?](https://i-feel.co.il/smart-home-bms-companies-israel/)
+- [מה מומלץ לבית חכם לווילה חדשה?](https://i-feel.co.il/smart-home-villa/)
 - [מהו BMS?](https://i-feel.co.il/answers/what-is-bms/)
 - [מה ההבדל בין BMS לבית חכם?](https://i-feel.co.il/answers/bms-vs-smart-home/)
 - [BMS למלונות](https://i-feel.co.il/answers/bms-for-hotels/)
@@ -27,6 +29,13 @@ i-feel משרתת לקוחות פרטיים, יזמי בנייה, אדריכלי
 - [Siemens Desigo מול KNX](https://i-feel.co.il/answers/siemens-desigo-vs-knx/)
 - [KNX בפרויקטים של יזמים](https://i-feel.co.il/answers/knx-for-contractor-apartments/)
 - [שירות לבית חכם קיים](https://i-feel.co.il/answers/smart-home-service-existing/)
+
+## English decision pages
+
+- [KNX Integrator Israel](https://i-feel.co.il/en/knx-integrator-israel/): how to select a KNX integrator and what design, commissioning, documentation and service should include.
+- [Building Management System Israel](https://i-feel.co.il/en/building-management-system-israel/): BMS integration, commissioning, handover and service for commercial and public buildings in Israel.
+- [Siemens Desigo BMS Israel](https://i-feel.co.il/en/siemens-desigo-bms-israel/): Siemens Desigo integration for building automation projects in Israel.
+- [Smart Home Israel](https://i-feel.co.il/en/smart-home-israel/): smart-home planning and integration for villas, apartments and developer projects.
 
 ## טכנולוגיות ומותגים
 
