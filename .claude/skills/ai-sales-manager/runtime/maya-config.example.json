@@ -6,15 +6,14 @@
   "VAULT_ROOT": null,
   "identity": {
     "role": "maya-agent",
+    "machineRole": "maya-front-office",
     "machineId": null
   },
   "skills": {
-    "operationalSource": "CLAUDE_COWORK",
+    "operationalSource": "CANONICAL_MANAGED_SKILLS",
     "vaultNotesDirectory": "Skills",
     "required": [
-      "maya-admin",
       "maya-whatsapp",
-      "maya-billing-control",
       "maya-email-maintenance"
     ],
     "installationStatus": "CONNECTION_MISSING"

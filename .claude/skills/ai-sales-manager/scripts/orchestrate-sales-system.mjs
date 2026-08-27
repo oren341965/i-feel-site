@@ -51,9 +51,7 @@ export const META_ADS_AUDIT_CHECKS = Object.freeze([
 ]);
 
 export const MAYA_STACK_SKILLS = Object.freeze([
-  'maya-admin',
   'maya-whatsapp',
-  'maya-billing-control',
   'maya-email-maintenance',
 ]);
 
@@ -111,9 +109,7 @@ export const ORCHESTRATED_COMPONENTS = Object.freeze([
   { name: 'manage-tenant-handovers', ownership: 'existing', role: 'project-handoff' },
   { name: 'procurement-po-tracker', ownership: 'existing', role: 'capacity-signal' },
   { name: 'autopilot-ifeel', ownership: 'existing', role: 'safety-governance' },
-  { name: 'maya-admin', ownership: 'external-existing', role: 'maya-front-office' },
   { name: 'maya-whatsapp', ownership: 'external-existing', role: 'maya-front-office' },
-  { name: 'maya-billing-control', ownership: 'external-existing', role: 'maya-billing' },
   { name: 'maya-email-maintenance', ownership: 'external-existing', role: 'maya-front-office' },
   { name: 'developer-outreach', ownership: 'external-existing', role: 'referrals' },
   { name: 'plans-chase', ownership: 'external-existing', role: 'plans' },
@@ -474,7 +470,7 @@ export function evaluateMayaPlansFollowup(item = {}) {
   return {
     required: true,
     status: issues.length === 0 ? 'FOLLOWUP_CURRENT' : 'MAYA_FOLLOWUP_REQUIRED',
-    owner: 'maya-admin',
+    owner: 'ai-sales-manager',
     communicationSkills: ['maya-email-maintenance', 'maya-whatsapp'],
     nextActionSource: 'timeline',
     issues,
@@ -571,7 +567,7 @@ export function orchestrateSalesSystem(input = {}) {
     },
     mayaPlansFollowup: {
       mandatory: true,
-      owner: 'maya-admin',
+      owner: 'ai-sales-manager',
       trackedStatuses: [...MAYA_PLANS_FOLLOWUP_STATUSES],
       allowedResults: [...MAYA_PLANS_FOLLOWUP_RESULTS],
       includeEveryMatchingOpenItem: true,

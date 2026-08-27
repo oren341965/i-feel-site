@@ -34,7 +34,7 @@ Use the existing Maya WhatsApp session on Maya's workstation. The shared `ai-sal
 - Identify the Monday item by a strong customer identifier, normally the verified phone number. A similar name is not sufficient.
 - Treat Monday as a trigger and operational record only, never as a message recipient. Never send or draft a reply to a Monday notification thread or address. Validate the direct customer or employee recipient independently; `WRONG_RECIPIENT` blocks the action.
 - Ordinary customer communication is limited to `09:00-18:00` Sunday through Thursday in `Asia/Jerusalem`; never send on Shabbat or an Israeli holiday.
-- Apply the installed `maya-admin` skill when the workflow requires its administrative rules. If it is missing, report the dependency instead of inventing a substitute.
+- Route cross-domain work to `ai-sales-manager`: service and complaints go to Support, received plans go to the plans/project handoff, and financial work remains deferred. Do not invent a generic Maya-admin authority.
 
 ## Voice-note and phone-complaint forwarding to Oren (standing permission)
 

@@ -12,7 +12,7 @@ This map prevents parallel managers, preserves proven code, and makes deferred w
 | `meta-ads-manager` | KEEP | Bounded read-only paid-media evidence. |
 | `lead-attribution-feedback` | KEEP | External attribution adapter keyed by `monday_item_id`. |
 | `ai-service-manager` | KEEP | Independent service-signal worker; not a second sales manager. |
-| Maya canonical skills | KEEP | Existing front-office workers with independent permissions. |
+| `maya-email-maintenance` and `maya-whatsapp` | KEEP | The only canonical Maya front-office workers. They have explicit routing and independent permissions. |
 | Existing website, content, quote, plans, referral, handoff, closeout, and mailing workers | KEEP | Reuse through bounded handoffs; never clone during orchestration. |
 | `C:\ifeel-sales` runtime templates | KEEP | Local maturity-0 state and dry-run launchers; installation remains separate. |
 | Vault schemas and bridges | KEEP | Idempotent bounded exchange with no live database or PII. |
@@ -34,6 +34,7 @@ Runtime algorithms are not rewritten in Phase 1 because their behavior is tested
 | --- | --- | --- |
 | Any parallel `sales-manager` or `sales-orchestrator` identity | RETIRE | `ai-sales-manager`. |
 | Standalone `maya-agent` skill | RETIRE | Existing Maya skills; the string may remain only for legacy Bus compatibility. |
+| Generic `maya-admin` and `maya-billing-control` runtime dependencies | RETIRE | Explicit routing to `ai-sales-manager`, Support, plans/project handoff, or a deferred finance workflow. Missing generic skills must not block Maya commissioning. |
 | `monday-sales-represntative-` as an authority | RETIRE | Read-only legacy input only; deterministic manager contracts are authoritative. |
 | Vault notes as executable source code or scheduler definitions | RETIRE | GitHub canonical skills plus separately installed local runtime. |
 | `worker.log` as proof for the Windows Email Task | RETIRE | The configured `task.out.log` and Windows Task result. |
@@ -45,7 +46,7 @@ No Phase 1 file or legacy data is deleted.
 | Component | Decision | Resume gate |
 | --- | --- | --- |
 | `customer-payment-collection` | DEFER | Separate completed design, tests, review, and explicit approval. Do not install, invoke, merge, or process its protected queue now. |
-| Maya business routine and WhatsApp | DEFER | Separate recovery/commissioning with verified session, locks, recipients, and approval boundaries. |
+| Maya business routine and WhatsApp activation | DEFER | Install paused first; then require a separate verified session, identity, locks, recipients, and approval-boundary smoke test. |
 | Live scheduler creation or activation | DEFER | Accepted dry run and explicit approval. |
 | Live Monday, Ads, budget, publishing, or outbound-message writes | DEFER | Action-specific authorization plus read-back verification. |
 | Direct Claude API | DEFER | Approved architecture and maturity change; file bridge remains canonical. |

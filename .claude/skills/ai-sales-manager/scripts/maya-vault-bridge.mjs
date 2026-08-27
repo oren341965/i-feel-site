@@ -5,9 +5,7 @@ import { fileURLToPath } from 'node:url';
 import { validateBusMessage } from './orchestrate-sales-system.mjs';
 
 const REQUIRED_MAYA_SKILLS = Object.freeze([
-  'maya-admin',
   'maya-whatsapp',
-  'maya-billing-control',
   'maya-email-maintenance',
 ]);
 

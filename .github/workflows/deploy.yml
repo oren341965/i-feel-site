@@ -11,6 +11,7 @@ on:
     paths-ignore:
       - '.claude/**'
       - 'tests/**'
+      - 'scripts/workstations/**'
       - '.github/workflows/deploy.yml'
   workflow_dispatch:
 
