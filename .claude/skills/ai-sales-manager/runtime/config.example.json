@@ -32,9 +32,7 @@
     "mode": "EXISTING_ONLY",
     "standaloneMayaAgentSkillAllowed": false,
     "availableSkills": [
-      "maya-admin",
       "maya-whatsapp",
-      "maya-billing-control",
       "maya-email-maintenance"
     ]
   },
@@ -90,7 +88,8 @@
     "activeUnownedLeadThreshold": null,
     "plansToProposalMaxBusinessDays": 7,
     "requireTrustedAttribution": true,
-    "requireTrustedDataQuality": true
+    "requireTrustedDataQuality": true,
+    "minimumDataQualityScore": null
   },
   "websiteImprovement": {
     "enabled": true,

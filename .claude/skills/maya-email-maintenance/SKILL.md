@@ -25,7 +25,7 @@ Keep Maya's work inbox small, classified and actionable without losing customer 
    - low-risk newsletter, automated notification or marketing clutter;
    - unknown or decision required.
 3. Apply the existing relevant label. Preferred labels are `i-feel/לידים-חדשים`, `ליד-יזם`, `ליד-אדריכל`, `קריאות-שירות`, `פרויקט-פעיל`, `תכניות`, `ספק`, `פיננסי`, `רגולציה`, `מכרזים`, `ספאם-שיווק`, `bounce` and `processed`. Create a missing label only when the mailbox owner has authorized inbox organization.
-4. For plans, confirm that the attachment is actually present and report the project/customer match and the recommended handoff to `maya-admin`. Do not claim the plans were filed or transferred when that integration is unavailable.
+4. For plans, confirm that the attachment is actually present and report the project/customer match to `ai-sales-manager` for the explicit plans/project handoff. Do not claim the plans were filed or transferred when that handoff is unavailable.
 5. For bounces, identify the failed recipient and likely address problem, label the message `bounce`, and prepare a correction recommendation. Do not alter Gmail contacts, Monday or another CRM automatically.
 6. For a message that requires a response, read the full thread and preserve its recipients, subject, dates and quoted facts. Send only when it fits the standing routine-customer scope below; otherwise keep it in the inbox and prepare a reply draft.
 7. Mark a message read and add `processed` only after its classification and required draft or escalation are complete.
@@ -82,7 +82,7 @@ Return a concise Hebrew summary with:
 - messages scanned, labeled, marked read and archived;
 - drafts prepared, plans detected and bounces detected;
 - items left in the inbox for Maya or Oren;
-- blockers, including missing Gmail access, missing `maya-admin`, an unavailable attachment or a wrong mailbox;
+- blockers, including missing Gmail access, an unavailable plans/project handoff, an unavailable attachment or a wrong mailbox;
 - the next scheduled run time.
 
 Use `COMPLETED`, `PARTIAL` or `BLOCKED` as the run status. Do not report a message as handled unless the requested Gmail state is verified after the action.

@@ -53,7 +53,7 @@ $vaultFolders = @(
     "AI-Sales\_backups"
 )
 $localDirectories = @("data", "state", "cache", "jobs", "bus", "logs", "config")
-$requiredSkills = @("maya-admin", "maya-whatsapp", "maya-billing-control", "maya-email-maintenance")
+$requiredSkills = @("maya-whatsapp", "maya-email-maintenance")
 
 $created = [System.Collections.Generic.List[string]]::new()
 foreach ($relative in $vaultFolders) {

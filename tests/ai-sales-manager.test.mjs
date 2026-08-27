@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
 import test from 'node:test';
 
 import {
@@ -185,4 +186,32 @@ test('sales explicit normalized booleans override status-label inference', () =>
   }, { now: NOW });
 
   assert.equal(item.population, 'closed');
+});
+
+test('Maya commissioning is role-scoped, hash-verified, and activation-free', () => {
+  const read = (relative) => readFileSync(new URL(`../${relative}`, import.meta.url), 'utf8');
+  const installer = read('scripts/workstations/maya-commissioning-install.ps1');
+  const exporter = read('scripts/workstations/export-maya-commissioning-bundle.ps1');
+  const bootstrap = read('scripts/workstations/maya-commissioning-bootstrap.ps1');
+  const resultReader = read('scripts/workstations/check-maya-commissioning-result.ps1');
+
+  assert.match(installer, /maya-email-maintenance/);
+  assert.match(installer, /maya-whatsapp/);
+  assert.doesNotMatch(installer, /requiredSkills\s*=.*ai-sales-manager/);
+  assert.doesNotMatch(installer, /requiredSkills\s*=.*maya-admin/);
+  assert.doesNotMatch(installer, /requiredSkills\s*=.*maya-billing-control/);
+  assert.match(installer, /Get-FileHash/);
+  assert.match(installer, /INSTALLED_PAUSED/);
+  assert.match(installer, /schedulersActivated\s*=\s*0/);
+  assert.match(installer, /externalSends\s*=\s*0/);
+  assert.match(installer, /mondayWrites\s*=\s*0/);
+  assert.doesNotMatch(installer, /Register-ScheduledTask|Enable-ScheduledTask|schtasks(?:\.exe)?\s+\/Create/i);
+
+  assert.match(exporter, /Refusing to export a Maya release from a dirty worktree/);
+  assert.match(exporter, /Local main does not match origin\/main/);
+  assert.match(exporter, /schedulerActivation\s*=\s*'PAUSED'/);
+  assert.match(bootstrap, /relativeReleasePath/);
+  assert.match(bootstrap, /ConfirmMayaWorkstation/);
+  assert.match(resultReader, /WAITING_FOR_MAYA/);
+  assert.match(resultReader, /MAYA_COMMISSIONING_RESULT/);
 });

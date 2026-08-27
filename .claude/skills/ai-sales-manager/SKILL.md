@@ -18,6 +18,7 @@ description: Orchestrate I Feel's maturity-0 sales system and deterministic read
 - Before any action beyond local read-only analysis, read [references/safety-and-approvals.md](references/safety-and-approvals.md).
 - For maintenance or handoff, read [references/phase-1-audit.md](references/phase-1-audit.md) and [references/validation-and-handoff.md](references/validation-and-handoff.md).
 - For Oren-machine commissioning after Phase 1, read [references/phase-2-local-core.md](references/phase-2-local-core.md) and run the no-write preflight before the full morning runtime.
+- For the single-command Maya handoff through the shared Vault, read [references/maya-commissioning.md](references/maya-commissioning.md). Installation is role-scoped and must finish paused before any browser or identity smoke test.
 
 ## Non-negotiable invariants
 
@@ -31,6 +32,7 @@ description: Orchestrate I Feel's maturity-0 sales system and deterministic read
 - Resolve the Vault through `VAULT_ROOT`; keep active SQLite state local under `C:\ifeel-sales`.
 - `customer-payment-collection` is `DEFER`. Do not install, invoke, merge, or substitute it in Phase 1.
 - Maya business routines and WhatsApp remain paused. The existing Windows Email Task is outside this refactor and remains unchanged.
+- Maya commissioning installs only the two canonical Maya workers. It never installs the parent manager on Maya, never activates a scheduler, and never treats the Vault as executable source truth.
 
 ## Deterministic entrypoints
 
