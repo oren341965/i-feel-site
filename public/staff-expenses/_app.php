@@ -16,6 +16,7 @@ require_once __DIR__ . '/_history.php';
 require_once __DIR__ . '/_profile.php';
 require_once __DIR__ . '/_form.php';
 require_once __DIR__ . '/_admin.php';
+require_once __DIR__ . '/_supervision.php';
 require_once __DIR__ . '/_readiness.php';
 
 function portal_render_maintenance_page(?string $requestId = null): never
@@ -147,6 +148,9 @@ try {
         if (portal_post('action', 60) === 'submit_work_report') {
             portal_handle_work_report_post($user);
         }
+        if (portal_post('action', 60) === 'submit_supervision') {
+            portal_handle_supervision_post($user);
+        }
         if (portal_post('action', 60) === 'submit_tenant_handover') {
             portal_handle_tenant_handover_post($user);
         }
@@ -172,12 +176,15 @@ try {
     if ($action === 'handover_download') {
         portal_handle_handover_download($user);
     }
+    if ($action === 'supervision_download') {
+        portal_handle_supervision_download($user);
+    }
 
     $tab = trim((string) ($_GET['tab'] ?? 'new'));
-    if (($user['role'] ?? '') !== 'admin' && !in_array($tab, ['new', 'history', 'work', 'handovers', 'profile', 'my_vehicle'], true)) {
+    if (($user['role'] ?? '') !== 'admin' && !in_array($tab, ['new', 'history', 'work', 'handovers', 'supervision', 'profile', 'my_vehicle'], true)) {
         $tab = 'new';
     }
-    if (!in_array($tab, ['new', 'history', 'work', 'handovers', 'profile', 'my_vehicle', 'work_stats', 'reports', 'employees', 'vehicles'], true)) {
+    if (!in_array($tab, ['new', 'history', 'work', 'handovers', 'supervision', 'profile', 'my_vehicle', 'work_stats', 'reports', 'employees', 'vehicles'], true)) {
         $tab = 'new';
     }
     if ($tab === 'my_vehicle' && portal_vehicles_for_employee($user) === []) {
@@ -194,6 +201,7 @@ try {
         'my_vehicle' => 'הרכב שלי',
         'work' => 'סיום התקנה או שירות',
         'handovers' => 'מסירות דיירים',
+        'supervision' => 'טופס פיקוח באתר',
         'work_stats' => 'סטטיסטיקת עבודות',
     ];
     $pageTitle = $pageTitles[$tab] ?? 'דיווח חדש';
@@ -218,6 +226,8 @@ try {
         portal_render_work_report_form($user, $flash);
     } elseif ($tab === 'handovers') {
         portal_render_tenant_handovers($user, $flash);
+    } elseif ($tab === 'supervision') {
+        portal_render_supervision($user, $flash);
     } elseif ($tab === 'work_stats') {
         portal_render_work_report_stats($flash);
     } else {

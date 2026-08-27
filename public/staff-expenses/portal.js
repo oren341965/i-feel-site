@@ -317,3 +317,98 @@
         }
     });
 })();
+
+/* ===== טופס פיקוח באתר ===== */
+(() => {
+    'use strict';
+
+    const form = document.getElementById('supervision-form');
+    if (!form) return;
+
+    const groups = Array.from(form.querySelectorAll('[data-supervision-track]'));
+    const applyTrack = (track) => {
+        groups.forEach((group) => {
+            const groupTrack = group.dataset.supervisionTrack;
+            const visible = groupTrack === 'all'
+                || track === 'hybrid'
+                || groupTrack === track;
+            group.hidden = !visible;
+        });
+    };
+    form.querySelectorAll('[data-supervision-track-input]').forEach((input) => {
+        input.addEventListener('change', () => applyTrack(input.value));
+    });
+
+    form.querySelectorAll('[data-supervision-mark-all]').forEach((button) => {
+        button.addEventListener('click', () => {
+            const groupId = button.dataset.supervisionMarkAll;
+            form.querySelectorAll('[data-supervision-group="' + groupId + '"]').forEach((row) => {
+                const ok = row.querySelector('input[type="radio"][value="ok"]');
+                if (ok) ok.checked = true;
+            });
+        });
+    });
+
+    const pad = document.getElementById('supervision-signature-pad');
+    const data = document.getElementById('supervision-signature-data');
+    const clear = document.getElementById('supervision-signature-clear');
+    if (pad && data) {
+        const ctx = pad.getContext('2d');
+        let drawing = false;
+        let dirty = false;
+        const reset = () => {
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(0, 0, pad.width, pad.height);
+            ctx.strokeStyle = '#10233f';
+            ctx.lineWidth = 2.5;
+            ctx.lineCap = 'round';
+            ctx.lineJoin = 'round';
+            dirty = false;
+            data.value = '';
+        };
+        const point = (event) => {
+            const rect = pad.getBoundingClientRect();
+            const source = event.touches ? event.touches[0] : event;
+            return {
+                x: (source.clientX - rect.left) * (pad.width / rect.width),
+                y: (source.clientY - rect.top) * (pad.height / rect.height),
+            };
+        };
+        const start = (event) => {
+            event.preventDefault();
+            drawing = true;
+            const p = point(event);
+            ctx.beginPath();
+            ctx.moveTo(p.x, p.y);
+        };
+        const move = (event) => {
+            if (!drawing) return;
+            event.preventDefault();
+            const p = point(event);
+            ctx.lineTo(p.x, p.y);
+            ctx.stroke();
+            dirty = true;
+        };
+        const end = () => {
+            if (!drawing) return;
+            drawing = false;
+            if (dirty) data.value = pad.toDataURL('image/png');
+        };
+        reset();
+        pad.addEventListener('mousedown', start);
+        pad.addEventListener('mousemove', move);
+        window.addEventListener('mouseup', end);
+        pad.addEventListener('touchstart', start, { passive: false });
+        pad.addEventListener('touchmove', move, { passive: false });
+        pad.addEventListener('touchend', end);
+        if (clear) clear.addEventListener('click', reset);
+    }
+
+    form.addEventListener('submit', () => {
+        const submit = form.querySelector('button[type="submit"]');
+        if (submit) {
+            submit.disabled = true;
+            submit.textContent = 'שומר ושולח...';
+        }
+    });
+})();

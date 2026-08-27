@@ -37,6 +37,7 @@ require_once $repositoryRoot . '/public/staff-expenses/_tenant_handovers.php';
 require_once $repositoryRoot . '/public/staff-expenses/_history.php';
 require_once $repositoryRoot . '/public/staff-expenses/_readiness.php';
 require_once $repositoryRoot . '/public/staff-expenses/_mcohome_faults.php';
+require_once $repositoryRoot . '/public/staff-expenses/_supervision.php';
 
 try {
     $portalCss = (string) file_get_contents($repositoryRoot . '/public/staff-expenses/portal.css');
@@ -702,6 +703,120 @@ try {
             ['size' => 12 * 1024 * 1024],
         ])) === 2,
         'Large email attachments were not split into safe batches.'
+    );
+
+    // ===== טופס פיקוח באתר =====
+    portal_test_expect(
+        portal_supervision_customer_key_slug('43612') === '43612'
+        && portal_supervision_customer_key_slug('../../etc/passwd') === 'etc-passwd'
+        && preg_match('/^k[a-f0-9]{16}$/', portal_supervision_customer_key_slug('לקוח פרטי')) === 1,
+        'Supervision customer keys were not converted into safe storage slugs.'
+    );
+    $_POST['sv_inspector_name'] = 'שם מזויף מהטופס';
+    portal_test_expect(
+        portal_supervision_inspector_name(['display_name' => 'מפקח מחובר', 'username' => 'worker']) === 'מפקח מחובר'
+        && portal_supervision_inspector_name(['display_name' => '', 'username' => 'worker']) === 'worker',
+        'Supervision inspector identity was not derived from the authenticated portal user.'
+    );
+    unset($_POST['sv_inspector_name']);
+
+    $supervisionId = portal_new_supervision_id();
+    portal_test_expect(
+        portal_supervision_valid_id($supervisionId)
+        && !portal_supervision_valid_id('SV-bad')
+        && str_contains(portal_supervision_dir('43612', $supervisionId), 'supervision'),
+        'Supervision report identifiers or storage paths are not validated.'
+    );
+    $supervisionTraversalBlocked = false;
+    try {
+        portal_supervision_dir('../escape', $supervisionId);
+    } catch (Throwable $supervisionPathError) {
+        $supervisionTraversalBlocked = true;
+    }
+    portal_test_expect($supervisionTraversalBlocked, 'Supervision storage path allowed directory traversal.');
+
+    $_POST['sv_finding_description'] = [0 => 'חסר שרוול לתריס בחדר שינה', 1 => ''];
+    $_POST['sv_finding_severity'] = [0 => 'blocker', 1 => 'medium'];
+    $_POST['sv_finding_owner'] = [0 => 'קבלן חשמל'];
+    $_POST['sv_finding_due'] = [0 => '2026-09-10'];
+    $supervisionFindings = portal_supervision_collect_findings();
+    portal_test_expect(
+        count($supervisionFindings) === 1
+        && $supervisionFindings[0]['severity'] === 'blocker'
+        && $supervisionFindings[0]['due_date'] === '2026-09-10',
+        'Supervision findings were not collected correctly.'
+    );
+
+    $_POST['sv_status'] = ['knx_green_continuous' => 'fix', 'knx_conduits' => 'ok', 'not_a_real_item' => 'ok'];
+    $_POST['sv_note'] = ['knx_green_continuous' => 'חיבור חשוף בארון'];
+    $supervisionChecklist = portal_supervision_collect_checklist();
+    portal_test_expect(
+        ($supervisionChecklist['knx_green_continuous']['status'] ?? '') === 'fix'
+        && ($supervisionChecklist['knx_conduits']['status'] ?? '') === 'ok'
+        && !isset($supervisionChecklist['not_a_real_item'])
+        && !isset($supervisionChecklist['sec_entry_camera']),
+        'Supervision checklist filtering did not keep only real, marked items.'
+    );
+    foreach (['sv_status', 'sv_note', 'sv_finding_description', 'sv_finding_severity', 'sv_finding_owner', 'sv_finding_due'] as $supervisionKey) {
+        unset($_POST[$supervisionKey]);
+    }
+
+    $supervisionReport = [
+        'id' => $supervisionId,
+        'customer_key' => '43612',
+        'customer_key_slug' => '43612',
+        'customer_name' => 'יגאל שמיע',
+        'customer_email' => 'customer@example.com',
+        'site_address' => 'מאה ושישים 13 רעננה',
+        'type' => 'infrastructure',
+        'visit_date' => '2026-08-27',
+        'result' => 'not_approved',
+        'summary' => 'יש להשלים שרוולים לפני יציקה.',
+        'next_visit' => '2026-09-03',
+        'checklist' => ['knx_green_continuous' => ['status' => 'fix', 'note' => 'חיבור חשוף בארון']],
+        'changes' => 'נוספה טלוויזיה ליד הבריכה — שני צינורות עד לריכוז.',
+        'findings' => $supervisionFindings,
+        'attachments' => [],
+        'inspector' => ['name' => 'מפקח מחובר', 'email' => 'worker@i-feel.co.il', 'phone' => ''],
+    ];
+    $supervisionInternal = portal_supervision_internal_body($supervisionReport);
+    portal_test_expect(
+        str_contains($supervisionInternal, '43612')
+        && str_contains($supervisionInternal, 'חיבור חשוף בארון')
+        && str_contains($supervisionInternal, 'חוסם המשך עבודה')
+        && str_contains($supervisionInternal, portal_supervision_type_label('infrastructure')),
+        'Supervision internal email is missing the customer key, checklist or findings.'
+    );
+    $supervisionCustomerHtml = portal_supervision_customer_html($supervisionReport);
+    portal_test_expect(
+        str_contains($supervisionCustomerHtml, 'יגאל שמיע')
+        && !str_contains($supervisionCustomerHtml, 'חיבור חשוף בארון')
+        && str_contains(portal_supervision_customer_body($supervisionReport), '2026-09-03'),
+        'Supervision customer summary exposed internal notes or missed the follow-up date.'
+    );
+
+    $supervisionMondayItem = [
+        'id' => '11513103398',
+        'name' => 'יגאל שמיע',
+        'column_values' => [
+            ['id' => '______9', 'text' => '43612'],
+            ['id' => 'location7', 'text' => 'מאה ושישים 13 רעננה'],
+            ['id' => 'link', 'text' => 'https://www.dropbox.com/scl/fo/customer'],
+            ['id' => 'link_to_______________________', 'text' => null, 'linked_item_ids' => ['11648392851', 'not-an-id']],
+        ],
+    ];
+    $supervisionMondayCustomer = portal_supervision_monday_customer_fields($supervisionMondayItem);
+    portal_test_expect(
+        IFEEL_SUPERVISION_CUSTOMER_KEY_COLUMN === '______9'
+        && $supervisionMondayCustomer['customer_key'] === '43612'
+        && $supervisionMondayCustomer['address'] === 'מאה ושישים 13 רעננה'
+        && portal_supervision_monday_linked_ids($supervisionMondayItem, 'link_to_______________________') === ['11648392851'],
+        'Supervision Monday customer mapping is wrong.'
+    );
+    portal_test_expect(
+        portal_supervision_customer_name_matches('  יגאל   שמיע ', 'יגאל שמיע')
+        && !portal_supervision_customer_name_matches('יגאל שמיע', 'יגאל שרייבר'),
+        'Supervision exact customer-name matching is wrong.'
     );
 
     $readiness = portal_readiness_report();
