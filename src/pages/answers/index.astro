@@ -7,13 +7,15 @@ const qas = [
   { href: '/answers/siemens-desigo-vs-knx/', q: 'מה ההבדל בין Siemens Desigo ל-KNX?', d: 'שרת ניהול מבנה מול פרוטוקול בקרה ברמת החדר.' },
   { href: '/answers/smart-home-service-existing/', q: 'מי נותן שירות למערכת בית חכם קיימת?', d: 'אבחון, תמיכה מרחוק, ביקורי טכנאי, תחזוקה והרחבות.' },
   { href: '/answers/choosing-smart-home-integrator/', q: 'איך בוחרים אינטגרטור לבית חכם בישראל?', d: 'מה חשוב לבדוק לפני שבוחרים מי מתכנן ומתקין.' },
+  { href: '/smart-home-bms-companies-israel/', q: 'איך בוחרים חברת בית חכם או BMS בישראל?', d: 'איך להתאים אינטגרטור לסוג הפרויקט לפי תקנים, תכנון, תיעוד, מסירה ושירות.' },
+  { href: '/smart-home-villa/', q: 'איך מתכננים בית חכם לווילה חדשה?', d: 'מה צריך לסגור לפני תוכניות החשמל: תאורה, תריסים, מיזוג, אינטגרציות, ארונות ותקשורת.' },
   { href: '/answers/what-is-bms/', q: 'מה זה BMS?', d: 'מערכת בקרת מבנה — מה היא מנהלת, אילו פרוטוקולים ולמי מתאים.' },
   { href: '/answers/bms-vs-smart-home/', q: 'מה ההבדל בין BMS לבית חכם?', d: 'ניהול מבנה מסחרי מול בית מגורים — מתי כל אחד.' },
   { href: '/answers/what-is-dali/', q: 'מה זה DALI?', d: 'פרוטוקול בקרת תאורה דיגיטלי — כתובת לכל גוף, עמעום ותרחישים.' },
   { href: '/answers/what-is-ddc/', q: 'מה זה DDC?', d: 'הבקר הדיגיטלי שהוא הליבה של מערכת בקרת מבנה.' },
   { href: '/answers/what-is-bacnet/', q: 'מה זה BACnet?', d: 'פרוטוקול תקני לתקשורת בין מערכות בקרת מבנה ו-HVAC.' },
   { href: '/answers/bms-for-hotels/', q: 'מתי צריך BMS במלון?', d: 'בקרת חדרים GRMS, חיסכון אנרגיה ושילוב ל-PMS.' },
-  { href: '/answers/developer-smart-home/', q: 'מתי יזם צריך בית חכם בפרויקט?', d: 'בית חכם כערך שיווקי — תכנון מראש בשלב החשמל.' },
+  { href: '/answers/developer-smart-home/', q: 'מתי יזם צריך בית חכם בפרויקט?', d: 'מה צריך להחליט בשלב התכנון, במפרט, בשינויי דיירים ובחלוקת האחריות.' },
   { href: '/answers/knx-for-contractor-apartments/', q: 'האם KNX מתאים לדירות קבלן?', d: 'KNX מול אלחוטי לדירות קבלן — מתי כל אחד מתאים.' },
   { href: '/answers/bms-vrf-integration/', q: 'איך מחברים BMS למיזוג VRF?', d: 'אינטגרציה דרך gateway — BACnet/Modbus ושליטה אזורית.' },
 ];
@@ -31,7 +33,9 @@ const meta = {
       { '@type': ['LocalBusiness','HomeAndConstructionBusiness'], '@id': 'https://i-feel.co.il/#business', name: 'i-feel', url: 'https://i-feel.co.il/', telephone: '+972-3-508-9553', email: 'sales@i-feel.co.il', address: { '@type':'PostalAddress', streetAddress:'אימבר 14', addressLocality:'פתח תקווה', postalCode:'4951148', addressCountry:'IL' }, areaServed: { '@type':'Country', name:'Israel' } },
       { '@type': 'BreadcrumbList', itemListElement: [
         { '@type':'ListItem', position:1, name:'דף הבית', item:'https://i-feel.co.il/' },
-        { '@type':'ListItem', position:2, name:'שאלות ותשובות', item: pageUrl } ] }
+        { '@type':'ListItem', position:2, name:'שאלות ותשובות', item: pageUrl } ] },
+      { '@type': 'ItemList', '@id': `${pageUrl}#answers`, name: 'שאלות ותשובות על בית חכם ובקרת מבנה', numberOfItems: qas.length,
+        itemListElement: qas.map((item, index) => ({ '@type':'ListItem', position:index + 1, name:item.q, url:`https://i-feel.co.il${item.href}` })) }
     ]
   })
 };
