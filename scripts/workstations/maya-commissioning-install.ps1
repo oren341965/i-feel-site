@@ -25,8 +25,6 @@ $requiredPayload = @(
     'payload\skills\maya-email-maintenance\SKILL.md',
     'payload\skills\maya-whatsapp\SKILL.md',
     'payload\scheduled-tasks\maya-email-maintenance\SKILL.md',
-    'payload\scheduled-tasks\maya-whatsapp\SKILL.md',
-    'payload\scheduled-tasks\maya-integrated-customer-operations\SKILL.md',
     'payload\email-review\draft_writer.py',
     'payload\runtime\maya-config.example.json'
 )
@@ -120,7 +118,7 @@ $emailRuntime = Join-Path $user 'ifeel-maya-gmail'
 $installPerformed = $false
 
 if (-not $VerifyOnly) {
-    foreach ($directory in @($backupRoot, $runtimeConfigRoot, $stagedTasksRoot, $emailRuntime)) {
+    foreach ($directory in @($backupRoot, $runtimeConfigRoot, $stagedTasksRoot, $emailRuntime, (Join-Path $runtime 'logs'))) {
         if ($PSCmdlet.ShouldProcess($directory, 'Create commissioning directory')) {
             New-Item -ItemType Directory -Path $directory -Force | Out-Null
         }
@@ -146,7 +144,18 @@ if (-not $VerifyOnly) {
         }
     }
 
-    foreach ($task in @('maya-email-maintenance', 'maya-whatsapp', 'maya-integrated-customer-operations')) {
+    foreach ($legacyTask in @('maya-whatsapp', 'maya-integrated-customer-operations')) {
+        $legacy = Join-Path $stagedTasksRoot $legacyTask
+        if (Test-Path -LiteralPath $legacy -PathType Container) {
+            $legacyBackup = Join-Path $backupRoot "staged-scheduled-tasks\$legacyTask"
+            if ($PSCmdlet.ShouldProcess($legacy, "Quarantine legacy staged scheduler to $legacyBackup")) {
+                New-Item -ItemType Directory -Path (Split-Path $legacyBackup -Parent) -Force | Out-Null
+                Move-Item -LiteralPath $legacy -Destination $legacyBackup
+            }
+        }
+    }
+
+    foreach ($task in @('maya-email-maintenance')) {
         $source = Join-Path $bundle "payload\scheduled-tasks\$task\SKILL.md"
         $target = Join-Path $stagedTasksRoot "$task\SKILL.md"
         if ($PSCmdlet.ShouldProcess($target, "Stage disabled scheduler prompt $task")) {
@@ -192,6 +201,15 @@ if (-not $VerifyOnly) {
     $config.skills.operationalSource = 'CANONICAL_MANAGED_SKILLS'
     $config.skills.required = $requiredSkills
     $config.skills.installationStatus = 'INSTALLED_PAUSED'
+    $config.automation.mode = 'REPORT_ONLY'
+    $config.automation.activeScheduler = 'maya-email-maintenance'
+    $config.automation.cadenceMinutes = 180
+    $config.automation.timeoutSeconds = 600
+    $config.automation.logsDirectory = (Join-Path $runtime 'logs')
+    $config.automation.windowsEmailTaskAllowed = $false
+    $config.automation.whatsappSchedulerAllowed = $false
+    $config.automation.integratedSchedulerAllowed = $false
+    $config.automation.schedulersActivated = 0
     if ($PSCmdlet.ShouldProcess($configPath, 'Write maturity-0 Maya runtime config')) {
         $config | ConvertTo-Json -Depth 30 | Set-Content -LiteralPath $configPath -Encoding UTF8
     }
@@ -232,7 +250,8 @@ $result = [ordered]@{
         role = 'maya-front-office'
         installPerformed = $installPerformed
         skills = $installedHashes
-        stagedSchedulers = 3
+        stagedSchedulers = 1
+        stagedSchedulerNames = @('maya-email-maintenance')
         schedulersActivated = 0
         windowsEmailTask = $windowsEmailTask
         runtimeLocks = $lockCount

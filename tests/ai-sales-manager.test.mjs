@@ -240,6 +240,11 @@ test('Maya commissioning is role-scoped, hash-verified, and activation-free', ()
   assert.match(installer, /Get-FileHash/);
   assert.match(installer, /INSTALLED_PAUSED/);
   assert.match(installer, /schedulersActivated\s*=\s*0/);
+  assert.match(installer, /stagedSchedulers\s*=\s*1/);
+  assert.match(installer, /Quarantine legacy staged scheduler/);
+  assert.match(installer, /timeoutSeconds\s*=\s*600/);
+  assert.match(installer, /windowsEmailTaskAllowed\s*=\s*\$false/);
+  assert.doesNotMatch(installer, /foreach \(\$task in @\('maya-email-maintenance', 'maya-whatsapp'/);
   assert.match(installer, /externalSends\s*=\s*0/);
   assert.match(installer, /mondayWrites\s*=\s*0/);
   assert.doesNotMatch(installer, /Register-ScheduledTask|Enable-ScheduledTask|schtasks(?:\.exe)?\s+\/Create/i);
@@ -247,6 +252,9 @@ test('Maya commissioning is role-scoped, hash-verified, and activation-free', ()
   assert.match(exporter, /Refusing to export a Maya release from a dirty worktree/);
   assert.match(exporter, /Local main does not match origin\/main/);
   assert.match(exporter, /schedulerActivation\s*=\s*'PAUSED'/);
+  assert.match(exporter, /stagedSchedulers\s*=\s*@\('maya-email-maintenance'\)/);
+  assert.doesNotMatch(exporter, /payload\\scheduled-tasks\\maya-whatsapp/);
+  assert.doesNotMatch(exporter, /payload\\scheduled-tasks\\maya-integrated-customer-operations/);
   assert.match(bootstrap, /relativeReleasePath/);
   assert.match(bootstrap, /ConfirmMayaWorkstation/);
   assert.match(resultReader, /WAITING_FOR_MAYA/);
