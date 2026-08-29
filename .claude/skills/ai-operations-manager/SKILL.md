@@ -27,8 +27,12 @@ Add another worker only when it owns a distinct operations workflow with no over
 - Never claim that a worker checked a source or completed an action without live evidence.
 - Keep customer documents and identifying operational data out of Git and manager reports.
 
+## Control-plane evidence
+
+For every orchestrated run, use `management-system-telemetry` when the capability, host, and scoped credentials are registered. Reuse one run key from `running` through the terminal state and report counters only; never send business payloads or identifying data. Missing telemetry credentials are a visible capability gap, not permission to search for secrets or repeat an external mutation.
+
 ## Handoff
 
 Report the worker skill used, the bounded source window, observed facts, decisions, exceptions, approvals requested or received, completed mutations, verification evidence, failures, and uncovered capabilities.
 
-For skill maintenance, run `npm run test:ai-managers`, `npm run build`, `quick_validate.py .claude/skills/ai-operations-manager`, `quick_validate.py .claude/skills/upload-delivery-notes-to-dropbox`, and `git diff --check`.
+For skill maintenance, run `npm run test:ai-managers`, `npm run build`, `quick_validate.py .claude/skills/ai-operations-manager`, `quick_validate.py .claude/skills/upload-delivery-notes-to-dropbox`, `quick_validate.py .claude/skills/management-system-telemetry`, and `git diff --check`.

@@ -57,6 +57,8 @@ Act as a cross-case service-operations manager over Monday board `3011387201`. L
 - Redact secrets and customer PII. Do not print raw Monday responses.
 - Do not report scores when `analysisComplete=false`, coverage has a null denominator, or live pagination did not reconcile.
 
+When this manager runs under the I Feel control plane, use `management-system-telemetry` with capability slug `ai-service-manager`. Telemetry records aggregate execution evidence only and never expands the service approval boundary or permits customer data in the envelope.
+
 ## Validation and handoff
 
 In the canonical repository run `npm run test:ai-managers`, `npm run build`, and `quick_validate.py .claude/skills/ai-service-manager`. Report board timestamp, main/subitem count reconciliation, omitted containers, thresholds, mapping warnings, test evidence, and any action that still requires explicit authorization.
