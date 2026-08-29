@@ -62,8 +62,6 @@ $copyMap = [ordered]@{
     '.claude\skills\maya-email-maintenance' = 'payload\skills\maya-email-maintenance'
     '.claude\skills\maya-whatsapp' = 'payload\skills\maya-whatsapp'
     'agent-config\maya-scheduled-tasks\maya-email-maintenance\SKILL.md' = 'payload\scheduled-tasks\maya-email-maintenance\SKILL.md'
-    'agent-config\maya-scheduled-tasks\maya-whatsapp\SKILL.md' = 'payload\scheduled-tasks\maya-whatsapp\SKILL.md'
-    '.claude\skills\maya-email-maintenance\references\maya-integrated-customer-operations.md' = 'payload\scheduled-tasks\maya-integrated-customer-operations\SKILL.md'
     '.claude\skills\maya-email-maintenance\scripts\draft_writer.py' = 'payload\email-review\draft_writer.py'
     '.claude\skills\ai-sales-manager\runtime\maya-config.example.json' = 'payload\runtime\maya-config.example.json'
     'scripts\workstations\maya-commissioning-install.ps1' = 'INSTALL.ps1'
@@ -100,6 +98,7 @@ if ($PSCmdlet.ShouldProcess($releaseRoot, 'Build Maya commissioning release')) {
         createdAt = (Get-Date).ToUniversalTime().ToString('o')
         requiredSkills = @('maya-email-maintenance', 'maya-whatsapp')
         schedulerActivation = 'PAUSED'
+        stagedSchedulers = @('maya-email-maintenance')
         files = $files
     }
     $manifest | ConvertTo-Json -Depth 10 | Set-Content -LiteralPath (Join-Path $stagingRoot 'manifest.json') -Encoding UTF8

@@ -5,7 +5,7 @@ description: Connector-free review of Maya protected email with verified custome
 
 # Maya Integrated Customer Operations — guarded connector-free routine
 
-Run at `17 */3 * * *`. Keep this Routine disabled until the canonical fix has been merged and installed. Keep `maya-whatsapp` disabled until its separate browser-tab recovery is approved. Do not alter Windows Task `iFeel Maya Email Maintenance`.
+LEGACY_DISABLED: do not stage, register, or run this Routine at maturity 0. The single canonical candidate is the report-only `maya-email-maintenance` scheduler prompt. Keep `maya-whatsapp` and Windows Task `iFeel Maya Email Maintenance` disabled.
 
 ## Canonical source and lock discipline
 
