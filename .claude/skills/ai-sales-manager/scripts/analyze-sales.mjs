@@ -147,6 +147,36 @@ function populationOf(item, config) {
   return { population: 'open', warnings };
 }
 
+const SALES_EXIT_STAGE_PATTERNS = Object.freeze([
+  /הועבר.*פרויקט/u, /העברה.*פרויקט/u, /עבר.*שירות/u, /הועבר.*שירות/u,
+  /תהליך מכירה הסתיים/u, /עסקה נסגרה/u, /נפתח תיק לקוח/u,
+]);
+
+export function salesEligibilityOf(item, options = {}) {
+  if (!item || typeof item !== 'object') throw new TypeError('item must be an object');
+  const config = validateConfig(options);
+  const now = strictDate(options.now, { timezone: config.timezone }) ?? new Date();
+  const nextAction = nextActionOf(item, config);
+  const handledAt = strictDate(item.handledAt, { timezone: config.timezone });
+  const latestEvidenceAt = strictDate(item.latestEvidenceAt, { timezone: config.timezone });
+  const effectiveStage = String(item.evidenceStage ?? item.status ?? '').trim();
+  const reasons = [];
+
+  if (item.transferredToProjects === true || item.transferredToService === true
+    || item.salesProcessEnded === true || item.dealClosed === true || item.customerFileOpened === true
+    || SALES_EXIT_STAGE_PATTERNS.some((pattern) => pattern.test(effectiveStage))) reasons.push('LEFT_SALES_OWNERSHIP');
+  if (nextAction && nextAction > now) reasons.push('FUTURE_FOLLOWUP');
+  if (item.handledInCurrentCycle === true
+    && (!latestEvidenceAt || !handledAt || latestEvidenceAt <= handledAt)) reasons.push('HANDLED_NO_NEW_EVIDENCE');
+
+  return {
+    eligible: reasons.length === 0,
+    reasons,
+    effectiveStage,
+    evidenceOverridesLeadNew: hasValue(item.evidenceStage) && String(item.leadState ?? '').trim() === 'ליד חדש',
+  };
+}
+
 function validateConfig(candidate) {
   const config = { ...DEFAULT_SALES_CONFIG, ...(candidate ?? {}) };
   assertTimezone(config.timezone);
@@ -201,6 +231,7 @@ export function classifySalesItem(item, options = {}) {
   const config = validateConfig(options);
   const now = strictDate(options.now, { timezone: config.timezone }) ?? new Date();
   const { population, warnings } = populationOf(item, config);
+  const salesEligibility = salesEligibilityOf(item, { ...config, now });
   const owners = ownersOf(item);
   const nextAction = nextActionOf(item, config);
   const lastUpdated = strictDate(item.lastUpdated, { timezone: config.timezone });
@@ -249,6 +280,7 @@ export function classifySalesItem(item, options = {}) {
     name: String(item.name ?? ''),
     status: String(item.status ?? ''),
     population,
+    salesEligibility,
     mappingWarnings,
     owners,
     nextAction: nextAction?.toISOString() ?? null,
@@ -404,7 +436,8 @@ export function analyzeSales(input, options = {}) {
     : clampScore(open.reduce((sum, item) => sum + item.healthScore, 0) / open.length);
   const qualityScore = dataQualityScore(coverage);
   const owners = ownerMetrics(classified);
-  const priorities = open.filter((item) => !item.flags.healthy)
+  const eligibleOpen = open.filter((item) => item.salesEligibility.eligible);
+  const priorities = eligibleOpen.filter((item) => !item.flags.healthy)
     .sort((a, b) => b.priorityScore - a.priorityScore
       || (a.lastUpdated ?? '').localeCompare(b.lastUpdated ?? '') || a.id.localeCompare(b.id))
     .slice(0, config.priorityLimit)
@@ -440,13 +473,22 @@ export function analyzeSales(input, options = {}) {
     ownerMetrics: owners,
     ownerAssignmentCount,
     priorities,
+    salesEligibility: {
+      eligibleOpen: eligibleOpen.length,
+      excludedOpen: open.length - eligibleOpen.length,
+      reasons: {
+        leftSalesOwnership: open.filter((item) => item.salesEligibility.reasons.includes('LEFT_SALES_OWNERSHIP')).length,
+        futureFollowup: open.filter((item) => item.salesEligibility.reasons.includes('FUTURE_FOLLOWUP')).length,
+        handledNoNewEvidence: open.filter((item) => item.salesEligibility.reasons.includes('HANDLED_NO_NEW_EVIDENCE')).length,
+      },
+    },
     mappingWarnings,
     trend: trendResult.trend,
     trendCompatibility: trendResult.compatibility,
     reconciliation: {
       populationMatchesTotal: counts.open + counts.closed + counts.cancelled === counts.total,
       uniqueIdsMatchTotal: uniqueIds === counts.total,
-      prioritiesAreOpen: priorities.every((priority) => open.some((item) => item.id === priority.id)),
+      prioritiesAreOpen: priorities.every((priority) => eligibleOpen.some((item) => item.id === priority.id)),
       note: 'ownerAssignmentCount may exceed open when a lead has multiple owners',
     },
     snapshot,
