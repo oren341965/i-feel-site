@@ -14,6 +14,7 @@ i-feel משרתת לקוחות פרטיים, יזמי בנייה, אדריכלי
 - [פתרונות ליזמי בנייה](https://i-feel.co.il/contractor-customer-care/): תשתיות דירה חכמה, תכנון סטנדרט ושדרוגים לדיירים בפרויקטים של בנייה רוויה.
 - [ליווי אדריכלים](https://i-feel.co.il/architects-smart-home-planning/): תיאום תשתיות, מפרטים, תכנון מערכות וביצוע מול האדריכל, החשמלאי ויתר היועצים.
 - [אודיו וקולנוע ביתי](https://i-feel.co.il/audio-and-sound-systems/): מערכות אודיו רב אזוריות וקולנוע ביתי כחלק ממערכת הבית החכם.
+- [מסכי LED חוץ לגינה ולווילה](https://i-feel.co.il/outdoor-led-screens/): תכנון מסך LED מודולרי לחוץ, כולל P2.976, בהירות, IP65, תחזוקה, NovaStar ותשתיות.
 - [רשתות תקשורת](https://i-feel.co.il/communication-networks/): תכנון רשת, Wi-Fi, כבילה וציוד Aruba Instant On עבור מערכות הבית והמבנה.
 - [שירות ותחזוקה](https://i-feel.co.il/service-and-maintenance/): שירות, תחזוקה, תמיכה ושדרוג למערכות קיימות.
 
