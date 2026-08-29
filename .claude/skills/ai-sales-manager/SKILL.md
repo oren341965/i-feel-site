@@ -44,3 +44,5 @@ description: Orchestrate I Feel's maturity-0 sales system and deterministic read
 - Vault boundaries: `scripts/vault-runtime.mjs`, `scripts/maya-vault-bridge.mjs`, and `scripts/claude-vault-bridge.mjs`
 
 Missing evidence or authority is a blocker, not permission to simulate success.
+
+When this manager runs under the I Feel control plane, use `management-system-telemetry` with capability slug `ai-sales-manager`. Telemetry records execution evidence only and never expands the sales approval boundary.
