@@ -18,6 +18,16 @@ The deterministic script is the source of truth for calculations. These rules ma
 
 Only open items enter exception counts, owner workload, health scoring, and the priority queue.
 
+## SALES_ELIGIBILITY_FILTER
+
+Keep pipeline classification and history intact, but show an open item in the manager's treatment queue only when it remains sales-owned and actionable now. Exclude it when any of these deterministic conditions holds:
+
+- the authoritative operational stage or a normalized explicit flag says it moved to Projects or Service, the sales process ended, the deal closed, or a customer file opened;
+- the authoritative `timeline` next action is still in the future;
+- `handledInCurrentCycle=true` and no normalized Gmail, Calendar or Monday-update evidence arrived after `handledAt`.
+
+Use `evidenceStage` only when it was derived from newer verified Gmail, Calendar or Monday-update evidence. It overrides the secondary `leadState` value `ליד חדש`; item names and free text never do. A future-follow-up item becomes eligible when its date arrives. A handled item becomes eligible when `latestEvidenceAt > handledAt`. The filter changes only the treatment queue, never pipeline counts, history, status or Monday data.
+
 ## Open-lead classifications
 
 - `overdue`: next-action due timestamp is earlier than calculation time.
