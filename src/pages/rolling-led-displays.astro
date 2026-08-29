@@ -1,0 +1,67 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import content from '../page-html/rolling-led-displays.html?raw';
+
+const meta = {
+  title: "מסכי LED מתגלגלים וקבועים | מפרט, מחיר ומצגת | i-feel",
+  description: "מסכי LED מתגלגלים וקבועים לעסקים ולחללים אדריכליים: דגמים, מחירי ייחוס, בטיחות, הדרכה ואספקה. הורידו מצגת או התקשרו 03-508-9553.",
+  canonical: "https://i-feel.co.il/rolling-led-displays/",
+  ogTitle: "מסך LED שנעלם כשלא משתמשים בו | i-feel",
+  ogDescription: "מדריך ומצגת להורדה: מסכי LED מתגלגלים וקבועים, השוואת דגמים, מחירים, איכות, אחריות, הדרכה ואספקה.",
+  ogUrl: "https://i-feel.co.il/rolling-led-displays/",
+  ogImage: "https://i-feel.co.il/assets/rolling-led/rolling-fast-led-display.jpg",
+  jsonLd: JSON.stringify({
+    '@context': 'https://schema.org',
+    '@graph': [
+      {
+        '@type': ['LocalBusiness', 'HomeAndConstructionBusiness'],
+        '@id': 'https://i-feel.co.il/#business',
+        name: 'i-feel',
+        url: 'https://i-feel.co.il/',
+        telephone: '+972-3-508-9553',
+        email: 'sales@i-feel.co.il',
+        address: { '@type': 'PostalAddress', streetAddress: 'אימבר 14', addressLocality: 'פתח תקווה', addressRegion: 'מחוז המרכז', postalCode: '4951148', addressCountry: 'IL' },
+        areaServed: { '@type': 'Country', name: 'Israel' }
+      },
+      {
+        '@type': 'BreadcrumbList',
+        itemListElement: [
+          { '@type': 'ListItem', position: 1, name: 'דף הבית', item: 'https://i-feel.co.il/' },
+          { '@type': 'ListItem', position: 2, name: 'מסכי LED חוץ', item: 'https://i-feel.co.il/outdoor-led-screens/' },
+          { '@type': 'ListItem', position: 3, name: 'מסכי LED מתגלגלים וקבועים', item: 'https://i-feel.co.il/rolling-led-displays/' }
+        ]
+      },
+      {
+        '@type': 'Service',
+        '@id': 'https://i-feel.co.il/rolling-led-displays/#service',
+        url: 'https://i-feel.co.il/rolling-led-displays/',
+        name: 'תכנון ואינטגרציה של מסכי LED מתגלגלים וקבועים',
+        serviceType: 'Rolling and Fixed LED Display Planning and Integration',
+        provider: { '@id': 'https://i-feel.co.il/#business' },
+        areaServed: { '@type': 'Country', name: 'Israel' },
+        description: 'אפיון, תכנון תשתיות, מנגנון, בקרה, התקנה, כיול ושירות למסכי LED מתגלגלים וקבועים.'
+      },
+      {
+        '@type': 'FAQPage',
+        mainEntity: [
+          { '@type': 'Question', name: 'מה ההבדל בין מסך LED מתגלגל למסך קבוע?', acceptedAnswer: { '@type': 'Answer', text: 'מסך קבוע נשאר במקומו ומאפשר מבנה פשוט יחסית. מסך מתגלגל מוסיף מנגנון תנועה ומאפשר להסתיר את התצוגה, אך דורש תכנון מכני, בטיחותי ותחזוקתי רחב יותר.' } },
+          { '@type': 'Question', name: 'איזה Pixel Pitch מתאים?', acceptedAnswer: { '@type': 'Answer', text: 'הבחירה נקבעת בעיקר לפי מרחק הצפייה והתוכן. P1.953 מתאים לצפייה קרובה ואיכות גבוהה, בעוד P3.91 ו-P5.2 יכולים להתאים למרחק גדול יותר וליישומים מסחריים או חיצוניים.' } },
+          { '@type': 'Question', name: 'האם המחיר למ״ר הוא מחיר הפרויקט?', acceptedAnswer: { '@type': 'Answer', text: 'לא. המחיר למ״ר אינו כולל בהכרח קבינטים, בקרה, חלפים, קונסטרוקציה, שילוח, מסים, התקנה וכיול. יש לבנות עלות מערכת מלאה לפי האתר.' } },
+          { '@type': 'Question', name: 'מה חייבים לקבל מהספק לפני הזמנה?', acceptedAnswer: { '@type': 'Answer', text: 'מפרט חתום, שרטוטי ייצור, רשימת רכיבים, מחיר ותנאי משלוח, אחריות ו-RMA, רשימת חלפים, תוכנית הדרכה, בדיקת FAT ולוח זמנים מפורט.' } }
+        ]
+      },
+      {
+        '@type': 'DigitalDocument',
+        name: 'Rolling and Fixed LED Display Import Program',
+        inLanguage: 'en',
+        encodingFormat: 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+        url: 'https://i-feel.co.il/downloads/rolling-and-fixed-led-import-program-en.pptx',
+        dateModified: '2026-08-29'
+      }
+    ]
+  })
+};
+---
+<BaseLayout {...meta}>
+  <Fragment set:html={content} />
+</BaseLayout>

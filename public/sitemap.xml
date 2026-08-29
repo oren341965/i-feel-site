@@ -256,7 +256,7 @@
   </url>
   <url>
     <loc>https://i-feel.co.il/green-building/</loc>
-    <lastmod>2026-05-22</lastmod>
+    <lastmod>2026-08-29</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -724,6 +724,12 @@
   </url>
   <url>
     <loc>https://i-feel.co.il/outdoor-led-screens/</loc>
+    <lastmod>2026-08-29</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://i-feel.co.il/rolling-led-displays/</loc>
     <lastmod>2026-08-29</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
