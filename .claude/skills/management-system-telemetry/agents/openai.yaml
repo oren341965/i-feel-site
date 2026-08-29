@@ -1,0 +1,4 @@
+interface:
+  display_name: "I Feel Run Telemetry"
+  short_description: "Report registered I Feel capability runs safely"
+  default_prompt: "Use $management-system-telemetry to report this registered I Feel capability run with sanitized evidence."
