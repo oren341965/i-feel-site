@@ -104,6 +104,11 @@ test('Maya standing communication scope is bounded and scheduled Gmail maintenan
   }
   assert.match(email, /must not permanently delete or trash mail/);
   assert.match(emailTask, /once every three hours/);
+  assert.match(emailTask, /REPORT_ONLY/);
+  assert.match(emailTask, /hard maximum duration of 10 minutes/);
+  assert.match(emailTask, /Do not create drafts/);
+  assert.match(emailTask, /EXTERNAL_ACTIONS=0/);
   assert.match(emailTask, /must not request local-file `Edit` access/);
   assert.match(emailTask, /alter Monday/);
+  assert.doesNotMatch(emailTask, /verify every label, archive or allowed send/i);
 });

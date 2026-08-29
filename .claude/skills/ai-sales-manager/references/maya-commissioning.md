@@ -5,7 +5,7 @@ This handoff makes Maya installation repeatable without copying prompts, source 
 ## Ownership
 
 - Oren/Codex builds the release from a clean local `main` that equals `origin/main`.
-- The release contains only `maya-email-maintenance`, `maya-whatsapp`, their staged scheduler prompts, the guarded email review writer, the Maya runtime template, and the installer.
+- The release contains the canonical `maya-email-maintenance` and `maya-whatsapp` skills, one staged `maya-email-maintenance` report-only scheduler prompt, the guarded email review writer, the Maya runtime template, and the installer. WhatsApp and integrated scheduler prompts are not staged at maturity 0.
 - Maya runs one stable command from `AI-Sales/Installers/Maya/INSTALL_CURRENT.ps1`.
 - The installer writes one PII-free `MAYA_COMMISSIONING_RESULT` to `AI-Sales/_bus/maya-to-manager`.
 - `ai-sales-manager` reads the result with `check-maya-commissioning-result.ps1`; no AI judgment is needed for export, hashing, installation, or verification.
@@ -19,6 +19,14 @@ This handoff makes Maya installation repeatable without copying prompts, source 
 5. On Oren, run `check-maya-commissioning-result.ps1` against the Vault.
 6. Continue only when the result is `INSTALLED_PAUSED`, every expected skill hash matches, `runtimeLocks=0`, and all external-action counters are zero.
 7. Browser/account smoke tests and scheduler activation are a later, separately approved gate.
+
+## Single report-only scheduler gate
+
+- The only activation candidate at maturity 0 is `maya-email-maintenance` in `REPORT_ONLY` mode, once every three hours with a 10-minute hard timeout.
+- Commissioning quarantines previously staged `maya-whatsapp` and `maya-integrated-customer-operations` prompts into the timestamped local backup instead of deleting them.
+- Windows Task `iFeel Maya Email Maintenance` remains disabled because its `--apply` path can mutate Gmail.
+- The report-only prompt may read and aggregate verified Maya Gmail evidence but cannot create drafts, send, label, mark read, archive, move, delete, download, or write to Monday, Calendar, WhatsApp, Vault, Bus, contacts, files, configuration, or connection flags.
+- Installation still finishes `INSTALLED_PAUSED`; activation requires a separate explicit approval after hash, identity, connection, lock, timeout, and duplicate-path verification.
 
 ## Safety boundaries
 

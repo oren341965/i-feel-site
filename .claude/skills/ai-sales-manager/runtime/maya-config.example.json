@@ -18,6 +18,17 @@
     ],
     "installationStatus": "CONNECTION_MISSING"
   },
+  "automation": {
+    "mode": "REPORT_ONLY",
+    "activeScheduler": "maya-email-maintenance",
+    "cadenceMinutes": 180,
+    "timeoutSeconds": 600,
+    "logsDirectory": "C:\\ifeel-maya\\logs",
+    "windowsEmailTaskAllowed": false,
+    "whatsappSchedulerAllowed": false,
+    "integratedSchedulerAllowed": false,
+    "schedulersActivated": 0
+  },
   "connections": {
     "gmail": {
       "connected": false,
