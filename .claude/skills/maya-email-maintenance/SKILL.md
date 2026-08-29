@@ -11,6 +11,7 @@ Keep Maya's work inbox small, classified and actionable without losing customer 
 
 - Before every run, read the authenticated Gmail profile and compare it with the Maya mailbox configured by the automation. Stop with `WRONG_MAILBOX` when the address is absent, belongs to Oren or does not exactly match the configured Maya address.
 - A separate automation invokes this skill every three hours. The skill performs one bounded pass and never creates another scheduler or overlapping run.
+- At maturity 0, every scheduled invocation is `REPORT_ONLY` and the staged scheduler prompt is stricter than the interactive workflow below. It may read and aggregate only: no Gmail label/read/archive mutation, no draft, no send, no attachment download, and no Monday, Calendar, WhatsApp, Vault, Bus, contact, configuration, or connection-state write. The pre-existing Windows Task and the WhatsApp/integrated schedulers must remain disabled.
 - Continue from the last successful checkpoint with a small overlap, deduplicate by Gmail message ID, and do not backfill more than 24 hours in one unattended pass. A manual run may process a larger range when the user requests it.
 
 ## Three-hour pass
@@ -52,6 +53,7 @@ Keep Maya's work inbox small, classified and actionable without losing customer 
 - Use one run lock and a bounded runtime. A timeout is a normal blocker result, not permission to continue indefinitely.
 - Never wait for human approval inside an unattended run. Put the approval in the approved local queue and finish with an explicit status.
 - Release the run lock in `finally` for every outcome, including timeout, connector failure, `WRONG_RECIPIENT` and `NEEDS_OREN`.
+- The maturity-0 report-only scheduler has a hard 10-minute limit and emits only aggregate counts and bounded blocker codes. It never uses Gmail state as a writable checkpoint and never includes customer identifiers or message metadata in logs.
 
 ## Standing routine-customer scope
 
