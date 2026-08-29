@@ -7,6 +7,7 @@ import './ai-sales-preflight.test.mjs';
 import {
   analyzeSales,
   classifySalesItem,
+  salesEligibilityOf,
 } from '../.claude/skills/ai-sales-manager/scripts/analyze-sales.mjs';
 
 const NOW = '2026-08-20T09:00:00.000Z';
@@ -188,6 +189,40 @@ test('sales explicit normalized booleans override status-label inference', () =>
   }, { now: NOW });
 
   assert.equal(item.population, 'closed');
+});
+
+test('SALES_ELIGIBILITY_FILTER excludes Itay Katz regression after project handoff despite lead-new', () => {
+  const eligibility = salesEligibilityOf({
+    id: 'regression-itay', name: '[redacted regression]', status: '1. ליד חדש', leadState: 'ליד חדש',
+    evidenceStage: 'הועבר למחלקת פרויקטים', latestEvidenceAt: '2026-08-20T08:00:00.000Z',
+  }, { now: NOW });
+
+  assert.equal(eligibility.eligible, false);
+  assert.deepEqual(eligibility.reasons, ['LEFT_SALES_OWNERSHIP']);
+  assert.equal(eligibility.evidenceOverridesLeadNew, true);
+});
+
+test('SALES_ELIGIBILITY_FILTER excludes Sharon Falek regression until follow-up or new evidence', () => {
+  const base = {
+    id: 'regression-sharon', name: '[redacted regression]', status: '8. הכנת הצעה ושליחתה',
+    owners: ['א'], nextAction: '2026-08-25', handledInCurrentCycle: true,
+    handledAt: '2026-08-20T08:30:00.000Z', latestEvidenceAt: '2026-08-20T08:00:00.000Z',
+    lastUpdated: '2026-01-01T09:00:00.000Z', createdAt: '2026-01-01T09:00:00.000Z',
+  };
+  const excluded = analyzeSales({ generatedAt: NOW, items: [base] });
+  const returnedByEvidence = salesEligibilityOf({
+    ...base, nextAction: null, latestEvidenceAt: '2026-08-20T08:45:00.000Z',
+  }, { now: NOW });
+  const returnedByDate = salesEligibilityOf(base, { now: '2026-08-26T09:00:00.000Z' });
+
+  assert.equal(excluded.priorities.length, 0);
+  assert.equal(excluded.salesEligibility.excludedOpen, 1);
+  assert.deepEqual(excluded.salesEligibility.reasons, {
+    leftSalesOwnership: 0, futureFollowup: 1, handledNoNewEvidence: 1,
+  });
+  assert.equal(returnedByEvidence.eligible, true);
+  assert.equal(returnedByDate.eligible, false);
+  assert.deepEqual(returnedByDate.reasons, ['HANDLED_NO_NEW_EVIDENCE']);
 });
 
 test('Maya commissioning is role-scoped, hash-verified, and activation-free', () => {
