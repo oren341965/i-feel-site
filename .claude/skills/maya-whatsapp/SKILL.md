@@ -15,6 +15,13 @@ Use the existing Maya WhatsApp session on Maya's workstation. The shared `ai-sal
 4. Before sending, read the recent direct conversation and the relevant operational record. Reject a duplicate request or an opt-out.
 5. During the daily execution window, run the field-content gate described below.
 
+## Maya-agent task context
+
+- This skill consumes only validated context handed off by the existing `maya-agent` Vault bridge; it never polls `manager-to-maya` independently and never creates a competing agent or queue.
+- Require `task_id`, `execution_state=ASSIGNED_TO_MAYA`, `monday_board_id` and `monday_item_id`. Resolve the real customer from Monday and a strong direct-chat identifier; never act from a name alone.
+- Confirm that the bridge already emitted `MAYA_ACKNOWLEDGED`, read the latest Monday notes/action/date and the latest direct conversation, and reuse a prior result for a duplicate `task_id`.
+- Return a bounded result to `ai-sales-manager` through `maya-to-manager`. At maturity 0 no task handoff grants permission to send, mutate Monday or bypass an approval gate.
+
 ## Browser and unattended-run controls
 
 - Use one already-open, verified WhatsApp Business tab. Never open a new WhatsApp tab from an unattended invocation.

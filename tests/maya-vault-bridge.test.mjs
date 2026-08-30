@@ -10,7 +10,12 @@ import {
   emitManagerHandshake,
   emitMayaReady,
   inspectMayaConnection,
+  processAssignedMayaTask,
+  readAssignedMayaTasks,
   respondToMayaSystemTests,
+  createMayaTaskAcknowledgement,
+  createMayaTaskResult,
+  validateAssignedMayaTask,
   validateMayaSystemTestEvent,
 } from '../.claude/skills/ai-sales-manager/scripts/maya-vault-bridge.mjs';
 
@@ -159,4 +164,94 @@ test('read-only Maya connection inspection does not create missing bus folders',
     (error) => error?.code === 'ENOENT',
   );
   assert.equal(vaultRoot.endsWith('vault'), true);
+});
+
+test('Maya receives an assigned dry-run task, ACKs, reads Monday and Gmail, and returns one result', async (t) => {
+  const { mayaConfigPath } = await fixture(t);
+  const config = JSON.parse(await readFile(mayaConfigPath, 'utf8'));
+  const managerDirectory = join(resolve(config.VAULT_ROOT), 'AI-Sales', '_bus', 'manager-to-maya');
+  await mkdir(managerDirectory, { recursive: true });
+  await mkdir(join(resolve(config.VAULT_ROOT), 'AI-Sales', '_bus', 'maya-to-manager'), { recursive: true });
+  const task = {
+    schema_version: 1,
+    task_id: 'maya-test-status-1',
+    generated_at: NOW.toISOString(),
+    source: 'ai-sales-manager',
+    target: 'maya-agent',
+    type: 'MAYA_TASK',
+    execution_state: 'ASSIGNED_TO_MAYA',
+    monday_board_id: '2732725332',
+    monday_item_id: '123456789',
+    instruction: 'Check whether a response already exists.',
+    approval_required: true,
+    approval_status: 'pending',
+    max_age_hours: 24,
+    dry_run: true,
+    maturity: 0,
+  };
+  await writeFile(join(managerDirectory, 'assigned-test.json'), JSON.stringify(task), 'utf8');
+  const queue = await readAssignedMayaTasks({ configPath: mayaConfigPath, now: NOW });
+  assert.equal(queue.tasks.length, 1);
+  assert.equal(queue.tasks[0].task.task_id, task.task_id);
+  assert.equal(validateAssignedMayaTask(task, { now: NOW }).accepted, true);
+  assert.equal(createMayaTaskAcknowledgement({ task, now: NOW }).state, 'MAYA_ACKNOWLEDGED');
+  assert.equal(createMayaTaskResult({ task, outcome: { state: 'BLOCKED' }, now: NOW }).message_sent, 'no');
+
+  let mondayReads = 0;
+  let gmailReads = 0;
+  const first = await processAssignedMayaTask({
+    configPath: mayaConfigPath,
+    task,
+    now: NOW,
+    adapters: {
+      mondayRead: async ({ boardId, itemId }) => {
+        mondayReads += 1;
+        assert.equal(boardId, '2732725332');
+        return { itemId, customerName: '[DRY_RUN_CUSTOMER]', nextTreatmentDate: '2026-08-22' };
+      },
+      gmailRead: async () => {
+        gmailReads += 1;
+        return { communicationChecked: true, responseFound: false };
+      },
+    },
+  });
+  assert.equal(first.accepted, true);
+  assert.equal(first.ack.created, true);
+  assert.equal(first.ack.message.state, 'MAYA_ACKNOWLEDGED');
+  assert.equal(first.result.type, 'MAYA_TASK_RESULT');
+  assert.equal(first.result.state, 'NEEDS_APPROVAL');
+  assert.equal(first.result.message_sent, 'no');
+  assert.equal(first.result.monday_updated, 'no');
+  assert.deepEqual(first.safety, { externalSends: 0, gmailMutations: 0, mondayWrites: 0 });
+
+  const second = await processAssignedMayaTask({
+    configPath: mayaConfigPath,
+    task,
+    now: NOW,
+    adapters: {
+      mondayRead: async () => { throw new Error('duplicate must not read Monday again'); },
+      gmailRead: async () => { throw new Error('duplicate must not read Gmail again'); },
+    },
+  });
+  assert.equal(second.status, 'DUPLICATE_RESULT_REUSED');
+  assert.equal(second.duplicate, true);
+  assert.equal(mondayReads, 1);
+  assert.equal(gmailReads, 1);
+});
+
+test('Maya rejects name-only and non-assigned tasks before ACK', () => {
+  const invalid = {
+    schema_version: 1,
+    task_id: 'maya-test-invalid',
+    generated_at: NOW.toISOString(),
+    source: 'ai-sales-manager',
+    target: 'maya-agent',
+    type: 'MAYA_TASK',
+    execution_state: 'QUEUED',
+    instruction: 'Contact customer by name.',
+    max_age_hours: 24,
+    dry_run: true,
+    maturity: 0,
+  };
+  assert.equal(validateAssignedMayaTask(invalid, { now: NOW }).accepted, false);
 });

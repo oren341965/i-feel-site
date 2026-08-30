@@ -4,9 +4,62 @@
   "title": "I Feel AI Sales file-bridge message",
   "oneOf": [
     { "$ref": "#/$defs/morningJudgmentRequest" },
-    { "$ref": "#/$defs/legacyBridgeMessage" }
+    { "$ref": "#/$defs/legacyBridgeMessage" },
+    { "$ref": "#/$defs/mayaTask" },
+    { "$ref": "#/$defs/mayaTaskAck" },
+    { "$ref": "#/$defs/mayaTaskResult" }
   ],
   "$defs": {
+    "mayaTask": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["schema_version", "task_id", "generated_at", "source", "target", "type", "execution_state", "monday_board_id", "monday_item_id", "instruction", "max_age_hours", "dry_run", "maturity"],
+      "properties": {
+        "schema_version": { "const": 1 },
+        "task_id": { "type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$" },
+        "generated_at": { "type": "string", "format": "date-time" },
+        "source": { "const": "ai-sales-manager" },
+        "target": { "const": "maya-agent" },
+        "type": { "const": "MAYA_TASK" },
+        "execution_state": { "const": "ASSIGNED_TO_MAYA" },
+        "monday_board_id": { "type": "string", "pattern": "^[0-9]+$" },
+        "monday_item_id": { "type": "string", "pattern": "^[0-9]+$" },
+        "instruction": { "type": "string", "minLength": 1, "maxLength": 2000 },
+        "approval_required": { "type": "boolean" },
+        "approval_status": { "enum": ["not_required", "pending", "approved", "rejected"] },
+        "max_age_hours": { "type": "number", "exclusiveMinimum": 0, "maximum": 168 },
+        "dry_run": { "const": true },
+        "maturity": { "const": 0 }
+      }
+    },
+    "mayaTaskAck": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["schema_version", "task_id", "monday_item_id", "source", "target", "type", "state", "received_at", "dry_run", "maturity"],
+      "properties": {
+        "schema_version": { "const": 1 }, "task_id": { "type": "string" }, "monday_item_id": { "type": "string" },
+        "source": { "const": "maya-agent" }, "target": { "const": "ai-sales-manager" }, "type": { "const": "MAYA_TASK_ACK" },
+        "state": { "const": "MAYA_ACKNOWLEDGED" }, "received_at": { "type": "string", "format": "date-time" },
+        "dry_run": { "const": true }, "maturity": { "const": 0 }
+      }
+    },
+    "mayaTaskResult": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["schema_version", "task_id", "monday_item_id", "customer_name", "source", "target", "type", "state", "action_performed", "communication_checked", "message_sent", "message_id", "result_summary", "monday_updated", "next_action", "next_treatment_date", "blocked_reason", "needs_oren_decision", "completed_at", "dry_run", "maturity"],
+      "properties": {
+        "schema_version": { "const": 1 }, "task_id": { "type": "string" }, "monday_item_id": { "type": "string" },
+        "customer_name": { "type": ["string", "null"], "maxLength": 250 }, "source": { "const": "maya-agent" },
+        "target": { "const": "ai-sales-manager" }, "type": { "const": "MAYA_TASK_RESULT" },
+        "state": { "enum": ["MAYA_EXECUTED", "WAITING_FOR_CUSTOMER", "RESPONSE_RECEIVED_AND_MONDAY_UPDATED", "BLOCKED", "NEEDS_APPROVAL", "NEEDS_OREN_DECISION"] },
+        "action_performed": { "type": "string", "maxLength": 500 }, "communication_checked": { "type": "boolean" },
+        "message_sent": { "enum": ["yes", "no"] }, "message_id": { "type": ["string", "null"], "maxLength": 250 },
+        "result_summary": { "type": "string", "maxLength": 2000 }, "monday_updated": { "enum": ["yes", "no"] },
+        "next_action": { "type": ["string", "null"], "maxLength": 500 }, "next_treatment_date": { "type": ["string", "null"], "maxLength": 64 },
+        "blocked_reason": { "type": ["string", "null"], "maxLength": 500 }, "needs_oren_decision": { "enum": ["yes", "no"] },
+        "completed_at": { "type": "string", "format": "date-time" }, "dry_run": { "const": true }, "maturity": { "const": 0 }
+      }
+    },
     "morningJudgmentRequest": {
       "type": "object",
       "additionalProperties": false,

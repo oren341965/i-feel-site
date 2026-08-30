@@ -14,6 +14,14 @@ Keep Maya's work inbox small, classified and actionable without losing customer 
 - At maturity 0, every scheduled invocation is `REPORT_ONLY` and the staged scheduler prompt is stricter than the interactive workflow below. It may read and aggregate only: no Gmail label/read/archive mutation, no draft, no send, no attachment download, and no Monday, Calendar, WhatsApp, Vault, Bus, contact, configuration, or connection-state write. The pre-existing Windows Task and the WhatsApp/integrated schedulers must remain disabled.
 - Continue from the last successful checkpoint with a small overlap, deduplicate by Gmail message ID, and do not backfill more than 24 hours in one unattended pass. A manual run may process a larger range when the user requests it.
 
+## Maya-agent task context
+
+- This skill is a worker of the existing `maya-agent` Vault bridge; it does not poll the manager queue or create a scheduler itself.
+- Accept customer work only with a validated `task_id`, `execution_state=ASSIGNED_TO_MAYA`, `monday_board_id` and `monday_item_id`. A customer name alone is never sufficient.
+- The bridge must emit `MAYA_ACKNOWLEDGED` before this skill reads Monday or Gmail. Reuse an existing correlated result for a duplicate `task_id`; never send twice.
+- Before any proposed contact, read the authoritative Monday item, its latest notes, `timeline`, last action, and the latest available direct Gmail thread. For a status check, first determine whether a response already exists.
+- Return the bounded execution result to `ai-sales-manager` through `maya-to-manager`; never leave the only result in local memory. At maturity 0 this skill remains read-only and returns `NEEDS_APPROVAL` or `NEEDS_OREN_DECISION` rather than sending or mutating Monday.
+
 ## Three-hour pass
 
 1. Scan `INBOX` from the checkpoint through the current time. Page through all matching results. Read the full thread when its context affects classification or the proposed response.
