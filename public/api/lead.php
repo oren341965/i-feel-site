@@ -191,6 +191,8 @@ $marketing = [
     'utm_term' => field('utm_term', 200),
     'utm_content' => field('utm_content', 200),
     'gclid' => field('gclid', 200),
+    'fbclid' => field('fbclid', 200),
+    'ttclid' => field('ttclid', 200),
 ];
 
 if ($lead['name'] === '' || $lead['phone'] === '' || $lead['lead_type'] === '') {
@@ -230,7 +232,7 @@ foreach ($marketing as $key => $value) {
     }
 }
 if ($marketingLines !== []) {
-    $updateBody .= "\n\n**Marketing (UTM / Google Ads)**\n" . implode("\n", $marketingLines);
+    $updateBody .= "\n\n**Marketing attribution**\n" . implode("\n", $marketingLines);
 }
 
 // Board 2732725332 requires phone + email column values on item creation
@@ -255,6 +257,8 @@ $utmColumnMap = [
     'utm_medium' => 'short_text99tuldfa',
     'utm_campaign' => 'short_text2l9c35ow',
     'gclid' => 'short_textr4lgm1qe',
+    'fbclid' => 'short_textbvepdnis',
+    'ttclid' => 'short_textbggao9rl',
 ];
 foreach ($utmColumnMap as $key => $columnId) {
     if ($marketing[$key] !== '') {

@@ -1,0 +1,68 @@
+<script is:inline>
+  (function () {
+    var attributionKeys = [
+      'utm_source',
+      'utm_medium',
+      'utm_campaign',
+      'utm_term',
+      'utm_content',
+      'gclid',
+      'fbclid',
+      'ttclid'
+    ];
+    var params = new URLSearchParams(window.location.search);
+    var values = {};
+
+    attributionKeys.forEach(function (key) {
+      var storageKey = 'ifeel_' + key;
+      var stored = '';
+      try { stored = sessionStorage.getItem(storageKey) || ''; } catch (error) {}
+
+      // Keep the first known touch for the browser session. A later visit must
+      // not silently replace the campaign that originally generated the lead.
+      if (!stored) {
+        var current = (params.get(key) || '').trim().slice(0, 200);
+        if (current) {
+          stored = current;
+          try { sessionStorage.setItem(storageKey, current); } catch (error) {}
+        }
+      }
+
+      values[key] = stored;
+    });
+
+    function fillLeadForm(form) {
+      attributionKeys.forEach(function (key) {
+        var value = values[key];
+        if (!value) return;
+
+        var input = form.querySelector('input[name="' + key + '"]');
+        if (!input) {
+          input = document.createElement('input');
+          input.type = 'hidden';
+          input.name = key;
+          form.appendChild(input);
+        }
+        input.value = value;
+      });
+    }
+
+    function fillAllLeadForms() {
+      document.querySelectorAll('form[action="/api/lead.php"]').forEach(fillLeadForm);
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', fillAllLeadForms, { once: true });
+    } else {
+      fillAllLeadForms();
+    }
+
+    // Also cover a lead form that is rendered dynamically after page load.
+    document.addEventListener('submit', function (event) {
+      var form = event.target;
+      if (form && form.matches && form.matches('form[action="/api/lead.php"]')) {
+        fillLeadForm(form);
+      }
+    }, true);
+  })();
+</script>
