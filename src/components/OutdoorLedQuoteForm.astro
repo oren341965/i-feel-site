@@ -1,0 +1,71 @@
+<section id="quote" class="bg-brand-50 border-y border-brand-100 py-16 scroll-mt-24">
+  <div class="max-w-5xl mx-auto px-4">
+    <div class="grid lg:grid-cols-[0.9fr_1.1fr] gap-8 items-start">
+      <div>
+        <p class="text-sm font-extrabold text-accent-600 mb-2">אפיון לפני הצעה</p>
+        <h2 class="text-3xl md:text-4xl font-extrabold text-brand-900 mb-4">קבלת הצעה מדויקת והוגנת למסך Outdoor LED</h2>
+        <p class="text-lg leading-8 text-brand-700 mb-5">גודל לבדו אינו מספיק לתמחור. כדי לבחור מסך, בקר, תשתיות וקונסטרוקציה מתאימים אנחנו צריכים להבין את מרחק הצפייה, החשיפה לשמש, מקורות הווידאו ודרך השירות.</p>
+        <ul class="space-y-3 text-brand-700">
+          <li><strong>מה כדאי לצרף בשיחה:</strong> צילום של הקיר או אזור ההתקנה ותוכנית אדריכלית אם קיימת.</li>
+          <li><strong>מה תקבלו:</strong> בדיקת התאמה ראשונית, שאלות השלמה והצעה לפי המפרט שנבחר בפועל.</li>
+          <li><strong>מה לא נעשה:</strong> לא נתמחר לפי „מסך בגודל מסוים” בלי לוודא בהירות, רזולוציה, בקר ותנאי התקנה.</li>
+        </ul>
+      </div>
+
+      <div class="bg-white rounded-2xl shadow-xl border border-brand-100 p-6 md:p-8">
+        <form id="outdoor-led-quote-form" action="/api/lead.php" method="post" accept-charset="UTF-8" class="grid gap-4">
+          <input type="hidden" name="lead_type" value="מסך Outdoor LED">
+          <input type="hidden" name="subject" value="בקשת אפיון והצעה למסך Outdoor LED">
+          <input type="hidden" name="source_page" value="/outdoor-led-screens/">
+          <input type="hidden" name="redirect_to" value="/outdoor-led-screens/">
+          <input type="hidden" name="message" id="outdoor-led-message" value="">
+          <input type="hidden" name="utm_source" value="">
+          <input type="hidden" name="utm_medium" value="">
+          <input type="hidden" name="utm_campaign" value="">
+          <input type="hidden" name="utm_term" value="">
+          <input type="hidden" name="utm_content" value="">
+          <input type="hidden" name="gclid" value="">
+          <div class="hidden" aria-hidden="true"><label>Website <input type="text" name="website" tabindex="-1" autocomplete="off"></label></div>
+
+          <div class="grid sm:grid-cols-2 gap-4">
+            <label class="block"><span class="block text-sm font-bold text-brand-900 mb-1">שם מלא *</span><input required name="name" type="text" autocomplete="name" maxlength="120" class="w-full rounded-lg border border-brand-200 px-4 py-3" placeholder="שם פרטי ומשפחה"></label>
+            <label class="block"><span class="block text-sm font-bold text-brand-900 mb-1">טלפון *</span><input required name="phone" type="tel" autocomplete="tel" inputmode="tel" maxlength="30" dir="ltr" class="w-full rounded-lg border border-brand-200 px-4 py-3 text-right" placeholder="050-0000000"></label>
+            <label class="block"><span class="block text-sm font-bold text-brand-900 mb-1">דוא״ל</span><input name="email" type="email" autocomplete="email" maxlength="160" class="w-full rounded-lg border border-brand-200 px-4 py-3" placeholder="name@example.com"></label>
+            <label class="block"><span class="block text-sm font-bold text-brand-900 mb-1">עיר / יישוב</span><input id="led-city" type="text" autocomplete="address-level2" maxlength="80" class="w-full rounded-lg border border-brand-200 px-4 py-3" placeholder="מיקום הפרויקט"></label>
+            <label class="block"><span class="block text-sm font-bold text-brand-900 mb-1">רוחב רצוי במטרים</span><input id="led-width" type="number" min="1" max="30" step="0.5" inputmode="decimal" class="w-full rounded-lg border border-brand-200 px-4 py-3" placeholder="לדוגמה 4"></label>
+            <label class="block"><span class="block text-sm font-bold text-brand-900 mb-1">גובה רצוי במטרים</span><input id="led-height" type="number" min="1" max="15" step="0.25" inputmode="decimal" class="w-full rounded-lg border border-brand-200 px-4 py-3" placeholder="לדוגמה 2"></label>
+            <label class="block"><span class="block text-sm font-bold text-brand-900 mb-1">מרחק צפייה קרוב</span><select id="led-distance" class="w-full rounded-lg border border-brand-200 px-4 py-3"><option>עד 3 מטר</option><option>3–5 מטר</option><option>5–8 מטר</option><option>מעל 8 מטר</option><option>עדיין לא ידוע</option></select></label>
+            <label class="block"><span class="block text-sm font-bold text-brand-900 mb-1">חשיפה לשמש</span><select id="led-sun" class="w-full rounded-lg border border-brand-200 px-4 py-3"><option>שמש ישירה</option><option>שמש חלקית</option><option>אזור מוצל</option><option>בעיקר שימוש בערב</option><option>עדיין לא ידוע</option></select></label>
+            <label class="block"><span class="block text-sm font-bold text-brand-900 mb-1">שימוש עיקרי</span><select id="led-use" class="w-full rounded-lg border border-brand-200 px-4 py-3"><option>טלוויזיה וסטרימינג</option><option>ספורט ואירוח</option><option>קולנוע חוץ</option><option>תצוגה ואירועים</option><option>שימוש משולב</option></select></label>
+            <label class="block"><span class="block text-sm font-bold text-brand-900 mb-1">מקור וידאו / בקר</span><select id="led-source" class="w-full rounded-lg border border-brand-200 px-4 py-3"><option>ממיר או סטרימר</option><option>מקור 4K</option><option>מספר מקורות וידאו</option><option>שילוב בבית חכם</option><option>עדיין לא ידוע</option></select></label>
+            <label class="block sm:col-span-2"><span class="block text-sm font-bold text-brand-900 mb-1">שלב הפרויקט</span><select id="led-stage" class="w-full rounded-lg border border-brand-200 px-4 py-3"><option>תכנון מוקדם</option><option>בנייה / שיפוץ</option><option>תשתיות כבר מוכנות</option><option>התקנה במקום קיים</option><option>בדיקת היתכנות</option></select></label>
+          </div>
+
+          <label class="block"><span class="block text-sm font-bold text-brand-900 mb-1">פרטים נוספים</span><textarea id="led-notes" rows="3" maxlength="1200" class="w-full rounded-lg border border-brand-200 px-4 py-3" placeholder="מיקום המסך, שעות שימוש, אודיו, תמונה או תוכנית שתוכלו להעביר בהמשך"></textarea></label>
+          <label class="flex gap-2 items-start text-sm text-brand-700"><input required type="checkbox" class="mt-1"><span>אני מאשר/ת להעביר ל‑I Feel את פרטי הקשר והאפיון לצורך בדיקה וחזרה אליי. *</span></label>
+          <button type="submit" class="inline-flex items-center justify-center bg-accent-500 hover:bg-accent-600 text-white px-8 py-4 rounded-lg font-extrabold text-lg shadow-md w-full">שליחת אפיון לקבלת הצעה</button>
+          <p class="text-xs text-brand-500 text-center">הפרטים משמשים למענה לפנייה בלבד. המפרט והמחיר הסופיים נקבעים לאחר אימות תנאי האתר והתצורה.</p>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  const quoteForm = document.querySelector<HTMLFormElement>('#outdoor-led-quote-form');
+  quoteForm?.addEventListener('submit', () => {
+    const value = (id: string) => (document.querySelector<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>(id)?.value || '').trim();
+    const lines = [
+      `עיר / יישוב: ${value('#led-city') || 'לא צוין'}`,
+      `מידה רצויה: ${value('#led-width') || 'לא צוין'} מ׳ רוחב × ${value('#led-height') || 'לא צוין'} מ׳ גובה`,
+      `מרחק צפייה קרוב: ${value('#led-distance')}`,
+      `חשיפה לשמש: ${value('#led-sun')}`,
+      `שימוש עיקרי: ${value('#led-use')}`,
+      `מקור וידאו / בקר: ${value('#led-source')}`,
+      `שלב הפרויקט: ${value('#led-stage')}`,
+      `פרטים נוספים: ${value('#led-notes') || 'לא צוינו'}`
+    ];
+    const message = document.querySelector<HTMLInputElement>('#outdoor-led-message');
+    if (message) message.value = lines.join('\n');
+  });
+</script>
