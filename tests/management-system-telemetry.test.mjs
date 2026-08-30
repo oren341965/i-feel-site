@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { spawn, spawnSync } from 'node:child_process';
-import { mkdtemp, rm, writeFile } from 'node:fs/promises';
+import { mkdir, mkdtemp, rm, writeFile } from 'node:fs/promises';
 import { createServer } from 'node:http';
 import { tmpdir } from 'node:os';
 import { resolve } from 'node:path';
@@ -10,6 +10,7 @@ const REPO = resolve(import.meta.dirname, '..');
 const SCRIPT = resolve(REPO, '.claude/skills/management-system-telemetry/scripts/report-capability-run.mjs');
 const HOST_SCRIPT = resolve(REPO, '.claude/skills/management-system-telemetry/scripts/report-host-checkin.mjs');
 const SALES_AUDIT_SCRIPT = resolve(REPO, '.claude/skills/ai-sales-manager/scripts/report-sales-audit.mjs');
+const SOURCE_SYNC_SCRIPT = resolve(REPO, '.claude/skills/management-system-telemetry/scripts/audit-source-sync.mjs');
 const BASE_ARGS = [
   '--capability', 'ai-sales-manager',
   '--run-key', 'telemetry-contract-test-v1',
@@ -65,6 +66,62 @@ async function analysisFixture(t, value = SALES_ANALYSIS) {
   await writeFile(path, JSON.stringify(value), 'utf8');
   return path;
 }
+
+async function sourceSyncFixture(t) {
+  const directory = await mkdtemp(resolve(tmpdir(), 'ifeel-source-sync-'));
+  t.after(() => rm(directory, { recursive: true, force: true }));
+  await mkdir(resolve(directory, '.claude/skills/example-skill'), { recursive: true });
+  await mkdir(resolve(directory, 'vault/02 Skills/Entries'), { recursive: true });
+  await mkdir(resolve(directory, 'installed/example-skill'), { recursive: true });
+  await writeFile(resolve(directory, '.claude/skills/example-skill/SKILL.md'), '---\nname: example-skill\ndescription: Test\n---\n\n# Example\n', 'utf8');
+  await writeFile(resolve(directory, 'vault/02 Skills/Entries/example-skill.md'), '---\ntype: skill-registry-entry\nstatus: Active\nversion: test-revision\n---\n\nSensitive body that must never be emitted.\n', 'utf8');
+  const git = spawnSync('git', ['init'], { cwd: directory, encoding: 'utf8' });
+  assert.equal(git.status, 0, git.stderr);
+  spawnSync('git', ['config', 'user.email', 'test@example.invalid'], { cwd: directory });
+  spawnSync('git', ['config', 'user.name', 'Test'], { cwd: directory });
+  spawnSync('git', ['add', '.'], { cwd: directory });
+  const commit = spawnSync('git', ['commit', '-m', 'fixture'], { cwd: directory, encoding: 'utf8' });
+  assert.equal(commit.status, 0, commit.stderr);
+  return directory;
+}
+
+test('source reconciliation links GitHub, Vault and installed Skills without leaking Vault bodies', async (t) => {
+  const directory = await sourceSyncFixture(t);
+  const result = spawnSync(process.execPath, [
+    SOURCE_SYNC_SCRIPT,
+    '--repo', directory,
+    '--vault', resolve(directory, 'vault'),
+    '--installed-skills', resolve(directory, 'installed'),
+    '--dry-run',
+  ], { encoding: 'utf8' });
+  assert.equal(result.status, 0, result.stderr);
+  const output = JSON.parse(result.stdout);
+  assert.equal(output.ok, true);
+  assert.equal(output.summary.canonical, 1);
+  assert.equal(output.summary.knowledgeLinked, 1);
+  assert.equal(output.summary.installed, 1);
+  assert.equal(output.capabilities[0].slug, 'example-skill');
+  assert.equal(output.capabilities[0].knowledgePath, '02 Skills/Entries/example-skill.md');
+  assert.equal(result.stdout.includes('Sensitive body'), false);
+  assert.equal(result.stdout.includes(directory), false);
+});
+
+test('source reconciliation reports missing knowledge and installation as blocking gaps', async (t) => {
+  const directory = await sourceSyncFixture(t);
+  await rm(resolve(directory, 'vault/02 Skills/Entries/example-skill.md'));
+  await rm(resolve(directory, 'installed/example-skill'), { recursive: true });
+  const result = spawnSync(process.execPath, [
+    SOURCE_SYNC_SCRIPT,
+    '--repo', directory,
+    '--vault', resolve(directory, 'vault'),
+    '--installed-skills', resolve(directory, 'installed'),
+    '--dry-run',
+  ], { encoding: 'utf8' });
+  assert.equal(result.status, 1, result.stderr);
+  const output = JSON.parse(result.stdout);
+  assert.deepEqual(output.summary.missingKnowledge, ['example-skill']);
+  assert.deepEqual(output.summary.missingInstalled, ['example-skill']);
+});
 
 function runScript(script, args, env = {}) {
   return new Promise((resolveResult) => {
