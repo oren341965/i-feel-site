@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import OutdoorLedQuoteForm from '../components/OutdoorLedQuoteForm.astro';
 import content from '../page-html/outdoor-led-screens.html?raw';
 
 const meta = {
@@ -53,6 +54,9 @@ const meta = {
         mainEntity: [
           { '@type': 'Question', name: 'איזו בהירות צריך למסך LED בגינה?', acceptedAnswer: { '@type': 'Answer', text: 'הבהירות נקבעת לפי כיוון המסך, שעות השימוש והחשיפה לשמש. בתצורת P2.976 המתועדת בעמוד המפרט הוא 5,500 nits ומעלה, אך ההתאמה הסופית נקבעת לאחר בדיקת האתר.' } },
           { '@type': 'Question', name: 'מה המשמעות של P2.976?', acceptedAnswer: { '@type': 'Answer', text: 'P2.976 הוא Pixel Pitch של 2.976 מ״מ, כלומר המרחק בין מרכזי פיקסלים סמוכים. פסיעה קטנה מאפשרת צפייה מפורטת יותר מטווח קרוב, אך אינה מחליפה תכנון של גודל המסך ומרחק הצפייה.' } },
+          { '@type': 'Question', name: 'באילו גדלים אפשר לבנות מסך Outdoor LED?', acceptedAnswer: { '@type': 'Answer', text: 'מסך LED מודולרי נבנה כרשת קבינטים. בתצורה המתועדת הקבינט הוא בגודל 1×1 מטר וברזולוציה 336×336 פיקסלים, ולכן לדוגמה מסך 4×2 מטר הוא ברזולוציה פיזית 1344×672. המידה הסופית נקבעת לפי הקיר, יחס התמונה, מרחק הצפייה והקונסטרוקציה.' } },
+          { '@type': 'Question', name: 'האם בקר NovaStar עם כניסת 4K הופך את המסך למסך 4K?', acceptedAnswer: { '@type': 'Answer', text: 'לא. כניסת 4K היא יכולת של הבקר לקבל ולעבד מקור וידאו. הרזולוציה הפיזית של המסך נקבעת לפי מספר הקבינטים והפיקסלים. הבקר ממפה את המקור לרזולוציית המסך בפועל.' } },
+          { '@type': 'Question', name: 'איזה מידע צריך כדי לקבל הצעה למסך LED חוץ?', acceptedAnswer: { '@type': 'Answer', text: 'כדי להכין הצעה מדויקת צריך מידה רצויה, מיקום, מרחק צפייה קרוב, חשיפה לשמש, שימוש עיקרי, מקורות וידאו, שלב הפרויקט ופרטים על תשתיות, קונסטרוקציה ואודיו.' } },
           { '@type': 'Question', name: 'האם IP65 מספיק למסך חוץ?', acceptedAnswer: { '@type': 'Answer', text: 'IP65 מציין הגנה מאבק ומסילוני מים לפי דירוג המעטפת. עדיין נדרשים תכנון ניקוז, אוורור, קונסטרוקציה, חשמל ותחזוקה המתאימים למיקום בפועל.' } },
           { '@type': 'Question', name: 'מי היצרן ומי היבואן של המסך?', acceptedAnswer: { '@type': 'Answer', text: 'DICOLOR היא יצרנית מסכי LED. יבוא או הפצה בישראל הם תפקיד מסחרי נפרד, ו-i-feel מתכננת ומשלבת את המערכת בהתאם לפרויקט. אין בעמוד טענה ש-i-feel היא נציגה רשמית של DICOLOR.' } }
         ]
@@ -63,4 +67,5 @@ const meta = {
 ---
 <BaseLayout {...meta}>
   <Fragment set:html={content} />
+  <OutdoorLedQuoteForm />
 </BaseLayout>
