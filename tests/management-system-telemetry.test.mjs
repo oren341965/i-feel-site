@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { spawn, spawnSync } from 'node:child_process';
-import { mkdir, mkdtemp, rm, writeFile } from 'node:fs/promises';
+import { mkdir, mkdtemp, rm, symlink, writeFile } from 'node:fs/promises';
 import { createServer } from 'node:http';
 import { tmpdir } from 'node:os';
 import { resolve } from 'node:path';
@@ -121,6 +121,36 @@ test('source reconciliation reports missing knowledge and installation as blocki
   const output = JSON.parse(result.stdout);
   assert.deepEqual(output.summary.missingKnowledge, ['example-skill']);
   assert.deepEqual(output.summary.missingInstalled, ['example-skill']);
+});
+
+test('source reconciliation accepts Dropbox-style symlink entries and leading blank lines', async (t) => {
+  const directory = await sourceSyncFixture(t);
+  const entry = resolve(directory, 'vault/02 Skills/Entries/example-skill.md');
+  const target = resolve(directory, 'vault/example-skill-target.md');
+  await writeFile(target, '\n---\ntype: skill-registry-entry\nstatus: Active\nversion: test-revision\n---\n\nPrivate body.\n', 'utf8');
+  await rm(entry);
+  try {
+    await symlink(target, entry, 'file');
+  } catch (error) {
+    if (error?.code === 'EPERM') {
+      t.skip('File symlinks require elevated Windows privileges');
+      return;
+    }
+    throw error;
+  }
+
+  const result = spawnSync(process.execPath, [
+    SOURCE_SYNC_SCRIPT,
+    '--repo', directory,
+    '--vault', resolve(directory, 'vault'),
+    '--installed-skills', resolve(directory, 'installed'),
+    '--dry-run',
+  ], { encoding: 'utf8' });
+  assert.equal(result.status, 0, result.stderr);
+  const output = JSON.parse(result.stdout);
+  assert.equal(output.summary.knowledgeLinked, 1);
+  assert.equal(output.capabilities[0].knowledgeStatus, 'Active');
+  assert.equal(result.stdout.includes('Private body'), false);
 });
 
 function runScript(script, args, env = {}) {

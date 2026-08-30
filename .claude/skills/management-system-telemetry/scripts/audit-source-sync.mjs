@@ -35,7 +35,10 @@ function usage() {
 }
 
 function frontmatter(text) {
-  const normalized = text.replaceAll('\r\n', '\n');
+  const normalized = text
+    .replace(/^\uFEFF/, '')
+    .replaceAll('\r\n', '\n')
+    .replace(/^(?:[ \t]*\n)+(?=---\n)/, '');
   if (!normalized.startsWith('---\n')) return {};
   const end = normalized.indexOf('\n---\n', 4);
   if (end < 0) return {};
@@ -81,7 +84,10 @@ async function discoverVaultEntries(vaultPath) {
   const entries = await readdir(root, { withFileTypes: true });
   const result = new Map();
   for (const entry of entries) {
-    if (!entry.isFile() || !entry.name.toLowerCase().endsWith('.md')) continue;
+    // Dropbox Files On-Demand may expose hydrated Markdown documents as
+    // symbolic links/reparse points on Windows. Reading the target remains
+    // metadata-only, so accept both regular files and those placeholders.
+    if ((!entry.isFile() && !entry.isSymbolicLink()) || !entry.name.toLowerCase().endsWith('.md')) continue;
     const slug = basename(entry.name, '.md');
     if (!SKILL_SLUG.test(slug)) continue;
     const content = await readFile(join(root, entry.name), 'utf8');
