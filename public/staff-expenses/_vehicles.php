@@ -476,7 +476,7 @@ function portal_render_employee_vehicle_card(array $user): void
                         <?php portal_render_vehicle_deadline('טסט שנתי', $vehicle['test_due_date'], $vehicle['test_due_label'], $vehicle['test_status']); ?>
                         <?php portal_render_vehicle_deadline('ביטוח חובה', $vehicle['compulsory_insurance_due_date'], $vehicle['compulsory_insurance_due_label'], $vehicle['compulsory_insurance_status']); ?>
                         <?php portal_render_optional_vehicle_deadline('ביטוח מקיף', $vehicle['comprehensive_insurance_due_date']); ?>
-                        <?php portal_render_optional_vehicle_deadline('ביטוח צד ג׳', $vehicle['third_party_insurance_due_date']); ?>
+                        <?php portal_render_vehicle_deadline('ביטוח צד ג׳', $vehicle['third_party_insurance_due_date']); ?>
                     </div>
                     <?php if ($vehicle['current_km'] !== ''): ?><p class="vehicle-card__meta">קילומטראז' בעדכון האחרון: <b><?= portal_h(number_format((float) preg_replace('/[^\d.]/', '', $vehicle['current_km']))) ?></b></p><?php endif; ?>
                     <?php if ($vehicle['last_update'] !== ''): ?><p class="vehicle-card__meta">עדכון אחרון: <?= portal_h($vehicle['last_update']) ?></p><?php endif; ?>
@@ -525,7 +525,7 @@ function portal_render_vehicle_admin(?array $flash): void
                             <td><?php portal_render_vehicle_deadline('טסט', $vehicle['test_due_date'], $vehicle['test_due_label'], $vehicle['test_status']); ?></td>
                             <td><?php portal_render_vehicle_deadline('חובה', $vehicle['compulsory_insurance_due_date'], $vehicle['compulsory_insurance_due_label'], $vehicle['compulsory_insurance_status']); ?></td>
                             <td><?php portal_render_optional_vehicle_deadline('מקיף', $vehicle['comprehensive_insurance_due_date']); ?></td>
-                            <td><?php portal_render_optional_vehicle_deadline('צד ג׳', $vehicle['third_party_insurance_due_date']); ?></td>
+                            <td><?php portal_render_vehicle_deadline('צד ג׳', $vehicle['third_party_insurance_due_date']); ?></td>
                             <td><?= $vehicle['current_km'] !== '' ? portal_h($vehicle['current_km']) . ' ק"מ' : '—' ?><?= $vehicle['last_update'] !== '' ? '<br><small>' . portal_h($vehicle['last_update']) . '</small>' : '' ?></td>
                         </tr>
                     <?php endforeach; ?>
@@ -562,7 +562,7 @@ function portal_render_vehicle_admin(?array $flash): void
             <label class="field"><span>תוקף המסמך</span><input type="date" name="vehicle_document_expires_on"></label>
             <label class="field"><span>מספר פוליסה / אסמכתה</span><input type="text" name="vehicle_document_policy_number" maxlength="160"></label>
             <label class="field field--full"><span>קובץ PDF או תמונה <b>*</b></span><input type="file" name="vehicle_document_file" required accept=".pdf,image/jpeg,image/png,image/webp,image/heic,image/heif,image/avif"></label>
-            <p class="form-note field--full">לרישיון, טסט וביטוח יש להזין תאריך תוקף. ביטוח צד ג׳ נשמר בנפרד ואינו מסומן כביטוח מקיף.</p>
+            <p class="form-note field--full">לרישיון, טסט וביטוח יש להזין תאריך תוקף. ביטוח צד ג׳ הוא כיסוי שיש לעקוב אחריו; אם הוא כלול בביטוח המקיף, יש להזין את אותו תאריך תוקף גם עבור צד ג׳.</p>
             <div class="field--full"><button type="submit" class="button button--primary">שמירת המסמך ועדכון התוקף</button></div>
         </form>
         <div class="vehicle-document-groups">
