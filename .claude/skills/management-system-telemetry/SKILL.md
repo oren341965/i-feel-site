@@ -37,3 +37,13 @@ node .claude/skills/management-system-telemetry/scripts/report-host-checkin.mjs 
 ```
 
 Use `--dry-run` to validate the envelope without credentials or network access.
+
+## GitHub, Obsidian and workstation reconciliation
+
+Use `scripts/audit-source-sync.mjs` to compare the canonical Skill packages in GitHub with the matching `02 Skills/Entries/*.md` records in the Obsidian Vault and, when supplied, the installed Skill directory on a workstation. The audit reads metadata only, hashes canonical `SKILL.md` files locally, and never exports Vault document contents.
+
+```text
+node .claude/skills/management-system-telemetry/scripts/audit-source-sync.mjs --repo <repo> --vault <vault> --installed-skills <skills-dir> --dry-run
+```
+
+Treat missing entries, invalid declared names and missing local packages as blocking registration gaps. A Vault version behind the Git revision is a documentation-freshness warning; do not overwrite the Vault automatically because policy and knowledge remain human-reviewed sources of truth.

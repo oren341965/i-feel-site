@@ -46,6 +46,16 @@ The production control plane may take up to 60 seconds to acknowledge a report. 
 
 The service identity may report only the Host bound to that identity. The Management System stores the observation as append-oriented history, refreshes the current Host summary, and rejects reuse of a check-in key with different evidence. The event must not contain user data, mailbox or customer evidence, filesystem paths, secrets, prompts or raw business content.
 
+## Source reconciliation
+
+`scripts/audit-source-sync.mjs` is the local evidence step for the three source layers:
+
+- GitHub supplies executable Skill identity and exact revision.
+- Obsidian supplies the reviewed knowledge entry, status and documented version.
+- The workstation supplies installed-package presence only.
+
+The output contains slugs, repository-relative paths, hashes and status/version metadata. It must not include document bodies, absolute filesystem paths, customer data or credentials. GitHub auto-discovery remains server-owned; the audit detects drift and does not silently change the Vault.
+
 ## Examples
 
 Start:
