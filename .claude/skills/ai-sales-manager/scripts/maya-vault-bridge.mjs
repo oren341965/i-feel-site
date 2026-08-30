@@ -1,4 +1,4 @@
-import { access, constants, mkdir, readFile, readdir, stat, writeFile } from 'node:fs/promises';
+import { access, appendFile, constants, mkdir, readFile, readdir, stat, writeFile } from 'node:fs/promises';
 import { isAbsolute, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -10,6 +10,14 @@ const REQUIRED_MAYA_SKILLS = Object.freeze([
 ]);
 
 const MAYA_SYSTEM_TEST_MAX_AGE_HOURS = 168;
+const MAYA_TASK_STATES = new Set([
+  'MAYA_EXECUTED',
+  'WAITING_FOR_CUSTOMER',
+  'RESPONSE_RECEIVED_AND_MONDAY_UPDATED',
+  'BLOCKED',
+  'NEEDS_APPROVAL',
+  'NEEDS_OREN_DECISION',
+]);
 
 function parseArgs(argv) {
   let configPath = null;
@@ -106,6 +114,238 @@ function boundedId(value, label) {
     throw new Error(`${label} must be a bounded safe identifier`);
   }
   return id;
+}
+
+function boundedText(value, label, maximum = 2000) {
+  const text = String(value ?? '').trim();
+  if (!text || text.length > maximum) throw new Error(`${label} must be bounded text`);
+  return text;
+}
+
+export function validateAssignedMayaTask(message, options = {}) {
+  try {
+    if (!message || typeof message !== 'object' || Array.isArray(message)) throw new Error('task must be an object');
+    boundedId(message.task_id, 'task_id');
+    boundedId(message.monday_board_id, 'monday_board_id');
+    boundedId(message.monday_item_id, 'monday_item_id');
+    boundedText(message.instruction, 'instruction');
+    if (message.schema_version !== 1
+      || message.source !== 'ai-sales-manager'
+      || message.target !== 'maya-agent'
+      || message.type !== 'MAYA_TASK'
+      || message.execution_state !== 'ASSIGNED_TO_MAYA'
+      || message.maturity !== 0
+      || message.dry_run !== true
+      || typeof message.max_age_hours !== 'number'
+      || message.max_age_hours <= 0
+      || message.max_age_hours > 168) {
+      throw new Error('task route or safety fields are invalid');
+    }
+    const now = new Date(options.now ?? Date.now());
+    const generatedAt = new Date(message.generated_at);
+    if (Number.isNaN(now.getTime()) || Number.isNaN(generatedAt.getTime())) throw new Error('task timestamp is invalid');
+    const ageHours = (now.getTime() - generatedAt.getTime()) / 3_600_000;
+    if (ageHours > message.max_age_hours || ageHours < -(5 / 60)) return { accepted: false, status: 'MAYA_TASK_STALE' };
+    return { accepted: true, status: 'MAYA_TASK_ACCEPTED' };
+  } catch (error) {
+    return { accepted: false, status: 'MAYA_TASK_INVALID', reason: error.message };
+  }
+}
+
+export function createMayaTaskAcknowledgement({ task, now = new Date() }) {
+  const validation = validateAssignedMayaTask(task, { now });
+  if (!validation.accepted) throw new Error(validation.status);
+  return {
+    schema_version: 1,
+    task_id: task.task_id,
+    monday_item_id: task.monday_item_id,
+    source: 'maya-agent',
+    target: 'ai-sales-manager',
+    type: 'MAYA_TASK_ACK',
+    state: 'MAYA_ACKNOWLEDGED',
+    received_at: now.toISOString(),
+    dry_run: true,
+    maturity: 0,
+  };
+}
+
+export function createMayaTaskResult({ task, outcome, now = new Date() }) {
+  const state = String(outcome.state ?? 'BLOCKED');
+  if (!MAYA_TASK_STATES.has(state)) throw new Error('Maya result state is invalid');
+  return {
+    schema_version: 1,
+    task_id: task.task_id,
+    monday_item_id: task.monday_item_id,
+    customer_name: outcome.customerName ?? null,
+    source: 'maya-agent',
+    target: 'ai-sales-manager',
+    type: 'MAYA_TASK_RESULT',
+    state,
+    action_performed: boundedText(outcome.actionPerformed ?? 'DRY_RUN_CHECK', 'action_performed', 500),
+    communication_checked: outcome.communicationChecked === true,
+    message_sent: outcome.messageSent === true ? 'yes' : 'no',
+    message_id: outcome.messageId ?? null,
+    result_summary: boundedText(outcome.resultSummary ?? 'Dry-run completed without an external action.', 'result_summary'),
+    monday_updated: outcome.mondayUpdated === true ? 'yes' : 'no',
+    next_action: outcome.nextAction ?? null,
+    next_treatment_date: outcome.nextTreatmentDate ?? null,
+    blocked_reason: outcome.blockedReason ?? null,
+    needs_oren_decision: outcome.needsOrenDecision === true ? 'yes' : 'no',
+    completed_at: now.toISOString(),
+    dry_run: true,
+    maturity: 0,
+  };
+}
+
+function taskArtifactPath(directory, kind, taskId) {
+  return join(directory, `maya-${kind}-${boundedId(taskId, 'task_id')}.json`);
+}
+
+async function writeTaskArtifactOnce(path, message) {
+  try {
+    await writeFile(path, `${JSON.stringify(message, null, 2)}\n`, { encoding: 'utf8', flag: 'wx' });
+    return { path, created: true, idempotentReuse: false, message };
+  } catch (error) {
+    if (error?.code !== 'EEXIST') throw error;
+    const existing = JSON.parse(await readFile(path, 'utf8'));
+    if (existing.task_id !== message.task_id || existing.type !== message.type) {
+      throw new Error('Existing Maya task artifact identity mismatch');
+    }
+    return { path, created: false, idempotentReuse: true, message: existing };
+  }
+}
+
+async function appendMayaTaskLog(runtime, entry) {
+  const logs = join(resolve(runtime.config.runtimeRoot), 'logs');
+  await mkdir(logs, { recursive: true });
+  const record = {
+    task_id: boundedId(entry.taskId, 'task_id'),
+    start_time: entry.startTime,
+    end_time: entry.endTime,
+    action: entry.action,
+    gmail_result: entry.gmailResult,
+    monday_result: entry.mondayResult,
+    manager_callback_result: entry.managerCallbackResult,
+    error: entry.error ?? null,
+  };
+  await appendFile(join(logs, 'maya-task-execution.jsonl'), `${JSON.stringify(record)}\n`, 'utf8');
+}
+
+export async function readAssignedMayaTasks({ configPath, now = new Date() }) {
+  const runtime = await loadMayaBridgeConfig(configPath);
+  const tasks = [];
+  const warnings = [];
+  for (const name of await readdir(runtime.managerToMaya)) {
+    if (!name.endsWith('.json')) continue;
+    const path = join(runtime.managerToMaya, name);
+    try {
+      const task = JSON.parse(await readFile(path, 'utf8'));
+      if (task?.execution_state !== 'ASSIGNED_TO_MAYA') continue;
+      const validation = validateAssignedMayaTask(task, { now });
+      if (validation.accepted) tasks.push({ path, task });
+      else warnings.push({ path, status: validation.status });
+    } catch {
+      warnings.push({ path, status: 'MAYA_TASK_UNREADABLE' });
+    }
+  }
+  tasks.sort((left, right) => left.task.generated_at.localeCompare(right.task.generated_at));
+  return { tasks, warnings };
+}
+
+export async function processAssignedMayaTask({
+  configPath,
+  task,
+  adapters,
+  now = new Date(),
+}) {
+  const validation = validateAssignedMayaTask(task, { now });
+  if (!validation.accepted) return { status: validation.status, accepted: false };
+  const runtime = await loadMayaBridgeConfig(configPath);
+  const startedAt = now.toISOString();
+  const resultPath = taskArtifactPath(runtime.mayaToManager, 'result', task.task_id);
+  try {
+    const existing = JSON.parse(await readFile(resultPath, 'utf8'));
+    if (existing.task_id !== task.task_id || existing.type !== 'MAYA_TASK_RESULT') {
+      throw new Error('Existing Maya task result identity mismatch');
+    }
+    await appendMayaTaskLog(runtime, {
+      taskId: task.task_id,
+      startTime: startedAt,
+      endTime: now.toISOString(),
+      action: 'DUPLICATE_RESULT_REUSED',
+      gmailResult: 'NOT_REPEATED',
+      mondayResult: 'NOT_REPEATED',
+      managerCallbackResult: 'EXISTING_RESULT_REUSED',
+    });
+    return { status: 'DUPLICATE_RESULT_REUSED', accepted: true, duplicate: true, result: existing };
+  } catch (error) {
+    if (error?.code !== 'ENOENT') throw error;
+  }
+
+  const ack = createMayaTaskAcknowledgement({ task, now });
+  const ackWrite = await writeTaskArtifactOnce(
+    taskArtifactPath(runtime.mayaToManager, 'ack', task.task_id),
+    ack,
+  );
+
+  let outcome;
+  try {
+    if (typeof adapters?.mondayRead !== 'function') throw new Error('MONDAY_READ_MISSING');
+    if (typeof adapters?.gmailRead !== 'function') throw new Error('GMAIL_READ_MISSING');
+    const monday = await adapters.mondayRead({
+      boardId: task.monday_board_id,
+      itemId: task.monday_item_id,
+    });
+    if (!monday || String(monday.itemId) !== String(task.monday_item_id)) throw new Error('MONDAY_ITEM_MISMATCH');
+    const gmail = await adapters.gmailRead({ task, monday });
+    outcome = {
+      customerName: monday.customerName ?? null,
+      state: gmail?.responseFound === true ? 'MAYA_EXECUTED' : 'NEEDS_APPROVAL',
+      actionPerformed: 'DRY_RUN_STATUS_CHECK',
+      communicationChecked: gmail?.communicationChecked === true,
+      messageSent: false,
+      resultSummary: gmail?.responseFound === true
+        ? 'Existing response detected; no follow-up was prepared.'
+        : 'No response detected; external follow-up remains approval-gated.',
+      mondayUpdated: false,
+      nextAction: gmail?.responseFound === true ? 'REVIEW_MONDAY_UPDATE' : 'REQUEST_FOLLOWUP_APPROVAL',
+      nextTreatmentDate: monday.nextTreatmentDate ?? null,
+      blockedReason: gmail?.responseFound === true ? 'MONDAY_WRITE_DISABLED_AT_MATURITY_0' : 'SEND_REQUIRES_APPROVAL',
+      needsOrenDecision: false,
+    };
+  } catch (error) {
+    outcome = {
+      state: 'BLOCKED',
+      actionPerformed: 'DRY_RUN_STATUS_CHECK',
+      communicationChecked: false,
+      messageSent: false,
+      resultSummary: 'Maya dry-run was blocked before any external action.',
+      mondayUpdated: false,
+      blockedReason: boundedText(error.message, 'blocked_reason', 500),
+      needsOrenDecision: false,
+    };
+  }
+  const result = createMayaTaskResult({ task, outcome, now });
+  const resultWrite = await writeTaskArtifactOnce(resultPath, result);
+  await appendMayaTaskLog(runtime, {
+    taskId: task.task_id,
+    startTime: startedAt,
+    endTime: now.toISOString(),
+    action: result.action_performed,
+    gmailResult: result.communication_checked ? 'READ_OK' : 'NOT_READ',
+    mondayResult: result.monday_updated === 'yes' ? 'WRITE_OK' : 'READ_ONLY',
+    managerCallbackResult: resultWrite.created ? 'RESULT_CREATED' : 'RESULT_REUSED',
+    error: result.blocked_reason,
+  });
+  return {
+    status: result.state,
+    accepted: true,
+    duplicate: false,
+    ack: ackWrite,
+    result: resultWrite.message,
+    resultWrite,
+    safety: { externalSends: 0, gmailMutations: 0, mondayWrites: 0 },
+  };
 }
 
 export function validateMayaSystemTestEvent(message, options = {}) {

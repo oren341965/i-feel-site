@@ -34,6 +34,7 @@ description: Orchestrate I Feel's maturity-0 sales system and deterministic read
 - `customer-payment-collection` is `DEFER`. Do not install, invoke, merge, or substitute it in Phase 1.
 - Maya business routines and WhatsApp remain paused. The existing Windows Email Task is outside this refactor and remains unchanged.
 - Maya commissioning installs only the two canonical Maya workers. It never installs the parent manager on Maya, never activates a scheduler, and never treats the Vault as executable source truth.
+- Manager-assigned Maya work uses only the existing Vault bridge. Require `execution_state=ASSIGNED_TO_MAYA`, `task_id`, `monday_board_id`, and `monday_item_id`; require a correlated `MAYA_ACKNOWLEDGED` and result, and reuse the existing result for duplicate task IDs. At maturity 0 this contract is dry-run only.
 
 ## Deterministic entrypoints
 
