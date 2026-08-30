@@ -64,6 +64,8 @@ AI-Sales/
 
 Handshake v1 הוא `SYSTEM_TEST` ממאיה ותשובת `SYSTEM_TEST_RESPONSE` מהמנהל. התשובה כוללת `source_event_id`; הרצה חוזרת משתמשת באותה תשובה ואינה יוצרת כפילות.
 
+משימות מכירה למאיה משתמשות ב־`MAYA_SALES_TASK_V2` על אותן תיקיות Bus: Assignment מהמנהל, ACK ממחשב Maya המאומת, ו־Result מובנה בחזרה. כל ההודעות immutable ומקושרות ב־`task_id`; שליחת Assignment אינה השלמה. רק Result אמיתי ממאיה יחד עם read-back חי מ־Monday יכול להביא ל־`RESPONSE_RECEIVED_AND_MONDAY_UPDATED`. פרטי הפרוטוקול נמצאים ב־`.claude/skills/ai-sales-manager/references/maya-task-protocol.md`.
+
 ## מקורות ומנועי הכנסה
 
 - Monday board `2732725332` נשאר מקור התהליך הקיים. אין שינוי boards, groups, columns, automations, statuses, schema או workflow.

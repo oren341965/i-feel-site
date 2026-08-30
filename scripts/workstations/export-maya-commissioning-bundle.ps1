@@ -64,6 +64,8 @@ $copyMap = [ordered]@{
     'agent-config\maya-scheduled-tasks\maya-email-maintenance\SKILL.md' = 'payload\scheduled-tasks\maya-email-maintenance\SKILL.md'
     '.claude\skills\maya-email-maintenance\scripts\draft_writer.py' = 'payload\email-review\draft_writer.py'
     '.claude\skills\ai-sales-manager\runtime\maya-config.example.json' = 'payload\runtime\maya-config.example.json'
+    '.claude\skills\ai-sales-manager\runtime\bus-message.schema.json' = 'payload\runtime\bus-message.schema.json'
+    '.claude\skills\ai-sales-manager\references\maya-task-protocol.md' = 'payload\runtime\maya-task-protocol.md'
     'scripts\workstations\maya-commissioning-install.ps1' = 'INSTALL.ps1'
 }
 
@@ -99,6 +101,7 @@ if ($PSCmdlet.ShouldProcess($releaseRoot, 'Build Maya commissioning release')) {
         requiredSkills = @('maya-email-maintenance', 'maya-whatsapp')
         schedulerActivation = 'PAUSED'
         stagedSchedulers = @('maya-email-maintenance')
+        taskProtocol = 'MAYA_SALES_TASK_V2'
         files = $files
     }
     $manifest | ConvertTo-Json -Depth 10 | Set-Content -LiteralPath (Join-Path $stagingRoot 'manifest.json') -Encoding UTF8
@@ -125,4 +128,5 @@ if ($PSCmdlet.ShouldProcess($releaseRoot, 'Build Maya commissioning release')) {
     schedulersActivated = 0
     externalSends = 0
     mondayWrites = 0
+    taskProtocol = 'MAYA_SALES_TASK_V2'
 } | ConvertTo-Json -Depth 5

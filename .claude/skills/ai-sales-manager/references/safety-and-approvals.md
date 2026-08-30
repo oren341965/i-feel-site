@@ -11,11 +11,13 @@ Maturity 0 is read-only for external systems and dry-run only for orchestration.
 - Create bounded temporary analysis under `.ai-manager-data` and remove it after the run.
 - Write schema-valid local state/log/brief artifacts under an already approved `C:\ifeel-sales` runtime.
 - Create the exact idempotent dry-run Bus messages permitted by `vault-layout.md` when the runtime operation itself is approved.
+- Enqueue the exact immutable Maya sales Assignment requested by Oren and accept its correlated ACK/Result messages under `maya-task-protocol.md`. Assignment authorizes queue transport only; worker actions remain bounded by the owning Maya skill and current execution gate.
 - Prepare recommendations, drafts, and a Draft PR without merging or deploying.
 
 ## Explicit approval required
 
 - Monday create/update/move/assignment, schema or label changes.
+- A Maya-task outcome/next-treatment update is allowed only when Oren explicitly assigned that exact item through the Maya task protocol. It must preserve board structure and existing labels, target only board `2732725332`, and pass a fresh live read-back. The isolated protocol test performs no Monday write.
 - Email, WhatsApp, customer outreach, reports sent to others, or calendar actions.
 - Ads/campaign/budget changes, publishing, production, merge to `main`, or deployment.
 - Runtime installation, scheduler creation/activation, connector activation, secret changes, or permission changes.

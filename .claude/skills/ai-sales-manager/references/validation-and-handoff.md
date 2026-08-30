@@ -9,6 +9,7 @@ Run from the repository work branch:
 3. `npm run build`.
 4. `git diff --check`.
 5. Review `git status`, staged diff, file deletions, secrets/PII, and unexpected runtime or Vault artifacts.
+6. Run the isolated Maya task test through Assignment → ACK → Result → isolated Monday read-back → local state update. Confirm zero external sends and zero Monday writes, and confirm production `completed=false`.
 
 Do not run `npm audit fix` as part of architecture maintenance. Dependency findings are reported separately and never justify an unreviewed version rewrite.
 
@@ -23,6 +24,7 @@ Report:
 - validation, test, build, and diff-check results;
 - external sends, Monday writes, Dropbox writes, deletions, scheduler/connector actions, and production actions;
 - remaining blockers and deferred work.
+- current Maya commissioning evidence: verified Skills, Service Identity, Gmail identity/freshness, WhatsApp Telemetry, `PAUSED_BY_PHASE_2`, and the action-specific approval state. Simulated test evidence must be labeled as such.
 
 ## Git handoff
 

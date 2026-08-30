@@ -51,6 +51,10 @@ Stage handling:
 
 Maya owns the communication follow-up through the existing Maya stack; the Monday sales owner does not change. At maturity 0, Maya prepares the proposed email or WhatsApp text and the next-action recommendation only. Sending externally or updating Monday still requires explicit authorization and a live read-back after any approved write.
 
+## Direct Maya assignments from Oren
+
+When Oren says `מאיה תבדוק`, `תעביר למאיה`, `תבקש ממאיה סטטוס`, or gives an equivalent direct instruction, use [maya-task-protocol.md](maya-task-protocol.md). Resolve one exact live item on sales board `2732725332`, enqueue a real Assignment on the existing Vault Bus, and wait for the correlated Maya ACK and Result. A Monday update or note is not a substitute for the task. Only `RESPONSE_RECEIVED_AND_MONDAY_UPDATED` after verified live read-back is complete; an isolated test ACK/Result never proves Maya production execution.
+
 ## Capacity
 
 Set `budget_growth_allowed=false` when either:

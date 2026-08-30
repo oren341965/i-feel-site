@@ -23,6 +23,19 @@ Use the existing Maya WhatsApp session on Maya's workstation. The shared `ai-sal
 - Use one run lock and a bounded runtime. Never wait for approval inside an unattended run; queue the approval and end with an explicit status.
 - Release the run lock in `finally` on success, timeout, missing access, session-claim failure or any other blocker.
 
+## Manager-assigned Maya sales tasks
+
+Use the existing `maya-agent` Bus identity only; do not create a separate agent or queue. For a schema-version-2 Assignment in `${VAULT_ROOT}/AI-Sales/_bus/manager-to-maya`, require board `2732725332`, a live-verified `monday_item_id`, the immutable task snapshot, `requested_by=ai-sales-manager`, and a production-ready execution gate.
+
+- Write one correlated `MAYA_SALES_TASK_ACK` with `MAYA_ACKNOWLEDGED` to `maya-to-manager` before work. ACK is receipt only.
+- Execute only the exact `required_action` within this skill's verified WhatsApp identity and standing routine-customer scope. Registry presence without current Telemetry is `BLOCKED`; a pending proactive-messaging approval is not blanket authorization.
+- Return `NEEDS_OREN_DECISION` for price, discount, proposal change, commercial or technical commitment, material complaint, liability, legal/safety issue, or material exception. Do not decide it.
+- Return `BLOCKED` for an unverified Service Identity, zero verified Skills, missing Telemetry/session/permission/information, an ambiguous customer, a wrong contact, or another dependency failure.
+- Return one structured Result. `WAITING_FOR_CUSTOMER` requires `next_action` and `next_treatment_date`. Maya never writes Monday; the manager must update the same live item and verify read-back before `RESPONSE_RECEIVED_AND_MONDAY_UPDATED` is accepted as complete.
+- A Result without an earlier ACK does not advance the task. Never report completion merely because the Assignment was written or the WhatsApp action was attempted.
+
+For `test_task=true`, use an isolated test Vault and `execution_origin=ISOLATED_TEST`; send no WhatsApp message and perform no Monday write. Simulated ACK/Result evidence is test-only.
+
 ## Core customer rules
 
 - Oren granted a standing approval on `2026-08-24` for bounded routine customer communication. Maya may send: acknowledgement of a new inbound lead or customer message; a factual status request for a lead, proposal, plans or open project; and a request for missing operational information. This approval does not authorize any other external action.

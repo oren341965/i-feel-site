@@ -225,6 +225,19 @@ test('SALES_ELIGIBILITY_FILTER excludes Sharon Falek regression until follow-up 
   assert.deepEqual(returnedByDate.reasons, ['HANDLED_NO_NEW_EVIDENCE']);
 });
 
+test('SALES_ELIGIBILITY_FILTER excludes the exact completed-sales group', () => {
+  const eligibility = salesEligibilityOf({
+    id: 'completed-group-regression',
+    status: '6. תיאום פגישה עם הלקוח',
+    group: 'תהליך מכירה הסתיים',
+    nextAction: '2026-08-01',
+  }, { now: NOW });
+
+  assert.equal(eligibility.eligible, false);
+  assert.equal(eligibility.effectiveGroup, 'תהליך מכירה הסתיים');
+  assert.equal(eligibility.reasons.includes('LEFT_SALES_OWNERSHIP'), true);
+});
+
 test('Maya commissioning is role-scoped, hash-verified, and activation-free', () => {
   const read = (relative) => readFileSync(new URL(`../${relative}`, import.meta.url), 'utf8');
   const installer = read('scripts/workstations/maya-commissioning-install.ps1');
@@ -247,6 +260,9 @@ test('Maya commissioning is role-scoped, hash-verified, and activation-free', ()
   assert.doesNotMatch(installer, /foreach \(\$task in @\('maya-email-maintenance', 'maya-whatsapp'/);
   assert.match(installer, /externalSends\s*=\s*0/);
   assert.match(installer, /mondayWrites\s*=\s*0/);
+  assert.match(installer, /MAYA_SALES_TASK_V2/);
+  assert.match(installer, /bus-message\.schema\.json/);
+  assert.match(installer, /maya-task-protocol\.md/);
   assert.doesNotMatch(installer, /Register-ScheduledTask|Enable-ScheduledTask|schtasks(?:\.exe)?\s+\/Create/i);
 
   assert.match(exporter, /Refusing to export a Maya release from a dirty worktree/);
@@ -255,6 +271,9 @@ test('Maya commissioning is role-scoped, hash-verified, and activation-free', ()
   assert.match(exporter, /stagedSchedulers\s*=\s*@\('maya-email-maintenance'\)/);
   assert.doesNotMatch(exporter, /payload\\scheduled-tasks\\maya-whatsapp/);
   assert.doesNotMatch(exporter, /payload\\scheduled-tasks\\maya-integrated-customer-operations/);
+  assert.match(exporter, /MAYA_SALES_TASK_V2/);
+  assert.match(exporter, /bus-message\.schema\.json/);
+  assert.match(exporter, /maya-task-protocol\.md/);
   assert.match(bootstrap, /relativeReleasePath/);
   assert.match(bootstrap, /ConfirmMayaWorkstation/);
   assert.match(resultReader, /WAITING_FOR_MAYA/);

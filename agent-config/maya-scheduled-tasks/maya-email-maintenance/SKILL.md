@@ -15,8 +15,19 @@ On every registered scheduler invocation, read `%USERPROFILE%\.claude\skills\may
 - Output only aggregate counts and bounded blocker codes. Do not include names, addresses, subjects, bodies, message/thread IDs, attachment names, or customer data.
 - The scheduler infrastructure may write its own execution output under `C:\ifeel-maya\logs`; the prompt must not request local-file `Edit` access, invoke file-editing tools, or write any file itself.
 
+## Existing Maya task queue
+
+Before the report-only inbox delta, inspect the existing `${VAULT_ROOT}/AI-Sales/_bus/manager-to-maya` queue for immutable schema-version-2 `MAYA_SALES_TASK_ASSIGNMENT` messages. Do not create a second scheduler, queue, or `maya-agent` skill.
+
+Read the installed canonical contracts at `C:\ifeel-maya\config\maya-task-protocol.md` and `C:\ifeel-maya\config\bus-message.schema.json` before processing a task. Missing or hash-unverified contracts are a commissioning blocker.
+
+- Process a production Assignment only after the Maya Service Identity, installed Skills, correct Maya Gmail profile, fresh worker evidence, and the assignment execution gate are verified. Otherwise leave it unacknowledged for commissioning; do not impersonate Maya from Oren's computer.
+- For a valid Assignment on a commissioned Maya workstation, write one immutable correlated ACK to `maya-to-manager` before work. The base Gmail pass remains report-only; an assigned action may proceed only through the canonical worker skill and its existing action-specific authority. Return a structured Result or a bounded `BLOCKED`/`NEEDS_OREN_DECISION` outcome.
+- Never write Monday from this scheduler. The manager owns the exact outcome/next-treatment write and live read-back.
+- `test_task=true` is allowed only in an isolated test Vault with `execution_origin=ISOLATED_TEST`, `external_actions_performed=false`, and `monday_writes_performed=false`; it does not prove production ACK or Result.
+
 ## Absolute prohibitions
 
-Do not create drafts; send email or WhatsApp; label, mark read, archive, move, trash, or delete Gmail messages; update or alter Monday; create Calendar events; modify contacts; write to the Vault or Bus; download attachments; run `worker.py --apply`; enable another scheduler; or change connection flags. Browser-visible access is not permission to change `connected:false`.
+Do not create drafts; send email or WhatsApp; label, mark read, archive, move, trash, or delete Gmail messages; update or alter Monday; create Calendar events; modify contacts; download attachments; run `worker.py --apply`; enable another scheduler; or change connection flags. The only Vault/Bus writes permitted by this prompt are the exact immutable Maya task ACK/Result messages above after their gates pass. Browser-visible access is not permission to change `connected:false`.
 
 Return exactly: `REPORT_ONLY_STATUS`, `MAILBOX_VERIFIED`, `WINDOW`, `SCANNED_COUNT`, aggregate route counts, `ACTIONABLE_SALES_COUNT`, `BLOCKERS`, `EXTERNAL_ACTIONS=0`, and `NEXT_RUN`. Never report an item as processed or handled.

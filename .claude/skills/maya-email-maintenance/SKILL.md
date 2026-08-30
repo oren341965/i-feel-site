@@ -47,6 +47,19 @@ Keep Maya's work inbox small, classified and actionable without losing customer 
 - Route plans requested or awaited to a plans follow-up; when plans were received, verify completeness and prepare a technical handoff instead of requesting them again. Route service or complaints to Support, employee tasks internally, and never reply to Monday.
 - The canonical guarded writer is `scripts/draft_writer.py`; its verified evidence contract and the integrated Routine template in `references/maya-integrated-customer-operations.md` are mandatory. A local runtime copy is not authoritative and must be installed from these files with `scripts/install-maya-email-review.ps1` after merge approval.
 
+## Manager-assigned Maya sales tasks
+
+The existing Maya Bus identity is `maya-agent`; it is not a separate skill. For an explicit manager assignment, read only immutable schema-version-2 messages from `${VAULT_ROOT}/AI-Sales/_bus/manager-to-maya` whose `message_type` is `MAYA_SALES_TASK_ASSIGNMENT`, `monday_board_id` is `2732725332`, `requested_by` is `ai-sales-manager`, and live Monday identity evidence is present.
+
+1. Validate every required task field and the execution gate. Reject a mismatched customer, item, status, snapshot field, duplicate message, email address, phone number, or raw correspondence in the Bus message.
+2. Before doing work, write one correlated `MAYA_SALES_TASK_ACK` with `MAYA_ACKNOWLEDGED` to `maya-to-manager`. ACK means only that the commissioned Maya workstation received the task.
+3. Execute only the exact `required_action` within this skill's verified Gmail identity and existing routine-customer authority. A pending approval to enable proactive Maya messaging is not blanket authorization. Price, discount, proposal change, commitment, material complaint, liability, legal/safety issue, or material exception returns `NEEDS_OREN_DECISION` without deciding it.
+4. Missing Service Identity, verified Skills, fresh Gmail access, exact Maya mailbox, live customer match, permission, information, or another dependency returns `BLOCKED` with a bounded reason. Never use Oren's Gmail profile to run the Maya route.
+5. Return one structured `MAYA_SALES_TASK_RESULT`. Use `MAYA_EXECUTED` after the bounded action; use `WAITING_FOR_CUSTOMER` only with `next_action` and `next_treatment_date`; use `RESPONSE_RECEIVED_AND_MONDAY_UPDATED` only as a claimed outcome for manager verification. Maya does not update Monday; the manager applies the exact task outcome and verifies a fresh read-back.
+6. A Result never substitutes for the preceding ACK. Do not mark the task complete locally or tell Oren it is complete.
+
+For `test_task=true`, use `execution_origin=ISOLATED_TEST`, create ACK and Result in an isolated test Vault only, and perform zero Gmail actions and zero Monday writes. Simulated messages prove the protocol path, not Maya workstation execution.
+
 ## Unattended-run controls
 
 - Exit quickly with `COMPLETED_NO_ACTION` when the checkpoint window has no delta.
