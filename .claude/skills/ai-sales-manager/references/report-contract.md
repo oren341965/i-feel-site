@@ -4,8 +4,8 @@ Write reports in concise Hebrew. Lead with the operational conclusion, then evid
 
 ## Required management report
 
-1. **מצב הצנרת עכשיו** — calculation timestamp, board update timestamp, total/open/closed/lost, health score, data-quality score, and item coverage.
-2. **מה דורש טיפול** — overdue, no next action, no owner, inactive, stale-review candidates, and unique exception count. State that categories overlap.
+1. **מצב הצנרת עכשיו** — calculation timestamp, board update timestamp, total/open/closed/lost, health score, data-quality score, and item coverage. Label `open` as the status-classification population; never present it as the current treatment workload.
+2. **מה דורש טיפול** — lead with `salesEligibility.eligibleOpen` and its eligible exception counts. Separately show excluded open totals and reasons (`LEFT_SALES_OWNERSHIP`, `FUTURE_FOLLOWUP`, `HANDLED_NO_NEW_EVIDENCE`). State that exception categories overlap.
 3. **תור פעולות מומלץ** — the highest-priority open leads with item ID/name, current owner, stage, due date, score, and explicit reasons. Do not include phone, email, or address.
 4. **לפי אחראי** — workload and exceptions per actual owner, including `ללא אחראי`. Add context instead of declaring a person successful or unsuccessful from volume alone.
 5. **איכות נתונים** — field coverage, mapping warnings, and whether proposal-value ranking is enabled.
@@ -31,3 +31,4 @@ Show only the selected owner's current workload, exceptions, and priority queue.
 - Call stale leads `מועמדים לבחינה`, never `לידים לסגירה אוטומטית`.
 - Distinguish `עובדה`, `סיווג לפי כלל`, and `השערת AI` when ambiguity matters.
 - Never repeat a historical baseline as if it were current.
+- Never label the raw `counts.open`, `counts.noOwner`, or `counts.exceptionLeads` populations as the current treatment queue. Management workload and capacity use only the eligible-open aggregate.

@@ -48,6 +48,12 @@ const SALES_ANALYSIS = {
     lastUpdated: { rate: 1 }, createdAt: { rate: 1 }, proposalValue: { rate: 0.2 },
   },
   priorities: [{ id: '123', name: 'Sensitive Customer', owners: ['Maya'], nextAction: 'Call private number' }],
+  salesEligibility: {
+    eligibleOpen: 2, eligibleExceptions: 2, eligibleHealthy: 0,
+    eligibleNoOwner: 1, eligibleNoNextAction: 1, eligibleOverdue: 1, eligibleInactive: 1, eligibleStale: 0,
+    excludedOpen: 4,
+    reasons: { leftSalesOwnership: 3, futureFollowup: 1, handledNoNewEvidence: 0 },
+  },
   reconciliation: { populationMatchesTotal: true, uniqueIdsMatchTotal: true, prioritiesAreOpen: true },
 };
 
@@ -235,6 +241,9 @@ test('sales audit dry run emits reconciled aggregates without operational detail
   assert.equal(output.envelope.boardId, '2732725332');
   assert.equal(output.envelope.totalCount, 10);
   assert.equal(output.envelope.exceptionCount, 5);
+  assert.equal(output.envelope.treatmentOpenCount, 2);
+  assert.equal(output.envelope.treatmentNoOwnerCount, 1);
+  assert.equal(output.envelope.excludedLeftSalesCount, 3);
   assert.equal(output.envelope.newLast7Days, 2);
   assert.equal(output.envelope.newLast30Days, 4);
   assert.equal(output.envelope.ownerCoverage, 6000);

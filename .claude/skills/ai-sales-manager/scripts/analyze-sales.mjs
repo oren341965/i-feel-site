@@ -447,6 +447,7 @@ export function analyzeSales(input, options = {}) {
   const qualityScore = dataQualityScore(coverage);
   const owners = ownerMetrics(classified);
   const eligibleOpen = open.filter((item) => item.salesEligibility.eligible);
+  const eligibleExceptions = eligibleOpen.filter((item) => !item.flags.healthy);
   const priorities = eligibleOpen.filter((item) => !item.flags.healthy)
     .sort((a, b) => b.priorityScore - a.priorityScore
       || (a.lastUpdated ?? '').localeCompare(b.lastUpdated ?? '') || a.id.localeCompare(b.id))
@@ -485,6 +486,13 @@ export function analyzeSales(input, options = {}) {
     priorities,
     salesEligibility: {
       eligibleOpen: eligibleOpen.length,
+      eligibleExceptions: eligibleExceptions.length,
+      eligibleHealthy: eligibleOpen.length - eligibleExceptions.length,
+      eligibleNoOwner: eligibleOpen.filter((item) => item.flags.noOwner).length,
+      eligibleNoNextAction: eligibleOpen.filter((item) => item.flags.noNextAction).length,
+      eligibleOverdue: eligibleOpen.filter((item) => item.flags.overdue).length,
+      eligibleInactive: eligibleOpen.filter((item) => item.flags.inactive).length,
+      eligibleStale: eligibleOpen.filter((item) => item.flags.stale).length,
       excludedOpen: open.length - eligibleOpen.length,
       reasons: {
         leftSalesOwnership: open.filter((item) => item.salesEligibility.reasons.includes('LEFT_SALES_OWNERSHIP')).length,
