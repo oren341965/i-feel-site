@@ -35,6 +35,9 @@ description: Orchestrate I Feel's maturity-0 sales system and deterministic read
 - Maya business routines and WhatsApp remain paused. The existing Windows Email Task is outside this refactor and remains unchanged.
 - Maya commissioning installs only the two canonical Maya workers. It never installs the parent manager on Maya, never activates a scheduler, and never treats the Vault as executable source truth.
 - Manager-assigned Maya work uses only the existing Vault bridge. Require `execution_state=ASSIGNED_TO_MAYA`, `task_id`, `monday_board_id`, and `monday_item_id`; require a correlated `MAYA_ACKNOWLEDGED` and result, and reuse the existing result for duplicate task IDs. At maturity 0 this contract is dry-run only.
+- Gmail, including `myhome@i-feel.co.il`, is never a task transport, ACK channel, or result channel for manager-assigned Maya work. Never create or send `[MAYA-TASK]`, `[MAYA-ACK]`, or `[MAYA-RESULT]` email.
+- Never create, update, or delete a Monday item to transport, acknowledge, test, or canary a Maya assignment. Validate the contract locally and through schema-valid Vault Bus messages only.
+- Never create or install a standalone `maya-agent`; that legacy string may appear only as the Bus source identity documented in `references/vault-layout.md`.
 
 ## Deterministic entrypoints
 
