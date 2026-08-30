@@ -1,5 +1,6 @@
 ---
 import '../styles/global.css';
+import LeadAttributionCapture from '../components/LeadAttributionCapture.astro';
 
 export interface Props {
   title: string;
@@ -95,18 +96,6 @@ const {
           formError.scrollIntoView({ block: 'center' });
         }
 
-        // Capture UTM + click IDs, persist across the visit, fill hidden form fields
-        var keys = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_term', 'utm_content', 'gclid'];
-        keys.forEach(function (k) {
-          var v = params.get(k);
-          if (v) { try { sessionStorage.setItem('ifeel_' + k, v); } catch (err) {} }
-          var stored = v;
-          if (!stored) { try { stored = sessionStorage.getItem('ifeel_' + k); } catch (err) {} }
-          if (!stored) return;
-          document.querySelectorAll('input[name="' + k + '"]').forEach(function (input) {
-            input.value = stored;
-          });
-        });
       });
     </script>
   </head>
@@ -171,6 +160,8 @@ const {
         </a>
       </div>
     </div>
+
+    <LeadAttributionCapture />
 
   </body>
 </html>
