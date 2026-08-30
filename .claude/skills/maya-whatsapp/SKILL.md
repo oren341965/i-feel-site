@@ -28,6 +28,7 @@ Use the existing Maya WhatsApp session on Maya's workstation. The shared `ai-sal
 Use the existing `maya-agent` Bus identity only; do not create a separate agent or queue. For a schema-version-2 Assignment in `${VAULT_ROOT}/AI-Sales/_bus/manager-to-maya`, require board `2732725332`, a live-verified `monday_item_id`, the immutable task snapshot, `requested_by=ai-sales-manager`, and a production-ready execution gate.
 
 - Write one correlated `MAYA_SALES_TASK_ACK` with `MAYA_ACKNOWLEDGED` to `maya-to-manager` before work. ACK is receipt only.
+- Before any proposed contact, read the authoritative Monday status, latest notes, `timeline`, last action, and latest verified direct conversation. First determine whether a response already exists, and reuse an existing correlated Result for a duplicate `task_id`.
 - Execute only the exact `required_action` within this skill's verified WhatsApp identity and standing routine-customer scope. Registry presence without current Telemetry is `BLOCKED`; a pending proactive-messaging approval is not blanket authorization.
 - Return `NEEDS_OREN_DECISION` for price, discount, proposal change, commercial or technical commitment, material complaint, liability, legal/safety issue, or material exception. Do not decide it.
 - Return `BLOCKED` for an unverified Service Identity, zero verified Skills, missing Telemetry/session/permission/information, an ambiguous customer, a wrong contact, or another dependency failure.

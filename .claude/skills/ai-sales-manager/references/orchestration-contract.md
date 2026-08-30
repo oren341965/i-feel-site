@@ -85,6 +85,18 @@ Inputs from other skills must be aggregates or bounded references, without names
 - proposed next action
 - `approval_required`
 
+## Manager-to-Maya task execution
+
+Use the existing Vault bridge only: the manager owns `_bus/manager-to-maya`, and the Maya stack owns `_bus/maya-to-manager`. Do not add a second queue, API, or standalone `maya-agent` skill.
+
+1. Dispatch one schema-version-2 `MAYA_SALES_TASK_ASSIGNMENT` with the full immutable snapshot from [maya-task-protocol.md](maya-task-protocol.md), including the exact live Monday board/item identity and `execution_state=ASSIGNED_TO_MAYA`.
+2. Maya writes one immutable correlated `MAYA_SALES_TASK_ACK` with `execution_state=MAYA_ACKNOWLEDGED` before operational reads. A production ACK is accepted only with the commissioned Maya workstation Service Identity.
+3. Resolve the customer from the supplied Monday item. A name alone is never an identifier.
+4. Before contact, read Monday status, latest notes, authoritative `timeline`, last action, and the latest relevant Gmail or direct conversation. A status check first determines whether a response already exists.
+5. At maturity 0, the integrated executor is isolated/read-only: sending and Monday mutation stay disabled. Return one of the exact protocol states, normally `BLOCKED`, `MAYA_EXECUTED`, or `NEEDS_OREN_DECISION`; `NEEDS_APPROVAL` is not a task state.
+6. Write one immutable `MAYA_SALES_TASK_RESULT` to `maya-to-manager`. On duplicate `task_id`, do not re-read or re-contact; return the existing validated v2 result.
+7. Keep logs bounded to task ID, timestamps, action, connector outcomes, callback outcome, and error. Never store correspondence, contact details, tokens, or secrets.
+
 ## Quote-to-Monday reconciliation gate
 
 Every quote or proposal that leaves an I Feel system must be reconciled with Monday board `2732725332` before the quote workflow is reported complete. Run the same gate immediately when Gmail, ERP or another source reveals that a quote was already sent.

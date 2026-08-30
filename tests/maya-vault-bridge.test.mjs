@@ -16,6 +16,8 @@ import {
   emitMayaReady,
   evaluateMayaProductionReadiness,
   inspectMayaConnection,
+  processAssignedMayaTask,
+  readAssignedMayaTasks,
   reconcileMayaSalesTask,
   respondToMayaSystemTests,
   submitMayaSalesTaskResult,
@@ -231,6 +233,44 @@ test('isolated Maya sales task completes Assignment -> ACK -> Result -> Monday g
   assert.equal(acknowledged.state.execution_state, 'MAYA_ACKNOWLEDGED');
   assert.equal(acknowledged.state.manager_status, 'מאיה קיבלה את המשימה');
   assert.equal(acknowledged.state.completed, false);
+
+  const queue = await readAssignedMayaTasks({ configPath: mayaConfigPath });
+  assert.equal(queue.tasks.length, 1);
+  assert.equal(queue.tasks[0].task.task_id, assigned.assignment.task_id);
+  let mondayReads = 0;
+  let gmailReads = 0;
+  const processed = await processAssignedMayaTask({
+    configPath: mayaConfigPath,
+    task: queue.tasks[0].task,
+    now: new Date('2026-08-21T10:01:45.000Z'),
+    adapters: {
+      mondayRead: async ({ boardId, itemId }) => {
+        mondayReads += 1;
+        assert.equal(boardId, '2732725332');
+        return { boardId, itemId, nextTreatmentDate: null };
+      },
+      gmailRead: async () => {
+        gmailReads += 1;
+        return { responseFound: true };
+      },
+    },
+  });
+  assert.equal(processed.ackWrite.created, false);
+  assert.equal(processed.result.execution_state, 'MAYA_EXECUTED');
+  assert.deepEqual(processed.safety, { externalSends: 0, gmailMutations: 0, mondayWrites: 0 });
+  const duplicate = await processAssignedMayaTask({
+    configPath: mayaConfigPath,
+    task: queue.tasks[0].task,
+    now: new Date('2026-08-21T10:01:50.000Z'),
+    adapters: {
+      mondayRead: async () => { throw new Error('DUPLICATE_MUST_NOT_READ_MONDAY'); },
+      gmailRead: async () => { throw new Error('DUPLICATE_MUST_NOT_READ_GMAIL'); },
+    },
+  });
+  assert.equal(duplicate.status, 'DUPLICATE_RESULT_REUSED');
+  assert.equal(duplicate.duplicate, true);
+  assert.equal(mondayReads, 1);
+  assert.equal(gmailReads, 1);
 
   const firstResult = await submitMayaSalesTaskResult({
     configPath: mayaConfigPath,
