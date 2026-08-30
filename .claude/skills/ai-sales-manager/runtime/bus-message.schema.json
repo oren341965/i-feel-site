@@ -4,62 +4,10 @@
   "title": "I Feel AI Sales file-bridge message",
   "oneOf": [
     { "$ref": "#/$defs/morningJudgmentRequest" },
-    { "$ref": "#/$defs/legacyBridgeMessage" },
-    { "$ref": "#/$defs/mayaTask" },
-    { "$ref": "#/$defs/mayaTaskAck" },
-    { "$ref": "#/$defs/mayaTaskResult" }
+    { "$ref": "#/$defs/mayaSalesTaskMessage" },
+    { "$ref": "#/$defs/legacyBridgeMessage" }
   ],
   "$defs": {
-    "mayaTask": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": ["schema_version", "task_id", "generated_at", "source", "target", "type", "execution_state", "monday_board_id", "monday_item_id", "instruction", "max_age_hours", "dry_run", "maturity"],
-      "properties": {
-        "schema_version": { "const": 1 },
-        "task_id": { "type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$" },
-        "generated_at": { "type": "string", "format": "date-time" },
-        "source": { "const": "ai-sales-manager" },
-        "target": { "const": "maya-agent" },
-        "type": { "const": "MAYA_TASK" },
-        "execution_state": { "const": "ASSIGNED_TO_MAYA" },
-        "monday_board_id": { "type": "string", "pattern": "^[0-9]+$" },
-        "monday_item_id": { "type": "string", "pattern": "^[0-9]+$" },
-        "instruction": { "type": "string", "minLength": 1, "maxLength": 2000 },
-        "approval_required": { "type": "boolean" },
-        "approval_status": { "enum": ["not_required", "pending", "approved", "rejected"] },
-        "max_age_hours": { "type": "number", "exclusiveMinimum": 0, "maximum": 168 },
-        "dry_run": { "const": true },
-        "maturity": { "const": 0 }
-      }
-    },
-    "mayaTaskAck": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": ["schema_version", "task_id", "monday_item_id", "source", "target", "type", "state", "received_at", "dry_run", "maturity"],
-      "properties": {
-        "schema_version": { "const": 1 }, "task_id": { "type": "string" }, "monday_item_id": { "type": "string" },
-        "source": { "const": "maya-agent" }, "target": { "const": "ai-sales-manager" }, "type": { "const": "MAYA_TASK_ACK" },
-        "state": { "const": "MAYA_ACKNOWLEDGED" }, "received_at": { "type": "string", "format": "date-time" },
-        "dry_run": { "const": true }, "maturity": { "const": 0 }
-      }
-    },
-    "mayaTaskResult": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": ["schema_version", "task_id", "monday_item_id", "customer_name", "source", "target", "type", "state", "action_performed", "communication_checked", "message_sent", "message_id", "result_summary", "monday_updated", "next_action", "next_treatment_date", "blocked_reason", "needs_oren_decision", "completed_at", "dry_run", "maturity"],
-      "properties": {
-        "schema_version": { "const": 1 }, "task_id": { "type": "string" }, "monday_item_id": { "type": "string" },
-        "customer_name": { "type": ["string", "null"], "maxLength": 250 }, "source": { "const": "maya-agent" },
-        "target": { "const": "ai-sales-manager" }, "type": { "const": "MAYA_TASK_RESULT" },
-        "state": { "enum": ["MAYA_EXECUTED", "WAITING_FOR_CUSTOMER", "RESPONSE_RECEIVED_AND_MONDAY_UPDATED", "BLOCKED", "NEEDS_APPROVAL", "NEEDS_OREN_DECISION"] },
-        "action_performed": { "type": "string", "maxLength": 500 }, "communication_checked": { "type": "boolean" },
-        "message_sent": { "enum": ["yes", "no"] }, "message_id": { "type": ["string", "null"], "maxLength": 250 },
-        "result_summary": { "type": "string", "maxLength": 2000 }, "monday_updated": { "enum": ["yes", "no"] },
-        "next_action": { "type": ["string", "null"], "maxLength": 500 }, "next_treatment_date": { "type": ["string", "null"], "maxLength": 64 },
-        "blocked_reason": { "type": ["string", "null"], "maxLength": 500 }, "needs_oren_decision": { "enum": ["yes", "no"] },
-        "completed_at": { "type": "string", "format": "date-time" }, "dry_run": { "const": true }, "maturity": { "const": 0 }
-      }
-    },
     "morningJudgmentRequest": {
       "type": "object",
       "additionalProperties": false,
@@ -120,6 +68,105 @@
             }
           }
         }
+      }
+    },
+    "mayaSalesTaskMessage": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema_version",
+        "message_id",
+        "message_type",
+        "source",
+        "target",
+        "task_id",
+        "monday_board_id",
+        "monday_item_id",
+        "customer_name",
+        "current_sales_status",
+        "instruction",
+        "required_action",
+        "created_at",
+        "due_date",
+        "priority",
+        "requested_by",
+        "execution_state",
+        "result",
+        "next_action",
+        "next_treatment_date",
+        "event_at",
+        "monday_item_source",
+        "monday_item_verified_at",
+        "test_task",
+        "execution_origin",
+        "execution_gate",
+        "external_actions_performed",
+        "monday_writes_performed",
+        "service_identity_verified",
+        "service_identity_id",
+        "maya_machine_id"
+      ],
+      "properties": {
+        "schema_version": { "const": 2 },
+        "message_id": { "type": "string", "minLength": 8, "maxLength": 128 },
+        "message_type": {
+          "enum": [
+            "MAYA_SALES_TASK_ASSIGNMENT",
+            "MAYA_SALES_TASK_ACK",
+            "MAYA_SALES_TASK_RESULT"
+          ]
+        },
+        "source": { "enum": ["ai-sales-manager", "maya-agent"] },
+        "target": { "enum": ["ai-sales-manager", "maya-agent"] },
+        "task_id": { "type": "string", "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._:-]{0,127}$" },
+        "monday_board_id": { "const": "2732725332" },
+        "monday_item_id": { "type": "string", "pattern": "^[0-9]{1,20}$" },
+        "customer_name": { "type": "string", "minLength": 1, "maxLength": 200 },
+        "current_sales_status": { "type": "string", "minLength": 1, "maxLength": 250 },
+        "instruction": { "type": "string", "minLength": 1, "maxLength": 2000 },
+        "required_action": { "type": "string", "minLength": 1, "maxLength": 1000 },
+        "created_at": { "type": "string", "format": "date-time" },
+        "due_date": { "type": ["string", "null"] },
+        "priority": { "enum": ["LOW", "NORMAL", "HIGH", "URGENT"] },
+        "requested_by": { "const": "ai-sales-manager" },
+        "execution_state": {
+          "enum": [
+            "ASSIGNED_TO_MAYA",
+            "MAYA_ACKNOWLEDGED",
+            "MAYA_EXECUTED",
+            "WAITING_FOR_CUSTOMER",
+            "RESPONSE_RECEIVED_AND_MONDAY_UPDATED",
+            "BLOCKED",
+            "NEEDS_OREN_DECISION"
+          ]
+        },
+        "result": { "type": ["string", "null"], "maxLength": 4000 },
+        "next_action": { "type": ["string", "null"], "maxLength": 1000 },
+        "next_treatment_date": { "type": ["string", "null"] },
+        "event_at": { "type": "string", "format": "date-time" },
+        "monday_item_source": { "const": "MONDAY_LIVE" },
+        "monday_item_verified_at": { "type": "string", "format": "date-time" },
+        "test_task": { "type": "boolean" },
+        "execution_origin": { "enum": ["MANAGER", "MAYA_WORKSTATION", "ISOLATED_TEST"] },
+        "execution_gate": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["ready", "status", "blockers"],
+          "properties": {
+            "ready": { "type": "boolean" },
+            "status": { "enum": ["MAYA_PRODUCTION_READY", "MAYA_PRODUCTION_BLOCKED"] },
+            "blockers": {
+              "type": "array",
+              "maxItems": 20,
+              "items": { "type": "string", "pattern": "^[A-Z0-9_]{3,80}$" }
+            }
+          }
+        },
+        "external_actions_performed": { "type": "boolean" },
+        "monday_writes_performed": { "type": "boolean" },
+        "service_identity_verified": { "type": "boolean" },
+        "service_identity_id": { "type": ["string", "null"], "maxLength": 128 },
+        "maya_machine_id": { "type": ["string", "null"], "maxLength": 63 }
       }
     },
     "legacyBridgeMessage": {

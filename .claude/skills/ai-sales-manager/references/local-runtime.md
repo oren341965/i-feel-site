@@ -22,5 +22,6 @@ C:\ifeel-sales\
 - Set `VAULT_ROOT` in each machine's local `config.json`; never commit the machine-specific path.
 - Copy aggregate snapshots to the Vault only after a future maturity/approval change.
 - `morning-run.mjs` may write `state/system-state.json`, one daily local log, one local Daily Oren Brief, one idempotent dry-run request under `${VAULT_ROOT}/AI-Sales/_bus/to-claude`, and one idempotent Maya `SYSTEM_TEST_RESPONSE`. It performs no external send or platform mutation.
+- `maya-vault-bridge.mjs` may write an Oren-requested immutable Maya Assignment to `manager-to-maya`, read correlated ACK/Result messages from `maya-to-manager`, and persist the derived task state under `state/maya-tasks`. It never treats an isolated test as production completion and never performs the Monday mutation itself.
 - `evening-close.mjs` remains proposal-only and does not archive or move messages at maturity 0.
 - Install idempotently with `scripts/workstations/install-oren-sales-runtime.ps1 -VaultRoot <vault>`. The installer merges missing non-secret defaults into an existing config, preserves credential paths, records a 90-day baseline start, installs a local dry-run launcher and does not register Task Scheduler.

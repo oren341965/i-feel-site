@@ -4,23 +4,40 @@ import { join, resolve } from 'node:path';
 import test from 'node:test';
 
 import {
+  acknowledgeMayaSalesTask,
+  assignMayaSalesTask,
+  createMayaSalesTask,
+  createMayaSalesTaskAck,
+  createMayaSalesTaskResult,
   createManagerHandshake,
   createManagerSystemTestResponse,
   createMayaReadyResponse,
   emitManagerHandshake,
   emitMayaReady,
+  evaluateMayaProductionReadiness,
   inspectMayaConnection,
   processAssignedMayaTask,
   readAssignedMayaTasks,
+  reconcileMayaSalesTask,
   respondToMayaSystemTests,
-  createMayaTaskAcknowledgement,
-  createMayaTaskResult,
-  validateAssignedMayaTask,
+  submitMayaSalesTaskResult,
+  syncMayaSalesTaskState,
+  validateMayaSalesTaskMessage,
   validateMayaSystemTestEvent,
 } from '../.claude/skills/ai-sales-manager/scripts/maya-vault-bridge.mjs';
 
 const REPO = resolve(import.meta.dirname, '..');
 const NOW = new Date('2026-08-21T10:00:00.000Z');
+const CURRENT_MAYA_CONTROL = Object.freeze({
+  mayaState: 'PAUSED_BY_PHASE_2',
+  documentedOnly: true,
+  verifiedSkillCount: 0,
+  serviceIdentityVerified: false,
+  whatsappTelemetryVerified: false,
+  emailSnapshotFresh: false,
+  gmailProfileRole: 'OREN',
+  proactiveMessagingApproval: 'PENDING',
+});
 let fixtureCounter = 0;
 
 async function fixture(t) {
@@ -166,92 +183,304 @@ test('read-only Maya connection inspection does not create missing bus folders',
   assert.equal(vaultRoot.endsWith('vault'), true);
 });
 
-test('Maya receives an assigned dry-run task, ACKs, reads Monday and Gmail, and returns one result', async (t) => {
-  const { mayaConfigPath } = await fixture(t);
-  const config = JSON.parse(await readFile(mayaConfigPath, 'utf8'));
-  const managerDirectory = join(resolve(config.VAULT_ROOT), 'AI-Sales', '_bus', 'manager-to-maya');
-  await mkdir(managerDirectory, { recursive: true });
-  await mkdir(join(resolve(config.VAULT_ROOT), 'AI-Sales', '_bus', 'maya-to-manager'), { recursive: true });
-  const task = {
-    schema_version: 1,
-    task_id: 'maya-test-status-1',
-    generated_at: NOW.toISOString(),
-    source: 'ai-sales-manager',
-    target: 'maya-agent',
-    type: 'MAYA_TASK',
-    execution_state: 'ASSIGNED_TO_MAYA',
-    monday_board_id: '2732725332',
-    monday_item_id: '123456789',
-    instruction: 'Check whether a response already exists.',
-    approval_required: true,
-    approval_status: 'pending',
-    max_age_hours: 24,
-    dry_run: true,
-    maturity: 0,
-  };
-  await writeFile(join(managerDirectory, 'assigned-test.json'), JSON.stringify(task), 'utf8');
-  const queue = await readAssignedMayaTasks({ configPath: mayaConfigPath, now: NOW });
-  assert.equal(queue.tasks.length, 1);
-  assert.equal(queue.tasks[0].task.task_id, task.task_id);
-  assert.equal(validateAssignedMayaTask(task, { now: NOW }).accepted, true);
-  assert.equal(createMayaTaskAcknowledgement({ task, now: NOW }).state, 'MAYA_ACKNOWLEDGED');
-  assert.equal(createMayaTaskResult({ task, outcome: { state: 'BLOCKED' }, now: NOW }).message_sent, 'no');
+test('isolated Maya sales task completes Assignment -> ACK -> Result -> Monday gate -> state without external writes', async (t) => {
+  const { managerConfigPath, mayaConfigPath } = await fixture(t);
+  const assigned = await assignMayaSalesTask({
+    configPath: managerConfigPath,
+    now: NOW,
+    input: {
+      task_id: 'maya-sales-internal-test-001',
+      monday_board_id: '2732725332',
+      monday_item_id: '1234567890',
+      customer_name: 'INTERNAL TEST CUSTOMER',
+      current_sales_status: '9. וידוא קבלת ההצעה',
+      instruction: 'Verify the Maya task protocol without contacting a customer.',
+      required_action: 'INTERNAL_TEST_NO_EMAIL_NO_WHATSAPP',
+      due_date: '2026-08-22',
+      priority: 'NORMAL',
+      next_action: null,
+      next_treatment_date: null,
+      monday_item_source: 'MONDAY_LIVE',
+      monday_item_verified_at: NOW.toISOString(),
+      test_task: true,
+      control_state: CURRENT_MAYA_CONTROL,
+    },
+  });
+  assert.equal(assigned.write.created, true);
+  assert.equal(assigned.state.execution_state, 'ASSIGNED_TO_MAYA');
+  assert.equal(assigned.state.completed, false);
+  assert.equal(assigned.assignment.execution_gate.ready, false);
 
+  const firstAck = await acknowledgeMayaSalesTask({
+    configPath: mayaConfigPath,
+    taskId: assigned.assignment.task_id,
+    now: new Date('2026-08-21T10:01:00.000Z'),
+    executionOrigin: 'ISOLATED_TEST',
+  });
+  assert.equal(firstAck.write.created, true);
+  const repeatedAck = await acknowledgeMayaSalesTask({
+    configPath: mayaConfigPath,
+    taskId: assigned.assignment.task_id,
+    now: new Date('2026-08-21T10:01:30.000Z'),
+    executionOrigin: 'ISOLATED_TEST',
+  });
+  assert.equal(repeatedAck.write.created, false);
+  assert.equal(repeatedAck.write.idempotentReuse, true);
+  const acknowledged = await syncMayaSalesTaskState({
+    configPath: managerConfigPath,
+    taskId: assigned.assignment.task_id,
+  });
+  assert.equal(acknowledged.state.execution_state, 'MAYA_ACKNOWLEDGED');
+  assert.equal(acknowledged.state.manager_status, 'מאיה קיבלה את המשימה');
+  assert.equal(acknowledged.state.completed, false);
+
+  const queue = await readAssignedMayaTasks({ configPath: mayaConfigPath });
+  assert.equal(queue.tasks.length, 1);
+  assert.equal(queue.tasks[0].task.task_id, assigned.assignment.task_id);
   let mondayReads = 0;
   let gmailReads = 0;
-  const first = await processAssignedMayaTask({
+  const processed = await processAssignedMayaTask({
     configPath: mayaConfigPath,
-    task,
-    now: NOW,
+    task: queue.tasks[0].task,
+    now: new Date('2026-08-21T10:01:45.000Z'),
     adapters: {
       mondayRead: async ({ boardId, itemId }) => {
         mondayReads += 1;
         assert.equal(boardId, '2732725332');
-        return { itemId, customerName: '[DRY_RUN_CUSTOMER]', nextTreatmentDate: '2026-08-22' };
+        return { boardId, itemId, nextTreatmentDate: null };
       },
       gmailRead: async () => {
         gmailReads += 1;
-        return { communicationChecked: true, responseFound: false };
+        return { responseFound: true };
       },
     },
   });
-  assert.equal(first.accepted, true);
-  assert.equal(first.ack.created, true);
-  assert.equal(first.ack.message.state, 'MAYA_ACKNOWLEDGED');
-  assert.equal(first.result.type, 'MAYA_TASK_RESULT');
-  assert.equal(first.result.state, 'NEEDS_APPROVAL');
-  assert.equal(first.result.message_sent, 'no');
-  assert.equal(first.result.monday_updated, 'no');
-  assert.deepEqual(first.safety, { externalSends: 0, gmailMutations: 0, mondayWrites: 0 });
-
-  const second = await processAssignedMayaTask({
+  assert.equal(processed.ackWrite.created, false);
+  assert.equal(processed.result.execution_state, 'MAYA_EXECUTED');
+  assert.deepEqual(processed.safety, { externalSends: 0, gmailMutations: 0, mondayWrites: 0 });
+  const duplicate = await processAssignedMayaTask({
     configPath: mayaConfigPath,
-    task,
-    now: NOW,
+    task: queue.tasks[0].task,
+    now: new Date('2026-08-21T10:01:50.000Z'),
     adapters: {
-      mondayRead: async () => { throw new Error('duplicate must not read Monday again'); },
-      gmailRead: async () => { throw new Error('duplicate must not read Gmail again'); },
+      mondayRead: async () => { throw new Error('DUPLICATE_MUST_NOT_READ_MONDAY'); },
+      gmailRead: async () => { throw new Error('DUPLICATE_MUST_NOT_READ_GMAIL'); },
     },
   });
-  assert.equal(second.status, 'DUPLICATE_RESULT_REUSED');
-  assert.equal(second.duplicate, true);
+  assert.equal(duplicate.status, 'DUPLICATE_RESULT_REUSED');
+  assert.equal(duplicate.duplicate, true);
   assert.equal(mondayReads, 1);
   assert.equal(gmailReads, 1);
+
+  const firstResult = await submitMayaSalesTaskResult({
+    configPath: mayaConfigPath,
+    taskId: assigned.assignment.task_id,
+    now: new Date('2026-08-21T10:02:00.000Z'),
+    executionOrigin: 'ISOLATED_TEST',
+    resultInput: {
+      execution_state: 'RESPONSE_RECEIVED_AND_MONDAY_UPDATED',
+      result: 'Isolated protocol result received; no customer contact occurred.',
+      next_action: 'No production action; retain commissioning gate.',
+      next_treatment_date: '2026-08-25',
+      external_actions_performed: false,
+      monday_writes_performed: false,
+    },
+  });
+  assert.equal(firstResult.write.created, true);
+  const repeatedResult = await submitMayaSalesTaskResult({
+    configPath: mayaConfigPath,
+    taskId: assigned.assignment.task_id,
+    now: new Date('2026-08-21T10:02:30.000Z'),
+    executionOrigin: 'ISOLATED_TEST',
+    resultInput: {
+      execution_state: 'RESPONSE_RECEIVED_AND_MONDAY_UPDATED',
+      result: 'Isolated protocol result received; no customer contact occurred.',
+      next_action: 'No production action; retain commissioning gate.',
+      next_treatment_date: '2026-08-25',
+      external_actions_performed: false,
+      monday_writes_performed: false,
+    },
+  });
+  assert.equal(repeatedResult.write.created, false);
+  assert.equal(repeatedResult.write.idempotentReuse, true);
+
+  const beforeReadback = await syncMayaSalesTaskState({
+    configPath: managerConfigPath,
+    taskId: assigned.assignment.task_id,
+  });
+  assert.equal(beforeReadback.state.execution_state, 'MAYA_EXECUTED');
+  assert.equal(beforeReadback.state.completed, false);
+  assert.deepEqual(beforeReadback.state.errors, ['MONDAY_READBACK_REQUIRED']);
+
+  const afterReadback = await syncMayaSalesTaskState({
+    configPath: managerConfigPath,
+    taskId: assigned.assignment.task_id,
+    mondayReadback: {
+      mode: 'ISOLATED_TEST',
+      verified: true,
+      verified_at: '2026-08-21T10:03:00.000Z',
+      monday_board_id: '2732725332',
+      monday_item_id: '1234567890',
+      result_recorded: true,
+      next_action_recorded: true,
+      next_treatment_date: '2026-08-25',
+    },
+  });
+  assert.equal(afterReadback.state.execution_state, 'RESPONSE_RECEIVED_AND_MONDAY_UPDATED');
+  assert.equal(afterReadback.state.protocol_completed, true);
+  assert.equal(afterReadback.state.completed, false);
+  assert.equal(afterReadback.state.isolated_test, true);
+  assert.equal(afterReadback.state.manager_status, 'TEST_ONLY_COMPLETED');
+  assert.equal(afterReadback.state.monday_update_verified, true);
+  assert.equal(afterReadback.statePath, assigned.statePath);
+  const persisted = JSON.parse(await readFile(afterReadback.statePath, 'utf8'));
+  assert.equal(persisted.execution_state, 'RESPONSE_RECEIVED_AND_MONDAY_UPDATED');
+  assert.equal(persisted.completed, false);
+  assert.equal(assigned.assignment.external_actions_performed, false);
+  assert.equal(assigned.assignment.monday_writes_performed, false);
 });
 
-test('Maya rejects name-only and non-assigned tasks before ACK', () => {
-  const invalid = {
-    schema_version: 1,
-    task_id: 'maya-test-invalid',
-    generated_at: NOW.toISOString(),
-    source: 'ai-sales-manager',
-    target: 'maya-agent',
-    type: 'MAYA_TASK',
-    execution_state: 'QUEUED',
-    instruction: 'Contact customer by name.',
-    max_age_hours: 24,
-    dry_run: true,
-    maturity: 0,
-  };
-  assert.equal(validateAssignedMayaTask(invalid, { now: NOW }).accepted, false);
+test('Maya production gate reflects current control evidence and rejects an unverified workstation ACK', async (t) => {
+  const readiness = evaluateMayaProductionReadiness(CURRENT_MAYA_CONTROL);
+  assert.equal(readiness.ready, false);
+  assert.deepEqual(readiness.blockers, [
+    'MAYA_PAUSED_BY_PHASE_2',
+    'MAYA_DOCUMENTED_ONLY',
+    'MAYA_VERIFIED_SKILLS_MISSING',
+    'MAYA_SERVICE_IDENTITY_MISSING',
+    'MAYA_WHATSAPP_TELEMETRY_MISSING',
+    'MAYA_EMAIL_EVIDENCE_STALE',
+    'WRONG_GMAIL_PROFILE',
+    'MAYA_PROACTIVE_MESSAGING_APPROVAL_PENDING',
+  ]);
+
+  const { managerConfigPath, mayaConfigPath } = await fixture(t);
+  const assigned = await assignMayaSalesTask({
+    configPath: managerConfigPath,
+    now: NOW,
+    input: {
+      task_id: 'maya-sales-production-gate-001',
+      monday_board_id: '2732725332',
+      monday_item_id: '1234567890',
+      customer_name: 'CONTROL GATE CUSTOMER',
+      current_sales_status: '9. וידוא קבלת ההצעה',
+      instruction: 'Check the current sales status.',
+      required_action: 'CHECK_STATUS',
+      priority: 'HIGH',
+      monday_item_source: 'MONDAY_LIVE',
+      monday_item_verified_at: NOW.toISOString(),
+      test_task: false,
+      control_state: CURRENT_MAYA_CONTROL,
+    },
+  });
+  await assert.rejects(() => acknowledgeMayaSalesTask({
+    configPath: mayaConfigPath,
+    taskId: assigned.assignment.task_id,
+    now: new Date('2026-08-21T10:01:00.000Z'),
+  }), /Verified Maya Service Identity is required/i);
+});
+
+test('Maya result cannot advance state before ACK and task schema rejects fabricated routes', () => {
+  const assignment = createMayaSalesTask({
+    task_id: 'maya-sales-ordering-test-001',
+    monday_board_id: '2732725332',
+    monday_item_id: '1234567890',
+    customer_name: 'ORDERING TEST CUSTOMER',
+    current_sales_status: '3. המתנה לקבלת תכניות',
+    instruction: 'Test ordering only.',
+    required_action: 'INTERNAL_ORDERING_TEST',
+    priority: 'LOW',
+    monday_item_source: 'MONDAY_LIVE',
+    monday_item_verified_at: NOW.toISOString(),
+    test_task: true,
+    control_state: CURRENT_MAYA_CONTROL,
+  }, { now: NOW });
+  const result = createMayaSalesTaskResult({
+    assignment,
+    executionState: 'MAYA_EXECUTED',
+    result: 'Isolated ordering result.',
+    now: new Date('2026-08-21T10:01:00.000Z'),
+    executionOrigin: 'ISOLATED_TEST',
+  });
+  const reconciled = reconcileMayaSalesTask({ assignment, responses: [result] });
+  assert.equal(reconciled.execution_state, 'ASSIGNED_TO_MAYA');
+  assert.equal(reconciled.result_received, false);
+  assert.deepEqual(reconciled.errors, ['MAYA_ACK_MISSING']);
+
+  const invalid = { ...assignment, monday_board_id: '999' };
+  assert.equal(validateMayaSalesTaskMessage(invalid).accepted, false);
+});
+
+test('Maya sales task JSON schema fixes the required fields and execution-state enum', async () => {
+  const schema = JSON.parse(await readFile(resolve(
+    REPO,
+    '.claude/skills/ai-sales-manager/runtime/bus-message.schema.json',
+  ), 'utf8'));
+  const task = schema.$defs.mayaSalesTaskMessage;
+  for (const field of [
+    'task_id', 'monday_board_id', 'monday_item_id', 'customer_name', 'current_sales_status',
+    'instruction', 'required_action', 'created_at', 'due_date', 'priority', 'requested_by',
+    'execution_state', 'result', 'next_action', 'next_treatment_date',
+  ]) assert.equal(task.required.includes(field), true, field);
+  assert.deepEqual(task.properties.execution_state.enum, [
+    'ASSIGNED_TO_MAYA',
+    'MAYA_ACKNOWLEDGED',
+    'MAYA_EXECUTED',
+    'WAITING_FOR_CUSTOMER',
+    'RESPONSE_RECEIVED_AND_MONDAY_UPDATED',
+    'BLOCKED',
+    'NEEDS_OREN_DECISION',
+  ]);
+});
+
+test('WAITING_FOR_CUSTOMER requires a verified next-treatment Monday read-back', () => {
+  const assignment = createMayaSalesTask({
+    task_id: 'maya-sales-waiting-test-001',
+    monday_board_id: '2732725332',
+    monday_item_id: '1234567890',
+    customer_name: 'WAITING TEST CUSTOMER',
+    current_sales_status: '10. המתנה לקבלת אישור הלקוח להצעה',
+    instruction: 'Test waiting-state reconciliation.',
+    required_action: 'INTERNAL_WAITING_TEST',
+    priority: 'NORMAL',
+    monday_item_source: 'MONDAY_LIVE',
+    monday_item_verified_at: NOW.toISOString(),
+    test_task: true,
+    control_state: CURRENT_MAYA_CONTROL,
+  }, { now: NOW });
+  const ack = createMayaSalesTaskAck({
+    assignment,
+    now: new Date('2026-08-21T10:01:00.000Z'),
+    executionOrigin: 'ISOLATED_TEST',
+  });
+  const result = createMayaSalesTaskResult({
+    assignment,
+    executionState: 'WAITING_FOR_CUSTOMER',
+    result: 'No external contact; waiting state tested in isolation.',
+    nextAction: 'Check for a customer response.',
+    nextTreatmentDate: '2026-08-25',
+    now: new Date('2026-08-21T10:02:00.000Z'),
+    executionOrigin: 'ISOLATED_TEST',
+  });
+  const pendingMonday = reconcileMayaSalesTask({ assignment, responses: [ack, result] });
+  assert.equal(pendingMonday.execution_state, 'MAYA_EXECUTED');
+  assert.deepEqual(pendingMonday.errors, ['MONDAY_READBACK_REQUIRED']);
+
+  const verified = reconcileMayaSalesTask({
+    assignment,
+    responses: [ack, result],
+    mondayReadback: {
+      mode: 'ISOLATED_TEST',
+      verified: true,
+      verified_at: '2026-08-21T10:03:00.000Z',
+      monday_board_id: '2732725332',
+      monday_item_id: '1234567890',
+      result_recorded: true,
+      next_action_recorded: true,
+      next_treatment_date: '2026-08-25',
+    },
+  });
+  assert.equal(verified.execution_state, 'WAITING_FOR_CUSTOMER');
+  assert.equal(verified.manager_status, 'ממתינים ללקוח');
+  assert.equal(verified.completed, false);
 });

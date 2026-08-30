@@ -160,10 +160,12 @@ export function salesEligibilityOf(item, options = {}) {
   const handledAt = strictDate(item.handledAt, { timezone: config.timezone });
   const latestEvidenceAt = strictDate(item.latestEvidenceAt, { timezone: config.timezone });
   const effectiveStage = String(item.evidenceStage ?? item.status ?? '').trim();
+  const effectiveGroup = String(item.group ?? '').trim();
   const reasons = [];
 
   if (item.transferredToProjects === true || item.transferredToService === true
     || item.salesProcessEnded === true || item.dealClosed === true || item.customerFileOpened === true
+    || effectiveGroup === 'תהליך מכירה הסתיים'
     || SALES_EXIT_STAGE_PATTERNS.some((pattern) => pattern.test(effectiveStage))) reasons.push('LEFT_SALES_OWNERSHIP');
   if (nextAction && nextAction > now) reasons.push('FUTURE_FOLLOWUP');
   if (item.handledInCurrentCycle === true
@@ -173,6 +175,7 @@ export function salesEligibilityOf(item, options = {}) {
     eligible: reasons.length === 0,
     reasons,
     effectiveStage,
+    effectiveGroup,
     evidenceOverridesLeadNew: hasValue(item.evidenceStage) && String(item.leadState ?? '').trim() === 'ליד חדש',
   };
 }

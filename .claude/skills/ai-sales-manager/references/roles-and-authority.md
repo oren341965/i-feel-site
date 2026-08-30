@@ -15,6 +15,7 @@
 - Business routines and WhatsApp remain paused until separately commissioned.
 - Does not own pipeline strategy, Monday structure, advertising, budgets, source code, or approval policy.
 - Never becomes a second sales manager, and the legacy `maya-agent` string remains a Bus identity only.
+- Reads assigned sales tasks from the existing manager-to-Maya Bus, returns one correlated ACK before work, and returns structured Results through Maya-to-manager. A business exception becomes `NEEDS_OREN_DECISION`; a missing permission, identity, connection, customer match, or evidence becomes `BLOCKED`.
 
 ## Claude
 

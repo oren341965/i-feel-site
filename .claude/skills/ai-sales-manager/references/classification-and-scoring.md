@@ -23,10 +23,13 @@ Only open items enter exception counts, owner workload, health scoring, and the 
 Keep pipeline classification and history intact, but show an open item in the manager's treatment queue only when it remains sales-owned and actionable now. Exclude it when any of these deterministic conditions holds:
 
 - the authoritative operational stage or a normalized explicit flag says it moved to Projects or Service, the sales process ended, the deal closed, or a customer file opened;
+- the exact Monday group title is `תהליך מכירה הסתיים`;
 - the authoritative `timeline` next action is still in the future;
 - `handledInCurrentCycle=true` and no normalized Gmail, Calendar or Monday-update evidence arrived after `handledAt`.
 
 Use `evidenceStage` only when it was derived from newer verified Gmail, Calendar or Monday-update evidence. It overrides the secondary `leadState` value `ליד חדש`; item names and free text never do. A future-follow-up item becomes eligible when its date arrives. A handled item becomes eligible when `latestEvidenceAt > handledAt`. The filter changes only the treatment queue, never pipeline counts, history, status or Monday data.
+
+The sales review reads board `2732725332` only. Do not query a Projects board to enrich, confirm, or expand the sales treatment queue.
 
 ## Open-lead classifications
 

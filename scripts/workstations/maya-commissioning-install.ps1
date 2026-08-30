@@ -26,7 +26,9 @@ $requiredPayload = @(
     'payload\skills\maya-whatsapp\SKILL.md',
     'payload\scheduled-tasks\maya-email-maintenance\SKILL.md',
     'payload\email-review\draft_writer.py',
-    'payload\runtime\maya-config.example.json'
+    'payload\runtime\maya-config.example.json',
+    'payload\runtime\bus-message.schema.json',
+    'payload\runtime\maya-task-protocol.md'
 )
 
 function Assert-SafeRoot {
@@ -213,6 +215,12 @@ if (-not $VerifyOnly) {
     if ($PSCmdlet.ShouldProcess($configPath, 'Write maturity-0 Maya runtime config')) {
         $config | ConvertTo-Json -Depth 30 | Set-Content -LiteralPath $configPath -Encoding UTF8
     }
+    foreach ($contract in @('bus-message.schema.json', 'maya-task-protocol.md')) {
+        $contractTarget = Join-Path $runtimeConfigRoot $contract
+        if ($PSCmdlet.ShouldProcess($contractTarget, "Install Maya task contract $contract")) {
+            Copy-Item -LiteralPath (Join-Path $bundle "payload\runtime\$contract") -Destination $contractTarget -Force
+        }
+    }
 }
 
 $installedHashes = @()
@@ -230,6 +238,17 @@ foreach ($engine in @(@{ name = 'claude'; root = $claudeRoot }, @{ name = 'codex
     }
 }
 $allSkillsVerified = @($installedHashes | Where-Object { -not $_.hashMatch }).Count -eq 0
+$taskContractHashes = foreach ($contract in @('bus-message.schema.json', 'maya-task-protocol.md')) {
+    $source = Join-Path $bundle "payload\runtime\$contract"
+    $target = Join-Path $runtimeConfigRoot $contract
+    [ordered]@{
+        name = $contract
+        present = Test-Path -LiteralPath $target -PathType Leaf
+        hashMatch = (Test-Path -LiteralPath $target -PathType Leaf) -and
+            ((Get-FileHash -LiteralPath $source -Algorithm SHA256).Hash -eq (Get-FileHash -LiteralPath $target -Algorithm SHA256).Hash)
+    }
+}
+$allTaskContractsVerified = @($taskContractHashes | Where-Object { -not $_.hashMatch }).Count -eq 0
 $lockCount = @(Get-ChildItem -LiteralPath $runtime -Filter '*.lock' -File -Recurse -ErrorAction SilentlyContinue).Count
 $windowsEmailTask = 'NOT_FOUND'
 try {
@@ -244,18 +263,20 @@ $result = [ordered]@{
     source = 'maya-commissioning-installer'
     target = 'ai-sales-manager'
     type = 'MAYA_COMMISSIONING_RESULT'
-    status = if ($allSkillsVerified -and $lockCount -eq 0) { 'INSTALLED_PAUSED' } else { 'BLOCKED' }
+    status = if ($allSkillsVerified -and $allTaskContractsVerified -and $lockCount -eq 0) { 'INSTALLED_PAUSED' } else { 'BLOCKED' }
     payload = [ordered]@{
         commit = $manifest.commit
         role = 'maya-front-office'
         installPerformed = $installPerformed
         skills = $installedHashes
+        taskContracts = $taskContractHashes
         stagedSchedulers = 1
         stagedSchedulerNames = @('maya-email-maintenance')
         schedulersActivated = 0
         windowsEmailTask = $windowsEmailTask
         runtimeLocks = $lockCount
         nextGate = 'BROWSER_AND_IDENTITY_SMOKE'
+        taskProtocol = 'MAYA_SALES_TASK_V2'
         externalSends = 0
         mondayWrites = 0
         deletions = 0

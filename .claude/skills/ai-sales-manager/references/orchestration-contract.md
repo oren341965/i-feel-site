@@ -51,6 +51,10 @@ Stage handling:
 
 Maya owns the communication follow-up through the existing Maya stack; the Monday sales owner does not change. At maturity 0, Maya prepares the proposed email or WhatsApp text and the next-action recommendation only. Sending externally or updating Monday still requires explicit authorization and a live read-back after any approved write.
 
+## Direct Maya assignments from Oren
+
+When Oren says `מאיה תבדוק`, `תעביר למאיה`, `תבקש ממאיה סטטוס`, or gives an equivalent direct instruction, use [maya-task-protocol.md](maya-task-protocol.md). Resolve one exact live item on sales board `2732725332`, enqueue a real Assignment on the existing Vault Bus, and wait for the correlated Maya ACK and Result. A Monday update or note is not a substitute for the task. Only `RESPONSE_RECEIVED_AND_MONDAY_UPDATED` after verified live read-back is complete; an isolated test ACK/Result never proves Maya production execution.
+
 ## Capacity
 
 Set `budget_growth_allowed=false` when either:
@@ -85,12 +89,12 @@ Inputs from other skills must be aggregates or bounded references, without names
 
 Use the existing Vault bridge only: the manager owns `_bus/manager-to-maya`, and the Maya stack owns `_bus/maya-to-manager`. Do not add a second queue, API, or standalone `maya-agent` skill.
 
-1. Dispatch `MAYA_TASK` only with a bounded `task_id`, `execution_state=ASSIGNED_TO_MAYA`, `monday_board_id`, `monday_item_id`, instruction, expiry, dry-run/maturity fields, and approval state.
-2. Maya writes one immutable `MAYA_TASK_ACK` with the same task ID, `state=MAYA_ACKNOWLEDGED`, and `received_at` before operational reads.
+1. Dispatch one schema-version-2 `MAYA_SALES_TASK_ASSIGNMENT` with the full immutable snapshot from [maya-task-protocol.md](maya-task-protocol.md), including the exact live Monday board/item identity and `execution_state=ASSIGNED_TO_MAYA`.
+2. Maya writes one immutable correlated `MAYA_SALES_TASK_ACK` with `execution_state=MAYA_ACKNOWLEDGED` before operational reads. A production ACK is accepted only with the commissioned Maya workstation Service Identity.
 3. Resolve the customer from the supplied Monday item. A name alone is never an identifier.
 4. Before contact, read Monday status, latest notes, authoritative `timeline`, last action, and the latest relevant Gmail or direct conversation. A status check first determines whether a response already exists.
-5. At maturity 0, adapters remain read-only. Sending and Monday mutation stay disabled; return `NEEDS_APPROVAL`, `NEEDS_OREN_DECISION`, or `BLOCKED` as appropriate.
-6. Write one immutable correlated result to `maya-to-manager`. On duplicate `task_id`, do not re-read or re-contact; return the existing result.
+5. At maturity 0, the integrated executor is isolated/read-only: sending and Monday mutation stay disabled. Return one of the exact protocol states, normally `BLOCKED`, `MAYA_EXECUTED`, or `NEEDS_OREN_DECISION`; `NEEDS_APPROVAL` is not a task state.
+6. Write one immutable `MAYA_SALES_TASK_RESULT` to `maya-to-manager`. On duplicate `task_id`, do not re-read or re-contact; return the existing validated v2 result.
 7. Keep logs bounded to task ID, timestamps, action, connector outcomes, callback outcome, and error. Never store correspondence, contact details, tokens, or secrets.
 
 ## Quote-to-Monday reconciliation gate

@@ -7,7 +7,9 @@
   "identity": {
     "role": "maya-agent",
     "machineRole": "maya-front-office",
-    "machineId": null
+    "machineId": null,
+    "serviceIdentityVerified": false,
+    "serviceIdentityId": null
   },
   "skills": {
     "operationalSource": "CANONICAL_MANAGED_SKILLS",
@@ -28,6 +30,27 @@
     "whatsappSchedulerAllowed": false,
     "integratedSchedulerAllowed": false,
     "schedulersActivated": 0
+  },
+  "taskQueue": {
+    "protocol": "MAYA_SALES_TASK_V2",
+    "transport": "VAULT_BUS",
+    "managerToMaya": "AI-Sales\\_bus\\manager-to-maya",
+    "mayaToManager": "AI-Sales\\_bus\\maya-to-manager",
+    "existingSchedulerPollingAllowed": true,
+    "ackResultWritesAllowed": true,
+    "mondayWritesAllowed": false,
+    "productionExecutionRequiresReadyGate": true,
+    "isolatedTestsAllowed": true
+  },
+  "controlState": {
+    "mayaState": "PAUSED_BY_PHASE_2",
+    "documentedOnly": true,
+    "verifiedSkillCount": 0,
+    "serviceIdentityVerified": false,
+    "whatsappTelemetryVerified": false,
+    "emailSnapshotFresh": false,
+    "gmailProfileRole": "NOT_MAYA",
+    "proactiveMessagingApproval": "PENDING"
   },
   "connections": {
     "gmail": {

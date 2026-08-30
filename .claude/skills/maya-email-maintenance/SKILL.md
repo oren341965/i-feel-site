@@ -14,14 +14,6 @@ Keep Maya's work inbox small, classified and actionable without losing customer 
 - At maturity 0, every scheduled invocation is `REPORT_ONLY` and the staged scheduler prompt is stricter than the interactive workflow below. It may read and aggregate only: no Gmail label/read/archive mutation, no draft, no send, no attachment download, and no Monday, Calendar, WhatsApp, Vault, Bus, contact, configuration, or connection-state write. The pre-existing Windows Task and the WhatsApp/integrated schedulers must remain disabled.
 - Continue from the last successful checkpoint with a small overlap, deduplicate by Gmail message ID, and do not backfill more than 24 hours in one unattended pass. A manual run may process a larger range when the user requests it.
 
-## Maya-agent task context
-
-- This skill is a worker of the existing `maya-agent` Vault bridge; it does not poll the manager queue or create a scheduler itself.
-- Accept customer work only with a validated `task_id`, `execution_state=ASSIGNED_TO_MAYA`, `monday_board_id` and `monday_item_id`. A customer name alone is never sufficient.
-- The bridge must emit `MAYA_ACKNOWLEDGED` before this skill reads Monday or Gmail. Reuse an existing correlated result for a duplicate `task_id`; never send twice.
-- Before any proposed contact, read the authoritative Monday item, its latest notes, `timeline`, last action, and the latest available direct Gmail thread. For a status check, first determine whether a response already exists.
-- Return the bounded execution result to `ai-sales-manager` through `maya-to-manager`; never leave the only result in local memory. At maturity 0 this skill remains read-only and returns `NEEDS_APPROVAL` or `NEEDS_OREN_DECISION` rather than sending or mutating Monday.
-
 ## Three-hour pass
 
 1. Scan `INBOX` from the checkpoint through the current time. Page through all matching results. Read the full thread when its context affects classification or the proposed response.
@@ -54,6 +46,20 @@ Keep Maya's work inbox small, classified and actionable without losing customer 
 - Before preparing any sales follow-up, reuse the parent `ai-sales-manager` `SALES_ELIGIBILITY_FILTER`. Exclude Projects/Service handoffs, ended sales, closed deals/open customer files, future `timeline` follow-ups, and same-cycle records without newer verified Gmail, Calendar or Monday-update evidence. New evidence or arrival of the follow-up date returns the record to review; authoritative stage/evidence overrides stale `ליד חדש`.
 - Route plans requested or awaited to a plans follow-up; when plans were received, verify completeness and prepare a technical handoff instead of requesting them again. Route service or complaints to Support, employee tasks internally, and never reply to Monday.
 - The canonical guarded writer is `scripts/draft_writer.py`; its verified evidence contract and the integrated Routine template in `references/maya-integrated-customer-operations.md` are mandatory. A local runtime copy is not authoritative and must be installed from these files with `scripts/install-maya-email-review.ps1` after merge approval.
+
+## Manager-assigned Maya sales tasks
+
+The existing Maya Bus identity is `maya-agent`; it is not a separate skill. For an explicit manager assignment, read only immutable schema-version-2 messages from `${VAULT_ROOT}/AI-Sales/_bus/manager-to-maya` whose `message_type` is `MAYA_SALES_TASK_ASSIGNMENT`, `monday_board_id` is `2732725332`, `requested_by` is `ai-sales-manager`, and live Monday identity evidence is present.
+
+1. Validate every required task field and the execution gate. Reject a mismatched customer, item, status, snapshot field, duplicate message, email address, phone number, or raw correspondence in the Bus message.
+2. Before doing work, write one correlated `MAYA_SALES_TASK_ACK` with `MAYA_ACKNOWLEDGED` to `maya-to-manager`. ACK means only that the commissioned Maya workstation received the task.
+3. Before any proposed contact, read the authoritative Monday status, latest notes, `timeline`, last action, and latest direct Gmail thread. First determine whether a customer response already exists, and reuse an existing correlated Result for a duplicate `task_id`.
+4. Execute only the exact `required_action` within this skill's verified Gmail identity and existing routine-customer authority. A pending approval to enable proactive Maya messaging is not blanket authorization. Price, discount, proposal change, commitment, material complaint, liability, legal/safety issue, or material exception returns `NEEDS_OREN_DECISION` without deciding it.
+5. Missing Service Identity, verified Skills, fresh Gmail access, exact Maya mailbox, live customer match, permission, information, or another dependency returns `BLOCKED` with a bounded reason. Never use Oren's Gmail profile to run the Maya route.
+6. Return one structured `MAYA_SALES_TASK_RESULT`. Use `MAYA_EXECUTED` after the bounded action; use `WAITING_FOR_CUSTOMER` only with `next_action` and `next_treatment_date`; use `RESPONSE_RECEIVED_AND_MONDAY_UPDATED` only as a claimed outcome for manager verification. Maya does not update Monday; the manager applies the exact task outcome and verifies a fresh read-back.
+7. A Result never substitutes for the preceding ACK. Do not mark the task complete locally or tell Oren it is complete.
+
+For `test_task=true`, use `execution_origin=ISOLATED_TEST`, create ACK and Result in an isolated test Vault only, and perform zero Gmail actions and zero Monday writes. Simulated messages prove the protocol path, not Maya workstation execution.
 
 ## Unattended-run controls
 

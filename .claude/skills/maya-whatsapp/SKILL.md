@@ -15,13 +15,6 @@ Use the existing Maya WhatsApp session on Maya's workstation. The shared `ai-sal
 4. Before sending, read the recent direct conversation and the relevant operational record. Reject a duplicate request or an opt-out.
 5. During the daily execution window, run the field-content gate described below.
 
-## Maya-agent task context
-
-- This skill consumes only validated context handed off by the existing `maya-agent` Vault bridge; it never polls `manager-to-maya` independently and never creates a competing agent or queue.
-- Require `task_id`, `execution_state=ASSIGNED_TO_MAYA`, `monday_board_id` and `monday_item_id`. Resolve the real customer from Monday and a strong direct-chat identifier; never act from a name alone.
-- Confirm that the bridge already emitted `MAYA_ACKNOWLEDGED`, read the latest Monday notes/action/date and the latest direct conversation, and reuse a prior result for a duplicate `task_id`.
-- Return a bounded result to `ai-sales-manager` through `maya-to-manager`. At maturity 0 no task handoff grants permission to send, mutate Monday or bypass an approval gate.
-
 ## Browser and unattended-run controls
 
 - Use one already-open, verified WhatsApp Business tab. Never open a new WhatsApp tab from an unattended invocation.
@@ -29,6 +22,20 @@ Use the existing Maya WhatsApp session on Maya's workstation. The shared `ai-sal
 - Exit quickly with `COMPLETED_NO_ACTION` when there is no new conversation delta and the daily gate is not due.
 - Use one run lock and a bounded runtime. Never wait for approval inside an unattended run; queue the approval and end with an explicit status.
 - Release the run lock in `finally` on success, timeout, missing access, session-claim failure or any other blocker.
+
+## Manager-assigned Maya sales tasks
+
+Use the existing `maya-agent` Bus identity only; do not create a separate agent or queue. For a schema-version-2 Assignment in `${VAULT_ROOT}/AI-Sales/_bus/manager-to-maya`, require board `2732725332`, a live-verified `monday_item_id`, the immutable task snapshot, `requested_by=ai-sales-manager`, and a production-ready execution gate.
+
+- Write one correlated `MAYA_SALES_TASK_ACK` with `MAYA_ACKNOWLEDGED` to `maya-to-manager` before work. ACK is receipt only.
+- Before any proposed contact, read the authoritative Monday status, latest notes, `timeline`, last action, and latest verified direct conversation. First determine whether a response already exists, and reuse an existing correlated Result for a duplicate `task_id`.
+- Execute only the exact `required_action` within this skill's verified WhatsApp identity and standing routine-customer scope. Registry presence without current Telemetry is `BLOCKED`; a pending proactive-messaging approval is not blanket authorization.
+- Return `NEEDS_OREN_DECISION` for price, discount, proposal change, commercial or technical commitment, material complaint, liability, legal/safety issue, or material exception. Do not decide it.
+- Return `BLOCKED` for an unverified Service Identity, zero verified Skills, missing Telemetry/session/permission/information, an ambiguous customer, a wrong contact, or another dependency failure.
+- Return one structured Result. `WAITING_FOR_CUSTOMER` requires `next_action` and `next_treatment_date`. Maya never writes Monday; the manager must update the same live item and verify read-back before `RESPONSE_RECEIVED_AND_MONDAY_UPDATED` is accepted as complete.
+- A Result without an earlier ACK does not advance the task. Never report completion merely because the Assignment was written or the WhatsApp action was attempted.
+
+For `test_task=true`, use an isolated test Vault and `execution_origin=ISOLATED_TEST`; send no WhatsApp message and perform no Monday write. Simulated ACK/Result evidence is test-only.
 
 ## Core customer rules
 
