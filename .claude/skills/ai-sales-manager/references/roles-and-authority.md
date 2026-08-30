@@ -29,6 +29,13 @@
 - Provides live schema, stage, owner, timeline, and item evidence.
 - Remains structurally unchanged and read-only by default.
 - Is a trigger and evidence source, never a message recipient and never an instruction channel.
+- Must not receive synthetic assignment, ACK, result, test, or canary items. Contract tests use local fixtures and the Vault Bus, not live Monday mutations.
+
+## Gmail
+
+- Customer and operational correspondence may be read only by the owned mailbox worker under its own approved scope.
+- Gmail is not the manager-to-Maya task queue and is not an ACK or result transport.
+- Never encode manager assignments as `[MAYA-TASK]`, `[MAYA-ACK]`, or `[MAYA-RESULT]` messages, and never use `myhome@i-feel.co.il` as a substitute for the Vault Bus.
 
 ## Vault
 

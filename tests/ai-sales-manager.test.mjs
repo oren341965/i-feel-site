@@ -260,3 +260,20 @@ test('Maya commissioning is role-scoped, hash-verified, and activation-free', ()
   assert.match(resultReader, /WAITING_FOR_MAYA/);
   assert.match(resultReader, /MAYA_COMMISSIONING_RESULT/);
 });
+
+test('manager-assigned Maya work is Vault-only and forbids Gmail, Monday canaries, and a standalone maya-agent', () => {
+  const read = (relative) => readFileSync(new URL(`../${relative}`, import.meta.url), 'utf8');
+  const skill = read('.claude/skills/ai-sales-manager/SKILL.md');
+  const roles = read('.claude/skills/ai-sales-manager/references/roles-and-authority.md');
+  const vault = read('.claude/skills/ai-sales-manager/references/vault-layout.md');
+
+  assert.match(skill, /uses only the existing Vault bridge/);
+  assert.match(skill, /Gmail[^\n]+is never a task transport/);
+  assert.match(skill, /Never create or send `\[MAYA-TASK\]`/);
+  assert.match(skill, /Never create, update, or delete a Monday item[^\n]+canary/);
+  assert.match(skill, /Never create or install a standalone `maya-agent`/);
+  assert.match(roles, /Gmail is not the manager-to-Maya task queue/);
+  assert.match(roles, /Must not receive synthetic assignment, ACK, result, test, or canary items/);
+  assert.match(vault, /This Vault route is exclusive for manager-assigned Maya work/);
+  assert.match(vault, /never creates a standalone `maya-agent` skill/);
+});
