@@ -39,7 +39,7 @@ const SALES_ANALYSIS = {
   source: { mode: 'live', uniqueIds: 10 },
   counts: {
     total: 10, open: 6, closed: 3, cancelled: 1, exceptionLeads: 5,
-    overdue: 2, noNextAction: 3, noOwner: 4, inactive: 2, stale: 1, healthy: 1,
+    overdue: 2, noNextAction: 3, noOwner: 4, inactive: 2, stale: 1, healthy: 1, newLast7Days: 2, newLast30Days: 4,
   },
   healthScore: 64,
   dataQualityScore: 78,
@@ -235,6 +235,8 @@ test('sales audit dry run emits reconciled aggregates without operational detail
   assert.equal(output.envelope.boardId, '2732725332');
   assert.equal(output.envelope.totalCount, 10);
   assert.equal(output.envelope.exceptionCount, 5);
+  assert.equal(output.envelope.newLast7Days, 2);
+  assert.equal(output.envelope.newLast30Days, 4);
   assert.equal(output.envelope.ownerCoverage, 6000);
   assert.equal(result.stdout.includes('Sensitive Customer'), false);
   assert.equal(result.stdout.includes('Call private number'), false);

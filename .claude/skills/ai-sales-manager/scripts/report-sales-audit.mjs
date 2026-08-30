@@ -142,6 +142,8 @@ function buildEnvelope(args, analysis) {
     inactiveCount: integer(counts.inactive, 'counts.inactive'),
     staleCount: integer(counts.stale, 'counts.stale'),
     healthyCount,
+    newLast7Days: integer(counts.newLast7Days, 'counts.newLast7Days'),
+    newLast30Days: integer(counts.newLast30Days, 'counts.newLast30Days'),
     statusCoverage: basisPoints(analysis.coverage?.status, 'status'),
     ownerCoverage: basisPoints(analysis.coverage?.owner, 'owner'),
     nextActionCoverage: basisPoints(analysis.coverage?.nextAction, 'nextAction'),
