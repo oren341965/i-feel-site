@@ -58,6 +58,8 @@ test('sales analyzer separates closed and lost, disables value ranking on low co
     { open: 1, closed: 1, cancelled: 1 },
   );
   assert.equal(result.counts.noNextAction, 1);
+  assert.equal(result.counts.newLast7Days, 2);
+  assert.equal(result.counts.newLast30Days, 3);
   assert.equal(result.valuePriorityEnabled, false);
   assert.equal(result.reconciliation.populationMatchesTotal, true);
   assert.equal(result.reconciliation.prioritiesAreOpen, true);
