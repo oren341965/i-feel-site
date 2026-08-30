@@ -1,4 +1,4 @@
 interface:
-  display_name: "I Feel Run Telemetry"
-  short_description: "Report registered I Feel capability runs safely"
-  default_prompt: "Use $management-system-telemetry to report this registered I Feel capability run with sanitized evidence."
+  display_name: "I Feel Control-Plane Telemetry"
+  short_description: "Report capability runs and host health safely"
+  default_prompt: "Use $management-system-telemetry to report this registered I Feel capability run or Host check-in with sanitized evidence."

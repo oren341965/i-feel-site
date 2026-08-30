@@ -38,6 +38,12 @@ Terminal states also require `--finished-at`. Optional non-negative integer coun
 
 Never retry an underlying external mutation because telemetry failed. Retrying only the same telemetry envelope with the same run key is safe.
 
+## Host check-ins
+
+`scripts/report-host-checkin.mjs` uses the same three environment variables and authentication layers. Its required arguments are `--checkin-key`, `--health`, `--source-mode`, `--observed-at`, `--installed-skills` and `--vault-status`; `--app-version` and `--evidence-ref` are optional and sanitized.
+
+The service identity may report only the Host bound to that identity. The Management System stores the observation as append-oriented history, refreshes the current Host summary, and rejects reuse of a check-in key with different evidence. The event must not contain user data, mailbox or customer evidence, filesystem paths, secrets, prompts or raw business content.
+
 ## Examples
 
 Start:

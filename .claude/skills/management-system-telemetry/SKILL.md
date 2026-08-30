@@ -1,6 +1,6 @@
 ---
 name: management-system-telemetry
-description: Report I Feel skill, agent, workflow, and orchestrator runs to the central I Feel Management System with a stable run key, bounded counters, host identity, and sanitized evidence. Use when instrumenting or executing a registered I Feel capability; it never grants permission for the underlying business action.
+description: Report I Feel capability runs and authenticated host health to the central Management System with stable keys, bounded counters, host identity, and sanitized evidence. Use when instrumenting or executing a registered I Feel capability or verifying a registered workstation; it never grants permission for the underlying business action.
 ---
 
 # I Feel Management System Telemetry
@@ -17,6 +17,10 @@ Use this adapter to make execution evidence visible in the I Feel Management Sys
 
 Use `scripts/report-capability-run.mjs`. Read [references/run-contract.md](references/run-contract.md) when adding the adapter to a worker, configuring credentials, or interpreting failures.
 
+## Host check-in contract
+
+Use `scripts/report-host-checkin.mjs` after a bounded local workstation audit or commissioning result. Report the registered host, observed time, `healthy`, `degraded` or `blocked`, installed Skill count, Vault state, optional version and a sanitized evidence reference. Reuse one stable `checkin_key` for retries of the same observation. A check-in verifies only those bounded host facts; it does not prove Gmail, Monday, WhatsApp or another connector.
+
 ## Safety boundaries
 
 - Never put tokens, message bodies, prompts, customer details, email addresses, phone numbers, document contents, or raw external identifiers in telemetry.
@@ -29,6 +33,7 @@ Use `scripts/report-capability-run.mjs`. Read [references/run-contract.md](refer
 
 ```text
 node .claude/skills/management-system-telemetry/scripts/report-capability-run.mjs --help
+node .claude/skills/management-system-telemetry/scripts/report-host-checkin.mjs --help
 ```
 
 Use `--dry-run` to validate the envelope without credentials or network access.
