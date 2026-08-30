@@ -12,6 +12,7 @@ On every registered scheduler invocation, read `%USERPROFILE%\.claude\skills\may
 - Verify the authenticated mailbox is exactly `myhome@i-feel.co.il`. If identity or read access is unavailable, return `BLOCKED`.
 - Read only the bounded inbox delta since the last visible report window, with no backfill beyond 24 hours. Do not persist a Gmail checkpoint at maturity 0.
 - Classify and count messages in memory. Apply `SALES_ELIGIBILITY_FILTER` before counting a sales item as actionable.
+- Never infer that a person did not answer from one Gmail thread. Any future reminder candidate requires a fresh all-thread Gmail, direct-WhatsApp and authoritative-Monday response check, a stable recipient/topic dedup key, the seven-day cooldown, and the two-attempt ceiling. Any response or unavailable channel means no reminder.
 - Output only aggregate counts and bounded blocker codes. Do not include names, addresses, subjects, bodies, message/thread IDs, attachment names, or customer data.
 - The scheduler infrastructure may write its own execution output under `C:\ifeel-maya\logs`; the prompt must not request local-file `Edit` access, invoke file-editing tools, or write any file itself.
 
