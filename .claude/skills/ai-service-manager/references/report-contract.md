@@ -25,6 +25,10 @@ Write reports in concise Hebrew and lead with the operational conclusion.
 
 Show threshold values, terminal-status mapping, critical override mapping, expected/fetched main-item and subitem counts, page count, pagination completeness, omitted containers, relevant-population denominators, reconciliation checks, mapping warnings, and invalid dates. Do not retain or send operational details by default.
 
+## Control-plane delivery
+
+After a complete live analysis, `scripts/report-service-audit.mjs` may publish only the reconciled aggregate snapshot to I Feel Management System. Use the same stable Telemetry run key, include the observed main/subitem/page counts and a sanitized evidence time, and never forward priorities, names, item IDs, technician metrics or category rows. A successful report updates central evidence only; it does not authorize a Monday write, message or schedule.
+
 ## Language rules
 
 - Say `חריג אדום` or `קריטי` only when the explicit override/urgency rule fired.
