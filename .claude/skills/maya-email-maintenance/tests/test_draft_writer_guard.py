@@ -42,6 +42,14 @@ def valid_item() -> dict:
             "do_not_contact": False,
             "unanswered_attempts": 0,
             "last_proactive_followup_at": None,
+            "response_check_complete": True,
+            "response_channels_checked": ["GMAIL_ALL_THREADS", "WHATSAPP_DIRECT", "MONDAY_ITEM"],
+            "response_detected": False,
+            "gmail_reply_detected": False,
+            "whatsapp_reply_detected": False,
+            "monday_update_detected": False,
+            "followup_topic_key": "open-tenders-and-proposals",
+            "recipient_topic_dedup_key": "employee-or-customer:open-tenders-and-proposals",
         },
     }
 
@@ -83,6 +91,35 @@ class DomainGuardTests(unittest.TestCase):
 
 
 class EvidenceAndThreadTests(unittest.TestCase):
+    def test_reply_in_another_gmail_thread_stops_reminder(self):
+        item = valid_item()
+        item["draft_evidence"]["gmail_reply_detected"] = True
+        self.assertEqual(writer.validate_candidate(item).reason, "RESPONSE_ALREADY_RECEIVED")
+
+    def test_whatsapp_reply_stops_reminder(self):
+        item = valid_item()
+        item["draft_evidence"]["response_detected"] = True
+        item["draft_evidence"]["whatsapp_reply_detected"] = True
+        self.assertEqual(writer.validate_candidate(item).reason, "RESPONSE_ALREADY_RECEIVED")
+
+    def test_monday_update_stops_reminder(self):
+        item = valid_item()
+        item["draft_evidence"]["monday_update_detected"] = True
+        self.assertEqual(writer.validate_candidate(item).reason, "RESPONSE_ALREADY_RECEIVED")
+
+    def test_missing_cross_channel_read_fails_closed(self):
+        item = valid_item()
+        item["draft_evidence"]["response_channels_checked"] = ["GMAIL_ALL_THREADS"]
+        self.assertEqual(
+            writer.validate_candidate(item).reason,
+            "CROSS_CHANNEL_RESPONSE_CHECK_INCOMPLETE",
+        )
+
+    def test_thread_id_alone_is_not_a_dedup_key(self):
+        item = valid_item()
+        item["draft_evidence"]["recipient_topic_dedup_key"] = ""
+        self.assertEqual(writer.validate_candidate(item).reason, "RECIPIENT_TOPIC_DEDUP_KEY_MISSING")
+
     def test_system_notification_thread_cannot_be_customer_thread(self):
         item = valid_item()
         item["thread_id"] = "monday-thread-1"

@@ -29,6 +29,7 @@ FORBIDDEN_RESOURCES = frozenset({"filters", "forwardingAddresses"})
 BLOCKED_DOMAIN = "monday.com"
 MAX_UNANSWERED_ATTEMPTS = 2
 MIN_FOLLOWUP_INTERVAL = timedelta(days=7)
+REQUIRED_RESPONSE_CHANNELS = frozenset({"GMAIL_ALL_THREADS", "WHATSAPP_DIRECT", "MONDAY_ITEM"})
 
 
 @dataclass(frozen=True)
@@ -180,6 +181,32 @@ def validate_candidate(item: dict[str, Any], now: datetime | None = None) -> Gua
         return GuardResult("NEEDS_OREN", "VERIFIED_EMAIL_MISMATCH")
     if source_is_blocked and direct_thread_id and direct_thread_id == source_thread_id:
         return GuardResult("WRONG_RECIPIENT_GUARD", "SYSTEM_THREAD_REUSED")
+
+    # Absence of a reply in one Gmail thread is never proof that nobody answered.
+    # Every proactive reminder must carry a fresh, fail-closed response check over
+    # all three authoritative surfaces and a stable recipient/topic dedup key.
+    checked_channels = {
+        str(channel).strip().upper()
+        for channel in (evidence.get("response_channels_checked") or [])
+        if str(channel).strip()
+    }
+    if evidence.get("response_check_complete") is not True or not REQUIRED_RESPONSE_CHANNELS.issubset(checked_channels):
+        return GuardResult("NEEDS_OREN", "CROSS_CHANNEL_RESPONSE_CHECK_INCOMPLETE")
+    if not str(evidence.get("followup_topic_key") or "").strip():
+        return GuardResult("NEEDS_OREN", "FOLLOWUP_TOPIC_KEY_MISSING")
+    if not str(evidence.get("recipient_topic_dedup_key") or "").strip():
+        return GuardResult("NEEDS_OREN", "RECIPIENT_TOPIC_DEDUP_KEY_MISSING")
+    if evidence.get("response_detected") is True:
+        return GuardResult("NEEDS_OREN", "RESPONSE_ALREADY_RECEIVED")
+    if any(
+        evidence.get(flag) is True
+        for flag in (
+            "gmail_reply_detected",
+            "whatsapp_reply_detected",
+            "monday_update_detected",
+        )
+    ):
+        return GuardResult("NEEDS_OREN", "RESPONSE_ALREADY_RECEIVED")
     if int(evidence.get("unanswered_attempts", MAX_UNANSWERED_ATTEMPTS + 1)) >= MAX_UNANSWERED_ATTEMPTS:
         return GuardResult("NEEDS_OREN", "UNANSWERED_ATTEMPT_LIMIT")
     last_followup = parse_timestamp(evidence.get("last_proactive_followup_at"))

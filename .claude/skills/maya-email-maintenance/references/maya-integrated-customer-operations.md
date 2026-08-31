@@ -37,6 +37,11 @@ Call the installed canonical writer only with a queue item containing `draft_evi
 - `direct_customer_thread_id` or `verified_new_recipient: true`;
 - separate `source_notification_thread_id`, `source_system_sender` and `original_thread_sender` evidence;
 - `dedup_passed: true`, `do_not_contact: false`, `unanswered_attempts`, and `last_proactive_followup_at`.
+- `followup_topic_key` and a stable `recipient_topic_dedup_key` based on verified identity plus normalized topic, not on a Gmail thread ID;
+- `response_check_complete: true` and `response_channels_checked` containing `GMAIL_ALL_THREADS`, `WHATSAPP_DIRECT`, and `MONDAY_ITEM` from fresh reads;
+- `response_detected: false`, with `gmail_reply_detected`, `whatsapp_reply_detected`, and `monday_update_detected` all false. Any true flag returns `RESPONSE_ALREADY_RECEIVED`; a missing/unreadable channel returns `CROSS_CHANNEL_RESPONSE_CHECK_INCOMPLETE`.
+
+This rule also applies to internal employee reminders. Never infer “no answer” from the reminder thread alone, never repeat hourly, and stop a multi-item summary reminder when the employee answered its normalized topic through any verified channel.
 
 The writer may return `PREVIEW_OK`, `WRONG_RECIPIENT_GUARD` or `NEEDS_OREN`. Treat both non-preview states as clean no-action results. It may call only Gmail `users.drafts.create`, read back a created draft, and never send.
 
