@@ -36,6 +36,7 @@ Act as a cross-case service-operations manager over Monday board `3011387201`. L
 8. Reconcile source records, omitted containers, analyzed cases, populations, and open-only priorities. Validate FTR, repeat-work, summary, and technician denominators.
 9. Render the Hebrew report, then remove the temporary input and operational result. Do not print them to logs. Separate observed facts, rule classifications, and AI hypotheses.
 10. For an approved recurring run, save only `result.snapshot` under `.ai-manager-data/service/snapshots/<ISO-date>.json`. Snapshots are aggregate and exclude customer and employee names, item IDs, priority rows, and small-cell category details.
+11. After a complete live analysis, publish the sanitized aggregate through `scripts/report-service-audit.mjs` using the same stable Telemetry run key. The reporter rejects operational rows and never expands service permissions.
 
 ## Operating modes
 
@@ -58,6 +59,11 @@ Act as a cross-case service-operations manager over Monday board `3011387201`. L
 - Do not report scores when `analysisComplete=false`, coverage has a null denominator, or live pagination did not reconcile.
 
 When this manager runs under the I Feel control plane, use `management-system-telemetry` with capability slug `ai-service-manager`. Telemetry records aggregate execution evidence only and never expands the service approval boundary or permits customer data in the envelope.
+
+Deterministic entrypoints:
+
+- Analysis: `scripts/analyze-service.mjs`
+- Aggregate control-plane ingestion: `scripts/report-service-audit.mjs`
 
 ## Validation and handoff
 
