@@ -1,0 +1,53 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import content from '../page-html/wireless-alarm-system.html?raw';
+
+const meta = {
+  title: "מערכת אזעקה אלחוטית לדירה - RISCO WiComm Pro כחלק מהבית החכם | i-feel",
+  description: "מערכת אזעקה אלחוטית לדירה בלי חציבות ובלי עבודת חשמלאי. RISCO WiComm Pro מחוברת ל-SmartSphere ומנוהלת מאותה אפליקציה של הבית החכם. i-feel 03-508-9553.",
+  canonical: "https://i-feel.co.il/wireless-alarm-system/",
+  ogTitle: "מערכת אזעקה אלחוטית לדירה - חלק מהבית החכם | i-feel",
+  ogDescription: "RISCO WiComm Pro לדירה: התקנה ביום אחד בלי הכנות חשמל, אימות ויזואלי, תקשורת מגובה, ושילוב מלא עם SmartSphere והתרחישים של הבית החכם.",
+  ogUrl: "https://i-feel.co.il/wireless-alarm-system/",
+  ogImage: "https://i-feel.co.il/assets/og-cover.jpg",
+  jsonLd: JSON.stringify({
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": ["LocalBusiness", "HomeAndConstructionBusiness"],
+        "@id": "https://i-feel.co.il/#business",
+        "name": "i-feel",
+        "alternateName": "i-feel מערכות בקרת מבנה ובית חכם",
+        "url": "https://i-feel.co.il/",
+        "logo": "https://i-feel.co.il/assets/ifeel-logo.png",
+        "image": "https://i-feel.co.il/assets/ifeel-logo.png",
+        "telephone": "+972-3-508-9553",
+        "email": "sales@i-feel.co.il",
+        "priceRange": "₪₪₪",
+        "address": { "@type": "PostalAddress", "streetAddress": "אימבר 14", "addressLocality": "פתח תקווה", "addressRegion": "מחוז המרכז", "postalCode": "4951148", "addressCountry": "IL" },
+        "areaServed": { "@type": "Country", "name": "Israel", "sameAs": "https://www.wikidata.org/wiki/Q801" },
+        "sameAs": ["https://www.facebook.com/SmarthomeIsrael", "https://www.instagram.com/ifeelisrael", "https://www.linkedin.com/company/200156"]
+      },
+      {
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          { "@type": "ListItem", "position": 1, "name": "דף הבית", "item": "https://i-feel.co.il/" },
+          { "@type": "ListItem", "position": 2, "name": "בית חכם", "item": "https://i-feel.co.il/smart-home/" },
+          { "@type": "ListItem", "position": 3, "name": "מערכת אזעקה אלחוטית", "item": "https://i-feel.co.il/wireless-alarm-system/" }
+        ]
+      },
+      {
+        "@type": "Service",
+        "name": "התקנת מערכת אזעקה אלחוטית לדירה",
+        "serviceType": "Wireless Home Alarm System Installation",
+        "provider": { "@id": "https://i-feel.co.il/#business" },
+        "areaServed": { "@type": "Country", "name": "Israel" },
+        "description": "תכנון והתקנה של מערכת אזעקה אלחוטית RISCO WiComm Pro לדירות, ללא הכנות חשמל וללא חציבות, בשילוב מלא עם מערכת הבית החכם SmartSphere."
+      }
+    ]
+  })
+};
+---
+<BaseLayout {...meta}>
+  <Fragment set:html={content} />
+</BaseLayout>

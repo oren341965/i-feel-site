@@ -19,6 +19,14 @@
       <h1><span class="he">טופס AS-MADE · סימנס 8 ערוצים – תאורה</span><span class="ar">نموذج AS-MADE · سيمنس 8 قنوات – إنارة</span></h1>
       <p><span class="he">שלב 3 מתוך 3 · 8 ערוצים · למילוי ע"י החשמלאי בשטח</span><span class="ar">الخطوة 3 من 3 · 8 قناة · للتعبئة من قِبل الكهربائي في الموقع</span></p>
       <p class="am-mfn"><b>N 532D51</b> · מק"ט <span dir="ltr">5WG1532-1DB51</span> · <a href="/articles/siemens-n532d51-knx-8-switch-output/" target="_blank" rel="noopener"><span class="he">מפרט הבקר באתר ›</span><span class="ar">مواصفات الوحدة في الموقع ›</span></a></p>
+      <a class="am-partner no-print" href="/license/" target="_blank" rel="noopener">
+        <picture>
+          <source type="image/webp" srcset="/assets/brands/siemens-solution-partner-68.webp 1x, /assets/brands/siemens-solution-partner-136.webp 2x">
+          <img src="/assets/brands/siemens-solution-partner-136.png" width="141" height="68" loading="lazy" decoding="async"
+               alt="Siemens Solution Partner — Building Automation">
+        </picture>
+        <span><span class="he">ציוד סימנס מקורי · תכנות ETS6 ע"י i-feel<b>לתעודת השותפות ›</b></span><span class="ar">معدات سيمنس أصلية · برمجة ETS6 من i-feel<b>شهادة الشراكة ›</b></span></span>
+      </a>
     </div>
     <div class="am-lang no-print" role="group" aria-label="שפה / اللغة">
       <button type="button" data-lang="he" aria-pressed="true">עברית</button>
@@ -28,6 +36,7 @@
 </header>
 
 <div class="am-wrap">
+
 
   <div class="am-note">
     <span class="he"><b>שים לב:</b> על סמך הטופס הזה אנחנו מתכנתים את הבקר ב-ETS6. מה שלא נרשם כאן — לא יתוכנת.
@@ -42,6 +51,15 @@
   </p>
 
   <div id="am-msg" class="am-msg" role="status" aria-live="polite"></div>
+
+  <div id="am-filerow" class="am-filerow no-print" hidden>
+    <span class="he">קובץ פירוט ההפעלות שצורף:</span><span class="ar">ملف جدول الدوائر المرفق:</span>
+    <b id="am-filename"></b>
+    <button type="button" id="am-fileclear" class="btn btn-s">
+      <span class="he">הסר</span><span class="ar">إزالة</span></button>
+  </div>
+
+  <div id="am-mapper" class="am-mapper no-print" hidden></div>
 
   <section class="am-sec" id="am-head">
     <h2><span class="he">פרטי הפרויקט</span><span class="ar">تفاصيل المشروع</span></h2>
@@ -115,10 +133,15 @@
 <li><b>תיאור מעגל / עומס</b> — מה בפועל מחובר: ספוטים מטבח, שנדלייר פינת אוכל, תאורת גינה.</li>
 <li><b>סוג עומס</b> ו<b>פעולה רצויה</b> — בחירה מהרשימה בלבד.</li>
 <li><b>הספק / כמות</b> — הזרם של המאמ"ת (למשל 10A) או ההספק בוואט.</li>
-<li>בבקרי תריסים: <b>זמן נסיעה מלא</b> — כמה שניות לוקח לתריס לרדת מפתוח לגמרי לסגור לגמרי.
-    מדוד/י בפועל עם סטופר. בלי הזמן הזה אי אפשר לתכנת מיקום באחוזים.</li>
 <li><b>נבדק בשטח</b> — “כן” רק אחרי שהפעלת את המעגל וראית שהוא עובד.</li>
 <li>ערוץ שאינו בשימוש — השאר/י ריק.</li></ul>
+<h4>קיצור דרך: פירוט ההפעלות מיצרן הלוחות</h4><ul>
+<li>קיבלת מיצרן הלוחות טבלה עם פירוט ההפעלות? לחצ/י <b>“פירוט הפעלות מהלוח”</b> והעלה/י אותה.
+    המערכת קוראת את הקובץ, שואלת איזו עמודה היא מה, וממלאת את הטבלה לפי מספרי היציאות.</li>
+<li>נתמך אוטומטית: <b>Excel ו-CSV</b>. קובץ PDF או DWG יצורף וישלח אלינו, אבל את הטבלה עדיין צריך למלא ידנית.</li>
+<li>גם אחרי מילוי אוטומטי — <b>שם ההפעלה של כל מוצא באחריותך</b>: "תאורת מרכז סלון", "שנדלייר פינת אוכל".
+    בלי זה אי אפשר לתכנת.</li>
+<li>הקובץ המקורי מצורף לטופס ומגיע אלינו בכל מקרה.</li></ul>
 <h4>מה לא ממלאים</h4><ul>
 <li>כל תא אפור שרשום בו <b>ימולא ע"י I FEEL</b> נעול. הכתובת הפיזית, כתובות הקבוצה ושמות
     האובייקטים ב-ETS נקבעים אצלנו בשלב התכנות.</li></ul>
@@ -140,10 +163,14 @@
 <li><b>وصف الدائرة / الحمل</b> — ما هو الموصول فعلياً: سبوتات المطبخ، ثريا غرفة الطعام، إنارة الحديقة.</li>
 <li><b>نوع الحمل</b> و<b>الوظيفة المطلوبة</b> — الاختيار من القائمة فقط.</li>
 <li><b>القدرة / الكمية</b> — تيار القاطع (مثلاً 10A) أو القدرة بالواط.</li>
-<li>في وحدات الستائر: <b>زمن الحركة الكامل</b> — كم ثانية تحتاج الستارة للنزول من الفتح الكامل حتى
-    الإغلاق الكامل. قِس بساعة إيقاف. بدون هذا الزمن لا يمكن برمجة الموضع بالنسبة المئوية.</li>
 <li><b>تم الفحص في الموقع</b> — «نعم» فقط بعد تشغيل الدائرة والتأكد من عملها.</li>
 <li>القناة غير المستخدمة — اتركها فارغة.</li></ul>
+<h4>اختصار: جدول الدوائر من مصنّع اللوحات</h4><ul>
+<li>هل استلمت جدول الدوائر من مصنّع اللوحة؟ اضغط <b>«جدول الدوائر من اللوحة»</b> وارفعه.
+    النظام يقرأ الملف، يسأل أي عمود يقابل أي حقل، ويعبّئ الجدول حسب أرقام المخارج.</li>
+<li>مدعوم تلقائياً: <b>Excel و-CSV</b>. ملف PDF أو DWG يُرفق ويصلنا، لكن الجدول يبقى للتعبئة اليدوية.</li>
+<li>حتى بعد التعبئة التلقائية — <b>اسم كل دائرة مسؤوليتك</b>: «إنارة وسط الصالون»، «ثريا غرفة الطعام».</li>
+<li>الملف الأصلي يُرفق بالنموذج ويصلنا في كل الأحوال.</li></ul>
 <h4>ما لا يجب تعبئته</h4><ul>
 <li>كل خانة رمادية مكتوب فيها <b>ימולא ע"י I FEEL</b> مقفلة. العنوان الفيزيائي وعناوين المجموعات
     وأسماء الكائنات في ETS تُحدَّد لدينا في مرحلة البرمجة.</li></ul>
@@ -172,6 +199,10 @@
   <button type="button" class="btn btn-s" id="am-loadbtn">
     <span class="he">טעינת טיוטה</span><span class="ar">تحميل مسوّدة</span></button>
   <input type="file" id="am-load" accept=".json,application/json" style="display:none">
+  <button type="button" class="btn btn-s" id="am-schedbtn">
+    <span class="he">פירוט הפעלות מהלוח</span><span class="ar">جدول الدوائر من اللوحة</span></button>
+  <input type="file" id="am-sched" style="display:none"
+         accept=".csv,.xlsx,.xls,.pdf,.dwg,.dxf,text/csv,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet">
   <a class="btn btn-s" href="/as-made/"><span class="he">כל הבקרים</span><span class="ar">كل الوحدات</span></a>
 </div>
 
