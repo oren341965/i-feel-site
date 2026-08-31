@@ -79,7 +79,7 @@ function buildEnvelope(args, hostSlug) {
 
 async function postEnvelope(baseUrl, siteToken, runToken, envelope) {
   const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), 15_000);
+  const timeout = setTimeout(() => controller.abort(), 60_000);
   try {
     const response = await fetch(new URL('/api/hosts/checkins', baseUrl), {
       method: 'POST',

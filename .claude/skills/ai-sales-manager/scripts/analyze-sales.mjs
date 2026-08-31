@@ -336,9 +336,14 @@ function applyValuePriority(classified, enabled) {
   });
 }
 
-function summarizeCounts(classified) {
+function summarizeCounts(classified, now) {
   const open = classified.filter((item) => item.population === 'open');
   const flagCount = (flag) => open.filter((item) => item.flags[flag]).length;
+  const createdWithinDays = (item, days) => {
+    if (!item.createdAt) return false;
+    const ageMs = now.getTime() - new Date(item.createdAt).getTime();
+    return ageMs >= 0 && ageMs <= days * DAY_MS;
+  };
   return {
     total: classified.length,
     open: open.length,
@@ -351,6 +356,8 @@ function summarizeCounts(classified) {
     inactive: flagCount('inactive'),
     stale: flagCount('stale'),
     healthy: flagCount('healthy'),
+    newLast7Days: classified.filter((item) => createdWithinDays(item, 7)).length,
+    newLast30Days: classified.filter((item) => createdWithinDays(item, 30)).length,
   };
 }
 
@@ -431,7 +438,7 @@ export function analyzeSales(input, options = {}) {
     && openProposalValueCoverage.rate >= config.proposalCoverageThreshold;
   let classified = sourceItems.map((item) => classifySalesItem(item, { ...config, now }));
   classified = applyValuePriority(classified, valuePriorityEnabled);
-  const counts = summarizeCounts(classified);
+  const counts = summarizeCounts(classified, now);
   const open = classified.filter((item) => item.population === 'open');
   const noData = sourceItems.length === 0;
   const healthScore = noData ? null : open.length === 0

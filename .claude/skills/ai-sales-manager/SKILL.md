@@ -40,6 +40,7 @@ description: Orchestrate I Feel's maturity-0 sales system and deterministic read
 ## Deterministic entrypoints
 
 - Pipeline analysis: `scripts/analyze-sales.mjs`
+- Aggregate audit ingestion: `scripts/report-sales-audit.mjs`. Use it only after a complete `live_read_only` analysis; pass the same stable telemetry run key and never send operational lead details.
 - Full-system dry run: `scripts/orchestrate-sales-system.mjs`
 - Local morning dry run: `scripts/morning-run.mjs`
 - No-write source preflight: `scripts/preflight-readonly.mjs`

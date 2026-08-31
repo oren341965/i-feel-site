@@ -38,11 +38,23 @@ Terminal states also require `--finished-at`. Optional non-negative integer coun
 
 Never retry an underlying external mutation because telemetry failed. Retrying only the same telemetry envelope with the same run key is safe.
 
+The production control plane may take up to 60 seconds to acknowledge a report. Worker-owned snapshot adapters must use the same service identity and stable run key as the capability run, accept only reconciled aggregates, and never forward customer-level evidence.
+
 ## Host check-ins
 
 `scripts/report-host-checkin.mjs` uses the same three environment variables and authentication layers. Its required arguments are `--checkin-key`, `--health`, `--source-mode`, `--observed-at`, `--installed-skills` and `--vault-status`; `--app-version` and `--evidence-ref` are optional and sanitized.
 
 The service identity may report only the Host bound to that identity. The Management System stores the observation as append-oriented history, refreshes the current Host summary, and rejects reuse of a check-in key with different evidence. The event must not contain user data, mailbox or customer evidence, filesystem paths, secrets, prompts or raw business content.
+
+## Source reconciliation
+
+`scripts/audit-source-sync.mjs` is the local evidence step for the three source layers:
+
+- GitHub supplies executable Skill identity and exact revision.
+- Obsidian supplies the reviewed knowledge entry, status and documented version.
+- The workstation supplies installed-package presence only.
+
+The output contains slugs, repository-relative paths, hashes and status/version metadata. It must not include document bodies, absolute filesystem paths, customer data or credentials. GitHub auto-discovery remains server-owned; the audit detects drift and does not silently change the Vault.
 
 ## Examples
 
