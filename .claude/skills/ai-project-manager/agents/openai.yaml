@@ -1,0 +1,5 @@
+interface:
+  display_name: "I Feel AI Project Manager"
+  short_description: "Read-only audit of I Feel project boards"
+  default_prompt: "Audit the registered I Feel project boards in read-only mode and report reconciled aggregate exceptions."
+
