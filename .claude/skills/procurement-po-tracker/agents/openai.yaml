@@ -1,0 +1,4 @@
+interface:
+  display_name: "I Feel Procurement PO Tracker"
+  short_description: "Read-only PO, supply and invoice audit"
+  default_prompt: "Audit I Feel procurement orders against supply and supplier-invoice evidence in read-only mode and report bounded aggregates."
