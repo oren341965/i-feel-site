@@ -10,6 +10,7 @@ Act as I Feel's parent operations orchestrator. Identify the requested operation
 ## Owned skills
 
 - `upload-delivery-notes-to-dropbox` — display name `העלאת תעודות משלוח לדרופבוקס`. It owns delivery-note intake from the designated WhatsApp group and office email, document extraction, routing by `מפתח`, duplicate control, exception-email preparation, descriptive filenames, Dropbox upload, and verification.
+- `procurement-po-tracker` — display name `מעקב הזמנות רכש`. It owns the read-only purchase-order → supply evidence → supplier-invoice reconciliation from the procurement mailbox.
 
 Add another worker only when it owns a distinct operations workflow with no overlapping source of truth.
 
@@ -17,8 +18,9 @@ Add another worker only when it owns a distinct operations workflow with no over
 
 1. Determine which owned workflow the request concerns.
 2. For any delivery-note, WhatsApp delivery-note group, Dropbox filing, missing customer folder, unclear delivery note, or related exception-notification request, load and follow `upload-delivery-notes-to-dropbox`.
-3. When a request spans multiple worker skills, keep each worker's evidence, approval boundary, and result separate, then reconcile them in one manager summary.
-4. If no owned skill covers the request, report the capability gap. Do not improvise a new production workflow inside the manager.
+3. For purchase-order status, supply evidence, missing supplier invoices or silent-supplier requests, load and follow `procurement-po-tracker`.
+4. When a request spans multiple worker skills, keep each worker's evidence, approval boundary, and result separate, then reconcile them in one manager summary.
+5. If no owned skill covers the request, report the capability gap. Do not improvise a new production workflow inside the manager.
 
 ## Guardrails
 
