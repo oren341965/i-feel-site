@@ -21,7 +21,8 @@ const TEAM = [
 const FROM_MAIL = 'noreply@i-feel.co.il';
 const FROM_NAME = 'I FEEL · טפסי AS-MADE';
 const ARCHIVE   = __DIR__ . '/_submissions';
-const MAX_BYTES = 900000;      // ~900KB — יותר מזה זה לא טופס
+const MAX_BYTES = 9000000;     // ~9MB — כולל קובץ פירוט ההפעלות המצורף
+const MAX_ATTACH = 6000000;    // ~6MB לקובץ המצורף עצמו
 const MIN_SECS  = 8;           // מהירות מילוי מינימלית (אנטי-בוט)
 
 header('Content-Type: application/json; charset=utf-8');
@@ -64,6 +65,28 @@ $mail    = filter_var($clean($head['email'] ?? ''), FILTER_VALIDATE_EMAIL) ?: ''
 $custMail = filter_var($clean($head['custmail'] ?? ''), FILTER_VALIDATE_EMAIL) ?: '';
 if ($project === 'ללא שם פרויקט' || $elec === 'חשמלאי לא מזוהה' || $mail === '')
     fail('חסרים פרטי פרויקט / חשמלאי / דוא"ל');
+
+// ---- קובץ פירוט ההפעלות שהחשמלאי צירף ----
+$att = null;
+if (!empty($d['attach']) && is_array($d['attach'])) {
+    $an  = (string)($d['attach']['name'] ?? '');
+    $ab  = (string)($d['attach']['b64'] ?? '');
+    $ext = strtolower(pathinfo($an, PATHINFO_EXTENSION));
+    $okExt = ['csv','txt','xlsx','xls','pdf','dwg','dxf','png','jpg','jpeg'];
+    $raw = ($ab !== '') ? base64_decode($ab, true) : false;
+    if ($raw !== false && in_array($ext, $okExt, true) && strlen($raw) <= MAX_ATTACH) {
+        // שם קובץ מנוקה — בלי נתיבים ובלי תווי בקרה
+        $safeName = preg_replace('/[^\p{L}\p{N}\.\-_ ]+/u', '_', basename($an));
+        $safeName = mb_substr($safeName, 0, 80) ?: ('schedule.' . $ext);
+        $mimes = ['csv'=>'text/csv','txt'=>'text/plain','pdf'=>'application/pdf',
+                  'xlsx'=>'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                  'xls'=>'application/vnd.ms-excel','png'=>'image/png',
+                  'jpg'=>'image/jpeg','jpeg'=>'image/jpeg'];
+        $att = ['name' => $safeName, 'bytes' => strlen($raw),
+                'mime' => $mimes[$ext] ?? 'application/octet-stream',
+                'b64'  => chunk_split(base64_encode($raw))];
+    }
+}
 
 // ==================== בניית XLSX ====================
 function xesc($s) { return htmlspecialchars((string)$s, ENT_QUOTES | ENT_XML1, 'UTF-8'); }
@@ -284,7 +307,7 @@ $body = '<div dir="rtl" style="font-family:Arial,sans-serif;font-size:14px;color
   . '</table>'
   . '<p style="margin:16px 0 6px"><b>הקובץ המלא מצורף כ-Excel.</b> להלן תצוגה מקדימה:</p>'
   . '<table cellpadding="5" border="1" style="border-collapse:collapse;font-size:12.5px;border-color:#d7dee7">'
-  . '<tr style="background:#1f3a5f;color:#fff"><th>בקר</th><th>יציאה</th><th>חדר</th>'
+  . '<tr style="background:#1f3a5f;color:#fff"><th>בקר / זוג</th><th>יציאה</th><th>חדר</th>'
   . '<th>תיאור</th><th>סוג</th><th>פעולה</th><th>הערות</th></tr>' . $rowsHtml . '</table>'
   . '<p style="color:#6b7280;font-size:12px;margin-top:18px">נשלח אוטומטית מטופס AS-MADE באתר i-feel.co.il</p></div>';
 
@@ -300,6 +323,11 @@ $msg = "--{$bnd}\r\n"
      . "name=\"{$fname}\"\r\n"
      . "Content-Transfer-Encoding: base64\r\n"
      . "Content-Disposition: attachment; filename=\"{$fname}\"\r\n\r\n{$content}\r\n"
+     . ($att
+        ? "--{$bnd}\r\nContent-Type: {$att['mime']}; name=\"{$att['name']}\"\r\n"
+          . "Content-Transfer-Encoding: base64\r\n"
+          . "Content-Disposition: attachment; filename=\"{$att['name']}\"\r\n\r\n{$att['b64']}\r\n"
+        : "")
      . "--{$bnd}--";
 
 $subject = '=?UTF-8?B?' . base64_encode("AS-MADE · {$project} · {$title}") . '?=';
@@ -354,4 +382,5 @@ if ($custMail !== '' && strcasecmp($custMail, $mail) !== 0) {
 
 if (!$sent) fail('הטופס נשמר אצלנו אך שליחת המייל נכשלה — נא ליצור קשר 03-508-9553', 500);
 echo json_encode(['ok' => true, 'channels' => $filled, 'file' => $fname,
+                  'attached' => $att ? $att['name'] : null,
                   'copies' => $custMail ? 3 : 2], JSON_UNESCAPED_UNICODE);
