@@ -14,7 +14,9 @@ Operate only as a child of `ai-sales-manager`. Read [../ai-sales-manager/referen
 3. Read the manager's capacity result and attribution confidence.
 4. If live access is absent or unverified, return `CONNECTION_MISSING` and stop platform analysis.
 
-The canonical maturity-0 connector is `scripts/meta-ads-readonly.mjs`. It requires an explicitly verified Graph API version, `act_<digits>` ad-account ID and a protected machine-local credential file. It deliberately has no default API version. The connector exposes only HTTP `GET` for an allowlist of ad-account reporting resources and keeps credentials out of URLs.
+The canonical maturity-0 connector is `scripts/meta-ads-readonly.mjs`. It requires an explicitly verified Graph API version, `act_<digits>` ad-account ID and a protected machine-local credential file. It deliberately has no default API version. The connector exposes only HTTP `GET` for an allowlist of ad-account and Page Lead Forms reporting resources and keeps credentials out of URLs.
+
+Page Lead Forms remain disabled unless machine-local configuration explicitly sets `leadFormsReadOnly=true`. Configure `pageId` when more than one Page is accessible; otherwise the connector may select the single accessible Page. It requests only lead identity, form, platform and creation time for bounded aggregation—never `field_data`, answers, names, email addresses or phone numbers. Missing `pages_show_list`, Page access or `leads_retrieval` permission returns a specific `CONNECTION_MISSING` reason without breaking ad-account reporting.
 
 Verify a configured connection with:
 
@@ -45,4 +47,4 @@ Compare Meta with Google using qualified leads, proposal rate, win rate, revenue
 
 Return connection status, evidence time, funnel metrics, creative/audience findings, bounded recommendations, capacity status and approval requirements. Finish by asserting that no platform write, budget change or external send occurred.
 
-When both `connected` and `liveVerified` are true in the machine-local runtime configuration, `morning-run.mjs` invokes this connector and exposes the live read under `metaAdsReadOnly`. Lead-form retrieval stays `CONNECTION_MISSING` until the Page/form permissions are separately configured and verified.
+When both `connected` and `liveVerified` are true in the machine-local runtime configuration, `morning-run.mjs` invokes this connector and exposes the live read under `metaAdsReadOnly`. Lead-form retrieval stays `CONNECTION_MISSING` until `leadFormsReadOnly`, the target Page when needed, and the Page/form permissions are separately configured and verified.
