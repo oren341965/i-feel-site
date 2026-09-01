@@ -36,7 +36,7 @@ The worker has a narrow standing authorization explicitly set by Oren for the re
 
 This authorization belongs to the worker, not to `ai-operations-manager` generally. It does not authorize other Dropbox writes, source-message mutations, customer/project-folder creation, ambiguous routing, destructive changes, financial actions, or unrelated external communications. Exception emails with source attachments and any action outside the worker's exact standing contract retain their explicit-approval boundary.
 
-## Reconciliation and backfill
+## Historical reconciliation and backfill
 
 When Oren requests a historical audit or gives a start date, delegate a bounded reconciliation run to the delivery-note worker. The worker must reconcile all supported sources available for that window against Dropbox and distinguish:
 
