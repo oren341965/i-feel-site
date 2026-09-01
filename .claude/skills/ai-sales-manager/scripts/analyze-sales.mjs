@@ -338,6 +338,7 @@ function applyValuePriority(classified, enabled) {
 
 function summarizeCounts(classified, now) {
   const open = classified.filter((item) => item.population === 'open');
+  const active = open.filter((item) => !item.salesEligibility.reasons.includes('LEFT_SALES_OWNERSHIP'));
   const flagCount = (flag) => open.filter((item) => item.flags[flag]).length;
   const createdWithinDays = (item, days) => {
     if (!item.createdAt) return false;
@@ -353,6 +354,7 @@ function summarizeCounts(classified, now) {
     overdue: flagCount('overdue'),
     noNextAction: flagCount('noNextAction'),
     noOwner: flagCount('noOwner'),
+    activeUnowned: active.filter((item) => item.flags.noOwner).length,
     inactive: flagCount('inactive'),
     stale: flagCount('stale'),
     healthy: flagCount('healthy'),

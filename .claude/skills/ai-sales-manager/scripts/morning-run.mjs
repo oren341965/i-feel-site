@@ -77,7 +77,9 @@ export async function runMorningDryRun({
     availableSkills: config.availableSkills,
     capacity: {
       plansToProposalBusinessDays: null,
-      activeUnownedLeads: mondaySnapshotReadOnly?.counts?.noOwner ?? null,
+      activeUnownedLeads: mondaySnapshotReadOnly?.counts?.activeUnowned
+        ?? mondaySnapshotReadOnly?.counts?.noOwner
+        ?? null,
       unownedLeadThreshold: config.capacity?.activeUnownedLeadThreshold,
     },
     connections: config.connections,

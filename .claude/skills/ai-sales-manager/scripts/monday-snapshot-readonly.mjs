@@ -126,6 +126,9 @@ function validateSnapshot(snapshot, { now, maxAgeHours }) {
     key,
     finiteInteger(snapshot.counts?.[key], `counts.${key}`),
   ]));
+  counts.activeUnowned = snapshot.counts?.activeUnowned === undefined
+    ? counts.noOwner
+    : finiteInteger(snapshot.counts.activeUnowned, 'counts.activeUnowned');
   if (counts.open + counts.closed + counts.cancelled !== counts.total) {
     throw new Error('Monday snapshot population counts do not reconcile');
   }
@@ -134,6 +137,9 @@ function validateSnapshot(snapshot, { now, maxAgeHours }) {
   }
   if (counts.exceptionLeads + counts.healthy !== counts.open) {
     throw new Error('Monday snapshot healthy and exception counts do not reconcile');
+  }
+  if (counts.activeUnowned > counts.noOwner || counts.activeUnowned > counts.open) {
+    throw new Error('Monday snapshot active-unowned count exceeds population');
   }
 
   const coverage = Object.fromEntries(REQUIRED_COVERAGE.map((key) => [

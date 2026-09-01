@@ -228,16 +228,20 @@ test('SALES_ELIGIBILITY_FILTER excludes Sharon Falek regression until follow-up 
 });
 
 test('SALES_ELIGIBILITY_FILTER excludes the exact completed-sales group', () => {
-  const eligibility = salesEligibilityOf({
+  const source = {
     id: 'completed-group-regression',
     status: '6. תיאום פגישה עם הלקוח',
     group: 'תהליך מכירה הסתיים',
     nextAction: '2026-08-01',
-  }, { now: NOW });
+  };
+  const eligibility = salesEligibilityOf(source, { now: NOW });
+  const result = analyzeSales({ generatedAt: NOW, items: [source] });
 
   assert.equal(eligibility.eligible, false);
   assert.equal(eligibility.effectiveGroup, 'תהליך מכירה הסתיים');
   assert.equal(eligibility.reasons.includes('LEFT_SALES_OWNERSHIP'), true);
+  assert.equal(result.counts.noOwner, 1);
+  assert.equal(result.counts.activeUnowned, 0);
 });
 
 test('Maya commissioning is role-scoped, hash-verified, and activation-free', () => {

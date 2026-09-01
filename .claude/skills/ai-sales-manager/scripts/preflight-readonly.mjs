@@ -190,7 +190,7 @@ export async function runSalesPreflightReadOnly({
     && attribution.value.connection?.status === 'LOCAL_SNAPSHOT_READ_ONLY';
   const capacity = evaluateCapacity({
     plansToProposalBusinessDays: null,
-    activeUnownedLeads: mondayCounts.noOwner,
+    activeUnownedLeads: mondayCounts.activeUnowned ?? mondayCounts.noOwner,
     unownedLeadThreshold: config.capacity?.activeUnownedLeadThreshold,
     attributionTrusted,
     dataQualityTrusted,

@@ -27,7 +27,7 @@ async function fixture() {
 
 const monday = async () => ({
   connection: { status: 'LOCAL_SNAPSHOT_READ_ONLY', snapshotGeneratedAt: '2026-08-27T06:00:00.000Z' },
-  counts: { total: 100, open: 20, noOwner: 7 },
+  counts: { total: 100, open: 20, noOwner: 7, activeUnowned: 4 },
   healthScore: 50,
   dataQualityScore: 90,
 });
@@ -76,7 +76,8 @@ test('preflight aggregates read-only sources and never exposes operational rows 
     assert.equal(result.safety.mayaActivated, false);
     assert.equal(JSON.stringify(result).includes('not-exposed-by-preflight'), false);
     assert.ok(result.blockers.includes('META_LEAD_FORMS_CONNECTION_MISSING'));
-    assert.equal(result.capacity.status, 'CAPACITY_BLOCKED');
+    assert.equal(result.capacity.status, 'CAPACITY_INPUT_MISSING');
+    assert.equal(result.capacity.reasons.includes('ACTIVE_UNOWNED_LEADS_OVER_THRESHOLD'), false);
   } finally {
     await rm(root, { recursive: true, force: true });
   }
