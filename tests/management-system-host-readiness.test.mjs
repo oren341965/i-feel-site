@@ -1,0 +1,134 @@
+import assert from 'node:assert/strict';
+import { copyFile, mkdir, mkdtemp, rm, writeFile } from 'node:fs/promises';
+import { tmpdir } from 'node:os';
+import { dirname, resolve } from 'node:path';
+import { spawnSync } from 'node:child_process';
+import test from 'node:test';
+
+const REPO = resolve(import.meta.dirname, '..');
+const SCRIPT = resolve(REPO, '.claude/skills/management-system-telemetry/scripts/audit-host-readiness.mjs');
+const SOURCE_SYNC_SCRIPT = resolve(REPO, '.claude/skills/management-system-telemetry/scripts/audit-source-sync.mjs');
+
+function git(cwd, args) {
+  const result = spawnSync('git', args, { cwd, encoding: 'utf8' });
+  assert.equal(result.status, 0, result.stderr);
+  return result.stdout.trim();
+}
+
+async function fixture(t) {
+  const root = await mkdtemp(resolve(tmpdir(), 'ifeel-host-readiness-'));
+  t.after(() => rm(root, { recursive: true, force: true }));
+
+  const repo = resolve(root, 'repo');
+  const vault = resolve(root, 'vault');
+  const installed = resolve(root, 'installed');
+  const metadata = resolve(root, 'metadata.json');
+  const telemetryRoot = resolve(repo, '.claude/skills/management-system-telemetry');
+
+  await mkdir(resolve(telemetryRoot, 'scripts'), { recursive: true });
+  await mkdir(resolve(vault, '02 Skills/Entries'), { recursive: true });
+  await mkdir(resolve(installed, 'management-system-telemetry'), { recursive: true });
+  await writeFile(
+    resolve(telemetryRoot, 'SKILL.md'),
+    '---\nname: management-system-telemetry\ndescription: Test telemetry skill\n---\n\n# Test\n',
+    'utf8',
+  );
+  await copyFile(SOURCE_SYNC_SCRIPT, resolve(telemetryRoot, 'scripts/audit-source-sync.mjs'));
+  await writeFile(
+    resolve(vault, '02 Skills/Entries/management-system-telemetry.md'),
+    '---\ntype: skill-registry-entry\nstatus: Active\nversion: reviewed-earlier\n---\n\nPrivate reviewed body.\n',
+    'utf8',
+  );
+
+  git(repo, ['init', '-b', 'main']);
+  git(repo, ['config', 'user.email', 'test@example.invalid']);
+  git(repo, ['config', 'user.name', 'Test']);
+  git(repo, ['add', '.']);
+  git(repo, ['commit', '-m', 'fixture']);
+  const mainRevision = git(repo, ['rev-parse', 'HEAD']);
+  git(repo, ['update-ref', 'refs/remotes/origin/main', mainRevision]);
+  git(repo, ['checkout', '-b', 'work/ifeel160222/test']);
+
+  await writeFile(metadata, JSON.stringify({
+    repository: 'oren341965/i-feel-site',
+    commit: mainRevision,
+    installedAt: '2026-09-01T00:00:00.000Z',
+  }), 'utf8');
+
+  return { root, repo, vault, installed, metadata, mainRevision };
+}
+
+function runPreflight(paths, extraArgs = [], env = {}) {
+  return spawnSync(process.execPath, [
+    SCRIPT,
+    '--repo', paths.repo,
+    '--vault', paths.vault,
+    '--installed-skills', paths.installed,
+    '--metadata', paths.metadata,
+    '--expected-computer', 'IFEEL160222',
+    ...extraArgs,
+  ], {
+    cwd: paths.repo,
+    encoding: 'utf8',
+    env: {
+      ...process.env,
+      COMPUTERNAME: 'IFEEL160222',
+      ...env,
+    },
+  });
+}
+
+test('host readiness allows provisioning and authenticated check-in without exposing secrets or paths', async (t) => {
+  const paths = await fixture(t);
+  const siteToken = 'transport-secret-value';
+  const runToken = `ifrun_${'r'.repeat(43)}`;
+  const result = runPreflight(paths, ['--expected-host', 'ifeel160222'], {
+    IFEEL_MANAGEMENT_HOST_SLUG: 'ifeel160222',
+    IFEEL_MANAGEMENT_SITE_TOKEN: siteToken,
+    IFEEL_MANAGEMENT_RUN_TOKEN: runToken,
+  });
+
+  assert.equal(result.status, 0, result.stderr);
+  const output = JSON.parse(result.stdout);
+  assert.equal(output.ok, true);
+  assert.equal(output.gates.readyForProvisioning, true);
+  assert.equal(output.gates.readyForAuthenticatedCheckin, true);
+  assert.equal(output.source.branch, 'work/ifeel160222/test');
+  assert.equal(output.source.basedOnOriginMain, true);
+  assert.equal(output.source.worktreeClean, true);
+  assert.equal(output.registration.canonicalSkills, 1);
+  assert.equal(output.registration.knowledgeLinked, 1);
+  assert.equal(output.registration.installedSkills, 1);
+  assert.equal(output.installation.installedCommitMatchesHead, true);
+  assert.ok(output.warnings.includes('VAULT_KNOWLEDGE_VERSION_BEHIND_GIT'));
+  assert.equal(result.stdout.includes(siteToken), false);
+  assert.equal(result.stdout.includes(runToken), false);
+  assert.equal(result.stdout.includes(paths.root), false);
+});
+
+test('host readiness separates local provisioning readiness from credential provisioning', async (t) => {
+  const paths = await fixture(t);
+  const result = runPreflight(paths, [], {
+    IFEEL_MANAGEMENT_HOST_SLUG: '',
+    IFEEL_MANAGEMENT_SITE_TOKEN: '',
+    IFEEL_MANAGEMENT_RUN_TOKEN: '',
+  });
+
+  assert.equal(result.status, 0, result.stderr);
+  const output = JSON.parse(result.stdout);
+  assert.equal(output.gates.readyForProvisioning, true);
+  assert.equal(output.gates.readyForAuthenticatedCheckin, false);
+  assert.ok(output.warnings.includes('MANAGEMENT_HOST_SLUG_NOT_CONFIGURED'));
+  assert.ok(output.warnings.includes('SERVICE_IDENTITY_CREDENTIALS_NOT_PROVISIONED'));
+});
+
+test('host readiness blocks work directly on main', async (t) => {
+  const paths = await fixture(t);
+  git(paths.repo, ['checkout', 'main']);
+  const result = runPreflight(paths);
+
+  assert.equal(result.status, 1, result.stderr);
+  const output = JSON.parse(result.stdout);
+  assert.equal(output.gates.readyForProvisioning, false);
+  assert.ok(output.blockingReasons.includes('WORKING_ON_PRODUCTION_BRANCH'));
+});
