@@ -21,6 +21,16 @@ Use `scripts/report-capability-run.mjs`. Read [references/run-contract.md](refer
 
 Use `scripts/report-host-checkin.mjs` after a bounded local workstation audit or commissioning result. Report the registered host, observed time, `healthy`, `degraded` or `blocked`, installed Skill count, Vault state, optional version and a sanitized evidence reference. Reuse one stable `checkin_key` for retries of the same observation. A check-in verifies only those bounded host facts; it does not prove Gmail, Monday, WhatsApp or another connector.
 
+## Service identity readiness gate
+
+Before provisioning a service identity or sending an authenticated Host check-in, run `scripts/audit-host-readiness.mjs`. The preflight is read-only and separates local workstation readiness from credential readiness. It verifies the safe work branch, `origin/main` ancestry, clean worktree, GitHub/Vault/installed Skill registration and local installation metadata without creating credentials or changing permissions.
+
+```text
+node .claude/skills/management-system-telemetry/scripts/audit-host-readiness.mjs --repo <repo> --vault <vault> --installed-skills <skills-dir> --expected-computer IFEEL160222
+```
+
+Use `--expected-host` only with an exact Host slug already registered in the I Feel Management System. Never invent a Host slug and never provision a token as part of the audit. Read [references/host-readiness.md](references/host-readiness.md) for the gates and approval boundary.
+
 ## Safety boundaries
 
 - Never put tokens, message bodies, prompts, customer details, email addresses, phone numbers, document contents, or raw external identifiers in telemetry.
@@ -34,9 +44,10 @@ Use `scripts/report-host-checkin.mjs` after a bounded local workstation audit or
 ```text
 node .claude/skills/management-system-telemetry/scripts/report-capability-run.mjs --help
 node .claude/skills/management-system-telemetry/scripts/report-host-checkin.mjs --help
+node .claude/skills/management-system-telemetry/scripts/audit-host-readiness.mjs --help
 ```
 
-Use `--dry-run` to validate the envelope without credentials or network access.
+Use `--dry-run` to validate the telemetry envelope without credentials or network access. The Host readiness audit is read-only by design and does not send telemetry.
 
 ## GitHub, Obsidian and workstation reconciliation
 
