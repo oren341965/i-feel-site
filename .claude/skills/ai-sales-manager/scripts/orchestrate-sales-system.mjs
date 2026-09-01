@@ -614,8 +614,16 @@ export function orchestrateSalesSystem(input = {}) {
     newsletterGrowth: {
       included: true,
       provider: 'Smoove',
+      program: 'EXISTING_CUSTOMER_NEWSLETTER',
+      existingProgramOnly: true,
+      createNewListAllowed: false,
+      createParallelCampaignAllowed: false,
       listIdSource: 'SERVER_LOCAL_CONFIGURATION',
       exactConsentVersion: 'ifeel-insights-v1',
+      audienceRoutes: {
+        existingCustomers: 'customer-exception-documented',
+        newWebsiteSubscribers: 'explicit-consent',
+      },
       eligiblePermissions: ['explicit-consent', 'customer-exception-documented'],
       excludedPermissions: ['do-not-mail', 'opt-in-required'],
       restoreDeletedContactsAllowed: false,

@@ -31,7 +31,7 @@ Search / ChatGPT / Gemini / Claude / ads / referrals
 | Sales orchestration | `ai-sales-manager` | canonical skill and local evidence snapshots | read, classify, report |
 | Lead operation | Sales team | Monday board `2732725332` | existing workflow only |
 | Website and AI discovery | website repository | GitHub `oren341965/i-feel-site` | branch, tests and Draft PR |
-| Newsletter audience | mailing-list collector + Smoove | explicit consent and provider suppression state | prepare/deduplicate only |
+| Existing customer newsletter | mailing-list collector + Smoove | existing program, documented customer exception or explicit consent, and provider suppression state | prepare/deduplicate only |
 | Customer communication | Maya stack | approved task and verified customer thread | no send without the applicable approval |
 | Paid media | Google/Meta managers | verified platform reads | audit/recommend only at maturity 0 |
 | Cross-computer coordination | Vault Bus | bounded, PII-free messages | idempotent file bridge only |
@@ -44,7 +44,9 @@ Every public form posts to `/api/lead.php`. The browser preserves session first 
 
 ### Newsletter
 
-`/newsletter/` collects a first name, valid email and an explicit unchecked consent. `/api/newsletter.php` sends the contact directly to the configured Smoove list using a server-only API key. Missing configuration fails closed. Deleted or unsubscribed contacts are never restored automatically. No campaign send is part of this foundation.
+I Feel's existing-customer newsletter remains the one newsletter program. No duplicate list or campaign is created. `/newsletter/` is a new public opt-in entrypoint into the verified existing Smoove list: it collects a first name, valid email and an explicit unchecked consent. Existing customers remain a separate `customer-exception-documented` route; new website subscribers require `explicit-consent`.
+
+`/api/newsletter.php` sends a consented subscriber directly to the server-configured existing Smoove list using a server-only API key. Missing configuration fails closed. Deleted or unsubscribed contacts are never restored automatically. No campaign send is part of this foundation.
 
 ### AI discovery
 

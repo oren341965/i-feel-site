@@ -127,7 +127,9 @@ The website lead endpoint records a bounded AI referral source and landing page 
 
 ## Newsletter growth
 
-`i-feel Insights` is a consent-first website funnel connected server-side to Smoove. A public subscription requires the exact consent version `ifeel-insights-v1`; the browser never receives the API key or list ID. The server fails closed when its local configuration is absent, never restores deleted or unsubscribed contacts, and records no contact PII in committed files, Vault aggregates or logs.
+I Feel already operates a newsletter for existing customers. Do not create a parallel newsletter, Smoove list or campaign. `i-feel Insights` is the public opt-in entrypoint to that existing program; the exact existing Smoove list is selected only through server-local configuration after read-back verification.
+
+A public subscription requires the exact consent version `ifeel-insights-v1`; the browser never receives the API key or list ID. Existing customers may enter only through a documented `customer-exception-documented` route. New website subscribers require `explicit-consent`. The server fails closed when its local configuration is absent, never restores deleted or unsubscribed contacts, and records no contact PII in committed files, Vault aggregates or logs.
 
 The `mailing-list-collector` may prepare deduplicated candidates, but only `explicit-consent` or `customer-exception-documented` recipients are eligible. `do-not-mail` and `opt-in-required` remain excluded. At maturity 0 the manager reports opt-in counts, source mix and draft content only. It does not send a campaign, create an automated campaign or change Smoove configuration.
 

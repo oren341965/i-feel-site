@@ -84,6 +84,12 @@ test('sales manager reports AI discovery and newsletter growth but cannot send o
   assert.equal(result.aiDiscovery.automaticPublishAllowed, false);
   assert.equal(result.aiDiscovery.automaticOutreachAllowed, false);
   assert.equal(result.newsletterGrowth.provider, 'Smoove');
+  assert.equal(result.newsletterGrowth.program, 'EXISTING_CUSTOMER_NEWSLETTER');
+  assert.equal(result.newsletterGrowth.existingProgramOnly, true);
+  assert.equal(result.newsletterGrowth.createNewListAllowed, false);
+  assert.equal(result.newsletterGrowth.createParallelCampaignAllowed, false);
+  assert.equal(result.newsletterGrowth.audienceRoutes.existingCustomers, 'customer-exception-documented');
+  assert.equal(result.newsletterGrowth.audienceRoutes.newWebsiteSubscribers, 'explicit-consent');
   assert.equal(result.newsletterGrowth.exactConsentVersion, 'ifeel-insights-v1');
   assert.equal(result.newsletterGrowth.restoreUnsubscribedContactsAllowed, false);
   assert.equal(result.newsletterGrowth.sendAllowed, false);
