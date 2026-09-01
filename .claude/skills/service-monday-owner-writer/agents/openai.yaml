@@ -1,0 +1,7 @@
+interface:
+  display_name: "I Feel Service Monday Owner Writer"
+  short_description: "Approved bounded service-owner changes in Monday"
+  default_prompt: "Use $service-monday-owner-writer to validate and execute the exact approved service ownership batch."
+
+policy:
+  allow_implicit_invocation: true
