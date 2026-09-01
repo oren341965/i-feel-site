@@ -12,6 +12,7 @@ This avoids page-specific tracking implementations and keeps website, landing-pa
 - Google Ads: `gclid`
 - Meta: `fbclid`
 - TikTok: `ttclid`
+- AI answer engines: bounded `first_referrer`, `last_referrer`, `entry_page` and `last_page` evidence, classified as ChatGPT, Gemini, Claude, Perplexity or Microsoft Copilot
 
 The Monday item keeps `מקור פנייה = אתר`. Detailed attribution is written only to the dedicated tracking columns. Empty values never replace known values.
 
@@ -28,6 +29,8 @@ The management target is 3–4 new leads per completed Sunday–Saturday week ac
 
 - percentage with a known source;
 - percentage with UTM or click-ID evidence;
+- AI-referral sessions, leads, qualified leads and converting landing pages;
+- newsletter opt-ins and opt-in conversion rate by first known source;
 - Google/Meta form-connection status;
 - Monday owner and next-action coverage for sales-owned leads.
 

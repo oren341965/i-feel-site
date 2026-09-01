@@ -94,6 +94,7 @@ test('v2 orchestration keeps the existing manager as parent and includes every r
   assert.deepEqual(result.dailyBriefSections, [...DAILY_BRIEF_SECTIONS]);
   for (const section of [
     'google_ads', 'meta_ads', 'daily_website_improvement', 'daily_seo',
+    'ai_discovery', 'newsletter_growth',
     'project_video_and_social_reuse', 'maya_and_plans', 'referral_opportunities',
     'existing_customer_revenue', 'service_quality_signals', 'project_handoff_and_closeout',
   ]) assert.equal(result.dailyBriefSections.includes(section), true, section);
@@ -245,8 +246,12 @@ test('daily website improvement is an explicit sales orchestration engine and NO
   assert.equal(result.dailyWebsiteImprovement.resultContract, 'ONE_EVIDENCE_BACKED_IMPROVEMENT_OR_NO_CHANGE');
   assert.equal(result.dailyWebsiteImprovement.acceptedSalesFeedback.includes('qualified_lead_pages'), true);
   assert.equal(result.dailyWebsiteImprovement.acceptedSalesFeedback.includes('content_gaps'), true);
+  assert.equal(result.dailyWebsiteImprovement.acceptedSalesFeedback.includes('ai_referral_leads'), true);
+  assert.equal(result.dailyWebsiteImprovement.acceptedSalesFeedback.includes('newsletter_opt_in_rate'), true);
   assert.equal(result.dailyWebsiteImprovement.workers.includes('daily-seo-crawl'), true);
   assert.equal(result.dailyWebsiteImprovement.automaticPublishAllowed, false);
+  assert.equal(result.aiDiscovery.automaticOutreachAllowed, false);
+  assert.equal(result.newsletterGrowth.sendAllowed, false);
 });
 
 test('weekly project-video update routes each video to Maya and a consent-eligible rotating audience', () => {
