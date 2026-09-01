@@ -316,7 +316,7 @@ if ($marketingLines !== []) {
 }
 
 // Board 2732725332 requires phone + email column values on item creation.
-// City is also kept in the durable structured lead record, including the minimal retry.
+// City and acquisition source are also kept in the durable structured lead record.
 $requiredColumnValues = [
     'phone' => [
         'phone' => preg_replace('/\D+/', '', $lead['phone']) ?: '0',
@@ -327,6 +327,7 @@ $requiredColumnValues = [
         'text' => $lead['email'] !== '' ? $lead['email'] : 'לא נמסר אימייל',
     ],
     'location7' => $lead['city'],
+    'text_mm6s32m7' => 'דיווח: ' . $lead['heard_from'] . ' | אוטומטי: ' . $lead['automatic_source'],
 ];
 
 $extraColumnValues = [
