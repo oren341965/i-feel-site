@@ -62,6 +62,14 @@
       input.value = value;
     }
 
+    function directFormChild(form, element) {
+      var child = element;
+      while (child && child.parentNode && child.parentNode !== form) {
+        child = child.parentNode;
+      }
+      return child && child.parentNode === form ? child : null;
+    }
+
     function createQualificationFields(form) {
       var city = form.querySelector('[name="city"]');
       var heardFrom = form.querySelector('[name="heard_from"]');
@@ -77,8 +85,9 @@
         wrapper.className = 'grid md:grid-cols-2 gap-4';
 
         var submit = form.querySelector('button[type="submit"], input[type="submit"]');
-        if (submit && submit.parentNode === form) {
-          form.insertBefore(wrapper, submit);
+        var submitBlock = directFormChild(form, submit);
+        if (submitBlock) {
+          form.insertBefore(wrapper, submitBlock);
         } else {
           form.appendChild(wrapper);
         }
