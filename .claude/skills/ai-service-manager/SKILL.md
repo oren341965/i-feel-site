@@ -49,6 +49,9 @@ Act as a cross-case service-operations manager over Monday board `3011387201`. L
 ## Guardrails
 
 - Never change a status, owner, technician, date, item, subitem, update, or column.
+- A requested change plan uses [references/monday-change-preview-contract.md](references/monday-change-preview-contract.md)
+  and `scripts/plan-service-monday-changes.mjs`. It creates a private review artifact only; it never grants
+  approval or supplies an executable Monday client.
 - Never send WhatsApp, email, Monday updates, or technician/customer notifications without a separate explicit request.
 - Do not create an automation or recurring schedule before a full live dry run is reviewed and accepted.
 - Do not infer service quality from closed-ticket volume alone. Use time, repeat visit, FTR, summary, category, and sample-size context.
@@ -64,6 +67,7 @@ Deterministic entrypoints:
 
 - Analysis: `scripts/analyze-service.mjs`
 - Aggregate control-plane ingestion: `scripts/report-service-audit.mjs`
+- Private review-only Monday change preview: `scripts/plan-service-monday-changes.mjs`
 
 ## Validation and handoff
 

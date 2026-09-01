@@ -109,6 +109,26 @@ function namesOf(item, plural, singular) {
   }).filter(Boolean))];
 }
 
+function peopleRefsOf(item, plural, singular) {
+  const source = Array.isArray(item[plural]) ? item[plural] : hasValue(item[singular]) ? [item[singular]] : [];
+  const seen = new Set();
+  return source.map((value) => {
+    if (!value || typeof value !== 'object' || Array.isArray(value)) {
+      return { id: null, kind: null, name: String(value ?? '').trim() };
+    }
+    const id = hasValue(value.id) ? String(value.id).trim() : null;
+    const kind = hasValue(value.kind) ? String(value.kind).trim().toLowerCase() : null;
+    const name = String(value.name ?? '').trim();
+    return { id, kind, name };
+  }).filter((value) => {
+    if (!value.name && !value.id) return false;
+    const key = `${value.kind ?? ''}:${value.id ?? ''}:${value.name}`;
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
+}
+
 function ageDays(from, now) {
   if (!from) return null;
   return Math.max(0, Math.floor((now.getTime() - from.getTime()) / DAY_MS));
@@ -250,6 +270,7 @@ export function classifyServiceItem(item, options = {}) {
   const { population, warnings } = populationOf(item, config);
   const open = population === 'open';
   const owners = namesOf(item, 'owners', 'owner');
+  const ownerRefs = peopleRefsOf(item, 'owners', 'owner');
   const accountableOwners = owners.filter((owner) => !config.genericQueueOwners.includes(owner));
   const technicians = namesOf(item, 'technicians', 'technician');
   const createdAt = strictDate(item.createdAt, { timezone: config.timezone });
@@ -343,6 +364,7 @@ export function classifyServiceItem(item, options = {}) {
     population,
     mappingWarnings,
     owners,
+    ownerRefs,
     accountableOwners,
     technicians,
     createdAt: createdAt?.toISOString() ?? null,
@@ -550,9 +572,10 @@ function trendFrom(snapshot, previous) {
 
 function operationalRow(item) {
   return {
-    id: item.id, name: item.name, status: item.status, owners: item.owners,
+    id: item.id, parentId: item.parentId, sourceKind: item.sourceKind,
+    name: item.name, status: item.status, owners: item.owners, ownerRefs: item.ownerRefs,
     technicians: item.technicians, visitDate: item.visitDate,
-    priorityScore: item.priorityScore, reasons: item.reasons,
+    priorityScore: item.priorityScore, reasons: item.reasons, flags: item.flags,
   };
 }
 
