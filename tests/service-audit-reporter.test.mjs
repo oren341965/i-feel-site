@@ -17,7 +17,11 @@ const ANALYSIS = {
     internalBottleneck: 1, repeatVisit: 1, missingSummary: 1, paymentFollowUp: 0, healthy: 1,
   },
   healthScore: 62, dataQualityScore: 78,
-  coverage: Object.fromEntries(['status', 'owner', 'createdAt', 'lastUpdated', 'category', 'technician', 'visitDate', 'ftr', 'summary', 'survey'].map((key) => [key, { rate: 0.5 }])),
+  coverage: {
+    status: { rate: 0.5 }, owner: { rate: 0.5 }, createdAt: { rate: 0.5 }, lastUpdated: { rate: 0.5 }, category: { rate: 0.5 },
+    technicianOnRelevantCases: { rate: 0.6 }, visitDateOnRelevantCases: { rate: 0.7 },
+    ftrOnCompletedVisits: { rate: 0.8 }, summaryOnCompletedVisits: { rate: 0.9 }, surveyOnResolvedCases: { rate: 0.1 },
+  },
   ftrSummary: { completedVisits: 3, yes: 1, no: 1, unknown: 1, knownSample: 2, rate: 0.5 },
   priorities: [{ id: '123', name: 'Sensitive Customer', owners: ['Private Employee'] }],
   reconciliation: { populationMatchesTotal: true, uniqueIdsMatchSourceRecords: true, analyzedCasesReconcile: true, prioritiesAreOpen: true },
@@ -56,6 +60,10 @@ test('service audit dry run emits reconciled aggregates without operational deta
   assert.equal(output.envelope.sourceRecordCount, 12);
   assert.equal(output.envelope.totalCount, 11);
   assert.equal(output.envelope.coverage.owner, 50);
+  assert.deepEqual(output.envelope.coverage, {
+    status: 50, owner: 50, createdAt: 50, lastUpdated: 50, category: 50,
+    technician: 60, visitDate: 70, ftr: 80, summary: 90, survey: 10,
+  });
   assert.equal(result.stdout.includes('Sensitive Customer'), false);
   assert.equal(result.stdout.includes('Private Employee'), false);
   assert.equal(Object.hasOwn(output.envelope, 'priorities'), false);
