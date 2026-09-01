@@ -6,6 +6,7 @@ import test from 'node:test';
 
 import {
   normalizeCustomerNumber,
+  OWNER_SKILL,
   planDeliveryNoteIntake,
 } from '../.claude/skills/upload-delivery-notes-to-dropbox/scripts/plan-delivery-note-intake.mjs';
 
@@ -201,4 +202,18 @@ test('operations CLI keeps identifying routing details private by default and re
   const outside = spawnSync(process.execPath, [SCRIPT, '--input', 'package.json'], { cwd: REPO, encoding: 'utf8' });
   assert.notEqual(outside.status, 0);
   assert.match(outside.stderr, /inside \.ai-manager-data\/operations/);
+});
+
+test('AI Operations Manager owns the finalized delivery-note worker without receiving broad write authority', async () => {
+  const manager = await readFile(resolve(REPO, '.claude/skills/ai-operations-manager/SKILL.md'), 'utf8');
+  const worker = await readFile(resolve(REPO, '.claude/skills/upload-delivery-notes-to-dropbox/SKILL.md'), 'utf8');
+
+  assert.equal(OWNER_SKILL, 'ai-operations-manager');
+  assert.match(manager, /`upload-delivery-notes-to-dropbox`/);
+  assert.match(manager, /Historical reconciliation and backfill/i);
+  assert.match(manager, /This authorization belongs to the worker, not to `ai-operations-manager` generally/);
+  assert.match(worker, /single source of truth for I Feel's delivery-note workflow/);
+  assert.match(worker, /Historical reconciliation and backfill/);
+  assert.match(worker, /completion update to Oren and Ora/);
+  assert.match(worker, /Do not create customer\/project folders/);
 });

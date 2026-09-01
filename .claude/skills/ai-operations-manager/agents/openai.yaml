@@ -1,7 +1,7 @@
 interface:
   display_name: "I Feel AI Operations Manager"
-  short_description: "Orchestrates I Feel operations specialist skills"
-  default_prompt: "Use $ai-operations-manager to coordinate an I Feel operations workflow."
+  short_description: "Orchestrates delivery-note, procurement, and operations specialist skills"
+  default_prompt: "Use $ai-operations-manager to coordinate the relevant I Feel operations worker, preserving its evidence and approval boundaries."
 
 policy:
   allow_implicit_invocation: true

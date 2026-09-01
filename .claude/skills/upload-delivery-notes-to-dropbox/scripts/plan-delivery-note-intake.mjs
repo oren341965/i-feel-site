@@ -2,7 +2,7 @@ import { readFile, stat, writeFile } from 'node:fs/promises';
 import { relative, resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
 
-export const PLAN_VERSION = 2;
+export const PLAN_VERSION = 4;
 export const OWNER_SKILL = 'ai-operations-manager';
 
 const REPO_ROOT = resolve(import.meta.dirname, '../../../../');
@@ -10,11 +10,14 @@ const PRIVATE_ROOT = resolve(REPO_ROOT, '.ai-manager-data/operations');
 const MAX_INPUT_BYTES = 10 * 1024 * 1024;
 const MAX_RECORDS = 10_000;
 const MAX_FOLDERS = 100_000;
+const MAX_PARTS = 100;
 const SUPPORTED_SOURCES = new Set(['email', 'whatsapp']);
 const SUPPORTED_EXTENSIONS = new Set(['.pdf', '.jpg', '.jpeg', '.png', '.webp', '.heic', '.heif']);
 const DEFAULT_WHATSAPP_GROUP = 'סיכומי התקנות ות משלוח';
 const MISSING_FOLDER_MESSAGE = 'שימו לב- לקוח ללא תיק בדרופבוקס !!!!';
 const UNCLEAR_DOCUMENT_MESSAGE = 'נא לשלוח שנית- התעודה לא היתה ברורה';
+const CANONICAL_DELIVERY_NOTE_FOLDER = 'תעודת משלוח';
+const DELIVERY_NOTE_FOLDER_NAMES = new Set([CANONICAL_DELIVERY_NOTE_FOLDER, 'תעודות משלוח']);
 
 function requireArray(value, name, max) {
   if (!Array.isArray(value)) throw new TypeError(`${name} must be an array`);
@@ -38,6 +41,16 @@ function normalizeHash(value) {
   return /^[a-f0-9]{64}$/.test(text) ? text : null;
 }
 
+function normalizePartNumber(value) {
+  if (value === null || value === undefined || value === '') return null;
+  const number = Number(value);
+  return Number.isInteger(number) && number >= 1 && number <= MAX_PARTS ? number : null;
+}
+
+function wasSupplied(value) {
+  return value !== null && value !== undefined && value !== '';
+}
+
 function hasExactDigitToken(path, number) {
   const text = String(path);
   let cursor = text.indexOf(number);
@@ -52,20 +65,45 @@ function hasExactDigitToken(path, number) {
 
 function isDeliveryNotesFolder(path) {
   const parts = String(path).replace(/\\/g, '/').replace(/\/+$/, '').split('/');
-  return parts.at(-1)?.normalize('NFC') === 'תעודות משלוח';
+  const finalComponent = parts.at(-1)?.normalize('NFC');
+  return finalComponent ? DELIVERY_NOTE_FOLDER_NAMES.has(finalComponent) : false;
 }
 
 function folderPath(folder) {
   return cleanText(folder?.pathDisplay) || cleanText(folder?.path);
 }
 
-function matchingFolders(folders, customerNumber) {
+function explicitFolderProjectKey(folder) {
+  return normalizeCustomerNumber(folder?.projectKey ?? folder?.customerNumber);
+}
+
+function folderMatchesProjectKey(folder, projectKey) {
+  const path = folderPath(folder);
+  if (!path) return false;
+  const explicit = explicitFolderProjectKey(folder);
+  return explicit ? explicit === projectKey : hasExactDigitToken(path, projectKey);
+}
+
+function matchingFolders(folders, projectKey) {
   const unique = new Map();
   for (const folder of folders) {
     const path = folderPath(folder);
     const type = cleanText(folder?.objectType).toLowerCase();
     if (!path || (type && type !== 'folder')) continue;
-    if (!isDeliveryNotesFolder(path) || !hasExactDigitToken(path, customerNumber)) continue;
+    if (!isDeliveryNotesFolder(path) || !folderMatchesProjectKey(folder, projectKey)) continue;
+    const key = path.normalize('NFC').toLocaleLowerCase('he');
+    if (!unique.has(key)) unique.set(key, path);
+  }
+  return [...unique.values()];
+}
+
+function matchingProjectFolders(folders, projectKey) {
+  const unique = new Map();
+  for (const folder of folders) {
+    const path = folderPath(folder);
+    const type = cleanText(folder?.objectType).toLowerCase();
+    if (!path || (type && type !== 'folder')) continue;
+    if (isDeliveryNotesFolder(path) || !folderMatchesProjectKey(folder, projectKey)) continue;
     const key = path.normalize('NFC').toLocaleLowerCase('he');
     if (!unique.has(key)) unique.set(key, path);
   }
@@ -137,21 +175,81 @@ function safeFileName(value) {
   return { name: `${stem}${extension}`, extension, supported: true };
 }
 
-function descriptiveFileName({ customerName, documentNumber, description, sourceFile }) {
+function descriptiveFileName({ customerName, documentNumber, description, sourceFile, partNumber, partCount }) {
   if (!sourceFile?.supported || !customerName || !documentNumber || !description) return null;
   const suffix = sourceFile.extension;
+  const partSuffix = partNumber
+    ? ` - עמוד ${partNumber}${partCount ? ` מתוך ${partCount}` : ''}`
+    : '';
   const prefix = `${customerName} - תעודת משלוח ${documentNumber} - `;
-  const descriptionLimit = Math.max(1, 180 - prefix.length - suffix.length);
-  return `${prefix}${description.slice(0, descriptionLimit)}${suffix}`;
+  const descriptionLimit = Math.max(1, 180 - prefix.length - partSuffix.length - suffix.length);
+  return `${prefix}${description.slice(0, descriptionLimit)}${partSuffix}${suffix}`;
 }
 
-function documentKey(customerNumber, documentNumber) {
+function documentBaseKey(projectKey, documentNumber) {
   const number = cleanText(documentNumber).toLocaleLowerCase('en-US');
-  return customerNumber && number ? `${customerNumber}\u0000${number}` : null;
+  return projectKey && number ? `${projectKey}\u0000${number}` : null;
+}
+
+function documentPartKey(projectKey, documentNumber, partNumber) {
+  const base = documentBaseKey(projectKey, documentNumber);
+  return base ? `${base}\u0000${partNumber ?? 'single'}` : null;
 }
 
 function addReason(reasonCounts, reason) {
   reasonCounts[reason] = (reasonCounts[reason] ?? 0) + 1;
+}
+
+function addIssue(issueMap, index, issue) {
+  const issues = issueMap.get(index) ?? [];
+  if (!issues.includes(issue)) issues.push(issue);
+  issueMap.set(index, issues);
+}
+
+function buildMultipartIssues(records) {
+  const groups = new Map();
+  const issueMap = new Map();
+
+  records.forEach((record, index) => {
+    if (!record || typeof record !== 'object' || Array.isArray(record)) return;
+    const projectKeys = projectKeyNumbers(record);
+    const documentNumber = normalizeDocumentNumber(record.documentNumber);
+    if (projectKeys.length !== 1 || !documentNumber) return;
+    const baseKey = documentBaseKey(projectKeys[0], documentNumber);
+    if (!baseKey) return;
+    const group = groups.get(baseKey) ?? { indexes: [], expectedCounts: new Set(), parts: new Set() };
+    group.indexes.push(index);
+    const partNumber = normalizePartNumber(record.partNumber);
+    const partCount = normalizePartNumber(record.partCount);
+    if (partCount) group.expectedCounts.add(partCount);
+    if (partNumber) group.parts.add(partNumber);
+    groups.set(baseKey, group);
+  });
+
+  for (const group of groups.values()) {
+    if (group.expectedCounts.size > 1) {
+      for (const index of group.indexes) addIssue(issueMap, index, 'CONFLICTING_PART_COUNTS');
+      continue;
+    }
+    const expectedCount = [...group.expectedCounts][0] ?? null;
+    if (!expectedCount || expectedCount <= 1) continue;
+
+    for (const index of group.indexes) {
+      const partNumber = normalizePartNumber(records[index]?.partNumber);
+      if (!partNumber) addIssue(issueMap, index, 'MISSING_PART_NUMBER');
+      else if (partNumber > expectedCount) addIssue(issueMap, index, 'INVALID_PART_RANGE');
+    }
+
+    const missing = [];
+    for (let part = 1; part <= expectedCount; part += 1) {
+      if (!group.parts.has(part)) missing.push(part);
+    }
+    if (missing.length > 0) {
+      for (const index of group.indexes) addIssue(issueMap, index, 'MISSING_DOCUMENT_PARTS');
+    }
+  }
+
+  return issueMap;
 }
 
 function uniqueEmails(values) {
@@ -177,13 +275,23 @@ function buildNotificationDraft({ issues, oraEmail, senderEmail }) {
 }
 
 function aggregateSummary(records, generatedAt) {
-  const counts = { total: records.length, ready: 0, duplicate: 0, notificationRequired: 0, needsReview: 0 };
+  const counts = {
+    total: records.length,
+    ready: 0,
+    duplicate: 0,
+    notificationRequired: 0,
+    needsReview: 0,
+    folderCreationRequired: 0,
+    incompleteMultipart: 0,
+  };
   const reasonCounts = {};
   for (const record of records) {
     if (record.status === 'ready') counts.ready += 1;
     if (record.status === 'duplicate') counts.duplicate += 1;
     if (record.status === 'notification-required') counts.notificationRequired += 1;
     if (record.status === 'needs-review') counts.needsReview += 1;
+    if (record.folderCreation?.required) counts.folderCreationRequired += 1;
+    if (record.reasons.includes('MISSING_DOCUMENT_PARTS')) counts.incompleteMultipart += 1;
     for (const reason of record.reasons) addReason(reasonCounts, reason);
   }
   return { planVersion: PLAN_VERSION, generatedAt, counts, reasonCounts };
@@ -195,16 +303,25 @@ export function planDeliveryNoteIntake(envelope) {
   }
   const records = requireArray(envelope.records, 'records', MAX_RECORDS);
   const folders = requireArray(envelope.customerFolders, 'customerFolders', MAX_FOLDERS);
+  const projectFolders = requireArray(envelope.projectFolders ?? [], 'projectFolders', MAX_FOLDERS);
   const existing = requireArray(envelope.existingDocuments ?? [], 'existingDocuments', MAX_FOLDERS);
   const generatedAt = cleanText(envelope.generatedAt);
   if (!generatedAt || Number.isNaN(Date.parse(generatedAt))) throw new TypeError('generatedAt must be an ISO date-time');
   const expectedWhatsAppGroup = cleanText(envelope.sourceContext?.whatsAppGroupName) || DEFAULT_WHATSAPP_GROUP;
   const oraEmail = normalizeEmail(envelope.notificationContext?.oraEmail);
+  const multipartIssues = buildMultipartIssues(records);
 
   const priorSources = new Set(existing.map((entry) => cleanText(entry?.sourceId)).filter(Boolean));
   const priorHashes = new Set(existing.map((entry) => normalizeHash(entry?.contentHash)).filter(Boolean));
   const priorDocuments = new Set(existing.map((entry) => {
-    return documentKey(
+    return documentPartKey(
+      normalizeCustomerNumber(entry?.projectKey ?? entry?.customerNumber),
+      normalizeDocumentNumber(entry?.documentNumber),
+      normalizePartNumber(entry?.partNumber),
+    );
+  }).filter(Boolean));
+  const priorUnpartitionedDocuments = new Set(existing.filter((entry) => !normalizePartNumber(entry?.partNumber)).map((entry) => {
+    return documentBaseKey(
       normalizeCustomerNumber(entry?.projectKey ?? entry?.customerNumber),
       normalizeDocumentNumber(entry?.documentNumber),
     );
@@ -234,8 +351,11 @@ export function planDeliveryNoteIntake(envelope) {
     const description = safeLabel(record.description, 120);
     const senderEmail = normalizeEmail(record.senderEmail);
     const sourceGroup = cleanText(record.sourceGroup);
-    const docKey = documentKey(projectKey, documentNumber);
-    const reasons = [];
+    const partNumber = normalizePartNumber(record.partNumber);
+    const partCount = normalizePartNumber(record.partCount);
+    const baseDocKey = documentBaseKey(projectKey, documentNumber);
+    const docKey = documentPartKey(projectKey, documentNumber, partNumber);
+    const reasons = [...(multipartIssues.get(index) ?? [])];
 
     if (!SUPPORTED_SOURCES.has(source)) reasons.push('UNSUPPORTED_SOURCE');
     if (!sourceId) reasons.push('MISSING_SOURCE_ID');
@@ -247,11 +367,17 @@ export function planDeliveryNoteIntake(envelope) {
     if (!documentType) reasons.push('UNCLEAR_DOCUMENT_TYPE');
     if (!documentNumber) reasons.push('UNCLEAR_DOCUMENT_NUMBER');
     if (!description) reasons.push('MISSING_DESCRIPTION');
+    if (wasSupplied(record.partNumber) && !partNumber) reasons.push('INVALID_PART_NUMBER');
+    if (wasSupplied(record.partCount) && !partCount) reasons.push('INVALID_PART_COUNT');
+    if (partNumber && partCount && partNumber > partCount) reasons.push('INVALID_PART_RANGE');
 
     const duplicateReasons = [];
     if (sourceId && (priorSources.has(sourceId) || seenSources.has(sourceId))) duplicateReasons.push('DUPLICATE_SOURCE');
     if (hash && (priorHashes.has(hash) || seenHashes.has(hash))) duplicateReasons.push('DUPLICATE_HASH');
     if (docKey && (priorDocuments.has(docKey) || seenDocuments.has(docKey))) duplicateReasons.push('DUPLICATE_DOCUMENT');
+    if (baseDocKey && partCount && partCount > 1 && priorUnpartitionedDocuments.has(baseDocKey)) {
+      reasons.push('UNCERTAIN_EXISTING_MULTIPART_DOCUMENT');
+    }
 
     if (sourceId) seenSources.add(sourceId);
     if (hash) seenHashes.add(hash);
@@ -262,11 +388,36 @@ export function planDeliveryNoteIntake(envelope) {
     else if (!file.supported) reasons.push('UNSUPPORTED_ATTACHMENT');
 
     const matches = projectKey ? matchingFolders(folders, projectKey) : [];
-    if (projectKey && matches.length === 0) reasons.push('CUSTOMER_FOLDER_NOT_FOUND');
-    if (projectKey && matches.length > 1) reasons.push('AMBIGUOUS_CUSTOMER_FOLDER');
+    const projectMatches = projectKey && matches.length === 0
+      ? matchingProjectFolders(projectFolders, projectKey)
+      : [];
 
-    const destinationFileName = descriptiveFileName({ customerName, documentNumber, description, sourceFile: file });
-    const destinationFolder = matches.length === 1 ? matches[0] : null;
+    if (projectKey && matches.length > 1) reasons.push('AMBIGUOUS_CUSTOMER_FOLDER');
+    if (projectKey && matches.length === 0 && projectMatches.length === 0) reasons.push('CUSTOMER_FOLDER_NOT_FOUND');
+    if (projectKey && matches.length === 0 && projectMatches.length > 1) reasons.push('AMBIGUOUS_PROJECT_FOLDER');
+
+    const destinationFileName = descriptiveFileName({
+      customerName,
+      documentNumber,
+      description,
+      sourceFile: file,
+      partNumber,
+      partCount,
+    });
+    const existingDestinationFolder = matches.length === 1 ? matches[0] : null;
+    const projectParent = matches.length === 0 && projectMatches.length === 1 ? projectMatches[0] : null;
+    const plannedDestinationFolder = projectParent
+      ? `${projectParent.replace(/\/+$/, '')}/${CANONICAL_DELIVERY_NOTE_FOLDER}`
+      : null;
+    const destinationFolder = existingDestinationFolder ?? plannedDestinationFolder;
+    const folderCreation = projectParent
+      ? {
+          required: true,
+          parentPath: projectParent,
+          folderName: CANONICAL_DELIVERY_NOTE_FOLDER,
+          destinationFolder: plannedDestinationFolder,
+        }
+      : null;
     const destinationPath = destinationFolder && destinationFileName
       ? `${destinationFolder.replace(/\/+$/, '')}/${destinationFileName}`
       : null;
@@ -278,8 +429,15 @@ export function planDeliveryNoteIntake(envelope) {
 
     if (duplicateReasons.length > 0) {
       return {
-        index, source, sourceId, status: 'duplicate', reasons: duplicateReasons,
-        projectKey, documentNumber,
+        index,
+        source,
+        sourceId,
+        status: 'duplicate',
+        reasons: duplicateReasons,
+        projectKey,
+        documentNumber,
+        partNumber,
+        partCount,
       };
     }
 
@@ -288,29 +446,74 @@ export function planDeliveryNoteIntake(envelope) {
       if (!oraEmail) reasons.push('MISSING_ORA_EMAIL');
       if (!senderEmail) reasons.push('MISSING_SENDER_EMAIL');
       const blockingReasons = reasons.filter((reason) => ![
-        'MISSING_PROJECT_KEY', 'CUSTOMER_FOLDER_NOT_FOUND', 'MISSING_CUSTOMER_NAME',
-        'UNCLEAR_DOCUMENT_TYPE', 'UNCLEAR_DOCUMENT_NUMBER',
+        'MISSING_PROJECT_KEY',
+        'CUSTOMER_FOLDER_NOT_FOUND',
+        'MISSING_CUSTOMER_NAME',
+        'UNCLEAR_DOCUMENT_TYPE',
+        'UNCLEAR_DOCUMENT_NUMBER',
       ].includes(reason));
       if (blockingReasons.length === 0 && notificationDraft.recipients.length === 2) {
         return {
-          index, source, sourceId, status: 'notification-required', reasons,
-          projectKey, customerName, supplierName, documentDate, documentType, documentNumber, notificationDraft,
+          index,
+          source,
+          sourceId,
+          status: 'notification-required',
+          reasons,
+          projectKey,
+          customerName,
+          supplierName,
+          documentDate,
+          documentType,
+          documentNumber,
+          partNumber,
+          partCount,
+          notificationDraft,
         };
       }
     }
     if (reasons.length > 0) {
       return {
-        index, source, sourceId, status: 'needs-review', reasons,
-        projectKey, customerName, supplierName, documentDate, documentType, documentNumber,
+        index,
+        source,
+        sourceId,
+        status: 'needs-review',
+        reasons,
+        projectKey,
+        customerName,
+        supplierName,
+        documentDate,
+        documentType,
+        documentNumber,
+        partNumber,
+        partCount,
         candidateDestinations: matches,
+        candidateProjectFolders: projectMatches,
+        folderCreation,
         notificationDraft,
       };
     }
 
     return {
-      index, source, sourceId, status: 'ready', reasons: [], projectKey,
-      customerName, supplierName, documentDate, documentType, documentNumber, description,
-      originalFileName: file.name, destinationFileName, destinationFolder, destinationPath,
+      index,
+      source,
+      sourceId,
+      status: 'ready',
+      reasons: [],
+      projectKey,
+      customerName,
+      supplierName,
+      documentDate,
+      documentType,
+      documentNumber,
+      description,
+      partNumber,
+      partCount,
+      originalFileName: file.name,
+      destinationFileName,
+      destinationFolder,
+      destinationPath,
+      folderAction: folderCreation ? 'create' : 'use-existing',
+      folderCreation,
     };
   });
 

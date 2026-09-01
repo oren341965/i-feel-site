@@ -40,6 +40,8 @@
           "documentDate": { "type": ["string", "null"], "format": "date" },
           "supplierName": { "type": ["string", "null"], "maxLength": 200 },
           "description": { "type": ["string", "null"], "maxLength": 500 },
+          "partNumber": { "type": ["integer", "null"], "minimum": 1, "maximum": 100 },
+          "partCount": { "type": ["integer", "null"], "minimum": 1, "maximum": 100 },
           "contentHash": {
             "type": ["string", "null"],
             "pattern": "^[a-fA-F0-9]{64}$"
@@ -69,7 +71,9 @@
         "properties": {
           "path": { "type": "string", "minLength": 1 },
           "pathDisplay": { "type": "string", "minLength": 1 },
-          "objectType": { "type": "string" }
+          "objectType": { "type": "string" },
+          "projectKey": { "type": "string" },
+          "customerNumber": { "type": "string", "description": "Legacy alias for projectKey" }
         },
         "anyOf": [
           { "required": ["path"] },
@@ -77,6 +81,26 @@
         ],
         "additionalProperties": false
       }
+    },
+    "projectFolders": {
+      "type": "array",
+      "maxItems": 100000,
+      "items": {
+        "type": "object",
+        "properties": {
+          "path": { "type": "string", "minLength": 1 },
+          "pathDisplay": { "type": "string", "minLength": 1 },
+          "objectType": { "type": "string" },
+          "projectKey": { "type": "string" },
+          "customerNumber": { "type": "string", "description": "Legacy alias for projectKey" }
+        },
+        "anyOf": [
+          { "required": ["path"] },
+          { "required": ["pathDisplay"] }
+        ],
+        "additionalProperties": false
+      },
+      "default": []
     },
     "existingDocuments": {
       "type": "array",
@@ -89,6 +113,8 @@
           "projectKey": { "type": "string" },
           "customerNumber": { "type": "string", "description": "Legacy alias for projectKey" },
           "documentNumber": { "type": "string" },
+          "partNumber": { "type": ["integer", "null"], "minimum": 1, "maximum": 100 },
+          "partCount": { "type": ["integer", "null"], "minimum": 1, "maximum": 100 },
           "fileName": { "type": "string" },
           "path": { "type": "string" },
           "pathDisplay": { "type": "string" }
