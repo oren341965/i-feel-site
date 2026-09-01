@@ -1,0 +1,7 @@
+interface:
+  display_name: "I Feel Supplier Invoice Forwarding"
+  short_description: "Verifies and forwards approved supplier invoices"
+  default_prompt: "Use $invoice-forwarding-accounting to prepare a bounded supplier-invoice forwarding run and stop for approval before any external mutation."
+
+policy:
+  allow_implicit_invocation: true

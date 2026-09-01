@@ -1,0 +1,72 @@
+{
+  "schemaVersion": 1,
+  "system": "I FEEL MANAGEMENT SYSTEM",
+  "domain": "accounting",
+  "sourcePolicy": {
+    "executableSkills": "GitHub: oren341965/i-feel-site/.claude/skills",
+    "managementDocuments": "Google Drive: 00 - iFeel Management - Sync Index & Source of Truth",
+    "businessSources": "Remain authoritative in their source systems"
+  },
+  "capabilities": [
+    {
+      "slug": "ai-accounting-manager",
+      "owner": "I Feel Accounting",
+      "role": "domain-orchestrator",
+      "dependencies": ["management-system-telemetry", "invoice-forwarding-accounting", "daily-digest-accounting", "expense-file", "ai-finance-manager"],
+      "capabilities": ["route-accounting-work", "consolidate-worker-results", "enforce-approval-boundaries"],
+      "triggers": ["accounting coordination", "multi-workflow accounting request", "accounting manager request"],
+      "permissions": {"read": "approved-connected-sources", "recommend": "allowed", "draft": "approval-required", "write": "approval-required", "send": "approval-required", "financialAction": "restricted", "secretsOrExternalPermissions": "restricted"},
+      "dataSources": ["worker-sanitized-results", "Google Drive management source-of-truth"],
+      "logging": {"adapter": "management-system-telemetry", "payload": "sanitized counters and evidence references only", "statuses": ["running", "succeeded", "failed", "blocked"]},
+      "orchestration": {"parent": null, "children": ["invoice-forwarding-accounting", "daily-digest-accounting", "expense-file", "ai-finance-manager"]}
+    },
+    {
+      "slug": "invoice-forwarding-accounting",
+      "owner": "I Feel Accounting",
+      "role": "supplier-invoice-worker",
+      "dependencies": ["ai-accounting-manager", "management-system-telemetry", "authenticated Gmail", "spreadsheet artifact tooling"],
+      "capabilities": ["find-supplier-invoices", "deduplicate-accounting-documents", "prepare-verified-invoice-register", "forward-approved-source-invoices"],
+      "triggers": ["collect supplier invoices", "forward invoices to accounting", "build invoice register"],
+      "permissions": {"read": "bounded Gmail scope", "recommend": "allowed", "draft": "approval-required", "write": "approval-required", "send": "approval-required immediately before send", "financialAction": "restricted", "secretsOrExternalPermissions": "restricted"},
+      "dataSources": ["authenticated Gmail messages and attachments", "user-approved recipient list"],
+      "logging": {"adapter": "management-system-telemetry", "payload": "counts, status, and sanitized evidence reference; no invoice or supplier data", "statuses": ["running", "succeeded", "failed", "blocked"]},
+      "orchestration": {"parent": "ai-accounting-manager", "children": []}
+    },
+    {
+      "slug": "daily-digest-accounting",
+      "owner": "I Feel Accounting",
+      "role": "accounting-correspondence-worker",
+      "dependencies": ["ai-accounting-manager", "management-system-telemetry", "authenticated Gmail", "user-supplied WhatsApp export when applicable"],
+      "capabilities": ["summarize-accounting-correspondence", "classify-accounting-exceptions", "prepare-approved-digest-draft"],
+      "triggers": ["daily accounting digest", "accounting correspondence review", "accounting WhatsApp export supplied"],
+      "permissions": {"read": "bounded Gmail/export scope", "recommend": "allowed", "draft": "approval-required", "write": "approval-required", "send": "restricted unless separately approved", "financialAction": "restricted", "secretsOrExternalPermissions": "restricted"},
+      "dataSources": ["authenticated Gmail inbound and outbound", "user-supplied WhatsApp export"],
+      "logging": {"adapter": "management-system-telemetry", "payload": "counts, status, and sanitized evidence reference; no message content or contact data", "statuses": ["running", "succeeded", "failed", "blocked"]},
+      "orchestration": {"parent": "ai-accounting-manager", "children": []}
+    },
+    {
+      "slug": "expense-file",
+      "owner": "I Feel Accounting",
+      "role": "monthly-expense-worker",
+      "dependencies": ["ai-accounting-manager", "management-system-telemetry", "Google Sheets", "approved supporting evidence"],
+      "capabilities": ["audit-monthly-expenses", "prepare-expense-changes", "apply-approved-chronological-updates", "verify-formulas-and-totals"],
+      "triggers": ["monthly expense file", "expense reconciliation", "expense categorization or audit"],
+      "permissions": {"read": "approved financial sources", "recommend": "allowed", "draft": "allowed as preview", "write": "explicit approval required", "send": "approval-required", "financialAction": "restricted", "secretsOrExternalPermissions": "restricted"},
+      "dataSources": ["Google Sheet: expenses", "approved invoices/statements/exports", "bank/card evidence only when supplied or authorized"],
+      "logging": {"adapter": "management-system-telemetry", "payload": "aggregate counters and sanitized evidence reference; no financial rows", "statuses": ["running", "succeeded", "failed", "blocked"]},
+      "orchestration": {"parent": "ai-accounting-manager", "children": [], "aggregateConsumer": "ai-finance-manager"}
+    },
+    {
+      "slug": "ai-finance-manager",
+      "owner": "I Feel Finance",
+      "role": "read-only-income-expense-audit-worker",
+      "dependencies": ["ai-accounting-manager", "management-system-telemetry", "Google Sheets expense source", "Google Sheets project-income source", "Google Sheets service-income source"],
+      "capabilities": ["audit-aggregate-expenses", "audit-project-income", "audit-service-income", "report-finance-source-freshness"],
+      "triggers": ["income and expense audit", "finance health", "aggregate finance reconciliation"],
+      "permissions": {"read": "three registered Google Sheets", "recommend": "allowed", "draft": "not-applicable", "write": "restricted", "send": "restricted", "financialAction": "restricted", "secretsOrExternalPermissions": "restricted"},
+      "dataSources": ["Google Sheet: expenses", "Google Sheet: project income", "Google Sheet: service income"],
+      "logging": {"adapter": "management-system-telemetry plus aggregate finance reporter", "payload": "reconciled aggregates only; no raw rows or identities", "statuses": ["running", "succeeded", "failed", "blocked"]},
+      "orchestration": {"parent": "ai-accounting-manager", "children": [], "receivesApprovedExpenseStructureFrom": "expense-file"}
+    }
+  ]
+}

@@ -1,0 +1,7 @@
+interface:
+  display_name: "I Feel Daily Accounting Digest"
+  short_description: "Summarizes bounded accounting correspondence"
+  default_prompt: "Use $daily-digest-accounting to review the requested accounting correspondence window and produce a verified digest."
+
+policy:
+  allow_implicit_invocation: true

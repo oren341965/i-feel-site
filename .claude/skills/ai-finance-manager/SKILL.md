@@ -5,7 +5,7 @@ description: Audit I Feel expense, project-income and service-income Google Shee
 
 # I Feel AI Finance Manager
 
-Own the aggregate read-only finance audit. Use the three canonical spreadsheets and keep each source's freshness independent.
+Operate as the read-only income/expense audit worker owned by `ai-accounting-manager`. Own the aggregate finance audit, use the three canonical spreadsheets, and keep each source's freshness independent. Read `../ai-accounting-manager/references/management-registration.json` when validating the Management System identity or orchestration contract.
 
 ## Workflow
 
@@ -26,5 +26,5 @@ Own the aggregate read-only finance audit. Use the three canonical spreadsheets 
 
 ## Control-plane evidence
 
-Use `management-system-telemetry` for `ai-finance-manager` when its scoped identity is installed. Reuse the same run key for the finance audit. Do not search for missing secrets.
+Use `management-system-telemetry` for the exact capability slug `ai-finance-manager` when its scoped identity is installed. Reuse the same run key for the finance audit. Missing registration, Host identity, or scoped credentials is `REGISTRATION_BLOCKED`; do not search for missing secrets or broaden permissions.
 
