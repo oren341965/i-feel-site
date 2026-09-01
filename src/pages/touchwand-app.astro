@@ -38,10 +38,10 @@ const jsonLd = JSON.stringify({
 
 const meta = {
   title: 'אפליקציית TouchWand באייפון ובאנדרואיד | i-feel',
-  description: 'הורדת אפליקציית TouchWand ל-Android והנחיות להמשך שימוש דרך cloud.touchwand.com באייפון, עם פרטי ההתחברות הקיימים.',
+  description: 'הורדת קובץ ההתקנה של TouchWand למחשב, העברתו למכשיר Android והנחיות להמשך שימוש עם פרטי ההתחברות הקיימים.',
   canonical,
   ogTitle: 'המשך שימוש במערכת TouchWand באייפון ובאנדרואיד',
-  ogDescription: 'הורדה ישירה של אפליקציית TouchWand ל-Android, כניסה דרך הענן באייפון ומידע על שדרוג ל-SmartSphere.',
+  ogDescription: 'הורדת קובץ ההתקנה של TouchWand למחשב, התקנה עצמאית במכשיר Android וכניסה דרך הענן באייפון.',
   ogUrl: canonical,
   jsonLd
 };
@@ -127,26 +127,27 @@ const meta = {
 
       <section class="rounded-2xl border border-brand-100 bg-white p-6 shadow-lg md:p-8" aria-labelledby="android-title">
         <p class="text-sm font-bold text-green-700">מכשירי Android</p>
-        <h2 id="android-title" class="mt-2 text-3xl font-extrabold text-brand-900">הורדה והתקנה של האפליקציה</h2>
+        <h2 id="android-title" class="mt-2 text-3xl font-extrabold text-brand-900">הורדת קובץ ההתקנה למחשב</h2>
         <p class="mt-6 text-lg leading-8 text-brand-700">
-          הורידו את קובץ ההתקנה ישירות מהאתר. לאחר ההתקנה התחברו עם <strong>אותו שם משתמש ואותה סיסמה</strong> שבהם השתמשתם קודם.
+          הורידו את קובץ ההתקנה למחשב, העבירו אותו למכשיר Android והתקינו אותו באופן עצמאי. לאחר ההתקנה התחברו עם <strong>אותו שם משתמש ואותה סיסמה</strong> שבהם השתמשתם קודם.
         </p>
         <div class="mt-6 rounded-xl border border-green-200 bg-green-50 p-5">
           <h3 class="text-lg font-extrabold text-brand-900">אפליקציית TouchWand ל-Android</h3>
-          <p class="mt-1 text-sm leading-6 text-brand-700">קובץ APK להתקנה ישירה, כ-23 MB. מיועד למכשירי Android בלבד.</p>
+          <p class="mt-1 text-sm leading-6 text-brand-700">קובץ APK להורדה למחשב, כ-23 MB. הקובץ מיועד להתקנה במכשירי Android בלבד.</p>
           <a
             href={androidApkUrl}
-            download
+            download="touchwand-plus-android.apk"
             type="application/vnd.android.package-archive"
             class="mt-4 flex w-full items-center justify-center rounded-xl bg-green-700 px-5 py-3.5 text-center text-lg font-extrabold text-white transition hover:bg-green-800 focus:outline-none focus:ring-4 focus:ring-green-200"
           >
-            הורדת אפליקציית TouchWand
+            הורדת קובץ ההתקנה למחשב
           </a>
         </div>
         <ol class="mt-6 space-y-3 text-brand-700">
-          <li><strong class="text-brand-900">1.</strong> הורידו את הקובץ ופתחו אותו בסיום ההורדה.</li>
-          <li><strong class="text-brand-900">2.</strong> אם Android מבקש אישור, אפשרו לדפדפן להתקין אפליקציות ממקור זה. ניתן לבטל את ההרשאה לאחר ההתקנה.</li>
-          <li><strong class="text-brand-900">3.</strong> פתחו את האפליקציה והתחברו עם שם המשתמש והסיסמה הקיימים.</li>
+          <li><strong class="text-brand-900">1.</strong> במחשב, לחצו על כפתור ההורדה ושמרו את קובץ ה-APK.</li>
+          <li><strong class="text-brand-900">2.</strong> העבירו את הקובץ למכשיר Android באמצעות כבל USB או אמצעי העברה מהימן אחר.</li>
+          <li><strong class="text-brand-900">3.</strong> במכשיר Android, פתחו את הקובץ ואשרו את ההתקנה. אם מוצגת בקשת הרשאה, אפשרו התקנה ממקור זה וניתן לבטל את ההרשאה לאחר מכן.</li>
+          <li><strong class="text-brand-900">4.</strong> פתחו את האפליקציה והתחברו עם שם המשתמש והסיסמה הקיימים.</li>
         </ol>
         <div class="mt-6 rounded-xl bg-brand-50 p-5">
           <h3 class="text-lg font-bold text-brand-900">אפשר גם דרך אתר הענן</h3>
