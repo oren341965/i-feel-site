@@ -24,11 +24,15 @@ if ($result.schemaVersion -ne 1 -or $result.type -ne 'MAYA_COMMISSIONING_RESULT'
     createdAt = $result.createdAt
     commit = $result.payload.commit
     role = $result.payload.role
+    primaryEngine = $result.payload.primaryEngine
+    claudeRequired = $result.payload.claudeRequired
     skillsVerified = @($result.payload.skills | Where-Object { $_.hashMatch }).Count
     skillsExpected = @($result.payload.skills).Count
     schedulersActivated = $result.payload.schedulersActivated
     runtimeLocks = $result.payload.runtimeLocks
     nextGate = $result.payload.nextGate
+    managementHostSlug = $result.payload.managementHostSlug
+    managementCredentialsProvisioned = $result.payload.managementCredentialsProvisioned
     externalSends = $result.payload.externalSends
     mondayWrites = $result.payload.mondayWrites
     deletions = $result.payload.deletions

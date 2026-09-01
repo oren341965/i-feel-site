@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { readFileSync } from 'node:fs';
+import { readFileSync, readdirSync } from 'node:fs';
 import test from 'node:test';
 
 import './ai-sales-preflight.test.mjs';
@@ -246,9 +246,17 @@ test('Maya commissioning is role-scoped, hash-verified, and activation-free', ()
   const exporter = read('scripts/workstations/export-maya-commissioning-bundle.ps1');
   const bootstrap = read('scripts/workstations/maya-commissioning-bootstrap.ps1');
   const resultReader = read('scripts/workstations/check-maya-commissioning-result.ps1');
+  const provisioner = read('agent-config/maya-codex/provision-management-telemetry.ps1');
+  const telemetryInvoker = read('agent-config/maya-codex/invoke-telemetry.ps1');
 
   assert.match(installer, /maya-email-maintenance/);
   assert.match(installer, /maya-whatsapp/);
+  assert.match(installer, /management-system-telemetry/);
+  assert.match(installer, /primaryEngine = 'codex'/);
+  assert.match(installer, /claudeRequired = \$false/);
+  assert.match(installer, /maya-front-office/);
+  assert.match(installer, /Expected DESKTOP-3LU7BMR/);
+  assert.match(installer, /Bundle manifest scope is invalid/);
   assert.doesNotMatch(installer, /requiredSkills\s*=.*ai-sales-manager/);
   assert.doesNotMatch(installer, /requiredSkills\s*=.*maya-admin/);
   assert.doesNotMatch(installer, /requiredSkills\s*=.*maya-billing-control/);
@@ -270,6 +278,11 @@ test('Maya commissioning is role-scoped, hash-verified, and activation-free', ()
   assert.match(exporter, /Refusing to export a Maya release from a dirty worktree/);
   assert.match(exporter, /Local main does not match origin\/main/);
   assert.match(exporter, /schedulerActivation\s*=\s*'PAUSED'/);
+  assert.match(exporter, /targetEngine = 'codex'/);
+  assert.match(exporter, /management-system-telemetry/);
+  assert.match(exporter, /registeredHostSlug = 'maya-front-office'/);
+  assert.match(exporter, /provision-management-telemetry\.ps1/);
+  assert.match(exporter, /claudeRequired = \$false/);
   assert.match(exporter, /stagedSchedulers\s*=\s*@\('maya-email-maintenance'\)/);
   assert.doesNotMatch(exporter, /payload\\scheduled-tasks\\maya-whatsapp/);
   assert.doesNotMatch(exporter, /payload\\scheduled-tasks\\maya-integrated-customer-operations/);
@@ -280,4 +293,23 @@ test('Maya commissioning is role-scoped, hash-verified, and activation-free', ()
   assert.match(bootstrap, /ConfirmMayaWorkstation/);
   assert.match(resultReader, /WAITING_FOR_MAYA/);
   assert.match(resultReader, /MAYA_COMMISSIONING_RESULT/);
+  assert.match(provisioner, /Read-Host 'Paste the Sites transport token' -AsSecureString/);
+  assert.match(provisioner, /ConvertFrom-SecureString/);
+  assert.match(provisioner, /expectedComputer = 'DESKTOP-3LU7BMR'/);
+  assert.match(provisioner, /-not \$ReplaceExisting/);
+  assert.match(telemetryInvoker, /hostSlug -ne 'maya-front-office'/);
+  assert.doesNotMatch(provisioner + telemetryInvoker, /Bearer\s+[A-Za-z0-9._-]{16,}/i);
+});
+
+test('Maya Codex review accounts for every canonical Skill without copying managers', () => {
+  const review = readFileSync(new URL('../.claude/skills/ai-sales-manager/references/maya-codex-skill-review.md', import.meta.url), 'utf8');
+  const canonicalSkills = readdirSync(new URL('../.claude/skills/', import.meta.url), { withFileTypes: true })
+    .filter((entry) => entry.isDirectory())
+    .map((entry) => entry.name)
+    .sort();
+
+  assert.equal(canonicalSkills.length, 27);
+  for (const skill of canonicalSkills) assert.equal(review.includes('`' + skill + '`'), true, `Missing ${skill} from Maya review`);
+  assert.match(review, /install the three packages/i);
+  assert.match(review, /Maya never becomes or impersonates a manager/);
 });

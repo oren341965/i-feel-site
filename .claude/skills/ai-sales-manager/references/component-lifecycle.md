@@ -13,6 +13,7 @@ This map prevents parallel managers, preserves proven code, and makes deferred w
 | `lead-attribution-feedback` | KEEP | External attribution adapter keyed by `monday_item_id`. |
 | `ai-service-manager` | KEEP | Independent service-signal worker; not a second sales manager. |
 | `maya-email-maintenance` and `maya-whatsapp` | KEEP | The only canonical Maya front-office workers. They have explicit routing and independent permissions. |
+| `management-system-telemetry` | KEEP | Shared sanitized evidence adapter; installed on Maya without granting manager or business-write authority. |
 | Existing website, content, quote, plans, referral, handoff, closeout, and mailing workers | KEEP | Reuse through bounded handoffs; never clone during orchestration. |
 | `C:\ifeel-sales` runtime templates | KEEP | Local maturity-0 state and dry-run launchers; installation remains separate. |
 | Vault schemas and bridges | KEEP | Idempotent bounded exchange with no live database or PII. |

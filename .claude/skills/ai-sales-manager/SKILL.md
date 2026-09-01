@@ -19,6 +19,8 @@ description: Orchestrate I Feel's maturity-0 sales system and deterministic read
 - For maintenance or handoff, read [references/phase-1-audit.md](references/phase-1-audit.md) and [references/validation-and-handoff.md](references/validation-and-handoff.md).
 - For Oren-machine commissioning after Phase 1, read [references/phase-2-local-core.md](references/phase-2-local-core.md) and run the no-write preflight before the full morning runtime.
 - For the single-command Maya handoff through the shared Vault, read [references/maya-commissioning.md](references/maya-commissioning.md). Installation is role-scoped and must finish paused before any browser or identity smoke test.
+- For replacing Claude on Maya's workstation with Codex, read [references/maya-codex-cutover.md](references/maya-codex-cutover.md). The cutover is Codex-first, preserves the canonical Skill source, and does not activate communication or schedulers.
+- For the complete canonical Skill selection made for Maya, read [references/maya-codex-skill-review.md](references/maya-codex-skill-review.md). Do not replace the reviewed three-Skill bundle with a copy of every manager and specialist.
 - When Oren says `מאיה תבדוק`, `תעביר למאיה`, `תבקש ממאיה סטטוס`, or assigns Maya sales work, read [references/maya-task-protocol.md](references/maya-task-protocol.md). Use the existing Vault Bus and require correlated ACK, Result, and Monday read-back; never substitute a Monday note for a real task.
 
 ## Non-negotiable invariants
@@ -34,7 +36,7 @@ description: Orchestrate I Feel's maturity-0 sales system and deterministic read
 - Resolve the Vault through `VAULT_ROOT`; keep active SQLite state local under `C:\ifeel-sales`.
 - `customer-payment-collection` is `DEFER`. Do not install, invoke, merge, or substitute it in Phase 1.
 - Maya business routines and WhatsApp remain paused. The existing Windows Email Task is outside this refactor and remains unchanged.
-- Maya commissioning installs only the two canonical Maya workers. It never installs the parent manager on Maya, never activates a scheduler, and never treats the Vault as executable source truth.
+- Maya commissioning installs the two canonical Maya workers plus the telemetry adapter into Codex only. It never installs the parent manager on Maya, never activates a scheduler, never requires Claude, and never treats the Vault as executable source truth.
 - Manager-assigned Maya work uses only the existing Vault bridge. An enqueued task is only `ASSIGNED_TO_MAYA`; only `RESPONSE_RECEIVED_AND_MONDAY_UPDATED` after a real Maya ACK, a real Maya Result, and live Monday read-back is fully completed. Duplicate task IDs reuse the existing immutable result, and isolated tests never count as production completion.
 
 ## Deterministic entrypoints
