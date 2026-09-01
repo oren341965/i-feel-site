@@ -1,8 +1,9 @@
 #!/usr/bin/env node
 
 import { readFile } from 'node:fs/promises';
+import { existsSync } from 'node:fs';
 import { homedir } from 'node:os';
-import { join, resolve } from 'node:path';
+import { extname, join, resolve } from 'node:path';
 import { spawnSync } from 'node:child_process';
 
 const REPOSITORY = 'oren341965/i-feel-site';
@@ -28,7 +29,7 @@ function parseArgs(argv) {
 }
 
 function usage() {
-  return `Usage: audit-host-readiness.mjs --repo <path> --vault <path> --installed-skills <path> [options]\n\nOptions:\n  --expected-computer <name>  Require the current workstation name to match\n  --expected-host <slug>      Require IFEEL_MANAGEMENT_HOST_SLUG to match this registered slug\n  --metadata <path>           Override ~/.ifeel-agent-config.json for installation metadata\n  --help                      Show this help\n\nThis is a read-only service-identity preflight. It never creates credentials, changes permissions, writes to source systems, or sends telemetry.`;
+  return `Usage: audit-host-readiness.mjs --repo <path> --vault <path> --installed-skills <path> [options]\n\nOptions:\n  --expected-computer <name>  Require the current workstation name to match\n  --expected-host <slug>      Require IFEEL_MANAGEMENT_HOST_SLUG to match this registered slug\n  --credential-wrapper <path> Validate a local credential wrapper with a network-free dry run\n  --metadata <path>           Override ~/.ifeel-agent-config.json for installation metadata\n  --help                      Show this help\n\nThis is a read-only service-identity preflight. It never creates credentials, changes permissions, writes to source systems, or sends telemetry.`;
 }
 
 function git(repoPath, args, { allowFailure = false } = {}) {
@@ -45,6 +46,54 @@ function text(result) {
 
 function normalizedComputerName(value) {
   return String(value ?? '').trim().toUpperCase();
+}
+
+function parseJsonOutput(stdout) {
+  const trimmed = String(stdout ?? '').trim();
+  if (!trimmed) return null;
+  try {
+    return JSON.parse(trimmed);
+  } catch {
+    const jsonLine = trimmed.split(/\r?\n/u).reverse().find((line) => line.trim().startsWith('{'));
+    if (!jsonLine) return null;
+    try {
+      return JSON.parse(jsonLine);
+    } catch {
+      return null;
+    }
+  }
+}
+
+function probeCredentialWrapper(path) {
+  const wrapperPath = resolve(path);
+  if (!existsSync(wrapperPath)) return { requested: true, valid: false, hostSlug: null };
+  const probeArgs = [
+    '--capability', 'ai-operations-manager',
+    '--run-key', 'host-readiness-preflight',
+    '--mode', 'read_only',
+    '--status', 'succeeded',
+    '--started-at', '2000-01-01T00:00:00.000Z',
+    '--finished-at', '2000-01-01T00:00:00.000Z',
+    '--dry-run',
+  ];
+  const extension = extname(wrapperPath).toLowerCase();
+  const commands = extension === '.mjs' || extension === '.js'
+    ? [{ command: process.execPath, args: [wrapperPath, ...probeArgs] }]
+    : ['pwsh.exe', 'powershell.exe'].map((command) => ({
+      command,
+      args: ['-NoProfile', '-ExecutionPolicy', 'Bypass', '-File', wrapperPath, ...probeArgs],
+    }));
+
+  for (const candidate of commands) {
+    const result = spawnSync(candidate.command, candidate.args, { encoding: 'utf8', env: process.env });
+    if (result.status !== 0) continue;
+    const output = parseJsonOutput(result.stdout);
+    const hostSlug = typeof output?.envelope?.hostSlug === 'string' ? output.envelope.hostSlug.trim() : '';
+    if (output?.dryRun === true && HOST_SLUG.test(hostSlug)) {
+      return { requested: true, valid: true, hostSlug };
+    }
+  }
+  return { requested: true, valid: false, hostSlug: null };
 }
 
 async function readInstallationMetadata(path) {
@@ -115,16 +164,25 @@ const observedComputer = normalizedComputerName(process.env.COMPUTERNAME || proc
 const expectedComputer = normalizedComputerName(args['expected-computer']);
 const computerMatchesExpected = expectedComputer ? observedComputer === expectedComputer : null;
 
-const configuredHostSlug = String(process.env.IFEEL_MANAGEMENT_HOST_SLUG ?? '').trim();
+const wrapperProbe = args['credential-wrapper']
+  ? probeCredentialWrapper(args['credential-wrapper'])
+  : { requested: false, valid: false, hostSlug: null };
+const environmentHostSlug = String(process.env.IFEEL_MANAGEMENT_HOST_SLUG ?? '').trim();
+const configuredHostSlug = environmentHostSlug || wrapperProbe.hostSlug || '';
 const expectedHostSlug = String(args['expected-host'] ?? '').trim();
 if (configuredHostSlug && !HOST_SLUG.test(configuredHostSlug)) fail('Invalid IFEEL_MANAGEMENT_HOST_SLUG');
 if (expectedHostSlug && !HOST_SLUG.test(expectedHostSlug)) fail('Invalid --expected-host');
 const hostSlugMatchesExpected = expectedHostSlug ? configuredHostSlug === expectedHostSlug : null;
 
 const credentials = {
-  siteTransportPresent: Boolean(process.env.IFEEL_MANAGEMENT_SITE_TOKEN),
-  serviceIdentityTokenPresent: Boolean(process.env.IFEEL_MANAGEMENT_RUN_TOKEN),
+  source: process.env.IFEEL_MANAGEMENT_SITE_TOKEN && process.env.IFEEL_MANAGEMENT_RUN_TOKEN
+    ? 'environment'
+    : wrapperProbe.valid ? 'credential_wrapper' : 'none',
+  siteTransportPresent: Boolean(process.env.IFEEL_MANAGEMENT_SITE_TOKEN) || wrapperProbe.valid,
+  serviceIdentityTokenPresent: Boolean(process.env.IFEEL_MANAGEMENT_RUN_TOKEN) || wrapperProbe.valid,
   hostSlugPresent: Boolean(configuredHostSlug),
+  credentialWrapperRequested: wrapperProbe.requested,
+  credentialWrapperValid: wrapperProbe.valid,
 };
 
 const sourceSync = runSourceSync(repoPath, vaultPath, installedSkillsPath);
@@ -138,12 +196,14 @@ if (!originMainRevision) blockingReasons.push('ORIGIN_MAIN_UNAVAILABLE');
 if (originMainRevision && !mainAncestor) blockingReasons.push('BRANCH_NOT_BASED_ON_ORIGIN_MAIN');
 if (!worktreeClean) blockingReasons.push('WORKTREE_NOT_CLEAN');
 if (expectedComputer && !computerMatchesExpected) blockingReasons.push('WORKSTATION_IDENTITY_MISMATCH');
+if (environmentHostSlug && wrapperProbe.hostSlug && environmentHostSlug !== wrapperProbe.hostSlug) blockingReasons.push('CREDENTIAL_SOURCES_HOST_MISMATCH');
 if (!sourceSync.ok) blockingReasons.push('SOURCE_REGISTRATION_GAPS');
 if (!metadata.present) warnings.push('INSTALLATION_METADATA_MISSING');
 if (metadata.present && metadata.repository !== REPOSITORY) blockingReasons.push('INSTALLATION_REPOSITORY_MISMATCH');
 if (metadata.present && metadata.commit && metadata.commit !== headRevision) warnings.push('INSTALLED_AGENT_CONFIG_BEHIND_WORKTREE');
 if (sourceSync.summary?.staleKnowledge?.length) warnings.push('VAULT_KNOWLEDGE_VERSION_BEHIND_GIT');
 if (!credentials.hostSlugPresent) warnings.push('MANAGEMENT_HOST_SLUG_NOT_CONFIGURED');
+if (wrapperProbe.requested && !wrapperProbe.valid) warnings.push('SERVICE_IDENTITY_CREDENTIAL_WRAPPER_INVALID');
 if (expectedHostSlug && !hostSlugMatchesExpected) blockingReasons.push('REGISTERED_HOST_SLUG_MISMATCH');
 if (!credentials.siteTransportPresent || !credentials.serviceIdentityTokenPresent) warnings.push('SERVICE_IDENTITY_CREDENTIALS_NOT_PROVISIONED');
 

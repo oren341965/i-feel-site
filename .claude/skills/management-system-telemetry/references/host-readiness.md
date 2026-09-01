@@ -16,7 +16,10 @@ Optional identity pins:
 
 - `--expected-computer`: expected Windows computer name, such as `IFEEL160222`.
 - `--expected-host`: already-registered Management System Host slug. Do not invent this value. Use only the slug shown by the Management System.
+- `--credential-wrapper`: approved local wrapper such as `invoke-telemetry.ps1`. The preflight invokes it only with `--dry-run`, validates the sanitized Host slug and never sends telemetry or prints credentials.
 - `--metadata`: alternate installation metadata path for testing. Production normally uses `~/.ifeel-agent-config.json`.
+
+For PowerShell wrappers, the preflight prefers PowerShell Core (`pwsh.exe`) and falls back to Windows PowerShell only when needed. This keeps DPAPI validation compatible with Codex's bundled runtime while preserving the network-free dry-run boundary.
 
 ## Gates
 
@@ -30,7 +33,7 @@ Optional identity pins:
 6. Existing installation metadata, when present, belongs to `oren341965/i-feel-site`.
 7. The optional expected registered Host slug matches `IFEEL_MANAGEMENT_HOST_SLUG` when supplied.
 
-`readyForAuthenticatedCheckin` adds three requirements:
+`readyForAuthenticatedCheckin` adds three requirements, supplied either through the current process environment or through a successfully validated local credential wrapper:
 
 - `IFEEL_MANAGEMENT_SITE_TOKEN` is present.
 - `IFEEL_MANAGEMENT_RUN_TOKEN` is present.
@@ -47,6 +50,7 @@ The following warnings do not automatically block provisioning:
 - `VAULT_KNOWLEDGE_VERSION_BEHIND_GIT`: reviewed Vault entries exist but their documented version does not match the current Git revision. This remains a documentation freshness warning because Vault content is human-reviewed and is not overwritten automatically.
 - `MANAGEMENT_HOST_SLUG_NOT_CONFIGURED`: the host has not yet been bound locally to its registered Management System identity.
 - `SERVICE_IDENTITY_CREDENTIALS_NOT_PROVISIONED`: the scoped credentials are not present in the local secret store.
+- `SERVICE_IDENTITY_CREDENTIAL_WRAPPER_INVALID`: an explicitly supplied local wrapper was missing or did not complete a valid network-free dry run.
 
 ## Example for IFEEL160222
 
@@ -57,7 +61,9 @@ node .claude/skills/management-system-telemetry/scripts/audit-host-readiness.mjs
   --repo . `
   --vault <vault-root> `
   --installed-skills $env:USERPROFILE\.codex\skills `
-  --expected-computer IFEEL160222
+  --expected-computer IFEEL160222 `
+  --expected-host <registered-host-slug> `
+  --credential-wrapper "$env:LOCALAPPDATA\I Feel\Management System\invoke-telemetry.ps1"
 ```
 
 After a Host and service identity have been explicitly created and approved in the Management System, repeat the preflight with the exact registered Host slug using `--expected-host`. Do not store or copy the token into Git, Google Drive, Dropbox, Obsidian, chat history or documentation.

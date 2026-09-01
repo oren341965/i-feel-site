@@ -190,7 +190,7 @@ export async function runSalesPreflightReadOnly({
     && attribution.value.connection?.status === 'LOCAL_SNAPSHOT_READ_ONLY';
   const capacity = evaluateCapacity({
     plansToProposalBusinessDays: null,
-    activeUnownedLeads: mondayCounts.noOwner,
+    activeUnownedLeads: mondayCounts.activeUnowned ?? mondayCounts.noOwner,
     unownedLeadThreshold: config.capacity?.activeUnownedLeadThreshold,
     attributionTrusted,
     dataQualityTrusted,
@@ -228,6 +228,11 @@ export async function runSalesPreflightReadOnly({
         spend: sum(metaAds.value.insights ?? [], 'spend'),
         clicks: sum(metaAds.value.insights ?? [], 'clicks'),
         leadForms: metaAds.value.leadData?.status ?? 'CONNECTION_MISSING',
+        leadFormsReason: metaAds.value.leadData?.reason ?? null,
+        leadPermissionSignalsVerified: metaAds.value.leadData?.permissionSignalsVerified === true,
+        missingLeadPermissionSignals: Array.isArray(metaAds.value.leadData?.missingPermissionSignals)
+          ? metaAds.value.leadData.missingPermissionSignals
+          : [],
       } : { status: 'READ_FAILED', reason: metaAds.error },
       attribution: attribution.ok ? {
         status: attribution.value.connection?.status,

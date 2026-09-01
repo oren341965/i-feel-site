@@ -38,6 +38,7 @@ function validSnapshot(overrides = {}) {
       overdue: 1,
       noNextAction: 2,
       noOwner: 2,
+      activeUnowned: 1,
       inactive: 3,
       stale: 1,
       healthy: 1,
@@ -96,6 +97,7 @@ test('sanitized Monday aggregate snapshot is accepted without enabling liveVerif
   assert.equal(result.connection.boardId, '2732725332');
   assert.equal(result.counts.open, 4);
   assert.equal(result.counts.noOwner, 2);
+  assert.equal(result.counts.activeUnowned, 1);
   assert.equal(result.healthScore, 70);
   assert.equal(result.dataQualityScore, 90);
   assert.deepEqual(result.safety, {

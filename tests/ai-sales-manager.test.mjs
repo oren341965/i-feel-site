@@ -228,16 +228,20 @@ test('SALES_ELIGIBILITY_FILTER excludes Sharon Falek regression until follow-up 
 });
 
 test('SALES_ELIGIBILITY_FILTER excludes the exact completed-sales group', () => {
-  const eligibility = salesEligibilityOf({
+  const source = {
     id: 'completed-group-regression',
     status: '6. תיאום פגישה עם הלקוח',
     group: 'תהליך מכירה הסתיים',
     nextAction: '2026-08-01',
-  }, { now: NOW });
+  };
+  const eligibility = salesEligibilityOf(source, { now: NOW });
+  const result = analyzeSales({ generatedAt: NOW, items: [source] });
 
   assert.equal(eligibility.eligible, false);
   assert.equal(eligibility.effectiveGroup, 'תהליך מכירה הסתיים');
   assert.equal(eligibility.reasons.includes('LEFT_SALES_OWNERSHIP'), true);
+  assert.equal(result.counts.noOwner, 1);
+  assert.equal(result.counts.activeUnowned, 0);
 });
 
 test('Maya commissioning is role-scoped, hash-verified, and activation-free', () => {
@@ -293,10 +297,26 @@ test('Maya commissioning is role-scoped, hash-verified, and activation-free', ()
   assert.match(bootstrap, /ConfirmMayaWorkstation/);
   assert.match(resultReader, /WAITING_FOR_MAYA/);
   assert.match(resultReader, /MAYA_COMMISSIONING_RESULT/);
+  assert.match(resultReader, /taskContractsVerified/);
+  assert.match(resultReader, /taskContractsExpected/);
+  assert.match(resultReader, /windowsEmailTask/);
   assert.match(provisioner, /Read-Host 'Paste the Sites transport token' -AsSecureString/);
   assert.match(provisioner, /ConvertFrom-SecureString/);
   assert.match(provisioner, /expectedComputer = 'DESKTOP-3LU7BMR'/);
+  assert.match(provisioner, /C:\\ifeel-maya\\config\\config\.json/);
+  assert.doesNotMatch(provisioner, /maya-runtime\.json/);
+  assert.match(provisioner, /Install the current commissioning bundle first/);
+  assert.match(provisioner, /not bound to the registered Management host/);
+  assert.match(provisioner, /INSTALL_CURRENT\.ps1/);
+  assert.match(provisioner, /-VerifyOnly/);
+  assert.match(provisioner, /Post-provisioning Maya verification did not pass every paused commissioning gate/);
+  assert.match(provisioner, /verificationPublished = \$verificationPublished/);
+  assert.match(provisioner, /Publish bounded post-provisioning Maya commissioning result/);
   assert.match(provisioner, /-not \$ReplaceExisting/);
+  assert.match(installer, /managementCredentialsProvisioned = \$managementCredentialsProvisioned/);
+  assert.match(installer, /maya-commissioning-credential-probe/);
+  assert.match(installer, /--dry-run/);
+  assert.match(installer, /\$probe\.envelope\.hostSlug -eq 'maya-front-office'/);
   assert.match(telemetryInvoker, /hostSlug -ne 'maya-front-office'/);
   assert.doesNotMatch(provisioner + telemetryInvoker, /Bearer\s+[A-Za-z0-9._-]{16,}/i);
 });

@@ -17,9 +17,10 @@ This handoff makes Maya installation repeatable without copying prompts, source 
 2. On Oren, export the release with `export-maya-commissioning-bundle.ps1` from clean `main`.
 3. Wait for Dropbox to make `current.json`, `INSTALL_CURRENT.ps1`, and the referenced release locally available on Maya.
 4. On Maya, run the one command printed by the exporter with `-ConfirmMayaWorkstation`.
-5. On Oren, run `check-maya-commissioning-result.ps1` against the Vault.
-6. Continue only when the result is `INSTALLED_PAUSED`, all three Codex Skill hashes and every Maya task contract hash match, `runtimeLocks=0`, `claudeRequired=false`, and all external-action counters are zero.
-7. Browser/account, Gmail, WhatsApp and Management System identity smoke tests are a later, separately approved gate. Scheduler activation remains a separate approval after those checks.
+5. Provision the scoped Management credentials with the installed `provision-management-telemetry.ps1` helper. After its hidden prompts succeed, it runs the current installer in network-free `-VerifyOnly` mode and publishes one new bounded `MAYA_COMMISSIONING_RESULT` to the existing Vault Bus. No token or absolute path is included.
+6. On Oren, run `check-maya-commissioning-result.ps1` against the Vault; do not copy logs, prompts or secrets between computers.
+7. Continue only when the newest result is `INSTALLED_PAUSED`, all three Codex Skill hashes and both Maya task contract hashes match, `managementCredentialsProvisioned=true`, `runtimeLocks=0`, `claudeRequired=false`, and all external-action counters are zero.
+8. Browser/account, Gmail, WhatsApp and Management System identity smoke tests are a later, separately approved gate. Scheduler activation remains a separate approval after those checks.
 
 ## Single report-only scheduler gate
 

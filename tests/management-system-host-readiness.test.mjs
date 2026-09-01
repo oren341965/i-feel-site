@@ -23,6 +23,7 @@ async function fixture(t) {
   const vault = resolve(root, 'vault');
   const installed = resolve(root, 'installed');
   const metadata = resolve(root, 'metadata.json');
+  const credentialWrapper = resolve(root, 'credential-wrapper.mjs');
   const telemetryRoot = resolve(repo, '.claude/skills/management-system-telemetry');
 
   await mkdir(resolve(telemetryRoot, 'scripts'), { recursive: true });
@@ -55,7 +56,13 @@ async function fixture(t) {
     installedAt: '2026-09-01T00:00:00.000Z',
   }), 'utf8');
 
-  return { root, repo, vault, installed, metadata, mainRevision };
+  await writeFile(credentialWrapper, `
+const args = process.argv.slice(2);
+if (!args.includes('--dry-run')) process.exit(2);
+process.stdout.write(JSON.stringify({ ok: true, dryRun: true, envelope: { hostSlug: 'ifeel160222' } }) + '\\n');
+`, 'utf8');
+
+  return { root, repo, vault, installed, metadata, credentialWrapper, mainRevision };
 }
 
 function runPreflight(paths, extraArgs = [], env = {}) {
@@ -120,6 +127,23 @@ test('host readiness separates local provisioning readiness from credential prov
   assert.equal(output.gates.readyForAuthenticatedCheckin, false);
   assert.ok(output.warnings.includes('MANAGEMENT_HOST_SLUG_NOT_CONFIGURED'));
   assert.ok(output.warnings.includes('SERVICE_IDENTITY_CREDENTIALS_NOT_PROVISIONED'));
+});
+
+test('host readiness validates an approved local credential wrapper without environment secrets', async (t) => {
+  const paths = await fixture(t);
+  const result = runPreflight(paths, ['--expected-host', 'ifeel160222', '--credential-wrapper', paths.credentialWrapper], {
+    IFEEL_MANAGEMENT_HOST_SLUG: '',
+    IFEEL_MANAGEMENT_SITE_TOKEN: '',
+    IFEEL_MANAGEMENT_RUN_TOKEN: '',
+  });
+
+  assert.equal(result.status, 0, result.stderr);
+  const output = JSON.parse(result.stdout);
+  assert.equal(output.gates.readyForAuthenticatedCheckin, true);
+  assert.equal(output.credentials.source, 'credential_wrapper');
+  assert.equal(output.credentials.credentialWrapperValid, true);
+  assert.equal(output.workstation.hostSlugMatchesExpected, true);
+  assert.equal(result.stdout.includes(paths.root), false);
 });
 
 test('host readiness blocks work directly on main', async (t) => {

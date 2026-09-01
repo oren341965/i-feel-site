@@ -25,6 +25,8 @@ Use `scripts/report-host-checkin.mjs` after a bounded local workstation audit or
 
 Before provisioning a service identity or sending an authenticated Host check-in, run `scripts/audit-host-readiness.mjs`. The preflight is read-only and separates local workstation readiness from credential readiness. It verifies the safe work branch, `origin/main` ancestry, clean worktree, GitHub/Vault/installed Skill registration and local installation metadata without creating credentials or changing permissions.
 
+When the approved credential is stored behind the local DPAPI wrapper, pass that wrapper with `--credential-wrapper`. The audit uses its network-free `--dry-run` path to verify credential availability and Host binding without reading or printing the secret payload itself.
+
 ```text
 node .claude/skills/management-system-telemetry/scripts/audit-host-readiness.mjs --repo <repo> --vault <vault> --installed-skills <skills-dir> --expected-computer IFEEL160222
 ```
