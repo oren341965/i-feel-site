@@ -28,7 +28,10 @@ if ($result.schemaVersion -ne 1 -or $result.type -ne 'MAYA_COMMISSIONING_RESULT'
     claudeRequired = $result.payload.claudeRequired
     skillsVerified = @($result.payload.skills | Where-Object { $_.hashMatch }).Count
     skillsExpected = @($result.payload.skills).Count
+    taskContractsVerified = @($result.payload.taskContracts | Where-Object { $_.hashMatch }).Count
+    taskContractsExpected = @($result.payload.taskContracts).Count
     schedulersActivated = $result.payload.schedulersActivated
+    windowsEmailTask = $result.payload.windowsEmailTask
     runtimeLocks = $result.payload.runtimeLocks
     nextGate = $result.payload.nextGate
     managementHostSlug = $result.payload.managementHostSlug

@@ -131,6 +131,7 @@ $codexRoot = Join-Path $user '.codex'
 $backupRoot = Join-Path $user ".ifeel-agent-backups\$(Get-Date -Format 'yyyyMMdd-HHmmss')-maya-commissioning"
 $stagedTasksRoot = Join-Path $runtime 'staged-scheduled-tasks'
 $runtimeConfigRoot = Join-Path $runtime 'config'
+$configPath = Join-Path $runtimeConfigRoot 'config.json'
 $emailRuntime = Join-Path $user 'ifeel-maya-gmail'
 $installPerformed = $false
 
@@ -210,7 +211,6 @@ if (-not $VerifyOnly) {
         Copy-Item -LiteralPath (Join-Path $bundle 'payload\email-review\draft_writer.py') -Destination $writerTarget -Force
     }
 
-    $configPath = Join-Path $runtimeConfigRoot 'config.json'
     $template = Get-Content -LiteralPath (Join-Path $bundle 'payload\runtime\maya-config.example.json') -Raw -Encoding UTF8 | ConvertFrom-Json
     $config = if (Test-Path -LiteralPath $configPath -PathType Leaf) {
         $configBackup = Join-Path $backupRoot 'runtime\config.json'
@@ -286,6 +286,33 @@ $taskContractHashes = foreach ($contract in @('bus-message.schema.json', 'maya-t
 }
 $allTaskContractsVerified = @($taskContractHashes | Where-Object { -not $_.hashMatch }).Count -eq 0
 $lockCount = @(Get-ChildItem -LiteralPath $runtime -Filter '*.lock' -File -Recurse -ErrorAction SilentlyContinue).Count
+$managementSecretPath = Join-Path ([Environment]::GetFolderPath('LocalApplicationData')) 'I Feel\Management System\telemetry-secrets.dpapi'
+$managementWrapperPath = Join-Path ([Environment]::GetFolderPath('LocalApplicationData')) 'I Feel\Management System\invoke-telemetry.ps1'
+$managementCredentialsProvisioned = $false
+if ((Test-Path -LiteralPath $managementSecretPath -PathType Leaf) -and
+    (Test-Path -LiteralPath $managementWrapperPath -PathType Leaf) -and
+    (Test-Path -LiteralPath $configPath -PathType Leaf)) {
+    try {
+        $verifiedConfig = Get-Content -LiteralPath $configPath -Raw -Encoding UTF8 | ConvertFrom-Json
+        if ($verifiedConfig.managementSystem.hostSlug -eq 'maya-front-office' -and
+            $verifiedConfig.managementSystem.credentialsProvisioned -eq $true) {
+            $probeJson = & $managementWrapperPath `
+                --capability maya-email-maintenance `
+                --run-key maya-commissioning-credential-probe `
+                --mode read_only `
+                --status succeeded `
+                --started-at 2000-01-01T00:00:00.000Z `
+                --finished-at 2000-01-01T00:00:00.000Z `
+                --dry-run
+            if ($LASTEXITCODE -eq 0) {
+                $probe = $probeJson | ConvertFrom-Json
+                $managementCredentialsProvisioned = $probe.dryRun -eq $true -and
+                    $probe.envelope.hostSlug -eq 'maya-front-office'
+            }
+        }
+    }
+    catch { $managementCredentialsProvisioned = $false }
+}
 $windowsEmailTask = 'NOT_FOUND'
 try {
     $task = Get-ScheduledTask -TaskName 'iFeel Maya Email Maintenance' -ErrorAction Stop
@@ -314,7 +341,7 @@ $result = [ordered]@{
         windowsEmailTask = $windowsEmailTask
         runtimeLocks = $lockCount
         managementHostSlug = 'maya-front-office'
-        managementCredentialsProvisioned = $false
+        managementCredentialsProvisioned = $managementCredentialsProvisioned
         nextGate = 'CODEX_BROWSER_IDENTITY_AND_MANAGEMENT_SMOKE'
         taskProtocol = 'MAYA_SALES_TASK_V2'
         externalSends = 0
