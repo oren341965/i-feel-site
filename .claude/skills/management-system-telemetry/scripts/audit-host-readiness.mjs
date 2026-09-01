@@ -48,6 +48,22 @@ function normalizedComputerName(value) {
   return String(value ?? '').trim().toUpperCase();
 }
 
+function parseJsonOutput(stdout) {
+  const trimmed = String(stdout ?? '').trim();
+  if (!trimmed) return null;
+  try {
+    return JSON.parse(trimmed);
+  } catch {
+    const jsonLine = trimmed.split(/\r?\n/u).reverse().find((line) => line.trim().startsWith('{'));
+    if (!jsonLine) return null;
+    try {
+      return JSON.parse(jsonLine);
+    } catch {
+      return null;
+    }
+  }
+}
+
 function probeCredentialWrapper(path) {
   const wrapperPath = resolve(path);
   if (!existsSync(wrapperPath)) return { requested: true, valid: false, hostSlug: null };
@@ -61,19 +77,23 @@ function probeCredentialWrapper(path) {
     '--dry-run',
   ];
   const extension = extname(wrapperPath).toLowerCase();
-  const command = extension === '.mjs' || extension === '.js' ? process.execPath : 'powershell.exe';
-  const commandArgs = command === process.execPath
-    ? [wrapperPath, ...probeArgs]
-    : ['-NoProfile', '-ExecutionPolicy', 'Bypass', '-File', wrapperPath, ...probeArgs];
-  const result = spawnSync(command, commandArgs, { encoding: 'utf8', env: process.env });
-  if (result.status !== 0) return { requested: true, valid: false, hostSlug: null };
-  try {
-    const output = JSON.parse(result.stdout);
+  const commands = extension === '.mjs' || extension === '.js'
+    ? [{ command: process.execPath, args: [wrapperPath, ...probeArgs] }]
+    : ['pwsh.exe', 'powershell.exe'].map((command) => ({
+      command,
+      args: ['-NoProfile', '-ExecutionPolicy', 'Bypass', '-File', wrapperPath, ...probeArgs],
+    }));
+
+  for (const candidate of commands) {
+    const result = spawnSync(candidate.command, candidate.args, { encoding: 'utf8', env: process.env });
+    if (result.status !== 0) continue;
+    const output = parseJsonOutput(result.stdout);
     const hostSlug = typeof output?.envelope?.hostSlug === 'string' ? output.envelope.hostSlug.trim() : '';
-    return { requested: true, valid: output?.dryRun === true && HOST_SLUG.test(hostSlug), hostSlug: HOST_SLUG.test(hostSlug) ? hostSlug : null };
-  } catch {
-    return { requested: true, valid: false, hostSlug: null };
+    if (output?.dryRun === true && HOST_SLUG.test(hostSlug)) {
+      return { requested: true, valid: true, hostSlug };
+    }
   }
+  return { requested: true, valid: false, hostSlug: null };
 }
 
 async function readInstallationMetadata(path) {
