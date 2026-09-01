@@ -131,6 +131,9 @@ $launcherPath = Join-Path $RuntimeRoot 'jobs\run-morning-dry-run.ps1'
 if ($PSCmdlet.ShouldProcess($launcherPath, 'Install local dry-run launcher')) {
     Copy-Item -LiteralPath $launcherTemplate -Destination $launcherPath -Force
 }
+$localDataRoot = [Environment]::GetFolderPath('LocalApplicationData')
+$telemetryCommandPath = Join-Path $localDataRoot 'I Feel\Management System\invoke-telemetry.ps1'
+$telemetryReady = Test-Path -LiteralPath $telemetryCommandPath -PathType Leaf
 $runtimeDocument = Join-Path $RuntimeRoot 'IFEEL_AI_SALES_MANAGER_INSTALL.md'
 if ((-not (Test-Path -LiteralPath $runtimeDocument -PathType Leaf)) -and
     $PSCmdlet.ShouldProcess($runtimeDocument, 'Install local specification copy')) {
@@ -148,6 +151,7 @@ $report = [ordered]@{
     skills_discovered = @($config.availableSkills)
     monday_snapshot_file = $config.connections.monday.snapshotFile
     monday_live_verified = $config.connections.monday.liveVerified
+    management_telemetry = if ($telemetryReady) { 'READY_DPAPI' } else { 'MISSING' }
     task_scheduler_installed = $false
     external_actions_performed = $false
     monday_writes_performed = $false
@@ -161,5 +165,6 @@ if ($PSCmdlet.ShouldProcess($reportPath, 'Write non-secret installation status')
 
 Write-Host "Oren AI Sales runtime is installed at $RuntimeRoot"
 Write-Host "Mode: maturity 0 / DRY_RUN"
+Write-Host "I FEEL MANAGEMENT telemetry: $(if ($telemetryReady) { 'READY_DPAPI' } else { 'MISSING' })"
 Write-Host "No Task Scheduler job or external write was installed."
 Write-Host "Run: & '$launcherPath'"
