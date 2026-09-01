@@ -145,6 +145,9 @@ $targets = @(
     "$base/robots.txt",
     "$base/llms.txt",
     "$base/customer-benefits/",
+    "$base/as-made/",
+    "$base/as-made/siemens-24/",
+    "$base/as-made/files/AS-MADE_siemens-24.xlsx",
     "$base/mt-law/",
     "$base/mt-law/gate.php",
     "$base/mt-law/product-image.php",
@@ -155,6 +158,28 @@ $targets = @(
 Start-Sleep -Seconds 5
 foreach ($url in $targets) {
     Invoke-LiveRequest -Url $url -OutputPath "NUL" | Out-Null
+}
+
+$asMadePath = Join-Path $env:TEMP ("ifeel-as-made-" + [guid]::NewGuid().ToString("N") + ".html")
+$asMadeControllerPath = Join-Path $env:TEMP ("ifeel-as-made-controller-" + [guid]::NewGuid().ToString("N") + ".html")
+try {
+    Invoke-LiveRequest -Url "$base/as-made/" -OutputPath $asMadePath | Out-Null
+    $asMadeBody = Get-Content -Raw -LiteralPath $asMadePath
+    if ($asMadeBody.IndexOf('AS-MADE', [StringComparison]::OrdinalIgnoreCase) -lt 0) {
+        throw "as-made-missing-marker=AS-MADE url=$base/as-made/"
+    }
+
+    Invoke-LiveRequest -Url "$base/as-made/siemens-24/" -OutputPath $asMadeControllerPath | Out-Null
+    $asMadeControllerBody = Get-Content -Raw -LiteralPath $asMadeControllerPath
+    if ($asMadeControllerBody.IndexOf('5WG1568-1AB81', [StringComparison]::OrdinalIgnoreCase) -lt 0 -and
+        $asMadeControllerBody.IndexOf('N 568/81', [StringComparison]::OrdinalIgnoreCase) -lt 0) {
+        throw "as-made-controller-marker-missing url=$base/as-made/siemens-24/"
+    }
+    Write-Host "OK AS-MADE main page, Siemens 24 form and Excel download"
+}
+finally {
+    Remove-Item -LiteralPath $asMadePath -Force -ErrorAction SilentlyContinue
+    Remove-Item -LiteralPath $asMadeControllerPath -Force -ErrorAction SilentlyContinue
 }
 
 $gateBodyPath = Join-Path $env:TEMP ("ifeel-mt-law-gate-" + [guid]::NewGuid().ToString("N") + ".html")
