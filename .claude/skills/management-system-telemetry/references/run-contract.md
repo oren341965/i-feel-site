@@ -40,6 +40,12 @@ Never retry an underlying external mutation because telemetry failed. Retrying o
 
 The production control plane may take up to 60 seconds to acknowledge a report. Worker-owned snapshot adapters must use the same service identity and stable run key as the capability run, accept only reconciled aggregates, and never forward customer-level evidence.
 
+## Delivery-note control snapshot
+
+The registered `upload-delivery-notes-to-dropbox` worker reports one terminal aggregate snapshot with `scripts/report-delivery-note-control.mjs`. Reuse the capability `run_key` as `--snapshot-key` so retries are idempotent. Required fields are terminal status, source window, capture time and a short aggregate source-coverage label. Optional range bounds must be supplied together.
+
+Allowed counters are series observed, documents observed/filed/uploaded, duplicates, open/new/closed sequence gaps, incomplete documents, unresolved exceptions and notifications. Never include document numbers beyond the aggregate range bounds, customer/project identifiers, names, paths, recipient identities, source IDs, message contents or attachment data. A snapshot failure is a telemetry gap and never authorizes repeating Dropbox or messaging mutations.
+
 ## Host check-ins
 
 `scripts/report-host-checkin.mjs` uses the same three environment variables and authentication layers. Its required arguments are `--checkin-key`, `--health`, `--source-mode`, `--observed-at`, `--installed-skills` and `--vault-status`; `--app-version` and `--evidence-ref` are optional and sanitized.

@@ -9,6 +9,7 @@ import test from 'node:test';
 const REPO = resolve(import.meta.dirname, '..');
 const SCRIPT = resolve(REPO, '.claude/skills/management-system-telemetry/scripts/report-capability-run.mjs');
 const HOST_SCRIPT = resolve(REPO, '.claude/skills/management-system-telemetry/scripts/report-host-checkin.mjs');
+const DELIVERY_NOTE_SCRIPT = resolve(REPO, '.claude/skills/management-system-telemetry/scripts/report-delivery-note-control.mjs');
 const SALES_AUDIT_SCRIPT = resolve(REPO, '.claude/skills/ai-sales-manager/scripts/report-sales-audit.mjs');
 const SOURCE_SYNC_SCRIPT = resolve(REPO, '.claude/skills/management-system-telemetry/scripts/audit-source-sync.mjs');
 const BASE_ARGS = [
@@ -32,6 +33,22 @@ const HOST_ARGS = [
   '--app-version', '18d948a',
   '--evidence-ref', 'host_audit:test',
 ];
+
+test('delivery-note control reporter emits aggregate-only bounded evidence', () => {
+  const result = spawnSync(process.execPath, [DELIVERY_NOTE_SCRIPT,
+    '--snapshot-key', 'delivery-notes-20260901', '--status', 'succeeded',
+    '--window-start', '2026-08-01T00:00:00.000Z', '--window-end', '2026-09-01T05:00:00.000Z', '--captured-at', '2026-09-01T05:02:00.000Z',
+    '--source-coverage', 'whatsapp,gmail,dropbox', '--range-start', '90000', '--range-end', '91234',
+    '--series-count', '1', '--observed-count', '42', '--filed-count', '36', '--open-gap-count', '3', '--closed-gap-count', '2', '--dry-run',
+  ], { encoding: 'utf8' });
+  assert.equal(result.status, 0, result.stderr);
+  const output = JSON.parse(result.stdout);
+  assert.equal(output.envelope.snapshotKey, 'delivery-notes-20260901');
+  assert.equal(output.envelope.openGapCount, 3);
+  assert.equal(output.envelope.rangeStart, 90000);
+  assert.equal(JSON.stringify(output).includes('customer'), false);
+  assert.equal(JSON.stringify(output).includes('documentNumber'), false);
+});
 
 const SALES_ANALYSIS = {
   boardId: '2732725332',

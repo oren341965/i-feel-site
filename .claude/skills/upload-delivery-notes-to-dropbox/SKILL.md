@@ -16,6 +16,7 @@ Act as the delivery-note worker owned by `ai-operations-manager`. Read bounded s
 - Use the normalized contract in [references/delivery-note-envelope.schema.json](references/delivery-note-envelope.schema.json) when preparing a deterministic plan.
 - Treat connector identity as live state. Verify it at the start of every live run; never infer that an account is connected because it exists on the computer.
 - This is an approved recurring daily workflow. Routine canonical child-folder creation, routine no-overwrite upload, and the defined completion update to Oren and Ora do not require per-file approval from Oren. This authorization is narrow and belongs only to this worker.
+- When the I FEEL Management System service identity is configured, use `management-system-telemetry` with capability slug `upload-delivery-notes-to-dropbox`. Report the run lifecycle and one terminal aggregate delivery-note-control snapshot using the same stable run key. Telemetry never expands this worker's permissions and must not contain customer, document, message, recipient, attachment, or Dropbox-path data.
 
 ## Delivery-note workflow
 
