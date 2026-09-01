@@ -10,6 +10,7 @@ on:
       - main
     paths-ignore:
       - '.claude/**'
+      - 'agent-config/**'
       - 'tests/**'
       - 'scripts/workstations/**'
       - '.github/workflows/deploy.yml'
