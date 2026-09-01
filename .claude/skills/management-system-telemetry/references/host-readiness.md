@@ -19,6 +19,8 @@ Optional identity pins:
 - `--credential-wrapper`: approved local wrapper such as `invoke-telemetry.ps1`. The preflight invokes it only with `--dry-run`, validates the sanitized Host slug and never sends telemetry or prints credentials.
 - `--metadata`: alternate installation metadata path for testing. Production normally uses `~/.ifeel-agent-config.json`.
 
+For PowerShell wrappers, the preflight prefers PowerShell Core (`pwsh.exe`) and falls back to Windows PowerShell only when needed. This keeps DPAPI validation compatible with Codex's bundled runtime while preserving the network-free dry-run boundary.
+
 ## Gates
 
 `readyForProvisioning` requires all of the following:
