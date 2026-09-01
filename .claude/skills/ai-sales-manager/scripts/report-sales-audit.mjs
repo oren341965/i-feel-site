@@ -115,8 +115,15 @@ function buildEnvelope(args, analysis) {
   const exceptionCount = integer(counts.exceptionLeads, 'counts.exceptionLeads');
   const healthyCount = integer(counts.healthy, 'counts.healthy');
   const uniqueItemCount = integer(analysis.source.uniqueIds, 'source.uniqueIds');
+  const eligibility = analysis.salesEligibility;
+  if (!eligibility || typeof eligibility !== 'object') fail('Analysis salesEligibility is missing');
+  const treatmentOpenCount = integer(eligibility.eligibleOpen, 'salesEligibility.eligibleOpen');
+  const treatmentExceptionCount = integer(eligibility.eligibleExceptions, 'salesEligibility.eligibleExceptions');
+  const treatmentHealthyCount = integer(eligibility.eligibleHealthy, 'salesEligibility.eligibleHealthy');
+  const excludedOpenCount = integer(eligibility.excludedOpen, 'salesEligibility.excludedOpen');
   if (openCount + closedCount + cancelledCount !== totalCount || exceptionCount + healthyCount !== openCount
-    || uniqueItemCount !== totalCount) fail('Analysis aggregate counts do not reconcile');
+    || uniqueItemCount !== totalCount || treatmentOpenCount + excludedOpenCount !== openCount
+    || treatmentExceptionCount + treatmentHealthyCount !== treatmentOpenCount) fail('Analysis aggregate counts do not reconcile');
 
   return {
     auditKey: requiredKey(args, 'audit-key'),
@@ -142,6 +149,18 @@ function buildEnvelope(args, analysis) {
     inactiveCount: integer(counts.inactive, 'counts.inactive'),
     staleCount: integer(counts.stale, 'counts.stale'),
     healthyCount,
+    treatmentOpenCount,
+    treatmentExceptionCount,
+    treatmentHealthyCount,
+    treatmentNoOwnerCount: integer(eligibility.eligibleNoOwner, 'salesEligibility.eligibleNoOwner'),
+    treatmentNoNextActionCount: integer(eligibility.eligibleNoNextAction, 'salesEligibility.eligibleNoNextAction'),
+    treatmentOverdueCount: integer(eligibility.eligibleOverdue, 'salesEligibility.eligibleOverdue'),
+    treatmentInactiveCount: integer(eligibility.eligibleInactive, 'salesEligibility.eligibleInactive'),
+    treatmentStaleCount: integer(eligibility.eligibleStale, 'salesEligibility.eligibleStale'),
+    excludedOpenCount,
+    excludedLeftSalesCount: integer(eligibility.reasons?.leftSalesOwnership, 'salesEligibility.reasons.leftSalesOwnership'),
+    excludedFutureCount: integer(eligibility.reasons?.futureFollowup, 'salesEligibility.reasons.futureFollowup'),
+    excludedHandledCount: integer(eligibility.reasons?.handledNoNewEvidence, 'salesEligibility.reasons.handledNoNewEvidence'),
     newLast7Days: integer(counts.newLast7Days, 'counts.newLast7Days'),
     newLast30Days: integer(counts.newLast30Days, 'counts.newLast30Days'),
     statusCoverage: basisPoints(analysis.coverage?.status, 'status'),
