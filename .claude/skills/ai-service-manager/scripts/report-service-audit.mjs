@@ -13,7 +13,11 @@ const COUNT_KEYS = [
   'overdueVisit', 'noOwner', 'missingTechnician', 'inactive', 'waitingCustomer', 'internalBottleneck',
   'repeatVisit', 'missingSummary', 'paymentFollowUp', 'healthy',
 ];
-const COVERAGE_KEYS = ['status', 'owner', 'createdAt', 'lastUpdated', 'category', 'technician', 'visitDate', 'ftr', 'summary', 'survey'];
+const COVERAGE_FIELDS = [
+  ['status', 'status'], ['owner', 'owner'], ['createdAt', 'createdAt'], ['lastUpdated', 'lastUpdated'], ['category', 'category'],
+  ['technician', 'technicianOnRelevantCases'], ['visitDate', 'visitDateOnRelevantCases'],
+  ['ftr', 'ftrOnCompletedVisits'], ['summary', 'summaryOnCompletedVisits'], ['survey', 'surveyOnResolvedCases'],
+];
 
 function usage() {
   return `Usage: report-service-audit.mjs --analysis <file> --audit-key <key> --run-key <key> --expected-main-count <n> --fetched-main-count <n> --fetched-subitem-count <n> --page-count <n> --source-updated-at <iso> [--dry-run]\n\nThe input must be a complete live analyze-service.mjs result. Only reconciled aggregates are sent; operational rows and identifying details are excluded.`;
@@ -127,7 +131,7 @@ function buildEnvelope(args, analysis) {
     missingTechnicianCount: counts.missingTechnician, inactiveCount: counts.inactive, waitingCustomerCount: counts.waitingCustomer,
     internalBottleneckCount: counts.internalBottleneck, repeatVisitCount: counts.repeatVisit,
     missingSummaryCount: counts.missingSummary, paymentFollowUpCount: counts.paymentFollowUp, healthyCount: counts.healthy,
-    coverage: Object.fromEntries(COVERAGE_KEYS.map((key) => [key, percentage(analysis.coverage?.[key], key)])),
+    coverage: Object.fromEntries(COVERAGE_FIELDS.map(([wireKey, analysisKey]) => [wireKey, percentage(analysis.coverage?.[analysisKey], analysisKey)])),
     ftr: { completedVisits, yes, no, unknown, knownSample, rate: ftr.rate },
     sourceUpdatedAt: timestamp(args, 'source-updated-at'), capturedAt: new Date(analysis.generatedAt).toISOString(),
   };
