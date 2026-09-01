@@ -73,7 +73,10 @@
       "readOnly": true,
       "apiVersion": null,
       "adAccountId": null,
-      "accessCredentialFile": null
+      "accessCredentialFile": null,
+      "leadFormsReadOnly": false,
+      "pageId": null,
+      "leadWindowDays": 30
     },
     "attribution": {
       "connected": false,

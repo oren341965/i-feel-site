@@ -88,8 +88,54 @@ test('Meta collector uses only GET allowlisted reporting paths and keeps credent
   assert.equal(result.adSets.length, 1);
   assert.equal(result.ads.length, 1);
   assert.equal(result.leadData.status, 'CONNECTION_MISSING');
+  assert.equal(result.leadData.reason, 'LEAD_FORM_READ_NOT_ENABLED');
   assert.equal(result.safety.platformWrites, 0);
   assert.equal(calls.length, 5);
+});
+
+test('Meta lead-form read verifies the page and returns only aggregate lead evidence', async (t) => {
+  const { configPath } = await fixture(t, {
+    leadFormsReadOnly: true,
+    pageId: '555',
+    leadWindowDays: 30,
+  });
+  const calls = [];
+  const fetchImpl = async (url, options) => {
+    calls.push(String(url));
+    assert.equal(options.method, 'GET');
+    const path = new URL(url).pathname.replace('/v99.0', '');
+    assertMetaReadOnlyPath(path);
+    if (path === '/me/adaccounts') return response({ data: [{ id: 'act_123456789' }] });
+    if (path === '/me/accounts') return response({ data: [{ id: '555', name: 'Synthetic Page' }] });
+    if (path === '/555/leadgen_forms') return response({ data: [{ id: '777', status: 'ACTIVE' }] });
+    if (path === '/777/leads') {
+      const fields = new URL(url).searchParams.get('fields');
+      assert.equal(fields, 'id,created_time');
+      assert.equal(String(url).includes('field_data'), false);
+      return response({ data: [
+        { id: '1', created_time: '2026-08-20T10:00:00+0000', field_data: [{ name: 'must_not_escape' }] },
+        { id: '2', created_time: '2026-06-01T10:00:00+0000' },
+      ] });
+    }
+    return response({ data: [] });
+  };
+  const result = await collectMetaAdsReadOnly({
+    configPath,
+    fetchImpl,
+    now: new Date('2026-08-21T10:00:00.000Z'),
+  });
+  assert.deepEqual(result.leadData, {
+    status: 'CONNECTED_READ_ONLY',
+    pageVerified: true,
+    formCount: 1,
+    formsQueried: 1,
+    windowDays: 30,
+    leadsInWindow: 1,
+    newestLeadAt: '2026-08-20T10:00:00.000Z',
+    personalFieldsRead: 0,
+  });
+  assert.equal(JSON.stringify(result).includes('must_not_escape'), false);
+  assert.equal(calls.length, 8);
 });
 
 test('Meta collector paginates by cursor without following credential-bearing next URLs', async (t) => {
@@ -117,10 +163,30 @@ test('Meta collector paginates by cursor without following credential-bearing ne
   assert.equal(result.connection.accessible, true);
 });
 
+test('Meta lead-form failures identify the read-only stage without exposing credential details', async (t) => {
+  const { configPath } = await fixture(t, { leadFormsReadOnly: true, pageId: '555' });
+  const fetchImpl = async (url) => {
+    const path = new URL(url).pathname.replace('/v99.0', '');
+    if (path === '/me/adaccounts') return response({ data: [{ id: 'act_123456789' }] });
+    if (path === '/me/accounts') return response({ error: { message: 'sensitive provider detail' } }, 403);
+    return response({ data: [] });
+  };
+  const result = await collectMetaAdsReadOnly({ configPath, fetchImpl });
+  assert.deepEqual(result.leadData, {
+    status: 'CONNECTION_MISSING',
+    reason: 'PAGE_ACCESS_FAILED_OR_PERMISSION_MISSING',
+    httpStatus: 403,
+  });
+  assert.equal(JSON.stringify(result).includes('sensitive provider detail'), false);
+});
+
 test('Meta connector fails closed on missing version, wrong account format, and mutation paths', async (t) => {
   assert.doesNotThrow(() => assertMetaReadOnlyPath('/act_123/campaigns'));
+  assert.doesNotThrow(() => assertMetaReadOnlyPath('/123/leadgen_forms'));
+  assert.doesNotThrow(() => assertMetaReadOnlyPath('/456/leads'));
   assert.throws(() => assertMetaReadOnlyPath('/act_wrong/campaigns'), /allowlist/i);
   assert.throws(() => assertMetaReadOnlyPath('/act_123/campaigns/delete'), /allowlist/i);
+  assert.throws(() => assertMetaReadOnlyPath('/456/leads/delete'), /allowlist/i);
 
   const { configPath } = await fixture(t, { apiVersion: null });
   await assert.rejects(() => collectMetaAdsReadOnly({
