@@ -8,6 +8,7 @@
     "role": "maya-agent",
     "machineRole": "maya-front-office",
     "machineId": null,
+    "primaryEngine": "codex",
     "serviceIdentityVerified": false,
     "serviceIdentityId": null
   },
@@ -16,9 +17,20 @@
     "vaultNotesDirectory": "Skills",
     "required": [
       "maya-whatsapp",
-      "maya-email-maintenance"
+      "maya-email-maintenance",
+      "management-system-telemetry"
     ],
     "installationStatus": "CONNECTION_MISSING"
+  },
+  "managementSystem": {
+    "hostSlug": "maya-front-office",
+    "telemetrySkill": "management-system-telemetry",
+    "credentialsStorage": "DPAPI_LOCAL_ONLY",
+    "credentialsProvisioned": false,
+    "capabilitySlugs": [
+      "maya-email-maintenance",
+      "maya-whatsapp"
+    ]
   },
   "automation": {
     "mode": "REPORT_ONLY",
