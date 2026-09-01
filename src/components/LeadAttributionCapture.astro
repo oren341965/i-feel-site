@@ -31,20 +31,93 @@
       values[key] = stored;
     });
 
+    function firstSessionValue(storageKey, current, maxLength) {
+      var stored = '';
+      try { stored = sessionStorage.getItem(storageKey) || ''; } catch (error) {}
+      if (!stored && current) {
+        stored = String(current).trim().slice(0, maxLength);
+        if (stored) {
+          try { sessionStorage.setItem(storageKey, stored); } catch (error) {}
+        }
+      }
+      return stored;
+    }
+
+    var firstReferrer = firstSessionValue('ifeel_first_referrer', document.referrer || '', 500);
+    var entryPage = firstSessionValue(
+      'ifeel_entry_page',
+      window.location.pathname + window.location.search,
+      500
+    );
+
+    function setHiddenValue(form, name, value) {
+      if (!value) return;
+      var input = form.querySelector('input[name="' + name + '"]');
+      if (!input) {
+        input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = name;
+        form.appendChild(input);
+      }
+      input.value = value;
+    }
+
+    function createQualificationFields(form) {
+      var city = form.querySelector('[name="city"]');
+      var heardFrom = form.querySelector('[name="heard_from"]');
+
+      if (city) city.required = true;
+      if (heardFrom) heardFrom.required = true;
+      if (city && heardFrom) return;
+
+      var wrapper = form.querySelector('[data-ifeel-lead-qualification]');
+      if (!wrapper) {
+        wrapper = document.createElement('div');
+        wrapper.setAttribute('data-ifeel-lead-qualification', 'true');
+        wrapper.className = 'grid md:grid-cols-2 gap-4';
+
+        var submit = form.querySelector('button[type="submit"], input[type="submit"]');
+        if (submit && submit.parentNode === form) {
+          form.insertBefore(wrapper, submit);
+        } else {
+          form.appendChild(wrapper);
+        }
+      }
+
+      if (!city) {
+        var cityLabel = document.createElement('label');
+        cityLabel.className = 'block';
+        cityLabel.innerHTML = '<span class="block text-sm font-bold text-brand-900 mb-1">עיר / יישוב בישראל <span class="text-accent-600">*</span></span>' +
+          '<input required name="city" type="text" autocomplete="address-level2" class="w-full rounded-lg border border-brand-200 px-4 py-3 text-brand-900 focus:border-accent-500 focus:ring-2 focus:ring-accent-500/20" placeholder="לדוגמה: ראשון לציון">';
+        wrapper.appendChild(cityLabel);
+      }
+
+      if (!heardFrom) {
+        var sourceLabel = document.createElement('label');
+        sourceLabel.className = 'block';
+        sourceLabel.innerHTML = '<span class="block text-sm font-bold text-brand-900 mb-1">איך שמעתם עלינו? <span class="text-accent-600">*</span></span>' +
+          '<select required name="heard_from" class="w-full rounded-lg border border-brand-200 px-4 py-3 text-brand-900 focus:border-accent-500 focus:ring-2 focus:ring-accent-500/20">' +
+          '<option value="">בחרו מקור</option>' +
+          '<option value="Google">Google</option>' +
+          '<option value="Facebook / Instagram">Facebook / Instagram</option>' +
+          '<option value="המלצה מלקוח">המלצה מלקוח</option>' +
+          '<option value="אדריכל / מעצב">אדריכל / מעצב</option>' +
+          '<option value="קבלן / חשמלאי / מפקח">קבלן / חשמלאי / מפקח</option>' +
+          '<option value="YouTube">YouTube</option>' +
+          '<option value="כבר לקוח של i-feel">כבר לקוח של i-feel</option>' +
+          '<option value="אחר">אחר</option>' +
+          '</select>';
+        wrapper.appendChild(sourceLabel);
+      }
+    }
+
     function fillLeadForm(form) {
       attributionKeys.forEach(function (key) {
-        var value = values[key];
-        if (!value) return;
-
-        var input = form.querySelector('input[name="' + key + '"]');
-        if (!input) {
-          input = document.createElement('input');
-          input.type = 'hidden';
-          input.name = key;
-          form.appendChild(input);
-        }
-        input.value = value;
+        setHiddenValue(form, key, values[key]);
       });
+      setHiddenValue(form, 'first_referrer', firstReferrer);
+      setHiddenValue(form, 'entry_page', entryPage);
+      createQualificationFields(form);
     }
 
     function fillAllLeadForms() {
@@ -62,6 +135,10 @@
       var form = event.target;
       if (form && form.matches && form.matches('form[action="/api/lead.php"]')) {
         fillLeadForm(form);
+        if (!form.checkValidity()) {
+          event.preventDefault();
+          form.reportValidity();
+        }
       }
     }, true);
   })();
