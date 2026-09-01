@@ -1,7 +1,7 @@
 interface:
   display_name: "העלאת תעודות משלוח לדרופבוקס"
-  short_description: "ניתוב, בדיקה והעלאת תעודות משלוח"
-  default_prompt: "Use $upload-delivery-notes-to-dropbox to review and file new I Feel delivery notes in Dropbox."
+  short_description: "קליטה, ניתוב, השלמה ובקרת תעודות משלוח"
+  default_prompt: "Use $upload-delivery-notes-to-dropbox to collect, reconcile, route, file, verify, and follow up I Feel delivery notes under the AI Operations Manager contract."
 
 policy:
   allow_implicit_invocation: true
