@@ -43,7 +43,12 @@ const metaAds = async () => ({
   adSets: [{ id: '2' }],
   ads: [{ id: '3' }],
   insights: [{ spend: 50, clicks: 10 }],
-  leadData: { status: 'CONNECTION_MISSING' },
+  leadData: {
+    status: 'CONNECTION_MISSING',
+    reason: 'LEAD_FORM_LIST_FAILED_OR_PERMISSION_MISSING',
+    permissionSignalsVerified: true,
+    missingPermissionSignals: ['ads_management', 'pages_manage_ads'],
+  },
 });
 const attribution = async () => ({
   connection: { status: 'LOCAL_SNAPSHOT_READ_ONLY' },
@@ -76,6 +81,8 @@ test('preflight aggregates read-only sources and never exposes operational rows 
     assert.equal(result.safety.mayaActivated, false);
     assert.equal(JSON.stringify(result).includes('not-exposed-by-preflight'), false);
     assert.ok(result.blockers.includes('META_LEAD_FORMS_CONNECTION_MISSING'));
+    assert.equal(result.sources.metaAds.leadFormsReason, 'LEAD_FORM_LIST_FAILED_OR_PERMISSION_MISSING');
+    assert.deepEqual(result.sources.metaAds.missingLeadPermissionSignals, ['ads_management', 'pages_manage_ads']);
     assert.equal(result.capacity.status, 'CAPACITY_INPUT_MISSING');
     assert.equal(result.capacity.reasons.includes('ACTIVE_UNOWNED_LEADS_OVER_THRESHOLD'), false);
   } finally {

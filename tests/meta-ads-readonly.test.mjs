@@ -107,6 +107,13 @@ test('Meta lead-form read verifies the page and returns only aggregate lead evid
     assertMetaReadOnlyPath(path);
     if (path === '/me/adaccounts') return response({ data: [{ id: 'act_123456789' }] });
     if (path === '/me/accounts') return response({ data: [{ id: '555', name: 'Synthetic Page' }] });
+    if (path === '/me/permissions') return response({ data: [
+      { permission: 'ads_management', status: 'granted' },
+      { permission: 'leads_retrieval', status: 'granted' },
+      { permission: 'pages_manage_ads', status: 'granted' },
+      { permission: 'pages_read_engagement', status: 'granted' },
+      { permission: 'pages_show_list', status: 'granted' },
+    ] });
     if (path === '/555/leadgen_forms') return response({ data: [{ id: '777', status: 'ACTIVE' }] });
     if (path === '/777/leads') {
       const fields = new URL(url).searchParams.get('fields');
@@ -133,9 +140,11 @@ test('Meta lead-form read verifies the page and returns only aggregate lead evid
     leadsInWindow: 1,
     newestLeadAt: '2026-08-20T10:00:00.000Z',
     personalFieldsRead: 0,
+    permissionSignalsVerified: true,
+    missingPermissionSignals: [],
   });
   assert.equal(JSON.stringify(result).includes('must_not_escape'), false);
-  assert.equal(calls.length, 8);
+  assert.equal(calls.length, 9);
 });
 
 test('Meta collector paginates by cursor without following credential-bearing next URLs', async (t) => {
@@ -176,6 +185,8 @@ test('Meta lead-form failures identify the read-only stage without exposing cred
     status: 'CONNECTION_MISSING',
     reason: 'PAGE_ACCESS_FAILED_OR_PERMISSION_MISSING',
     httpStatus: 403,
+    permissionSignalsVerified: false,
+    missingPermissionSignals: [],
   });
   assert.equal(JSON.stringify(result).includes('sensitive provider detail'), false);
 });
@@ -184,6 +195,7 @@ test('Meta connector fails closed on missing version, wrong account format, and 
   assert.doesNotThrow(() => assertMetaReadOnlyPath('/act_123/campaigns'));
   assert.doesNotThrow(() => assertMetaReadOnlyPath('/123/leadgen_forms'));
   assert.doesNotThrow(() => assertMetaReadOnlyPath('/456/leads'));
+  assert.doesNotThrow(() => assertMetaReadOnlyPath('/me/permissions'));
   assert.throws(() => assertMetaReadOnlyPath('/act_wrong/campaigns'), /allowlist/i);
   assert.throws(() => assertMetaReadOnlyPath('/act_123/campaigns/delete'), /allowlist/i);
   assert.throws(() => assertMetaReadOnlyPath('/456/leads/delete'), /allowlist/i);

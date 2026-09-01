@@ -6,12 +6,20 @@ const META_GRAPH_ORIGIN = 'https://graph.facebook.com';
 const META_ALLOWED_PATHS = Object.freeze([
   /^\/me\/adaccounts$/,
   /^\/me\/accounts$/,
+  /^\/me\/permissions$/,
   /^\/act_\d+$/,
   /^\/act_\d+\/(?:insights|campaigns|adsets|ads)$/,
   /^\/\d+\/leadgen_forms$/,
   /^\/\d+\/leads$/,
 ]);
 const MAX_LEAD_FORMS = 50;
+const LEAD_PERMISSION_SIGNALS = Object.freeze([
+  'ads_management',
+  'leads_retrieval',
+  'pages_manage_ads',
+  'pages_read_engagement',
+  'pages_show_list',
+]);
 
 function parseArgs(argv) {
   let configPath = null;
@@ -130,6 +138,7 @@ async function collectLeadDataReadOnly({ runtime, requestBase, now }) {
   if (!runtime.leadFormsReadOnly) return missingLeadData('LEAD_FORM_READ_NOT_ENABLED');
   if (!runtime.pageId) return missingLeadData('PAGE_ID_NOT_CONFIGURED');
   let stage = 'PAGE_ACCESS';
+  let missingPermissionSignals = null;
   try {
     const pages = await metaList({
       ...requestBase,
@@ -138,6 +147,19 @@ async function collectLeadDataReadOnly({ runtime, requestBase, now }) {
     });
     if (!pages.some(({ id }) => String(id) === runtime.pageId)) {
       return missingLeadData('PAGE_NOT_ACCESSIBLE_WITH_CURRENT_CREDENTIAL');
+    }
+    try {
+      const permissions = await metaList({
+        ...requestBase,
+        path: '/me/permissions',
+        params: { fields: 'permission,status', limit: 200 },
+      });
+      const granted = new Set(permissions
+        .filter(({ status }) => status === 'granted')
+        .map(({ permission }) => String(permission ?? '')));
+      missingPermissionSignals = LEAD_PERMISSION_SIGNALS.filter((permission) => !granted.has(permission));
+    } catch {
+      missingPermissionSignals = null;
     }
     stage = 'LEAD_FORM_LIST';
     const forms = await metaList({
@@ -173,12 +195,16 @@ async function collectLeadDataReadOnly({ runtime, requestBase, now }) {
       leadsInWindow,
       newestLeadAt: newestLeadAt?.toISOString() ?? null,
       personalFieldsRead: 0,
+      permissionSignalsVerified: missingPermissionSignals !== null,
+      missingPermissionSignals: missingPermissionSignals ?? [],
     };
   } catch (error) {
     const httpStatus = String(error?.message ?? '').match(/HTTP (\d{3})/)?.[1] ?? null;
     return {
       ...missingLeadData(`${stage}_FAILED_OR_PERMISSION_MISSING`),
       ...(httpStatus ? { httpStatus: Number(httpStatus) } : {}),
+      permissionSignalsVerified: missingPermissionSignals !== null,
+      missingPermissionSignals: missingPermissionSignals ?? [],
     };
   }
 }
@@ -277,7 +303,7 @@ export async function collectMetaAdsReadOnly({ configPath, fetchImpl = fetch, no
     leadData,
     safety: {
       allowedHttpMethods: ['GET'],
-      allowedResources: ['adaccounts', 'insights', 'campaigns', 'adsets', 'ads', 'pages', 'leadgen_forms', 'leads_without_field_data'],
+      allowedResources: ['adaccounts', 'insights', 'campaigns', 'adsets', 'ads', 'pages', 'permission_status', 'leadgen_forms', 'leads_without_field_data'],
       mutationMethodsAvailable: false,
       platformWrites: 0,
       budgetChanges: 0,
