@@ -5,8 +5,11 @@ import { fileURLToPath } from 'node:url';
 const META_GRAPH_ORIGIN = 'https://graph.facebook.com';
 const META_ALLOWED_PATHS = Object.freeze([
   /^\/me\/adaccounts$/,
+  /^\/me\/accounts$/,
   /^\/act_\d+$/,
   /^\/act_\d+\/(?:insights|campaigns|adsets|ads)$/,
+  /^\/\d+\/leadgen_forms$/,
+  /^\/\d+\/leads$/,
 ]);
 
 function parseArgs(argv) {
@@ -26,6 +29,12 @@ function parseArgs(argv) {
 export function normalizeMetaAdAccountId(value) {
   const normalized = String(value ?? '').trim();
   if (!/^act_\d+$/.test(normalized)) throw new Error('Meta ad account ID must use the act_<digits> format');
+  return normalized;
+}
+
+export function normalizeMetaObjectId(value, label = 'Meta object ID') {
+  const normalized = String(value ?? '').trim();
+  if (!/^\d+$/.test(normalized)) throw new Error(`${label} must contain digits only`);
   return normalized;
 }
 
@@ -98,6 +107,114 @@ export async function loadMetaRuntimeConfig(configPath) {
     apiVersion: metaAds.apiVersion,
     adAccountId: normalizeMetaAdAccountId(metaAds.adAccountId),
     accessCredentialFile: resolve(metaAds.accessCredentialFile),
+    leadFormsReadOnly: metaAds.leadFormsReadOnly === true,
+    pageId: metaAds.pageId ? normalizeMetaObjectId(metaAds.pageId, 'Meta Page ID') : null,
+    leadWindowDays: Number.isInteger(metaAds.leadWindowDays)
+      && metaAds.leadWindowDays >= 1 && metaAds.leadWindowDays <= 365
+      ? metaAds.leadWindowDays
+      : 30,
+  };
+}
+
+function leadConnectionMissing(reason, details = {}) {
+  return {
+    status: 'CONNECTION_MISSING',
+    reason,
+    ...details,
+  };
+}
+
+async function collectMetaLeadFormsReadOnly({ runtime, requestBase, now }) {
+  if (!runtime.leadFormsReadOnly) {
+    return leadConnectionMissing('LEAD_FORM_AND_PAGE_PERMISSIONS_NOT_CONFIGURED');
+  }
+
+  let pages;
+  try {
+    pages = await metaList({
+      ...requestBase,
+      path: '/me/accounts',
+      params: { fields: 'id', limit: 200 },
+    });
+  } catch {
+    return leadConnectionMissing('PAGE_LIST_PERMISSION_NOT_VERIFIED');
+  }
+  const accessiblePages = pages
+    .map(({ id }) => {
+      try { return normalizeMetaObjectId(id, 'Accessible Meta Page ID'); } catch { return null; }
+    })
+    .filter(Boolean);
+  const pageId = runtime.pageId ?? (accessiblePages.length === 1 ? accessiblePages[0] : null);
+  if (!pageId) {
+    return leadConnectionMissing(
+      accessiblePages.length === 0 ? 'NO_ACCESSIBLE_META_PAGE' : 'META_PAGE_ID_REQUIRED',
+      { accessiblePageCount: accessiblePages.length },
+    );
+  }
+  if (!accessiblePages.includes(pageId)) {
+    return leadConnectionMissing('CONFIGURED_META_PAGE_NOT_ACCESSIBLE', {
+      accessiblePageCount: accessiblePages.length,
+    });
+  }
+
+  let forms;
+  try {
+    forms = await metaList({
+      ...requestBase,
+      path: `/${pageId}/leadgen_forms`,
+      params: { fields: 'id,status,created_time', limit: 500 },
+    });
+  } catch {
+    return leadConnectionMissing('LEAD_FORMS_PERMISSION_NOT_VERIFIED', {
+      accessiblePageCount: accessiblePages.length,
+    });
+  }
+
+  const since = new Date(now.getTime() - runtime.leadWindowDays * 86_400_000);
+  const leadRows = [];
+  try {
+    for (const form of forms) {
+      const formId = normalizeMetaObjectId(form.id, 'Meta Lead Form ID');
+      const rows = await metaList({
+        ...requestBase,
+        path: `/${formId}/leads`,
+        params: {
+          fields: 'id,created_time,form_id,platform',
+          filtering: JSON.stringify([{
+            field: 'time_created', operator: 'GREATER_THAN', value: Math.floor(since.getTime() / 1000),
+          }]),
+          limit: 500,
+        },
+      });
+      leadRows.push(...rows);
+    }
+  } catch {
+    return leadConnectionMissing('LEADS_RETRIEVAL_PERMISSION_NOT_VERIFIED', {
+      accessiblePageCount: accessiblePages.length,
+      formCount: forms.length,
+    });
+  }
+
+  const recentLeads = leadRows.filter(({ created_time: createdTime }) => {
+    const created = new Date(createdTime);
+    return !Number.isNaN(created.getTime()) && created >= since && created <= now;
+  });
+  const latestLeadAt = recentLeads.reduce((latest, { created_time: createdTime }) => {
+    const created = new Date(createdTime);
+    return Number.isNaN(created.getTime()) || (latest && created <= latest) ? latest : created;
+  }, null);
+
+  return {
+    status: 'CONNECTED_READ_ONLY',
+    evidenceTime: now.toISOString(),
+    periodDays: runtime.leadWindowDays,
+    accessiblePageCount: accessiblePages.length,
+    formCount: forms.length,
+    activeFormCount: forms.filter(({ status }) => String(status ?? '').toUpperCase() === 'ACTIVE').length,
+    leadCount: recentLeads.length,
+    latestLeadAt: latestLeadAt?.toISOString() ?? null,
+    aggregateOnly: true,
+    fieldDataRequested: false,
   };
 }
 
@@ -117,7 +234,7 @@ export async function collectMetaAdsReadOnly({ configPath, fetchImpl = fetch, no
   const account = accessibleAccounts.find(({ id }) => id === runtime.adAccountId);
   if (!account) throw new Error(`Target Meta ad account ${runtime.adAccountId} is not accessible`);
 
-  const [insights, campaigns, adSets, ads] = await Promise.all([
+  const [insights, campaigns, adSets, ads, leadData] = await Promise.all([
     metaList({
       ...requestBase,
       path: `/${runtime.adAccountId}/insights`,
@@ -152,6 +269,7 @@ export async function collectMetaAdsReadOnly({ configPath, fetchImpl = fetch, no
         limit: 500,
       },
     }),
+    collectMetaLeadFormsReadOnly({ runtime, requestBase, now }),
   ]);
 
   return {
@@ -191,13 +309,11 @@ export async function collectMetaAdsReadOnly({ configPath, fetchImpl = fetch, no
     campaigns,
     adSets,
     ads,
-    leadData: {
-      status: 'CONNECTION_MISSING',
-      reason: 'LEAD_FORM_AND_PAGE_PERMISSIONS_NOT_CONFIGURED',
-    },
+    leadData,
     safety: {
       allowedHttpMethods: ['GET'],
-      allowedResources: ['adaccounts', 'insights', 'campaigns', 'adsets', 'ads'],
+      allowedResources: ['adaccounts', 'pages', 'insights', 'campaigns', 'adsets', 'ads', 'leadgen_forms', 'leads'],
+      leadFieldDataRequested: false,
       mutationMethodsAvailable: false,
       platformWrites: 0,
       budgetChanges: 0,

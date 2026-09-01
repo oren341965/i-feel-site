@@ -6,6 +6,7 @@ import test from 'node:test';
 import {
   assertMetaReadOnlyPath,
   collectMetaAdsReadOnly,
+  normalizeMetaObjectId,
 } from '../.claude/skills/meta-ads-manager/scripts/meta-ads-readonly.mjs';
 
 const REPO = resolve(import.meta.dirname, '..');
@@ -121,10 +122,74 @@ test('Meta connector fails closed on missing version, wrong account format, and 
   assert.doesNotThrow(() => assertMetaReadOnlyPath('/act_123/campaigns'));
   assert.throws(() => assertMetaReadOnlyPath('/act_wrong/campaigns'), /allowlist/i);
   assert.throws(() => assertMetaReadOnlyPath('/act_123/campaigns/delete'), /allowlist/i);
+  assert.doesNotThrow(() => assertMetaReadOnlyPath('/123/leadgen_forms'));
+  assert.doesNotThrow(() => assertMetaReadOnlyPath('/456/leads'));
+  assert.throws(() => assertMetaReadOnlyPath('/123/leads/delete'), /allowlist/i);
+  assert.equal(normalizeMetaObjectId('123'), '123');
+  assert.throws(() => normalizeMetaObjectId('123?fields=secret'), /digits only/i);
 
   const { configPath } = await fixture(t, { apiVersion: null });
   await assert.rejects(() => collectMetaAdsReadOnly({
     configPath,
     fetchImpl: async () => { throw new Error('network must not be reached'); },
   }), /version/i);
+});
+
+test('Meta lead-form collector returns aggregates only and never requests field_data', async (t) => {
+  const { configPath } = await fixture(t, {
+    leadFormsReadOnly: true,
+    pageId: '987654321',
+    leadWindowDays: 30,
+  });
+  const calls = [];
+  const fetchImpl = async (url, options) => {
+    const parsed = new URL(url);
+    const path = parsed.pathname.replace('/v99.0', '');
+    calls.push({ path, fields: parsed.searchParams.get('fields'), method: options.method });
+    assert.equal(options.method, 'GET');
+    assert.equal(parsed.searchParams.has('access_token'), false);
+    assert.doesNotMatch(parsed.searchParams.get('fields') ?? '', /field_data/i);
+    if (path === '/me/adaccounts') return response({ data: [{ id: 'act_123456789', currency: 'ILS' }] });
+    if (path === '/me/accounts') return response({ data: [{ id: '987654321' }] });
+    if (path === '/987654321/leadgen_forms') return response({ data: [
+      { id: '111', status: 'ACTIVE', created_time: '2026-07-01T00:00:00.000Z' },
+      { id: '222', status: 'ARCHIVED', created_time: '2026-01-01T00:00:00.000Z' },
+    ] });
+    if (path === '/111/leads') return response({ data: [
+      { id: '1', form_id: '111', platform: 'fb', created_time: '2026-08-20T10:00:00.000Z' },
+      { id: '2', form_id: '111', platform: 'ig', created_time: '2026-07-01T10:00:00.000Z' },
+    ] });
+    if (path === '/222/leads') return response({ data: [] });
+    return response({ data: [] });
+  };
+  const result = await collectMetaAdsReadOnly({
+    configPath,
+    fetchImpl,
+    now: new Date('2026-08-21T10:00:00.000Z'),
+  });
+  assert.equal(result.leadData.status, 'CONNECTED_READ_ONLY');
+  assert.equal(result.leadData.formCount, 2);
+  assert.equal(result.leadData.activeFormCount, 1);
+  assert.equal(result.leadData.leadCount, 1);
+  assert.equal(result.leadData.latestLeadAt, '2026-08-20T10:00:00.000Z');
+  assert.equal(result.leadData.aggregateOnly, true);
+  assert.equal(result.leadData.fieldDataRequested, false);
+  assert.equal(result.safety.leadFieldDataRequested, false);
+  assert.ok(calls.some(({ path }) => path === '/987654321/leadgen_forms'));
+  assert.ok(calls.some(({ path }) => path === '/111/leads'));
+});
+
+test('Meta lead-form collector fails closed without an unambiguous accessible Page', async (t) => {
+  const { configPath } = await fixture(t, { leadFormsReadOnly: true });
+  const fetchImpl = async (url) => {
+    const path = new URL(url).pathname.replace('/v99.0', '');
+    if (path === '/me/adaccounts') return response({ data: [{ id: 'act_123456789' }] });
+    if (path === '/me/accounts') return response({ data: [{ id: '1' }, { id: '2' }] });
+    return response({ data: [] });
+  };
+  const result = await collectMetaAdsReadOnly({ configPath, fetchImpl });
+  assert.equal(result.leadData.status, 'CONNECTION_MISSING');
+  assert.equal(result.leadData.reason, 'META_PAGE_ID_REQUIRED');
+  assert.equal(result.leadData.accessiblePageCount, 2);
+  assert.equal(result.safety.platformWrites, 0);
 });
