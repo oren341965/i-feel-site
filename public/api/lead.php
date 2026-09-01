@@ -104,6 +104,66 @@ function monday_request(string $query, array $variables, string $token): array
     return $decoded;
 }
 
+function attribution_source(array $marketing, string $referrer): string
+{
+    $utmSource = strtolower(trim((string) ($marketing['utm_source'] ?? '')));
+    $utmMedium = strtolower(trim((string) ($marketing['utm_medium'] ?? '')));
+
+    if (($marketing['gclid'] ?? '') !== '') {
+        return 'Google Ads';
+    }
+    if (($marketing['fbclid'] ?? '') !== '') {
+        return 'Meta / Facebook / Instagram';
+    }
+    if (($marketing['ttclid'] ?? '') !== '') {
+        return 'TikTok';
+    }
+
+    if ($utmSource !== '') {
+        $isPaid = strpos($utmMedium, 'cpc') !== false
+            || strpos($utmMedium, 'ppc') !== false
+            || strpos($utmMedium, 'paid') !== false;
+
+        if (strpos($utmSource, 'google') !== false && $isPaid) {
+            return 'Google Ads';
+        }
+        if (strpos($utmSource, 'facebook') !== false
+            || strpos($utmSource, 'instagram') !== false
+            || strpos($utmSource, 'meta') !== false) {
+            return 'Meta / Facebook / Instagram';
+        }
+        if (strpos($utmSource, 'tiktok') !== false) {
+            return 'TikTok';
+        }
+
+        $label = 'Campaign: ' . $utmSource;
+        if ($utmMedium !== '') {
+            $label .= ' / ' . $utmMedium;
+        }
+        return $label;
+    }
+
+    $host = strtolower((string) (parse_url($referrer, PHP_URL_HOST) ?? ''));
+    $host = preg_replace('/^www\./', '', $host) ?? $host;
+    if ($host === '') {
+        return 'Direct / unknown';
+    }
+    if (strpos($host, 'google.') !== false) {
+        return 'Google organic';
+    }
+    if (strpos($host, 'bing.com') !== false) {
+        return 'Bing organic';
+    }
+    if (strpos($host, 'facebook.com') !== false || strpos($host, 'instagram.com') !== false) {
+        return 'Facebook / Instagram referral';
+    }
+    if (strpos($host, 'youtube.com') !== false || strpos($host, 'youtu.be') !== false) {
+        return 'YouTube referral';
+    }
+
+    return 'Referral: ' . $host;
+}
+
 function fallback_mail(array $lead, string $reason, array $marketing = []): bool
 {
     $to = getenv('LEAD_FALLBACK_EMAIL') ?: DEFAULT_FALLBACK_EMAIL;
@@ -115,12 +175,17 @@ function fallback_mail(array $lead, string $reason, array $marketing = []): bool
         'Name: ' . $lead['name'],
         'Phone: ' . $lead['phone'],
         'Email: ' . $lead['email'],
+        'City / locality: ' . $lead['city'],
         'Lead type: ' . $lead['lead_type'],
+        'How heard about us: ' . $lead['heard_from'],
+        'Automatic source: ' . ($lead['automatic_source'] ?? 'Direct / unknown'),
         'Subject: ' . $lead['subject'],
         'Message:',
         $lead['message'],
         '',
         'Source page: ' . $lead['source_page'],
+        'First entry page: ' . $lead['entry_page'],
+        'First referrer: ' . $lead['first_referrer'],
         'Submitted at: ' . gmdate('c'),
         'IP: ' . ($_SERVER['REMOTE_ADDR'] ?? ''),
     ]);
@@ -178,10 +243,14 @@ $lead = [
     'name' => field('name', 120),
     'phone' => field('phone', 80),
     'email' => field('email', 160),
+    'city' => field('city', 160),
     'lead_type' => field('lead_type', 120),
+    'heard_from' => field('heard_from', 200),
     'subject' => field('subject', 180),
     'message' => field('message', 4000),
     'source_page' => field('source_page', 300),
+    'entry_page' => field('entry_page', 500),
+    'first_referrer' => field('first_referrer', 500),
 ];
 
 $marketing = [
@@ -195,13 +264,19 @@ $marketing = [
     'ttclid' => field('ttclid', 200),
 ];
 
-if ($lead['name'] === '' || $lead['phone'] === '' || $lead['lead_type'] === '') {
+if ($lead['name'] === ''
+    || $lead['phone'] === ''
+    || $lead['city'] === ''
+    || $lead['lead_type'] === ''
+    || $lead['heard_from'] === '') {
     redirect_back('missing');
 }
 
 if ($lead['email'] !== '' && !filter_var($lead['email'], FILTER_VALIDATE_EMAIL)) {
     redirect_back('bad-email');
 }
+
+$lead['automatic_source'] = attribution_source($marketing, $lead['first_referrer']);
 
 $token = getenv('MONDAY_API_TOKEN') ?: '';
 $boardId = getenv('MONDAY_BOARD_ID') ?: DEFAULT_BOARD_ID;
@@ -215,10 +290,15 @@ $updateBody = implode("\n", [
     '* Name: ' . $lead['name'],
     '* Phone: ' . $lead['phone'],
     '* Email: ' . ($lead['email'] ?: '-'),
+    '* City / locality: ' . $lead['city'],
     '* Lead type: ' . $lead['lead_type'],
     '* Landing label: ' . $landingLabel,
+    '* How heard about us: ' . $lead['heard_from'],
+    '* Automatic source: ' . $lead['automatic_source'],
     '* Subject: ' . ($lead['subject'] ?: '-'),
     '* Source page: ' . ($lead['source_page'] ?: '/contactus/'),
+    '* First entry page: ' . ($lead['entry_page'] ?: '-'),
+    '* First referrer: ' . ($lead['first_referrer'] ?: '-'),
     '* Submitted at: ' . gmdate('c'),
     '',
     '**Message**',
@@ -235,8 +315,8 @@ if ($marketingLines !== []) {
     $updateBody .= "\n\n**Marketing attribution**\n" . implode("\n", $marketingLines);
 }
 
-// Board 2732725332 requires phone + email column values on item creation
-// (create_item without them fails with DATA_VALIDATIONS_ERROR).
+// Board 2732725332 requires phone + email column values on item creation.
+// City and acquisition source are also kept in the durable structured lead record.
 $requiredColumnValues = [
     'phone' => [
         'phone' => preg_replace('/\D+/', '', $lead['phone']) ?: '0',
@@ -246,6 +326,8 @@ $requiredColumnValues = [
         'email' => $lead['email'] !== '' ? $lead['email'] : 'no-reply@i-feel.co.il',
         'text' => $lead['email'] !== '' ? $lead['email'] : 'לא נמסר אימייל',
     ],
+    'location7' => $lead['city'],
+    'text_mm6s32m7' => 'דיווח: ' . $lead['heard_from'] . ' | אוטומטי: ' . $lead['automatic_source'],
 ];
 
 $extraColumnValues = [
@@ -282,8 +364,8 @@ try {
     try {
         $createItem = monday_request($createMutation, $createVariables, $token);
     } catch (Throwable $createError) {
-        // Extra columns may fail validation independently — retry with the
-        // required columns only before giving up on Monday entirely.
+        // Extra columns may fail validation independently. Retry with the
+        // durable required fields before giving up on Monday entirely.
         error_log('[i-feel lead form] full create failed, retrying minimal: ' . $createError->getMessage());
         $createVariables['columnValues'] = json_encode($requiredColumnValues, JSON_UNESCAPED_UNICODE);
         $createItem = monday_request($createMutation, $createVariables, $token);
