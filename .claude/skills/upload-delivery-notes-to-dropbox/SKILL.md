@@ -10,6 +10,7 @@ Act as the delivery-note worker owned by `ai-operations-manager`. Read bounded s
 ## Start
 
 - Read [references/delivery-note-intake.md](references/delivery-note-intake.md).
+- When reconciling issued delivery-note numbers or investigating gaps from 2026-08-01 onward, read and follow [references/delivery-note-sequence-control.md](references/delivery-note-sequence-control.md).
 - When auditing scheduled installations or Maya's installation summaries, read and follow [references/signed-delivery-note-follow-up.md](references/signed-delivery-note-follow-up.md).
 - When collecting from WhatsApp, read and follow [references/whatsapp-web-intake.md](references/whatsapp-web-intake.md). The worker, not Oren, downloads the attachments when an authenticated browser connection is available.
 - Use the normalized contract in [references/delivery-note-envelope.schema.json](references/delivery-note-envelope.schema.json) when preparing a deterministic plan.
@@ -68,6 +69,13 @@ When Oren provides a start date or asks to go over all delivery notes again, run
 - If the blocker was only a missing delivery-note child folder and the project is now uniquely identified by exact `מפתח`, create `תעודת משלוח`, upload the file automatically under the routine rules, verify it, and resolve the exception.
 - If the note is still blocked, prepare a concise reminder to Ora with the current reason and the date of the previous notice. Do not send duplicate reminders more frequently than once every two days, and do not continue after resolution.
 
+## Issued-number sequence control
+
+- Maintain the private issued-delivery-note register and investigate sequence gaps from `2026-08-01` onward according to [references/delivery-note-sequence-control.md](references/delivery-note-sequence-control.md).
+- Treat a missing number as an operational exception to investigate, not as proof that equipment was lost. Verify the document series and check for cancellation, voiding, drafts, alternate series, delayed source arrival, and already-filed copies before escalating.
+- For every confirmed unresolved sequence gap, notify Oren, Sagiv, Kiril, and Cheyne using only verified organizational identities. Include Ora when the normal exception workflow requires her. Never guess an address from a name.
+- Keep the gap open and recheck it on the normal daily run until the source document is received and filed or authoritative evidence closes the number as void/cancelled/non-delivery-note. Stop reminders immediately after closure.
+
 ## Signed delivery-note control
 
 - Use the installation schedule and Maya's installation-summary intake as bounded evidence sources. For every completed installation whose summary says equipment was installed, verify whether a signed delivery note was received and filed.
@@ -98,6 +106,6 @@ When Oren provides a start date or asks to go over all delivery notes again, run
 
 ## Handoff
 
-Report the source window, connector identities, source coverage, total source attachments, unique delivery notes, uploaded count, duplicate count, canonical folders created, incomplete/multi-part count, notification count, review count by reason, completion-update status, exception-email status, failures, and any coverage gap. Separate observed source facts, deterministic routing decisions, and assumptions that still require confirmation.
+Report the source window, connector identities, source coverage, total source attachments, unique delivery notes, uploaded count, duplicate count, canonical folders created, incomplete/multi-part count, issued-number range checked, open sequence-gap count, notification count, review count by reason, completion-update status, exception-email status, failures, and any coverage gap. Separate observed source facts, deterministic routing decisions, and assumptions that still require confirmation.
 
 For skill maintenance, run `npm run test:ai-managers`, `npm run build`, `quick_validate.py .claude/skills/upload-delivery-notes-to-dropbox`, and `git diff --check`.
