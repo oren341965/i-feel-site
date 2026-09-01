@@ -27,7 +27,7 @@ Every newly introduced component starts at maturity 0:
 
 ## Daily flow
 
-1. At 06:00 collect the Monday audit, external attribution, verified advertising summaries, website status, project content, Maya/plans signals, referral opportunities, existing-customer opportunities and service-quality aggregates.
+1. At 06:00 collect the Monday audit, external attribution, verified advertising summaries, website status, AI-answer-engine referrals, newsletter opt-in aggregates, project content, Maya/plans signals, referral opportunities, existing-customer opportunities and service-quality aggregates.
 2. At 06:05 run deterministic checks, including the capacity rule.
 3. At 06:10 place ambiguous cases in `_bus/to-claude/` using the bus schema.
 4. Produce one concise brief for Oren. `NO_CHANGE` is valid for the website engine.
@@ -117,7 +117,21 @@ This gate does not authorize sending or resending a quote, email or WhatsApp mes
 
 ## Website sales feedback
 
-The daily website/SEO engine accepts qualified-lead page evidence, converting search terms, recurring objections, selling project types, competitors and content gaps. It proposes at most one evidence-backed improvement when useful. It may return `NO_CHANGE`.
+The daily website/SEO engine accepts qualified-lead page evidence, converting search terms, recurring objections, selling project types, competitors, content gaps, AI-referral landing pages, AI-referral leads and newsletter opt-in rate. It proposes at most one evidence-backed improvement when useful. It may return `NO_CHANGE`.
+
+## AI answer-engine discovery
+
+ChatGPT, Gemini, Claude, Perplexity and Microsoft Copilot are referral surfaces, not campaign platforms that the manager can manipulate. Use standard technical SEO, crawlable public pages, Organization/LocalBusiness identity, original project evidence, clear answers and source-backed expertise. Do not invent an AI-only ranking technique, fake citations or publish thin duplicate pages.
+
+The website lead endpoint records a bounded AI referral source and landing page alongside the existing first/last-touch evidence. The Daily Oren Brief reports aggregate AI-referral sessions, leads, qualified leads and converting pages when those inputs are available. Missing attribution is a tracking gap, not zero demand. Publishing still follows the repository PR, merge and deployment approvals.
+
+## Newsletter growth
+
+I Feel already operates a newsletter for existing customers. Do not create a parallel newsletter, Smoove list or campaign. `i-feel Insights` is the public opt-in entrypoint to that existing program; the exact existing Smoove list is selected only through server-local configuration after read-back verification.
+
+A public subscription requires the exact consent version `ifeel-insights-v1`; the browser never receives the API key or list ID. Existing customers may enter only through a documented `customer-exception-documented` route. New website subscribers require `explicit-consent`. The server fails closed when its local configuration is absent, never restores deleted or unsubscribed contacts, and records no contact PII in committed files, Vault aggregates or logs.
+
+The `mailing-list-collector` may prepare deduplicated candidates, but only `explicit-consent` or `customer-exception-documented` recipients are eligible. `do-not-mail` and `opt-in-required` remain excluded. At maturity 0 the manager reports opt-in counts, source mix and draft content only. It does not send a campaign, create an automated campaign or change Smoove configuration.
 
 ## Weekly project-video micro-update
 

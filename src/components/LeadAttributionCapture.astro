@@ -43,12 +43,29 @@
       return stored;
     }
 
-    var firstReferrer = firstSessionValue('ifeel_first_referrer', document.referrer || '', 500);
-    var entryPage = firstSessionValue(
-      'ifeel_entry_page',
-      window.location.pathname + window.location.search,
+    function safeUrlEvidence(value, maxLength) {
+      if (!value) return '';
+      try {
+        var parsed = new URL(value, window.location.origin);
+        if (parsed.origin === window.location.origin) return parsed.pathname.slice(0, maxLength);
+        return (parsed.origin + parsed.pathname).slice(0, maxLength);
+      } catch (error) {
+        return String(value).split(/[?#]/, 1)[0].slice(0, maxLength);
+      }
+    }
+
+    var firstReferrer = firstSessionValue(
+      'ifeel_first_referrer',
+      safeUrlEvidence(document.referrer || '', 500),
       500
     );
+    var entryPage = firstSessionValue(
+      'ifeel_entry_page',
+      window.location.pathname,
+      500
+    );
+    var lastReferrer = safeUrlEvidence(document.referrer || '', 500);
+    var lastPage = window.location.pathname.slice(0, 500);
 
     function setHiddenValue(form, name, value) {
       if (!value) return;
@@ -113,6 +130,10 @@
           '<option value="אדריכל / מעצב">אדריכל / מעצב</option>' +
           '<option value="קבלן / חשמלאי / מפקח">קבלן / חשמלאי / מפקח</option>' +
           '<option value="YouTube">YouTube</option>' +
+          '<option value="ChatGPT">ChatGPT</option>' +
+          '<option value="Gemini">Gemini</option>' +
+          '<option value="Claude">Claude</option>' +
+          '<option value="כלי AI אחר">כלי AI אחר</option>' +
           '<option value="כבר לקוח של i-feel">כבר לקוח של i-feel</option>' +
           '<option value="אחר">אחר</option>' +
           '</select>';
@@ -126,11 +147,24 @@
       });
       setHiddenValue(form, 'first_referrer', firstReferrer);
       setHiddenValue(form, 'entry_page', entryPage);
+      setHiddenValue(form, 'last_referrer', lastReferrer);
+      setHiddenValue(form, 'last_page', lastPage);
       createQualificationFields(form);
+    }
+
+    function fillNewsletterForm(form) {
+      attributionKeys.forEach(function (key) {
+        setHiddenValue(form, key, values[key]);
+      });
+      setHiddenValue(form, 'first_referrer', firstReferrer);
+      setHiddenValue(form, 'entry_page', entryPage);
+      setHiddenValue(form, 'last_referrer', lastReferrer);
+      setHiddenValue(form, 'last_page', lastPage);
     }
 
     function fillAllLeadForms() {
       document.querySelectorAll('form[action="/api/lead.php"]').forEach(fillLeadForm);
+      document.querySelectorAll('form[action="/api/newsletter.php"]').forEach(fillNewsletterForm);
     }
 
     if (document.readyState === 'loading') {
@@ -148,6 +182,8 @@
           event.preventDefault();
           form.reportValidity();
         }
+      } else if (form && form.matches && form.matches('form[action="/api/newsletter.php"]')) {
+        fillNewsletterForm(form);
       }
     }, true);
   })();

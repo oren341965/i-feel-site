@@ -135,6 +135,21 @@ function attribution_source(array $marketing, string $referrer): string
         if (strpos($utmSource, 'tiktok') !== false) {
             return 'TikTok';
         }
+        if (strpos($utmSource, 'chatgpt') !== false || strpos($utmSource, 'openai') !== false) {
+            return 'AI referral: ChatGPT';
+        }
+        if (strpos($utmSource, 'gemini') !== false || strpos($utmSource, 'bard') !== false) {
+            return 'AI referral: Gemini';
+        }
+        if (strpos($utmSource, 'claude') !== false || strpos($utmSource, 'anthropic') !== false) {
+            return 'AI referral: Claude';
+        }
+        if (strpos($utmSource, 'perplexity') !== false) {
+            return 'AI referral: Perplexity';
+        }
+        if (strpos($utmSource, 'copilot') !== false) {
+            return 'AI referral: Microsoft Copilot';
+        }
 
         $label = 'Campaign: ' . $utmSource;
         if ($utmMedium !== '') {
@@ -148,6 +163,24 @@ function attribution_source(array $marketing, string $referrer): string
     if ($host === '') {
         return 'Direct / unknown';
     }
+    // AI answer engines must be checked before generic search domains. In
+    // particular, gemini.google.com would otherwise be counted as Google
+    // organic and the AI referral signal would be lost.
+    if ($host === 'chatgpt.com' || $host === 'chat.openai.com' || $host === 'openai.com') {
+        return 'AI referral: ChatGPT';
+    }
+    if ($host === 'gemini.google.com' || $host === 'bard.google.com') {
+        return 'AI referral: Gemini';
+    }
+    if ($host === 'claude.ai' || $host === 'anthropic.com') {
+        return 'AI referral: Claude';
+    }
+    if ($host === 'perplexity.ai') {
+        return 'AI referral: Perplexity';
+    }
+    if ($host === 'copilot.microsoft.com' || $host === 'copilot.cloud.microsoft') {
+        return 'AI referral: Microsoft Copilot';
+    }
     if (strpos($host, 'google.') !== false) {
         return 'Google organic';
     }
@@ -160,7 +193,6 @@ function attribution_source(array $marketing, string $referrer): string
     if (strpos($host, 'youtube.com') !== false || strpos($host, 'youtu.be') !== false) {
         return 'YouTube referral';
     }
-
     return 'Referral: ' . $host;
 }
 
@@ -186,6 +218,8 @@ function fallback_mail(array $lead, string $reason, array $marketing = []): bool
         'Source page: ' . $lead['source_page'],
         'First entry page: ' . $lead['entry_page'],
         'First referrer: ' . $lead['first_referrer'],
+        'Last referrer: ' . $lead['last_referrer'],
+        'Last page: ' . $lead['last_page'],
         'Submitted at: ' . gmdate('c'),
         'IP: ' . ($_SERVER['REMOTE_ADDR'] ?? ''),
     ]);
@@ -251,6 +285,8 @@ $lead = [
     'source_page' => field('source_page', 300),
     'entry_page' => field('entry_page', 500),
     'first_referrer' => field('first_referrer', 500),
+    'last_referrer' => field('last_referrer', 500),
+    'last_page' => field('last_page', 500),
 ];
 
 $marketing = [
@@ -277,6 +313,7 @@ if ($lead['email'] !== '' && !filter_var($lead['email'], FILTER_VALIDATE_EMAIL))
 }
 
 $lead['automatic_source'] = attribution_source($marketing, $lead['first_referrer']);
+$lead['automatic_last_source'] = attribution_source($marketing, $lead['last_referrer']);
 
 $token = getenv('MONDAY_API_TOKEN') ?: '';
 $boardId = getenv('MONDAY_BOARD_ID') ?: DEFAULT_BOARD_ID;
@@ -295,10 +332,13 @@ $updateBody = implode("\n", [
     '* Landing label: ' . $landingLabel,
     '* How heard about us: ' . $lead['heard_from'],
     '* Automatic source: ' . $lead['automatic_source'],
+    '* Automatic last source: ' . $lead['automatic_last_source'],
     '* Subject: ' . ($lead['subject'] ?: '-'),
     '* Source page: ' . ($lead['source_page'] ?: '/contactus/'),
     '* First entry page: ' . ($lead['entry_page'] ?: '-'),
     '* First referrer: ' . ($lead['first_referrer'] ?: '-'),
+    '* Last referrer: ' . ($lead['last_referrer'] ?: '-'),
+    '* Last page: ' . ($lead['last_page'] ?: '-'),
     '* Submitted at: ' . gmdate('c'),
     '',
     '**Message**',
