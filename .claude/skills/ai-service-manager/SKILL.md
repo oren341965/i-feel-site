@@ -52,6 +52,8 @@ Act as a cross-case service-operations manager over Monday board `3011387201`. L
 - A requested change plan uses [references/monday-change-preview-contract.md](references/monday-change-preview-contract.md)
   and `scripts/plan-service-monday-changes.mjs`. It creates a private review artifact only; it never grants
   approval or supplies an executable Monday client.
+- After Oren approves one exact preview batch, route execution to the separate `service-monday-owner-writer`.
+  Do not execute the mutation from this read-only manager.
 - Never send WhatsApp, email, Monday updates, or technician/customer notifications without a separate explicit request.
 - Do not create an automation or recurring schedule before a full live dry run is reviewed and accepted.
 - Do not infer service quality from closed-ticket volume alone. Use time, repeat visit, FTR, summary, category, and sample-size context.
@@ -71,4 +73,4 @@ Deterministic entrypoints:
 
 ## Validation and handoff
 
-In the canonical repository run `npm run test:ai-managers`, `npm run build`, and `quick_validate.py .claude/skills/ai-service-manager`. Report board timestamp, main/subitem count reconciliation, omitted containers, thresholds, mapping warnings, test evidence, and any action that still requires explicit authorization.
+In the canonical repository run `npm run test:ai-managers`, `npm run build`, `quick_validate.py .claude/skills/ai-service-manager`, and `quick_validate.py .claude/skills/service-monday-owner-writer`. Report board timestamp, main/subitem count reconciliation, omitted containers, thresholds, mapping warnings, test evidence, and any action that still requires explicit authorization.
