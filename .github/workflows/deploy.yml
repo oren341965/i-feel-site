@@ -10,8 +10,10 @@ on:
       - main
     paths-ignore:
       - '.claude/**'
+      - 'agent-config/**'
       - 'tests/**'
       - 'scripts/workstations/**'
+      - 'scripts/deploy/seo-autopublish.mjs'
       - '.github/workflows/deploy.yml'
   workflow_dispatch:
 

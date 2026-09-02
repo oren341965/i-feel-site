@@ -6,9 +6,16 @@ import { tmpdir } from 'node:os';
 import { resolve } from 'node:path';
 import test from 'node:test';
 
+import './automation-audit-reporter.test.mjs';
+import './daily-seo-safety.test.mjs';
+import './email-audit-reporter.test.mjs';
+import './marketing-audit-reporter.test.mjs';
+import './verify-live-reporter.test.mjs';
+
 const REPO = resolve(import.meta.dirname, '..');
 const SCRIPT = resolve(REPO, '.claude/skills/management-system-telemetry/scripts/report-capability-run.mjs');
 const HOST_SCRIPT = resolve(REPO, '.claude/skills/management-system-telemetry/scripts/report-host-checkin.mjs');
+const DELIVERY_NOTE_SCRIPT = resolve(REPO, '.claude/skills/management-system-telemetry/scripts/report-delivery-note-control.mjs');
 const SALES_AUDIT_SCRIPT = resolve(REPO, '.claude/skills/ai-sales-manager/scripts/report-sales-audit.mjs');
 const SOURCE_SYNC_SCRIPT = resolve(REPO, '.claude/skills/management-system-telemetry/scripts/audit-source-sync.mjs');
 const BASE_ARGS = [
@@ -33,6 +40,22 @@ const HOST_ARGS = [
   '--evidence-ref', 'host_audit:test',
 ];
 
+test('delivery-note control reporter emits aggregate-only bounded evidence', () => {
+  const result = spawnSync(process.execPath, [DELIVERY_NOTE_SCRIPT,
+    '--snapshot-key', 'delivery-notes-20260901', '--status', 'succeeded',
+    '--window-start', '2026-08-01T00:00:00.000Z', '--window-end', '2026-09-01T05:00:00.000Z', '--captured-at', '2026-09-01T05:02:00.000Z',
+    '--source-coverage', 'whatsapp,gmail,dropbox', '--range-start', '90000', '--range-end', '91234',
+    '--series-count', '1', '--observed-count', '42', '--filed-count', '36', '--open-gap-count', '3', '--closed-gap-count', '2', '--dry-run',
+  ], { encoding: 'utf8' });
+  assert.equal(result.status, 0, result.stderr);
+  const output = JSON.parse(result.stdout);
+  assert.equal(output.envelope.snapshotKey, 'delivery-notes-20260901');
+  assert.equal(output.envelope.openGapCount, 3);
+  assert.equal(output.envelope.rangeStart, 90000);
+  assert.equal(JSON.stringify(output).includes('customer'), false);
+  assert.equal(JSON.stringify(output).includes('documentNumber'), false);
+});
+
 const SALES_ANALYSIS = {
   boardId: '2732725332',
   generatedAt: '2026-08-30T08:05:00.000Z',
@@ -48,8 +71,16 @@ const SALES_ANALYSIS = {
     status: { rate: 1 }, owner: { rate: 0.6 }, nextAction: { rate: 0.7 },
     lastUpdated: { rate: 1 }, createdAt: { rate: 1 }, proposalValue: { rate: 0.2 },
   },
+  treatment: {
+    openCount: 3, exceptionCount: 3, healthyCount: 0, noOwnerCount: 2,
+    noNextActionCount: 2, overdueCount: 1, inactiveCount: 1, staleCount: 1,
+    excludedOpenCount: 3, excludedLeftSalesCount: 2, excludedFutureCount: 1, excludedHandledCount: 0,
+  },
   priorities: [{ id: '123', name: 'Sensitive Customer', owners: ['Maya'], nextAction: 'Call private number' }],
-  reconciliation: { populationMatchesTotal: true, uniqueIdsMatchTotal: true, prioritiesAreOpen: true },
+  reconciliation: {
+    populationMatchesTotal: true, uniqueIdsMatchTotal: true, prioritiesAreOpen: true,
+    treatmentPopulationMatchesOpen: true, treatmentHealthMatchesOpen: true, treatmentExclusionsMatchOpen: true,
+  },
 };
 
 const SALES_ARGS = [
@@ -324,6 +355,10 @@ test('sales audit dry run emits reconciled aggregates without operational detail
   assert.equal(output.envelope.exceptionCount, 5);
   assert.equal(output.envelope.newLast7Days, 2);
   assert.equal(output.envelope.newLast30Days, 4);
+  assert.equal(output.envelope.treatmentOpenCount, 3);
+  assert.equal(output.envelope.treatmentNoOwnerCount, 2);
+  assert.equal(output.envelope.excludedOpenCount, 3);
+  assert.equal(output.envelope.excludedLeftSalesCount, 2);
   assert.equal(output.envelope.ownerCoverage, 6000);
   assert.equal(result.stdout.includes('Sensitive Customer'), false);
   assert.equal(result.stdout.includes('Call private number'), false);
@@ -377,6 +412,10 @@ test('sales audit uses both auth layers and returns sanitized aggregate evidence
   assert.equal(captured.url, '/api/sales/audits');
   assert.equal(captured.headers['oai-sites-authorization'], `Bearer ${siteToken}`);
   assert.equal(captured.headers.authorization, `Bearer ${runToken}`);
+  assert.equal(captured.body.treatmentOpenCount, 3);
+  assert.equal(captured.body.treatmentNoOwnerCount, 2);
+  assert.equal(captured.body.excludedOpenCount, 3);
+  assert.equal(captured.body.excludedFutureCount, 1);
   assert.equal(Object.hasOwn(captured.body, 'priorities'), false);
   assert.equal(result.stdout.includes(siteToken), false);
   assert.equal(result.stdout.includes(runToken), false);

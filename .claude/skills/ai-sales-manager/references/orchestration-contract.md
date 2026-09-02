@@ -85,6 +85,8 @@ Inputs from other skills must be aggregates or bounded references, without names
 - proposed next action
 - `approval_required`
 
+The canonical Management System marketing handoff is `scripts/report-marketing-audit.mjs`. It consumes the complete read-only worker outputs locally, reconciles their totals, and transmits only platform aggregates, bounded sanitized search-quality candidates, attribution counts, capacity state and blocker codes. It never transmits attribution rows, lead records, account credentials, message content or operational sales items. The handoff fails closed when pagination, source timestamps, account identity, attribution counts, capacity evidence or the zero-write self-check cannot be proven.
+
 ## Manager-to-Maya task execution
 
 Use the existing Vault bridge only: the manager owns `_bus/manager-to-maya`, and the Maya stack owns `_bus/maya-to-manager`. Do not add a second queue, API, or standalone `maya-agent` skill.

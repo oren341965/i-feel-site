@@ -17,6 +17,8 @@ Use this adapter to make execution evidence visible in the I Feel Management Sys
 
 Use `scripts/report-capability-run.mjs`. Read [references/run-contract.md](references/run-contract.md) when adding the adapter to a worker, configuring credentials, or interpreting failures.
 
+For the registered `upload-delivery-notes-to-dropbox` worker, also use `scripts/report-delivery-note-control.mjs` after the terminal run event. It sends only reconciled aggregate counts and sequence-range coverage to the Operations dashboard; read the worker snapshot section in [references/run-contract.md](references/run-contract.md). Reuse the capability run key as the snapshot key.
+
 ## Host check-in contract
 
 Use `scripts/report-host-checkin.mjs` after a bounded local workstation audit or commissioning result. Report the registered host, observed time, `healthy`, `degraded` or `blocked`, installed Skill count, Vault state, optional version and a sanitized evidence reference. Reuse one stable `checkin_key` for retries of the same observation. A check-in verifies only those bounded host facts; it does not prove Gmail, Monday, WhatsApp or another connector.
@@ -45,6 +47,7 @@ Use `--expected-host` only with an exact Host slug already registered in the I F
 
 ```text
 node .claude/skills/management-system-telemetry/scripts/report-capability-run.mjs --help
+node .claude/skills/management-system-telemetry/scripts/report-delivery-note-control.mjs --help
 node .claude/skills/management-system-telemetry/scripts/report-host-checkin.mjs --help
 node .claude/skills/management-system-telemetry/scripts/audit-host-readiness.mjs --help
 ```
