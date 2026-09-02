@@ -1,7 +1,7 @@
 [CmdletBinding(SupportsShouldProcess)]
 param(
     [Parameter()]
-    [string]$RepositoryPath = (Resolve-Path (Join-Path $PSScriptRoot '..\..')).Path,
+    [string]$RepositoryPath,
 
     [Parameter(Mandatory)]
     [string]$VaultRoot,
@@ -11,6 +11,10 @@ param(
 )
 
 $ErrorActionPreference = 'Stop'
+
+if ([string]::IsNullOrWhiteSpace($RepositoryPath)) {
+    $RepositoryPath = (Resolve-Path (Join-Path $PSScriptRoot '..\..')).Path
+}
 
 function Get-RelativePathCompat {
     param(
