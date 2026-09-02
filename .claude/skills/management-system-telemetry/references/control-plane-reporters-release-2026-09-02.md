@@ -14,6 +14,7 @@ This integration branch combines the reviewed changes from Draft PRs #241, #244,
 - authenticated website audit reporting and the read-only verifier;
 - authenticated Maya email aggregate reporting;
 - authenticated morning-automation aggregate reporting.
+- canonical validation and safety repair for `daily-seo-crawl`, including removal of manual token handling and automatic merge.
 
 The source Draft PRs remain unchanged. This branch exists to resolve their shared test-runner conflict once and provide one merge gate.
 
@@ -23,8 +24,8 @@ Reporter tests are imported by `tests/management-system-telemetry.test.mjs`, whi
 
 Verified on 2026-09-02:
 
-- six affected skills passed `quick_validate.py` in UTF-8 mode;
-- 150 AI-manager tests passed;
+- all 27 canonical Skill folders passed `quick_validate.py` in UTF-8 mode;
+- 152 AI-manager tests passed;
 - one existing test was skipped as expected;
 - zero tests failed;
 - the Astro production build and build QA passed;
@@ -38,9 +39,9 @@ Verified on 2026-09-02:
 - Email reporting does not expose message subjects, addresses, bodies, identifiers, or attachments.
 - Automation reporting cannot prove a scheduler active from Telemetry alone.
 - Delivery-note Telemetry does not broaden the delivery-note worker's standing authorization.
+- Daily SEO publication stops at a Draft PR, uses the shared workstation publisher, and cannot read a manual GitHub token or enable auto-merge.
 - Merge to `main`, production approval, credentials, sends, business writes, and scheduler changes remain separately gated.
 
 ## Expected merge behavior
 
-The resulting main change is confined to `.claude/**`, `tests/**`, and `.github/workflows/deploy.yml`. With the included path-ignore rule, merging this integration branch should validate repository history without starting a production website deployment. This expectation must be confirmed from the post-merge GitHub Actions result; it is not permission to merge.
-
+The resulting main change is confined to `.claude/**`, `tests/**`, `.github/workflows/deploy.yml`, and the non-runtime compatibility helper `scripts/deploy/seo-autopublish.mjs`. With the included path-ignore rules, merging this integration branch should validate repository history without starting a production website deployment. This expectation must be confirmed from the post-merge GitHub Actions result; it is not permission to merge.

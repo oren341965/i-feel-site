@@ -1,4 +1,3 @@
-
 ---
 name: daily-seo-crawl
 description: "סקיל יומי שמקדם את i-feel.co.il למקום #1 בגוגל ישראל עבור 'בית חכם' (מסלול פרטי) ו-'בקרת מבנה' (מסלול BMS). בניגוד לסקיל SEO סטנדרטי — זה לא מנטר, זה *מקדם*: כל דוח יומי כולל ניתוח פער מול הדף שמחזיק את #1, והצעה למהלך ההתקפי השבועי. מפיק דוח עברית של 10-20 שורות עם: מיקומי North Star + המהלך ההתקפי הבא + משימות טכניות דחופות + אימות הפוסט היומי. השתמש בסקיל כאשר אורן כותב: 'סריקת SEO', 'בדיקת האתר', 'מה המצב עם SEO', 'איפה אנחנו בגוגל', 'איפה אנחנו ב-בית חכם', 'איפה אנחנו ב-בקרת מבנה', 'תבדוק את האתר', 'יש בעיות באתר', 'מה צריך לתקן באתר', 'למה אנחנו לא מדורגים', 'למה לא מוצאים אותנו בגוגל', 'תריץ אימות', 're-verify', 'בדוק שהתיקון עבד', 'ציון האתר', 'מה המתחרים עושים'. גם כשאורן מזכיר 'גוגל', 'דירוג', 'אינדוקס', 'sitemap', 'Core Web Vitals', 'CLS', 'LCP', או מדבר על Vitrea/SwitchBee/HiGoal בהקשר של i-feel. הפעלה אוטומטית ב-07:00 דרך Make.com. גם אם אורן לא אמר 'סקיל' — אם הוא רוצה לדעת איפה i-feel בגוגל או איך לטפס ל-#1, השתמש בסקיל הזה."
@@ -208,8 +207,8 @@ https://www.googleapis.com/pagespeedonline/v5/runPagespeed?url=https://i-feel.co
 ## תיקונים אוטומטיים
 
 > **האתר סטטי (Astro), לא WordPress.** אין WordPress MCP ואין Yoast. כל תיקון =
-> ענף `work/seo-*` חדש מה-`origin/main` → commit → `seo-autopublish.mjs` (push+PR+auto-merge)
-> → deploy.yml פורס אוטומטית → אימות חי. ראה "פרסום אוטומטי בסוף ריצה".
+> ענף `work/seo-*` חדש מה-`origin/main` → build ובדיקות → Draft PR דרך המסלול הבטוח.
+> merge ופריסה מתקיימים רק לאחר אישור מפורש, ואז `deploy.yml` ו־`verify-live` סוגרים את הלולאה.
 > אין עריכה ישירה של `main` ואין העלאת FTP ידנית.
 
 **רשאי לתקן ישירות** (ללא אישור נוסף, אחרי שהצעת ואורן אמר "תתקן"):
@@ -224,46 +223,33 @@ https://www.googleapis.com/pagespeedonline/v5/runPagespeed?url=https://i-feel.co
 - מחיקת תוכן
 - שינוי סוג schema
 
-## פרסום אוטומטי בסוף ריצה (auto-publish + verify) — ברירת מחדל מ-08/08/2026
+## הכנת Draft PR בסוף ריצה — ללא merge אוטומטי
 
-אם הוחל שינוי בקוד/תוכן האתר במהלך הריצה, סוגרים את הלולאה לבד — בלי לעצור לאישור,
-בגבולות התיקונים המותרים בלבד (meta / alt / sitemap / הרחבת FAQ schema קיים / קישורים פנימיים).
+אם הוחל שינוי בקוד או בתוכן במהלך ריצה שאורן ביקש, סוגרים אוטומטית רק את החלק המקומי וההפיך: ענף עבודה, בדיקות, commit, העלאת הענף ו־Draft PR. merge ל־`main`, אישור production ופריסה נשארים שער אישור מפורש ונפרד.
 
-הזרימה (רצה מסביבת ה-bash של הריצה, ללא PowerShell וללא FTP ידני):
-
-1. **ענף עבודה תקני**: ודא שאתה על ענף `work/seo-<slug>-<YYYY-MM-DD>` (חובה תבנית `work/seo-*` —
-   רק היא ממוזגת אוטומטית). אם התחלת על שם אחר — `git branch -m work/seo-...`.
-2. **commit** של השינוי עם הודעה תיאורית.
-3. **push + PR + auto-merge**:
+1. צור ענף ייחודי באמצעות `scripts/workstations/new-work.ps1 -Slug <short-seo-slug>` לפני העריכה. אין לשנות שם של ענף קיים ממחשב אחר.
+2. בצע את התיקון המצומצם והריץ את בדיקות האתר.
+3. פרסם דרך המסלול הבטוח:
+   ```powershell
+   .\scripts\workstations\publish-work.ps1 `
+     -CommitMessage "SEO: <תיאור קצר>" `
+     -PrTitle "SEO: <תיאור קצר>"
    ```
-   node scripts/deploy/seo-autopublish.mjs --title "SEO: <תיאור קצר>"
-   ```
-   הסקריפט קורא את `IFEEL_GH_TOKEN` מ-`.env.local`, דוחף את הענף, פותח PR מול main,
-   ומפעיל auto-merge (squash). הוא **לעולם לא דוחף ישירות ל-main** וממזג רק ענפי `work/seo-*`.
-4. **הדיפלוי אוטומטי**: ה-merge ל-main מפעיל את `.github/workflows/deploy.yml` →
-   job על ה-runner `ifeel-deploy` → build+טסטים → FTPS → verify-live פנימי.
-5. **אימות חיצוני שלך (חובה בסיום)**: המתן ~90 שניות למחזור ה-CI, ואז אמת שהאתר חי ותקין:
-   - `web_fetch https://i-feel.co.il/?cb={timestamp}` → צריך 200.
-   - אם שונה דף ספציפי — `web_fetch` אליו עם cache-bust, ובדוק שהשינוי בפועל באוויר.
-   - במצב מלא יותר — הרץ את הסקיל `verify-live`.
-   סכם בדוח: "✅ עלה לאוויר ואומת" או "🔴 העלאה נכשלה — {סיבה}".
-6. Facebook OG debugger — אם שונו og: tags, הצג: `https://developers.facebook.com/tools/debug/?q={url}`
-7. GSC — הצג: `https://search.google.com/search-console` → URL Inspection → Request Indexing.
+4. עצור ב־Draft PR ודווח את הקישור, הראיות והבדיקות. אל תפעיל auto-merge ואל תטפל ב־GitHub Token ידני.
+5. רק לאחר אישור merge מפורש, מסלול `deploy-ifeel` רשאי להמשיך דרך GitHub Actions וה־runner המשרדי. אחרי פריסה מאושרת הרץ `verify-live`.
 
-**נפילה בטוחה**: אם `seo-autopublish.mjs` נכשל (אין token / ה-runner אופליין / checks אדומים) —
-אל תמזג ידנית ואל תעלה FTP. השאר את ה-commit על ענף `work/seo-*`, דווח את הסיבה בדוח כפריט 🔴,
-ותן לאורן את קישור ה-PR לפעולה ידנית. אף פעם אל תמחק את הענף.
+`scripts/deploy/seo-autopublish.mjs` נשמר כשם תאימות ישן, אך התנהגותו מוגבלת מעתה להאצלת העבודה ל־`publish-work.ps1` ולפתיחת Draft PR בלבד.
 
-**דרישות תשתית (אורן מגדיר פעם אחת)**: `.env.local` עם `IFEEL_GH_TOKEN` (fine-grained PAT, repo זה,
-Contents+Pull requests = RW); Allow auto-merge מופעל בריפו; branch protection ל-main עם required check
-`Validate site` (רץ על Pull Requests); ה-runner `ifeel-deploy` מקוון; סודות `IFEEL_FTP_*` קיימים.
+**נפילה בטוחה**: אם build, rebase, push או יצירת Draft PR נכשלים, אין לבצע force push, merge ידני, FTP או עקיפת runner. השאר את העבודה בענף ודווח את הסיבה.
 
 ## טריגרים ושיגור
 
-**אוטומטי (Make.com webhook)**:
-- יום חול 07:00 → `mode: daily`
-- יום ראשון 07:00 → `mode: deep`
-- 30 דקות אחרי `daily-article-publisher` → `mode: verify` על ה-URL החדש
+**מתוזמן, רק כאשר קיים Scheduler מאומת במערכת הניהול**:
+- יום חול → `mode: daily`
+- יום ראשון → `mode: deep`
+- אחרי פרסום מאמר מאושר → `mode: verify` על ה-URL החדש
+
+תיעוד לוח זמנים אינו הוכחה שה־Scheduler פעיל. יש להציג רק תצפית רעננה ממערכת התזמון.
 
 **ידני (אורן כותב בצ'אט)**:
 - "סריקת SEO" / "תבדוק את האתר" / "מה המצב עם ה-SEO" → `mode: daily`
@@ -271,12 +257,12 @@ Contents+Pull requests = RW); Allow auto-merge מופעל בריפו; branch pro
 - "תבדוק שהתיקון עבד ב-{URL}" → `mode: verify`
 
 **פלט**:
-- Webhook → טיוטת Gmail ל-oren@i-feel.co.il, נושא: `📊 דוח SEO — {DD/MM} | {X}/100 | {N} משימות`
-- ידני → הדוח נשלח בשיחה
+- מתוזמן → דוח מחוטא במערכת הניהול ו־Telemetry; יצירת טיוטת Gmail או שליחה דורשות אישור מפורש.
+- ידני → הדוח מוצג בשיחה.
 
 **משימות Monday**:
-- כברירת מחדל המשימות הן של אורן ונשארות בדוח. פתח item ב-Monday רק אם המשימה דורשת תוכן מקצועי משגיב/אורה/קיריל → לוח 3011387201 (שירות) או 2732725207 (פרויקטים), קבוצה "SEO", יעד: +2 ימים.
-- 🟡 → backlog שבועי (לא משימה יומית).
+- כברירת מחדל המשימות נשארות בדוח. יצירת item ב־Monday היא כתיבה עסקית ודורשת תוכנית מדויקת ואישור מפורש.
+- 🟡 נשאר backlog שבועי בדוח עד לאישור.
 
 ## טיפול בשגיאות
 
@@ -314,7 +300,7 @@ Contents+Pull requests = RW); Allow auto-merge מופעל בריפו; branch pro
 - `deploy-ifeel` — כל תיקון שמגיע לשרת עובר דרכו
 - `verify-live` — בדיקת עשן אחרי תיקון
 - `new-page` — יצירת דף חדש (כולל עדכון sitemap ידני)
-- `morning-briefing-ifeel` — מפעיל את הסקיל כחלק מהבריפינג של 06:00
+- `ai-operations-manager` — רשאי לנתב ביקורת SEO כחלק מתדריך הבוקר, בלי להרחיב את הרשאות הסקיל
 
 ## חוזה חיבור ל־AI Sales Manager
 

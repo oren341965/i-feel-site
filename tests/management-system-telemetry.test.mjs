@@ -7,6 +7,7 @@ import { resolve } from 'node:path';
 import test from 'node:test';
 
 import './automation-audit-reporter.test.mjs';
+import './daily-seo-safety.test.mjs';
 import './email-audit-reporter.test.mjs';
 import './marketing-audit-reporter.test.mjs';
 import './verify-live-reporter.test.mjs';
