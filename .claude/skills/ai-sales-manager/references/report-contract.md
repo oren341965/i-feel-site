@@ -13,6 +13,12 @@ Write reports in concise Hebrew. Lead with the operational conclusion, then evid
 7. **תובנות AI** — at most five evidence-linked observations. Label uncertain explanations as hypotheses.
 8. **שלוש פעולות ניהוליות** — concrete, bounded actions for the next working period. Recommendations are not Monday mutations.
 
+## Management System aggregate contract
+
+The control-plane audit must publish both the full pipeline population and the filtered treatment population. The filtered aggregate contains only counts: open, exception, healthy, no owner, no next action, overdue, inactive and stale. It also publishes the excluded-open total split into one exclusive primary bucket per item: left sales ownership first, future follow-up second, handled with no new evidence third. These three buckets must reconcile exactly to excluded open, and treatment open plus excluded open must reconcile exactly to pipeline open.
+
+Never omit treatment metrics silently. If any treatment count or reconciliation is missing, fail before transport instead of allowing the dashboard to present all open history as the current treatment queue. No customer row, name, contact detail, action text or priority record may enter this aggregate request.
+
 ## Full-system daily brief
 
 For an orchestration dry run, keep the existing pipeline sections and append concise sections for target progress, Google Ads, Meta Ads, daily website/SEO improvement, project video/social reuse, Maya/plans, referrals, existing-customer revenue, service-quality signals, handoff/closeout, capacity and one highest-value action. Show `CONNECTION_MISSING`, `MISSING_LOCAL`, `CAPACITY_THRESHOLD_MISSING`, `CAPACITY_BLOCKED` and `NO_CHANGE` literally when applicable. End with the maturity-0 post-run self-check.

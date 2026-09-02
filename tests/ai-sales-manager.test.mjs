@@ -58,6 +58,20 @@ test('sales analyzer separates closed and lost, disables value ranking on low co
     { open: 1, closed: 1, cancelled: 1 },
   );
   assert.equal(result.counts.noNextAction, 1);
+  assert.deepEqual(result.treatment, {
+    openCount: 1,
+    exceptionCount: 1,
+    healthyCount: 0,
+    noOwnerCount: 0,
+    noNextActionCount: 1,
+    overdueCount: 0,
+    inactiveCount: 0,
+    staleCount: 0,
+    excludedOpenCount: 0,
+    excludedLeftSalesCount: 0,
+    excludedFutureCount: 0,
+    excludedHandledCount: 0,
+  });
   assert.equal(result.counts.newLast7Days, 2);
   assert.equal(result.counts.newLast30Days, 3);
   assert.equal(result.valuePriorityEnabled, false);
@@ -222,6 +236,11 @@ test('SALES_ELIGIBILITY_FILTER excludes Sharon Falek regression until follow-up 
   assert.deepEqual(excluded.salesEligibility.reasons, {
     leftSalesOwnership: 0, futureFollowup: 1, handledNoNewEvidence: 1,
   });
+  assert.equal(excluded.treatment.openCount, 0);
+  assert.equal(excluded.treatment.excludedOpenCount, 1);
+  assert.equal(excluded.treatment.excludedFutureCount, 1);
+  assert.equal(excluded.treatment.excludedHandledCount, 0);
+  assert.equal(excluded.reconciliation.treatmentExclusionsMatchOpen, true);
   assert.equal(returnedByEvidence.eligible, true);
   assert.equal(returnedByDate.eligible, false);
   assert.deepEqual(returnedByDate.reasons, ['HANDLED_NO_NEW_EVIDENCE']);

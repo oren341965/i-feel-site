@@ -449,6 +449,30 @@ export function analyzeSales(input, options = {}) {
   const qualityScore = dataQualityScore(coverage);
   const owners = ownerMetrics(classified);
   const eligibleOpen = open.filter((item) => item.salesEligibility.eligible);
+  const excludedOpen = open.filter((item) => !item.salesEligibility.eligible);
+  const treatmentFlagCount = (flag) => eligibleOpen.filter((item) => item.flags[flag]).length;
+  const exclusionBucket = (item) => {
+    const reasons = item.salesEligibility.reasons;
+    if (reasons.includes('LEFT_SALES_OWNERSHIP')) return 'leftSalesOwnership';
+    if (reasons.includes('FUTURE_FOLLOWUP')) return 'futureFollowup';
+    if (reasons.includes('HANDLED_NO_NEW_EVIDENCE')) return 'handledNoNewEvidence';
+    throw new TypeError(`Unsupported sales treatment exclusion for item ${item.id}`);
+  };
+  const exclusionBuckets = excludedOpen.map(exclusionBucket);
+  const treatment = {
+    openCount: eligibleOpen.length,
+    exceptionCount: eligibleOpen.filter((item) => !item.flags.healthy).length,
+    healthyCount: treatmentFlagCount('healthy'),
+    noOwnerCount: treatmentFlagCount('noOwner'),
+    noNextActionCount: treatmentFlagCount('noNextAction'),
+    overdueCount: treatmentFlagCount('overdue'),
+    inactiveCount: treatmentFlagCount('inactive'),
+    staleCount: treatmentFlagCount('stale'),
+    excludedOpenCount: excludedOpen.length,
+    excludedLeftSalesCount: exclusionBuckets.filter((reason) => reason === 'leftSalesOwnership').length,
+    excludedFutureCount: exclusionBuckets.filter((reason) => reason === 'futureFollowup').length,
+    excludedHandledCount: exclusionBuckets.filter((reason) => reason === 'handledNoNewEvidence').length,
+  };
   const priorities = eligibleOpen.filter((item) => !item.flags.healthy)
     .sort((a, b) => b.priorityScore - a.priorityScore
       || (a.lastUpdated ?? '').localeCompare(b.lastUpdated ?? '') || a.id.localeCompare(b.id))
@@ -474,6 +498,7 @@ export function analyzeSales(input, options = {}) {
     dataQualityScore: qualityScore,
     coverage,
     openProposalValueCoverage,
+    treatment,
   };
   const trendResult = trendFrom(snapshot, envelope.previousSnapshot);
   const ownerAssignmentCount = owners.reduce((sum, owner) => sum + owner.open, 0);
@@ -485,6 +510,7 @@ export function analyzeSales(input, options = {}) {
     ownerMetrics: owners,
     ownerAssignmentCount,
     priorities,
+    treatment,
     salesEligibility: {
       eligibleOpen: eligibleOpen.length,
       excludedOpen: open.length - eligibleOpen.length,
@@ -501,6 +527,10 @@ export function analyzeSales(input, options = {}) {
       populationMatchesTotal: counts.open + counts.closed + counts.cancelled === counts.total,
       uniqueIdsMatchTotal: uniqueIds === counts.total,
       prioritiesAreOpen: priorities.every((priority) => eligibleOpen.some((item) => item.id === priority.id)),
+      treatmentPopulationMatchesOpen: treatment.openCount + treatment.excludedOpenCount === counts.open,
+      treatmentHealthMatchesOpen: treatment.exceptionCount + treatment.healthyCount === treatment.openCount,
+      treatmentExclusionsMatchOpen: treatment.excludedLeftSalesCount + treatment.excludedFutureCount
+        + treatment.excludedHandledCount === treatment.excludedOpenCount,
       note: 'ownerAssignmentCount may exceed open when a lead has multiple owners',
     },
     snapshot,
