@@ -35,4 +35,6 @@ At maturity 0, do not write to Monday, Google, Meta or the external attribution 
 
 `scripts/attribution-readonly.mjs` validates an approved JSON export under the configured runtime `data` directory against `runtime/attribution-snapshot.schema.json`. The export must use schema version 1, contain source-timestamped rows keyed by `monday_item_id`, label every row `LOW`, `MEDIUM` or `HIGH` confidence, and contain no raw PII. The adapter rejects stale files, future evidence, unknown fields and paths outside the runtime data directory; it performs no source, Monday or external writes.
 
+`scripts/monday-attribution-coverage-readonly.mjs` measures live source-field coverage on the complete Monday sales board without emitting item IDs, names, contact fields or source text. It must reconcile board count, pagination and unique IDs before reporting aggregate all-time, 30-day and 7-day windows. Use the cohort windows to distinguish legacy attribution debt from a current capture regression; never treat a partial page or a manually populated source label as proof that paid click IDs are working.
+
 This adapter is a safe local boundary for synthetic and approved exports. It is not a live Google Drive connection. Keep `connections.attribution.connected=false` and `sourceVerified=false` until an approved export is actually present and verified.
