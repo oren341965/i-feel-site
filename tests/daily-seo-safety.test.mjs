@@ -11,8 +11,11 @@ test('daily SEO skill is discoverable and keeps merge and sends behind explicit 
   assert.match(skill, /^---\r?\nname: daily-seo-crawl\r?\n/);
   assert.match(skill, /Draft PR/);
   assert.match(skill, /אישור מפורש/);
+  assert.match(skill, /Scheduler רשום ומאומת במערכת הניהול/);
   assert.doesNotMatch(skill, /מפעיל auto-merge/);
   assert.doesNotMatch(skill, /\.env\.local.*IFEEL_GH_TOKEN/);
+  assert.doesNotMatch(skill, /Make\.com/);
+  assert.doesNotMatch(skill, /מסלול ה־auto-publish/);
 });
 
 test('legacy SEO publisher delegates to the safe workstation flow and cannot auto-merge', async () => {
