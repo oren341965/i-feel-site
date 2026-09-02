@@ -62,6 +62,20 @@ A historical run must not silently reduce coverage to email when the WhatsApp so
 
 For every orchestrated run, use `management-system-telemetry` when the capability, host, and scoped credentials are registered. Reuse one run key from `running` through the terminal state and report counters only; never send business payloads or identifying data. Missing telemetry credentials are a visible capability gap, not permission to search for secrets or repeat an external mutation.
 
+## Management System morning-status reporting
+
+After a read-only `ai-operations-manager` run, report one aggregate snapshot with:
+
+```powershell
+node .\.claude\skills\ai-operations-manager\scripts\report-automation-audit.mjs `
+  --audit-file <absolute-json> --audit-key <stable-key> --run-key <telemetry-run-key>
+```
+
+The file may contain only an enumerated source identity and state, evidence time, 08:00 scheduler state,
+bounded blocker codes, capacity state, and zero-action counters. Never include task names, customer data,
+message text, or a free-form `detail`. All write, send, scheduler-change, and Maya-activation counters must
+remain zero/false. The reporter does not create or enable a scheduler; `--dry-run` validates without transport.
+
 ## Handoff
 
 Report the worker skill used, bounded source window, source coverage, observed facts, deterministic decisions, filed count, duplicate count, folders created, incomplete/multi-part count, unresolved exceptions, approvals requested or received, completed mutations, verification evidence, completion-update status, failures, and uncovered capabilities.
