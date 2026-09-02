@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { copyFile, mkdir, mkdtemp, rm, writeFile } from 'node:fs/promises';
+import { copyFile, mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { dirname, resolve } from 'node:path';
 import { spawnSync } from 'node:child_process';
@@ -8,6 +8,7 @@ import test from 'node:test';
 const REPO = resolve(import.meta.dirname, '..');
 const SCRIPT = resolve(REPO, '.claude/skills/management-system-telemetry/scripts/audit-host-readiness.mjs');
 const SOURCE_SYNC_SCRIPT = resolve(REPO, '.claude/skills/management-system-telemetry/scripts/audit-source-sync.mjs');
+const INSTALL_AGENT_CONFIG = resolve(REPO, 'scripts/workstations/install-agent-config.ps1');
 
 function git(cwd, args) {
   const result = spawnSync('git', args, { cwd, encoding: 'utf8' });
@@ -144,6 +145,52 @@ test('host readiness accepts Windows PowerShell UTF-8 BOM installation metadata'
   const output = JSON.parse(result.stdout);
   assert.equal(output.ok, true);
   assert.equal(output.installation.installedCommitMatchesHead, true);
+});
+
+test('agent config installer supports an isolated user root and writes BOM-free JSON', {
+  skip: process.platform !== 'win32',
+}, async (t) => {
+  const root = await mkdtemp(resolve(tmpdir(), 'ifeel-agent-install-'));
+  t.after(() => rm(root, { recursive: true, force: true }));
+  const personalClaude = resolve(root, '.claude/skills/personal-skill/SKILL.md');
+  const personalCodex = resolve(root, '.codex/skills/personal-skill/SKILL.md');
+  const oldManaged = resolve(root, '.codex/skills/ai-sales-manager/SKILL.md');
+  const settingsPath = resolve(root, '.claude/settings.json');
+  await mkdir(dirname(personalClaude), { recursive: true });
+  await mkdir(dirname(personalCodex), { recursive: true });
+  await mkdir(dirname(oldManaged), { recursive: true });
+  await writeFile(personalClaude, 'personal claude skill', 'utf8');
+  await writeFile(personalCodex, 'personal codex skill', 'utf8');
+  await writeFile(oldManaged, 'old managed skill', 'utf8');
+  await writeFile(settingsPath, JSON.stringify({ permissions: { allow: ['personal-rule'] } }), 'utf8');
+
+  const result = spawnSync('powershell.exe', [
+    '-NoProfile',
+    '-ExecutionPolicy', 'Bypass',
+    '-File', INSTALL_AGENT_CONFIG,
+    '-RepositoryPath', REPO,
+    '-UserRoot', root,
+  ], { encoding: 'utf8' });
+  assert.equal(result.status, 0, result.stderr);
+
+  const metadataBytes = await readFile(resolve(root, '.ifeel-agent-config.json'));
+  const settingsBytes = await readFile(settingsPath);
+  assert.notDeepEqual([...metadataBytes.subarray(0, 3)], [0xef, 0xbb, 0xbf]);
+  assert.notDeepEqual([...settingsBytes.subarray(0, 3)], [0xef, 0xbb, 0xbf]);
+  const metadata = JSON.parse(metadataBytes.toString('utf8'));
+  const settings = JSON.parse(settingsBytes.toString('utf8'));
+  assert.equal(metadata.repository, 'oren341965/i-feel-site');
+  assert.equal(settings.permissions.allow.includes('personal-rule'), true);
+  assert.equal(await readFile(personalClaude, 'utf8'), 'personal claude skill');
+  assert.equal(await readFile(personalCodex, 'utf8'), 'personal codex skill');
+  assert.equal(
+    await readFile(resolve(root, '.codex/skills/ai-sales-manager/SKILL.md'), 'utf8'),
+    await readFile(resolve(REPO, '.claude/skills/ai-sales-manager/SKILL.md'), 'utf8'),
+  );
+  assert.equal(
+    await readFile(resolve(metadata.backupPath, 'codex/skills/ai-sales-manager/SKILL.md'), 'utf8'),
+    'old managed skill',
+  );
 });
 
 test('host readiness validates an approved local credential wrapper without environment secrets', async (t) => {

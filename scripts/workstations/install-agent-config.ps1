@@ -1,10 +1,19 @@
 [CmdletBinding(SupportsShouldProcess)]
 param(
     [Parameter()]
-    [string]$RepositoryPath = (Resolve-Path (Join-Path $PSScriptRoot "..\..")).Path
+    [string]$RepositoryPath = (Resolve-Path (Join-Path $PSScriptRoot "..\..")).Path,
+
+    [Parameter()]
+    [ValidateNotNullOrEmpty()]
+    [string]$UserRoot = [Environment]::GetFolderPath("UserProfile")
 )
 
 $ErrorActionPreference = "Stop"
+
+if (($UserRoot -notmatch '^[A-Za-z]:[\\/]') -and
+    ($UserRoot -notmatch '^\\\\[^\\]+\\[^\\]+(?:\\|$)')) {
+    throw "UserRoot must be an absolute Windows path."
+}
 
 $sourceSkills = Join-Path $RepositoryPath ".claude\skills"
 $sourceClaude = Join-Path $RepositoryPath "CLAUDE.md"
@@ -17,7 +26,6 @@ foreach ($required in @($sourceSkills, $sourceClaude, $sourceCodex, $sourceSetti
     }
 }
 
-$userRoot = [Environment]::GetFolderPath("UserProfile")
 $claudeHome = Join-Path $userRoot ".claude"
 $codexHome = Join-Path $userRoot ".codex"
 $backupRoot = Join-Path $userRoot ".ifeel-agent-backups\$(Get-Date -Format 'yyyyMMdd-HHmmss')"
@@ -91,7 +99,8 @@ if (-not $settings.PSObject.Properties['$schema']) {
 }
 
 if ($PSCmdlet.ShouldProcess($claudeSettings, "Merge shared Claude permission rules")) {
-    $settings | ConvertTo-Json -Depth 20 | Set-Content -LiteralPath $claudeSettings -Encoding UTF8
+    $settingsJson = $settings | ConvertTo-Json -Depth 20
+    [IO.File]::WriteAllText($claudeSettings, $settingsJson, [Text.UTF8Encoding]::new($false))
 }
 
 foreach ($engine in @("claude", "codex")) {
