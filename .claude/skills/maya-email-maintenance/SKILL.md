@@ -108,3 +108,21 @@ Return a concise Hebrew summary with:
 - the next scheduled run time.
 
 Use `COMPLETED`, `PARTIAL` or `BLOCKED` as the run status. Do not report a message as handled unless the requested Gmail state is verified after the action.
+
+### Maturity-0 Management System report
+
+For a `REPORT_ONLY` run, write no Gmail or cross-system state. Build one local JSON object with only:
+
+- `mailboxRole=maya_front_office`, identity/result/window/checkpoint status and bounded blocker codes;
+- Gmail system totals and a complete primary-route count whose sum equals `messagesScanned`;
+- `paginationComplete`, `contentInspected`, `sourceUpdatedAt` and `capturedAt`;
+- all action counters (`itemsChanged`, labels, read/archive, drafts, sends, downloads, Monday/WhatsApp/Calendar/contacts/Vault/Bus writes and scheduler changes) fixed to zero.
+
+Never include the mailbox address, message/thread IDs, addresses, subjects, body text, attachment names or arrays of messages. After a correlated `maya-email-maintenance` Telemetry run is registered, report the aggregate file with:
+
+```powershell
+node .\.claude\skills\maya-email-maintenance\scripts\report-email-audit.mjs `
+  --audit-file <absolute-json> --audit-key <stable-key> --run-key <telemetry-run-key>
+```
+
+The reporter requires the two Management System credentials from the local protected process environment. `--dry-run` validates the exact envelope without network transmission.
