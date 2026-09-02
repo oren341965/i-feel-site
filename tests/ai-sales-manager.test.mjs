@@ -300,6 +300,9 @@ test('Maya commissioning is role-scoped, hash-verified, and activation-free', ()
 
   assert.match(exporter, /Refusing to export a Maya release from a dirty worktree/);
   assert.match(exporter, /Local main does not match origin\/main/);
+  assert.doesNotMatch(exporter, /\[string\]\$RepositoryPath\s*=\s*\(Resolve-Path/);
+  assert.match(exporter, /IsNullOrWhiteSpace\(\$RepositoryPath\)/);
+  assert.match(exporter, /Join-Path \$PSScriptRoot '\.\.\\\.\.'/);
   assert.match(exporter, /schedulerActivation\s*=\s*'PAUSED'/);
   assert.match(exporter, /targetEngine = 'codex'/);
   assert.match(exporter, /management-system-telemetry/);
