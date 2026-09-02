@@ -43,6 +43,7 @@ description: Orchestrate I Feel's maturity-0 sales system and deterministic read
 
 - Pipeline analysis: `scripts/analyze-sales.mjs`
 - Aggregate audit ingestion: `scripts/report-sales-audit.mjs`. Use it only after a complete `live_read_only` analysis; pass the same stable telemetry run key and never send operational lead details.
+- Aggregate marketing ingestion: `scripts/report-marketing-audit.mjs`. It reconciles the canonical Google, Meta, attribution and sales-capacity reads into one PII-free Management System snapshot; use the same registered `ai-sales-manager` run key and keep every protected-action counter at zero.
 - Full-system dry run: `scripts/orchestrate-sales-system.mjs`
 - Local morning dry run: `scripts/morning-run.mjs`
 - No-write source preflight: `scripts/preflight-readonly.mjs`
