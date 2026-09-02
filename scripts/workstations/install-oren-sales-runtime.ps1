@@ -37,9 +37,20 @@ function Merge-MissingDefaults {
     }
 }
 
-if ((-not [IO.Path]::IsPathFullyQualified($RepositoryPath)) -or
-    (-not [IO.Path]::IsPathFullyQualified($RuntimeRoot)) -or
-    (-not [IO.Path]::IsPathFullyQualified($VaultRoot))) {
+function Test-FullyQualifiedWindowsPath {
+    param([Parameter(Mandatory)][string]$Path)
+
+    if ([string]::IsNullOrWhiteSpace($Path)) {
+        return $false
+    }
+
+    return ($Path -match '^[A-Za-z]:[\\/]') -or
+        ($Path -match '^\\\\[^\\]+\\[^\\]+(?:\\|$)')
+}
+
+if ((-not (Test-FullyQualifiedWindowsPath -Path $RepositoryPath)) -or
+    (-not (Test-FullyQualifiedWindowsPath -Path $RuntimeRoot)) -or
+    (-not (Test-FullyQualifiedWindowsPath -Path $VaultRoot))) {
     throw 'RepositoryPath, RuntimeRoot and VaultRoot must be absolute paths.'
 }
 if (-not (Test-Path -LiteralPath (Join-Path $RepositoryPath '.git'))) {

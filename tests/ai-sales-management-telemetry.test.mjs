@@ -1,6 +1,10 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import { spawnSync } from 'node:child_process';
 import { EventEmitter } from 'node:events';
+import { mkdir, mkdtemp, rm } from 'node:fs/promises';
+import { tmpdir } from 'node:os';
+import { resolve } from 'node:path';
 import { PassThrough } from 'node:stream';
 
 import {
@@ -73,4 +77,27 @@ test('management telemetry process is killed and fails closed after the bounded 
     /timed out after 10 ms/,
   );
   assert.equal(child.killCalls, 1);
+});
+
+test('Oren runtime installer previews successfully under Windows PowerShell 5.1', {
+  skip: process.platform !== 'win32',
+}, async (t) => {
+  const repository = resolve(import.meta.dirname, '..');
+  const fixture = await mkdtemp(resolve(tmpdir(), 'ifeel-sales-installer-'));
+  t.after(() => rm(fixture, { recursive: true, force: true }));
+  const vault = resolve(fixture, 'vault');
+  await mkdir(resolve(vault, '.obsidian'), { recursive: true });
+
+  const result = spawnSync('powershell.exe', [
+    '-NoProfile',
+    '-ExecutionPolicy', 'Bypass',
+    '-File', resolve(repository, 'scripts/workstations/install-oren-sales-runtime.ps1'),
+    '-RepositoryPath', repository,
+    '-RuntimeRoot', resolve(fixture, 'runtime'),
+    '-VaultRoot', vault,
+    '-WhatIf',
+  ], { encoding: 'utf8' });
+
+  assert.equal(result.status, 0, result.stderr);
+  assert.match(result.stdout, /No Task Scheduler job or external write was installed\./);
 });
