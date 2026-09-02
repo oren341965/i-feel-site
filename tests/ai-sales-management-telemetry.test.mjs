@@ -1,8 +1,11 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import { EventEmitter } from 'node:events';
+import { PassThrough } from 'node:stream';
 
 import {
   localDateKey,
+  runPowerShell,
   runManagedMorning,
 } from '../.claude/skills/ai-sales-manager/scripts/run-morning-managed.mjs';
 
@@ -53,4 +56,21 @@ test('managed morning does not run the manager when the running envelope is reje
     /management unavailable/,
   );
   assert.equal(managerCalls, 0);
+});
+
+test('management telemetry process is killed and fails closed after the bounded timeout', async () => {
+  const child = new EventEmitter();
+  child.stdout = new PassThrough();
+  child.stderr = new PassThrough();
+  child.killCalls = 0;
+  child.kill = () => { child.killCalls += 1; };
+
+  await assert.rejects(
+    runPowerShell('telemetry.ps1', [], {
+      spawnImpl: () => child,
+      timeoutMs: 10,
+    }),
+    /timed out after 10 ms/,
+  );
+  assert.equal(child.killCalls, 1);
 });

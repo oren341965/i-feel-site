@@ -10,6 +10,7 @@ import { runMorningDryRun } from './morning-run.mjs';
 const CAPABILITY_SLUG = 'ai-sales-manager';
 const DEFAULT_CONFIG = fileURLToPath(new URL('../runtime/config.example.json', import.meta.url));
 const DEFAULT_TIMEZONE = 'Asia/Jerusalem';
+const DEFAULT_TELEMETRY_TIMEOUT_MS = 75_000;
 
 function parseArgs(argv) {
   let configPath = DEFAULT_CONFIG;
@@ -43,28 +44,47 @@ export function defaultTelemetryCommandPath(environment = process.env) {
   return resolve(localAppData, 'I Feel', 'Management System', 'invoke-telemetry.ps1');
 }
 
-function runPowerShell(commandPath, argumentsList) {
+export function runPowerShell(commandPath, argumentsList, {
+  spawnImpl = spawn,
+  timeoutMs = DEFAULT_TELEMETRY_TIMEOUT_MS,
+} = {}) {
   return new Promise((resolvePromise, rejectPromise) => {
-    const child = spawn('powershell.exe', [
+    const child = spawnImpl('powershell.exe', [
       '-NoProfile',
       '-ExecutionPolicy', 'Bypass',
       '-File', commandPath,
       ...argumentsList,
     ], { windowsHide: true, stdio: ['ignore', 'pipe', 'pipe'] });
     let stdout = '';
+    let settled = false;
+    const settle = (callback) => {
+      if (settled) return false;
+      settled = true;
+      clearTimeout(timer);
+      callback();
+      return true;
+    };
+    const timer = setTimeout(() => {
+      if (settled) return;
+      settled = true;
+      clearTimeout(timer);
+      child.kill();
+      rejectPromise(new Error(`Management telemetry timed out after ${timeoutMs} ms.`));
+    }, timeoutMs);
     child.stdout.setEncoding('utf8');
     child.stderr.resume();
     child.stdout.on('data', (chunk) => { stdout += chunk; });
-    child.once('error', rejectPromise);
+    child.once('error', (error) => settle(() => rejectPromise(error)));
     child.once('close', (code) => {
       if (code !== 0) {
-        rejectPromise(new Error(`Management telemetry command failed with exit code ${code}.`));
+        settle(() => rejectPromise(new Error(`Management telemetry command failed with exit code ${code}.`)));
         return;
       }
       try {
-        resolvePromise(JSON.parse(stdout.trim()));
+        const output = JSON.parse(stdout.trim());
+        settle(() => resolvePromise(output));
       } catch {
-        rejectPromise(new Error('Management telemetry returned an invalid response.'));
+        settle(() => rejectPromise(new Error('Management telemetry returned an invalid response.')));
       }
     });
   });
