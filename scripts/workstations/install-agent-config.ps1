@@ -142,7 +142,8 @@ $metadata = [ordered]@{
 }
 $metadataPath = Join-Path $userRoot ".ifeel-agent-config.json"
 if ($PSCmdlet.ShouldProcess($metadataPath, "Write installation metadata")) {
-    $metadata | ConvertTo-Json | Set-Content -LiteralPath $metadataPath -Encoding UTF8
+    $metadataJson = $metadata | ConvertTo-Json
+    [IO.File]::WriteAllText($metadataPath, $metadataJson, [Text.UTF8Encoding]::new($false))
 }
 
 Write-Host "Shared Claude/Codex configuration installed."

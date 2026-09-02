@@ -129,6 +129,23 @@ test('host readiness separates local provisioning readiness from credential prov
   assert.ok(output.warnings.includes('SERVICE_IDENTITY_CREDENTIALS_NOT_PROVISIONED'));
 });
 
+test('host readiness accepts Windows PowerShell UTF-8 BOM installation metadata', async (t) => {
+  const paths = await fixture(t);
+  const metadata = JSON.stringify({
+    repository: 'oren341965/i-feel-site',
+    commit: paths.mainRevision,
+    installedAt: '2026-09-01T00:00:00.000Z',
+  });
+  await writeFile(paths.metadata, `\uFEFF${metadata}`, 'utf8');
+
+  const result = runPreflight(paths);
+
+  assert.equal(result.status, 0, result.stderr);
+  const output = JSON.parse(result.stdout);
+  assert.equal(output.ok, true);
+  assert.equal(output.installation.installedCommitMatchesHead, true);
+});
+
 test('host readiness validates an approved local credential wrapper without environment secrets', async (t) => {
   const paths = await fixture(t);
   const result = runPreflight(paths, ['--expected-host', 'ifeel160222', '--credential-wrapper', paths.credentialWrapper], {
