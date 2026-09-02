@@ -48,8 +48,16 @@ const SALES_ANALYSIS = {
     status: { rate: 1 }, owner: { rate: 0.6 }, nextAction: { rate: 0.7 },
     lastUpdated: { rate: 1 }, createdAt: { rate: 1 }, proposalValue: { rate: 0.2 },
   },
+  treatment: {
+    openCount: 3, exceptionCount: 3, healthyCount: 0, noOwnerCount: 2,
+    noNextActionCount: 2, overdueCount: 1, inactiveCount: 1, staleCount: 1,
+    excludedOpenCount: 3, excludedLeftSalesCount: 2, excludedFutureCount: 1, excludedHandledCount: 0,
+  },
   priorities: [{ id: '123', name: 'Sensitive Customer', owners: ['Maya'], nextAction: 'Call private number' }],
-  reconciliation: { populationMatchesTotal: true, uniqueIdsMatchTotal: true, prioritiesAreOpen: true },
+  reconciliation: {
+    populationMatchesTotal: true, uniqueIdsMatchTotal: true, prioritiesAreOpen: true,
+    treatmentPopulationMatchesOpen: true, treatmentHealthMatchesOpen: true, treatmentExclusionsMatchOpen: true,
+  },
 };
 
 const SALES_ARGS = [
@@ -324,6 +332,10 @@ test('sales audit dry run emits reconciled aggregates without operational detail
   assert.equal(output.envelope.exceptionCount, 5);
   assert.equal(output.envelope.newLast7Days, 2);
   assert.equal(output.envelope.newLast30Days, 4);
+  assert.equal(output.envelope.treatmentOpenCount, 3);
+  assert.equal(output.envelope.treatmentNoOwnerCount, 2);
+  assert.equal(output.envelope.excludedOpenCount, 3);
+  assert.equal(output.envelope.excludedLeftSalesCount, 2);
   assert.equal(output.envelope.ownerCoverage, 6000);
   assert.equal(result.stdout.includes('Sensitive Customer'), false);
   assert.equal(result.stdout.includes('Call private number'), false);
@@ -377,6 +389,10 @@ test('sales audit uses both auth layers and returns sanitized aggregate evidence
   assert.equal(captured.url, '/api/sales/audits');
   assert.equal(captured.headers['oai-sites-authorization'], `Bearer ${siteToken}`);
   assert.equal(captured.headers.authorization, `Bearer ${runToken}`);
+  assert.equal(captured.body.treatmentOpenCount, 3);
+  assert.equal(captured.body.treatmentNoOwnerCount, 2);
+  assert.equal(captured.body.excludedOpenCount, 3);
+  assert.equal(captured.body.excludedFutureCount, 1);
   assert.equal(Object.hasOwn(captured.body, 'priorities'), false);
   assert.equal(result.stdout.includes(siteToken), false);
   assert.equal(result.stdout.includes(runToken), false);
