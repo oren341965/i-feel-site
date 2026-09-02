@@ -6,6 +6,11 @@ import { tmpdir } from 'node:os';
 import { resolve } from 'node:path';
 import test from 'node:test';
 
+import './automation-audit-reporter.test.mjs';
+import './email-audit-reporter.test.mjs';
+import './marketing-audit-reporter.test.mjs';
+import './verify-live-reporter.test.mjs';
+
 const REPO = resolve(import.meta.dirname, '..');
 const SCRIPT = resolve(REPO, '.claude/skills/management-system-telemetry/scripts/report-capability-run.mjs');
 const HOST_SCRIPT = resolve(REPO, '.claude/skills/management-system-telemetry/scripts/report-host-checkin.mjs');
