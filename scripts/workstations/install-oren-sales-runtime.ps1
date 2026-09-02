@@ -135,7 +135,8 @@ if (Test-Path -LiteralPath $configPath -PathType Leaf) {
     }
 }
 if ($PSCmdlet.ShouldProcess($configPath, 'Write merged maturity-0 runtime config')) {
-    $config | ConvertTo-Json -Depth 30 | Set-Content -LiteralPath $configPath -Encoding UTF8
+    $configJson = $config | ConvertTo-Json -Depth 30
+    [IO.File]::WriteAllText($configPath, $configJson, [Text.UTF8Encoding]::new($false))
 }
 
 $launcherPath = Join-Path $RuntimeRoot 'jobs\run-morning-dry-run.ps1'
@@ -171,7 +172,8 @@ $report = [ordered]@{
 }
 $reportPath = Join-Path $RuntimeRoot 'logs\installation-status.json'
 if ($PSCmdlet.ShouldProcess($reportPath, 'Write non-secret installation status')) {
-    $report | ConvertTo-Json -Depth 10 | Set-Content -LiteralPath $reportPath -Encoding UTF8
+    $reportJson = $report | ConvertTo-Json -Depth 10
+    [IO.File]::WriteAllText($reportPath, $reportJson, [Text.UTF8Encoding]::new($false))
 }
 
 Write-Host "Oren AI Sales runtime is installed at $RuntimeRoot"

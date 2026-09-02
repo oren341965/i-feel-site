@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { spawnSync } from 'node:child_process';
 import { EventEmitter } from 'node:events';
-import { mkdir, mkdtemp, rm } from 'node:fs/promises';
+import { mkdir, mkdtemp, readFile, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { resolve } from 'node:path';
 import { PassThrough } from 'node:stream';
@@ -100,4 +100,36 @@ test('Oren runtime installer previews successfully under Windows PowerShell 5.1'
 
   assert.equal(result.status, 0, result.stderr);
   assert.match(result.stdout, /No Task Scheduler job or external write was installed\./);
+});
+
+test('Oren runtime installer writes BOM-free JSON under Windows PowerShell 5.1', {
+  skip: process.platform !== 'win32',
+}, async (t) => {
+  const repository = resolve(import.meta.dirname, '..');
+  const fixture = await mkdtemp(resolve(tmpdir(), 'ifeel-sales-installer-json-'));
+  t.after(() => rm(fixture, { recursive: true, force: true }));
+  const vault = resolve(fixture, 'vault');
+  const runtime = resolve(fixture, 'runtime');
+  await mkdir(resolve(vault, '.obsidian'), { recursive: true });
+
+  const result = spawnSync('powershell.exe', [
+    '-NoProfile',
+    '-ExecutionPolicy', 'Bypass',
+    '-File', resolve(repository, 'scripts/workstations/install-oren-sales-runtime.ps1'),
+    '-RepositoryPath', repository,
+    '-RuntimeRoot', runtime,
+    '-VaultRoot', vault,
+  ], { encoding: 'utf8' });
+
+  assert.equal(result.status, 0, result.stderr);
+  const configBytes = await readFile(resolve(runtime, 'config/config.json'));
+  const reportBytes = await readFile(resolve(runtime, 'logs/installation-status.json'));
+  assert.notDeepEqual([...configBytes.subarray(0, 3)], [0xef, 0xbb, 0xbf]);
+  assert.notDeepEqual([...reportBytes.subarray(0, 3)], [0xef, 0xbb, 0xbf]);
+  const config = JSON.parse(configBytes.toString('utf8'));
+  const report = JSON.parse(reportBytes.toString('utf8'));
+  assert.equal(config.maturity, 0);
+  assert.equal(config.connections.monday.writesAllowed, false);
+  assert.equal(report.external_actions_performed, false);
+  assert.equal(report.task_scheduler_installed, false);
 });
