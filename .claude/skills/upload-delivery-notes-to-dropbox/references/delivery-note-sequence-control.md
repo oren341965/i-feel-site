@@ -5,6 +5,7 @@ Use this reference to reconcile consecutive issued delivery-note numbers from 20
 ## Scope and evidence
 
 - Lower bound: delivery notes issued on or after `2026-08-01`. Do not infer missing numbers across the boundary from older records.
+- Every daily run is cumulative from `2026-08-01` through the current run upper bound. It must carry forward every still-open observed delivery note and every still-open sequence gap until verified closure; the daily report is not limited to documents first seen since the previous run.
 - Use every bounded, authenticated source already approved for this worker: the designated WhatsApp group, qualifying `office@i-feel.co.il` mail, the private unresolved register, and verified Dropbox delivery-note destinations.
 - Prefer an authoritative issued-document register or ERP export when an authenticated supported source is available. Source attachments alone can reveal gaps but cannot prove that every integer in a range was issued as a delivery note.
 - Partition the sequence by verified document series, issuing entity, and numbering regime when those fields exist. Never compare unrelated series merely because their numbers are close.
@@ -35,11 +36,13 @@ Do not commit this table, customer data, document numbers, source IDs, or recipi
 ## Reconciliation
 
 1. Build the observed inventory from 2026-08-01 through the current run's upper bound. Normalize only clear delivery-note numbers and collapse repeat photographs while retaining distinct multipart pages.
-2. Group records by verified numbering series. Within each group, sort numerically and enumerate integers between the lowest and highest observed issued numbers. Do not generate a gap after the highest observed number because no later number proves that it was skipped.
-3. For every absent integer inside an observed range, create `gap-candidate`; then search all approved sources and Dropbox for that exact document number. Check private unresolved history before treating it as new.
-4. Before escalation, seek authoritative evidence that the number was void, cancelled, a draft, assigned to another document type, or belongs to another numbering series. When verified, record the closure status/evidence and do not notify as a missing delivery note.
-5. If the number remains absent or only a partial source exists, set `investigating`. Record the nearest observed numbers, series, known project/customer evidence, sources checked, and the concrete action needed. Do not invent a project key or customer for an unexplained number.
-6. Close as `resolved` only when the complete source and exact Dropbox filing are verified, or when authoritative evidence proves a non-fileable disposition such as `void`, `cancelled`, or `not-a-delivery-note`.
+2. Import the previous unresolved register before processing newly arrived sources. Every record whose complete source or exact Dropbox filing is not verified remains in the current run as carry-over even when no new message mentions it.
+3. Group records by verified numbering series. Within each group, sort numerically and enumerate integers between the lowest and highest observed issued numbers. Do not generate a gap after the highest observed number because no later number proves that it was skipped.
+4. For every absent integer inside an observed range, create `gap-candidate`; then search all approved sources and Dropbox for that exact document number. Check private unresolved history before treating it as new.
+5. Before escalation, seek authoritative evidence that the number was void, cancelled, a draft, assigned to another document type, or belongs to another numbering series. When verified, record the closure status/evidence and do not notify as a missing delivery note.
+6. If the number remains absent or only a partial source exists, set `investigating`. Record the nearest observed numbers, series, known project/customer evidence, sources checked, and the concrete action needed. Do not invent a project key or customer for an unexplained number.
+7. Treat an observed delivery note that is not fully verified in Dropbox as an open carry-over record even when it is not a numeric sequence gap. Classify the blocker explicitly, for example `source-missing`, `routing-missing`, `upload-pending`, `incomplete-source`, or `signature-review`.
+8. Close as `resolved` only when the complete source and exact Dropbox filing are verified, or when authoritative evidence proves a non-fileable disposition such as `void`, `cancelled`, or `not-a-delivery-note`.
 
 ## Notifications and stopping rule
 
@@ -56,16 +59,19 @@ The alert must state:
 
 An initial sequence-gap alert and its routine status follow-ups are part of the recurring control requested by Oren. Attachments, messages to unverified recipients, or communications outside this defined recipient set retain the normal approval boundary.
 
-Recheck open gaps on every daily delivery-note run. Do not send the same unchanged alert more than once every two days. Stop all reminders immediately when the gap is closed by complete verified filing or authoritative disposition evidence.
+Recheck every open carry-over record and every open sequence gap on every daily delivery-note run. The normal daily completion update to Oren and Ora must include the complete current open carry-over list, including unchanged items, until each item is closed. Do not suppress an unchanged open item merely because it appeared in yesterday's report. Stop reporting and reminding on that item immediately after verified closure.
 
 ## Daily summary
 
 Add to the normal completion update:
 
+- the cumulative audit window, always starting at `2026-08-01` unless Oren explicitly requests an earlier bound;
 - the series and inclusive issued-number ranges checked;
 - count of numbers observed and filed;
-- new and still-open sequence gaps;
-- gaps closed since the previous run and their closure category;
+- every currently open observed delivery note, with document number, verified project key/customer when available, current blocker, and required next action;
+- every currently open sequence gap, including unchanged carry-over from prior runs;
+- new open items found since the previous run;
+- items closed since the previous run and their closure category;
 - unavailable evidence sources or unverified required recipients.
 
 Never state that the sequence is complete when an authoritative issued-document source required to prove completeness was unavailable. Describe the result as an observed-source reconciliation and name the coverage gap.
