@@ -18,6 +18,26 @@ description: "בדיקת עשן מהירה של i-feel.co.il — סטטוסים,
 - **full** — בנוסף עוברים על **כל** ה-URL-ים ב-sitemap החי ומוודאים שכולם מחזירים 200.
   להריץ כשאורן מבקש "בדיקה מלאה", אחרי שינוי גדול, או אם quick העלה חשד.
 
+## הרצה דטרמיניסטית ודיווח למערכת הניהול
+
+מקור האמת לבדיקת quick/full הוא הסקריפט הבא, שמדפיס ל־stdout צילום מצב JSON מחוטא בלבד:
+
+```powershell
+.\.claude\skills\verify-live\scripts\verify-live-readonly.ps1 -Mode quick
+```
+
+הסקריפט משתמש ב־`git ls-remote`, ב־GitHub CLI בקריאה וב־`curl.exe`; הוא אינו מבצע `git fetch`,
+אינו משנה refs או קבצים, אינו מפעיל Workflow ואינו פורס. שמירת הפלט מחוץ לריפו היא באחריות
+המפעיל. אחרי רישום ריצת `verify-live` ב־Telemetry, אפשר לדווח את הסיכום למערכת הניהול:
+
+```powershell
+node .\.claude\skills\verify-live\scripts\report-website-audit.mjs `
+  --audit-file <absolute-json> --audit-key <stable-key> --run-key <telemetry-run-key>
+```
+
+ה־reporter מקבל רק את סכמת הסיכום הקבועה, דורש שני רבדי אימות דרך משתני הסביבה המקומיים,
+ודוחה URL-ים, HTML, payload גולמי, כתיבות או פריסה. `--dry-run` מאמת ומציג את המעטפה בלי שליחה.
+
 יש גם מצב **verify-fix**: אורן נותן URL + מה אמור להיות בו ("תבדוק שהתיקון עבד ב-X") —
 מושכים את הדף ומחפשים את המחרוזת/התוכן הצפוי. מדווחים נמצא/לא נמצא + מזכירים שיש cache
 (LiteSpeed) — אם לא נמצא, לנסות שוב אחרי דקה לפני שמכריזים על כישלון.
@@ -61,9 +81,8 @@ $code = curl.exe -s -o NUL -w "%{http_code}" 'https://i-feel.co.il/llms.txt'   #
 
 ### 5. סנכרון ריפו ↔ אוויר
 ```powershell
-git -C C:\Users\USER\i-feel-site fetch origin
+git ls-remote https://github.com/oren341965/i-feel-site.git refs/heads/main
 gh run list --repo oren341965/i-feel-site --workflow deploy.yml --branch main --status success --limit 1 --json databaseId,headSha,conclusion,updatedAt,url
-git -C C:\Users\USER\i-feel-site rev-parse origin/main
 ```
 - ה-`headSha` של הריצה הירוקה האחרונה חייב להיות זהה ל-`origin/main`.
 - אם אינו זהה, יש commit ב-main שטרם נפרס או שפריסתו נכשלה/ממתינה ל-runner.
@@ -101,6 +120,7 @@ git -C C:\Users\USER\i-feel-site rev-parse origin/main
 - אל תשתמש ב-WebFetch לבדיקות תגים/סקריפטים — הוא ממיר ל-markdown ומוחק אותם. רק curl.
 - אל תכריז על תקלה על סמך בדיקה אחת אם ייתכן cache — אמת פעמיים בהפרש דקה.
 - אל תריץ full על כל ~90 ה-URL-ים בלי סיבה — quick מספיק לשגרה.
+- אל תשתמש ב־`git fetch` לצורך האימות; בדיקה אינה רשאית לשנות גם refs מקומיים.
 
 
 ## אזור העובדים (staff-expenses) — בדיקת PHP handler
