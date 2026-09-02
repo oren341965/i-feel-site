@@ -102,7 +102,10 @@ function buildEnvelope(args, analysis) {
   if (analysis.analysisComplete !== true) fail('Analysis is incomplete');
   const reconciliation = analysis.reconciliation;
   if (!reconciliation || reconciliation.populationMatchesTotal !== true
-    || reconciliation.uniqueIdsMatchTotal !== true || reconciliation.prioritiesAreOpen !== true) {
+    || reconciliation.uniqueIdsMatchTotal !== true || reconciliation.prioritiesAreOpen !== true
+    || reconciliation.treatmentPopulationMatchesOpen !== true
+    || reconciliation.treatmentHealthMatchesOpen !== true
+    || reconciliation.treatmentExclusionsMatchOpen !== true) {
     fail('Analysis reconciliation failed');
   }
 
@@ -117,6 +120,30 @@ function buildEnvelope(args, analysis) {
   const uniqueItemCount = integer(analysis.source.uniqueIds, 'source.uniqueIds');
   if (openCount + closedCount + cancelledCount !== totalCount || exceptionCount + healthyCount !== openCount
     || uniqueItemCount !== totalCount) fail('Analysis aggregate counts do not reconcile');
+
+  const treatment = analysis.treatment;
+  if (!treatment || typeof treatment !== 'object' || Array.isArray(treatment)) fail('Analysis treatment metrics are missing');
+  const treatmentOpenCount = integer(treatment.openCount, 'treatment.openCount');
+  const treatmentExceptionCount = integer(treatment.exceptionCount, 'treatment.exceptionCount');
+  const treatmentHealthyCount = integer(treatment.healthyCount, 'treatment.healthyCount');
+  const treatmentNoOwnerCount = integer(treatment.noOwnerCount, 'treatment.noOwnerCount');
+  const treatmentNoNextActionCount = integer(treatment.noNextActionCount, 'treatment.noNextActionCount');
+  const treatmentOverdueCount = integer(treatment.overdueCount, 'treatment.overdueCount');
+  const treatmentInactiveCount = integer(treatment.inactiveCount, 'treatment.inactiveCount');
+  const treatmentStaleCount = integer(treatment.staleCount, 'treatment.staleCount');
+  const excludedOpenCount = integer(treatment.excludedOpenCount, 'treatment.excludedOpenCount');
+  const excludedLeftSalesCount = integer(treatment.excludedLeftSalesCount, 'treatment.excludedLeftSalesCount');
+  const excludedFutureCount = integer(treatment.excludedFutureCount, 'treatment.excludedFutureCount');
+  const excludedHandledCount = integer(treatment.excludedHandledCount, 'treatment.excludedHandledCount');
+  if (treatmentOpenCount + excludedOpenCount !== openCount
+    || treatmentExceptionCount + treatmentHealthyCount !== treatmentOpenCount
+    || excludedLeftSalesCount + excludedFutureCount + excludedHandledCount !== excludedOpenCount) {
+    fail('Analysis treatment counts do not reconcile');
+  }
+  for (const value of [treatmentExceptionCount, treatmentHealthyCount, treatmentNoOwnerCount,
+    treatmentNoNextActionCount, treatmentOverdueCount, treatmentInactiveCount, treatmentStaleCount]) {
+    if (value > treatmentOpenCount) fail('Analysis treatment count exceeds treatment population');
+  }
 
   return {
     auditKey: requiredKey(args, 'audit-key'),
@@ -144,6 +171,18 @@ function buildEnvelope(args, analysis) {
     healthyCount,
     newLast7Days: integer(counts.newLast7Days, 'counts.newLast7Days'),
     newLast30Days: integer(counts.newLast30Days, 'counts.newLast30Days'),
+    treatmentOpenCount,
+    treatmentExceptionCount,
+    treatmentHealthyCount,
+    treatmentNoOwnerCount,
+    treatmentNoNextActionCount,
+    treatmentOverdueCount,
+    treatmentInactiveCount,
+    treatmentStaleCount,
+    excludedOpenCount,
+    excludedLeftSalesCount,
+    excludedFutureCount,
+    excludedHandledCount,
     statusCoverage: basisPoints(analysis.coverage?.status, 'status'),
     ownerCoverage: basisPoints(analysis.coverage?.owner, 'owner'),
     nextActionCoverage: basisPoints(analysis.coverage?.nextAction, 'nextAction'),
