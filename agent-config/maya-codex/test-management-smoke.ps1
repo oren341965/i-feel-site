@@ -37,11 +37,19 @@ if ($config.managementSystem.hostSlug -ne $expectedHost -or
     throw 'Maya runtime is not in the approved credentials-provisioned REPORT_ONLY state.'
 }
 $requiredSkills = @($config.skills.required | ForEach-Object { [string]$_ } | Sort-Object -Unique)
+$operationalCapabilities = @($config.managementSystem.capabilitySlugs | ForEach-Object { [string]$_ } | Sort-Object -Unique)
 if ($requiredSkills.Count -eq 0 -or
     $requiredSkills -notcontains 'management-system-telemetry' -or
     $requiredSkills -notcontains 'maya-email-maintenance' -or
+    $requiredSkills -notcontains 'maya-instagram-relations' -or
     $requiredSkills -notcontains 'maya-whatsapp') {
     throw 'Maya runtime config does not declare the required managed Skill set.'
+}
+if ($operationalCapabilities.Count -eq 0 -or
+    $operationalCapabilities -notcontains 'maya-email-maintenance' -or
+    $operationalCapabilities -notcontains 'maya-instagram-relations' -or
+    $operationalCapabilities -notcontains 'maya-whatsapp') {
+    throw 'Maya runtime config does not declare every operational capability scope.'
 }
 
 $vaultRoot = [IO.Path]::GetFullPath([string]$config.VAULT_ROOT)
@@ -77,6 +85,29 @@ $commonTelemetryArguments = @(
 if ($DryRun) { $commonTelemetryArguments += '--dry-run' }
 
 try {
+    $identityScopesVerified = @()
+    foreach ($capability in $operationalCapabilities) {
+        $identityRunKey = "maya-identity-scope-$capability-$keySuffix"
+        $identityArguments = @(
+            '--capability', $capability,
+            '--run-key', $identityRunKey,
+            '--mode', 'identity_probe',
+            '--status', 'succeeded',
+            '--started-at', $startedAt.ToString('o'),
+            '--finished-at', (Get-Date).ToUniversalTime().ToString('o'),
+            '--reads', '0', '--writes', '0', '--sends', '0', '--errors', '0',
+            '--evidence-ref', 'maya_identity_scope:verified'
+        )
+        if ($DryRun) { $identityArguments += '--dry-run' }
+        $identityOutput = & $telemetryWrapper @identityArguments
+        if ($LASTEXITCODE -ne 0) { throw "Maya service identity is not authorized for $capability." }
+        $identityProbe = $identityOutput | ConvertFrom-Json
+        if ($DryRun -and $identityProbe.envelope.capabilitySlug -ne $capability) {
+            throw "Maya identity dry-run did not preserve $capability."
+        }
+        $identityScopesVerified += $capability
+    }
+
     $runningOutput = & $telemetryWrapper @commonTelemetryArguments --status running
     if ($LASTEXITCODE -ne 0) { throw 'Maya telemetry running event was rejected.' }
     $running = $runningOutput | ConvertFrom-Json
@@ -87,7 +118,7 @@ try {
         '--health', 'healthy',
         '--source-mode', 'commissioning_smoke',
         '--observed-at', $startedAt.ToString('o'),
-        '--installed-skills', '3',
+        '--installed-skills', ([string]$requiredSkills.Count),
         '--vault-status', 'verified_offline',
         '--app-version', ([string]$verification.payload.commit).Substring(0, [Math]::Min(12, ([string]$verification.payload.commit).Length)),
         '--evidence-ref', 'maya_commissioning:credentials_provisioned_paused'
@@ -114,6 +145,7 @@ try {
         checkinKey = $checkinKey
         runKey = $runKey
         installedSkills = $requiredSkills.Count
+        identityScopesVerified = $identityScopesVerified
         vaultStatus = 'verified_offline'
         automationMode = 'REPORT_ONLY'
         schedulersActivated = 0
