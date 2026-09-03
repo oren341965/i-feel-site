@@ -5,7 +5,11 @@ import test from 'node:test';
 test('Maya Instagram relations is monthly, approval-gated, and non-mutating when scheduled', async () => {
   const skill = await readFile(new URL('../.claude/skills/maya-instagram-relations/SKILL.md', import.meta.url), 'utf8');
   const scheduledTask = await readFile(new URL('../agent-config/maya-scheduled-tasks/maya-instagram-relations/SKILL.md', import.meta.url), 'utf8');
+  const parent = await readFile(new URL('../.claude/skills/ai-sales-manager/SKILL.md', import.meta.url), 'utf8');
+  const governance = await readFile(new URL('../.claude/skills/ai-sales-manager/references/instagram-relations-program.md', import.meta.url), 'utf8');
 
+  assert.match(skill, /ai-sales-manager.*AI Marketing Manager responsibility/);
+  assert.match(skill, /does not set marketing strategy, expand the audience, change the skill or approve her own outreach/);
   assert.match(skill, /at most once per Israeli calendar month/);
   assert.match(skill, /approved watchlist/);
   assert.match(skill, /no more than one consolidated note per professional per calendar month/);
@@ -14,7 +18,15 @@ test('Maya Instagram relations is monthly, approval-gated, and non-mutating when
   assert.match(skill, /EXTERNAL_ACTIONS=0/);
 
   assert.match(scheduledTask, /first Sunday of each month at 10:00/);
+  assert.match(scheduledTask, /PROGRAM_OWNER=ai-sales-manager/);
   assert.match(scheduledTask, /Do not send a direct message/);
   assert.match(scheduledTask, /SENDS=0/);
   assert.match(scheduledTask, /NEXT_ELIGIBLE_MONTH/);
+
+  assert.match(parent, /references\/instagram-relations-program\.md/);
+  assert.match(parent, /owns the program as I Feel's AI Marketing Manager/);
+  assert.match(governance, /Program idea and backlog.*ai-sales-manager/s);
+  assert.match(governance, /Maya through `maya-instagram-relations`/);
+  assert.match(governance, /repository work branch and Pull Request/);
+  assert.match(governance, /cannot authorize its own external action/);
 });
