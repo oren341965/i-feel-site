@@ -5,7 +5,7 @@ This handoff makes Maya installation repeatable without copying prompts, source 
 ## Ownership
 
 - Oren/Codex builds the release from a clean local `main` that equals `origin/main`.
-- The release contains the canonical `maya-email-maintenance` and `maya-whatsapp` workers, the `management-system-telemetry` adapter, role-scoped Codex instructions, one staged `maya-email-maintenance` report-only scheduler prompt, the guarded email review writer, the Maya runtime template, the hash-verified `MAYA_SALES_TASK_V2` protocol/schema, and the installer. WhatsApp and integrated scheduler prompts are not staged at maturity 0.
+- The release contains the canonical `maya-email-maintenance`, `maya-instagram-relations` and `maya-whatsapp` workers, the `management-system-telemetry` adapter, role-scoped Codex instructions, staged report-only prompts for email maintenance and the monthly Instagram relationship review, the guarded email review writer, the Maya runtime template, the hash-verified `MAYA_SALES_TASK_V2` protocol/schema, and the installer. WhatsApp and integrated scheduler prompts are not staged at maturity 0.
 - Installation targets `%USERPROFILE%\.codex` only. The canonical repository path remains `.claude/skills`, but the installed Maya runtime has no Claude dependency and does not require `.claude` to exist.
 - Maya runs one stable command from `AI-Sales/Installers/Maya/INSTALL_CURRENT.ps1`.
 - The installer writes one PII-free `MAYA_COMMISSIONING_RESULT` to `AI-Sales/_bus/maya-to-manager`.
@@ -19,12 +19,14 @@ This handoff makes Maya installation repeatable without copying prompts, source 
 4. On Maya, run the one command printed by the exporter with `-ConfirmMayaWorkstation`.
 5. Provision the scoped Management credentials with the installed `provision-management-telemetry.ps1` helper. After its hidden prompts succeed, it runs the current installer in network-free `-VerifyOnly` mode and publishes one new bounded `MAYA_COMMISSIONING_RESULT` to the existing Vault Bus. No token or absolute path is included.
 6. On Oren, run `check-maya-commissioning-result.ps1` against the Vault; do not copy logs, prompts or secrets between computers.
-7. Continue only when the newest result is `INSTALLED_PAUSED`, all three Codex Skill hashes and both Maya task contract hashes match, `managementCredentialsProvisioned=true`, `runtimeLocks=0`, `claudeRequired=false`, and all external-action counters are zero.
+7. Continue only when the newest result is `INSTALLED_PAUSED`, all four Codex Skill hashes and both Maya task contract hashes match, `managementCredentialsProvisioned=true`, `runtimeLocks=0`, `claudeRequired=false`, and all external-action counters are zero.
 8. Browser/account, Gmail, WhatsApp and Management System identity smoke tests are a later, separately approved gate. Scheduler activation remains a separate approval after those checks.
 
-## Single report-only scheduler gate
+## Report-only scheduler gates
 
-- The only activation candidate at maturity 0 is `maya-email-maintenance` in `REPORT_ONLY` mode, once every three hours with a 10-minute hard timeout.
+- `maya-email-maintenance` remains the only activation candidate at maturity 0, in `REPORT_ONLY` mode once every three hours with a 10-minute hard timeout.
+- `maya-instagram-relations` is installed with a separate report-only prompt fixed to the first Sunday of each month at 10:00 `Asia/Jerusalem`. It remains staged and disabled until Maya's Instagram identity, the approved watchlist, the monthly checkpoint and the per-message approval path are verified.
+- The Instagram scheduled run can return proposed wording for approval but cannot create a platform draft, send, comment, react, follow or perform any other external write.
 - Commissioning quarantines previously staged `maya-whatsapp` and `maya-integrated-customer-operations` prompts into the timestamped local backup instead of deleting them.
 - Windows Task `iFeel Maya Email Maintenance` remains disabled because its `--apply` path can mutate Gmail.
 - The report-only prompt may read and aggregate verified Maya Gmail evidence but cannot create drafts, send, label, mark read, archive, move, delete, download, or write to Monday, Calendar, WhatsApp, Vault, Bus, contacts, files, configuration, or connection flags.

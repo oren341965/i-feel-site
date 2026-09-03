@@ -275,6 +275,7 @@ test('Maya commissioning is role-scoped, hash-verified, and activation-free', ()
   const managementSmoke = read('agent-config/maya-codex/test-management-smoke.ps1');
 
   assert.match(installer, /maya-email-maintenance/);
+  assert.match(installer, /maya-instagram-relations/);
   assert.match(installer, /maya-whatsapp/);
   assert.match(installer, /management-system-telemetry/);
   assert.match(installer, /primaryEngine = 'codex'/);
@@ -288,10 +289,11 @@ test('Maya commissioning is role-scoped, hash-verified, and activation-free', ()
   assert.match(installer, /Get-FileHash/);
   assert.match(installer, /INSTALLED_PAUSED/);
   assert.match(installer, /schedulersActivated\s*=\s*0/);
-  assert.match(installer, /stagedSchedulers\s*=\s*1/);
+  assert.match(installer, /stagedSchedulers\s*=\s*2/);
   assert.match(installer, /Quarantine legacy staged scheduler/);
   assert.match(installer, /timeoutSeconds\s*=\s*600/);
   assert.match(installer, /windowsEmailTaskAllowed\s*=\s*\$false/);
+  assert.match(installer, /instagramRelationsSchedulerAllowed\s*=\s*\$false/);
   assert.doesNotMatch(installer, /foreach \(\$task in @\('maya-email-maintenance', 'maya-whatsapp'/);
   assert.match(installer, /externalSends\s*=\s*0/);
   assert.match(installer, /mondayWrites\s*=\s*0/);
@@ -313,7 +315,8 @@ test('Maya commissioning is role-scoped, hash-verified, and activation-free', ()
   assert.match(exporter, /invoke-host-checkin\.ps1/);
   assert.match(exporter, /test-management-smoke\.ps1/);
   assert.match(exporter, /claudeRequired = \$false/);
-  assert.match(exporter, /stagedSchedulers\s*=\s*@\('maya-email-maintenance'\)/);
+  assert.match(exporter, /stagedSchedulers\s*=\s*@\('maya-email-maintenance', 'maya-instagram-relations'\)/);
+  assert.match(exporter, /payload\\scheduled-tasks\\maya-instagram-relations/);
   assert.doesNotMatch(exporter, /payload\\scheduled-tasks\\maya-whatsapp/);
   assert.doesNotMatch(exporter, /payload\\scheduled-tasks\\maya-integrated-customer-operations/);
   assert.match(exporter, /MAYA_SALES_TASK_V2/);
@@ -379,8 +382,8 @@ test('Maya Codex review accounts for every canonical Skill without copying manag
     .map((entry) => entry.name)
     .sort();
 
-  assert.equal(canonicalSkills.length, 27);
+  assert.equal(canonicalSkills.length, 28);
   for (const skill of canonicalSkills) assert.equal(review.includes('`' + skill + '`'), true, `Missing ${skill} from Maya review`);
-  assert.match(review, /install the three packages/i);
+  assert.match(review, /install the four packages/i);
   assert.match(review, /Maya never becomes or impersonates a manager/);
 });
