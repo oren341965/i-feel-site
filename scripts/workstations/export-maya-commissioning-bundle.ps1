@@ -97,6 +97,9 @@ $copyMap = [ordered]@{
     '.claude\skills\ai-sales-manager\runtime\maya-config.example.json' = 'payload\runtime\maya-config.example.json'
     '.claude\skills\ai-sales-manager\runtime\bus-message.schema.json' = 'payload\runtime\bus-message.schema.json'
     '.claude\skills\ai-sales-manager\references\maya-task-protocol.md' = 'payload\runtime\maya-task-protocol.md'
+    '.claude\skills\ai-sales-manager\scripts\orchestrate-sales-system.mjs' = 'payload\runtime\orchestrate-sales-system.mjs'
+    '.claude\skills\ai-sales-manager\scripts\maya-vault-bridge.mjs' = 'payload\runtime\maya-vault-bridge.mjs'
+    '.claude\skills\ai-sales-manager\scripts\maya-task-e2e-smoke.mjs' = 'payload\runtime\maya-task-e2e-smoke.mjs'
     'scripts\workstations\maya-commissioning-install.ps1' = 'INSTALL.ps1'
 }
 

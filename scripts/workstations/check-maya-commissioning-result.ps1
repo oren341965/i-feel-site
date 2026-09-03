@@ -30,6 +30,8 @@ if ($result.schemaVersion -ne 1 -or $result.type -ne 'MAYA_COMMISSIONING_RESULT'
     skillsExpected = @($result.payload.skills).Count
     taskContractsVerified = @($result.payload.taskContracts | Where-Object { $_.hashMatch }).Count
     taskContractsExpected = @($result.payload.taskContracts).Count
+    taskRuntimeVerified = @($result.payload.taskRuntime | Where-Object { $_.hashMatch }).Count
+    taskRuntimeExpected = @($result.payload.taskRuntime).Count
     schedulersActivated = $result.payload.schedulersActivated
     windowsEmailTask = $result.payload.windowsEmailTask
     runtimeLocks = $result.payload.runtimeLocks

@@ -333,7 +333,9 @@ export function validateMayaSalesTaskMessage(message) {
         throw new Error('Maya sales task requires a fresh live Monday identity read');
       }
     }
-    if (message.monday_item_source !== 'MONDAY_LIVE'
+    const mondaySourceValid = message.monday_item_source === 'MONDAY_LIVE'
+      || (message.test_task === true && message.monday_item_source === 'ISOLATED_TEST');
+    if (!mondaySourceValid
       || message.requested_by !== 'ai-sales-manager'
       || !MAYA_SALES_TASK_PRIORITIES.includes(message.priority)
       || typeof message.test_task !== 'boolean'

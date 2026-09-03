@@ -312,6 +312,10 @@ test('Maya commissioning is role-scoped, hash-verified, and activation-free', ()
   assert.match(installer, /MAYA_SALES_TASK_V2/);
   assert.match(installer, /bus-message\.schema\.json/);
   assert.match(installer, /maya-task-protocol\.md/);
+  assert.match(installer, /maya-vault-bridge\.mjs/);
+  assert.match(installer, /maya-task-e2e-smoke\.mjs/);
+  assert.match(installer, /taskRuntimeHashes/);
+  assert.match(installer, /isolatedTaskSmokeCommand/);
   assert.doesNotMatch(installer, /Register-ScheduledTask|Enable-ScheduledTask|schtasks(?:\.exe)?\s+\/Create/i);
 
   assert.match(exporter, /Refusing to export a Maya release from a dirty worktree/);
@@ -334,12 +338,17 @@ test('Maya commissioning is role-scoped, hash-verified, and activation-free', ()
   assert.match(exporter, /MAYA_SALES_TASK_V2/);
   assert.match(exporter, /bus-message\.schema\.json/);
   assert.match(exporter, /maya-task-protocol\.md/);
+  assert.match(exporter, /maya-vault-bridge\.mjs/);
+  assert.match(exporter, /maya-task-e2e-smoke\.mjs/);
+  assert.match(exporter, /orchestrate-sales-system\.mjs/);
   assert.match(bootstrap, /relativeReleasePath/);
   assert.match(bootstrap, /ConfirmMayaWorkstation/);
   assert.match(resultReader, /WAITING_FOR_MAYA/);
   assert.match(resultReader, /MAYA_COMMISSIONING_RESULT/);
   assert.match(resultReader, /taskContractsVerified/);
   assert.match(resultReader, /taskContractsExpected/);
+  assert.match(resultReader, /taskRuntimeVerified/);
+  assert.match(resultReader, /taskRuntimeExpected/);
   assert.match(resultReader, /windowsEmailTask/);
   assert.match(provisioner, /Read-Host 'Paste the Sites transport token' -AsSecureString/);
   assert.match(provisioner, /ConvertFrom-SecureString/);
@@ -402,6 +411,9 @@ test('Maya commissioning export writes parseable BOM-free release pointers under
     '.claude/skills/ai-sales-manager/runtime/maya-config.example.json',
     '.claude/skills/ai-sales-manager/runtime/bus-message.schema.json',
     '.claude/skills/ai-sales-manager/references/maya-task-protocol.md',
+    '.claude/skills/ai-sales-manager/scripts/orchestrate-sales-system.mjs',
+    '.claude/skills/ai-sales-manager/scripts/maya-vault-bridge.mjs',
+    '.claude/skills/ai-sales-manager/scripts/maya-task-e2e-smoke.mjs',
     'agent-config/maya-codex/AGENTS.md',
     'agent-config/maya-codex/invoke-telemetry.ps1',
     'agent-config/maya-codex/invoke-host-checkin.ps1',
