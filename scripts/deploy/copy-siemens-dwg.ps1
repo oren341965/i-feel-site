@@ -18,7 +18,11 @@ $requiredFiles = @(
     '5WG1141-1AB03.dwg'
 )
 
-$relativeArchivePath = 'בקרת מבנה תיקיה מרכזית\Siemens DWG\DWG'
+# Keep the script ASCII-safe because the self-hosted runner invokes Windows
+# PowerShell 5.1, which treats UTF-8 files without a BOM as the ANSI code page.
+$relativeArchivePath = [Text.Encoding]::Unicode.GetString(
+    [Convert]::FromBase64String('0QXnBegF6gUgAN4F0QXgBdQFIADqBdkF5wXZBdQFIADeBegF2wXWBdkF6gVcAFMAaQBlAG0AZQBuAHMAIABEAFcARwBcAEQAVwBHAA==')
+)
 $roots = New-Object 'System.Collections.Generic.HashSet[string]' ([System.StringComparer]::OrdinalIgnoreCase)
 
 function Add-DropboxRoot([string]$Path) {
