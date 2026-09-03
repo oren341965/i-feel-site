@@ -1,0 +1,76 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+const canonical = 'https://i-feel.co.il/articles/siemens-n263d51-knx-8-binary-input/';
+const title = 'Siemens N 263D51: בקר KNX עם 8 כניסות בינאריות | i-feel';
+const description = 'Siemens N 263D51, מק״ט 5WG1263-1DB51, בקר KNX עם 8 כניסות AC/DC בטווח 10 עד 230V, להתקנה בלוח ולתכנות ETS.';
+const dataSheetUrl = 'https://sid.siemens.com/r/A6V12316430/19616964619___en-US_19617223179';
+const jsonLd = JSON.stringify({
+  '@context': 'https://schema.org',
+  '@type': 'Product',
+  name: 'Siemens N 263D51 KNX Binary Input',
+  description,
+  sku: '5WG1263-1DB51',
+  brand: { '@type': 'Brand', name: 'Siemens' },
+  url: canonical,
+});
+---
+
+<BaseLayout title={title} description={description} canonical={canonical} ogTitle={title} ogDescription={description} ogUrl={canonical} jsonLd={jsonLd}>
+  <article class="bg-white" dir="rtl">
+    <header class="bg-brand-900 text-white py-16 md:py-20">
+      <div class="max-w-5xl mx-auto px-4">
+        <a href="/siemens-knx-products/" class="text-accent-400 font-semibold hover:text-accent-300">ציוד Siemens KNX</a>
+        <p class="mt-4 text-sm text-brand-200">Siemens GAMMA / KNX · עודכן 03.09.2026</p>
+        <h1 class="mt-4 text-4xl md:text-5xl font-extrabold leading-tight">Siemens N 263D51: בקר KNX עם 8 כניסות בינאריות</h1>
+        <p class="mt-5 max-w-4xl text-lg md:text-xl text-brand-100 leading-relaxed">8 כניסות מתח AC/DC לקליטת מצבים, פולסים ופקודות ממפסקים וממערכות חיצוניות והעברתם למערכת KNX.</p>
+      </div>
+    </header>
+
+    <div class="max-w-5xl mx-auto px-4 py-12">
+      <section class="rounded-2xl border border-brand-100 bg-brand-50 p-6 md:p-8 mb-10">
+        <p class="text-accent-700 font-bold text-lg mb-3">מק״ט Siemens: <span dir="ltr">5WG1263-1DB51</span></p>
+        <h2 class="text-3xl font-extrabold text-brand-900 mb-4">8 כניסות למידע מהשטח אל KNX</h2>
+        <p class="text-lg text-brand-700 leading-relaxed mb-5">N 263D51 הוא בקר כניסות בינאריות להתקנה על פס DIN. הוא מזהה אותות AC או DC בטווח 10 עד 230V. כל כניסה ניתנת להגדרה בנפרד ב-ETS ויכולה לשמש למיתוג, דימור, סצנות, הצללות, ערכים, לוגיקה וספירת פולסים.</p>
+        <a href={dataSheetUrl} target="_blank" rel="noopener noreferrer" class="inline-flex items-center justify-center rounded-lg bg-accent-600 px-5 py-3 font-bold text-white transition hover:bg-accent-700">Datasheet רשמי של Siemens</a>
+      </section>
+
+      <section class="grid grid-cols-2 md:grid-cols-5 gap-3 mb-12">
+        <div class="rounded-xl border border-brand-100 p-4 text-center"><div class="text-3xl font-extrabold text-accent-700">8</div><div class="mt-2 text-sm font-semibold">כניסות</div></div>
+        <div class="rounded-xl border border-brand-100 p-4 text-center"><div class="text-2xl font-extrabold text-accent-700">10–230V</div><div class="mt-2 text-sm font-semibold">AC/DC</div></div>
+        <div class="rounded-xl border border-brand-100 p-4 text-center"><div class="text-3xl font-extrabold text-accent-700">KNX</div><div class="mt-2 text-sm font-semibold">תקשורת</div></div>
+        <div class="rounded-xl border border-brand-100 p-4 text-center"><div class="text-3xl font-extrabold text-accent-700">DIN</div><div class="mt-2 text-sm font-semibold">התקנה</div></div>
+        <div class="rounded-xl border border-brand-100 p-4 text-center"><div class="text-3xl font-extrabold text-accent-700">ETS</div><div class="mt-2 text-sm font-semibold">תכנות</div></div>
+      </section>
+
+      <div class="prose-he max-w-none">
+        <h2>שימושים עיקריים</h2>
+        <ul>
+          <li>חיבור מפסקים ולחצנים בעלי אות מתח מתאים.</li>
+          <li>קליטת מצב ממערכות חיצוניות.</li>
+          <li>שליחת פקודות מיתוג, דימור, סצנות והצללות ל-KNX.</li>
+          <li>ספירת פולסים והעברת ערכים למערכת.</li>
+          <li>תפעול ישיר וסימולציית מצב כניסה בחזית הבקר.</li>
+        </ul>
+
+        <aside class="my-8 rounded-xl border-r-4 border-accent-600 bg-accent-50 p-5 not-prose">
+          <h2 class="text-xl font-extrabold text-brand-900 mb-2">חשוב בתכנון</h2>
+          <p class="m-0 text-brand-700">דגם N 263D51 מיועד לכניסות מתח AC/DC של 10 עד 230V. יש להתאים את סוג הכניסה למקור האות בפועל ולפעול לפי מסמכי Siemens.</p>
+        </aside>
+
+        <h2>נתונים מרכזיים</h2>
+        <div class="not-prose overflow-x-auto">
+          <table class="w-full border-collapse text-right">
+            <tbody>
+              <tr class="border-b"><th class="p-3 bg-brand-50">דגם</th><td class="p-3">N 263D51</td></tr>
+              <tr class="border-b"><th class="p-3 bg-brand-50">מק״ט</th><td class="p-3" dir="ltr">5WG1263-1DB51</td></tr>
+              <tr class="border-b"><th class="p-3 bg-brand-50">מספר כניסות</th><td class="p-3">8</td></tr>
+              <tr class="border-b"><th class="p-3 bg-brand-50">טווח אות</th><td class="p-3">10 עד 230V AC/DC</td></tr>
+              <tr><th class="p-3 bg-brand-50">הזנת אלקטרוניקה</th><td class="p-3">מקו KNX</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </article>
+</BaseLayout>
