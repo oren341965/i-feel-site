@@ -5,100 +5,7 @@ import { articles } from '../../data/articles';
 const title = 'מאמרים ומדריכים | i-feel';
 const description = 'מדריכי i-feel לבית חכם, KNX, בקרת מבנה BMS, שדרוג בית קיים, יזמים, אדריכלים ושירות.';
 const canonical = 'https://i-feel.co.il/articles/';
-
-const siemensN12522Article = {
-  slug: 'siemens-n12522-knx-power-supply-640ma',
-  title: 'Siemens N 125/22: ספק כוח KNX ‏640mA',
-  description: 'ספק כוח KNX במתח 29V DC ובזרם 640mA עם יציאה נוספת לא חנוקה. מק״ט 5WG1125-1AB22.',
-  category: 'Siemens / KNX',
-  updated: '2026-09-03',
-};
-
-const siemensN262D51Article = {
-  slug: 'siemens-n262d51-knx-8-dry-contact-input',
-  title: 'Siemens N 262D51: בקר KNX עם 8 כניסות מגע יבש',
-  description: '8 כניסות פוטנציאל חופשי לחיבור לחצנים, מפסקים ומגעים יבשים למערכת KNX. מק״ט 5WG1262-1DB51.',
-  category: 'Siemens / KNX',
-  updated: '2026-09-03',
-};
-
-const siemensN14103Article = {
-  slug: 'siemens-n14103-knx-dali-gateway-plus',
-  title: 'Siemens N 141/03: KNX / DALI Gateway Plus',
-  description: 'קו DALI אחד, עד 64 התקנים ועד 16 קבוצות DALI, לחיבור מערכת התאורה ל-KNX. מק״ט 5WG1141-1AB03.',
-  category: 'Siemens / KNX / DALI',
-  updated: '2026-09-03',
-};
-
-const siemensN554D31Article = {
-  slug: 'siemens-n554d31-knx-4-channel-dimmer',
-  title: 'Siemens N 554D31: דימר KNX מסוג TRIAC עם 4 ערוצים',
-  description: 'דימר פאזה TRIAC, טריאק, עם 4 ערוצים עד 300VA לערוץ, מידות 144×90×61 מ״מ, זיהוי עומס אוטומטי והגנות אלקטרוניות.',
-  category: 'Siemens / KNX',
-  updated: '2026-08-09',
-};
-
-const siemensN56881Article = {
-  slug: 'siemens-n56881-knx-24-output',
-  title: 'Siemens N 568/81: בקר KNX רב תכליתי עם 24 יציאות',
-  description: '24 יציאות ממסר, עד 12 מנועי תריס AC, עד 2 מנועי DC, מאוורר תלת מהירויות ושסתומי חימום וקירור בבקר אחד.',
-  category: 'Siemens / KNX',
-  updated: '2026-07-31',
-};
-
-const siemensN56722Article = {
-  slug: 'siemens-n56722-knx-16-output',
-  title: 'Siemens N 567/22: בקר KNX עם 16 יציאות 10A',
-  description: '16 יציאות מיתוג, עד 10A לעומס התנגדותי, תפעול ידני, חיווי לכל ערוץ ופונקציות ETS מתקדמות.',
-  category: 'Siemens / KNX',
-  updated: '2026-07-31',
-};
-
-const siemensN532D51Article = {
-  slug: 'siemens-n532d51-knx-8-switch-output',
-  title: 'Siemens N 532D51: בקר KNX עם 8 יציאות 10AX',
-  description: '8 יציאות ממסר פוטנציאל חופשי, התאמה לעומסי C ולזרמי התנעה, תפעול מכני מקומי ופונקציות ETS מתקדמות.',
-  category: 'Siemens / KNX',
-  updated: '2026-07-31',
-};
-
-const siemensN532D31Article = {
-  slug: 'siemens-n532d31-knx-4-switch-output',
-  title: 'Siemens N 532D31: בקר KNX עם 4 יציאות 10AX',
-  description: '4 יציאות מיתוג פוטנציאל חופשי ברוחב קומפקטי, עם התאמה לעומסי C, סצנות, לוגיקה, זמנים ומשובי מצב.',
-  category: 'Siemens / KNX',
-  updated: '2026-07-31',
-};
-
-const siemensN543D51Article = {
-  slug: 'siemens-n543d51-knx-8-blind-actuator',
-  title: 'Siemens N 543D51: בקר KNX ל-8 תריסים AC',
-  description: 'בקר ייעודי ל-8 מנועי AC 230V, עם זיהוי מצבי קצה, קביעת זמן תנועה אוטומטית, מיקום מדויק ופונקציות בטיחות.',
-  category: 'Siemens / KNX',
-  updated: '2026-07-31',
-};
-
-const siemensN543D31Article = {
-  slug: 'siemens-n543d31-knx-4-blind-actuator',
-  title: 'Siemens N 543D31: בקר KNX ל-4 תריסים AC',
-  description: 'בקר קומפקטי ל-4 מנועי AC 230V, עם זיהוי מצבי קצה, זמן תנועה אוטומטי, שליטה ברפפות והגנות רוח וגשם.',
-  category: 'Siemens / KNX',
-  updated: '2026-07-31',
-};
-
-const publicArticles = [
-  siemensN12522Article,
-  siemensN262D51Article,
-  siemensN14103Article,
-  siemensN554D31Article,
-  siemensN56881Article,
-  siemensN56722Article,
-  siemensN532D51Article,
-  siemensN532D31Article,
-  siemensN543D51Article,
-  siemensN543D31Article,
-  ...articles.filter((article) => !article.hidden),
-];
+const publicArticles = articles.filter((article) => !article.hidden);
 
 const jsonLd = JSON.stringify({
   '@context': 'https://schema.org',
@@ -122,10 +29,10 @@ const jsonLd = JSON.stringify({
       <p class="text-accent-400 font-semibold mb-3">מרכז ידע</p>
       <h1 class="text-4xl md:text-5xl font-extrabold mb-5">מאמרים ומדריכים</h1>
       <p class="max-w-3xl text-lg text-brand-100">
-        מדריכים מעשיים לבית חכם, KNX, בקרת מבנה BMS, שדרוגים, יזמים ואדריכלים. כל מאמר מוביל לעמוד תוכן מלא עם קישורים לעמודים ולקטלוגים הרלוונטיים.
+        מדריכים מעשיים לבית חכם, KNX, בקרת מבנה BMS, שדרוגים, יזמים ואדריכלים. מפרטי מוצרים ושרטוטי CAD/DWG נמצאים בנפרד באזור מוצרים ומפרטים.
       </p>
       <div class="mt-6 flex flex-wrap gap-3">
-        <a href="/siemens-knx-products/" class="inline-flex items-center rounded-lg bg-accent-600 px-5 py-3 font-bold text-white transition hover:bg-accent-700">לכל ציוד Siemens KNX</a>
+        <a href="/siemens-knx-products/" class="inline-flex items-center rounded-lg bg-accent-600 px-5 py-3 font-bold text-white transition hover:bg-accent-700">מוצרים ומפרטים טכניים</a>
         <a href="https://www.google.com/preferences/source?q=i-feel.co.il" class="inline-flex items-center rounded-lg bg-white px-5 py-3 font-bold text-brand-900 transition hover:bg-brand-50">הוסיפו את i-feel למקורות המועדפים ב-Google</a>
       </div>
     </div>
