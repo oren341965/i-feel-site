@@ -12,7 +12,7 @@ This map prevents parallel managers, preserves proven code, and makes deferred w
 | `meta-ads-manager` | KEEP | Bounded read-only paid-media evidence. |
 | `lead-attribution-feedback` | KEEP | External attribution adapter keyed by `monday_item_id`. |
 | `ai-service-manager` | KEEP | Independent service-signal worker; not a second sales manager. |
-| `maya-email-maintenance`, `maya-instagram-relations` and `maya-whatsapp` | KEEP | The only canonical Maya front-office workers. They have explicit routing and independent permissions; the Instagram program is governed centrally by `ai-sales-manager` as AI Marketing Manager. |
+| `maya-email-maintenance`, `maya-instagram-relations` and `maya-whatsapp` | KEEP | The only canonical Maya front-office workers. They have explicit routing and independent permissions; the Monday-sourced Instagram/Facebook program is governed centrally by `ai-sales-manager` as AI Marketing Manager. |
 | `management-system-telemetry` | KEEP | Shared sanitized evidence adapter; installed on Maya without granting manager or business-write authority. |
 | Existing website, content, quote, plans, referral, handoff, closeout, and mailing workers | KEEP | Reuse through bounded handoffs; never clone during orchestration. |
 | `C:\ifeel-sales` runtime templates | KEEP | Local maturity-0 state and dry-run launchers; installation remains separate. |

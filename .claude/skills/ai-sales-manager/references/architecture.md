@@ -19,7 +19,7 @@ Maintain one sales-management control plane with deterministic evidence, explici
 - `C:\ifeel-sales` is machine-local runtime state, never the canonical source and never committed.
 - `${VAULT_ROOT}/AI-Sales` is a bounded exchange and snapshot surface, not a database, scheduler, CRM, or source-code store.
 - Monday is the operational sales workflow. The manager reads and reconciles it but does not silently replace or restructure it.
-- Maya is a front-office worker, not a second sales or marketing manager. For the Instagram professional-relations program, `ai-sales-manager` owns the idea, policy, watchlist governance and skill lifecycle as I Feel's AI Marketing Manager; Maya owns only the verified monthly review, evidence and drafts. Communication permissions do not transfer between them.
+- Maya is a front-office worker, not a second sales or marketing manager. For the Monday-sourced Instagram/Facebook professional-relations program, `ai-sales-manager` owns the idea, candidate roster, policy, watchlist governance and skill lifecycle as I Feel's AI Marketing Manager; Maya owns only public-profile resolution, the verified monthly review, evidence and drafts. Communication permissions do not transfer between them.
 
 ## Flow
 
