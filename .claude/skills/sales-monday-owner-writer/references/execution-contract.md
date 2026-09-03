@@ -59,4 +59,3 @@ The validator is network-free. It rejects stale evidence, mismatched item sets, 
 - Rollback mismatch: terminal `rollback_failed` and immediate escalation.
 
 No stage update, next-action change, customer message, notification or scheduler action is included.
-

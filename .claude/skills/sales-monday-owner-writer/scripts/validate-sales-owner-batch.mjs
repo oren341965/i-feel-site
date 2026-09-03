@@ -20,7 +20,6 @@ function privatePath(value, label) {
   if (rel.startsWith('..') || isAbsolute(rel)) fail(`${label} must be inside .ai-manager-data/sales/tmp`);
   return absolute;
 }
-
 function parseTime(value, label, now) {
   const time = Date.parse(value);
   if (!Number.isFinite(time)) fail(`${label} must be a valid timestamp`);

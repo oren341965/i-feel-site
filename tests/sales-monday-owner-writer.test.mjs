@@ -65,7 +65,6 @@ test('planner creates a private review-only batch for unowned main items', () =>
   assert.deepEqual(preview.proposals[0].proposedValue, OREN);
   assert.match(preview.previewFingerprint, /^[A-F0-9]{64}$/);
 });
-
 test('planner blocks already-owned and ineligible rows', () => {
   const preview = planSalesOwnerChanges({
     now: NOW,

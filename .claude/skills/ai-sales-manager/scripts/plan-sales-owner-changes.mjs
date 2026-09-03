@@ -20,7 +20,6 @@ function privatePath(value, label) {
   if (rel.startsWith('..') || isAbsolute(rel)) fail(`${label} must be inside .ai-manager-data/sales/tmp`);
   return absolute;
 }
-
 function people(value, label) {
   const entries = value?.personsAndTeams;
   if (!Array.isArray(entries)) fail(`${label} must contain personsAndTeams`);

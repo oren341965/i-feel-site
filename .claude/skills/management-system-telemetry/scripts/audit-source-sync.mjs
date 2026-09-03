@@ -200,5 +200,3 @@ const output = {
 
 process.stdout.write(`${JSON.stringify(output, null, 2)}\n`);
 if (!output.ok) process.exitCode = 1;
-
-

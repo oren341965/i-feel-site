@@ -34,4 +34,3 @@ Run `scripts/validate-sales-owner-batch.mjs` before any connector write. Continu
 ## Validation
 
 Run `npm run test:ai-managers`, `npm run build`, `quick_validate.py .claude/skills/sales-monday-owner-writer`, `quick_validate.py .claude/skills/ai-sales-manager`, and `git diff --check`.
-
