@@ -57,10 +57,10 @@ The service identity may report only the Host bound to that identity. The Manage
 `scripts/audit-source-sync.mjs` is the local evidence step for the three source layers:
 
 - GitHub supplies executable Skill identity and exact revision.
-- Obsidian supplies the reviewed knowledge entry, status and documented version.
-- The workstation supplies installed-package presence only.
+- Obsidian supplies the reviewed knowledge entry, status, documented revision and canonical `SKILL.md` source hash.
+- The workstation supplies installed-package presence and the installed `SKILL.md` source hash.
 
-The output contains slugs, repository-relative paths, hashes and status/version metadata. It must not include document bodies, absolute filesystem paths, customer data or credentials. GitHub auto-discovery remains server-owned; the audit detects drift and does not silently change the Vault.
+The output contains slugs, repository-relative paths, hashes and status/version metadata. Source freshness is determined by the per-Skill SHA-256 hash, not by the repository-wide revision, so unrelated website commits do not make every Skill stale. It must not include document bodies, absolute filesystem paths, customer data or credentials. GitHub auto-discovery remains server-owned; the audit detects drift and does not silently change the Vault.
 
 ## Examples
 

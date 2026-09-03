@@ -34,6 +34,11 @@ function usage() {
   return `Usage: audit-source-sync.mjs --repo <path> --vault <path> [--installed-skills <path>] [--dry-run]\n\nCompares canonical GitHub Skill packages with Obsidian registry entries and an optional local installation. It reads metadata only and never changes any source.`;
 }
 
+function skillHash(content) {
+  const normalized = content.replace(/^\uFEFF/, '').replaceAll('\r\n', '\n');
+  return createHash('sha256').update(normalized).digest('hex');
+}
+
 function frontmatter(text) {
   const normalized = text
     .replace(/^\uFEFF/, '')
@@ -73,7 +78,7 @@ async function discoverCanonicalSkills(repoPath) {
       slug,
       declaredName: metadata.name || null,
       sourcePath: `.claude/skills/${slug}/SKILL.md`,
-      sourceHash: createHash('sha256').update(content).digest('hex'),
+      sourceHash: skillHash(content),
     });
   }
   return skills;
@@ -95,8 +100,24 @@ async function discoverVaultEntries(vaultPath) {
     result.set(slug, {
       status: metadata.status || 'UNKNOWN',
       version: metadata.version || null,
+      sourceHash: metadata.source_hash || null,
       knowledgePath: `02 Skills/Entries/${entry.name}`,
     });
+  }
+  return result;
+}
+
+async function discoverInstalledSkills(installedSkillsPath) {
+  const slugs = await directoryNames(installedSkillsPath);
+  const result = new Map();
+  for (const slug of slugs) {
+    if (!SKILL_SLUG.test(slug)) continue;
+    try {
+      const content = await readFile(join(installedSkillsPath, slug, 'SKILL.md'), 'utf8');
+      result.set(slug, skillHash(content));
+    } catch {
+      result.set(slug, null);
+    }
   }
   return result;
 }
@@ -119,12 +140,16 @@ const vaultPath = resolve(args.vault);
 const canonical = await discoverCanonicalSkills(repoPath).catch(() => fail('Canonical Skill directory is unavailable'));
 const vaultEntries = await discoverVaultEntries(vaultPath).catch(() => fail('Vault Skill registry is unavailable'));
 const installed = args['installed-skills']
-  ? new Set(await directoryNames(resolve(args['installed-skills'])).catch(() => fail('Installed Skill directory is unavailable')))
+  ? await discoverInstalledSkills(resolve(args['installed-skills'])).catch(() => fail('Installed Skill directory is unavailable'))
   : null;
 const revision = gitRevision(repoPath);
 
 const capabilities = canonical.map((skill) => {
   const knowledge = vaultEntries.get(skill.slug);
+  const installedSourceHash = installed?.get(skill.slug) ?? null;
+  const knowledgeAtSourceHash = knowledge?.sourceHash
+    ? knowledge.sourceHash === skill.sourceHash
+    : knowledge?.version === revision;
   return {
     slug: skill.slug,
     sourcePath: skill.sourcePath,
@@ -133,8 +158,12 @@ const capabilities = canonical.map((skill) => {
     knowledgePath: knowledge?.knowledgePath ?? null,
     knowledgeStatus: knowledge?.status ?? 'MISSING',
     knowledgeVersion: knowledge?.version ?? null,
+    knowledgeSourceHash: knowledge?.sourceHash ?? null,
+    knowledgeAtSourceHash,
     knowledgeAtRevision: knowledge?.version === revision,
-    installed: installed ? installed.has(skill.slug) : null,
+    installed: installed ? installed.has(skill.slug) && Boolean(installedSourceHash) : null,
+    installedSourceHash,
+    installedAtSourceHash: installed ? installedSourceHash === skill.sourceHash : null,
   };
 });
 
@@ -143,20 +172,27 @@ const orphanedVaultEntries = [...vaultEntries.keys()].filter((slug) => !canonica
 const summary = {
   canonical: capabilities.length,
   knowledgeLinked: capabilities.filter((item) => item.knowledgePath).length,
+  knowledgeAtSourceHash: capabilities.filter((item) => item.knowledgeAtSourceHash).length,
   knowledgeAtRevision: capabilities.filter((item) => item.knowledgeAtRevision).length,
   installed: installed ? capabilities.filter((item) => item.installed).length : null,
+  installedAtSourceHash: installed ? capabilities.filter((item) => item.installedAtSourceHash).length : null,
   missingKnowledge: capabilities.filter((item) => !item.knowledgePath).map((item) => item.slug),
-  staleKnowledge: capabilities.filter((item) => item.knowledgePath && !item.knowledgeAtRevision).map((item) => item.slug),
+  staleKnowledge: capabilities.filter((item) => item.knowledgePath && !item.knowledgeAtSourceHash).map((item) => item.slug),
   missingInstalled: installed ? capabilities.filter((item) => !item.installed).map((item) => item.slug) : [],
+  staleInstalled: installed ? capabilities.filter((item) => item.installed && !item.installedAtSourceHash).map((item) => item.slug) : [],
   orphanedVaultEntries,
   invalidDeclaredNames: capabilities.filter((item) => !item.declaredNameMatches).map((item) => item.slug),
 };
 
 const output = {
-  ok: summary.missingKnowledge.length === 0 && summary.missingInstalled.length === 0 && summary.invalidDeclaredNames.length === 0,
+  ok: summary.missingKnowledge.length === 0
+    && summary.missingInstalled.length === 0
+    && summary.staleKnowledge.length === 0
+    && summary.staleInstalled.length === 0
+    && summary.invalidDeclaredNames.length === 0,
   dryRun: args.dryRun,
   schemaVersion: 1,
-  source: { repository: 'oren341965/i-feel-site', revision },
+  source: { repository: 'oren341965/i-feel-site', revision, hashNormalization: 'utf8-lf-v1' },
   observedAt: new Date().toISOString(),
   summary,
   capabilities,
@@ -164,3 +200,5 @@ const output = {
 
 process.stdout.write(`${JSON.stringify(output, null, 2)}\n`);
 if (!output.ok) process.exitCode = 1;
+
+
