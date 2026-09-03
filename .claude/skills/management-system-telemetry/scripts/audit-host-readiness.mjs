@@ -98,7 +98,8 @@ function probeCredentialWrapper(path) {
 
 async function readInstallationMetadata(path) {
   try {
-    const parsed = JSON.parse(await readFile(path, 'utf8'));
+    const serialized = await readFile(path, 'utf8');
+    const parsed = JSON.parse(serialized.replace(/^\uFEFF/u, ''));
     return {
       present: true,
       repository: typeof parsed.repository === 'string' ? parsed.repository : null,

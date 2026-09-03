@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { copyFile, mkdir, mkdtemp, rm, writeFile } from 'node:fs/promises';
+import { copyFile, mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { dirname, resolve } from 'node:path';
 import { spawnSync } from 'node:child_process';
@@ -144,6 +144,19 @@ test('host readiness validates an approved local credential wrapper without envi
   assert.equal(output.credentials.credentialWrapperValid, true);
   assert.equal(output.workstation.hostSlugMatchesExpected, true);
   assert.equal(result.stdout.includes(paths.root), false);
+});
+
+test('host readiness accepts installer metadata with a UTF-8 BOM', async (t) => {
+  const paths = await fixture(t);
+  const metadata = await readFile(paths.metadata, 'utf8');
+  await writeFile(paths.metadata, `\uFEFF${metadata}`, 'utf8');
+  const result = runPreflight(paths);
+
+  assert.equal(result.status, 0, result.stderr);
+  const output = JSON.parse(result.stdout);
+  assert.equal(output.installation.metadataPresent, true);
+  assert.equal(output.installation.repositoryMatches, true);
+  assert.equal(output.installation.installedCommitMatchesHead, true);
 });
 
 test('host readiness blocks work directly on main', async (t) => {
