@@ -3,6 +3,12 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
 const products = [
   {
+    category: 'ספקי כוח ותשתית',
+    items: [
+      { title: 'Siemens N 125/22', subtitle: 'ספק כוח KNX ‏29V DC / 640mA', partNumber: '5WG1125-1AB22', href: '/articles/siemens-n12522-knx-power-supply-640ma/' },
+    ],
+  },
+  {
     category: 'מיתוג ורב תכליתי',
     items: [
       { title: 'Siemens N 568/81', subtitle: 'בקר KNX רב תכליתי עם 24 יציאות', partNumber: '5WG1568-1AB81', href: '/articles/siemens-n56881-knx-24-output/' },
@@ -40,8 +46,8 @@ const products = [
 
 const allItems = products.flatMap((group) => group.items);
 const canonical = 'https://i-feel.co.il/siemens-knx-products/';
-const title = 'ציוד Siemens KNX | בקרים, כניסות, תריסים ו-DALI | i-feel';
-const description = 'מרכז ציוד Siemens KNX של i-feel: בקרי מיתוג, כניסות בינאריות, בקרי תריסים, דימרים ושערי KNX-DALI, כולל מק״טים וקישורים לדפי מוצר.';
+const title = 'ציוד Siemens KNX | ספקי כוח, בקרים, כניסות, תריסים ו-DALI | i-feel';
+const description = 'מרכז ציוד Siemens KNX של i-feel: ספקי כוח, בקרי מיתוג, כניסות בינאריות, בקרי תריסים, דימרים ושערי KNX-DALI, כולל מק״טים וקישורים לדפי מוצר.';
 const jsonLd = JSON.stringify({
   '@context': 'https://schema.org',
   '@type': 'CollectionPage',
@@ -59,7 +65,7 @@ const jsonLd = JSON.stringify({
       <div class="max-w-7xl mx-auto px-4">
         <p class="text-accent-400 font-semibold mb-3">Siemens GAMMA / KNX</p>
         <h1 class="text-4xl md:text-5xl font-extrabold mb-5">ציוד Siemens KNX</h1>
-        <p class="max-w-4xl text-lg text-brand-100 leading-relaxed">מרכז אחד לכל דפי המוצר של Siemens KNX באתר i-feel. כל פריט כולל דגם, מק״ט וקישור למידע הטכני המלא, כדי שאפשר יהיה למצוא במהירות את הבקר הנכון לתכנון, הצעת מחיר או ביצוע.</p>
+        <p class="max-w-4xl text-lg text-brand-100 leading-relaxed">מרכז אחד לכל דפי המוצר של Siemens KNX באתר i-feel. כל פריט כולל דגם, מק״ט וקישור למידע הטכני המלא, כדי שאפשר יהיה למצוא במהירות את הציוד הנכון לתכנון, הצעת מחיר או ביצוע.</p>
       </div>
     </section>
 
