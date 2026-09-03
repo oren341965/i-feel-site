@@ -1,0 +1,8 @@
+interface:
+  display_name: "I Feel Sales Monday Owner Writer"
+  short_description: "Approved assignment of unowned sales items in Monday"
+  default_prompt: "Use $sales-monday-owner-writer to validate and execute the exact approved sales ownership batch."
+
+policy:
+  allow_implicit_invocation: true
+

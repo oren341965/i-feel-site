@@ -561,7 +561,7 @@ test('Maya Codex review accounts for every canonical Skill without copying manag
     .map((entry) => entry.name)
     .sort();
 
-  assert.equal(canonicalSkills.length, 28);
+  assert.equal(canonicalSkills.length, 29);
   for (const skill of canonicalSkills) assert.equal(review.includes('`' + skill + '`'), true, `Missing ${skill} from Maya review`);
   assert.match(review, /install the four packages/i);
   assert.match(review, /Maya never becomes or impersonates a manager/);
