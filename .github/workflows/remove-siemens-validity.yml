@@ -39,6 +39,8 @@ jobs:
               new = new.replace(expiry, "")
               new = new.replace("Building Automation, .", "Building Automation.")
               new = new.replace("Building Automation,  .", "Building Automation.")
+              new = new.replace("בתחום אוטומציית המבנים. האישור .", "בתחום אוטומציית המבנים.")
+              new = new.replace('> · <a href="/license/"', '><a href="/license/"')
               if new != text:
                   path.write_text(new, encoding="utf-8")
                   changed.append(str(path))
@@ -53,10 +55,11 @@ jobs:
           remaining = []
           for path in Path("src").rglob("*"):
               if path.is_file() and path.suffix.lower() in {".astro", ".html", ".md", ".mdx", ".js", ".ts", ".json"}:
-                  if "31.12.2026" in path.read_text(encoding="utf-8"):
+                  text = path.read_text(encoding="utf-8")
+                  if "31.12.2026" in text or "האישור ." in text or "> · <a href=\"/license/\"" in text:
                       remaining.append(str(path))
           if remaining:
-              raise SystemExit("Expiry date still remains in: " + ", ".join(remaining))
+              raise SystemExit("Cleanup leftovers remain in: " + ", ".join(remaining))
 
       - name: Commit and push cleanup branch
         shell: bash
@@ -65,4 +68,4 @@ jobs:
           git config user.email "website@i-feel.co.il"
           git add src
           git commit -m "Remove Siemens partner expiry wording"
-          git push origin HEAD:fix/remove-siemens-validity
+          git push --force-with-lease origin HEAD:fix/remove-siemens-validity
