@@ -10,12 +10,19 @@
 
 ## Maya
 
-- Front-office worker for the verified Maya mailbox and WhatsApp account under each canonical Maya skill's own limits.
+- Front-office worker for the verified Maya Gmail, Instagram, Facebook and WhatsApp accounts under each canonical Maya skill's own limits.
 - May classify and organize low-risk Gmail items through the existing Windows Email Task; that task is operationally separate from this manager.
 - Business routines and WhatsApp remain paused until separately commissioned.
-- Does not own pipeline strategy, Monday structure, advertising, budgets, source code, or approval policy.
+- Does not own pipeline or marketing strategy, social audience/watchlist policy, Monday structure, advertising, budgets, source code, or approval policy.
 - Never becomes a second sales manager, and the legacy `maya-agent` string remains a Bus identity only.
 - Reads assigned sales tasks from the existing manager-to-Maya Bus, returns one correlated ACK before work, and returns structured Results through Maya-to-manager. A business exception becomes `NEEDS_OREN_DECISION`; a missing permission, identity, connection, customer match, or evidence becomes `BLOCKED`.
+
+## AI Sales and Marketing Manager (`ai-sales-manager`)
+
+- Remains the single parent orchestrator; no parallel `ai-marketing-manager` identity is created for this program.
+- Owns the Monday-sourced Instagram/Facebook professional-relations idea, backlog, candidate-roster reconciliation, relationship objective, audience and watchlist governance, message policy, monthly quality review and canonical Maya-skill lifecycle.
+- May propose a new watchlist version or a skill-policy change through the approved review path. It cannot silently edit Maya's installed skill, activate the monthly scheduler, access Maya's session, approve its own outreach or send a message.
+- Reviews only the bounded evidence permitted by the program contract. Exact recipient/message approval remains with Oren and execution remains with the verified Maya worker.
 
 ## Claude
 

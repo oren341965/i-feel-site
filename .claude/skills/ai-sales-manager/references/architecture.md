@@ -8,7 +8,7 @@ Maintain one sales-management control plane with deterministic evidence, explici
 
 1. **Sources** — Monday board `2732725332`, approved attribution exports, verified read-only advertising connections, website evidence, Maya aggregates, service aggregates, and project/content signals.
 2. **Deterministic core** — schema validation, pagination and count reconciliation, normalization, scoring, idempotency, capacity checks, and bounded local state.
-3. **Workers** — paid media, attribution, service, content, website, Maya, plans, quote quality, referrals, handoff, and closeout skills. A worker owns its domain operation; the manager owns orchestration and reconciliation.
+3. **Workers** — paid media, attribution, service, content, website, Maya, plans, quote quality, referrals, handoff, and closeout skills. A worker owns its domain operation; the manager owns orchestration, reconciliation and the strategy of manager-owned marketing programs.
 4. **Judgment** — Claude receives a schema-valid bounded request through the Vault file bridge and returns review-only judgment. Judgment never changes permission or maturity.
 5. **Decision** — Oren receives one evidence-backed brief, approves protected actions, and owns business exceptions.
 6. **Delivery** — GitHub carries reviewed canonical code through work branches and pull requests. Runtime installation, scheduler activation, external sends, Monday writes, publishing, and production remain separate approved operations.
@@ -19,7 +19,7 @@ Maintain one sales-management control plane with deterministic evidence, explici
 - `C:\ifeel-sales` is machine-local runtime state, never the canonical source and never committed.
 - `${VAULT_ROOT}/AI-Sales` is a bounded exchange and snapshot surface, not a database, scheduler, CRM, or source-code store.
 - Monday is the operational sales workflow. The manager reads and reconciles it but does not silently replace or restructure it.
-- Maya is a front-office worker, not a second sales manager. Its communication permissions do not transfer to the parent manager.
+- Maya is a front-office worker, not a second sales or marketing manager. For the Monday-sourced Instagram/Facebook professional-relations program, `ai-sales-manager` owns the idea, candidate roster, policy, watchlist governance and skill lifecycle as I Feel's AI Marketing Manager; Maya owns only public-profile resolution, the verified monthly review, evidence and drafts. Communication permissions do not transfer between them.
 
 ## Flow
 
