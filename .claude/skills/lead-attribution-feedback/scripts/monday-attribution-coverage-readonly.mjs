@@ -80,6 +80,35 @@ function safeCategory(columns) {
   return combined ? 'other_reported' : 'missing';
 }
 
+function safeAttributionToken(column) {
+  if (!hasValue(column)) return null;
+  const value = String(column.text ?? '').trim().toLowerCase();
+  if (!/^[a-z0-9][a-z0-9._-]{0,79}$/.test(value)) return null;
+  return value;
+}
+
+function approvedAttributionRow(itemId, columns, category, observedAt) {
+  const hasClickId = [COLUMN_IDS.gclid, COLUMN_IDS.fbclid, COLUMN_IDS.ttclid]
+    .some((columnId) => hasValue(columns.get(columnId)));
+  const row = {
+    monday_item_id: itemId,
+    evidence_timestamp: observedAt.toISOString(),
+    confidence: hasClickId ? 'HIGH' : category === 'missing' ? 'LOW' : 'MEDIUM',
+  };
+  const utmSource = safeAttributionToken(columns.get(COLUMN_IDS.utmSource));
+  const utmMedium = safeAttributionToken(columns.get(COLUMN_IDS.utmMedium));
+  const utmCampaign = safeAttributionToken(columns.get(COLUMN_IDS.utmCampaign));
+  if (utmSource) row.utm_source = utmSource;
+  if (utmMedium) row.utm_medium = utmMedium;
+  if (utmCampaign) row.utm_campaign = utmCampaign;
+  if (category !== 'missing') {
+    row.how_did_you_hear = category;
+    row.first_touch = category;
+    row.last_touch = category;
+  }
+  return row;
+}
+
 function emptyWindow() {
   return {
     total: 0,
@@ -141,6 +170,7 @@ export async function collectMondayAttributionCoverageReadOnly({
   configPath = DEFAULT_CONFIG,
   now = new Date(),
   fetchImpl = globalThis.fetch,
+  includeApprovedSnapshot = false,
 } = {}) {
   if (typeof fetchImpl !== 'function') throw new Error('A fetch implementation is required');
   const observedAt = new Date(now);
@@ -201,6 +231,7 @@ export async function collectMondayAttributionCoverageReadOnly({
   }
 
   const ids = new Set();
+  const approvedRows = [];
   const windows = { all: emptyWindow(), last7Days: emptyWindow(), last30Days: emptyWindow() };
   const cut7 = new Date(observedAt.getTime() - 7 * 24 * 60 * 60_000);
   const cut30 = new Date(observedAt.getTime() - 30 * 24 * 60 * 60_000);
@@ -219,6 +250,7 @@ export async function collectMondayAttributionCoverageReadOnly({
     const columns = new Map(item.column_values.map((column) => [String(column.id), column]));
     const presentIds = COLUMN_ID_LIST.filter((columnId) => hasValue(columns.get(columnId)));
     const category = safeCategory(columns);
+    if (includeApprovedSnapshot) approvedRows.push(approvedAttributionRow(id, columns, category, observedAt));
     updateWindow(windows.all, presentIds, category);
     if (createdAt >= cut30) updateWindow(windows.last30Days, presentIds, category);
     if (createdAt >= cut7) updateWindow(windows.last7Days, presentIds, category);
@@ -226,7 +258,7 @@ export async function collectMondayAttributionCoverageReadOnly({
   const paginationComplete = items.length === expectedItemCount && ids.size === expectedItemCount;
   if (!paginationComplete) throw new Error('Monday pagination or unique-ID reconciliation failed');
 
-  return {
+  const result = {
     schemaVersion: 1,
     mode: 'LIVE_READ_ONLY',
     boardId: EXPECTED_BOARD_ID,
@@ -247,6 +279,15 @@ export async function collectMondayAttributionCoverageReadOnly({
       rawPiiOutput: false,
     },
   };
+  if (includeApprovedSnapshot) {
+    result.approvedSnapshot = {
+      schema_version: 1,
+      generated_at: observedAt.toISOString(),
+      source: 'approved_attribution_export',
+      rows: approvedRows,
+    };
+  }
+  return result;
 }
 
 function parseArgs(argv) {

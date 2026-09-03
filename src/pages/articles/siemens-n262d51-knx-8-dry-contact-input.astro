@@ -1,0 +1,77 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+const canonical = 'https://i-feel.co.il/articles/siemens-n262d51-knx-8-dry-contact-input/';
+const title = 'Siemens N 262D51: בקר KNX עם 8 כניסות מגע יבש | i-feel';
+const description = 'Siemens N 262D51, מק״ט 5WG1262-1DB51, בקר KNX עם 8 כניסות למגעים יבשים ופוטנציאל חופשי, לחיבור לחצנים, מפסקים ומגעים למערכת KNX.';
+const dataSheetUrl = 'https://sid.siemens.com/v/u/A6V15749810';
+const jsonLd = JSON.stringify({
+  '@context': 'https://schema.org',
+  '@type': 'Product',
+  name: 'Siemens N 262D51 Binary Input 8 x Potential-Free',
+  description,
+  sku: '5WG1262-1DB51',
+  brand: { '@type': 'Brand', name: 'Siemens' },
+  url: canonical,
+});
+---
+
+<BaseLayout title={title} description={description} canonical={canonical} ogTitle={title} ogDescription={description} ogUrl={canonical} jsonLd={jsonLd}>
+  <article class="bg-white" dir="rtl">
+    <header class="bg-brand-900 text-white py-16 md:py-20">
+      <div class="max-w-5xl mx-auto px-4">
+        <a href="/siemens-knx-products/" class="text-accent-400 font-semibold hover:text-accent-300">ציוד Siemens KNX</a>
+        <p class="mt-4 text-sm text-brand-200">Siemens GAMMA / KNX · עודכן 03.09.2026</p>
+        <h1 class="mt-4 text-4xl md:text-5xl font-extrabold leading-tight">Siemens N 262D51: בקר KNX עם 8 כניסות מגע יבש</h1>
+        <p class="mt-5 max-w-4xl text-lg md:text-xl text-brand-100 leading-relaxed">בקר כניסות בינאריות ל-8 מגעים יבשים ופוטנציאל חופשי. מתאים לחיבור לחצנים, מפסקים, מגעי דלת וחלון ומגעי ריליי ללא מתח למערכת KNX.</p>
+      </div>
+    </header>
+
+    <div class="max-w-5xl mx-auto px-4 py-12">
+      <section class="rounded-2xl border border-brand-100 bg-brand-50 p-6 md:p-8 mb-10">
+        <p class="text-accent-700 font-bold text-lg mb-3">מק״ט Siemens: <span dir="ltr">5WG1262-1DB51</span></p>
+        <h2 class="text-3xl font-extrabold text-brand-900 mb-4">8 כניסות למגעים יבשים</h2>
+        <p class="text-lg text-brand-700 leading-relaxed mb-5">N 262D51 מיועד לקליטת שמונה אותות בינאריים פוטנציאל חופשי. הבקר מייצר בעצמו את פולסי הבדיקה לכניסות, ולכן אין להזין אליהן מתח חיצוני. הוא מתאים במיוחד למפסקים ולחצנים רגילים ולמגעים יבשים ממערכות אחרות.</p>
+        <a href={dataSheetUrl} target="_blank" rel="noopener noreferrer" class="inline-flex items-center justify-center rounded-lg bg-accent-600 px-5 py-3 font-bold text-white transition hover:bg-accent-700">מידע טכני רשמי של Siemens</a>
+      </section>
+
+      <section class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-12">
+        <div class="rounded-xl border border-brand-100 p-4 text-center"><div class="text-3xl font-extrabold text-accent-700">8</div><div class="mt-2 text-sm font-semibold">כניסות</div></div>
+        <div class="rounded-xl border border-brand-100 p-4 text-center"><div class="text-2xl font-extrabold text-accent-700">Dry Contact</div><div class="mt-2 text-sm font-semibold">מגע יבש</div></div>
+        <div class="rounded-xl border border-brand-100 p-4 text-center"><div class="text-2xl font-extrabold text-accent-700">KNX</div><div class="mt-2 text-sm font-semibold">הזנה מה-Bus</div></div>
+        <div class="rounded-xl border border-brand-100 p-4 text-center"><div class="text-2xl font-extrabold text-accent-700">ETS</div><div class="mt-2 text-sm font-semibold">תכנות מלא</div></div>
+      </section>
+
+      <div class="prose-he max-w-none">
+        <h2>מה מחברים ל-N 262D51?</h2>
+        <ul>
+          <li>לחצנים ומפסקים רגילים בעלי מגע יבש.</li>
+          <li>מגעי דלת וחלון פוטנציאל חופשי.</li>
+          <li>יציאות ריליי ללא מתח ממערכות חיצוניות.</li>
+          <li>מגעי מצב, פולסים ואותות בינאריים ללא מתח.</li>
+        </ul>
+
+        <h2>פונקציות KNX</h2>
+        <p>כל כניסה ניתנת להגדרה ב-ETS לפעולות כגון מיתוג, דימור, סצנות, הצללה, שליחת ערכים ופונקציות לוגיות. הבקר כולל גם תפעול ישיר לצורכי בדיקה והפעלה בשטח.</p>
+
+        <aside class="my-8 rounded-xl border-r-4 border-accent-600 bg-accent-50 p-5 not-prose">
+          <h2 class="text-xl font-extrabold text-brand-900 mb-2">חשוב: לא להזין מתח לכניסות</h2>
+          <p class="m-0 text-brand-700">זהו דגם למגעים יבשים. אם נדרש לקלוט מתח 10–230V AC/DC, הדגם המתאים הוא N 263D51, מק״ט 5WG1263-1DB51.</p>
+        </aside>
+
+        <h2>נתונים מרכזיים</h2>
+        <div class="not-prose overflow-x-auto">
+          <table class="w-full border-collapse text-right">
+            <tbody>
+              <tr class="border-b"><th class="p-3 bg-brand-50">דגם</th><td class="p-3">N 262D51</td></tr>
+              <tr class="border-b"><th class="p-3 bg-brand-50">מק״ט</th><td class="p-3" dir="ltr">5WG1262-1DB51</td></tr>
+              <tr class="border-b"><th class="p-3 bg-brand-50">מספר כניסות</th><td class="p-3">8</td></tr>
+              <tr class="border-b"><th class="p-3 bg-brand-50">סוג כניסה</th><td class="p-3">מגע יבש / Potential-Free</td></tr>
+              <tr><th class="p-3 bg-brand-50">הזנת הבקר</th><td class="p-3">מקו KNX</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </article>
+</BaseLayout>
