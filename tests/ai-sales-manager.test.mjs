@@ -388,7 +388,14 @@ test('Maya commissioning is role-scoped, hash-verified, and activation-free', ()
   assert.match(managementSmoke, /--status succeeded/);
   assert.match(managementSmoke, /--health', 'healthy'/);
   assert.match(managementSmoke, /\$verifiedSkills -ne \$requiredSkills\.Count/);
+  assert.match(managementSmoke, /\$requiredSkills -notcontains 'maya-instagram-relations'/);
+  assert.match(managementSmoke, /\$operationalCapabilities -notcontains 'maya-instagram-relations'/);
+  assert.match(managementSmoke, /foreach \(\$capability in \$operationalCapabilities\)/);
+  assert.match(managementSmoke, /--mode', 'identity_probe'/);
+  assert.match(managementSmoke, /Maya service identity is not authorized for \$capability/);
+  assert.match(managementSmoke, /--installed-skills', \(\[string\]\$requiredSkills\.Count\)/);
   assert.match(managementSmoke, /installedSkills = \$requiredSkills\.Count/);
+  assert.match(managementSmoke, /identityScopesVerified = \$identityScopesVerified/);
   assert.match(managementSmoke, /schedulersActivated = 0/);
   assert.match(managementSmoke, /externalSends = 0/);
   assert.match(managementSmoke, /mondayWrites = 0/);
