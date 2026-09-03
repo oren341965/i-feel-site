@@ -7,7 +7,8 @@ const DEFAULT_BASE_URL = 'https://i-feel-management-system.oren341965.chatgpt.si
 const KEY = /^[A-Za-z0-9][A-Za-z0-9._:-]{3,159}$/;
 const PERIOD = /^\d{4}-(0[1-9]|1[0-2])$/;
 const MAX_BYTES = 2 * 1024 * 1024;
-const TOP_KEYS = new Set(['period', 'expenses', 'projectIncome', 'serviceIncome', 'capturedAt']);
+const REQUIRED_TOP_KEYS = new Set(['period', 'expenses', 'projectIncome', 'serviceIncome', 'capturedAt']);
+const ALLOWED_TOP_KEYS = new Set([...REQUIRED_TOP_KEYS, 'comparisons']);
 const FORBIDDEN_KEYS = /(items?|rowsdata|raw|payload|vendor|supplier|customer|client|address|phone|email|account)/i;
 
 function fail(message, code = 2) {
@@ -54,7 +55,7 @@ async function load(path) {
   if (!metadata.isFile() || metadata.size < 2 || metadata.size > MAX_BYTES) fail('Analysis file size is invalid');
   let result;
   try { result = JSON.parse(await readFile(target, 'utf8')); } catch { fail('Analysis file is not valid JSON'); }
-  if (!result || typeof result !== 'object' || Array.isArray(result) || Object.keys(result).some((key) => !TOP_KEYS.has(key)) || [...TOP_KEYS].some((key) => !(key in result))) fail('Analysis schema is invalid');
+  if (!result || typeof result !== 'object' || Array.isArray(result) || Object.keys(result).some((key) => !ALLOWED_TOP_KEYS.has(key)) || [...REQUIRED_TOP_KEYS].some((key) => !(key in result))) fail('Analysis schema is invalid');
   walk(result);
   if (typeof result.period !== 'string' || !PERIOD.test(result.period)) fail('Invalid period');
   timestamp(result.capturedAt, 'capturedAt');
