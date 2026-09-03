@@ -58,11 +58,11 @@ jobs:
           if remaining:
               raise SystemExit("Expiry date still remains in: " + ", ".join(remaining))
 
-      - name: Commit and push cleanup
+      - name: Commit and push cleanup branch
         shell: bash
         run: |
           git config user.name "I Feel website automation"
           git config user.email "website@i-feel.co.il"
           git add src
           git commit -m "Remove Siemens partner expiry wording"
-          git push origin HEAD:main
+          git push origin HEAD:fix/remove-siemens-validity
