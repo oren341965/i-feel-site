@@ -396,6 +396,7 @@ test('Maya commissioning export writes parseable BOM-free release pointers under
   const vault = join(root, 'vault');
   const sources = [
     '.claude/skills/maya-email-maintenance',
+    '.claude/skills/maya-instagram-relations',
     '.claude/skills/maya-whatsapp',
     '.claude/skills/management-system-telemetry',
     '.claude/skills/ai-sales-manager/runtime/maya-config.example.json',
@@ -407,6 +408,7 @@ test('Maya commissioning export writes parseable BOM-free release pointers under
     'agent-config/maya-codex/test-management-smoke.ps1',
     'agent-config/maya-codex/provision-management-telemetry.ps1',
     'agent-config/maya-scheduled-tasks/maya-email-maintenance/SKILL.md',
+    'agent-config/maya-scheduled-tasks/maya-instagram-relations/SKILL.md',
     'scripts/workstations/export-maya-commissioning-bundle.ps1',
     'scripts/workstations/maya-commissioning-bootstrap.ps1',
     'scripts/workstations/maya-commissioning-install.ps1',
