@@ -147,6 +147,8 @@ $targets = @(
     "$base/customer-benefits/",
     "$base/siemens-knx-products/",
     "$base/articles/siemens-n12522-knx-power-supply-640ma/",
+    "$base/articles/siemens-n262d51-knx-8-dry-contact-input/",
+    "$base/articles/siemens-n14103-knx-dali-gateway-plus/",
     "$base/articles/siemens-n263d51-knx-8-binary-input/",
     "$base/articles/siemens-n14121-knx-dali-gateway-twin-plus/",
     "$base/articles/siemens-n554d31-knx-4-channel-dimmer/",
