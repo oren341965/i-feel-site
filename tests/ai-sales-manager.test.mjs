@@ -6,6 +6,7 @@ import {
   readFileSync,
   readdirSync,
   rmSync,
+  writeFileSync,
 } from 'node:fs';
 import { execFileSync } from 'node:child_process';
 import { tmpdir } from 'node:os';
@@ -350,6 +351,12 @@ test('Maya commissioning is role-scoped, hash-verified, and activation-free', ()
   assert.match(resultReader, /taskRuntimeVerified/);
   assert.match(resultReader, /taskRuntimeExpected/);
   assert.match(resultReader, /windowsEmailTask/);
+  assert.match(resultReader, /currentReleaseCommit/);
+  assert.match(resultReader, /currentReleaseSkillsExpected/);
+  assert.match(resultReader, /latestAvailableReleaseCommit/);
+  assert.match(resultReader, /pointerBehindLatestRelease/);
+  assert.match(resultReader, /freshnessStatus/);
+  assert.match(resultReader, /current\.json/);
   assert.match(provisioner, /Read-Host 'Paste the Sites transport token' -AsSecureString/);
   assert.match(provisioner, /ConvertFrom-SecureString/);
   assert.match(provisioner, /expectedComputer = 'DESKTOP-3LU7BMR'/);
@@ -363,6 +370,8 @@ test('Maya commissioning is role-scoped, hash-verified, and activation-free', ()
   assert.match(provisioner, /verificationPublished = \$verificationPublished/);
   assert.match(provisioner, /Publish bounded post-provisioning Maya commissioning result/);
   assert.match(provisioner, /-not \$ReplaceExisting/);
+  assert.match(provisioner, /\$verifiedSkills -ne \$requiredSkills\.Count/);
+  assert.match(provisioner, /\$verifiedSkillNames -join '\|'/);
   assert.match(installer, /managementCredentialsProvisioned = \$managementCredentialsProvisioned/);
   assert.match(installer, /existingCredentialsProvisioned/);
   assert.match(installer, /invoke-host-checkin\.ps1/);
@@ -378,6 +387,8 @@ test('Maya commissioning is role-scoped, hash-verified, and activation-free', ()
   assert.match(managementSmoke, /--status running/);
   assert.match(managementSmoke, /--status succeeded/);
   assert.match(managementSmoke, /--health', 'healthy'/);
+  assert.match(managementSmoke, /\$verifiedSkills -ne \$requiredSkills\.Count/);
+  assert.match(managementSmoke, /installedSkills = \$requiredSkills\.Count/);
   assert.match(managementSmoke, /schedulersActivated = 0/);
   assert.match(managementSmoke, /externalSends = 0/);
   assert.match(managementSmoke, /mondayWrites = 0/);
@@ -461,6 +472,76 @@ test('Maya commissioning export writes parseable BOM-free release pointers under
     assert.equal(result.schedulersActivated, 0);
     assert.equal(result.externalSends, 0);
     assert.equal(result.mondayWrites, 0);
+  } finally {
+    rmSync(root, { recursive: true, force: true });
+  }
+});
+
+test('Maya commissioning result checker reports stale evidence against the canonical release pointer', {
+  skip: process.platform !== 'win32',
+}, () => {
+  const root = mkdtempSync(join(tmpdir(), 'ifeel-maya-readiness-'));
+  const vault = join(root, 'vault');
+  const installerRoot = join(vault, 'AI-Sales', 'Installers', 'Maya');
+  const releaseRoot = join(installerRoot, 'releases', 'new-release');
+  const busRoot = join(vault, 'AI-Sales', '_bus', 'maya-to-manager');
+  const currentCommit = 'a'.repeat(40);
+  const oldCommit = 'b'.repeat(40);
+  const currentSkills = ['maya-email-maintenance', 'maya-instagram-relations', 'maya-whatsapp', 'management-system-telemetry'];
+
+  try {
+    mkdirSync(join(vault, '.obsidian'), { recursive: true });
+    mkdirSync(releaseRoot, { recursive: true });
+    mkdirSync(busRoot, { recursive: true });
+    writeFileSync(join(installerRoot, 'current.json'), JSON.stringify({
+      schemaVersion: 1,
+      commit: currentCommit,
+      relativeReleasePath: 'releases\\new-release',
+    }));
+    writeFileSync(join(releaseRoot, 'manifest.json'), JSON.stringify({
+      schemaVersion: 1,
+      createdAt: '2026-09-03T10:00:00.000Z',
+      commit: currentCommit,
+      requiredSkills: currentSkills,
+    }));
+    writeFileSync(join(busRoot, 'maya-commissioning-test-20260903-090000.json'), JSON.stringify({
+      schemaVersion: 1,
+      type: 'MAYA_COMMISSIONING_RESULT',
+      status: 'INSTALLED_PAUSED',
+      createdAt: '2026-09-03T09:00:00.000Z',
+      payload: {
+        commit: oldCommit,
+        role: 'maya-front-office',
+        primaryEngine: 'codex',
+        claudeRequired: false,
+        skills: currentSkills.slice(0, 3).map((skill) => ({ skill, hashMatch: true })),
+        taskContracts: ['schema', 'protocol'].map((name) => ({ name, hashMatch: true })),
+        schedulersActivated: 0,
+        windowsEmailTask: 'Disabled',
+        runtimeLocks: 0,
+        nextGate: 'CODEX_BROWSER_IDENTITY_AND_MANAGEMENT_SMOKE',
+        managementHostSlug: 'maya-front-office',
+        managementCredentialsProvisioned: true,
+        externalSends: 0,
+        mondayWrites: 0,
+        deletions: 0,
+      },
+    }));
+
+    const output = execFileSync('powershell.exe', [
+      '-NoProfile',
+      '-ExecutionPolicy', 'Bypass',
+      '-File', join(REPO, 'scripts/workstations/check-maya-commissioning-result.ps1'),
+      '-VaultRoot', vault,
+    ], { encoding: 'utf8' });
+    const result = JSON.parse(output.trim().replace(/^\uFEFF/, ''));
+    assert.equal(result.status, 'INSTALLED_PAUSED');
+    assert.equal(result.freshnessStatus, 'STALE');
+    assert.equal(result.skillsVerified, 3);
+    assert.equal(result.currentReleaseSkillsExpected, 4);
+    assert.equal(result.isCurrentRelease, false);
+    assert.equal(result.isCurrentSkillSet, false);
+    assert.equal(result.pointerBehindLatestRelease, false);
   } finally {
     rmSync(root, { recursive: true, force: true });
   }

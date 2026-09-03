@@ -36,6 +36,13 @@ if ($config.managementSystem.hostSlug -ne $expectedHost -or
     $config.automation.schedulersActivated -ne 0) {
     throw 'Maya runtime is not in the approved credentials-provisioned REPORT_ONLY state.'
 }
+$requiredSkills = @($config.skills.required | ForEach-Object { [string]$_ } | Sort-Object -Unique)
+if ($requiredSkills.Count -eq 0 -or
+    $requiredSkills -notcontains 'management-system-telemetry' -or
+    $requiredSkills -notcontains 'maya-email-maintenance' -or
+    $requiredSkills -notcontains 'maya-whatsapp') {
+    throw 'Maya runtime config does not declare the required managed Skill set.'
+}
 
 $vaultRoot = [IO.Path]::GetFullPath([string]$config.VAULT_ROOT)
 if (-not (Test-Path -LiteralPath (Join-Path $vaultRoot '.obsidian') -PathType Container)) {
@@ -49,10 +56,12 @@ $verificationOutput = & $verifyCurrent -RuntimeRoot 'C:\ifeel-maya' -UserRoot ([
 if ($LASTEXITCODE -ne 0) { throw 'Maya commissioning verification failed.' }
 $verification = $verificationOutput | ConvertFrom-Json
 $verifiedSkills = @($verification.payload.skills | Where-Object { $_.hashMatch }).Count
+$verifiedSkillNames = @($verification.payload.skills | ForEach-Object { [string]$_.skill } | Sort-Object -Unique)
 if ($verification.status -ne 'INSTALLED_PAUSED' -or
     $verification.payload.managementHostSlug -ne $expectedHost -or
     $verification.payload.managementCredentialsProvisioned -ne $true -or
-    $verifiedSkills -ne 3 -or
+    $verifiedSkills -ne $requiredSkills.Count -or
+    ($verifiedSkillNames -join '|') -ne ($requiredSkills -join '|') -or
     $verification.payload.schedulersActivated -ne 0 -or
     $verification.payload.externalSends -ne 0 -or
     $verification.payload.mondayWrites -ne 0) {
@@ -104,7 +113,7 @@ try {
         dryRun = [bool]$DryRun
         checkinKey = $checkinKey
         runKey = $runKey
-        installedSkills = 3
+        installedSkills = $requiredSkills.Count
         vaultStatus = 'verified_offline'
         automationMode = 'REPORT_ONLY'
         schedulersActivated = 0
