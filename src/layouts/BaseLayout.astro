@@ -53,6 +53,9 @@ const siemensKnxProducts: Record<string, string> = {
 
 const productSku = siemensKnxProducts[canonicalPath] || '';
 const isSiemensKnxProduct = Boolean(productSku);
+const localProductImage = productSku === '5WG1532-1DB51'
+  ? 'https://i-feel.co.il/assets/siemens-knx/images/5WG1532-1DB51.jpg'
+  : '';
 
 function stablePathHash(value: string) {
   let hash = 2166136261;
@@ -76,7 +79,7 @@ function generatedOgImageUrl(pathname: string) {
 }
 
 const usesLegacyGenericImage = !requestedOgImage || /\/assets\/og-cover\.jpg(?:$|\?)/.test(requestedOgImage);
-const ogImage = usesLegacyGenericImage ? generatedOgImageUrl(canonicalPath) : requestedOgImage;
+const ogImage = localProductImage || (usesLegacyGenericImage ? generatedOgImageUrl(canonicalPath) : requestedOgImage);
 const ogType = canonicalPath.startsWith('/articles/') && canonicalPath !== '/articles/' && !isSiemensKnxProduct ? 'article' : 'website';
 
 const effectiveJsonLd = isSiemensKnxProduct
@@ -89,6 +92,7 @@ const effectiveJsonLd = isSiemensKnxProduct
       brand: { '@type': 'Brand', name: 'Siemens' },
       url: canonical,
       category: 'Siemens KNX',
+      ...(localProductImage ? { image: localProductImage } : {}),
     })
   : jsonLd;
 
@@ -204,12 +208,19 @@ const siteIdentityJsonLd = JSON.stringify({
       <SiemensDwgDownload />
     </main>
     {isSiemensKnxProduct && (
-      <script is:inline>
+      <script is:inline define:vars={{ productSku }}>
         document.addEventListener('DOMContentLoaded', function () {
           var legacyArticleLink = document.querySelector('main article header a[href="/articles/"]');
           if (legacyArticleLink) {
             legacyArticleLink.setAttribute('href', '/siemens-knx-products/');
             legacyArticleLink.textContent = 'מוצרים ומפרטים טכניים';
+          }
+          if (productSku === '5WG1532-1DB51') {
+            var productImage = document.querySelector('main img[alt*="N 532D51"]');
+            if (productImage) {
+              productImage.setAttribute('src', '/assets/siemens-knx/images/5WG1532-1DB51.jpg');
+              productImage.removeAttribute('referrerpolicy');
+            }
           }
         });
       </script>
