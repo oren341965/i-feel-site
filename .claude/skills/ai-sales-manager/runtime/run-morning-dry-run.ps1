@@ -12,19 +12,24 @@ if (-not (Test-Path -LiteralPath $ConfigPath -PathType Leaf)) {
 
 $config = Get-Content -LiteralPath $ConfigPath -Raw -Encoding UTF8 | ConvertFrom-Json
 $userProfile = [Environment]::GetFolderPath('UserProfile')
+$localDataRoot = [Environment]::GetFolderPath('LocalApplicationData')
+$telemetryCommandPath = Join-Path $localDataRoot 'I Feel\Management System\invoke-telemetry.ps1'
 $candidates = @(
-    (Join-Path $userProfile '.codex\skills\ai-sales-manager\scripts\morning-run.mjs'),
-    (Join-Path $userProfile '.claude\skills\ai-sales-manager\scripts\morning-run.mjs')
+    (Join-Path $userProfile '.codex\skills\ai-sales-manager\scripts\run-morning-managed.mjs'),
+    (Join-Path $userProfile '.claude\skills\ai-sales-manager\scripts\run-morning-managed.mjs')
 )
 if ($config.PSObject.Properties['repositoryPath'] -and $config.repositoryPath) {
-    $candidates += Join-Path $config.repositoryPath '.claude\skills\ai-sales-manager\scripts\morning-run.mjs'
+    $candidates += Join-Path $config.repositoryPath '.claude\skills\ai-sales-manager\scripts\run-morning-managed.mjs'
 }
 $managerScript = $candidates | Where-Object { Test-Path -LiteralPath $_ -PathType Leaf } | Select-Object -First 1
 if (-not $managerScript) {
-    throw 'ai-sales-manager is not installed for Codex/Claude and is not available in the configured repository.'
+    throw 'The managed ai-sales-manager launcher is not installed for Codex/Claude and is not available in the configured repository.'
+}
+if (-not (Test-Path -LiteralPath $telemetryCommandPath -PathType Leaf)) {
+    throw 'I FEEL MANAGEMENT telemetry is not installed on this host.'
 }
 
-$managerOutput = @(& node $managerScript --config $ConfigPath 2>&1)
+$managerOutput = @(& node $managerScript --config $ConfigPath --telemetry-command $telemetryCommandPath 2>&1)
 $managerExitCode = $LASTEXITCODE
 $managerOutput | Write-Output
 if ($managerExitCode -ne 0) {
@@ -40,7 +45,7 @@ if ($managerExitCode -ne 0) {
     $logRoot = Join-Path $runtimeRoot 'logs'
     New-Item -ItemType Directory -Path $logRoot -Force | Out-Null
     $failurePath = Join-Path $logRoot ("morning-run-failure-{0}.json" -f (Get-Date).ToUniversalTime().ToString('yyyy-MM-dd'))
-    [ordered]@{
+    $failure = [ordered]@{
         schemaVersion = 1
         generatedAt = (Get-Date).ToUniversalTime().ToString('o')
         job = 'morning-run'
@@ -52,6 +57,8 @@ if ($managerExitCode -ne 0) {
         mondayWrites = 0
         sends = 0
         schedulersChanged = 0
-    } | ConvertTo-Json | Set-Content -LiteralPath $failurePath -Encoding UTF8
+    }
+    $failureJson = $failure | ConvertTo-Json
+    [IO.File]::WriteAllText($failurePath, $failureJson, [Text.UTF8Encoding]::new($false))
     throw "AI Sales Manager dry run failed with exit code $managerExitCode ($failureCode)"
 }

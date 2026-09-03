@@ -1,5 +1,16 @@
 import assert from 'node:assert/strict';
-import { readFileSync, readdirSync } from 'node:fs';
+import {
+  cpSync,
+  mkdirSync,
+  mkdtempSync,
+  readFileSync,
+  readdirSync,
+  rmSync,
+} from 'node:fs';
+import { execFileSync } from 'node:child_process';
+import { tmpdir } from 'node:os';
+import { dirname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import test from 'node:test';
 
 import './ai-sales-preflight.test.mjs';
@@ -11,6 +22,7 @@ import {
 } from '../.claude/skills/ai-sales-manager/scripts/analyze-sales.mjs';
 
 const NOW = '2026-08-20T09:00:00.000Z';
+const REPO = fileURLToPath(new URL('..', import.meta.url));
 
 test('sales classifier keeps overlapping operational exceptions', () => {
   const item = classifySalesItem({
@@ -367,9 +379,74 @@ test('morning launcher persists a bounded failure code without raw command outpu
   assert.match(launcher, /externalActionsPerformed = \$false/);
   assert.match(launcher, /mondayWrites = 0/);
   assert.match(launcher, /sends = 0/);
-  const persistedPayload = launcher.match(/\[ordered\]@\{([\s\S]*?)\}\s*\| ConvertTo-Json/)?.[1];
+  const persistedPayload = launcher.match(/\$failure\s*=\s*\[ordered\]@\{([\s\S]*?)\}\s*\r?\n\s*\$failureJson/)?.[1];
   assert.ok(persistedPayload);
   assert.doesNotMatch(persistedPayload, /errorText|managerOutput/);
+  assert.match(launcher, /UTF8Encoding\]::new\(\$false\)/);
+});
+
+test('Maya commissioning export writes parseable BOM-free release pointers under Windows PowerShell 5.1', {
+  skip: process.platform !== 'win32',
+}, () => {
+  const root = mkdtempSync(join(tmpdir(), 'ifeel-maya-export-'));
+  const repository = join(root, 'repo');
+  const vault = join(root, 'vault');
+  const sources = [
+    '.claude/skills/maya-email-maintenance',
+    '.claude/skills/maya-whatsapp',
+    '.claude/skills/management-system-telemetry',
+    '.claude/skills/ai-sales-manager/runtime/maya-config.example.json',
+    '.claude/skills/ai-sales-manager/runtime/bus-message.schema.json',
+    '.claude/skills/ai-sales-manager/references/maya-task-protocol.md',
+    'agent-config/maya-codex/AGENTS.md',
+    'agent-config/maya-codex/invoke-telemetry.ps1',
+    'agent-config/maya-codex/invoke-host-checkin.ps1',
+    'agent-config/maya-codex/test-management-smoke.ps1',
+    'agent-config/maya-codex/provision-management-telemetry.ps1',
+    'agent-config/maya-scheduled-tasks/maya-email-maintenance/SKILL.md',
+    'scripts/workstations/export-maya-commissioning-bundle.ps1',
+    'scripts/workstations/maya-commissioning-bootstrap.ps1',
+    'scripts/workstations/maya-commissioning-install.ps1',
+  ];
+
+  try {
+    mkdirSync(repository, { recursive: true });
+    mkdirSync(join(vault, '.obsidian'), { recursive: true });
+    for (const relative of sources) {
+      const source = join(REPO, relative);
+      const target = join(repository, relative);
+      mkdirSync(dirname(target), { recursive: true });
+      cpSync(source, target, { recursive: true });
+    }
+    execFileSync('git.exe', ['init', '--initial-branch=work/test-maya-export'], { cwd: repository, stdio: 'ignore' });
+    execFileSync('git.exe', ['config', 'user.email', 'test@invalid.local'], { cwd: repository });
+    execFileSync('git.exe', ['config', 'user.name', 'I Feel Test'], { cwd: repository });
+    execFileSync('git.exe', ['add', '.'], { cwd: repository });
+    execFileSync('git.exe', ['commit', '-m', 'test fixture'], { cwd: repository, stdio: 'ignore' });
+
+    const output = execFileSync('powershell.exe', [
+      '-NoProfile',
+      '-ExecutionPolicy', 'Bypass',
+      '-File', join(repository, 'scripts/workstations/export-maya-commissioning-bundle.ps1'),
+      '-RepositoryPath', repository,
+      '-VaultRoot', vault,
+      '-AllowWorkBranch',
+    ], { encoding: 'utf8' });
+    const result = JSON.parse(output.trim().replace(/^\uFEFF/, ''));
+    const mayaRoot = join(vault, 'AI-Sales', 'Installers', 'Maya');
+    const currentBytes = readFileSync(join(mayaRoot, 'current.json'));
+    const manifestBytes = readFileSync(join(result.releasePath, 'manifest.json'));
+
+    assert.equal(currentBytes.subarray(0, 3).equals(Buffer.from([0xef, 0xbb, 0xbf])), false);
+    assert.equal(manifestBytes.subarray(0, 3).equals(Buffer.from([0xef, 0xbb, 0xbf])), false);
+    assert.equal(JSON.parse(currentBytes.toString('utf8')).commit, result.commit);
+    assert.equal(JSON.parse(manifestBytes.toString('utf8')).schedulerActivation, 'PAUSED');
+    assert.equal(result.schedulersActivated, 0);
+    assert.equal(result.externalSends, 0);
+    assert.equal(result.mondayWrites, 0);
+  } finally {
+    rmSync(root, { recursive: true, force: true });
+  }
 });
 
 test('Maya Codex review accounts for every canonical Skill without copying managers', () => {
