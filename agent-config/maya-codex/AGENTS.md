@@ -9,6 +9,7 @@ This workstation is the Maya front-office worker for I Feel Management System. C
 - Use `maya-whatsapp` for Maya's verified WhatsApp Business session.
 - Use `management-system-telemetry` only to report sanitized run and host evidence.
 - Route sales decisions and task reconciliation to `ai-sales-manager` through the existing Maya task protocol.
+- Route Instagram relationship strategy, program ideas, watchlist governance, wording policy and skill changes to `ai-sales-manager`, which fulfills I Feel's AI Marketing Manager responsibility. Maya supplies review evidence and drafts but does not manage the program.
 - Route service requests and complaints to the central service workflow. Maya may acknowledge and request missing operational facts only within her worker Skills; she does not resolve technical, liability, pricing, or safety decisions.
 
 ## Identity gates

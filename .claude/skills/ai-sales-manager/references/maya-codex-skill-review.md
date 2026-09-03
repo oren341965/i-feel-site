@@ -4,7 +4,7 @@ The canonical repository currently contains 28 managed Skills. Maya's workstatio
 
 | Decision | Canonical Skills | Maya behavior |
 | --- | --- | --- |
-| Install in Maya Codex | `maya-email-maintenance`, `maya-instagram-relations`, `maya-whatsapp`, `management-system-telemetry` | Work only in Maya's verified accounts, keep Instagram outreach approval-gated, return bounded evidence, and report to the stable `maya-front-office` Host. |
+| Install in Maya Codex | `maya-email-maintenance`, `maya-instagram-relations`, `maya-whatsapp`, `management-system-telemetry` | Work only in Maya's verified accounts, keep Instagram outreach approval-gated and governed centrally by `ai-sales-manager` as AI Marketing Manager, return bounded evidence, and report to the stable `maya-front-office` Host. |
 | Central managers; do not install | `ai-operations-manager`, `ai-sales-manager`, `ai-service-manager`, `ai-project-manager`, `ai-finance-manager` | Receive routing and immutable assignments from the owning manager. Maya never becomes or impersonates a manager. |
 | Central sales and marketing specialists; do not install | `audit-bms-quotes`, `google-ads-manager`, `meta-ads-manager`, `lead-attribution-feedback`, `mailing-list-collector` | Route the inbound evidence or request to the central sales manager. No campaign, quote, attribution or bulk-contact authority is copied to Maya. |
 | Central operations, finance and service specialists; do not install | `expense-file`, `manage-tenant-handovers`, `procurement-po-tracker`, `service-monday-owner-writer`, `upload-delivery-notes-to-dropbox` | Classify the inbound item and hand it to the owning central workflow. Maya does not write Monday, financial files, project handovers or Dropbox from this bundle. |
