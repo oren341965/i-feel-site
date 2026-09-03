@@ -68,4 +68,4 @@ jobs:
           git config user.email "website@i-feel.co.il"
           git add src
           git commit -m "Remove Siemens partner expiry wording"
-          git push --force-with-lease origin HEAD:fix/remove-siemens-validity
+          git push --force origin HEAD:fix/remove-siemens-validity
