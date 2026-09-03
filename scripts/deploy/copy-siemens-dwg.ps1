@@ -18,7 +18,6 @@ $requiredFiles = @(
     '5WG1141-1AB03.dwg'
 )
 
-$relativeArchivePath = 'בקרת מבנה תיקיה מרכזית\Siemens DWG\DWG'
 $roots = New-Object 'System.Collections.Generic.HashSet[string]' ([System.StringComparer]::OrdinalIgnoreCase)
 
 function Add-DropboxRoot([string]$Path) {
@@ -67,28 +66,22 @@ if ($roots.Count -eq 0) {
 
 $sourceDirectory = $null
 foreach ($root in $roots) {
-    $candidate = Join-Path $root $relativeArchivePath
-    if (Test-Path -LiteralPath $candidate -PathType Container) {
-        $sourceDirectory = $candidate
-        break
-    }
-}
-
-if (-not $sourceDirectory) {
-    foreach ($root in $roots) {
-        Write-Host "Searching Dropbox root for Siemens DWG archive: $root"
-        $marker = Get-ChildItem -LiteralPath $root -File -Filter '5WG1125-1AB22.dwg' -Recurse -ErrorAction SilentlyContinue |
-            Where-Object { $_.DirectoryName -match 'Siemens DWG[\\/]DWG$' } |
-            Select-Object -First 1
-        if ($marker) {
+    Write-Host "Searching Dropbox root for Siemens DWG archive: $root"
+    $markers = Get-ChildItem -LiteralPath $root -File -Filter '5WG1125-1AB22.dwg' -Recurse -ErrorAction SilentlyContinue
+    foreach ($marker in $markers) {
+        $parentName = Split-Path -Leaf $marker.DirectoryName
+        $grandParent = Split-Path -Parent $marker.DirectoryName
+        $grandParentName = Split-Path -Leaf $grandParent
+        if ($parentName -ieq 'DWG' -and $grandParentName -ieq 'Siemens DWG') {
             $sourceDirectory = $marker.DirectoryName
             break
         }
     }
+    if ($sourceDirectory) { break }
 }
 
 if (-not $sourceDirectory) {
-    throw "Siemens DWG archive was not found under the detected Dropbox roots. Expected relative path: $relativeArchivePath"
+    throw 'Siemens DWG archive was not found under the detected Dropbox roots.'
 }
 
 Write-Host "Using Siemens DWG archive: $sourceDirectory"
