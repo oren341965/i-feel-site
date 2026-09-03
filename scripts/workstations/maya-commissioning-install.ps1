@@ -20,9 +20,10 @@ param(
 )
 
 $ErrorActionPreference = 'Stop'
-$requiredSkills = @('maya-email-maintenance', 'maya-whatsapp', 'management-system-telemetry')
+$requiredSkills = @('maya-email-maintenance', 'maya-instagram-relations', 'maya-whatsapp', 'management-system-telemetry')
 $requiredPayload = @(
     'payload\skills\maya-email-maintenance\SKILL.md',
+    'payload\skills\maya-instagram-relations\SKILL.md',
     'payload\skills\maya-whatsapp\SKILL.md',
     'payload\skills\management-system-telemetry\SKILL.md',
     'payload\codex\AGENTS.md',
@@ -31,6 +32,7 @@ $requiredPayload = @(
     'payload\management-system\test-management-smoke.ps1',
     'payload\management-system\provision-management-telemetry.ps1',
     'payload\scheduled-tasks\maya-email-maintenance\SKILL.md',
+    'payload\scheduled-tasks\maya-instagram-relations\SKILL.md',
     'payload\email-review\draft_writer.py',
     'payload\runtime\maya-config.example.json',
     'payload\runtime\bus-message.schema.json',
@@ -194,7 +196,7 @@ if (-not $VerifyOnly) {
         }
     }
 
-    foreach ($task in @('maya-email-maintenance')) {
+    foreach ($task in @('maya-email-maintenance', 'maya-instagram-relations')) {
         $source = Join-Path $bundle "payload\scheduled-tasks\$task\SKILL.md"
         $target = Join-Path $stagedTasksRoot "$task\SKILL.md"
         if ($PSCmdlet.ShouldProcess($target, "Stage disabled scheduler prompt $task")) {
@@ -252,13 +254,14 @@ if (-not $VerifyOnly) {
     $config.automation.logsDirectory = (Join-Path $runtime 'logs')
     $config.automation.windowsEmailTaskAllowed = $false
     $config.automation.whatsappSchedulerAllowed = $false
+    $config.automation.instagramRelationsSchedulerAllowed = $false
     $config.automation.integratedSchedulerAllowed = $false
     $config.automation.schedulersActivated = 0
     $config.managementSystem.hostSlug = 'maya-front-office'
     $config.managementSystem.telemetrySkill = 'management-system-telemetry'
     $config.managementSystem.credentialsStorage = 'DPAPI_LOCAL_ONLY'
     $config.managementSystem.credentialsProvisioned = $existingCredentialsProvisioned
-    $config.managementSystem.capabilitySlugs = @('maya-email-maintenance', 'maya-whatsapp')
+    $config.managementSystem.capabilitySlugs = @('maya-email-maintenance', 'maya-instagram-relations', 'maya-whatsapp')
     if ($PSCmdlet.ShouldProcess($configPath, 'Write maturity-0 Maya runtime config')) {
         $config | ConvertTo-Json -Depth 30 | Set-Content -LiteralPath $configPath -Encoding UTF8
     }
@@ -348,8 +351,8 @@ $result = [ordered]@{
         installPerformed = $installPerformed
         skills = $installedHashes
         taskContracts = $taskContractHashes
-        stagedSchedulers = 1
-        stagedSchedulerNames = @('maya-email-maintenance')
+        stagedSchedulers = 2
+        stagedSchedulerNames = @('maya-email-maintenance', 'maya-instagram-relations')
         schedulersActivated = 0
         windowsEmailTask = $windowsEmailTask
         runtimeLocks = $lockCount

@@ -33,7 +33,8 @@
     "standaloneMayaAgentSkillAllowed": false,
     "availableSkills": [
       "maya-whatsapp",
-      "maya-email-maintenance"
+      "maya-email-maintenance",
+      "maya-instagram-relations"
     ]
   },
   "baseline": {
