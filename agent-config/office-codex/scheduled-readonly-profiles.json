@@ -1,0 +1,109 @@
+{
+  "schemaVersion": 1,
+  "hostSlug": "desktop-d1d7o8u",
+  "expectedComputerName": "DESKTOP-D1D7O8U",
+  "defaultMode": "REPORT_ONLY",
+  "state": "PAUSED",
+  "credentials": {
+    "storage": "DPAPI_LOCAL_ONLY",
+    "embeddedSecrets": false,
+    "provisioningStatus": "NOT_PROVISIONED"
+  },
+  "profiles": [
+    {
+      "id": "seo-report-only",
+      "displayName": "I Feel SEO Manager",
+      "executionClass": "scheduled_agent",
+      "identity": {
+        "proposedName": "desktop-d1d7o8u-seo-report-v1",
+        "capabilities": [
+          "daily-seo-crawl",
+          "verify-live"
+        ],
+        "status": "APPROVAL_REQUIRED"
+      },
+      "requiredArtifacts": [
+        ".claude/skills/daily-seo-crawl/SKILL.md",
+        ".claude/skills/verify-live/SKILL.md",
+        ".claude/skills/verify-live/scripts/verify-live-readonly.ps1",
+        ".claude/skills/verify-live/scripts/report-website-audit.mjs",
+        ".claude/skills/management-system-telemetry/SKILL.md"
+      ],
+      "runtime": {
+        "executor": "codex_scheduled_task",
+        "mode": "REPORT_ONLY",
+        "smokeStatus": "PENDING_READ_ONLY",
+        "externalPrerequisites": [
+          "PUBLIC_WEBSITE_READ_ACCESS",
+          "WEB_SEARCH_ACCESS"
+        ]
+      },
+      "scheduleProposal": {
+        "timezone": "Asia/Jerusalem",
+        "cadenceFromCanonicalSkill": "weekdays 07:00; Sunday deep 07:00",
+        "status": "APPROVAL_REQUIRED"
+      },
+      "safety": {
+        "businessWritesAllowed": false,
+        "externalSendsAllowed": false,
+        "productionChangesAllowed": false,
+        "schedulerActivationAllowed": false
+      }
+    },
+    {
+      "id": "procurement-report-only",
+      "displayName": "I Feel Procurement PO Tracker",
+      "executionClass": "scheduled_agent",
+      "identity": {
+        "proposedName": "desktop-d1d7o8u-procurement-report-v1",
+        "capabilities": [
+          "procurement-po-tracker"
+        ],
+        "status": "APPROVAL_REQUIRED"
+      },
+      "requiredArtifacts": [
+        ".claude/skills/procurement-po-tracker/SKILL.md",
+        ".claude/skills/procurement-po-tracker/references/report-contract.md",
+        ".claude/skills/procurement-po-tracker/scripts/report-procurement-audit.mjs",
+        ".claude/skills/management-system-telemetry/SKILL.md"
+      ],
+      "runtime": {
+        "executor": "codex_scheduled_task",
+        "mode": "REPORT_ONLY",
+        "smokeStatus": "PENDING_READ_ONLY",
+        "externalPrerequisites": [
+          "OFFICE_GMAIL_READ_CONNECTOR"
+        ]
+      },
+      "scheduleProposal": {
+        "timezone": "Asia/Jerusalem",
+        "cadenceFromCanonicalSkill": null,
+        "status": "OWNER_DECISION_REQUIRED"
+      },
+      "safety": {
+        "businessWritesAllowed": false,
+        "externalSendsAllowed": false,
+        "productionChangesAllowed": false,
+        "schedulerActivationAllowed": false
+      }
+    }
+  ],
+  "inheritedWorkers": [
+    {
+      "id": "google-ads-manager",
+      "parent": "ai-sales-manager",
+      "independentIdentityRequired": false
+    },
+    {
+      "id": "meta-ads-manager",
+      "parent": "ai-sales-manager",
+      "independentIdentityRequired": false
+    }
+  ],
+  "interactiveOnly": [
+    {
+      "id": "expense-file",
+      "reason": "Sheet mutations require per-run preview, explicit approval and read-back verification"
+    }
+  ]
+}
