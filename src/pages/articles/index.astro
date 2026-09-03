@@ -6,6 +6,22 @@ const title = 'מאמרים ומדריכים | i-feel';
 const description = 'מדריכי i-feel לבית חכם, KNX, בקרת מבנה BMS, שדרוג בית קיים, יזמים, אדריכלים ושירות.';
 const canonical = 'https://i-feel.co.il/articles/';
 
+const siemensN263D51Article = {
+  slug: 'siemens-n263d51-knx-8-binary-input',
+  title: 'Siemens N 263D51: בקר KNX עם 8 כניסות בינאריות',
+  description: '8 כניסות AC/DC בטווח 10 עד 230V לקליטת מצבים, פולסים ופקודות והעברתם למערכת KNX.',
+  category: 'Siemens / KNX',
+  updated: '2026-09-03',
+};
+
+const siemensN14121Article = {
+  slug: 'siemens-n14121-knx-dali-gateway-twin-plus',
+  title: 'Siemens N 141/21: KNX / DALI Gateway Twin Plus',
+  description: 'שני קווי DALI, עד 64 התקנים בכל קו ועד 32 קבוצות DALI, לחיבור מערכת התאורה ל-KNX.',
+  category: 'Siemens / KNX / DALI',
+  updated: '2026-09-03',
+};
+
 const siemensN554D31Article = {
   slug: 'siemens-n554d31-knx-4-channel-dimmer',
   title: 'Siemens N 554D31: דימר KNX מסוג TRIAC עם 4 ערוצים',
@@ -63,6 +79,8 @@ const siemensN543D31Article = {
 };
 
 const publicArticles = [
+  siemensN263D51Article,
+  siemensN14121Article,
   siemensN554D31Article,
   siemensN56881Article,
   siemensN56722Article,
@@ -97,13 +115,9 @@ const jsonLd = JSON.stringify({
       <p class="max-w-3xl text-lg text-brand-100">
         מדריכים מעשיים לבית חכם, KNX, בקרת מבנה BMS, שדרוגים, יזמים ואדריכלים. כל מאמר מוביל לעמוד תוכן מלא עם קישורים לעמודים ולקטלוגים הרלוונטיים.
       </p>
-      <div class="mt-6">
-        <a
-          href="https://www.google.com/preferences/source?q=i-feel.co.il"
-          class="inline-flex items-center rounded-lg bg-white px-5 py-3 font-bold text-brand-900 transition hover:bg-brand-50"
-        >
-          הוסיפו את i-feel למקורות המועדפים ב-Google
-        </a>
+      <div class="mt-6 flex flex-wrap gap-3">
+        <a href="/siemens-knx-products/" class="inline-flex items-center rounded-lg bg-accent-600 px-5 py-3 font-bold text-white transition hover:bg-accent-700">לכל ציוד Siemens KNX</a>
+        <a href="https://www.google.com/preferences/source?q=i-feel.co.il" class="inline-flex items-center rounded-lg bg-white px-5 py-3 font-bold text-brand-900 transition hover:bg-brand-50">הוסיפו את i-feel למקורות המועדפים ב-Google</a>
       </div>
     </div>
   </section>
@@ -118,9 +132,7 @@ const jsonLd = JSON.stringify({
               <a href={`/articles/${article.slug}/`} class="hover:text-accent-600">{article.title}</a>
             </h2>
             <p class="text-brand-600 mb-5">{article.description}</p>
-            <a href={`/articles/${article.slug}/`} class="inline-flex items-center text-accent-700 font-bold hover:text-accent-600">
-              קרא את המאמר המלא
-            </a>
+            <a href={`/articles/${article.slug}/`} class="inline-flex items-center text-accent-700 font-bold hover:text-accent-600">קרא את המאמר המלא</a>
           </article>
         ))}
       </div>
