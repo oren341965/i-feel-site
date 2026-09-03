@@ -1,99 +1,35 @@
-name: Deploy Siemens KNX DWG files
+name: Verify Siemens KNX DWG files
 
 on:
-  push:
-    branches:
-      - main
-    paths:
-      - '.github/workflows/deploy-siemens-dwg.yml'
   workflow_dispatch:
 
 permissions:
   contents: read
 
-concurrency:
-  group: ifeel-siemens-dwg-production
-  cancel-in-progress: true
-
 jobs:
-  deploy-dwg:
-    name: Deploy Siemens DWG
-    runs-on:
-      - self-hosted
-      - windows
-      - x64
-      - ifeel-deploy
-    environment:
-      name: production
-      url: https://i-feel.co.il/siemens-knx-products/
-
+  verify-dwg:
+    name: Verify Siemens DWG downloads
+    runs-on: ubuntu-latest
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        env:
-          NODE_OPTIONS: --use-system-ca
-        with:
-          node-version: 24
-          cache: npm
-
-      - name: Install deployment dependencies
-        shell: cmd
-        run: npm ci --legacy-peer-deps --ignore-scripts
-
-      - name: Collect Siemens DWG files directly from authorized Dropbox export
-        shell: powershell -NoProfile -ExecutionPolicy Bypass -File {0}
+      - name: Verify published DWG files
+        shell: bash
         run: |
-          $ErrorActionPreference = 'Stop'
-          $destination = 'dwg-dist\assets\siemens-knx\dwg'
-          New-Item -ItemType Directory -Force -Path $destination | Out-Null
-          $downloads = @(
-            @{ Name='5WG1125-1AB22.dwg'; Url='https://uc8ecaf868a489fb9823d72605d3.dl.dropboxusercontent.com/cd/0/get/DHYGgXF5OMcL_mNcEWEQoTjQFgLCZvQ7sqQe64BW-QDCUYfOV7VN6shr-wWekax0xgMrbPUCab8DZWbCw4A6M1Xg2BgyLO70DEfqwzkZO44VbHX7wntbPsKa4qHNjthCgks5edao5Lnl-75ZH-BG0BFl-OzOJMrXmdq3AzaxLaJ8Ew/file?c_luid=c57b7778' },
-            @{ Name='5WG1567-1AB22.dwg'; Url='https://uc35f066bc11fd9a2f36e48f79a2.dl.dropboxusercontent.com/cd/0/get/DHbjCcFBjDzrIKjkpEOCKcZe1OgwTBRwUPopvIwZEE_i0KQKAHs7Zlj5sPZijtANY5HNb9Pz-suthdn55mlzkwmi0ofUiczr792uJr4wbotkiBh7UVHgDUwVvj6a2x5dm4jB7dYSnrLdChVdc_vAa0ZWBf0qhNYxPJuGdf2N-dJy7w/file?c_luid=c57b7778' },
-            @{ Name='5WG1532-1DB51.dwg'; Url='https://uce59522eec4d8cad8147c3f82ac.dl.dropboxusercontent.com/cd/0/get/DHauQnxzpb7srzmHzsrumCewA_3_Tu0NkQW67Q_pBeoXArI-Je6hR0o9a6HZkbZkMbdolgByRiQAS8qDvj7F-M6Sh4rTjNfb5OULYdsV3iH2URYzpL-lot7eY0-OCYvH2uZxRxtya2AAU960mo42uC46hijdLlcHK8j5vuumh0MbUA/file?c_luid=c57b7778' },
-            @{ Name='5WG1532-1DB31.dwg'; Url='https://ucafb1da27e2e3f25738a15f9fa7.dl.dropboxusercontent.com/cd/0/get/DHZdeTc3J_V6w6RV__D2ySDT0wp-NAtbQBmupipkEu6mpS9oYzO1ovQd82o2xcOcbINy5xB-OQq-HgcOcdRdmWbS-xxfXdyZzL9y_IK67wjGSnV32js8iBJzpUyvKbS6HqNbJCxy8D_75uC30pO1isUEgCbdTHjL4o1FCcz1OKhvBg/file?c_luid=c57b7778' },
-            @{ Name='5WG1262-1DB51.dwg'; Url='https://uc241959bd435203327c7cbd47f6.dl.dropboxusercontent.com/cd/0/get/DHYhUId8AM1rb1rhpslnw9-ZpgjTzH_RKCrY3IRsWIY0J2cIk2iPnMio7iHzQn9Kn6sdT7cLWmUBrfgTlVLJraxATQ7fBDKaGeYHJQdUok_YMFenaa1yBNpKoubKIAoBHeSz_KmW0_BlfaoQuqelWtidMKGfPFuX3Mg8OPpiPAjg8w/file?c_luid=c57b7778' },
-            @{ Name='5WG1543-1DB51.dwg'; Url='https://uc0b1d638f8f986a273e369bd20c.dl.dropboxusercontent.com/cd/0/get/DHZP4EPTtzOmbGf4kgONiEipJxTfwo3hkhncyiyw3EnDiYM2rub5P2SgtAwtWeamBeiqYFgqBmNEDvcISTU1gIBjqU-bnQu8e689iKIbj7Es9PmH2Dzc1hkvyT4bYGVqxnwt54bg_RO9yQ25wNPLIr4SGg62dzDT32RRpP9QgeCThQ/file?c_luid=c57b7778' },
-            @{ Name='5WG1543-1DB31.dwg'; Url='https://uc64e5e55175fdb4863435775645.dl.dropboxusercontent.com/cd/0/get/DHZea1hjUNuYHyHY5SRKkdVkaYepVzjYnS9UYMLgdhWTNh9H0rYj6iFu8g9uEzBVfNuwDxvgQFIZPEK2tUqhyt1-aueSEOheO2hek_-g9ZIReqY0KfnzYmYziiGnPWc0CfAkvBbfyhK20kU_1ZVmBr1CqI7WGTeoH_zShwjIoDZ9Ig/file?c_luid=c57b7778' },
-            @{ Name='5WG1554-1DB31.dwg'; Url='https://uc8559459633df903d0c11d6fbc7.dl.dropboxusercontent.com/cd/0/get/DHbRHGrQnbJF3yG1E1zWMhT3s8vmwHEuEANC_NnFQJJf4c0v95irjoEVVfpJJ9UNx34Fia4hdkDW2JLc0kFou-Ni0okOHVLoo6OHa4UzqjdBmhZlgkbz6YrO9MdqadvDg8z__Lwu7DaZF5JrJpV7kRci5Eh4ICJeZhbNoqwDm5Wzpw/file?c_luid=c57b7778' },
-            @{ Name='5WG1141-1AB03.dwg'; Url='https://uc723a1a4656339a47b123a4c256.dl.dropboxusercontent.com/cd/0/get/DHaX7lB6IdR8wiOaNrQzcrvOtUOrgsvk97fyHbSP7UTvERT_eofltV7EiawXjEqibGMnjgq7YaLm8rxGD3RdnZvaN9-hFoZRCmaxfNJYjDjZAA9IqB8I2jHzYDOhMY9ybdMKqJS2MJw05PrgOdt2JDoF4DetpWkXE9jbd6Rpy8b_Zw/file?c_luid=c57b7778' }
+          set -euo pipefail
+          base='https://i-feel.co.il/assets/siemens-knx/dwg'
+          files=(
+            '5WG1125-1AB22.dwg'
+            '5WG1567-1AB22.dwg'
+            '5WG1532-1DB51.dwg'
+            '5WG1532-1DB31.dwg'
+            '5WG1262-1DB51.dwg'
+            '5WG1543-1DB51.dwg'
+            '5WG1543-1DB31.dwg'
+            '5WG1554-1DB31.dwg'
+            '5WG1141-1AB03.dwg'
           )
-          foreach ($item in $downloads) {
-            $out = Join-Path $destination $item.Name
-            & curl.exe --fail --silent --show-error --location --output $out --max-time 60 $item.Url
-            if ($LASTEXITCODE -ne 0 -or -not (Test-Path -LiteralPath $out -PathType Leaf) -or (Get-Item -LiteralPath $out).Length -lt 1000) {
-              throw "Dropbox DWG download failed: $($item.Name)"
-            }
-            Write-Host "Downloaded $($item.Name) bytes=$((Get-Item -LiteralPath $out).Length)"
-          }
-
-      - name: Upload Siemens DWG files through explicit FTPS
-        shell: cmd
-        env:
-          NODE_OPTIONS: --use-system-ca
-          IFEEL_FTP_SERVER: ${{ secrets.IFEEL_FTP_SERVER || secrets.FTP_SERVER }}
-          IFEEL_FTP_USERNAME: ${{ secrets.IFEEL_FTP_USERNAME || secrets.FTP_USERNAME }}
-          IFEEL_FTP_PASSWORD: ${{ secrets.IFEEL_FTP_PASSWORD || secrets.FTP_PASSWORD }}
-          IFEEL_FTP_SERVER_DIR: ${{ secrets.IFEEL_FTP_SERVER_DIR || secrets.FTP_SERVER_DIR }}
-        run: node scripts\deploy\ftps-upload.mjs dwg-dist
-
-      - name: Verify Siemens DWG downloads are live
-        shell: powershell -NoProfile -ExecutionPolicy Bypass -File {0}
-        run: |
-          $ErrorActionPreference = 'Stop'
-          $base = 'https://i-feel.co.il/assets/siemens-knx/dwg'
-          $files = @(
-            '5WG1125-1AB22.dwg','5WG1567-1AB22.dwg','5WG1532-1DB51.dwg','5WG1532-1DB31.dwg','5WG1262-1DB51.dwg','5WG1543-1DB51.dwg','5WG1543-1DB31.dwg','5WG1554-1DB31.dwg','5WG1141-1AB03.dwg'
-          )
-          Start-Sleep -Seconds 5
-          foreach ($file in $files) {
-            $url = "$base/$file"
-            $status = & curl.exe --silent --show-error --location --ssl-revoke-best-effort --output NUL --write-out '%{http_code}' --max-time 45 $url
-            if ($LASTEXITCODE -ne 0 -or [int]$status -lt 200 -or [int]$status -ge 400) {
-              throw "DWG live verification failed: http=$status url=$url"
-            }
-            Write-Host "OK $status $url"
-          }
-          Write-Host 'All 9 Siemens KNX DWG files are live.'
+          for file in "${files[@]}"; do
+            code=$(curl --silent --show-error --location --output /dev/null --write-out '%{http_code}' --max-time 45 "$base/$file")
+            test "$code" -ge 200 -a "$code" -lt 400
+            echo "OK $code $base/$file"
+          done
+          echo 'All 9 Siemens KNX DWG files are live.'
