@@ -1,0 +1,103 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+const products = [
+  {
+    category: 'מיתוג ורב תכליתי',
+    items: [
+      { title: 'Siemens N 568/81', subtitle: 'בקר KNX רב תכליתי עם 24 יציאות', partNumber: '5WG1568-1AB81', href: '/articles/siemens-n56881-knx-24-output/' },
+      { title: 'Siemens N 567/22', subtitle: 'בקר KNX עם 16 יציאות מיתוג', partNumber: '5WG1567-1AB22', href: '/articles/siemens-n56722-knx-16-output/' },
+      { title: 'Siemens N 532D51', subtitle: 'בקר KNX עם 8 יציאות מיתוג 10AX', partNumber: '5WG1532-1DB51', href: '/articles/siemens-n532d51-knx-8-switch-output/' },
+      { title: 'Siemens N 532D31', subtitle: 'בקר KNX עם 4 יציאות מיתוג 10AX', partNumber: '5WG1532-1DB31', href: '/articles/siemens-n532d31-knx-4-switch-output/' },
+    ],
+  },
+  {
+    category: 'כניסות',
+    items: [
+      { title: 'Siemens N 263D51', subtitle: 'בקר KNX עם 8 כניסות בינאריות AC/DC', partNumber: '5WG1263-1DB51', href: '/articles/siemens-n263d51-knx-8-binary-input/' },
+    ],
+  },
+  {
+    category: 'תריסים והצללות',
+    items: [
+      { title: 'Siemens N 543D51', subtitle: 'בקר KNX ל-8 מנועי תריס AC', partNumber: '5WG1543-1DB51', href: '/articles/siemens-n543d51-knx-8-blind-actuator/' },
+      { title: 'Siemens N 543D31', subtitle: 'בקר KNX ל-4 מנועי תריס AC', partNumber: '5WG1543-1DB31', href: '/articles/siemens-n543d31-knx-4-blind-actuator/' },
+    ],
+  },
+  {
+    category: 'דימור',
+    items: [
+      { title: 'Siemens N 554D31', subtitle: 'דימר KNX אוניברסלי עם 4 ערוצים', partNumber: '5WG1554-1DB31', href: '/articles/siemens-n554d31-knx-4-channel-dimmer/' },
+    ],
+  },
+  {
+    category: 'DALI',
+    items: [
+      { title: 'Siemens N 141/21', subtitle: 'KNX / DALI Gateway Twin Plus, שני קווי DALI', partNumber: '5WG1141-1AB21', href: '/articles/siemens-n14121-knx-dali-gateway-twin-plus/' },
+    ],
+  },
+];
+
+const allItems = products.flatMap((group) => group.items);
+const canonical = 'https://i-feel.co.il/siemens-knx-products/';
+const title = 'ציוד Siemens KNX | בקרים, כניסות, תריסים ו-DALI | i-feel';
+const description = 'מרכז ציוד Siemens KNX של i-feel: בקרי מיתוג, כניסות בינאריות, בקרי תריסים, דימרים ושערי KNX-DALI, כולל מק״טים וקישורים לדפי מוצר.';
+const jsonLd = JSON.stringify({
+  '@context': 'https://schema.org',
+  '@type': 'CollectionPage',
+  name: title,
+  description,
+  url: canonical,
+  inLanguage: 'he-IL',
+  hasPart: allItems.map((item) => ({ '@type': 'Product', name: item.title, sku: item.partNumber, url: `https://i-feel.co.il${item.href}`, brand: { '@type': 'Brand', name: 'Siemens' } })),
+});
+---
+
+<BaseLayout title={title} description={description} canonical={canonical} ogTitle={title} ogDescription={description} ogUrl={canonical} jsonLd={jsonLd}>
+  <main dir="rtl" class="bg-white">
+    <section class="bg-brand-900 text-white py-16 md:py-20">
+      <div class="max-w-7xl mx-auto px-4">
+        <p class="text-accent-400 font-semibold mb-3">Siemens GAMMA / KNX</p>
+        <h1 class="text-4xl md:text-5xl font-extrabold mb-5">ציוד Siemens KNX</h1>
+        <p class="max-w-4xl text-lg text-brand-100 leading-relaxed">מרכז אחד לכל דפי המוצר של Siemens KNX באתר i-feel. כל פריט כולל דגם, מק״ט וקישור למידע הטכני המלא, כדי שאפשר יהיה למצוא במהירות את הבקר הנכון לתכנון, הצעת מחיר או ביצוע.</p>
+      </div>
+    </section>
+
+    <section class="py-12 md:py-16">
+      <div class="max-w-7xl mx-auto px-4 space-y-12">
+        {products.map((group) => (
+          <section>
+            <div class="flex items-center justify-between gap-4 mb-5">
+              <h2 class="text-2xl md:text-3xl font-extrabold text-brand-900 border-r-4 border-accent-500 pr-3">{group.category}</h2>
+              <span class="text-sm font-semibold text-brand-500">{group.items.length} פריטים</span>
+            </div>
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
+              {group.items.map((item) => (
+                <article class="rounded-2xl border border-brand-100 bg-white p-6 shadow-sm hover:shadow-lg hover:border-accent-400 transition flex flex-col">
+                  <div class="flex flex-wrap gap-2 mb-3">
+                    <span class="tag tag-bms">Siemens</span>
+                    <span class="tag tag-architect">KNX</span>
+                  </div>
+                  <h3 class="text-xl font-extrabold text-brand-900 mb-2">{item.title}</h3>
+                  <p class="text-brand-700 mb-4 flex-grow">{item.subtitle}</p>
+                  <p class="text-sm text-brand-600 mb-5"><strong>מק״ט:</strong> <span dir="ltr">{item.partNumber}</span></p>
+                  <a href={item.href} class="inline-flex items-center justify-center rounded-lg bg-brand-700 px-5 py-3 font-bold text-white hover:bg-brand-800 transition">לדף המוצר</a>
+                </article>
+              ))}
+            </div>
+          </section>
+        ))}
+      </div>
+    </section>
+
+    <section class="bg-brand-50 border-y border-brand-100 py-10">
+      <div class="max-w-7xl mx-auto px-4 flex flex-col md:flex-row md:items-center md:justify-between gap-5">
+        <div>
+          <h2 class="text-2xl font-extrabold text-brand-900 mb-2">קטלוגים ומידע נוסף</h2>
+          <p class="text-brand-700">לעיון בקטלוגי KNX המלאים, חומרי Siemens ומדריכי i-feel.</p>
+        </div>
+        <a href="/catalogs/" class="inline-flex justify-center rounded-lg bg-accent-600 px-5 py-3 font-bold text-white hover:bg-accent-700 transition">למרכז הקטלוגים</a>
+      </div>
+    </section>
+  </main>
+</BaseLayout>
