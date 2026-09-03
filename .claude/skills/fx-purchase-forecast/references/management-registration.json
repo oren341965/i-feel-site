@@ -1,0 +1,74 @@
+{
+  "schemaVersion": 1,
+  "system": "I FEEL MANAGEMENT SYSTEM",
+  "slug": "fx-purchase-forecast",
+  "displayName": "I Feel FX Purchase Forecast",
+  "domains": ["finance", "operations"],
+  "owner": "I Feel Operations",
+  "financeConsumer": "ai-finance-manager",
+  "operationalParent": "ai-operations-manager",
+  "optionalAccountingRouter": "ai-accounting-manager",
+  "dependencies": [
+    "management-system-telemetry",
+    "Google Sheet: הוצאות איי פיל",
+    "current EUR/ILS rate source",
+    "current USD/ILS rate source",
+    "supplier/open procurement evidence"
+  ],
+  "capabilities": [
+    "refresh-eur-ils-forecast",
+    "refresh-usd-ils-forecast",
+    "recalculate-open-foreign-purchase-estimates",
+    "preserve-original-currency-and-due-date",
+    "verify-forecast-readback"
+  ],
+  "triggers": [
+    "weekly Sunday morning FX refresh",
+    "manual foreign-currency forecast refresh",
+    "Siemens or supplier open-item forecast update"
+  ],
+  "permissions": {
+    "read": [
+      "public/current FX rates",
+      "open/future foreign-currency rows in canonical expense Sheet",
+      "approved supplier open-item evidence"
+    ],
+    "write": "standing authorization: derived ILS estimate plus FX rate/date note on existing open/future procurement rows only",
+    "send": "restricted",
+    "financialAction": "restricted",
+    "supplierCommunication": "restricted",
+    "dueDateChange": "restricted",
+    "destructiveChange": "restricted",
+    "secretsOrExternalPermissions": "restricted"
+  },
+  "dataSources": [
+    "Google Sheet: הוצאות איי פיל",
+    "current public FX-rate source",
+    "supplier statements/open-item evidence"
+  ],
+  "logging": {
+    "adapter": "management-system-telemetry",
+    "payload": "aggregate counters, rate observation timestamp, and sanitized evidence reference only",
+    "statuses": ["running", "succeeded", "failed", "blocked"],
+    "forbidden": ["supplier names", "invoice/order references", "raw rows", "bank details", "free text"]
+  },
+  "orchestration": {
+    "parent": "ai-operations-manager",
+    "financeConsumer": "ai-finance-manager",
+    "accountingRouterWhenAvailable": "ai-accounting-manager"
+  },
+  "standingAuthorization": {
+    "authorizedBy": "Oren",
+    "scope": "weekly EUR/ILS and USD/ILS forecast refresh for open/future procurement estimates only",
+    "doesNotAuthorize": [
+      "payments",
+      "transfers",
+      "currency trading or hedging",
+      "supplier communications",
+      "purchase orders",
+      "price commitments",
+      "due-date changes",
+      "changes to paid rows"
+    ]
+  }
+}
