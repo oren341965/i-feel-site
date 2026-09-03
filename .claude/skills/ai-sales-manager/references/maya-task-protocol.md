@@ -31,7 +31,7 @@ Every Assignment, ACK, and Result carries the same immutable task snapshot:
 - `next_action` — nullable until known
 - `next_treatment_date` — nullable until known
 
-The assignment also records `monday_item_source=MONDAY_LIVE`, `monday_item_verified_at`, an execution gate, test origin, and external-action counters. Reject a response when any immutable snapshot value differs from the assignment.
+The assignment also records `monday_item_source=MONDAY_LIVE`, `monday_item_verified_at`, an execution gate, test origin, and external-action counters. A synthetic isolated smoke must instead use `monday_item_source=ISOLATED_TEST`; that value is forbidden for production tasks. Reject a response when any immutable snapshot value differs from the assignment.
 
 ## State machine
 
