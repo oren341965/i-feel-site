@@ -1,0 +1,68 @@
+name: Remove Siemens partner expiry wording
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - '.github/workflows/remove-siemens-validity.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  update-copy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ github.token }}
+
+      - name: Remove year-end validity wording everywhere
+        shell: python
+        run: |
+          from pathlib import Path
+
+          exact_sentence = "נכון ל-2026 החברה מחזיקה בהסמכת Siemens Solution Partner בתחום Building Automation, בתוקף עד 31.12.2026."
+          replacement_sentence = "החברה היא Siemens Solution Partner בתחום Building Automation."
+          exact_banner = "Building Automation · בתוקף עד 31.12.2026"
+          expiry = "בתוקף עד 31.12.2026"
+
+          changed = []
+          for path in Path("src").rglob("*"):
+              if not path.is_file() or path.suffix.lower() not in {".astro", ".html", ".md", ".mdx", ".js", ".ts", ".json"}:
+                  continue
+              text = path.read_text(encoding="utf-8")
+              new = text.replace(exact_sentence, replacement_sentence)
+              new = new.replace(exact_banner, "Building Automation")
+              new = new.replace(expiry, "")
+              new = new.replace("Building Automation, .", "Building Automation.")
+              new = new.replace("Building Automation,  .", "Building Automation.")
+              if new != text:
+                  path.write_text(new, encoding="utf-8")
+                  changed.append(str(path))
+
+          if not changed:
+              raise SystemExit("No files changed")
+
+          print("Updated files:")
+          for item in changed:
+              print(item)
+
+          remaining = []
+          for path in Path("src").rglob("*"):
+              if path.is_file() and path.suffix.lower() in {".astro", ".html", ".md", ".mdx", ".js", ".ts", ".json"}:
+                  if "31.12.2026" in path.read_text(encoding="utf-8"):
+                      remaining.append(str(path))
+          if remaining:
+              raise SystemExit("Expiry date still remains in: " + ", ".join(remaining))
+
+      - name: Commit and push cleanup
+        shell: bash
+        run: |
+          git config user.name "I Feel website automation"
+          git config user.email "website@i-feel.co.il"
+          git add src
+          git commit -m "Remove Siemens partner expiry wording"
+          git push origin HEAD:main
