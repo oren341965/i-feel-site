@@ -1,0 +1,78 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+const canonical = 'https://i-feel.co.il/articles/siemens-n14121-knx-dali-gateway-twin-plus/';
+const title = 'Siemens N 141/21: KNX / DALI Gateway Twin Plus | i-feel';
+const description = 'Siemens N 141/21, מק״ט 5WG1141-1AB21, שער KNX ל-DALI עם 2 יציאות DALI, עד 64 התקנים לכל יציאה ועד 32 קבוצות.';
+const dataSheetUrl = 'https://knx-td.sihub.siemens.com/search_find_en.htm?ssn=5WG1141-1AB21';
+const jsonLd = JSON.stringify({
+  '@context': 'https://schema.org',
+  '@type': 'Product',
+  name: 'Siemens N 141/21 KNX DALI Gateway Twin Plus',
+  description,
+  sku: '5WG1141-1AB21',
+  brand: { '@type': 'Brand', name: 'Siemens' },
+  url: canonical,
+});
+---
+
+<BaseLayout title={title} description={description} canonical={canonical} ogTitle={title} ogDescription={description} ogUrl={canonical} jsonLd={jsonLd}>
+  <article class="bg-white" dir="rtl">
+    <header class="bg-brand-900 text-white py-16 md:py-20">
+      <div class="max-w-5xl mx-auto px-4">
+        <a href="/siemens-knx-products/" class="text-accent-400 font-semibold hover:text-accent-300">ציוד Siemens KNX</a>
+        <p class="mt-4 text-sm text-brand-200">Siemens GAMMA / KNX / DALI · עודכן 03.09.2026</p>
+        <h1 class="mt-4 text-4xl md:text-5xl font-extrabold leading-tight">Siemens N 141/21: KNX / DALI Gateway Twin Plus</h1>
+        <p class="mt-5 max-w-4xl text-lg md:text-xl text-brand-100 leading-relaxed">שער תקשורת בין KNX לבין DALI עם שני קווי DALI עצמאיים, שליטה בקבוצות, תרחישים, דימור, ניטור תקלות ותאורת חירום מתאימה.</p>
+      </div>
+    </header>
+
+    <div class="max-w-5xl mx-auto px-4 py-12">
+      <section class="rounded-2xl border border-brand-100 bg-brand-50 p-6 md:p-8 mb-10">
+        <p class="text-accent-700 font-bold text-lg mb-3">מק״ט Siemens: <span dir="ltr">5WG1141-1AB21</span></p>
+        <h2 class="text-3xl font-extrabold text-brand-900 mb-4">2 קווי DALI בבקר אחד</h2>
+        <p class="text-lg text-brand-700 leading-relaxed mb-5">N 141/21 מחבר את מערכת KNX למערכות תאורה DALI. הוא כולל שני ערוצי DALI, עד 64 התקני DALI בכל ערוץ, כלומר עד 128 התקנים ביחידה אחת, ועד 32 קבוצות DALI במכשיר.</p>
+        <a href={dataSheetUrl} target="_blank" rel="noopener noreferrer" class="inline-flex items-center justify-center rounded-lg bg-accent-600 px-5 py-3 font-bold text-white transition hover:bg-accent-700">מידע טכני רשמי של Siemens</a>
+      </section>
+
+      <section class="grid grid-cols-2 md:grid-cols-5 gap-3 mb-12">
+        <div class="rounded-xl border border-brand-100 p-4 text-center"><div class="text-3xl font-extrabold text-accent-700">2</div><div class="mt-2 text-sm font-semibold">קווי DALI</div></div>
+        <div class="rounded-xl border border-brand-100 p-4 text-center"><div class="text-3xl font-extrabold text-accent-700">128</div><div class="mt-2 text-sm font-semibold">התקנים מרביים</div></div>
+        <div class="rounded-xl border border-brand-100 p-4 text-center"><div class="text-3xl font-extrabold text-accent-700">32</div><div class="mt-2 text-sm font-semibold">קבוצות DALI</div></div>
+        <div class="rounded-xl border border-brand-100 p-4 text-center"><div class="text-3xl font-extrabold text-accent-700">16</div><div class="mt-2 text-sm font-semibold">סצנות לכל קו</div></div>
+        <div class="rounded-xl border border-brand-100 p-4 text-center"><div class="text-3xl font-extrabold text-accent-700">4TE</div><div class="mt-2 text-sm font-semibold">רוחב בלוח</div></div>
+      </section>
+
+      <div class="prose-he max-w-none">
+        <h2>יכולות עיקריות</h2>
+        <ul>
+          <li>הדלקה, כיבוי ודימור של תאורת DALI דרך KNX.</li>
+          <li>שני קווי DALI עצמאיים עם עד 64 התקנים בכל קו.</li>
+          <li>עד 32 קבוצות DALI ביחידה.</li>
+          <li>שליטה פרטנית בהתקני DALI מתאימים.</li>
+          <li>סצנות, מצב לילה, מוני שעות עבודה ומחזורי מיתוג.</li>
+          <li>חיווי תקלות ברמת התקן DALI.</li>
+          <li>פונקציות לתאורת חירום בהתאם לציוד ולתצורה.</li>
+          <li>ספק DALI משולב ותפעול ישיר מהחזית.</li>
+        </ul>
+
+        <h2>שימוש בפרויקט</h2>
+        <p>הבקר מתאים לפרויקטים שבהם תאורת DALI צריכה להשתלב במערכת KNX מרכזית. הוא מאפשר להעביר פקודות, מצבים ותקלות בין שתי המערכות ולרכז את תפעול התאורה יחד עם שאר מערכות הבית או המבנה.</p>
+
+        <h2>נתונים מרכזיים</h2>
+        <div class="not-prose overflow-x-auto">
+          <table class="w-full border-collapse text-right">
+            <tbody>
+              <tr class="border-b"><th class="p-3 bg-brand-50">דגם</th><td class="p-3">N 141/21 KNX / DALI Gateway Twin Plus</td></tr>
+              <tr class="border-b"><th class="p-3 bg-brand-50">מק״ט</th><td class="p-3" dir="ltr">5WG1141-1AB21</td></tr>
+              <tr class="border-b"><th class="p-3 bg-brand-50">יציאות DALI</th><td class="p-3">2</td></tr>
+              <tr class="border-b"><th class="p-3 bg-brand-50">התקני DALI לכל יציאה</th><td class="p-3">עד 64</td></tr>
+              <tr class="border-b"><th class="p-3 bg-brand-50">קבוצות DALI</th><td class="p-3">עד 32</td></tr>
+              <tr><th class="p-3 bg-brand-50">רוחב בלוח</th><td class="p-3">4 מודולים</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </article>
+</BaseLayout>

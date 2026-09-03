@@ -210,6 +210,19 @@ test('host readiness validates an approved local credential wrapper without envi
   assert.equal(result.stdout.includes(paths.root), false);
 });
 
+test('host readiness accepts installer metadata with a UTF-8 BOM', async (t) => {
+  const paths = await fixture(t);
+  const metadata = await readFile(paths.metadata, 'utf8');
+  await writeFile(paths.metadata, `\uFEFF${metadata}`, 'utf8');
+  const result = runPreflight(paths);
+
+  assert.equal(result.status, 0, result.stderr);
+  const output = JSON.parse(result.stdout);
+  assert.equal(output.installation.metadataPresent, true);
+  assert.equal(output.installation.repositoryMatches, true);
+  assert.equal(output.installation.installedCommitMatchesHead, true);
+});
+
 test('host readiness blocks work directly on main', async (t) => {
   const paths = await fixture(t);
   git(paths.repo, ['checkout', 'main']);

@@ -27,6 +27,8 @@ $requiredPayload = @(
     'payload\skills\management-system-telemetry\SKILL.md',
     'payload\codex\AGENTS.md',
     'payload\management-system\invoke-telemetry.ps1',
+    'payload\management-system\invoke-host-checkin.ps1',
+    'payload\management-system\test-management-smoke.ps1',
     'payload\management-system\provision-management-telemetry.ps1',
     'payload\scheduled-tasks\maya-email-maintenance\SKILL.md',
     'payload\email-review\draft_writer.py',
@@ -176,6 +178,8 @@ if (-not $VerifyOnly) {
     if ($PSCmdlet.ShouldProcess($managementRoot, 'Install paused Maya Management System helpers')) {
         New-Item -ItemType Directory -Path $managementRoot -Force | Out-Null
         Copy-Item -LiteralPath (Join-Path $bundle 'payload\management-system\invoke-telemetry.ps1') -Destination (Join-Path $managementRoot 'invoke-telemetry.ps1') -Force
+        Copy-Item -LiteralPath (Join-Path $bundle 'payload\management-system\invoke-host-checkin.ps1') -Destination (Join-Path $managementRoot 'invoke-host-checkin.ps1') -Force
+        Copy-Item -LiteralPath (Join-Path $bundle 'payload\management-system\test-management-smoke.ps1') -Destination (Join-Path $managementRoot 'test-management-smoke.ps1') -Force
         Copy-Item -LiteralPath (Join-Path $bundle 'payload\management-system\provision-management-telemetry.ps1') -Destination (Join-Path $managementRoot 'provision-management-telemetry.ps1') -Force
     }
 
@@ -212,13 +216,18 @@ if (-not $VerifyOnly) {
     }
 
     $template = Get-Content -LiteralPath (Join-Path $bundle 'payload\runtime\maya-config.example.json') -Raw -Encoding UTF8 | ConvertFrom-Json
+    $existingCredentialsProvisioned = $false
     $config = if (Test-Path -LiteralPath $configPath -PathType Leaf) {
         $configBackup = Join-Path $backupRoot 'runtime\config.json'
         if ($PSCmdlet.ShouldProcess($configPath, "Back up Maya runtime config to $configBackup")) {
             New-Item -ItemType Directory -Path (Split-Path $configBackup -Parent) -Force | Out-Null
             Copy-Item -LiteralPath $configPath -Destination $configBackup
         }
-        Get-Content -LiteralPath $configPath -Raw -Encoding UTF8 | ConvertFrom-Json
+        $existingConfig = Get-Content -LiteralPath $configPath -Raw -Encoding UTF8 | ConvertFrom-Json
+        $existingSecretPath = Join-Path ([Environment]::GetFolderPath('LocalApplicationData')) 'I Feel\Management System\telemetry-secrets.dpapi'
+        $existingCredentialsProvisioned = $existingConfig.managementSystem.credentialsProvisioned -eq $true -and
+            (Test-Path -LiteralPath $existingSecretPath -PathType Leaf)
+        $existingConfig
     }
     else { Copy-JsonValue $template }
     Merge-MissingDefaults -Target $config -Defaults $template
@@ -248,7 +257,7 @@ if (-not $VerifyOnly) {
     $config.managementSystem.hostSlug = 'maya-front-office'
     $config.managementSystem.telemetrySkill = 'management-system-telemetry'
     $config.managementSystem.credentialsStorage = 'DPAPI_LOCAL_ONLY'
-    $config.managementSystem.credentialsProvisioned = $false
+    $config.managementSystem.credentialsProvisioned = $existingCredentialsProvisioned
     $config.managementSystem.capabilitySlugs = @('maya-email-maintenance', 'maya-whatsapp')
     if ($PSCmdlet.ShouldProcess($configPath, 'Write maturity-0 Maya runtime config')) {
         $config | ConvertTo-Json -Depth 30 | Set-Content -LiteralPath $configPath -Encoding UTF8
@@ -288,9 +297,13 @@ $allTaskContractsVerified = @($taskContractHashes | Where-Object { -not $_.hashM
 $lockCount = @(Get-ChildItem -LiteralPath $runtime -Filter '*.lock' -File -Recurse -ErrorAction SilentlyContinue).Count
 $managementSecretPath = Join-Path ([Environment]::GetFolderPath('LocalApplicationData')) 'I Feel\Management System\telemetry-secrets.dpapi'
 $managementWrapperPath = Join-Path ([Environment]::GetFolderPath('LocalApplicationData')) 'I Feel\Management System\invoke-telemetry.ps1'
+$managementCheckinWrapperPath = Join-Path ([Environment]::GetFolderPath('LocalApplicationData')) 'I Feel\Management System\invoke-host-checkin.ps1'
+$managementSmokePath = Join-Path ([Environment]::GetFolderPath('LocalApplicationData')) 'I Feel\Management System\test-management-smoke.ps1'
 $managementCredentialsProvisioned = $false
 if ((Test-Path -LiteralPath $managementSecretPath -PathType Leaf) -and
     (Test-Path -LiteralPath $managementWrapperPath -PathType Leaf) -and
+    (Test-Path -LiteralPath $managementCheckinWrapperPath -PathType Leaf) -and
+    (Test-Path -LiteralPath $managementSmokePath -PathType Leaf) -and
     (Test-Path -LiteralPath $configPath -PathType Leaf)) {
     try {
         $verifiedConfig = Get-Content -LiteralPath $configPath -Raw -Encoding UTF8 | ConvertFrom-Json

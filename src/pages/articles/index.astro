@@ -6,6 +6,30 @@ const title = 'מאמרים ומדריכים | i-feel';
 const description = 'מדריכי i-feel לבית חכם, KNX, בקרת מבנה BMS, שדרוג בית קיים, יזמים, אדריכלים ושירות.';
 const canonical = 'https://i-feel.co.il/articles/';
 
+const siemensN12522Article = {
+  slug: 'siemens-n12522-knx-power-supply-640ma',
+  title: 'Siemens N 125/22: ספק כוח KNX ‏640mA',
+  description: 'ספק כוח KNX במתח 29V DC ובזרם 640mA עם יציאה נוספת לא חנוקה. מק״ט 5WG1125-1AB22.',
+  category: 'Siemens / KNX',
+  updated: '2026-09-03',
+};
+
+const siemensN262D51Article = {
+  slug: 'siemens-n262d51-knx-8-dry-contact-input',
+  title: 'Siemens N 262D51: בקר KNX עם 8 כניסות מגע יבש',
+  description: '8 כניסות פוטנציאל חופשי לחיבור לחצנים, מפסקים ומגעים יבשים למערכת KNX. מק״ט 5WG1262-1DB51.',
+  category: 'Siemens / KNX',
+  updated: '2026-09-03',
+};
+
+const siemensN14103Article = {
+  slug: 'siemens-n14103-knx-dali-gateway-plus',
+  title: 'Siemens N 141/03: KNX / DALI Gateway Plus',
+  description: 'קו DALI אחד, עד 64 התקנים ועד 16 קבוצות DALI, לחיבור מערכת התאורה ל-KNX. מק״ט 5WG1141-1AB03.',
+  category: 'Siemens / KNX / DALI',
+  updated: '2026-09-03',
+};
+
 const siemensN554D31Article = {
   slug: 'siemens-n554d31-knx-4-channel-dimmer',
   title: 'Siemens N 554D31: דימר KNX מסוג TRIAC עם 4 ערוצים',
@@ -63,6 +87,9 @@ const siemensN543D31Article = {
 };
 
 const publicArticles = [
+  siemensN12522Article,
+  siemensN262D51Article,
+  siemensN14103Article,
   siemensN554D31Article,
   siemensN56881Article,
   siemensN56722Article,
@@ -97,13 +124,9 @@ const jsonLd = JSON.stringify({
       <p class="max-w-3xl text-lg text-brand-100">
         מדריכים מעשיים לבית חכם, KNX, בקרת מבנה BMS, שדרוגים, יזמים ואדריכלים. כל מאמר מוביל לעמוד תוכן מלא עם קישורים לעמודים ולקטלוגים הרלוונטיים.
       </p>
-      <div class="mt-6">
-        <a
-          href="https://www.google.com/preferences/source?q=i-feel.co.il"
-          class="inline-flex items-center rounded-lg bg-white px-5 py-3 font-bold text-brand-900 transition hover:bg-brand-50"
-        >
-          הוסיפו את i-feel למקורות המועדפים ב-Google
-        </a>
+      <div class="mt-6 flex flex-wrap gap-3">
+        <a href="/siemens-knx-products/" class="inline-flex items-center rounded-lg bg-accent-600 px-5 py-3 font-bold text-white transition hover:bg-accent-700">לכל ציוד Siemens KNX</a>
+        <a href="https://www.google.com/preferences/source?q=i-feel.co.il" class="inline-flex items-center rounded-lg bg-white px-5 py-3 font-bold text-brand-900 transition hover:bg-brand-50">הוסיפו את i-feel למקורות המועדפים ב-Google</a>
       </div>
     </div>
   </section>
@@ -118,9 +141,7 @@ const jsonLd = JSON.stringify({
               <a href={`/articles/${article.slug}/`} class="hover:text-accent-600">{article.title}</a>
             </h2>
             <p class="text-brand-600 mb-5">{article.description}</p>
-            <a href={`/articles/${article.slug}/`} class="inline-flex items-center text-accent-700 font-bold hover:text-accent-600">
-              קרא את המאמר המלא
-            </a>
+            <a href={`/articles/${article.slug}/`} class="inline-flex items-center text-accent-700 font-bold hover:text-accent-600">קרא את המאמר המלא</a>
           </article>
         ))}
       </div>

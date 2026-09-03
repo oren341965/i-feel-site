@@ -41,3 +41,25 @@ test('finance reporter rejects operational fields before transport', async (t) =
   await assert.rejects(runWith(t, invalid), /Operational field is forbidden/);
 });
 
+test('finance reporter accepts the bounded comparison contract used by the Management System', async (t) => {
+  const input = aggregate();
+  input.comparisons = {
+    status: 'CONNECTED_READ_ONLY',
+    expenseSameMonthLastYear: {
+      period: '2025-08', sheetName: '2025', modifiedAt: '2026-08-31T10:00:00Z',
+      rows: 9, numericRows: 9, total: 850, missingAmountRows: 0,
+    },
+    income: {
+      basis: 'before_vat_source_summary',
+      current: { period: '2026-08', projectSheetName: 'אוגוסט 2026', projectIncomeBeforeVat: 800, serviceSheetName: 'אוגוסט 2026', serviceIncomeBeforeVat: 200, totalIncomeBeforeVat: 1000 },
+      previous: { period: '2026-07', projectSheetName: 'יולי 2026', projectIncomeBeforeVat: 700, serviceSheetName: 'יולי 2026', serviceIncomeBeforeVat: 150, totalIncomeBeforeVat: 850 },
+      sameMonthLastYear: { period: '2025-08', projectSheetName: 'אוגוסט 2025', projectIncomeBeforeVat: 600, serviceSheetName: 'אוגוסט 2025', serviceIncomeBeforeVat: 100, totalIncomeBeforeVat: 700 },
+    },
+  };
+
+  const { stdout } = await runWith(t, input);
+  const result = JSON.parse(stdout);
+  assert.equal(result.envelope.comparisons.expenseSameMonthLastYear.total, 850);
+  assert.equal(result.envelope.comparisons.income.current.totalIncomeBeforeVat, 1000);
+});
+

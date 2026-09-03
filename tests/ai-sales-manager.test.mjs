@@ -271,6 +271,8 @@ test('Maya commissioning is role-scoped, hash-verified, and activation-free', ()
   const resultReader = read('scripts/workstations/check-maya-commissioning-result.ps1');
   const provisioner = read('agent-config/maya-codex/provision-management-telemetry.ps1');
   const telemetryInvoker = read('agent-config/maya-codex/invoke-telemetry.ps1');
+  const hostCheckinInvoker = read('agent-config/maya-codex/invoke-host-checkin.ps1');
+  const managementSmoke = read('agent-config/maya-codex/test-management-smoke.ps1');
 
   assert.match(installer, /maya-email-maintenance/);
   assert.match(installer, /maya-whatsapp/);
@@ -308,6 +310,8 @@ test('Maya commissioning is role-scoped, hash-verified, and activation-free', ()
   assert.match(exporter, /management-system-telemetry/);
   assert.match(exporter, /registeredHostSlug = 'maya-front-office'/);
   assert.match(exporter, /provision-management-telemetry\.ps1/);
+  assert.match(exporter, /invoke-host-checkin\.ps1/);
+  assert.match(exporter, /test-management-smoke\.ps1/);
   assert.match(exporter, /claudeRequired = \$false/);
   assert.match(exporter, /stagedSchedulers\s*=\s*@\('maya-email-maintenance'\)/);
   assert.doesNotMatch(exporter, /payload\\scheduled-tasks\\maya-whatsapp/);
@@ -336,11 +340,36 @@ test('Maya commissioning is role-scoped, hash-verified, and activation-free', ()
   assert.match(provisioner, /Publish bounded post-provisioning Maya commissioning result/);
   assert.match(provisioner, /-not \$ReplaceExisting/);
   assert.match(installer, /managementCredentialsProvisioned = \$managementCredentialsProvisioned/);
+  assert.match(installer, /existingCredentialsProvisioned/);
+  assert.match(installer, /invoke-host-checkin\.ps1/);
+  assert.match(installer, /test-management-smoke\.ps1/);
   assert.match(installer, /maya-commissioning-credential-probe/);
   assert.match(installer, /--dry-run/);
   assert.match(installer, /\$probe\.envelope\.hostSlug -eq 'maya-front-office'/);
   assert.match(telemetryInvoker, /hostSlug -ne 'maya-front-office'/);
-  assert.doesNotMatch(provisioner + telemetryInvoker, /Bearer\s+[A-Za-z0-9._-]{16,}/i);
+  assert.match(hostCheckinInvoker, /report-host-checkin\.mjs/);
+  assert.match(hostCheckinInvoker, /hostSlug -ne 'maya-front-office'/);
+  assert.match(managementSmoke, /expectedComputer = 'DESKTOP-3LU7BMR'/);
+  assert.match(managementSmoke, /automation\.mode -ne 'REPORT_ONLY'/);
+  assert.match(managementSmoke, /--status running/);
+  assert.match(managementSmoke, /--status succeeded/);
+  assert.match(managementSmoke, /--health', 'healthy'/);
+  assert.match(managementSmoke, /schedulersActivated = 0/);
+  assert.match(managementSmoke, /externalSends = 0/);
+  assert.match(managementSmoke, /mondayWrites = 0/);
+  assert.doesNotMatch(provisioner + telemetryInvoker + hostCheckinInvoker + managementSmoke, /Bearer\s+[A-Za-z0-9._-]{16,}/i);
+});
+
+test('morning launcher persists a bounded failure code without raw command output', () => {
+  const launcher = readFileSync(new URL('../.claude/skills/ai-sales-manager/runtime/run-morning-dry-run.ps1', import.meta.url), 'utf8');
+  assert.match(launcher, /morning-run-failure-/);
+  assert.match(launcher, /ATTRIBUTION_SNAPSHOT_STALE/);
+  assert.match(launcher, /externalActionsPerformed = \$false/);
+  assert.match(launcher, /mondayWrites = 0/);
+  assert.match(launcher, /sends = 0/);
+  const persistedPayload = launcher.match(/\[ordered\]@\{([\s\S]*?)\}\s*\| ConvertTo-Json/)?.[1];
+  assert.ok(persistedPayload);
+  assert.doesNotMatch(persistedPayload, /errorText|managerOutput/);
 });
 
 test('Maya Codex review accounts for every canonical Skill without copying managers', () => {

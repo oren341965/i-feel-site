@@ -1,0 +1,69 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+const canonical = 'https://i-feel.co.il/articles/siemens-n12522-knx-power-supply-640ma/';
+const title = 'Siemens N 125/22: ספק כוח KNX ‏640mA | i-feel';
+const description = 'Siemens N 125/22, מק״ט 5WG1125-1AB22, ספק כוח KNX במתח 29V DC ובזרם 640mA, עם יציאה נוספת לא חנוקה.';
+const siemensUrl = 'https://mall.industry.siemens.com/mall/en/WW/Catalog/Product/5WG1125-1AB22';
+const jsonLd = JSON.stringify({
+  '@context': 'https://schema.org',
+  '@type': 'Product',
+  name: 'Siemens N 125/22 KNX Power Supply 640mA',
+  description,
+  sku: '5WG1125-1AB22',
+  brand: { '@type': 'Brand', name: 'Siemens' },
+  url: canonical,
+});
+---
+
+<BaseLayout title={title} description={description} canonical={canonical} ogTitle={title} ogDescription={description} ogUrl={canonical} jsonLd={jsonLd}>
+  <article class="bg-white" dir="rtl">
+    <header class="bg-brand-900 text-white py-16 md:py-20">
+      <div class="max-w-5xl mx-auto px-4">
+        <a href="/siemens-knx-products/" class="text-accent-400 font-semibold hover:text-accent-300">ציוד Siemens KNX</a>
+        <p class="mt-4 text-sm text-brand-200">Siemens GAMMA / KNX · עודכן 03.09.2026</p>
+        <h1 class="mt-4 text-4xl md:text-5xl font-extrabold leading-tight">Siemens N 125/22: ספק כוח KNX ‏640mA</h1>
+        <p class="mt-5 max-w-4xl text-lg md:text-xl text-brand-100 leading-relaxed">ספק כוח ייעודי לקו KNX, במתח יציאה 29V DC ובזרם 640mA, עם יציאה נוספת לא חנוקה לצרכים מתאימים בתכנון המערכת.</p>
+      </div>
+    </header>
+
+    <div class="max-w-5xl mx-auto px-4 py-12">
+      <section class="rounded-2xl border border-brand-100 bg-brand-50 p-6 md:p-8 mb-10">
+        <p class="text-accent-700 font-bold text-lg mb-3">מק״ט Siemens: <span dir="ltr">5WG1125-1AB22</span></p>
+        <h2 class="text-3xl font-extrabold text-brand-900 mb-4">הזנת קו KNX עד 640mA</h2>
+        <p class="text-lg text-brand-700 leading-relaxed mb-5">N 125/22 מספק את מתח העבודה לקו ה-KNX ומיועד להתקנה בלוח כחלק מתשתית המערכת. לפי Siemens הוא מספק 29V DC בזרם של 640mA וכולל יציאה נוספת לא חנוקה.</p>
+        <a href={siemensUrl} target="_blank" rel="noopener noreferrer" class="inline-flex items-center justify-center rounded-lg bg-accent-600 px-5 py-3 font-bold text-white transition hover:bg-accent-700">מידע רשמי של Siemens</a>
+      </section>
+
+      <section class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-12">
+        <div class="rounded-xl border border-brand-100 p-4 text-center"><div class="text-3xl font-extrabold text-accent-700">29V</div><div class="mt-2 text-sm font-semibold">מתח DC</div></div>
+        <div class="rounded-xl border border-brand-100 p-4 text-center"><div class="text-3xl font-extrabold text-accent-700">640mA</div><div class="mt-2 text-sm font-semibold">זרם יציאה</div></div>
+        <div class="rounded-xl border border-brand-100 p-4 text-center"><div class="text-3xl font-extrabold text-accent-700">KNX</div><div class="mt-2 text-sm font-semibold">ספק לקו</div></div>
+        <div class="rounded-xl border border-brand-100 p-4 text-center"><div class="text-3xl font-extrabold text-accent-700">N 125/22</div><div class="mt-2 text-sm font-semibold">דגם</div></div>
+      </section>
+
+      <div class="prose-he max-w-none">
+        <h2>תפקיד ספק הכוח במערכת KNX</h2>
+        <p>קו KNX דורש ספק כוח ייעודי המספק את מתח האפיק לבקרים, חיישנים, מפסקים וממשקים המחוברים אליו. בחירת הספק נעשית לפי צריכת כלל רכיבי הקו ותכנון הטופולוגיה.</p>
+
+        <h2>נתונים מרכזיים</h2>
+        <div class="not-prose overflow-x-auto">
+          <table class="w-full border-collapse text-right">
+            <tbody>
+              <tr class="border-b"><th class="p-3 bg-brand-50">דגם</th><td class="p-3">N 125/22</td></tr>
+              <tr class="border-b"><th class="p-3 bg-brand-50">מק״ט</th><td class="p-3" dir="ltr">5WG1125-1AB22</td></tr>
+              <tr class="border-b"><th class="p-3 bg-brand-50">מתח יציאה</th><td class="p-3">29V DC</td></tr>
+              <tr class="border-b"><th class="p-3 bg-brand-50">זרם יציאה</th><td class="p-3">640mA</td></tr>
+              <tr><th class="p-3 bg-brand-50">יציאה נוספת</th><td class="p-3">יציאה לא חנוקה</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <aside class="my-8 rounded-xl border-r-4 border-accent-600 bg-accent-50 p-5 not-prose">
+          <h2 class="text-xl font-extrabold text-brand-900 mb-2">הערת דגם</h2>
+          <p class="m-0 text-brand-700">Siemens מציינת עבור חלק מהשווקים כי N 125/22 נמצא בתהליך יציאה ממחזור החיים וכי N 125/23, מק״ט 5WG1125-1AB23, הוא הדגם המחליף. בפרויקט חדש יש לבדוק זמינות ודגם מאושר לפני הזמנה.</p>
+        </aside>
+      </div>
+    </div>
+  </article>
+</BaseLayout>
