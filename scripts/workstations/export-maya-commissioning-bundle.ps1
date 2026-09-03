@@ -40,6 +40,25 @@ function Assert-ChildPath {
         throw "$Label is outside the intended root: $childPath"
     }
 }
+
+function Get-Sha256Hex {
+    param([Parameter(Mandatory)][string]$Path)
+
+    $stream = [IO.File]::OpenRead($Path)
+    try {
+        $sha256 = [Security.Cryptography.SHA256]::Create()
+        try {
+            return ([BitConverter]::ToString($sha256.ComputeHash($stream))).Replace('-', '')
+        }
+        finally {
+            $sha256.Dispose()
+        }
+    }
+    finally {
+        $stream.Dispose()
+    }
+}
+
 $repository = [IO.Path]::GetFullPath($RepositoryPath)
 $vault = [IO.Path]::GetFullPath($VaultRoot)
 if (-not (Test-Path -LiteralPath (Join-Path $repository '.git'))) { throw "Repository is missing: $repository" }
@@ -96,7 +115,7 @@ if ($PSCmdlet.ShouldProcess($releaseRoot, 'Build Maya commissioning release')) {
             ForEach-Object {
                 [ordered]@{
                     path = Get-RelativePathCompat -BasePath $stagingRoot -TargetPath $_.FullName
-                    sha256 = (Get-FileHash -LiteralPath $_.FullName -Algorithm SHA256).Hash
+                    sha256 = Get-Sha256Hex -Path $_.FullName
                     bytes = $_.Length
                 }
             }
@@ -115,7 +134,12 @@ if ($PSCmdlet.ShouldProcess($releaseRoot, 'Build Maya commissioning release')) {
         taskProtocol = 'MAYA_SALES_TASK_V2'
         files = $files
     }
-    $manifest | ConvertTo-Json -Depth 10 | Set-Content -LiteralPath (Join-Path $stagingRoot 'manifest.json') -Encoding UTF8
+    $manifestJson = $manifest | ConvertTo-Json -Depth 10
+    [IO.File]::WriteAllText(
+        (Join-Path $stagingRoot 'manifest.json'),
+        $manifestJson,
+        [Text.UTF8Encoding]::new($false)
+    )
     New-Item -ItemType Directory -Path (Split-Path $releaseRoot -Parent) -Force | Out-Null
     Assert-ChildPath -Parent $mayaRoot -Child $stagingRoot -Label 'StagingRoot'
     Assert-ChildPath -Parent $mayaRoot -Child $releaseRoot -Label 'ReleaseRoot'
@@ -123,11 +147,17 @@ if ($PSCmdlet.ShouldProcess($releaseRoot, 'Build Maya commissioning release')) {
 
     New-Item -ItemType Directory -Path $mayaRoot -Force | Out-Null
     Copy-Item -LiteralPath (Join-Path $repository 'scripts\workstations\maya-commissioning-bootstrap.ps1') -Destination (Join-Path $mayaRoot 'INSTALL_CURRENT.ps1') -Force
-    [ordered]@{
+    $current = [ordered]@{
         schemaVersion = 1
         commit = $commit
         relativeReleasePath = "releases\$releaseName"
-    } | ConvertTo-Json | Set-Content -LiteralPath (Join-Path $mayaRoot 'current.json') -Encoding UTF8
+    }
+    $currentJson = $current | ConvertTo-Json
+    [IO.File]::WriteAllText(
+        (Join-Path $mayaRoot 'current.json'),
+        $currentJson,
+        [Text.UTF8Encoding]::new($false)
+    )
 }
 
 [ordered]@{
