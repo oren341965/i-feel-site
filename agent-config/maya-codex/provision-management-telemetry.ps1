@@ -24,6 +24,13 @@ $runtimeConfig = Get-Content -Raw -LiteralPath $runtimeConfigPath | ConvertFrom-
 if (-not $runtimeConfig.managementSystem -or $runtimeConfig.managementSystem.hostSlug -ne $hostSlug) {
     throw 'Maya runtime config is not bound to the registered Management host.'
 }
+$requiredSkills = @($runtimeConfig.skills.required | ForEach-Object { [string]$_ } | Sort-Object -Unique)
+if ($requiredSkills.Count -eq 0 -or
+    $requiredSkills -notcontains 'management-system-telemetry' -or
+    $requiredSkills -notcontains 'maya-email-maintenance' -or
+    $requiredSkills -notcontains 'maya-whatsapp') {
+    throw 'Maya runtime config does not declare the required managed Skill set.'
+}
 
 if (-not $SiteToken) { $SiteToken = Read-Host 'Paste the Sites transport token' -AsSecureString }
 if (-not $RunToken) { $RunToken = Read-Host 'Paste the Maya scoped service-identity token' -AsSecureString }
@@ -79,12 +86,14 @@ if (-not $WhatIfPreference) {
     $verificationOutput = & $verifyCurrent -RuntimeRoot 'C:\ifeel-maya' -UserRoot ([Environment]::GetFolderPath('UserProfile')) -VerifyOnly
     $verification = $verificationOutput | ConvertFrom-Json
     $verifiedSkills = @($verification.payload.skills | Where-Object { $_.hashMatch }).Count
+    $verifiedSkillNames = @($verification.payload.skills | ForEach-Object { [string]$_.skill } | Sort-Object -Unique)
     $verifiedContracts = @($verification.payload.taskContracts | Where-Object { $_.hashMatch }).Count
     if ($verification.status -ne 'INSTALLED_PAUSED' -or
         $verification.payload.primaryEngine -ne 'codex' -or
         $verification.payload.managementHostSlug -ne $hostSlug -or
         $verification.payload.managementCredentialsProvisioned -ne $true -or
-        $verifiedSkills -ne 3 -or
+        $verifiedSkills -ne $requiredSkills.Count -or
+        ($verifiedSkillNames -join '|') -ne ($requiredSkills -join '|') -or
         $verifiedContracts -ne 2 -or
         $verification.payload.runtimeLocks -ne 0 -or
         $verification.payload.schedulersActivated -ne 0 -or

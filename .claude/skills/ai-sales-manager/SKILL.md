@@ -5,7 +5,7 @@ description: Orchestrate I Feel's maturity-0 sales and marketing system and dete
 
 # I Feel AI Sales Manager
 
-`ai-sales-manager` is the single parent orchestrator for I Feel sales. It coordinates existing workers, preserves the deterministic analyzer for Monday board `2732725332`, and fails closed when evidence, connection, maturity, or approval is missing.
+`ai-sales-manager` coordinates I Feel sales workers and the deterministic analyzer for Monday board `2732725332`. It fails closed when evidence, connection, maturity, or approval is missing.
 
 ## Route the request
 
@@ -23,6 +23,7 @@ description: Orchestrate I Feel's maturity-0 sales and marketing system and dete
 - For the complete canonical Skill selection made for Maya, read [references/maya-codex-skill-review.md](references/maya-codex-skill-review.md). Do not replace the reviewed four-Skill bundle with a copy of every manager and specialist.
 - For architect/designer Instagram and Facebook relations sourced from Monday, read [references/instagram-relations-program.md](references/instagram-relations-program.md). This manager owns the program as I Feel's AI Marketing Manager; Maya executes it.
 - When Oren says `מאיה תבדוק`, `תעביר למאיה`, `תבקש ממאיה סטטוס`, or assigns Maya sales work, read [references/maya-task-protocol.md](references/maya-task-protocol.md). Use the existing Vault Bus and require correlated ACK, Result, and Monday read-back; never substitute a Monday note for a real task.
+- Ownership: `scripts/plan-sales-owner-changes.mjs` previews; `sales-monday-owner-writer` writes after approval.
 
 ## Non-negotiable invariants
 

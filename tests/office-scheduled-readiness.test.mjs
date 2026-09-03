@@ -7,6 +7,8 @@ import test from 'node:test';
 const REPO = resolve(import.meta.dirname, '..');
 const SCRIPT = resolve(REPO, 'scripts/workstations/test-office-scheduled-readiness.mjs');
 const MANIFEST = resolve(REPO, 'agent-config/office-codex/scheduled-readonly-profiles.json');
+const PROVISIONER = resolve(REPO, 'agent-config/office-codex/provision-scheduled-readonly-profile.ps1');
+const INVOKER = resolve(REPO, 'agent-config/office-codex/invoke-scheduled-readonly-profile.ps1');
 
 test('office scheduled profiles remain paused, report-only and least privilege', async () => {
   const manifest = JSON.parse(await readFile(MANIFEST, 'utf8'));
@@ -100,4 +102,25 @@ test('readiness check fails closed on a different workstation', () => {
   assert.equal(output.host.matches, false);
   assert.equal(output.gates.readyForScopedIdentityProvisioning, false);
   assert.ok(output.blockingReasons.includes('HOST_COMPUTER_MISMATCH'));
+});
+
+test('office profiles use isolated DPAPI credentials and fail closed outside their scope', async () => {
+  const [provisioner, invoker] = await Promise.all([
+    readFile(PROVISIONER, 'utf8'),
+    readFile(INVOKER, 'utf8'),
+  ]);
+
+  assert.match(provisioner, /ValidateSet\('seo-report-only', 'procurement-report-only'\)/);
+  assert.match(provisioner, /Read-Host 'Paste the scoped service-identity token' -AsSecureString/);
+  assert.match(provisioner, /ConvertFrom-SecureString/);
+  assert.match(provisioner, /Management System\\profiles/);
+  assert.match(provisioner, /schedulersActivated = 0/);
+  assert.match(provisioner, /businessWrites = 0/);
+  assert.match(provisioner, /externalSends = 0/);
+  assert.match(provisioner, /secretsPrinted = \$false/);
+
+  assert.match(invoker, /outside this profile scope/);
+  assert.match(invoker, /stored profile scope does not match the canonical manifest/);
+  assert.match(invoker, /--capability \$Capability/);
+  assert.doesNotMatch(provisioner + invoker, /New-ScheduledTask|Register-ScheduledTask|schtasks/i);
 });
