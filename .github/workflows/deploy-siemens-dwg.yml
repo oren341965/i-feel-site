@@ -1,0 +1,87 @@
+name: Deploy Siemens KNX DWG files
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'scripts/deploy/copy-siemens-dwg.ps1'
+      - '.github/workflows/deploy-siemens-dwg.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ifeel-siemens-dwg-production
+  cancel-in-progress: true
+
+jobs:
+  deploy-dwg:
+    name: Deploy Siemens DWG
+    runs-on:
+      - self-hosted
+      - windows
+      - x64
+      - ifeel-deploy
+    environment:
+      name: production
+      url: https://i-feel.co.il/siemens-knx-products/
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        env:
+          NODE_OPTIONS: --use-system-ca
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Install deployment dependencies
+        shell: cmd
+        run: npm ci --legacy-peer-deps --ignore-scripts
+
+      - name: Collect Siemens DWG files from local Dropbox sync
+        shell: powershell -NoProfile -ExecutionPolicy Bypass -File {0}
+        run: |
+          .\scripts\deploy\copy-siemens-dwg.ps1 -DistRoot dwg-dist
+
+      - name: Upload Siemens DWG files through explicit FTPS
+        shell: cmd
+        env:
+          NODE_OPTIONS: --use-system-ca
+          IFEEL_FTP_SERVER: ${{ secrets.IFEEL_FTP_SERVER || secrets.FTP_SERVER }}
+          IFEEL_FTP_USERNAME: ${{ secrets.IFEEL_FTP_USERNAME || secrets.FTP_USERNAME }}
+          IFEEL_FTP_PASSWORD: ${{ secrets.IFEEL_FTP_PASSWORD || secrets.FTP_PASSWORD }}
+          IFEEL_FTP_SERVER_DIR: ${{ secrets.IFEEL_FTP_SERVER_DIR || secrets.FTP_SERVER_DIR }}
+        run: node scripts\deploy\ftps-upload.mjs dwg-dist
+
+      - name: Verify Siemens DWG downloads are live
+        shell: powershell -NoProfile -ExecutionPolicy Bypass -File {0}
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $base = 'https://i-feel.co.il/assets/siemens-knx/dwg'
+          $files = @(
+            '5WG1125-1AB22.dwg',
+            '5WG1567-1AB22.dwg',
+            '5WG1532-1DB51.dwg',
+            '5WG1532-1DB31.dwg',
+            '5WG1262-1DB51.dwg',
+            '5WG1543-1DB51.dwg',
+            '5WG1543-1DB31.dwg',
+            '5WG1554-1DB31.dwg',
+            '5WG1141-1AB03.dwg'
+          )
+          Start-Sleep -Seconds 5
+          foreach ($file in $files) {
+            $url = "$base/$file"
+            $status = & curl.exe --silent --show-error --location --ssl-revoke-best-effort --output NUL --write-out '%{http_code}' --max-time 45 $url
+            if ($LASTEXITCODE -ne 0 -or [int]$status -lt 200 -or [int]$status -ge 400) {
+              throw "DWG live verification failed: http=$status url=$url"
+            }
+            Write-Host "OK $status $url"
+          }
+          Write-Host 'All published Siemens KNX DWG files are live.'

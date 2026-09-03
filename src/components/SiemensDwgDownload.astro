@@ -1,0 +1,51 @@
+---
+const downloads = {
+  '/articles/siemens-n12522-knx-power-supply-640ma/': { partNumber: '5WG1125-1AB22', file: '5WG1125-1AB22.dwg', label: 'ספק כוח N 125/22' },
+  '/articles/siemens-n56722-knx-16-output/': { partNumber: '5WG1567-1AB22', file: '5WG1567-1AB22.dwg', label: 'בקר N 567/22' },
+  '/articles/siemens-n532d51-knx-8-switch-output/': { partNumber: '5WG1532-1DB51', file: '5WG1532-1DB51.dwg', label: 'בקר N 532D51' },
+  '/articles/siemens-n532d31-knx-4-switch-output/': { partNumber: '5WG1532-1DB31', file: '5WG1532-1DB31.dwg', label: 'בקר N 532D31' },
+  '/articles/siemens-n262d51-knx-8-dry-contact-input/': { partNumber: '5WG1262-1DB51', file: '5WG1262-1DB51.dwg', label: 'בקר כניסות N 262D51' },
+  '/articles/siemens-n543d51-knx-8-blind-actuator/': { partNumber: '5WG1543-1DB51', file: '5WG1543-1DB51.dwg', label: 'בקר תריסים N 543D51' },
+  '/articles/siemens-n543d31-knx-4-blind-actuator/': { partNumber: '5WG1543-1DB31', file: '5WG1543-1DB31.dwg', label: 'בקר תריסים N 543D31' },
+  '/articles/siemens-n554d31-knx-4-channel-dimmer/': { partNumber: '5WG1554-1DB31', file: '5WG1554-1DB31.dwg', label: 'דימר N 554D31' },
+  '/articles/siemens-n14103-knx-dali-gateway-plus/': { partNumber: '5WG1141-1AB03', file: '5WG1141-1AB03.dwg', label: 'KNX/DALI Gateway N 141/03' },
+};
+
+const knownMissing = {
+  '/articles/siemens-n56881-knx-24-output/': { partNumber: '5WG1568-1AB81', label: 'בקר N 568/81' },
+};
+
+const pathname = Astro.url.pathname.endsWith('/') ? Astro.url.pathname : `${Astro.url.pathname}/`;
+const item = downloads[pathname];
+const missingItem = knownMissing[pathname];
+const downloadUrl = item ? `/assets/siemens-knx/dwg/${item.file}` : '';
+---
+
+{item && (
+  <section class="bg-brand-50 border-y border-brand-100 py-8" dir="rtl" aria-label="הורדת קובץ DWG">
+    <div class="max-w-5xl mx-auto px-4 flex flex-col md:flex-row md:items-center md:justify-between gap-5">
+      <div>
+        <p class="text-sm font-bold text-accent-700 mb-1">CAD / DWG</p>
+        <h2 class="text-2xl font-extrabold text-brand-900 mb-2">קובץ DWG של {item.label}</h2>
+        <p class="text-brand-700">מק״ט <span dir="ltr">{item.partNumber}</span>. קובץ התכנון נמצא בארכיון Siemens של I FEEL וזמין להורדה ישירה מהאתר.</p>
+      </div>
+      <a
+        href={downloadUrl}
+        download={item.file}
+        class="inline-flex shrink-0 items-center justify-center rounded-lg bg-accent-600 px-6 py-3 font-bold text-white transition hover:bg-accent-700"
+      >
+        הורדת DWG
+      </a>
+    </div>
+  </section>
+)}
+
+{missingItem && (
+  <section class="bg-amber-50 border-y border-amber-200 py-7" dir="rtl" aria-label="מצב קובץ DWG">
+    <div class="max-w-5xl mx-auto px-4">
+      <p class="text-sm font-bold text-amber-800 mb-1">CAD / DWG</p>
+      <h2 class="text-xl font-extrabold text-brand-900 mb-2">DWG עבור {missingItem.label} עדיין חסר בארכיון</h2>
+      <p class="text-brand-700">מק״ט <span dir="ltr">{missingItem.partNumber}</span>. הקישור יתווסף כאן מיד לאחר קבלת קובץ ה-DWG.</p>
+    </div>
+  </section>
+)}
