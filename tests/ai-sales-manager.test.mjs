@@ -343,6 +343,18 @@ test('Maya commissioning is role-scoped, hash-verified, and activation-free', ()
   assert.doesNotMatch(provisioner + telemetryInvoker, /Bearer\s+[A-Za-z0-9._-]{16,}/i);
 });
 
+test('morning launcher persists a bounded failure code without raw command output', () => {
+  const launcher = readFileSync(new URL('../.claude/skills/ai-sales-manager/runtime/run-morning-dry-run.ps1', import.meta.url), 'utf8');
+  assert.match(launcher, /morning-run-failure-/);
+  assert.match(launcher, /ATTRIBUTION_SNAPSHOT_STALE/);
+  assert.match(launcher, /externalActionsPerformed = \$false/);
+  assert.match(launcher, /mondayWrites = 0/);
+  assert.match(launcher, /sends = 0/);
+  const persistedPayload = launcher.match(/\[ordered\]@\{([\s\S]*?)\}\s*\| ConvertTo-Json/)?.[1];
+  assert.ok(persistedPayload);
+  assert.doesNotMatch(persistedPayload, /errorText|managerOutput/);
+});
+
 test('Maya Codex review accounts for every canonical Skill without copying managers', () => {
   const review = readFileSync(new URL('../.claude/skills/ai-sales-manager/references/maya-codex-skill-review.md', import.meta.url), 'utf8');
   const canonicalSkills = readdirSync(new URL('../.claude/skills/', import.meta.url), { withFileTypes: true })

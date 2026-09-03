@@ -1,9 +1,10 @@
 import assert from 'node:assert/strict';
-import { mkdir, rm, writeFile } from 'node:fs/promises';
+import { mkdir, readFile, rm, writeFile } from 'node:fs/promises';
 import { join, resolve } from 'node:path';
 import test from 'node:test';
 
 import { collectMondayAttributionCoverageReadOnly } from '../.claude/skills/lead-attribution-feedback/scripts/monday-attribution-coverage-readonly.mjs';
+import { refreshAttributionSnapshotReadOnly } from '../.claude/skills/lead-attribution-feedback/scripts/refresh-attribution-snapshot-readonly.mjs';
 
 const REPO = resolve(import.meta.dirname, '..');
 const NOW = '2026-09-02T03:00:00.000Z';
@@ -37,9 +38,15 @@ async function fixture(t) {
   const tokenPath = join(root, 'monday-token.txt');
   await writeFile(tokenPath, 'synthetic-read-token', 'utf8');
   const configPath = join(root, 'config.json');
+  const sourceFile = join(root, 'data', 'attribution-snapshot.json');
   await writeFile(configPath, JSON.stringify({
+    runtimeRoot: root,
     mondayBoardId: '2732725332',
     connections: {
+      attribution: {
+        sourceFile,
+        maxAgeHours: 168,
+      },
       monday: {
         connected: true,
         liveVerified: true,
@@ -56,7 +63,7 @@ async function fixture(t) {
       },
     },
   }), 'utf8');
-  return { configPath };
+  return { configPath, sourceFile };
 }
 
 test('live Monday attribution coverage reconciles all pages and returns only aggregates', async (t) => {
@@ -105,6 +112,64 @@ test('live Monday attribution coverage reconciles all pages and returns only agg
   assert.doesNotMatch(queryText, /\bname\b|phone|email|updates|long_text/);
   assert.match(queryText, /created_at/);
   assert.deepEqual(requests[1].variables, { cursor: 'next-page' });
+});
+
+test('approved local export reuses the complete read and excludes raw click identifiers', async (t) => {
+  const { configPath } = await fixture(t);
+  const pages = [response({ data: { boards: [{ items_count: 1, items_page: {
+    cursor: null,
+    items: [item('1', '2026-09-01T03:00:00.000Z', {
+      short_textr4lgm1qe: 'synthetic-sensitive-click-id',
+      short_textzqle0408: 'google',
+      short_text99tuldfa: 'cpc',
+    })],
+  } }] } })];
+  const result = await collectMondayAttributionCoverageReadOnly({
+    configPath,
+    now: NOW,
+    fetchImpl: async () => pages.shift(),
+    includeApprovedSnapshot: true,
+  });
+  assert.equal(result.approvedSnapshot.source, 'approved_attribution_export');
+  assert.equal(result.approvedSnapshot.generated_at, NOW);
+  assert.equal(result.approvedSnapshot.rows.length, 1);
+  assert.deepEqual(result.approvedSnapshot.rows[0], {
+    monday_item_id: '1',
+    evidence_timestamp: NOW,
+    confidence: 'HIGH',
+    utm_source: 'google',
+    utm_medium: 'cpc',
+    how_did_you_hear: 'google_ads_click_id',
+    first_touch: 'google_ads_click_id',
+    last_touch: 'google_ads_click_id',
+  });
+  assert.doesNotMatch(JSON.stringify(result.approvedSnapshot), /synthetic-sensitive-click-id/);
+});
+
+test('refresh writes one validated local snapshot and reports zero external actions', async (t) => {
+  const { configPath, sourceFile } = await fixture(t);
+  const pages = [response({ data: { boards: [{ items_count: 1, items_page: {
+    cursor: null,
+    items: [item('1', '2026-09-01T03:00:00.000Z', { dropdown_mm3s443s: 'אתר' })],
+  } }] } })];
+  const result = await refreshAttributionSnapshotReadOnly({
+    configPath,
+    now: new Date(NOW),
+    fetchImpl: async () => pages.shift(),
+  });
+  assert.equal(result.mode, 'LIVE_READ_ONLY_LOCAL_EXPORT');
+  assert.equal(result.records, 1);
+  assert.equal(result.backupFile, null);
+  assert.deepEqual(result.safety, {
+    mondayWrites: 0,
+    externalSends: 0,
+    rawPiiOutput: false,
+    localFilesWritten: 1,
+  });
+  const saved = JSON.parse(await readFile(sourceFile, 'utf8'));
+  assert.equal(saved.generated_at, NOW);
+  assert.equal(saved.rows[0].monday_item_id, '1');
+  assert.equal(saved.rows[0].how_did_you_hear, 'website_reported');
 });
 
 test('live Monday attribution coverage fails closed on partial pagination', async (t) => {
