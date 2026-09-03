@@ -9,6 +9,16 @@
     "embeddedSecrets": false,
     "provisioningStatus": "NOT_PROVISIONED"
   },
+  "dispatcher": {
+    "capability": "ai-operations-manager",
+    "automationId": "i-feel-ai",
+    "state": "ACTIVE_EXISTING",
+    "timezone": "Asia/Jerusalem",
+    "localTime": "08:00",
+    "mode": "REPORT_ONLY",
+    "additionalSchedulerRequired": false,
+    "protectedActionsRemainApprovalGated": true
+  },
   "profiles": [
     {
       "id": "seo-report-only",
@@ -41,7 +51,9 @@
       "scheduleProposal": {
         "timezone": "Asia/Jerusalem",
         "cadenceFromCanonicalSkill": "weekdays 07:00; Sunday deep 07:00",
-        "status": "APPROVAL_REQUIRED"
+        "selectedDispatcher": "i-feel-ai at 08:00",
+        "additionalSchedulerRequired": false,
+        "status": "COVERED_BY_EXISTING_DISPATCHER_AFTER_SMOKE"
       },
       "safety": {
         "businessWritesAllowed": false,
@@ -78,7 +90,9 @@
       "scheduleProposal": {
         "timezone": "Asia/Jerusalem",
         "cadenceFromCanonicalSkill": null,
-        "status": "OWNER_DECISION_REQUIRED"
+        "selectedDispatcher": "i-feel-ai at 08:00",
+        "additionalSchedulerRequired": false,
+        "status": "COVERED_BY_EXISTING_DISPATCHER_AFTER_SMOKE"
       },
       "safety": {
         "businessWritesAllowed": false,

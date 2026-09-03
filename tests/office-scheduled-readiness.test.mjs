@@ -15,6 +15,16 @@ test('office scheduled profiles remain paused, report-only and least privilege',
   assert.equal(manifest.defaultMode, 'REPORT_ONLY');
   assert.equal(manifest.credentials.storage, 'DPAPI_LOCAL_ONLY');
   assert.equal(manifest.credentials.embeddedSecrets, false);
+  assert.deepEqual(manifest.dispatcher, {
+    capability: 'ai-operations-manager',
+    automationId: 'i-feel-ai',
+    state: 'ACTIVE_EXISTING',
+    timezone: 'Asia/Jerusalem',
+    localTime: '08:00',
+    mode: 'REPORT_ONLY',
+    additionalSchedulerRequired: false,
+    protectedActionsRemainApprovalGated: true,
+  });
   assert.deepEqual(manifest.profiles.map((profile) => profile.id), [
     'seo-report-only',
     'procurement-report-only',
@@ -25,6 +35,9 @@ test('office scheduled profiles remain paused, report-only and least privilege',
     assert.equal(profile.executionClass, 'scheduled_agent');
     assert.equal(profile.runtime.mode, 'REPORT_ONLY');
     assert.equal(profile.runtime.smokeStatus, 'PENDING_READ_ONLY');
+    assert.equal(profile.scheduleProposal.selectedDispatcher, 'i-feel-ai at 08:00');
+    assert.equal(profile.scheduleProposal.additionalSchedulerRequired, false);
+    assert.equal(profile.scheduleProposal.status, 'COVERED_BY_EXISTING_DISPATCHER_AFTER_SMOKE');
     assert.equal(profile.safety.businessWritesAllowed, false);
     assert.equal(profile.safety.externalSendsAllowed, false);
     assert.equal(profile.safety.productionChangesAllowed, false);
@@ -59,11 +72,12 @@ test('readiness check is local-only and reports remaining approval gates', () =>
   assert.equal(output.gates.readyForSchedulerActivation, false);
   assert.ok(output.blockingReasons.includes('SCOPED_IDENTITIES_NOT_PROVISIONED'));
   assert.ok(output.blockingReasons.includes('REPORT_ONLY_SMOKE_NOT_COMPLETED'));
-  assert.ok(output.blockingReasons.includes('SCHEDULER_OWNER_APPROVAL_REQUIRED'));
+  assert.equal(output.blockingReasons.includes('SCHEDULER_OWNER_APPROVAL_REQUIRED'), false);
   assert.deepEqual(output.safety, {
     filesWritten: 0,
     credentialsRead: 0,
     schedulersChanged: 0,
+    additionalSchedulersRequired: 0,
     externalRequests: 0,
     businessWrites: 0,
     externalSends: 0,

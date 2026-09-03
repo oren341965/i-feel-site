@@ -62,6 +62,12 @@ async function main() {
     manifest.state === 'PAUSED' &&
     manifest.credentials?.storage === 'DPAPI_LOCAL_ONLY' &&
     manifest.credentials?.embeddedSecrets === false &&
+    manifest.dispatcher?.capability === 'ai-operations-manager' &&
+    manifest.dispatcher?.automationId === 'i-feel-ai' &&
+    manifest.dispatcher?.state === 'ACTIVE_EXISTING' &&
+    manifest.dispatcher?.mode === 'REPORT_ONLY' &&
+    manifest.dispatcher?.additionalSchedulerRequired === false &&
+    manifest.dispatcher?.protectedActionsRemainApprovalGated === true &&
     Array.isArray(manifest.profiles) && manifest.profiles.length === 2;
   if (!structureValid) reasons.push('MANIFEST_STRUCTURE_INVALID');
 
@@ -78,6 +84,9 @@ async function main() {
       profile.runtime?.executor === 'codex_scheduled_task' &&
       profile.runtime?.mode === 'REPORT_ONLY' &&
       profile.runtime?.smokeStatus === 'PENDING_READ_ONLY' &&
+      profile.scheduleProposal?.selectedDispatcher === 'i-feel-ai at 08:00' &&
+      profile.scheduleProposal?.additionalSchedulerRequired === false &&
+      profile.scheduleProposal?.status === 'COVERED_BY_EXISTING_DISPATCHER_AFTER_SMOKE' &&
       profile.safety?.businessWritesAllowed === false &&
       profile.safety?.externalSendsAllowed === false &&
       profile.safety?.productionChangesAllowed === false &&
@@ -129,15 +138,15 @@ async function main() {
     blockingReasons: [
       ...new Set([
         ...reasons,
-        'SCOPED_IDENTITIES_NOT_PROVISIONED',
-        'REPORT_ONLY_SMOKE_NOT_COMPLETED',
-        'SCHEDULER_OWNER_APPROVAL_REQUIRED',
-      ]),
+      'SCOPED_IDENTITIES_NOT_PROVISIONED',
+      'REPORT_ONLY_SMOKE_NOT_COMPLETED',
+    ]),
     ],
     safety: {
       filesWritten: 0,
       credentialsRead: 0,
       schedulersChanged: 0,
+      additionalSchedulersRequired: 0,
       externalRequests: 0,
       businessWrites: 0,
       externalSends: 0,
