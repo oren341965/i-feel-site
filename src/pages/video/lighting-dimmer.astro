@@ -1,0 +1,119 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+const videoId = 'rq23WL6a0Aw';
+const pageUrl = 'https://i-feel.co.il/video/lighting-dimmer/';
+const title = 'איך משנים את עוצמת התאורה במפסקי I FEEL | מדריך למשתמש';
+const description = 'מדריך וידאו של I FEEL לשינוי עוצמת התאורה במפסקים ובמערכת הבית החכם. הסרטון מציג את התהליך המלא ברצף, כדי שמשתמשים יוכלו לבצע את הפעולה בכוחות עצמם.';
+
+const jsonLd = JSON.stringify({
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'WebPage',
+      '@id': `${pageUrl}#page`,
+      url: pageUrl,
+      name: title,
+      description,
+      inLanguage: 'he-IL',
+      isPartOf: { '@id': 'https://i-feel.co.il/#website' },
+    },
+    {
+      '@type': 'BreadcrumbList',
+      itemListElement: [
+        { '@type': 'ListItem', position: 1, name: 'דף הבית', item: 'https://i-feel.co.il/' },
+        { '@type': 'ListItem', position: 2, name: 'הדרכות וידאו', item: 'https://i-feel.co.il/video/' },
+        { '@type': 'ListItem', position: 3, name: 'שינוי עוצמת התאורה', item: pageUrl },
+      ],
+    },
+    {
+      '@type': 'VideoObject',
+      '@id': `${pageUrl}#video`,
+      name: title,
+      description,
+      uploadDate: '2026-09-03',
+      thumbnailUrl: `https://i.ytimg.com/vi/${videoId}/hqdefault.jpg`,
+      contentUrl: `https://www.youtube.com/watch?v=${videoId}`,
+      embedUrl: `https://www.youtube-nocookie.com/embed/${videoId}`,
+      inLanguage: 'he-IL',
+      publisher: { '@id': 'https://i-feel.co.il/#business' },
+    },
+  ],
+});
+---
+
+<BaseLayout
+  title={`${title} | i-feel`}
+  description={description}
+  canonical={pageUrl}
+  ogTitle={title}
+  ogDescription={description}
+  ogUrl={pageUrl}
+  jsonLd={jsonLd}
+>
+  <nav class="bg-brand-50 border-b border-brand-100" aria-label="פירורי לחם">
+    <div class="max-w-5xl mx-auto px-4 py-3 text-sm">
+      <a href="/" class="text-brand-600 hover:text-accent-600">דף הבית</a>
+      <span class="mx-2 text-brand-400">›</span>
+      <a href="/video/" class="text-brand-600 hover:text-accent-600">הדרכות וידאו</a>
+      <span class="mx-2 text-brand-400">›</span>
+      <span class="text-brand-900 font-medium">שינוי עוצמת התאורה</span>
+    </div>
+  </nav>
+
+  <section class="hero-gradient text-white">
+    <div class="max-w-5xl mx-auto px-4 py-14 lg:py-16">
+      <div class="inline-flex items-center rounded-full border border-white/20 bg-white/10 px-4 py-1.5 text-sm font-medium mb-5">מדריך וידאו · שירות עצמי · בית חכם I FEEL</div>
+      <h1 class="text-3xl md:text-5xl font-extrabold mb-4">איך משנים את עוצמת התאורה במפסקי I FEEL</h1>
+      <p class="text-lg md:text-xl text-brand-100 leading-relaxed max-w-3xl">מדריך מלא שמציג את שינוי עוצמת התאורה במפסקים השונים. ההסבר נשמר ברצף מלא כדי שתוכלו לעקוב אחר התהליך ולבצע אותו בעצמכם.</p>
+    </div>
+  </section>
+
+  <section class="py-10 lg:py-14">
+    <div class="max-w-5xl mx-auto px-4">
+      <div class="grid lg:grid-cols-[minmax(0,1fr)_300px] gap-8 items-start">
+        <div>
+          <div class="bg-brand-900 rounded-2xl overflow-hidden shadow-lg">
+            <div class="w-full aspect-video">
+              <iframe
+                class="w-full h-full"
+                src={`https://www.youtube-nocookie.com/embed/${videoId}`}
+                title={title}
+                loading="eager"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowfullscreen
+              ></iframe>
+            </div>
+          </div>
+
+          <div class="mt-6 bg-white border border-brand-100 rounded-2xl p-6 shadow-sm">
+            <h2 class="text-2xl font-extrabold text-brand-900 mb-3">לפני שמתחילים</h2>
+            <p class="text-brand-700 leading-relaxed mb-4">מומלץ לצפות בסרטון מתחילתו ועד סופו לפני ביצוע השינוי. הסרטון כולל את ההסבר המלא כפי שנמסר בהדרכה, ללא קיצורים של שלבי העבודה.</p>
+            <p class="text-brand-700 leading-relaxed">אם המפסק אינו מגיב, התאורה אינה נדלקת או שהפעולה המתוארת בסרטון אינה מתאימה למערכת המותקנת אצלכם, אל תפתחו את המפסק. עברו למרכז השירות לקבלת סיוע.</p>
+          </div>
+        </div>
+
+        <aside class="bg-brand-50 border border-brand-100 rounded-2xl p-6 lg:sticky lg:top-24">
+          <h2 class="text-xl font-extrabold text-brand-900 mb-3">צריכים עזרה נוספת?</h2>
+          <p class="text-sm text-brand-700 leading-relaxed mb-5">מרכז השירות של I FEEL כולל מדריכים נוספים ודרכי יצירת קשר במקרה שהפעולה אינה נפתרת באמצעות הסרטון.</p>
+          <div class="space-y-3">
+            <a href="/help/" class="block text-center bg-accent-600 hover:bg-accent-700 text-white font-bold px-5 py-3 rounded-lg transition">למרכז השירות</a>
+            <a href="/video/" class="block text-center bg-white hover:bg-brand-100 text-brand-900 font-bold px-5 py-3 rounded-lg border border-brand-200 transition">לכל סרטוני ההדרכה</a>
+            <a href={`https://www.youtube.com/watch?v=${videoId}`} target="_blank" rel="noopener" class="block text-center text-red-700 hover:underline font-semibold py-2">צפייה ב-YouTube ↗</a>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </section>
+
+  <section class="bg-brand-50 border-y border-brand-100 py-10">
+    <div class="max-w-5xl mx-auto px-4">
+      <h2 class="text-2xl font-extrabold text-brand-900 mb-4">עוד מידע על תאורה חכמה</h2>
+      <div class="grid md:grid-cols-3 gap-4 text-sm font-semibold">
+        <a href="/smart-home/" class="bg-white border border-brand-100 rounded-xl p-4 hover:border-accent-500 hover:shadow-md transition">מערכת בית חכם ›</a>
+        <a href="/knx-smart-home/" class="bg-white border border-brand-100 rounded-xl p-4 hover:border-accent-500 hover:shadow-md transition">בית חכם KNX ›</a>
+        <a href="/smart-lighting/" class="bg-white border border-brand-100 rounded-xl p-4 hover:border-accent-500 hover:shadow-md transition">תאורה חכמה ›</a>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
