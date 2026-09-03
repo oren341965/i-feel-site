@@ -83,6 +83,7 @@ $stagingRoot = Join-Path $mayaRoot (".staging-{0}" -f [guid]::NewGuid().ToString
 
 $copyMap = [ordered]@{
     '.claude\skills\maya-email-maintenance' = 'payload\skills\maya-email-maintenance'
+    '.claude\skills\maya-instagram-relations' = 'payload\skills\maya-instagram-relations'
     '.claude\skills\maya-whatsapp' = 'payload\skills\maya-whatsapp'
     '.claude\skills\management-system-telemetry' = 'payload\skills\management-system-telemetry'
     'agent-config\maya-codex\AGENTS.md' = 'payload\codex\AGENTS.md'
@@ -91,6 +92,7 @@ $copyMap = [ordered]@{
     'agent-config\maya-codex\test-management-smoke.ps1' = 'payload\management-system\test-management-smoke.ps1'
     'agent-config\maya-codex\provision-management-telemetry.ps1' = 'payload\management-system\provision-management-telemetry.ps1'
     'agent-config\maya-scheduled-tasks\maya-email-maintenance\SKILL.md' = 'payload\scheduled-tasks\maya-email-maintenance\SKILL.md'
+    'agent-config\maya-scheduled-tasks\maya-instagram-relations\SKILL.md' = 'payload\scheduled-tasks\maya-instagram-relations\SKILL.md'
     '.claude\skills\maya-email-maintenance\scripts\draft_writer.py' = 'payload\email-review\draft_writer.py'
     '.claude\skills\ai-sales-manager\runtime\maya-config.example.json' = 'payload\runtime\maya-config.example.json'
     '.claude\skills\ai-sales-manager\runtime\bus-message.schema.json' = 'payload\runtime\bus-message.schema.json'
@@ -128,11 +130,11 @@ if ($PSCmdlet.ShouldProcess($releaseRoot, 'Build Maya commissioning release')) {
         commit = $commit
         createdAt = (Get-Date).ToUniversalTime().ToString('o')
         targetEngine = 'codex'
-        requiredSkills = @('maya-email-maintenance', 'maya-whatsapp', 'management-system-telemetry')
+        requiredSkills = @('maya-email-maintenance', 'maya-instagram-relations', 'maya-whatsapp', 'management-system-telemetry')
         registeredHostSlug = 'maya-front-office'
         claudeRequired = $false
         schedulerActivation = 'PAUSED'
-        stagedSchedulers = @('maya-email-maintenance')
+        stagedSchedulers = @('maya-email-maintenance', 'maya-instagram-relations')
         taskProtocol = 'MAYA_SALES_TASK_V2'
         files = $files
     }

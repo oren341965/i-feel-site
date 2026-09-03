@@ -154,7 +154,7 @@ Token הרישום הוא חד-פעמי וסודי. אין להעתיק אותו
 
 ## AI Sales בשני מחשבים
 
-מחשב אורן מריץ את Codex, Claude, `ai-sales-manager` ואת ה־runtime המקומי. ה־SQLite הפעיל נשאר מקומי תחת `C:\ifeel-sales` ואינו מסונכרן דרך Dropbox. מחשב Maya מריץ Claude, את הסקילים הקנוניים `maya-email-maintenance` ו־`maya-whatsapp`, ואת Obsidian; `maya-agent` הוא מזהה Bus ישן בלבד ואינו סקיל עצמאי. התקנת runtime או Task Scheduler היא שלב נפרד ואינה חלק מעדכון הסקילים.
+מחשב אורן מריץ את Codex, Claude, `ai-sales-manager` ואת ה־runtime המקומי. ה־SQLite הפעיל נשאר מקומי תחת `C:\ifeel-sales` ואינו מסונכרן דרך Dropbox. מחשב Maya מריץ Claude, את הסקילים הקנוניים `maya-email-maintenance`, ‏`maya-instagram-relations` ו־`maya-whatsapp`, ואת Obsidian; `maya-agent` הוא מזהה Bus ישן בלבד ואינו סקיל עצמאי. התקנת runtime או Task Scheduler היא שלב נפרד ואינה חלק מעדכון הסקילים. סקיל האינסטגרם מיועד לסקירה חודשית של רשימת מעקב מאושרת ולהכנת נוסח לאישור; אין ממנו שליחה אוטומטית.
 
 שני המחשבים רשאים להשתמש ב־Dropbox Obsidian Vault משותף. כל מחשב מגדיר `VAULT_ROOT` לנתיב המקומי שלו; אין להכניס נתיב משתמש קשיח לריפו. המבנה המוצע וה־file-bridge מתועדים תחת `ai-sales-manager/references/vault-layout.md`.
 

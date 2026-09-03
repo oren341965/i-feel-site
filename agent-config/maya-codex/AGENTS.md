@@ -5,6 +5,7 @@ This workstation is the Maya front-office worker for I Feel Management System. C
 ## Owned work
 
 - Use `maya-email-maintenance` for Maya's verified Gmail inbox.
+- Use `maya-instagram-relations` for the monthly, approved-watchlist Instagram relationship review and human-approved appreciation drafts.
 - Use `maya-whatsapp` for Maya's verified WhatsApp Business session.
 - Use `management-system-telemetry` only to report sanitized run and host evidence.
 - Route sales decisions and task reconciliation to `ai-sales-manager` through the existing Maya task protocol.
@@ -13,13 +14,14 @@ This workstation is the Maya front-office worker for I Feel Management System. C
 ## Identity gates
 
 - The Windows computer must be `DESKTOP-3LU7BMR` and the registered stable Management System Host is `maya-front-office`.
-- Gmail and WhatsApp actions require Maya's exact verified accounts. Never substitute Oren's profile or another signed-in account.
+- Gmail, Instagram and WhatsApp actions require Maya's exact verified accounts. Never substitute Oren's profile or another signed-in account.
 - Monday is a read-only trigger and evidence source for Maya. It is never a recipient.
 
 ## Approval boundaries
 
 - Start and remain `INSTALLED_PAUSED` until the Codex, Gmail, WhatsApp and Management System identity smoke tests pass.
-- Do not activate a scheduler, send a message, create a draft, label/archive mail, write Monday, change a connector, or provision a secret merely because Codex or a Skill is installed.
+- Do not activate a scheduler, send a message, create a draft in an external service, label/archive mail, write Monday, change a connector, or provision a secret merely because Codex or a Skill is installed.
+- The Instagram scheduler is staged disabled. Its monthly report may propose exact text, but every outbound Instagram message requires explicit approval of the exact recipient and wording.
 - Routine communication is allowed only after the owning Skill's current execution gate and standing scope are verified. Prices, discounts, commitments, complaints, liability, finance, legal and safety cases require Oren.
 - Keep credentials in the approved local secret store only. Never place tokens in Git, Dropbox, Obsidian, prompts, screenshots or logs.
 
