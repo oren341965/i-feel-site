@@ -90,6 +90,12 @@
       "readOnly": true,
       "draftsAllowed": false,
       "externalSendsAllowed": false
+    },
+    "facebook": {
+      "connected": false,
+      "readOnly": true,
+      "draftsAllowed": false,
+      "externalSendsAllowed": false
     }
   },
   "localDirectories": [
