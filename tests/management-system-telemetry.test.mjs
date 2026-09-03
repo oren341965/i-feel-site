@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
+import { createHash } from 'node:crypto';
 import { spawn, spawnSync } from 'node:child_process';
-import { mkdir, mkdtemp, rm, symlink, writeFile } from 'node:fs/promises';
+import { mkdir, mkdtemp, readFile, rm, symlink, writeFile } from 'node:fs/promises';
 import { createServer } from 'node:http';
 import { tmpdir } from 'node:os';
 import { resolve } from 'node:path';
@@ -104,8 +105,11 @@ async function sourceSyncFixture(t) {
   await mkdir(resolve(directory, '.claude/skills/example-skill'), { recursive: true });
   await mkdir(resolve(directory, 'vault/02 Skills/Entries'), { recursive: true });
   await mkdir(resolve(directory, 'installed/example-skill'), { recursive: true });
-  await writeFile(resolve(directory, '.claude/skills/example-skill/SKILL.md'), '---\nname: example-skill\ndescription: Test\n---\n\n# Example\n', 'utf8');
-  await writeFile(resolve(directory, 'vault/02 Skills/Entries/example-skill.md'), '---\ntype: skill-registry-entry\nstatus: Active\nversion: test-revision\n---\n\nSensitive body that must never be emitted.\n', 'utf8');
+  const skillContent = '---\nname: example-skill\ndescription: Test\n---\n\n# Example\n';
+  const sourceHash = createHash('sha256').update(skillContent).digest('hex');
+  await writeFile(resolve(directory, '.claude/skills/example-skill/SKILL.md'), skillContent, 'utf8');
+  await writeFile(resolve(directory, 'installed/example-skill/SKILL.md'), skillContent, 'utf8');
+  await writeFile(resolve(directory, 'vault/02 Skills/Entries/example-skill.md'), `---\ntype: skill-registry-entry\nstatus: Active\nversion: test-revision\nsource_hash: ${sourceHash}\n---\n\nSensitive body that must never be emitted.\n`, 'utf8');
   const git = spawnSync('git', ['init'], { cwd: directory, encoding: 'utf8' });
   assert.equal(git.status, 0, git.stderr);
   spawnSync('git', ['config', 'user.email', 'test@example.invalid'], { cwd: directory });
@@ -131,10 +135,47 @@ test('source reconciliation links GitHub, Vault and installed Skills without lea
   assert.equal(output.summary.canonical, 1);
   assert.equal(output.summary.knowledgeLinked, 1);
   assert.equal(output.summary.installed, 1);
+  assert.equal(output.summary.knowledgeAtSourceHash, 1);
+  assert.equal(output.summary.installedAtSourceHash, 1);
   assert.equal(output.capabilities[0].slug, 'example-skill');
   assert.equal(output.capabilities[0].knowledgePath, '02 Skills/Entries/example-skill.md');
   assert.equal(result.stdout.includes('Sensitive body'), false);
   assert.equal(result.stdout.includes(directory), false);
+});
+
+test('source reconciliation detects real Skill drift independently of repository revision', async (t) => {
+  const directory = await sourceSyncFixture(t);
+  await writeFile(resolve(directory, '.claude/skills/example-skill/SKILL.md'), '---\nname: example-skill\ndescription: Changed\n---\n\n# Example\n', 'utf8');
+  const result = spawnSync(process.execPath, [
+    SOURCE_SYNC_SCRIPT,
+    '--repo', directory,
+    '--vault', resolve(directory, 'vault'),
+    '--installed-skills', resolve(directory, 'installed'),
+    '--dry-run',
+  ], { encoding: 'utf8' });
+  assert.equal(result.status, 1, result.stderr);
+  const output = JSON.parse(result.stdout);
+  assert.deepEqual(output.summary.staleKnowledge, ['example-skill']);
+  assert.deepEqual(output.summary.staleInstalled, ['example-skill']);
+});
+
+test('source reconciliation ignores CRLF versus LF transport differences', async (t) => {
+  const directory = await sourceSyncFixture(t);
+  const installedPath = resolve(directory, 'installed/example-skill/SKILL.md');
+  const installed = await readFile(installedPath, 'utf8');
+  await writeFile(installedPath, installed.replaceAll('\n', '\r\n'), 'utf8');
+  const result = spawnSync(process.execPath, [
+    SOURCE_SYNC_SCRIPT,
+    '--repo', directory,
+    '--vault', resolve(directory, 'vault'),
+    '--installed-skills', resolve(directory, 'installed'),
+    '--dry-run',
+  ], { encoding: 'utf8' });
+  assert.equal(result.status, 0, result.stderr);
+  const output = JSON.parse(result.stdout);
+  assert.equal(output.ok, true);
+  assert.equal(output.source.hashNormalization, 'utf8-lf-v1');
+  assert.equal(output.capabilities[0].installedAtSourceHash, true);
 });
 
 test('source reconciliation reports missing knowledge and installation as blocking gaps', async (t) => {
