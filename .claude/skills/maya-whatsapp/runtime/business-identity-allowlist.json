@@ -1,0 +1,13 @@
+{
+  "schemaVersion": 1,
+  "identityKind": "whatsapp-business-profile",
+  "approvedHost": "maya-front-office",
+  "approvedComputer": "DESKTOP-3LU7BMR",
+  "businessName": "i feel מערכות בעמ",
+  "email": "myhome@i-feel.co.il",
+  "websiteHost": "www.i-feel.co.il",
+  "phoneFingerprint": {
+    "algorithm": "sha256-e164-v1",
+    "value": "2ffc9a19da1cec47f1c491593eed91dd5db3d9cdac241d67d4faba2f2b7b9071"
+  }
+}

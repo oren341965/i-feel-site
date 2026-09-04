@@ -25,6 +25,8 @@ $requiredPayload = @(
     'payload\skills\maya-email-maintenance\SKILL.md',
     'payload\skills\maya-instagram-relations\SKILL.md',
     'payload\skills\maya-whatsapp\SKILL.md',
+    'payload\skills\maya-whatsapp\runtime\business-identity-allowlist.json',
+    'payload\skills\maya-whatsapp\scripts\verify-business-identity.mjs',
     'payload\skills\management-system-telemetry\SKILL.md',
     'payload\codex\AGENTS.md',
     'payload\management-system\invoke-telemetry.ps1',
