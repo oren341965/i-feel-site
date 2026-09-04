@@ -33,10 +33,14 @@ $eligible = is_string($proof)
     && (int) $stored['expires_at'] >= time()
     && trim((string) $stored['monday_item_id']) !== ''
     && hash_equals($stored['hash'], hash('sha256', $proof));
+$leadId = $eligible ? (string) $stored['monday_item_id'] : null;
 
 // Consume the server-side proof even when it is expired or malformed. This
 // makes every successful Monday lead eligible for at most one browser event.
 unset($_SESSION['ads_conversion_proof']);
 session_write_close();
 
-echo json_encode(['eligible' => $eligible], JSON_UNESCAPED_SLASHES);
+echo json_encode([
+    'eligible' => $eligible,
+    'lead_id' => $leadId,
+], JSON_UNESCAPED_SLASHES);

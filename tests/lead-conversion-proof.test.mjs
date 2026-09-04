@@ -14,9 +14,9 @@ test('Monday success creates a server-side, expiring conversion proof', async ()
   assert.match(source, /\$itemId\s*=.*create_item.*id/s);
   assert.match(source, /ads_conversion_proof/);
   assert.match(source, /random_bytes\(32\)/);
-  assert.match(source, /redirect_back\('sent',\s*\$conversionProof\)/);
+  assert.match(source, /redirect_back\('sent',\s*issue_conversion_proof\(\(string\) \$itemId\)\)/);
   assert.match(source, /redirect_back\('sent-mail'\)/);
-  assert.doesNotMatch(source, /redirect_back\('sent-mail',/);
+  assert.match(source, /LEAD_FALLBACK_COUNTS_AS_VALID/);
 });
 
 test('conversion proof is session-bound and consumed once', async () => {
@@ -24,14 +24,17 @@ test('conversion proof is session-bound and consumed once', async () => {
   assert.match(source, /hash_equals/);
   assert.match(source, /monday_item_id/);
   assert.match(source, /unset\(\$_SESSION\['ads_conversion_proof'\]\)/);
-  assert.match(source, /\['eligible'\s*=>\s*\$eligible\]/);
+  assert.match(source, /'eligible'\s*=>\s*\$eligible/);
+  assert.match(source, /'lead_id'\s*=>\s*\$leadId/);
 });
 
 test('contact and landing clients require verifier eligibility before Ads conversion', async () => {
   const landing = await readFile(files.landing, 'utf8');
   const contact = await readFile(files.contact, 'utf8');
   assert.match(landing, /consume-conversion\.php/);
-  assert.match(landing, /eligible\s*===\s*true[^}]+adsConversion\('form'\)/s);
+  assert.match(landing, /eligible\s*===\s*true[^}]+gtag\('event', 'conversion'/s);
   assert.match(contact, /consume-conversion\.php/);
   assert.match(contact, /eligible\s*===\s*true[^}]+gtag\('event', 'conversion'/s);
+  assert.match(landing, /transaction_id/);
+  assert.match(contact, /transaction_id/);
 });
