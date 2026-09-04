@@ -1,0 +1,90 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+const canonical = 'https://i-feel.co.il/articles/roborock-smart-home-integration-2026/';
+const title = 'Roborock בבית החכם: שואבים, רובוטים ותרחישי אוטומציה עם i-feel | i-feel';
+const description = 'החידושים של Roborock ב-2026 מראים לאן עולם הרובוטיקה הביתית מתקדם. כך i-feel משלבת שואבים ורובוטים נתמכים בתוך תרחישי הבית החכם, עם הפעלה מרחוק, תזמונים, סטטוסים ואוטומציות.';
+const ifaUrl = 'https://global.roborock.com/pages/ifa-2026';
+const roverUrl = 'https://newsroom.roborock.com/gl/news/ces-2026-roborock-releases-the-world-s-first-robotic-vacuum-with-wheel-leg-architecture-as-it-joins-hands-with-real-madrid-football-club-';
+const appUrl = 'https://global.roborock.com/pages/roborock-app';
+const image1 = 'https://cdn.awsusor0.fds.api.mi-img.com/newsroom/e322ab52c25ebf251e1e5d08cd45513f.jpg?h=900&thumb=1&w=900';
+const image2 = 'https://cdn.awsusor0.fds.api.mi-img.com/newsroom/989a396c6013791e49625e473dccd9c8.jpg?h=900&thumb=1&w=900';
+const jsonLd = JSON.stringify({
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  headline: 'Roborock בבית החכם: שואבים, רובוטים ותרחישי אוטומציה עם i-feel',
+  description,
+  datePublished: '2026-09-04',
+  dateModified: '2026-09-04',
+  inLanguage: 'he-IL',
+  mainEntityOfPage: canonical,
+  author: { '@type': 'Organization', name: 'i-feel', url: 'https://i-feel.co.il/' },
+  publisher: { '@type': 'Organization', name: 'i-feel', url: 'https://i-feel.co.il/' },
+  image: [image1, image2],
+});
+---
+
+<BaseLayout title={title} description={description} canonical={canonical} ogTitle={title} ogDescription={description} ogUrl={canonical} ogImage={image1} jsonLd={jsonLd}>
+  <article class="bg-white" dir="rtl">
+    <header class="bg-brand-900 text-white py-16 md:py-20">
+      <div class="max-w-5xl mx-auto px-4">
+        <a href="/articles/" class="text-accent-400 font-semibold hover:text-accent-300">מאמרים ועדכונים</a>
+        <p class="mt-4 text-sm text-brand-200">בית חכם ורובוטיקה · עודכן 04.09.2026</p>
+        <h1 class="mt-4 text-4xl md:text-5xl font-extrabold leading-tight">Roborock נכנסת עמוק יותר לבית החכם, ו-i-feel מחברת את הרובוטים לתרחישים של כל הבית</h1>
+        <p class="mt-5 max-w-4xl text-lg md:text-xl text-brand-100 leading-relaxed">שואבים חכמים כבר אינם מכשיר שעובד לבד. הדור החדש של Roborock כולל רובוטים מתקדמים יותר, פתרונות לבריכה, דגמי שטיפה חדשים ורובוטים שמתמודדים עם אזורים שבעבר היו מחוץ לטווח. מבחינת i-feel, הערך האמיתי מתחיל כשהרובוט הופך לחלק ממערכת הבית החכם.</p>
+      </div>
+    </header>
+
+    <div class="max-w-5xl mx-auto px-4 py-12">
+      <div class="grid md:grid-cols-2 gap-6 mb-12 not-prose">
+        <figure class="rounded-2xl overflow-hidden border border-brand-100 bg-white shadow-sm">
+          <img src={image1} alt="Roborock עם תחנת עגינה חכמה" width="900" height="900" loading="eager" class="w-full h-auto object-cover" />
+          <figcaption class="p-4 text-sm text-brand-600">דוגמה לדור החדש של מערכות הניקוי הרובוטיות של Roborock. צילום: Roborock Newsroom.</figcaption>
+        </figure>
+        <figure class="rounded-2xl overflow-hidden border border-brand-100 bg-white shadow-sm">
+          <img src={image2} alt="Roborock Saros Z70 עם זרוע רובוטית" width="900" height="900" loading="lazy" class="w-full h-auto object-cover" />
+          <figcaption class="p-4 text-sm text-brand-600">Saros Z70 עם זרוע רובוטית, המחשה לכיוון שבו רובוטיקה ביתית הופכת לעוזר פעיל בבית. צילום: Roborock Newsroom.</figcaption>
+        </figure>
+      </div>
+
+      <div class="prose-he max-w-none">
+        <p>בתערוכת IFA 2026 הציגה Roborock שורה של חידושים, בהם <strong>RockAqua P1</strong> לניקוי בריכות, <strong>Saros 20 Flow</strong>, <strong>Saros 20 Neo</strong> ומוצרים נוספים לניקוי רצפות, חצרות ובריכות. עוד קודם לכן הציגה החברה את <strong>Saros Rover</strong>, רובוט בפיתוח בעל מבנה גלגל-רגל שמיועד להתמודד גם עם מדרגות ומפלסים. המגמה ברורה: הרובוט הביתי יוצא מהחדר הבודד והופך לחלק ממערך תחזוקת הבית כולו.</p>
+
+        <h2>מה i-feel מוסיפה לרובוט החכם?</h2>
+        <p>בבית חכם של i-feel אפשר, בדגמים ובממשקים הנתמכים, לחבר את השואב או הרובוט למערכת השליטה המרכזית במקום להשאיר אותו כאפליקציה נפרדת. החיבור יכול להתבצע באמצעות SmartSphere / Home Assistant, ממשקי יצרן, Matter או אינטגרציה ייעודית, בהתאם לדגם וליכולות שהוא חושף. כך ניתן לרכז במקום אחד הפעלה, עצירה, סטטוס, תזמון, בחירת אזורים ותרחישים משולבים עם מערכות נוספות בבית.</p>
+
+        <h2>תרחישים שאפשר לבנות</h2>
+        <ul>
+          <li><strong>יצאנו מהבית:</strong> כאשר האזעקה נדרכת ואין נוכחות בבית, התאורה והתריסים עוברים למצב יציאה והשואב מתחיל ניקוי באזורים שהוגדרו מראש.</li>
+          <li><strong>חוזרים הביתה:</strong> המערכת בודקת אם הרובוט עדיין עובד, שולחת אותו לעמדת העגינה ומונעת מצב שבו הוא מסתובב בין הרגליים בזמן הכניסה.</li>
+          <li><strong>אחרי ארוחת ערב:</strong> לחיצה אחת על “סיום ארוחה” יכולה להדליק תאורת לילה עדינה, להעביר את המיזוג למצב ערב ולהפעיל ניקוי ממוקד במטבח ובפינת האוכל.</li>
+          <li><strong>ניקיון לפי חדר:</strong> כפתור במסך הבית, בטלפון או בטאבלט יכול לשלוח את הרובוט רק לסלון, למטבח או לחדר מסוים, אם הדגם תומך בבחירת חדרים.</li>
+          <li><strong>בית עם בעלי חיים:</strong> ניתן לקבוע ניקוי נוסף בשעות שבהן הבית ריק, או להפעיל ניקוי אוטומטי לאחר פתיחת דלת היציאה לחצר וחזרת הכלב.</li>
+          <li><strong>תחזוקה חכמה:</strong> סטטוס אביזרים, צורך בריקון או טיפול וחריגה מתהליך ניקוי יכולים להופיע במסך הבית ולהפוך להתראה מסודרת במקום להישאר קבורים באפליקציה נפרדת.</li>
+          <li><strong>בריכה וחוץ:</strong> ככל שממשקי דגמי הבריכה והחוץ החדשים יתמכו בכך, ניתן לשלב גם אותם בלוחות זמנים ובתרחישי “בית בחופשה”, “הכנת הבית לסוף שבוע” או “אירוח”.</li>
+          <li><strong>תזמון לפי תעריף ושקט:</strong> אפשר לקבוע את פעולת הרובוט בשעות שבהן הבית ריק, ולשלב טעינה בשעות מועדפות כאשר הדגם והמערכת תומכים בכך.</li>
+        </ul>
+
+        <h2>לא עוד אפליקציה נפרדת, אלא חלק מהבית</h2>
+        <p>המטרה של i-feel אינה רק להוסיף עוד אייקון למסך. הרעיון הוא לחבר את הרובוט ללוגיקה של הבית: נוכחות, אזעקה, שעות, חדרים, מצב אירוח, מצב חופשה, תאורה, מיזוג ושאר המערכות. כך פעולה שנראית קטנה, כמו “תנקה את המטבח כשכולנו יצאנו”, הופכת לאוטומציה אמיתית שאינה דורשת מהלקוח לזכור להפעיל אותה בכל פעם.</p>
+
+        <p>חשוב לציין שהיקף השליטה המדויק משתנה בין דגם לדגם ובהתאם לממשק הרשמי הזמין. לפני שילוב בפרויקט i-feel בודקת את הדגם, את אפשרויות החיבור ואת הפקודות שניתן לקבל ממנו בפועל.</p>
+      </div>
+
+      <section class="mt-12 rounded-2xl border border-brand-100 bg-brand-50 p-6 md:p-8">
+        <h2 class="text-2xl font-extrabold text-brand-900 mb-4">מקורות ומידע נוסף</h2>
+        <div class="flex flex-wrap gap-3">
+          <a href={ifaUrl} target="_blank" rel="noopener noreferrer" class="inline-flex items-center rounded-lg bg-accent-600 px-5 py-3 font-bold text-white hover:bg-accent-700">Roborock IFA 2026</a>
+          <a href={roverUrl} target="_blank" rel="noopener noreferrer" class="inline-flex items-center rounded-lg bg-white border border-brand-200 px-5 py-3 font-bold text-brand-900 hover:bg-brand-100">Saros Rover, המקור הרשמי</a>
+          <a href={appUrl} target="_blank" rel="noopener noreferrer" class="inline-flex items-center rounded-lg bg-white border border-brand-200 px-5 py-3 font-bold text-brand-900 hover:bg-brand-100">Roborock App</a>
+        </div>
+      </section>
+
+      <section class="mt-10 rounded-2xl bg-brand-900 text-white p-7 md:p-9">
+        <h2 class="text-3xl font-extrabold mb-3">רוצים לחבר שואב רובוטי לבית החכם?</h2>
+        <p class="text-brand-100 text-lg leading-8 mb-5">שלחו לנו את הדגם הקיים או המתוכנן. צוות i-feel יבדוק אילו יכולות ניתן לשלב במערכת ומה נכון להפוך לתרחיש אוטומטי.</p>
+        <a href="/contact/" class="inline-flex items-center rounded-lg bg-accent-600 px-5 py-3 font-bold text-white hover:bg-accent-700">בדיקת התאמה עם i-feel</a>
+      </section>
+    </div>
+  </article>
+</BaseLayout>
