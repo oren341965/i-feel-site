@@ -34,6 +34,7 @@ require_once $repositoryRoot . '/public/staff-expenses/_records.php';
 require_once $repositoryRoot . '/public/staff-expenses/_notifications.php';
 require_once $repositoryRoot . '/public/staff-expenses/_work_reports.php';
 require_once $repositoryRoot . '/public/staff-expenses/_tenant_handovers.php';
+require_once $repositoryRoot . '/public/staff-expenses/_tenant_handover_cloud.php';
 require_once $repositoryRoot . '/public/staff-expenses/_history.php';
 require_once $repositoryRoot . '/public/staff-expenses/_readiness.php';
 require_once $repositoryRoot . '/public/staff-expenses/_mcohome_faults.php';
@@ -524,6 +525,29 @@ try {
         portal_handover_credentials($handoverResident)['password'] === '0501234567',
         'Tenant handover credentials were not derived from the resident phone.'
     );
+    $handoverClientId = portal_new_handover_client_id();
+    $handoverFormCreatedAt = portal_handover_form_created_at($handoverClientId);
+    portal_test_expect(
+        preg_match('/^[a-f0-9]{32}$/', $handoverClientId) === 1
+        && $handoverFormCreatedAt !== ''
+        && portal_valid_date(portal_handover_form_date($handoverClientId))
+        && is_file($repositoryRoot . '/public/staff-expenses/offline-worker.js'),
+        'Tenant handover offline identity or worker is missing.'
+    );
+    portal_handover_forget_form($handoverClientId);
+    portal_test_expect(
+        portal_handover_form_created_at($handoverClientId) === '',
+        'Completed tenant handover form metadata was not cleared.'
+    );
+    $signatureTestDir = $storagePath . DIRECTORY_SEPARATOR . 'signature-test';
+    portal_ensure_directory($signatureTestDir);
+    $signatureData = 'data:image/png;base64,' . base64_encode((string) file_get_contents($repositoryRoot . '/public/assets/ifeel-logo.png'));
+    $savedSignature = portal_handover_save_signature($signatureTestDir, $signatureData);
+    portal_test_expect(
+        ($savedSignature['mime'] ?? '') === 'image/png'
+        && is_file($signatureTestDir . DIRECTORY_SEPARATOR . 'files' . DIRECTORY_SEPARATOR . ($savedSignature['storage_name'] ?? '')),
+        'Tenant handover recipient signature was not validated and stored.'
+    );
     $lifecycleStatusSource = [
         'id' => '54321',
         'name' => 'Lifecycle Resident',
@@ -579,11 +603,21 @@ try {
         'Custom controller location was not normalized.'
     );
     portal_test_expect(
-        portal_handover_ready_label('delivered_with_app_link') === 'נמסר עם קישור לאפליקציה'
-        && portal_handover_ready_label('completed_without_app_link') === 'הסתיים ללא קישור לאפליקציה'
-        && portal_handover_ready_label('ready_for_delivery') === 'מוכן למסירה'
-        && portal_handover_ready_label('not_ready_return_required') === 'לא מוכן — יש לחזור',
-        'Tenant handover delivery status labels are wrong.'
+        portal_handover_apartment_type_label('standard_central') === 'דירת סטנדרט — רק אזור מרכזי'
+        && portal_handover_apartment_type_label('upgraded') === 'דירה משודרגת'
+        && portal_handover_apartment_type_label('standard_corridor') === 'דירת סטנדרט + מסדרון'
+        && portal_handover_apartment_type_label('full') === 'דירה מלאה'
+        && portal_handover_ready_label('ready_not_delivered') === 'מוכן ולא נמסר'
+        && portal_handover_ready_label('not_ready_not_delivered') === 'לא מוכן ולא נמסר'
+        && portal_handover_ready_label('ready_delivered') === 'מוכן ונמסר ללקוח/נציג הלקוח',
+        'Tenant handover apartment type or delivery status labels are wrong.'
+    );
+    portal_test_expect(
+        (portal_handover_send_resident([
+            'details' => ['ready' => 'ready_not_delivered'],
+            'resident' => ['email' => 'resident@example.com'],
+        ])['status'] ?? '') === 'skipped',
+        'A handover that was not delivered would send an email to the resident.'
     );
     portal_test_expect(
         portal_handover_cloud_link('https://cloud.example.com/customer/1001') === 'https://cloud.example.com/customer/1001'
@@ -591,6 +625,33 @@ try {
         && portal_handover_cloud_link('javascript:alert(1)') === ''
         && portal_handover_support_url() === 'https://i-feel.co.il/smart-home-support/',
         'Tenant handover cloud or support links were not validated correctly.'
+    );
+    $cloudPoolUpdate = portal_handover_cloud_pool_sheet_update_data([
+        'resident_name' => 'Test Resident',
+        'reserved_at' => '2026-08-13T15:00:00+00:00',
+        'assigned_at' => '2026-08-13T16:00:00+00:00',
+        'key' => str_repeat('a', 64),
+    ], 'handover-123', 42, "'homeassistant-tunnels.csv'");
+    portal_test_expect(
+        ($cloudPoolUpdate[0]['range'] ?? '') === "'homeassistant-tunnels.csv'!C1:H1"
+        && ($cloudPoolUpdate[0]['values'][0] ?? []) === [
+            'סטטוס',
+            'שם הדייר',
+            'מועד פתיחת הגישה',
+            'מועד סיום המסירה',
+            'מזהה הקצאה',
+            'מספר מסירה',
+        ]
+        && ($cloudPoolUpdate[1]['range'] ?? '') === "'homeassistant-tunnels.csv'!C42:H42"
+        && ($cloudPoolUpdate[1]['values'][0] ?? []) === [
+            'הוקצה',
+            'Test Resident',
+            '13/08/2026 18:00',
+            '13/08/2026 19:00',
+            str_repeat('a', 20),
+            'handover-123',
+        ],
+        'Tenant cloud pool update omitted the resident name or access-opening time.'
     );
     $handoverCustomerEmail = [
         'resident' => ['name' => 'Test Resident', 'apartment' => '12', 'building' => '2', 'project_title' => 'Test Project'],
@@ -613,11 +674,44 @@ try {
         && portal_handover_hvac_connection_label('ir') === 'חיבור באמצעות IR'
         && portal_handover_hvac_connection_label('dry_contact_panel_9') === 'חיבור באמצעות מגע יבש מפאנל 9'
         && portal_handover_hvac_connection_label('micromodule') === 'חיבור באמצעות מיקרומודול'
-        && portal_handover_boiler_label('avatto') === 'AVATTO'
-        && portal_handover_boiler_label('domex') === 'DOMEX'
-        && portal_handover_boiler_label('none') === 'אין'
+        && portal_handover_boiler_label('none') === 'אין דוד'
+        && portal_handover_boiler_label('ava_dud') === 'AVA-DUD'
+        && portal_handover_boiler_label('ir') === 'IR'
         && portal_handover_boiler_label('switcher') === 'סוויטשר',
         'Structured handover switch, HVAC, or boiler labels are wrong.'
+    );
+    portal_test_expect(
+        portal_handover_component_switch_status_label('operational_connected') === 'תקין ומחובר לקונטרולר'
+        && portal_handover_component_switch_status_label('not_operational') === 'לא תקין'
+        && portal_handover_component_switch_status_label('operational_not_connected') === 'תקין ולא מחובר לקונטרולר'
+        && portal_handover_component_switch_status_label('other') === 'אחר'
+        && portal_handover_component_switch_status_label('not_applicable') === 'אין פאנלים'
+        && portal_handover_component_panel_presence_label('has_panels') === 'יש פאנלים'
+        && portal_handover_component_panel_presence_label('none') === 'אין'
+        && portal_handover_component_switch_email_lines([
+            'component_panel_presence' => 'has_panels',
+            'light_switch_count' => 6,
+            'light_switch_type_1_count' => 2,
+            'light_switch_type_2_count' => 3,
+            'light_switch_type_3_count' => 1,
+            'shutter_switch_count' => 4,
+            'component_switch_status' => 'other',
+            'component_switch_status_other' => 'נדרש ביקור נוסף',
+        ]) === [
+            'פאנלים של תאורה ותריס: יש פאנלים',
+            'סך פאנלי התאורה: 6',
+            'כמות פאנלי תאורה מסוג 1: 2',
+            'כמות פאנלי תאורה מסוג 2: 3',
+            'כמות פאנלי תאורה מסוג 3: 1',
+            'כמות פאנלי תריס: 4',
+            'סטטוס הפאנלים: אחר',
+            'פירוט סטטוס אחר: נדרש ביקור נוסף',
+        ]
+        && portal_handover_component_switch_email_lines([
+            'component_panel_presence' => 'none',
+            'light_switch_type_1_count' => 0,
+        ]) === ['פאנלים של תאורה ותריס: אין'],
+        'Light and shutter switch quantity or status labels are wrong.'
     );
     $switch9EmailLines = portal_handover_switch_9_email_lines([
         'switch_9_count' => 2,
@@ -636,14 +730,15 @@ try {
     );
     portal_test_expect(
         portal_handover_issue_label('electrical') === 'תקלת חשמל'
-        && portal_handover_issue_label('cabling') === 'תקלת כבילה'
-        && portal_handover_issue_label('contractor') === 'בעיית קבלנים (טיח או קופסא שבורה)'
+        && portal_handover_issue_label('cabling') === 'כבילה לא נכונה / תקלת כבילה'
+        && portal_handover_issue_label('contractor') === 'עבודת קבלן נדרשת (טיח, קופסה שבורה, קיר עקום וכו׳)'
+        && portal_handover_issue_label('other') === 'אחר'
         && portal_handover_issue_email_lines([
-            'issues' => [['type' => 'electrical'], ['type' => 'contractor']],
+            'issues' => [['type' => 'electrical'], ['type' => 'other', 'description' => 'קיר עקום']],
         ]) === [
             'מספר תקלות שצולמו בדירה: 2',
             'תקלה מס׳ 1: תקלת חשמל',
-            'תקלה מס׳ 2: בעיית קבלנים (טיח או קופסא שבורה)',
+            'תקלה מס׳ 2: אחר | פירוט: קיר עקום',
         ],
         'Apartment issue labels or email details are wrong.'
     );
@@ -657,9 +752,10 @@ try {
                 'issue_10' => ['storage_name' => 'issue-10.png'],
                 'issue_2' => ['storage_name' => 'issue-2.png'],
                 'issue_1' => ['storage_name' => 'issue-1.png'],
+                'signature' => ['storage_name' => 'signature.png'],
                 'untrusted' => ['storage_name' => 'ignored.png'],
             ],
-        ]) === ['controller', 'switch_1', 'switch_2', 'switch_10', 'issue_1', 'issue_2', 'issue_10'],
+        ]) === ['controller', 'switch_1', 'switch_2', 'switch_10', 'issue_1', 'issue_2', 'issue_10', 'signature'],
         'Tenant handover photo keys were not filtered and ordered correctly.'
     );
     $workStats = portal_work_report_stats([

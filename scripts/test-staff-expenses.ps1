@@ -19,6 +19,7 @@ $adminCookies = Join-Path $testRoot "admin-cookies.txt"
 $responseBody = Join-Path $testRoot "response-body.txt"
 $fixture = Join-Path $repositoryRoot "tests\staff-expenses\fixtures\receipt.pdf"
 $handoverImage = Join-Path $repositoryRoot "public\assets\ifeel-logo.png"
+$handoverSignatureData = "data:image/png;base64," + [Convert]::ToBase64String([IO.File]::ReadAllBytes($handoverImage))
 $router = "tests\staff-expenses\router.php"
 $publicRoot = "public"
 $process = $null
@@ -87,6 +88,14 @@ try {
         "-t", $publicRoot,
         $router
     )
+
+    # Codex/CI may inject both PATH and Path. Windows PowerShell's Start-Process
+    # treats those names case-insensitively and otherwise throws before PHP starts.
+    $normalizedProcessPath = $env:PATH
+    [Environment]::SetEnvironmentVariable("PATH", $null, "Process")
+    [Environment]::SetEnvironmentVariable("Path", $null, "Process")
+    [Environment]::SetEnvironmentVariable("PATH", $normalizedProcessPath, "Process")
+
     $process = Start-Process `
         -FilePath $PhpExecutable `
         -ArgumentList $phpArguments `
@@ -204,8 +213,10 @@ try {
     Assert-PortalTest ($html -match 'id="camera-receipts"[^>]*capture="environment"') "Mobile receipt camera input is missing."
     Assert-PortalTest ($html -match '<option value="purchases">') "Travel purchases category is missing."
 
-    Invoke-PortalCurl "-o", $responseBody, "-b", $employeeCookies, "$baseUrl/staff-expenses/?tab=handovers" | Out-Null
+    $headers = Invoke-PortalCurl "-D", "-", "-o", $responseBody, "-b", $employeeCookies, "$baseUrl/staff-expenses/?tab=handovers"
     $handoverLandingHtml = Get-Content -Raw -Encoding utf8 $responseBody
+    Assert-PortalTest ($headers -match "(?im)^X-Ifeel-Offline-Cache: handover") "Tenant handover page was not marked for the authenticated offline cache."
+    Assert-PortalTest ($handoverLandingHtml -match 'data-handover-offline-status') "Tenant handover offline readiness status was not rendered."
     Assert-PortalTest ($handoverLandingHtml -match 'class="detail-card handover-awaiting-card"') "Tenant handover technician-step preview was not rendered before resident selection."
     Assert-PortalTest ($handoverLandingHtml -match 'class="handover-field-preview"') "Tenant handover technician fields were not explained on the landing state."
     Assert-PortalTest (([regex]::Matches($handoverLandingHtml, 'value="test-project"')).Count -eq 1) "The canonical Monday project was not rendered exactly once."
@@ -219,6 +230,7 @@ try {
     Invoke-PortalCurl "-o", $responseBody, "-b", $employeeCookies, "$baseUrl/staff-expenses/?tab=handovers&handover_project=test-project" | Out-Null
     $handoverProjectHtml = Get-Content -Raw -Encoding utf8 $responseBody
     Assert-PortalTest ($handoverProjectHtml -match 'name="handover_resident"' -and $handoverProjectHtml -match 'value="1001"') "Tenant residents were not listed immediately after selecting a project."
+    Assert-PortalTest ($handoverProjectHtml -match 'data-handover-offline-prepare' -and $handoverProjectHtml -match 'data-handover-offline-resident-id="1001"') "Project-level offline preparation controls were not rendered."
     Assert-PortalTest ($handoverProjectHtml -match 'name="handover_building" data-handover-autosubmit>' -and $handoverProjectHtml -notmatch 'name="handover_building"[^>]*required') "The optional building filter still blocks direct resident selection."
     Invoke-PortalCurl "-o", $responseBody, "-b", $employeeCookies, "$baseUrl/staff-expenses/?tab=handovers&handover_project=test-project&handover_building=15&handover_resident=1001" | Out-Null
     $handoverStaleSelectionHtml = Get-Content -Raw -Encoding utf8 $responseBody
@@ -268,43 +280,79 @@ try {
         "$baseUrl/staff-expenses/?tab=handovers&handover_project=test-project&handover_building=2&handover_resident=1001" | Out-Null
     $handoverHtml = Get-Content -Raw -Encoding utf8 $responseBody
     Assert-PortalTest ($handoverHtml -match 'name="action" value="submit_tenant_handover"') "Tenant handover form was not rendered."
+    Assert-PortalTest ($handoverHtml -match 'name="handover_client_id"\s+value="[a-f0-9]{32}"') "Tenant handover offline idempotency key was not rendered."
     Assert-PortalTest ($handoverHtml -match 'name="handover_resident"[^>]*data-handover-autosubmit') "Resident selection does not open the technician form automatically."
     Assert-PortalTest ($handoverHtml -match 'resident@example\.com') "Authenticated handover form omitted the Monday resident email."
     Assert-PortalTest ($handoverHtml -match '0501234567') "Authenticated handover form omitted the derived initial password."
     Assert-PortalTest ($handoverHtml -notmatch 'name="handover_resident_email"|name="handover_resident_phone"') "Resident PII was trusted through client-editable fields."
-    Assert-PortalTest ($handoverHtml -match 'name="handover_ready"[^>]*required' -and $handoverHtml -match 'value="delivered_with_app_link"' -and $handoverHtml -match 'value="completed_without_app_link"' -and $handoverHtml -match 'value="ready_for_delivery"' -and $handoverHtml -match 'value="not_ready_return_required"') "Delivery status choices were not rendered."
-    Assert-PortalTest ($handoverHtml -match 'type="url"[^>]*name="handover_cloud_link"' -and $handoverHtml -match 'data-handover-cloud-link') "Customer-specific cloud link field was not rendered."
+    Assert-PortalTest ($handoverHtml -match 'name="handover_apartment_type"[^>]*required' -and $handoverHtml -match 'value="standard_central"' -and $handoverHtml -match 'value="upgraded"' -and $handoverHtml -match 'value="standard_corridor"' -and $handoverHtml -match 'value="full"') "The four mandatory apartment types were not rendered."
+    Assert-PortalTest ($handoverHtml -match 'name="handover_ready"[^>]*required' -and $handoverHtml -match 'value="ready_not_delivered"' -and $handoverHtml -match 'value="not_ready_not_delivered"' -and $handoverHtml -match 'value="ready_delivered"' -and $handoverHtml -notmatch 'value="delivered_with_app_link"') "Delivery status choices were not replaced with the required three options."
+    $recipientSectionIndex = $handoverHtml.IndexOf('data-handover-recipient-fields')
+    $issueSectionIndex = $handoverHtml.IndexOf('class="field--full handover-issues"')
+    $submitBarIndex = $handoverHtml.IndexOf('class="field--full submit-bar"')
+    Assert-PortalTest ($handoverHtml -match 'name="handover_recipient_name"' -and $handoverHtml -match 'name="handover_recipient_signature"' -and $handoverHtml -match 'data-handover-signature-canvas' -and $recipientSectionIndex -gt $issueSectionIndex -and $recipientSectionIndex -lt $submitBarIndex) "Delivered handover recipient name and signature controls were not rendered at the bottom of the form."
+    Assert-PortalTest ($handoverHtml -match 'data-handover-cloud-link-field[^>]*data-handover-cloud-available="1"' -and $handoverHtml -match 'data-handover-cloud-link[^>]*>https://cloud\.example\.com/pool/001<' -and $handoverHtml -match 'data-handover-cloud-copy' -and $handoverHtml -match 'פתיחת הקישור' -and $handoverHtml -match 'הוקצה אוטומטית' -and $handoverHtml -match 'הקובץ של אריק' -and $handoverHtml -notmatch 'name="handover_cloud_link"') "A unique pool address was not allocated automatically and shown read-only to the authenticated technician."
+    Assert-PortalTest ($handoverHtml -match 'class="field handover-auto-date"' -and $handoverHtml -match '<time datetime="[^\"]+">\d{2}/\d{2}/\d{4} \d{2}:\d{2}</time>' -and $handoverHtml -notmatch 'name="handover_date"') "The handover form creation date was not generated automatically as read-only server data."
     Assert-PortalTest ($handoverHtml -match 'name="handover_controller_location"[^>]*required' -and $handoverHtml -match 'name="handover_controller"[^>]*required' -and $handoverHtml -match 'name="handover_icons"[^>]*required') "Controller and icon requirements were not marked mandatory."
     Assert-PortalTest ($handoverHtml -match 'name="handover_switch_9_count"[^>]*min="1"[^>]*max="50"[^>]*required') "Switch 9 quantity field was not rendered."
+    Assert-PortalTest ($handoverHtml -match 'כמות מפסקי 9 בדירה' -and $handoverHtml -match 'לפי הכמות שתוזן ייפתח כרטיס חובה נפרד לכל מפסק 9') "Switch 9 quantity instructions were not rendered."
+    Assert-PortalTest ($handoverHtml -match 'סיווג מפסק 9 מס׳ 1' -and $handoverHtml -match 'data-handover-switch-9-configuration-label') "Per-switch classification fields were not rendered."
     Assert-PortalTest ($handoverHtml -match 'name="handover_switch_9_configuration_1"[^>]*required' -and $handoverHtml -match 'value="shutter_2_light_2"') "Per-unit switch 9 configuration choices were not rendered."
     Assert-PortalTest ($handoverHtml -match 'name="handover_switch_9_location_1"[^>]*required') "Per-unit switch 9 location field was not rendered."
     Assert-PortalTest ($handoverHtml -match 'name="handover_switch_photo_1"[^>]*data-handover-switch-9-photo[^>]*required') "Per-unit switch 9 photo field was not rendered."
-    Assert-PortalTest ($handoverHtml -match 'name="handover_light_switch_count"[^>]*min="0"[^>]*max="99"[^>]*required' -and $handoverHtml -match 'name="handover_light_switch_location"') "Light switch quantity and location fields were not rendered."
-    Assert-PortalTest ($handoverHtml -match 'name="handover_shutter_switch_count"[^>]*min="0"[^>]*max="99"[^>]*required' -and $handoverHtml -match 'name="handover_shutter_switch_location"') "Shutter switch quantity and location fields were not rendered."
+    Assert-PortalTest ($handoverHtml -match 'name="handover_component_panel_presence"[^>]*required' -and $handoverHtml -match 'value="has_panels"' -and $handoverHtml -match 'value="none"' -and $handoverHtml -match 'data-handover-component-panels') "Panel presence choices, including none, were not rendered."
+    Assert-PortalTest ($handoverHtml -match 'name="handover_light_switch_count"[^>]*min="0"[^>]*max="99"' -and $handoverHtml -match 'name="handover_light_switch_type_1_count"' -and $handoverHtml -match 'name="handover_light_switch_type_2_count"' -and $handoverHtml -match 'name="handover_light_switch_type_3_count"') "Light panel total and per-type quantity fields were not rendered."
+    Assert-PortalTest ($handoverHtml -match 'name="handover_shutter_switch_count"[^>]*min="0"[^>]*max="99"' -and $handoverHtml -match 'כמות פאנלי תריס') "Shutter panel quantity field was not rendered."
+    Assert-PortalTest ($handoverHtml -match 'name="handover_component_switch_status"' -and $handoverHtml -match 'value="operational_connected"' -and $handoverHtml -match 'value="not_operational"' -and $handoverHtml -match 'value="operational_not_connected"' -and $handoverHtml -match 'data-handover-component-switch-status-other') "Panel status choices or custom detail field were not rendered."
+    Assert-PortalTest ($handoverHtml -notmatch 'name="handover_light_switch_location"|name="handover_shutter_switch_location"') "Obsolete light or shutter switch location fields are still rendered."
     Assert-PortalTest ($handoverHtml -match 'name="handover_captive_shutter_24v"[^>]*required' -and $handoverHtml -match 'value="not_in_project"') "Captive shutter 24V choices were not rendered."
     Assert-PortalTest ($handoverHtml -match 'name="handover_hvac_connection"[^>]*required' -and $handoverHtml -match 'value="none"' -and $handoverHtml -match 'value="ir"' -and $handoverHtml -match 'value="dry_contact_panel_9"' -and $handoverHtml -match 'value="micromodule"') "HVAC connection choices were not rendered."
-    Assert-PortalTest ($handoverHtml -match 'name="handover_boiler"[^>]*required' -and $handoverHtml -match 'value="avatto"' -and $handoverHtml -match 'value="domex"' -and $handoverHtml -match 'value="none"' -and $handoverHtml -match 'value="switcher"' -and $handoverHtml -match 'name="handover_notes"[^>]*required') "Boiler choices or notes requirement were not rendered."
+    $boilerSelectMatch = [regex]::Match($handoverHtml, '<select name="handover_boiler"[^>]*>(.*?)</select>', [Text.RegularExpressions.RegexOptions]::Singleline)
+    $boilerSelectHtml = if ($boilerSelectMatch.Success) { $boilerSelectMatch.Groups[1].Value } else { "" }
+    Assert-PortalTest ($handoverHtml -match 'סוג הדוד <b>\*</b>' -and $boilerSelectMatch.Success -and ([regex]::Matches($boilerSelectHtml, '<option value="(?:none|ava_dud|ir|switcher)">').Count -eq 4) -and $boilerSelectHtml -match 'value="none">אין דוד' -and $boilerSelectHtml -match 'value="ava_dud">AVA-DUD' -and $boilerSelectHtml -match 'value="ir">IR' -and $boilerSelectHtml -match 'value="switcher">סוויטשר' -and $handoverHtml -match 'name="handover_notes"[^>]*required') "The four required boiler choices or notes requirement were not rendered."
     Assert-PortalTest ($handoverHtml -match 'name="handover_controller_photo"[^>]*required') "Mandatory controller photo was not rendered."
-    Assert-PortalTest ($handoverHtml -match 'name="handover_issue_count" value="0"' -and $handoverHtml -match 'data-handover-issue-add' -and $handoverHtml -match 'data-handover-issue-photo' -and $handoverHtml -match 'value="electrical"' -and $handoverHtml -match 'value="cabling"' -and $handoverHtml -match 'value="contractor"') "Repeatable apartment issue photo controls were not rendered."
+    Assert-PortalTest ($handoverHtml -match 'name="handover_issue_count" value="0"' -and $handoverHtml -match 'data-handover-issue-add' -and $handoverHtml -match 'data-handover-issue-photo' -and $handoverHtml -match 'value="electrical"' -and $handoverHtml -match 'value="cabling"' -and $handoverHtml -match 'value="contractor"' -and $handoverHtml -match 'value="other"' -and $handoverHtml -match 'data-handover-issue-description') "Repeatable apartment issue photo controls or the custom issue option were not rendered."
     Assert-PortalTest ($handoverHtml -notmatch 'name="handover_switch_9"|name="handover_blinds"') "Legacy free-text switch fields are still rendered."
     $handoverCsrf = Get-CsrfFromHtml $handoverHtml
     $handoverTokenMatch = [regex]::Match($handoverHtml, 'name="handover_submission_token"\s+value="([a-f0-9]{64})"')
     Assert-PortalTest $handoverTokenMatch.Success "Tenant handover replay-protection token was not rendered."
     $handoverToken = $handoverTokenMatch.Groups[1].Value
+    $handoverClientIdMatch = [regex]::Match($handoverHtml, 'name="handover_client_id"\s+value="([a-f0-9]{32})"')
+    Assert-PortalTest $handoverClientIdMatch.Success "Tenant handover client ID was not rendered."
+    $handoverClientId = $handoverClientIdMatch.Groups[1].Value
+
+    $allocationLedgerPath = Join-Path $storagePath "tenant-cloud-allocations.json"
+    $reservedLedger = Get-Content -Raw -Encoding utf8 $allocationLedgerPath | ConvertFrom-Json
+    $firstReservation = @($reservedLedger.allocations.PSObject.Properties.Value | Where-Object { $_.link -eq "https://cloud.example.com/pool/001" })
+    $firstOpenedAt = if ($firstReservation.Count -eq 1) { [string]$firstReservation[0].reserved_at } else { "" }
+    Assert-PortalTest ($firstReservation.Count -eq 1 -and $firstReservation[0].state -eq "reserved" -and $firstReservation[0].resident_name -eq "דייר בדיקה" -and -not [string]::IsNullOrWhiteSpace($firstOpenedAt)) "Opening a resident did not create a named, timestamped, locked cloud address reservation."
+
+    Invoke-PortalCurl `
+        "-o", $responseBody, `
+        "-b", $employeeCookies, `
+        "$baseUrl/staff-expenses/?tab=handovers&handover_project=test-project&handover_building=2&handover_resident=1002" | Out-Null
+    $secondResidentHtml = Get-Content -Raw -Encoding utf8 $responseBody
+    Assert-PortalTest ($secondResidentHtml -match 'data-handover-cloud-link[^>]*>https://cloud\.example\.com/pool/002<') "A second resident was not given a different reserved cloud address."
 
     $headers = Invoke-PortalCurl `
         "-D", "-", `
         "-o", $responseBody, `
         "-b", $employeeCookies, `
         "-c", $employeeCookies, `
+        "-H", "Accept: application/json", `
+        "-H", "X-Ifeel-Offline-Queue: 1", `
         "-F", "csrf=$handoverCsrf", `
         "-F", "action=submit_tenant_handover", `
         "-F", "handover_submission_token=$handoverToken", `
+        "-F", "handover_client_id=$handoverClientId", `
         "-F", "handover_project_id=test-project", `
         "-F", "handover_resident_id=1001", `
-        "-F", "handover_ready=delivered_with_app_link", `
-        "-F", "handover_cloud_link=https://cloud.example.com/customer/1001", `
-        "-F", "handover_date=2026-08-13", `
+        "-F", "handover_apartment_type=standard_corridor", `
+        "-F", "handover_ready=ready_delivered", `
+        "-F", "handover_recipient_name=Test Customer Representative", `
+        "--form-string", "handover_recipient_signature=$handoverSignatureData", `
+        "-F", "handover_cloud_link=https://attacker.invalid/forged", `
+        "-F", "handover_date=1900-01-01", `
         "-F", "handover_controller_location=communications_cabinet", `
         "-F", "handover_controller=raspberry_pi", `
         "-F", "handover_icons=done", `
@@ -313,31 +361,47 @@ try {
         "-F", "handover_switch_9_location_1=Entrance", `
         "-F", "handover_switch_9_configuration_2=light_9", `
         "-F", "handover_switch_9_location_2=Kitchen", `
-        "-F", "handover_light_switch_count=2", `
-        "-F", "handover_light_switch_location=Living room, Bedroom", `
+        "-F", "handover_component_panel_presence=has_panels", `
+        "-F", "handover_light_switch_count=6", `
+        "-F", "handover_light_switch_type_1_count=2", `
+        "-F", "handover_light_switch_type_2_count=3", `
+        "-F", "handover_light_switch_type_3_count=1", `
         "-F", "handover_shutter_switch_count=1", `
-        "-F", "handover_shutter_switch_location=Balcony", `
+        "-F", "handover_component_switch_status=operational_connected", `
         "-F", "handover_captive_shutter_24v=installed_activated", `
         "-F", "handover_hvac_connection=dry_contact_panel_9", `
-        "-F", "handover_boiler=switcher", `
+        "-F", "handover_boiler=ava_dud", `
         "-F", "handover_notes=Integration test", `
         "-F", "handover_controller_photo=@$handoverImage;type=image/png", `
         "-F", "handover_switch_photo_1=@$handoverImage;type=image/png", `
         "-F", "handover_switch_photo_2=@$handoverImage;type=image/png", `
         "-F", "handover_issue_count=2", `
         "-F", "handover_issue_type_1=electrical", `
-        "-F", "handover_issue_type_2=contractor", `
+        "-F", "handover_issue_type_2=other", `
+        "-F", "handover_issue_description_2=Crooked wall requires contractor work", `
         "-F", "handover_issue_photo_1=@$handoverImage;type=image/png", `
         "-F", "handover_issue_photo_2=@$handoverImage;type=image/png", `
         "$baseUrl/staff-expenses/"
-    Assert-PortalTest ($headers -match "HTTP/1\.1 303") "Tenant handover submission was not accepted."
+    $handoverSubmitBody = Get-Content -Raw -Encoding utf8 $responseBody
+    Assert-PortalTest ($headers -match "HTTP/1\.1 200" -and $headers -match "(?im)^Content-Type: application/json") "Queued tenant handover submission was not accepted as JSON. Response: $handoverSubmitBody"
+    $handoverSubmitResponse = $handoverSubmitBody | ConvertFrom-Json
+    Assert-PortalTest ($handoverSubmitResponse.ok -eq $true -and -not [string]::IsNullOrWhiteSpace($handoverSubmitResponse.handoverId)) "Queued tenant handover response did not confirm the saved handover."
     $handoverMetadata = @(Get-ChildItem -LiteralPath (Join-Path $storagePath "tenant-handovers") -Recurse -Filter "metadata.json")
     Assert-PortalTest ($handoverMetadata.Count -eq 1) "Expected one stored tenant handover."
     $handoverRecord = Get-Content -Raw -Encoding utf8 $handoverMetadata[0].FullName | ConvertFrom-Json
+    Assert-PortalTest ($handoverRecord.client_id -eq $handoverClientId) "Tenant handover did not retain the offline idempotency key."
     Assert-PortalTest ($handoverRecord.source.item_id -eq "1001") "Tenant handover did not retain the verified Monday item ID."
     Assert-PortalTest ($handoverRecord.credentials.password -eq "0501234567") "Tenant handover credentials were not stored correctly."
-    Assert-PortalTest ($handoverRecord.details.ready -eq "delivered_with_app_link") "Tenant handover delivery status was not stored correctly."
-    Assert-PortalTest ($handoverRecord.details.cloud_link -eq "https://cloud.example.com/customer/1001") "Tenant handover cloud link was not stored correctly."
+    Assert-PortalTest ($handoverRecord.details.apartment_type -eq "standard_corridor" -and $handoverRecord.details.ready -eq "ready_delivered" -and $handoverRecord.details.recipient_name -eq "Test Customer Representative") "Tenant handover apartment type, delivery status, or recipient name was not stored correctly."
+    Assert-PortalTest ($handoverRecord.details.cloud_link -eq "https://cloud.example.com/pool/001") "Tenant handover did not ignore the forged browser link and retain the reserved pool address."
+    $formCreatedAt = [DateTimeOffset]::Parse([string]$handoverRecord.details.form_created_at)
+    $israelTimeZone = [TimeZoneInfo]::FindSystemTimeZoneById("Israel Standard Time")
+    $expectedAutomaticDate = [TimeZoneInfo]::ConvertTime($formCreatedAt, $israelTimeZone).ToString("yyyy-MM-dd")
+    Assert-PortalTest ($handoverRecord.details.date -eq $expectedAutomaticDate -and $handoverRecord.details.date -ne "1900-01-01") "Tenant handover trusted a technician-supplied date instead of the immutable server form date."
+    Assert-PortalTest ($handoverRecord.details.cloud_allocation.state -eq "assigned" -and $handoverRecord.details.cloud_allocation.sheet_sync -eq "synced") "Completed handover did not record the permanent cloud allocation state."
+    $assignedLedger = Get-Content -Raw -Encoding utf8 $allocationLedgerPath | ConvertFrom-Json
+    $assignedAllocation = @($assignedLedger.allocations.PSObject.Properties.Value | Where-Object { $_.link -eq "https://cloud.example.com/pool/001" })
+    Assert-PortalTest ($assignedAllocation.Count -eq 1 -and $assignedAllocation[0].state -eq "assigned" -and $assignedAllocation[0].resident_name -eq "דייר בדיקה" -and $assignedAllocation[0].reserved_at -eq $firstOpenedAt -and $assignedAllocation[0].handover_id -eq $handoverSubmitResponse.handoverId -and $assignedAllocation[0].sheet_sync -eq "synced") "Completed cloud address did not retain the resident name and original access-opening time or was not locked permanently against reuse."
     Assert-PortalTest (
         $handoverRecord.details.switch_9_count -eq 2 `
         -and $handoverRecord.details.switch_9_units.Count -eq 2 `
@@ -347,18 +411,24 @@ try {
         -and $handoverRecord.details.switch_9_units[1].location -eq "Kitchen" `
         -and $handoverRecord.details.issues.Count -eq 2 `
         -and $handoverRecord.details.issues[0].type -eq "electrical" `
-        -and $handoverRecord.details.issues[1].type -eq "contractor" `
-        -and $handoverRecord.details.light_switch_count -eq "2" `
-        -and $handoverRecord.details.light_switch_location -eq "Living room, Bedroom" `
+        -and $handoverRecord.details.issues[1].type -eq "other" `
+        -and $handoverRecord.details.issues[1].description -eq "Crooked wall requires contractor work" `
+        -and $handoverRecord.details.component_panel_presence -eq "has_panels" `
+        -and $handoverRecord.details.light_switch_count -eq 6 `
+        -and $handoverRecord.details.light_switch_type_1_count -eq 2 `
+        -and $handoverRecord.details.light_switch_type_2_count -eq 3 `
+        -and $handoverRecord.details.light_switch_type_3_count -eq 1 `
         -and $handoverRecord.details.shutter_switch_count -eq "1" `
-        -and $handoverRecord.details.shutter_switch_location -eq "Balcony" `
+        -and $handoverRecord.details.component_switch_status -eq "operational_connected" `
+        -and $handoverRecord.details.component_switch_status_other -eq "" `
         -and $handoverRecord.details.captive_shutter_24v -eq "installed_activated" `
         -and $handoverRecord.details.hvac_connection -eq "dry_contact_panel_9" `
-        -and $handoverRecord.details.boiler -eq "switcher"
+        -and $handoverRecord.details.boiler -eq "ava_dud"
     ) "Structured handover switch and HVAC details were not stored correctly."
     Assert-PortalTest (
-        @($handoverRecord.photos.PSObject.Properties).Count -eq 5 `
+        @($handoverRecord.photos.PSObject.Properties).Count -eq 6 `
         -and $null -ne $handoverRecord.photos.controller `
+        -and $null -ne $handoverRecord.photos.signature `
         -and $null -ne $handoverRecord.photos.switch_1 `
         -and $null -ne $handoverRecord.photos.switch_2 `
         -and $null -ne $handoverRecord.photos.issue_1 `
@@ -366,6 +436,20 @@ try {
     ) "Tenant handover did not preserve the controller, switch 9, and apartment issue photos."
     Assert-PortalTest ($handoverRecord.notifications.resident.status -eq "sent") "Resident handover email status was not recorded."
     Assert-PortalTest ($handoverRecord.notifications.internal.failed.Count -eq 0) "Internal handover email status was not recorded as successful."
+    $duplicateHeaders = Invoke-PortalCurl `
+        "-D", "-", `
+        "-o", $responseBody, `
+        "-b", $employeeCookies, `
+        "-H", "Accept: application/json", `
+        "-H", "X-Ifeel-Offline-Queue: 1", `
+        "-F", "csrf=$handoverCsrf", `
+        "-F", "action=submit_tenant_handover", `
+        "-F", "handover_client_id=$handoverClientId", `
+        "$baseUrl/staff-expenses/"
+    $duplicateResponse = Get-Content -Raw -Encoding utf8 $responseBody | ConvertFrom-Json
+    $handoverMetadataAfterRetry = @(Get-ChildItem -LiteralPath (Join-Path $storagePath "tenant-handovers") -Recurse -Filter "metadata.json")
+    Assert-PortalTest ($duplicateHeaders -match "HTTP/1\.1 200" -and $duplicateResponse.duplicate -eq $true) "Offline retry was not recognized as an idempotent duplicate."
+    Assert-PortalTest ($handoverMetadataAfterRetry.Count -eq 1) "Offline retry created a duplicate tenant handover."
     $handoverDownloadStatus = Invoke-PortalCurl `
         "-o", $responseBody, `
         "-w", "%{http_code}", `
@@ -384,6 +468,12 @@ try {
         "-b", $employeeCookies, `
         "$baseUrl/staff-expenses/?action=handover_download&handover_id=$($handoverRecord.id)&file=issue_2"
     Assert-PortalTest ($handoverIssueDownloadStatus -eq "200") "Authenticated employee could not open the second apartment issue photo."
+    $handoverSignatureDownloadStatus = Invoke-PortalCurl `
+        "-o", $responseBody, `
+        "-w", "%{http_code}", `
+        "-b", $employeeCookies, `
+        "$baseUrl/staff-expenses/?action=handover_download&handover_id=$($handoverRecord.id)&file=signature"
+    Assert-PortalTest ($handoverSignatureDownloadStatus -eq "200") "Authenticated employee could not open the recipient signature."
 
     $csrf = Get-CsrfFromHtml $html
 
