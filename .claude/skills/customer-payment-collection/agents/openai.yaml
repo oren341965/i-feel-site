@@ -1,0 +1,6 @@
+interface:
+  display_name: "חיוב לקוחות לתשלום"
+  short_description: "מעקב מאובטח אחר חשבונות וגביית לקוחות"
+  default_prompt: "Use $customer-payment-collection to review pending customer payment documents and prepare evidence-backed reminder drafts."
+policy:
+  allow_implicit_invocation: true
