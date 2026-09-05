@@ -46,6 +46,38 @@
     "integratedSchedulerAllowed": false,
     "schedulersActivated": 0
   },
+  "professionalContentCycle": {
+    "standingAuthorizationRecordedAt": "2026-09-04",
+    "authorizedBy": "oren",
+    "activationState": "AWAITING_OREN_START",
+    "explicitStartRequired": true,
+    "owningSkill": "maya-email-maintenance",
+    "reference": "references/professional-content-cycle.md",
+    "managementHostSlug": "maya-front-office",
+    "managementCapabilitySlug": "maya-email-maintenance",
+    "managementMode": "professional_content_cycle",
+    "mondayContactBoardId": "3040781819",
+    "mondayTaskItemId": "12975315819",
+    "dailyTargetMin": 40,
+    "dailyTargetMax": 80,
+    "cooldownDays": 14,
+    "approvedImageRequired": true,
+    "paidCampaignChangesAllowed": false,
+    "mondayBoundedWritesAllowedAfterActivation": true,
+    "externalProfessionalEmailAllowedAfterActivation": true,
+    "organicPublishingAllowedAfterActivation": true,
+    "initialContent": {
+      "contentId": "iscar-bms-2026-09-04",
+      "url": "https://i-feel.co.il/structure-control/projects/iscar/",
+      "image": "https://i-feel.co.il/structure-control/projects/iscar/iscar-building-exterior.jpeg",
+      "segments": [
+        "electrical-consultants",
+        "low-voltage-consultants",
+        "electrical-contractors",
+        "panel-manufacturers"
+      ]
+    }
+  },
   "taskQueue": {
     "protocol": "MAYA_SALES_TASK_V2",
     "transport": "VAULT_BUS",
