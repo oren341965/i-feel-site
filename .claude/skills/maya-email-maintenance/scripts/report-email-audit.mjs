@@ -12,10 +12,11 @@ const REQUEST_TIMEOUT_MS = 60_000;
 const FIELDS = Object.freeze([
   'mailboxRole', 'identityVerified', 'sourceMode', 'runStatus', 'analysisComplete', 'windowStart', 'windowEnd',
   'inboxTotal', 'inboxUnread', 'recent24hCount', 'draftTotal', 'starredTotal', 'starredUnread', 'importantTotal',
-  'importantUnread', 'spamTotal', 'trashTotal', 'messagesScanned', 'routeCounts', 'paginationComplete',
-  'contentInspected', 'checkpointStatus', 'blockerCodes', 'itemsChanged', 'itemsLabeled', 'itemsMarkedRead',
-  'itemsArchived', 'draftsPrepared', 'messagesSent', 'attachmentsDownloaded', 'mondayWrites', 'whatsAppWrites',
-  'calendarWrites', 'contactsWrites', 'vaultWrites', 'busWrites', 'schedulersChanged', 'sourceUpdatedAt', 'capturedAt',
+  'importantUnread', 'spamTotal', 'trashTotal', 'messagesScanned', 'routeCounts', 'openLoopCount', 'closedLoopCount',
+  'readyUnsentDraftCount', 'openOperationalLoopCount', 'paginationComplete', 'contentInspected', 'checkpointStatus',
+  'blockerCodes', 'itemsChanged', 'itemsLabeled', 'itemsMarkedRead', 'itemsArchived', 'draftsPrepared', 'messagesSent',
+  'attachmentsDownloaded', 'mondayWrites', 'whatsAppWrites', 'calendarWrites', 'contactsWrites', 'vaultWrites',
+  'busWrites', 'schedulersChanged', 'sourceUpdatedAt', 'capturedAt',
 ]);
 const ROUTES = Object.freeze(['customer', 'lead', 'plans', 'service', 'supplierFinance', 'bounce', 'clutter', 'unknown']);
 const PROTECTED = Object.freeze([
@@ -23,6 +24,7 @@ const PROTECTED = Object.freeze([
   'attachmentsDownloaded', 'mondayWrites', 'whatsAppWrites', 'calendarWrites', 'contactsWrites', 'vaultWrites',
   'busWrites', 'schedulersChanged',
 ]);
+const LOOP_COUNTERS = Object.freeze(['openLoopCount', 'closedLoopCount', 'readyUnsentDraftCount', 'openOperationalLoopCount']);
 
 function exactObject(value, label, fields) {
   if (!value || typeof value !== 'object' || Array.isArray(value)) throw new Error(`${label} must be an object`);
@@ -87,14 +89,20 @@ export function buildEmailEnvelope(input, auditKey, runKey) {
     'inboxTotal', 'inboxUnread', 'recent24hCount', 'draftTotal', 'starredTotal', 'starredUnread', 'importantTotal',
     'importantUnread', 'spamTotal', 'trashTotal', 'messagesScanned', ...PROTECTED,
   ].map((field) => [field, integer(audit[field], field)]));
+  const loopCounts = Object.fromEntries(LOOP_COUNTERS.map((field) => [field, integer(audit[field], field)]));
   if (counters.inboxUnread > counters.inboxTotal || counters.starredUnread > counters.starredTotal
     || counters.importantUnread > counters.importantTotal || counters.messagesScanned > counters.inboxTotal
     || counters.messagesScanned > counters.recent24hCount) throw new Error('Email counters do not reconcile');
+  if (loopCounts.readyUnsentDraftCount > counters.draftTotal
+    || loopCounts.readyUnsentDraftCount > loopCounts.openLoopCount
+    || loopCounts.openOperationalLoopCount > loopCounts.openLoopCount) throw new Error('Email open-loop counters do not reconcile');
   if (PROTECTED.some((field) => counters[field] !== 0)) throw new Error('Email reporter observed a protected action');
   const routeInput = exactObject(audit.routeCounts, 'Email routeCounts', ROUTES);
   const routeCounts = Object.fromEntries(ROUTES.map((route) => [route, integer(routeInput[route], `routeCounts.${route}`)]));
   if (Object.values(routeCounts).reduce((sum, count) => sum + count, 0) !== counters.messagesScanned) throw new Error('Email routes do not reconcile');
-  if (counters.messagesScanned > 0 && !contentInspected) throw new Error('Classified email evidence was not inspected');
+  if ((counters.messagesScanned > 0 || loopCounts.openLoopCount > 0 || loopCounts.closedLoopCount > 0) && !contentInspected) {
+    throw new Error('Classified email evidence was not inspected');
+  }
   if (!['READ_ONLY_WINDOW', 'NO_DELTA', 'CHECKPOINT_UNAVAILABLE', 'WRONG_MAILBOX'].includes(audit.checkpointStatus)) {
     throw new Error('Email checkpointStatus is invalid');
   }
