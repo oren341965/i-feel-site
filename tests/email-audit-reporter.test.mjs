@@ -9,6 +9,7 @@ function fixture() {
     inboxTotal: 100, inboxUnread: 3, recent24hCount: 8, draftTotal: 2, starredTotal: 5, starredUnread: 1,
     importantTotal: 20, importantUnread: 2, spamTotal: 1, trashTotal: 4, messagesScanned: 8,
     routeCounts: { customer: 2, lead: 1, plans: 1, service: 1, supplierFinance: 1, bounce: 1, clutter: 1, unknown: 0 },
+    openLoopCount: 4, closedLoopCount: 6, readyUnsentDraftCount: 1, openOperationalLoopCount: 1,
     paginationComplete: true, contentInspected: true, checkpointStatus: 'READ_ONLY_WINDOW', blockerCodes: [],
     itemsChanged: 0, itemsLabeled: 0, itemsMarkedRead: 0, itemsArchived: 0, draftsPrepared: 0, messagesSent: 0,
     attachmentsDownloaded: 0, mondayWrites: 0, whatsAppWrites: 0, calendarWrites: 0, contactsWrites: 0,
@@ -22,6 +23,8 @@ test('email reporter emits only reconciled aggregate evidence', () => {
   assert.equal(envelope.messagesScanned, 8);
   assert.equal(envelope.routeCounts.lead, 1);
   assert.equal(envelope.messagesSent, 0);
+  assert.equal('openLoopCount' in envelope, false);
+  assert.equal('readyUnsentDraftCount' in envelope, false);
   assert.equal(JSON.stringify(envelope).includes('@'), false);
 });
 
@@ -36,10 +39,19 @@ test('email reporter rejects message payloads, wrong identity and protected acti
   assert.throws(() => buildEmailEnvelope(mutation, 'email-audit-20260902-004', 'maya-email-20260902-004'), /protected action/);
 });
 
+test('email reporter rejects inconsistent open-loop counters', () => {
+  const tooManyDrafts = fixture(); tooManyDrafts.readyUnsentDraftCount = 3;
+  assert.throws(() => buildEmailEnvelope(tooManyDrafts, 'email-audit-20260902-006', 'maya-email-20260902-006'), /open-loop counters/);
+
+  const operationalOutsideOpen = fixture(); operationalOutsideOpen.openOperationalLoopCount = 5;
+  assert.throws(() => buildEmailEnvelope(operationalOutsideOpen, 'email-audit-20260902-007', 'maya-email-20260902-007'), /open-loop counters/);
+});
+
 test('email reporter accepts an explicit content-free wrong-mailbox blocker', () => {
   const blocked = fixture(); blocked.identityVerified = false; blocked.runStatus = 'BLOCKED'; blocked.analysisComplete = false;
   blocked.paginationComplete = false; blocked.contentInspected = false; blocked.messagesScanned = 0;
   blocked.routeCounts = { customer: 0, lead: 0, plans: 0, service: 0, supplierFinance: 0, bounce: 0, clutter: 0, unknown: 0 };
+  blocked.openLoopCount = 0; blocked.closedLoopCount = 0; blocked.readyUnsentDraftCount = 0; blocked.openOperationalLoopCount = 0;
   blocked.checkpointStatus = 'WRONG_MAILBOX'; blocked.blockerCodes = ['WRONG_MAILBOX'];
   const envelope = buildEmailEnvelope(blocked, 'email-audit-20260902-005', 'maya-email-20260902-005');
   assert.equal(envelope.runStatus, 'BLOCKED');
