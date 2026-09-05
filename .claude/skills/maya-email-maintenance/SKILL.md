@@ -14,9 +14,20 @@ Keep Maya's work inbox small, classified and actionable without losing customer 
 - At maturity 0, every scheduled invocation is `REPORT_ONLY` and the staged scheduler prompt is stricter than the interactive workflow below. It may read and aggregate only: no Gmail label/read/archive mutation, no draft, no send, no attachment download, and no Monday, Calendar, WhatsApp, Vault, Bus, contact, configuration, or connection-state write. The pre-existing Windows Task and the WhatsApp/integrated schedulers must remain disabled.
 - Continue from the last successful checkpoint with a small overlap, deduplicate by Gmail message ID, and do not backfill more than 24 hours in one unattended pass. A manual run may process a larger range when the user requests it.
 
+## Open-loop priority model
+
+Prioritize work by whether the operational loop is open, not by who sent the message. Sender, source and route remain useful metadata, but they do not determine urgency or completion.
+
+- `OPEN_LOOP`: a new inbound customer, lead, proposal, project, service or other business request that still requires a verified response or action. Keep it active.
+- `CLOSED_LOOP`: the required action is verified complete, resolved or superseded. Render it `⚪` in a management summary.
+- Routine Netlify notifications without a failed GitHub Action or another unresolved deployment problem are informational `CLOSED_LOOP` items and render `⚪`.
+- A failed GitHub Actions run without a later verified recovery is `OPEN_OPERATIONAL_LOOP`, renders `🟡`, and remains open until a successful later run or explicit resolution is verified.
+- `READY_UNSENT_DRAFT`: a ready customer or sales Gmail draft that has not been sent and has no newer reply or closing evidence. Render it `🟡` and treat it as the highest-priority stuck email follow-up exception for the run. This priority does not grant send authority.
+- Scan Gmail Drafts on every run, not only when a draft is new or changed. For every potentially actionable draft, inspect enough current thread state to determine whether it is still needed. A newer reply, completed action or verified closed loop makes the draft stale or superseded and therefore not actionable.
+
 ## Three-hour pass
 
-1. Scan `INBOX` from the checkpoint through the current time. Page through all matching results. Read the full thread when its context affects classification or the proposed response.
+1. Scan `INBOX` from the checkpoint through the current time and scan the current `DRAFT` inventory on every run regardless of checkpoint. Page through all matching inbox results and all drafts needed to establish current open-loop state. Read the full thread when its context affects classification, loop state or the proposed response.
 2. Classify each new message into one primary route:
    - customer, lead, proposal or sales follow-up;
    - plans or project files, especially DWG or PDF attachments;
@@ -66,7 +77,7 @@ For `test_task=true`, use `execution_origin=ISOLATED_TEST`, create ACK and Resul
 
 ## Unattended-run controls
 
-- Exit quickly with `COMPLETED_NO_ACTION` when the checkpoint window has no delta.
+- Exit quickly with `COMPLETED_NO_ACTION` when the checkpoint window has no delta and the current draft scan contains no open draft exception.
 - Use one run lock and a bounded runtime. A timeout is a normal blocker result, not permission to continue indefinitely.
 - Never wait for human approval inside an unattended run. Put the approval in the approved local queue and finish with an explicit status.
 - Release the run lock in `finally` for every outcome, including timeout, connector failure, `WRONG_RECIPIENT` and `NEEDS_OREN`.
@@ -102,6 +113,7 @@ Return a concise Hebrew summary with:
 
 - mailbox identity and time window;
 - messages scanned, labeled, marked read and archived;
+- open loops, closed loops, ready-unsent draft count and unresolved operational-loop count;
 - drafts prepared, plans detected and bounces detected;
 - items left in the inbox for Maya or Oren;
 - blockers, including missing Gmail access, an unavailable plans/project handoff, an unavailable attachment or a wrong mailbox;
@@ -115,6 +127,7 @@ For a `REPORT_ONLY` run, write no Gmail or cross-system state. Build one local J
 
 - `mailboxRole=maya_front_office`, identity/result/window/checkpoint status and bounded blocker codes;
 - Gmail system totals and a complete primary-route count whose sum equals `messagesScanned`;
+- aggregate `openLoopCount`, `closedLoopCount`, `readyUnsentDraftCount` and `openOperationalLoopCount`;
 - `paginationComplete`, `contentInspected`, `sourceUpdatedAt` and `capturedAt`;
 - all action counters (`itemsChanged`, labels, read/archive, drafts, sends, downloads, Monday/WhatsApp/Calendar/contacts/Vault/Bus writes and scheduler changes) fixed to zero.
 
