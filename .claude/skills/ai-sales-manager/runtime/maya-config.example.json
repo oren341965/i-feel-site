@@ -48,20 +48,31 @@
   },
   "professionalContentCycle": {
     "standingAuthorizationRecordedAt": "2026-09-04",
+    "directStartRecordedAt": "2026-09-06",
     "authorizedBy": "oren",
-    "activationState": "AWAITING_OREN_START",
-    "explicitStartRequired": true,
+    "activationState": "AUTHORIZED_ACTIVE_PENDING_RUNTIME_GATES",
+    "explicitStartRequired": false,
     "owningSkill": "maya-email-maintenance",
     "reference": "references/professional-content-cycle.md",
+    "runtimeReference": "references/professional-content-runtime.md",
     "managementHostSlug": "maya-front-office",
     "managementCapabilitySlug": "maya-email-maintenance",
     "managementMode": "professional_content_cycle",
+    "senderEmail": "myhome@i-feel.co.il",
+    "forbiddenSenderEmails": [
+      "oren@i-feel.co.il"
+    ],
+    "gmailSendCapabilityRequired": true,
+    "gmailReadOnlyInsufficient": true,
+    "whatsappTelemetryRequiredForProfessionalEmail": false,
     "mondayContactBoardId": "3040781819",
-    "mondayTaskItemId": "12975315819",
+    "mondayTaskItemId": "12984367316",
     "dailyTargetMin": 40,
     "dailyTargetMax": 80,
     "cooldownDays": 14,
     "approvedImageRequired": true,
+    "ifeelTipRequired": true,
+    "preferredSourcesCtaRequired": true,
     "paidCampaignChangesAllowed": false,
     "mondayBoundedWritesAllowedAfterActivation": true,
     "externalProfessionalEmailAllowedAfterActivation": true,
@@ -97,7 +108,7 @@
     "whatsappTelemetryVerified": false,
     "emailSnapshotFresh": false,
     "gmailProfileRole": "NOT_MAYA",
-    "proactiveMessagingApproval": "PENDING"
+    "proactiveMessagingApproval": "AUTHORIZED_FOR_PROFESSIONAL_CONTENT_ONLY"
   },
   "connections": {
     "gmail": {
