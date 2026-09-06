@@ -144,7 +144,7 @@
         "next_action": { "type": ["string", "null"], "maxLength": 1000 },
         "next_treatment_date": { "type": ["string", "null"] },
         "event_at": { "type": "string", "format": "date-time" },
-        "monday_item_source": { "const": "MONDAY_LIVE" },
+        "monday_item_source": { "enum": ["MONDAY_LIVE", "ISOLATED_TEST"] },
         "monday_item_verified_at": { "type": "string", "format": "date-time" },
         "test_task": { "type": "boolean" },
         "execution_origin": { "enum": ["MANAGER", "MAYA_WORKSTATION", "ISOLATED_TEST"] },
