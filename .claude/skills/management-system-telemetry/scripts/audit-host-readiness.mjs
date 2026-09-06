@@ -202,7 +202,8 @@ if (!sourceSync.ok) blockingReasons.push('SOURCE_REGISTRATION_GAPS');
 if (!metadata.present) warnings.push('INSTALLATION_METADATA_MISSING');
 if (metadata.present && metadata.repository !== REPOSITORY) blockingReasons.push('INSTALLATION_REPOSITORY_MISMATCH');
 if (metadata.present && metadata.commit && metadata.commit !== headRevision) warnings.push('INSTALLED_AGENT_CONFIG_BEHIND_WORKTREE');
-if (sourceSync.summary?.staleKnowledge?.length) warnings.push('VAULT_KNOWLEDGE_VERSION_BEHIND_GIT');
+if (sourceSync.summary?.staleKnowledge?.length) warnings.push('VAULT_KNOWLEDGE_SOURCE_HASH_BEHIND_GIT');
+if (sourceSync.summary?.staleInstalled?.length) warnings.push('INSTALLED_SKILL_SOURCE_HASH_BEHIND_GIT');
 if (!credentials.hostSlugPresent) warnings.push('MANAGEMENT_HOST_SLUG_NOT_CONFIGURED');
 if (wrapperProbe.requested && !wrapperProbe.valid) warnings.push('SERVICE_IDENTITY_CREDENTIAL_WRAPPER_INVALID');
 if (expectedHostSlug && !hostSlugMatchesExpected) blockingReasons.push('REGISTERED_HOST_SLUG_MISMATCH');
@@ -246,6 +247,7 @@ const output = {
     installedSkills: sourceSync.summary?.installed ?? null,
     missingKnowledge: sourceSync.summary?.missingKnowledge ?? [],
     missingInstalled: sourceSync.summary?.missingInstalled ?? [],
+    staleInstalled: sourceSync.summary?.staleInstalled ?? [],
     invalidDeclaredNames: sourceSync.summary?.invalidDeclaredNames ?? [],
     staleKnowledge: sourceSync.summary?.staleKnowledge ?? [],
   },
