@@ -34,7 +34,7 @@ Never promote a group name or free-text phrase to official completion evidence. 
 
 ## Public Instagram and Facebook resolution
 
-The AI Marketing Manager supplies the reconciled Monday candidate roster. Maya performs the platform lookup through the verified I Feel sessions and returns evidence; finding an account does not make it contactable.
+`ai-sales-manager` supplies the reconciled Monday candidate roster and project evidence; `ai-marketing-manager` supplies the approved watchlist and relationship objective. Maya performs the platform lookup through the verified I Feel sessions and returns evidence; finding an account does not make it contactable.
 
 Search only for a public professional Instagram account and a public Facebook business/professional page. Do not inspect, map or contact a private personal profile. Use the exact professional name, firm name and official website/domain from the verified Monday record when available.
 

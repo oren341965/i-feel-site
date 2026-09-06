@@ -6,10 +6,11 @@ test('Maya social relations is Monday-sourced, monthly, approval-gated, and non-
   const skill = await readFile(new URL('../.claude/skills/maya-instagram-relations/SKILL.md', import.meta.url), 'utf8');
   const discovery = await readFile(new URL('../.claude/skills/maya-instagram-relations/references/monday-social-discovery.md', import.meta.url), 'utf8');
   const scheduledTask = await readFile(new URL('../agent-config/maya-scheduled-tasks/maya-instagram-relations/SKILL.md', import.meta.url), 'utf8');
-  const parent = await readFile(new URL('../.claude/skills/ai-sales-manager/SKILL.md', import.meta.url), 'utf8');
-  const governance = await readFile(new URL('../.claude/skills/ai-sales-manager/references/instagram-relations-program.md', import.meta.url), 'utf8');
+  const parent = await readFile(new URL('../.claude/skills/ai-marketing-manager/SKILL.md', import.meta.url), 'utf8');
+  const governance = await readFile(new URL('../.claude/skills/ai-marketing-manager/references/instagram-relations-program.md', import.meta.url), 'utf8');
 
-  assert.match(skill, /ai-sales-manager.*AI Marketing Manager responsibility/);
+  assert.match(skill, /`ai-marketing-manager` is the parent/);
+  assert.match(skill, /`ai-sales-manager` supplies the reconciled Monday candidate roster/);
   assert.match(skill, /does not set marketing strategy, expand the audience, change the skill or approve her own outreach/);
   assert.match(skill, /at most once per Israeli calendar month/);
   assert.match(skill, /approved watchlist/);
@@ -35,7 +36,7 @@ test('Maya social relations is Monday-sourced, monthly, approval-gated, and non-
   assert.match(discovery, /Do not write social URLs, relationship states or outreach results back to Monday without a separate exact approval/);
 
   assert.match(scheduledTask, /first Sunday of each month at 10:00/);
-  assert.match(scheduledTask, /PROGRAM_OWNER=ai-sales-manager/);
+  assert.match(scheduledTask, /PROGRAM_OWNER=ai-marketing-manager/);
   assert.match(scheduledTask, /Do not send a direct message/);
   assert.match(scheduledTask, /Do not browse suggested accounts or add recipients/);
   assert.match(scheduledTask, /across both platforms/);
@@ -44,9 +45,9 @@ test('Maya social relations is Monday-sourced, monthly, approval-gated, and non-
   assert.match(scheduledTask, /NEXT_ELIGIBLE_MONTH/);
 
   assert.match(parent, /references\/instagram-relations-program\.md/);
-  assert.match(parent, /owns the program as I Feel's AI Marketing Manager/);
-  assert.match(governance, /Program idea and backlog.*ai-sales-manager/s);
-  assert.match(governance, /Monday candidate roster and watchlist policy.*ai-sales-manager/s);
+  assert.match(parent, /Govern the professional Instagram\/Facebook relationship program/);
+  assert.match(governance, /Program idea, backlog, voice and contact policy.*ai-marketing-manager/s);
+  assert.match(governance, /Monday candidate roster and project evidence.*ai-sales-manager/s);
   assert.match(governance, /Maya through `maya-instagram-relations`/);
   assert.match(governance, /repository work branch and Pull Request/);
   assert.match(governance, /cannot authorize its own external action/);

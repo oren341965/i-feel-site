@@ -1,16 +1,16 @@
-# AI Marketing Manager ownership of professional social relations
+# Compatibility bridge for professional social relations
 
-This contract governs `maya-instagram-relations` across Instagram and Facebook. The technical parent remains `ai-sales-manager`, which fulfills I Feel's AI Marketing Manager responsibility for this program. Do not create a parallel manager, a second Maya worker or a separate outreach queue.
+The canonical ownership contract moved to `../../ai-marketing-manager/references/instagram-relations-program.md`. `ai-sales-manager` now supplies the reconciled Monday roster, verified project evidence and sales-capacity context; it no longer owns marketing strategy or watchlist policy. Existing callers should route program decisions to `ai-marketing-manager` and keep Maya as the bounded worker. The approval and privacy boundaries below remain unchanged during migration.
 
 ## Ownership map
 
 | Responsibility | Owner | Boundary |
 | --- | --- | --- |
-| Program idea and backlog | `ai-sales-manager` as AI Marketing Manager | May initiate relationship-nurturing ideas and propose improvements; cannot authorize its own external action. |
-| Monday candidate roster and watchlist policy | `ai-sales-manager` | Reconciles existing architects/designers from the approved Monday boards, proposes exact verified social profiles and governs watchlist versions. |
-| Voice, selection criteria and contact limits | `ai-sales-manager` | Maintains the canonical policy through a repository work branch and Pull Request, never by editing Maya's installed copy. |
+| Program idea and backlog | `ai-marketing-manager` | May initiate relationship-nurturing ideas and propose improvements; cannot authorize its own external action. |
+| Monday candidate roster and project evidence | `ai-sales-manager` | Reconciles existing architects/designers from the approved Monday boards and returns bounded evidence. |
+| Watchlist, voice, selection criteria and contact limits | `ai-marketing-manager` | Maintains the canonical policy through a repository work branch and Pull Request, never by editing Maya's installed copy. |
 | Instagram/Facebook profile resolution and monthly evidence | Maya through `maya-instagram-relations` | Uses the manager's Monday roster, verifies public professional profiles in Maya's sessions, selects evidence and prepares exact drafts. |
-| Quality review and program learning | `ai-sales-manager` | Reviews aggregate outcomes and sampled approved wording, detects generic or sales-heavy patterns and proposes bounded changes. |
+| Quality review and program learning | `ai-marketing-manager` | Reviews aggregate outcomes and sampled approved wording, detects generic or sales-heavy patterns and proposes bounded changes. |
 | External send | Maya after explicit approval | Requires the exact verified handle, source item and final message text; the manager cannot convert a recommendation into approval. |
 | Business exceptions and final authority | Oren | Approves protected actions, new outreach scope, merge, installation and scheduler activation. |
 

@@ -17,12 +17,16 @@
 - Never becomes a second sales manager, and the legacy `maya-agent` string remains a Bus identity only.
 - Reads assigned sales tasks from the existing manager-to-Maya Bus, returns one correlated ACK before work, and returns structured Results through Maya-to-manager. A business exception becomes `NEEDS_OREN_DECISION`; a missing permission, identity, connection, customer match, or evidence becomes `BLOCKED`.
 
-## AI Sales and Marketing Manager (`ai-sales-manager`)
+## AI Sales Manager (`ai-sales-manager`)
 
-- Remains the single parent orchestrator; no parallel `ai-marketing-manager` identity is created for this program.
-- Owns the Monday-sourced Instagram/Facebook professional-relations idea, backlog, candidate-roster reconciliation, relationship objective, audience and watchlist governance, message policy, monthly quality review and canonical Maya-skill lifecycle.
-- May propose a new watchlist version or a skill-policy change through the approved review path. It cannot silently edit Maya's installed skill, activate the monthly scheduler, access Maya's session, approve its own outreach or send a message.
-- Reviews only the bounded evidence permitted by the program contract. Exact recipient/message approval remains with Oren and execution remains with the verified Maya worker.
+- Owns the deterministic sales audit, Monday candidate-roster reconciliation, verified project evidence, attribution and capacity context.
+- Supplies bounded evidence to `ai-marketing-manager`; it does not own marketing strategy, watchlist policy, content publishing or outreach approval.
+
+## AI Marketing Manager (`ai-marketing-manager`)
+
+- Owns demand-generation strategy, the professional-relations backlog, relationship objective, watchlist governance, message policy, monthly quality review and the canonical marketing-worker lifecycle.
+- May propose a new watchlist version or skill-policy change through the approved review path. It cannot silently edit Maya's installed skill, activate a scheduler, access Maya's session, approve its own outreach or send a message.
+- Reviews only the bounded evidence permitted by the marketing program contract. Exact recipient/message approval remains with Oren and execution remains with the verified Maya worker.
 
 ## Claude
 
