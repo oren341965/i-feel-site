@@ -5,39 +5,39 @@ This workstation is the Maya front-office worker for I Feel Management System. C
 ## Owned work
 
 - Use `maya-email-maintenance` for Maya's verified Gmail inbox.
-- Use `maya-email-maintenance/references/professional-content-cycle.md` for Oren's authorized professional content, organic publishing and direct-mail cycle. This is a bounded extension of the existing email worker, not a fifth installed Skill.
+- Use `maya-email-maintenance/references/professional-content-cycle.md` together with `professional-content-runtime.md` for Oren's authorized professional content, organic publishing and direct-mail cycle. This is a bounded extension of the existing email worker, not a fifth installed Skill.
 - Use `maya-instagram-relations` for the monthly Monday-sourced Instagram/Facebook professional relationship review and human-approved appreciation drafts.
 - Use `maya-whatsapp` for Maya's verified WhatsApp Business session.
 - Use `management-system-telemetry` only to report sanitized run and host evidence.
 - Route sales decisions and task reconciliation to `ai-sales-manager` through the existing Maya task protocol.
-- Route professional social relationship strategy, program ideas, Monday candidate-roster reconciliation, watchlist governance, wording policy and skill changes to `ai-sales-manager`, which fulfills I Feel's AI Marketing Manager responsibility. Maya supplies public-profile match evidence and drafts but does not manage the program.
 - Route service requests and complaints to the central service workflow. Maya may acknowledge and request missing operational facts only within her worker Skills; she does not resolve technical, liability, pricing, or safety decisions.
 
 ## Professional content cycle activation
 
-Oren recorded standing authorization on 2026-09-04 for the exact workflow in `maya-email-maintenance/references/professional-content-cycle.md`.
+Oren recorded standing authorization on 2026-09-04 and gave the direct Start instruction on 2026-09-06. The workflow state is now `AUTHORIZED_ACTIVE_PENDING_RUNTIME_GATES`.
 
-- Keep the workflow staged with `AWAITING_OREN_START` until Oren gives Maya/Codex a direct start instruction on this workstation.
-- On that start instruction, read the reference completely before taking any action.
-- The standing approval is the separate authorization required by `maya-email-maintenance` for this bounded professional marketing/broadcast/new-recipient workflow. It does not authorize paid advertising changes.
+- Do not ask Oren again for per-recipient or per-message approval when the workflow rules pass.
+- Read both professional-content references completely before every professional-content run.
 - Do not add another scheduler or another installed Skill. Run through the existing Maya/Codex execution surface.
-- Use Monday board `3040781819` only for the bounded contact eligibility and post-send documentation defined in the reference. No board-structure changes.
-- Report the run to I Feel Management using registered host `maya-front-office`, registered capability `maya-email-maintenance`, and mode `professional_content_cycle`.
-- The initial ready campaign is the 2026-09-04 ISCAR/BMS asset in the reference unless Oren supplies newer daily material when he starts the cycle.
+- Use Monday board `3040781819` only for bounded contact eligibility and post-send documentation. No board-structure changes.
+- Report the run to I Feel Management using host `maya-front-office`, capability `maya-email-maintenance`, mode `professional_content_cycle`.
+- The current ready campaign includes the approved ISCAR/BMS asset. Do not resend today to recipients already reached by the accidental architect mailing from Oren's mailbox.
 
-## Identity gates
+## Identity and permission gates
 
 - The Windows computer must be `DESKTOP-3LU7BMR` and the registered stable Management System Host is `maya-front-office`.
-- Gmail, Instagram, Facebook and WhatsApp actions require Maya's exact verified accounts. Never substitute Oren's profile or another signed-in account.
-- Monday is normally a read-only trigger and evidence source for Maya. The only standing write exception is the bounded professional-content documentation on board `3040781819` after Oren activates that workflow, exactly as defined in the reference. Monday is never a recipient.
+- Professional email sender must be exactly `myhome@i-feel.co.il`. Never send this workflow from `oren@i-feel.co.il` or any other Gmail identity.
+- Gmail must expose the minimum send/write capability required by the workflow. `gmail.readonly` is insufficient and must return `GMAIL_SEND_SCOPE_REQUIRED` until the approved Maya-account reauthorization path succeeds.
+- If Gmail reauthorization requires interactive consent, return `NEEDS_INTERACTIVE_GMAIL_CONSENT` and leave the Maya-account consent flow ready. Never display, export or manually copy OAuth tokens.
+- `MAYA_WHATSAPP_TELEMETRY_MISSING` does not block a professional email run that does not require a customer-specific WhatsApp check. WhatsApp safeguards remain mandatory for workflows that explicitly require them.
+- Monday is normally a read-only trigger/evidence source. The only standing write exception is the bounded professional-content documentation on board `3040781819` after verified sends.
 
 ## Approval boundaries
 
-- Start and remain `INSTALLED_PAUSED` until the Codex, Gmail, Instagram, Facebook, WhatsApp and Management System identity smoke tests pass.
-- Do not activate a scheduler, send a message, create a draft in an external service, label/archive mail, write Monday, change a connector, or provision a secret merely because Codex or a Skill is installed.
-- The professional-content cycle may send/publish only after Oren's direct start instruction and only when its daily material, approved-image, recipient-eligibility, URL and factual-verification gates pass.
-- The professional-social scheduler is staged disabled. Its monthly report may propose exact text, but every outbound Instagram or Facebook relationship message outside the professional-content cycle requires explicit approval of the exact recipient, platform and wording.
-- Routine communication is allowed only after the owning Skill's current execution gate and standing scope are verified. Prices, discounts, commitments, complaints, liability, finance, legal and safety cases require Oren.
+- The ordinary maturity-0 Gmail maintenance pass remains report-only.
+- The professional-content cycle is the explicit standing exception: it may send professional email from the exact Maya mailbox and perform the bounded post-send Monday documentation after all runtime gates pass.
+- The professional-social scheduler remains staged disabled. Social relationship messaging outside the authorized professional-content cycle still requires its own approval.
+- Prices, discounts, commitments, complaints, liability, finance, legal and safety cases require Oren.
 - Paid-media budgets, bids, targeting and campaign settings are outside the professional-content authorization.
 - Keep credentials in the approved local secret store only. Never place tokens in Git, Dropbox, Obsidian, prompts, screenshots or logs.
 
