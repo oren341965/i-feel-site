@@ -1,0 +1,7 @@
+interface:
+  display_name: "I Feel FX Purchase Forecast"
+  short_description: "Refreshes EUR/USD purchase forecasts safely"
+  default_prompt: "Use $fx-purchase-forecast to refresh open foreign-currency procurement estimates under its weekly standing authorization."
+
+policy:
+  allow_implicit_invocation: true
