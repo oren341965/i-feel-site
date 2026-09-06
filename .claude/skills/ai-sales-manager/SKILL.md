@@ -21,7 +21,7 @@ description: Orchestrate I Feel's maturity-0 sales and marketing system and dete
 - For the single-command Maya handoff through the shared Vault, read [references/maya-commissioning.md](references/maya-commissioning.md). Installation is role-scoped and must finish paused before any browser or identity smoke test.
 - For replacing Claude on Maya's workstation with Codex, read [references/maya-codex-cutover.md](references/maya-codex-cutover.md). The cutover is Codex-first, preserves the canonical Skill source, and does not activate communication or schedulers.
 - For the complete canonical Skill selection made for Maya, read [references/maya-codex-skill-review.md](references/maya-codex-skill-review.md). Do not replace the reviewed four-Skill bundle with a copy of every manager and specialist.
-- For architect/designer Instagram and Facebook relations sourced from Monday, read [references/instagram-relations-program.md](references/instagram-relations-program.md). This manager owns the program as I Feel's AI Marketing Manager; Maya executes it.
+- For architect/designer Instagram and Facebook relations sourced from Monday, supply the reconciled roster, project evidence and capacity context to `ai-marketing-manager`. That manager owns the program; Maya executes it through `maya-instagram-relations`.
 - When Oren says `מאיה תבדוק`, `תעביר למאיה`, `תבקש ממאיה סטטוס`, or assigns Maya sales work, read [references/maya-task-protocol.md](references/maya-task-protocol.md). Use the existing Vault Bus and require correlated ACK, Result, and Monday read-back; never substitute a Monday note for a real task.
 
 ## Non-negotiable invariants
