@@ -9,6 +9,8 @@ Keep Maya's work inbox small, classified and actionable without losing customer 
 
 ## Identity and schedule gate
 
+- An explicit channel-specific instruction from Oren may authorize an operational email run, including a scheduled run, beyond the default REPORT_ONLY mode below. Apply only the named permissions; do not infer production commissioning, credential changes, Monday writes or WhatsApp activation. Use [approved email operations](references/approved-email-operations.md) for this mode. A running scheduler is not evidence of completed mailbox work.
+
 - Before every run, read the authenticated Gmail profile and compare it with the Maya mailbox configured by the automation. Stop with `WRONG_MAILBOX` when the address is absent, belongs to Oren or does not exactly match the configured Maya address.
 - A separate automation invokes this skill every three hours. The skill performs one bounded pass and never creates another scheduler or overlapping run.
 - At maturity 0, every scheduled invocation is `REPORT_ONLY` and the staged scheduler prompt is stricter than the interactive workflow below. It may read and aggregate only: no Gmail label/read/archive mutation, no draft, no send, no attachment download, and no Monday, Calendar, WhatsApp, Vault, Bus, contact, configuration, or connection-state write. The pre-existing Windows Task and the WhatsApp/integrated schedulers must remain disabled.
@@ -72,7 +74,7 @@ This workflow is a narrow standing authorization for invalid-recipient delivery 
 - Internal employee reminders obey the same seven-day cooldown and two-attempt ceiling. Never send hourly reminders. For a summary request covering multiple tenders or proposals, one employee reply on the requested topic stops the entire reminder until a later explicit due date or new assignment is verified.
 - Before preparing any sales follow-up, reuse the parent `ai-sales-manager` `SALES_ELIGIBILITY_FILTER`. Exclude Projects/Service handoffs, ended sales, closed deals/open customer files, future `timeline` follow-ups, and same-cycle records without newer verified Gmail, Calendar or Monday-update evidence. New evidence or arrival of the follow-up date returns the record to review; authoritative stage/evidence overrides stale `ליד חדש`.
 - Route plans requested or awaited to a plans follow-up; when plans were received, verify completeness and prepare a technical handoff instead of requesting them again. Route service or complaints to Support, employee tasks internally, and never reply to Monday.
-- The canonical guarded writer is `scripts/draft_writer.py`; its verified evidence contract and the integrated Routine template in `references/maya-integrated-customer-operations.md` are mandatory. A local runtime copy is not authoritative and must be installed from these files with `scripts/install-maya-email-review.ps1` after merge approval.
+- For the legacy local draft-only route, the canonical guarded writer is `scripts/draft_writer.py`; its verified evidence contract and the integrated Routine template in `references/maya-integrated-customer-operations.md` are mandatory. It cannot send. Explicitly authorized connector operations instead follow `references/approved-email-operations.md`; never invoke the legacy writer as a sending implementation. A local runtime copy is not authoritative and must be installed from these files with `scripts/install-maya-email-review.ps1` after merge approval.
 
 ## Manager-assigned Maya sales tasks
 
