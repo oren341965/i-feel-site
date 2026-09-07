@@ -60,6 +60,39 @@ test('low attribution blocks budget movement', () => {
   assert.deepEqual(decision.blockers, ['ATTRIBUTION_LOW']);
 });
 
+test('a date-bound human-approved route selects the exact BMS target without pretending the automated gates passed', () => {
+  const policy = { ...POLICY, approvedBudgetTransfers: [{
+    authorizationId: 'oren-google-ads-budget-route-20260907-v1',
+    localDate: '2026-09-07', sourceCampaignId: '1', targetCampaignId: '3',
+    maxTransferMicros: 25_000_000,
+  }] };
+  const decision = chooseDailyGoogleAdsDecision({
+    policy, gates: { trackingTrusted: false, capacityStatus: 'BLOCKED', dataQualityScore: 0.69, attributionCoverage: 0.01 },
+    now: NOW, searchTerms: [], campaigns: [
+      { campaignId: '1', campaignName: 'Smart apartment', status: 'ENABLED', budgetResourceName: 'customers/2514971872/campaignBudgets/1', budgetMicros: 100_000_000, spendMicros: 500_000_000, conversions: 0 },
+      { campaignId: '2', campaignName: 'Smart home', status: 'ENABLED', budgetResourceName: 'customers/2514971872/campaignBudgets/2', budgetMicros: 50_000_000, spendMicros: 200_000_000, conversions: 5 },
+      { campaignId: '3', campaignName: 'BMS', status: 'ENABLED', budgetResourceName: 'customers/2514971872/campaignBudgets/3', budgetMicros: 50_000_000, spendMicros: 50_000_000, conversions: 0 },
+    ],
+  });
+
+  assert.equal(decision.action, 'REALLOCATE_DAILY_BUDGET');
+  assert.equal(decision.selectionMode, 'HUMAN_APPROVED_ROUTE');
+  assert.equal(decision.source.campaignId, '1');
+  assert.equal(decision.target.campaignId, '3');
+  assert.equal(decision.transferMicros, 10_000_000);
+  assert.equal(decision.totalAccountBudgetDeltaMicros, 0);
+});
+
+test('a human-approved route cannot exceed the canonical daily ceiling', () => {
+  assert.throws(() => chooseDailyGoogleAdsDecision({
+    policy: { ...POLICY, approvedBudgetTransfers: [{
+      authorizationId: 'oren-google-ads-budget-route-20260907-v1', localDate: '2026-09-07',
+      sourceCampaignId: '1', targetCampaignId: '3', maxTransferMicros: 25_000_001,
+    }] },
+    gates: GATES, now: NOW, searchTerms: [], campaigns: [],
+  }), /daily transfer ceiling/);
+});
+
 test('an explicitly approved exact irrelevant query can be excluded without a budget change', () => {
   const decision = chooseDailyGoogleAdsDecision({
     policy: POLICY, gates: { ...GATES, attributionCoverage: 0.01 }, now: NOW, campaigns: [],

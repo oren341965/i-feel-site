@@ -11,6 +11,8 @@ Oren's recurring authorization is registered as `oren-google-ads-daily-bounded-v
 1. Add one campaign-level exact negative keyword only when the full search term appears in the locally approved exact-term allowlist, has no conversion and crosses the configured click and spend thresholds.
 2. Reallocate daily budget from one enabled, non-shared losing campaign to one enabled, non-shared winning campaign. The same amount must be removed and added, so the total account daily budget delta is exactly zero.
 
+An exact, date-bound transfer route supplied by Oren may select a named source and target even when the autonomous attribution gates are blocked. It must use `approvedBudgetTransfers`, carry an authorization ID matching `oren-google-ads-budget-route-YYYYMMDD-v1`, match the Jerusalem execution date, remain under every monetary and percentage ceiling, and still pass live eligibility, precondition, read-back and rollback checks. This is execution of a human decision, not an autonomous inference.
+
 `NO_SAFE_CHANGE` is a valid decision. A daily improvement loop is not a requirement to write when evidence is weak.
 
 ## Mandatory gates

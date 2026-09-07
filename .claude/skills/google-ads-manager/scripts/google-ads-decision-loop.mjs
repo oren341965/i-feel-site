@@ -131,6 +131,49 @@ function assertPolicy(policy, now) {
 
 export function chooseDailyGoogleAdsDecision({ campaigns, searchTerms, policy, gates, now = new Date() }) {
   assertPolicy(policy, now);
+  const localDate = isoDateInJerusalem(now);
+  const approvedTransfer = (policy.approvedBudgetTransfers ?? []).find((entry) => entry?.localDate === localDate);
+  if (approvedTransfer) {
+    const sourceId = String(approvedTransfer.sourceCampaignId ?? '');
+    const targetId = String(approvedTransfer.targetCampaignId ?? '');
+    if (!/^oren-google-ads-budget-route-\d{8}-v1$/.test(String(approvedTransfer.authorizationId ?? ''))) {
+      throw new Error('Approved budget route authorization ID is invalid');
+    }
+    if (!/^\d+$/.test(sourceId) || !/^\d+$/.test(targetId) || sourceId === targetId) {
+      throw new Error('Approved budget route campaign IDs are invalid');
+    }
+    const authorizedMicros = number(approvedTransfer.maxTransferMicros);
+    if (authorizedMicros <= 0 || authorizedMicros > number(policy.maxDailyTransferMicros)) {
+      throw new Error('Approved budget route exceeds the daily transfer ceiling');
+    }
+    const eligible = (campaigns ?? []).filter((row) => row.status === 'ENABLED' && row.explicitlyShared !== true);
+    const source = eligible.find((row) => String(row.campaignId) === sourceId);
+    const target = eligible.find((row) => String(row.campaignId) === targetId);
+    if (!source || !target || source.budgetResourceName === target.budgetResourceName) {
+      return { status: 'NO_SAFE_CHANGE', localDate, blockers: ['APPROVED_ROUTE_NOT_ELIGIBLE'] };
+    }
+    const transferMicros = Math.floor(Math.min(
+      authorizedMicros,
+      number(source.budgetMicros) * number(policy.maxSourceBudgetReductionPct),
+      number(source.budgetMicros) - number(policy.minimumCampaignBudgetMicros),
+    ));
+    if (transferMicros <= 0) return { status: 'NO_SAFE_CHANGE', localDate, blockers: ['TRANSFER_BELOW_MINIMUM'] };
+    return {
+      status: 'DECIDED', action: 'REALLOCATE_DAILY_BUDGET', localDate,
+      selectionMode: 'HUMAN_APPROVED_ROUTE', authorizationId: approvedTransfer.authorizationId,
+      source: {
+        campaignId: sourceId, campaignName: String(source.campaignName ?? ''),
+        budgetResourceName: source.budgetResourceName, beforeMicros: number(source.budgetMicros),
+        afterMicros: number(source.budgetMicros) - transferMicros,
+      },
+      target: {
+        campaignId: targetId, campaignName: String(target.campaignName ?? ''),
+        budgetResourceName: target.budgetResourceName, beforeMicros: number(target.budgetMicros),
+        afterMicros: number(target.budgetMicros) + transferMicros,
+      },
+      transferMicros, totalAccountBudgetDeltaMicros: 0,
+    };
+  }
   const blockers = [];
   if (gates?.trackingTrusted !== true) blockers.push('TRACKING_UNTRUSTED');
   if (gates?.capacityStatus !== 'READY') blockers.push('CAPACITY_BLOCKED');
@@ -148,7 +191,7 @@ export function chooseDailyGoogleAdsDecision({ campaigns, searchTerms, policy, g
     return {
       status: 'DECIDED',
       action: 'ADD_EXACT_CAMPAIGN_NEGATIVE',
-      localDate: isoDateInJerusalem(now),
+      localDate,
       campaignId: String(negative.campaignId),
       campaignName: String(negative.campaignName ?? ''),
       searchTerm: String(negative.searchTerm),
@@ -158,7 +201,7 @@ export function chooseDailyGoogleAdsDecision({ campaigns, searchTerms, policy, g
   }
 
   if (number(gates?.attributionCoverage) < number(policy.minimumAttributionCoverage)) blockers.push('ATTRIBUTION_LOW');
-  if (blockers.length) return { status: 'NO_SAFE_CHANGE', localDate: isoDateInJerusalem(now), blockers: [...new Set(blockers)] };
+  if (blockers.length) return { status: 'NO_SAFE_CHANGE', localDate, blockers: [...new Set(blockers)] };
 
   const eligible = (campaigns ?? []).filter((row) => row.status === 'ENABLED' && row.explicitlyShared !== true);
   const losers = eligible
@@ -174,19 +217,19 @@ export function chooseDailyGoogleAdsDecision({ campaigns, searchTerms, policy, g
 
   const source = losers[0];
   const target = winners.find((row) => row.budgetResourceName !== source?.budgetResourceName);
-  if (!source || !target) return { status: 'NO_SAFE_CHANGE', localDate: isoDateInJerusalem(now), blockers: ['NO_ELIGIBLE_BUDGET_PAIR'] };
+  if (!source || !target) return { status: 'NO_SAFE_CHANGE', localDate, blockers: ['NO_ELIGIBLE_BUDGET_PAIR'] };
 
   const transferMicros = Math.floor(Math.min(
     number(policy.maxDailyTransferMicros),
     number(source.budgetMicros) * number(policy.maxSourceBudgetReductionPct),
     number(source.budgetMicros) - number(policy.minimumCampaignBudgetMicros),
   ));
-  if (transferMicros <= 0) return { status: 'NO_SAFE_CHANGE', localDate: isoDateInJerusalem(now), blockers: ['TRANSFER_BELOW_MINIMUM'] };
+  if (transferMicros <= 0) return { status: 'NO_SAFE_CHANGE', localDate, blockers: ['TRANSFER_BELOW_MINIMUM'] };
 
   return {
     status: 'DECIDED',
     action: 'REALLOCATE_DAILY_BUDGET',
-    localDate: isoDateInJerusalem(now),
+    localDate,
     source: {
       campaignId: String(source.campaignId), campaignName: String(source.campaignName ?? ''),
       budgetResourceName: source.budgetResourceName, beforeMicros: number(source.budgetMicros),
