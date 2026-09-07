@@ -106,6 +106,7 @@
     "minimumNegativeClicks": 3,
     "minimumNegativeSpendMicros": 75000000,
     "approvedExactNegativeTerms": [],
+    "approvedBudgetTransfers": [],
     "gates": {
       "trackingTrusted": false,
       "capacityStatus": "CAPACITY_THRESHOLD_MISSING",
