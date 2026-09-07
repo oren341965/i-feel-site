@@ -63,6 +63,7 @@
       "connected": false,
       "liveVerified": false,
       "readOnly": true,
+      "writeEnabled": false,
       "apiVersion": "v25",
       "loginCustomerId": null,
       "serviceAccountCredentialFile": null,
@@ -86,6 +87,30 @@
       "sourceType": "LOCAL_JSON_EXPORT",
       "sourceFile": null,
       "maxAgeHours": 168
+    }
+  },
+  "marketingDecision": {
+    "maturity": 1,
+    "mode": "BOUNDED_AUTONOMOUS",
+    "authorizationId": "oren-google-ads-daily-bounded-v1",
+    "authorizationExpiresAt": "2026-12-06T21:59:59.000Z",
+    "accountBudgetIncreaseMicros": 0,
+    "maxSourceBudgetReductionPct": 0.1,
+    "maxDailyTransferMicros": 25000000,
+    "minimumCampaignBudgetMicros": 10000000,
+    "minimumLoserSpendMicros": 100000000,
+    "minimumWinnerConversions": 2,
+    "maximumWinnerCpaMicros": 2000000000,
+    "minimumAttributionCoverage": 0.6,
+    "minimumDataQualityScore": 0.8,
+    "minimumNegativeClicks": 3,
+    "minimumNegativeSpendMicros": 75000000,
+    "approvedExactNegativeTerms": [],
+    "gates": {
+      "trackingTrusted": false,
+      "capacityStatus": "CAPACITY_THRESHOLD_MISSING",
+      "dataQualityScore": 0,
+      "attributionCoverage": 0
     }
   },
   "capacity": {
