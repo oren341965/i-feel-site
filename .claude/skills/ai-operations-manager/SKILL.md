@@ -11,6 +11,7 @@ Act as I Feel's parent operations orchestrator. Identify the requested operation
 
 - `upload-delivery-notes-to-dropbox` — display name `העלאת תעודות משלוח לדרופבוקס`. It owns the complete delivery-note lifecycle: bounded intake from the designated WhatsApp group and office email, original-file retrieval, extraction, exact `מפתח` routing, duplicate and multi-part control, creation of a missing canonical delivery-note child folder under a verified existing project, routine no-overwrite Dropbox upload, verification, historical reconciliation, unresolved-note follow-up, and the completion update to Oren and Ora.
 - `procurement-po-tracker` — display name `מעקב הזמנות רכש`. It owns the read-only purchase-order → supply evidence → supplier-invoice reconciliation from the procurement mailbox.
+- `fx-purchase-forecast` — display name `I Feel FX Purchase Forecast`. It owns the weekly EUR/ILS and USD/ILS refresh for open/future foreign-currency procurement estimates in the canonical expense Sheet under Oren's narrow standing authorization. It belongs jointly to Operations for supplier/procurement timing and Finance for forecast consumption; `ai-finance-manager` remains a read-only consumer of the resulting aggregate finance view.
 
 Add another worker only when it owns a distinct operations workflow with no overlapping source of truth.
 
@@ -19,8 +20,9 @@ Add another worker only when it owns a distinct operations workflow with no over
 1. Determine which owned workflow the request concerns.
 2. For any delivery note, WhatsApp delivery-note group, `office@i-feel.co.il` delivery-note intake, Dropbox filing, missing delivery-note folder, `מפתח` routing, historical delivery-note audit, incomplete/multi-page delivery note, signed delivery-note follow-up, or related exception request, load and follow `upload-delivery-notes-to-dropbox`.
 3. For purchase-order status, supply evidence, missing supplier invoices or silent-supplier requests, load and follow `procurement-po-tracker`.
-4. When a request spans multiple worker skills, keep each worker's evidence, approval boundary, and result separate, then reconcile them in one manager summary.
-5. If no owned skill covers the request, report the capability gap. Do not improvise a new production workflow inside the manager.
+4. For weekly or manual EUR/ILS or USD/ILS refreshes, Siemens/open supplier due-date forecasts, or derived ILS estimates for future foreign-currency purchases, load and follow `fx-purchase-forecast`.
+5. When a request spans multiple worker skills, keep each worker's evidence, approval boundary, and result separate, then reconcile them in one manager summary.
+6. If no owned skill covers the request, report the capability gap. Do not improvise a new production workflow inside the manager.
 
 ## Delivery-note delegation contract
 
@@ -35,6 +37,12 @@ The worker has a narrow standing authorization explicitly set by Oren for the re
 - sending the defined concise completion update to verified organizational identities for Oren and Ora after the batch.
 
 This authorization belongs to the worker, not to `ai-operations-manager` generally. It does not authorize other Dropbox writes, source-message mutations, customer/project-folder creation, ambiguous routing, destructive changes, financial actions, or unrelated external communications. Exception emails with source attachments and any action outside the worker's exact standing contract retain their explicit-approval boundary.
+
+## FX purchase forecast delegation contract
+
+`fx-purchase-forecast` is the only owned worker authorized to perform the recurring foreign-currency estimate refresh. Oren's standing authorization is limited to reading current EUR/ILS and USD/ILS rates, reading existing open/future foreign-currency procurement rows, updating only the derived ILS estimate and the rate/date note, and verifying the read-back. It does not authorize payments, transfers, supplier communications, due-date changes, purchase orders, price commitments, FX trades/hedges, destructive edits, or changes to settled rows.
+
+The original currency amount and supplier due date remain immutable source evidence during an FX refresh. Finance may consume the resulting aggregate forecast, but the refresh does not broaden `ai-finance-manager` beyond read-only authority.
 
 ## Historical reconciliation and backfill
 
@@ -53,6 +61,7 @@ A historical run must not silently reduce coverage to email when the WhatsApp so
 
 - An approval granted to the manager covers only the exact bounded mutation plan shown to Oren unless a worker contains an explicit standing rule approved by Oren.
 - Preserve the delivery-note worker's narrow standing authorization exactly; do not generalize it to another worker or connector.
+- Preserve the FX worker's narrow standing authorization exactly; do not generalize it into supplier-payment, banking, trading, or broader financial authority.
 - Dropbox writes, email sends, source-message mutations, recurring schedules, and other external changes retain the approval requirements of the responsible worker.
 - Never claim that a worker checked a source or completed an action without live evidence.
 - Keep customer documents and identifying operational data out of Git and manager reports.
@@ -80,4 +89,4 @@ remain zero/false. The reporter does not create or enable a scheduler; `--dry-ru
 
 Report the worker skill used, bounded source window, source coverage, observed facts, deterministic decisions, filed count, duplicate count, folders created, incomplete/multi-part count, unresolved exceptions, approvals requested or received, completed mutations, verification evidence, completion-update status, failures, and uncovered capabilities.
 
-For skill maintenance, run `npm run test:ai-managers`, `npm run build`, `quick_validate.py .claude/skills/ai-operations-manager`, `quick_validate.py .claude/skills/upload-delivery-notes-to-dropbox`, `quick_validate.py .claude/skills/management-system-telemetry`, and `git diff --check`.
+For skill maintenance, run `npm run test:ai-managers`, `npm run build`, `quick_validate.py .claude/skills/ai-operations-manager`, `quick_validate.py .claude/skills/upload-delivery-notes-to-dropbox`, `quick_validate.py .claude/skills/fx-purchase-forecast`, `quick_validate.py .claude/skills/management-system-telemetry`, and `git diff --check`.
