@@ -26,6 +26,7 @@ The connector is pinned to Google Ads API v25. It exposes only `customers.listAc
 
 ## Analysis
 
+- Apply the current portfolio strategy from `references/daily-decision-policy.md`: BMS is the primary growth portfolio, hotels are a priority BMS sub-segment, lighting control is secondary, and developer smart-apartment demand is `STOP_LOSS` until Monday proves qualified outcomes.
 - conversion-tracking health;
 - spend, budgets, campaigns, ad groups, keywords and search terms;
 - negative-keyword candidates and broad-match risk;
@@ -46,6 +47,7 @@ Historical reference only, never current fact: 30 days, NIS 6,553 spend, 955 cli
 - No Apply All and no automatic broad match.
 - No budget increase when capacity is blocked, the threshold is missing, tracking is untrusted or attribution is insufficient.
 - Optimize for qualified leads, proposals, wins and revenue, never raw conversions alone.
+- Keep Google Ads conversions visibly separate from verified Monday leads. Do not increase `דירה חכמה ליזמים` without a verified qualified lead, proposal, win or revenue record.
 - Every write requires an immediate live precondition read, live read-back and bounded sanitized state. A budget mismatch triggers one rollback attempt and then stops.
 - Any action outside the maturity-1 allowlist requires a new explicit approval.
 - Use the Claude file bridge only for nuanced search intent, campaign mismatch, sales-quality interpretation or ad-copy judgment.

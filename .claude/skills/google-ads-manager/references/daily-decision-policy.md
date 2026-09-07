@@ -15,6 +15,17 @@ An exact, date-bound transfer route supplied by Oren may select a named source a
 
 `NO_SAFE_CHANGE` is a valid decision. A daily improvement loop is not a requirement to write when evidence is weak.
 
+## Current portfolio strategy
+
+Oren's business direction recorded on 2026-09-07 is:
+
+- `BMS / בקרת מבנה` is the primary growth portfolio. Prefer qualified demand, proposals and revenue in this portfolio when choosing where to expand.
+- Hotels are a proven BMS sub-segment and a priority for research, landing-page, keyword and campaign-plan development. Creating a hotel campaign, changing creative or adding budget remains outside this policy and requires separate explicit approval.
+- `DALI / בקרת תאורה` is the secondary proven portfolio and may receive an exact approved zero-sum budget route.
+- `דירה חכמה ליזמים` is in `STOP_LOSS`. Do not increase its budget or treat Google Ads conversions as proof of success until a qualified lead, proposal, win or revenue record is verified in Monday attribution.
+
+This priority is a business constraint, not a substitute for live evidence. Report Google conversions separately from qualified Monday outcomes. Autonomous budget selection must still pass every mandatory gate; an exact human-approved route may select BMS or lighting control under the bounded route rules above.
+
 ## Mandatory gates
 
 - exact account `251-497-1872` and API version `v25`;
@@ -36,6 +47,7 @@ An exact, date-bound transfer route supplied by Oren may select a named source a
 - changing bidding strategy, target CPA/ROAS, audience, geography, schedule, match type, ad, asset, landing page or conversion action;
 - broad or phrase negative keywords;
 - using a Google recommendation or email summary as sufficient evidence;
+- increasing the `דירה חכמה ליזמים` portfolio without verified qualified-funnel evidence in Monday;
 - writing when a live precondition or read-back does not reconcile;
 - expanding this authorization to another platform or manager.
 
