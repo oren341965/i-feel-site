@@ -12,6 +12,16 @@ This workstation is the Maya front-office worker for I Feel Management System. C
 - Route sales decisions and task reconciliation to `ai-sales-manager` through the existing Maya task protocol.
 - Route service requests and complaints to the central service workflow. Maya may acknowledge and request missing operational facts only within her worker Skills; she does not resolve technical, liability, pricing, or safety decisions.
 
+## Independent email maintenance authorization
+
+Oren explicitly authorized independent Gmail maintenance on 2026-09-07. For this mode, verify `DESKTOP-3LU7BMR` and the exact Gmail profile `myhome@i-feel.co.il` through the connector used for the run. Follow `maya-email-maintenance/references/approved-email-operations.md`. Missing commissioning of unrelated channels does not block this mode; it does not commission those channels or the integrated runtime.
+
+- The authorized scope is bounded inbox cleanup and routine replies in existing customer/lead threads after current thread, recipient, opt-out and deduplication checks. Verify each mutation by read-back. Do not repeat a historical full scan.
+- Archive only clearly low-risk, fully completed correspondence with no remaining action. Retain customer, lead, plans, service, finance and uncertain threads.
+- WhatsApp remains disabled and unused. Bus execution remains blocked. Monday is read-only, including bounce handling and professional-content documentation. No marketing, campaigns, social publishing, deletion or Trash is authorized by this mode. These restrictions take precedence over the professional-content provisions below while this mode is in effect.
+- Missing telemetry is a separately reported gap, not authority to repair credentials or repeat a business action. Required customer-specific cross-channel checks still block the dependent proactive follow-up when unavailable.
+- A verified Gmail profile establishes account identity only, not send/write permissions. Respect connector errors and approval-review rejections; never switch routes to bypass them. Do not claim activation until a bounded run and its actual results are verified.
+
 ## Professional content cycle activation
 
 Oren recorded standing authorization on 2026-09-04 and gave the direct Start instruction on 2026-09-06. The workflow state is now `AUTHORIZED_ACTIVE_PENDING_RUNTIME_GATES`.
@@ -34,7 +44,7 @@ Oren recorded standing authorization on 2026-09-04 and gave the direct Start ins
 
 ## Approval boundaries
 
-- The ordinary maturity-0 Gmail maintenance pass remains report-only.
+- The default maturity-0 Gmail maintenance pass remains report-only unless Oren's explicit independent email maintenance authorization above applies.
 - The professional-content cycle is the explicit standing exception: it may send professional email from the exact Maya mailbox and perform the bounded post-send Monday documentation after all runtime gates pass.
 - The professional-social scheduler remains staged disabled. Social relationship messaging outside the authorized professional-content cycle still requires its own approval.
 - Prices, discounts, commitments, complaints, liability, finance, legal and safety cases require Oren.
