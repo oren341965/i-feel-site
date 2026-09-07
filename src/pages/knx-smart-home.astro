@@ -3,12 +3,21 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import content from '../page-html/knx-smart-home.html?raw';
 import KnxAdvisorCta from '../components/KnxAdvisorCta.astro';
 
+const integratorSection = `
+<section id="knx-integrator-israel">
+  <h2>איך לבחור אינטגרטור KNX בישראל</h2>
+  <p><strong>התשובה הקצרה:</strong> אינטגרטור KNX צריך לדעת לתכנן את תשתית ה-BUS, לתכנת ב-ETS, לתאם בין חשמל, תאורה, תריסים ומיזוג, למסור קבצי ETS ותיעוד מסודר, ולתת שירות גם אחרי האכלוס. i-feel מרכזת את התכנון, התכנות, האינטגרציה והליווי של מערכות KNX בישראל, ועובדת בפרויקטים המתאימים עם ציוד Siemens ויצרני KNX נוספים לפי דרישות התכנון.</p>
+  <p>בבחירת ספק כדאי לבדוק מראש מי אחראי על התכנות, מי מחזיק את קובצי הפרויקט, איך מטופלות הרחבות עתידיות, ומה קורה במקרה של החלפת בקר או רכיב. ראו גם <a href="/smart-home-planning/">תכנון בית חכם</a>, <a href="/smart-home-bms-companies-israel/">מדריך לבחירת חברת בית חכם ואינטגרטור</a> ו<a href="/projects/">פרויקטים שבוצעו</a>.</p>
+</section>`;
+
+const pageContent = content.replace('<section id="faq">', `${integratorSection}\n<section id="faq">`);
+
 const meta = {
-  title: "בית חכם KNX בישראל | הסטנדרט הקווי המוביל | i-feel",
-  description: "בית חכם KNX — הסטנדרט הבינלאומי לבקרת בית קווית. אמינות מקסימלית, עצמאות מרשת, ויכולת לנהל מערכות מורכבות לשנים. תכנון, התקנה ותכנות בחברה אחת. ייעוץ 03-508-9553.",
+  title: "בית חכם ואינטגרטור KNX בישראל | תכנון ותכנות | i-feel",
+  description: "מחפשים אינטגרטור KNX בישראל? i-feel מתכננת, מתכנתת ומלווה מערכות KNX, כולל ETS, אינטגרציה, תיעוד ושירות לפרויקטים חדשים ולווילות.",
   canonical: "https://i-feel.co.il/knx-smart-home/",
-  ogTitle: "בית חכם KNX בישראל | i-feel",
-  ogDescription: "הסטנדרט הקווי המוביל לבית חכם אמין. תכנון, התקנה ותכנות KNX עם ציוד Siemens, אינטגרציה ותמיכה בישראל.",
+  ogTitle: "בית חכם ואינטגרטור KNX בישראל | i-feel",
+  ogDescription: "תכנון, תכנות ETS ואינטגרציה למערכות KNX בישראל, עם תיעוד ושירות לאורך חיי המערכת.",
   ogUrl: "https://i-feel.co.il/knx-smart-home/",
   ogImage: "https://i-feel.co.il/assets/projects/villa-knx-electrical.jpg",
   jsonLd: JSON.stringify({
@@ -39,18 +48,39 @@ const meta = {
       },
       {
         "@type": "Service",
-        "name": "תכנון והתקנת בית חכם KNX",
+        "name": "אינטגרטור KNX בישראל - תכנון, תכנות והתקנה",
         "url": "https://i-feel.co.il/knx-smart-home/",
-        "serviceType": "KNX Smart Home Installation",
+        "serviceType": "KNX Smart Home Integration",
         "provider": { "@id": "https://i-feel.co.il/#business" },
         "areaServed": { "@type": "Country", "name": "Israel" },
-        "description": "תכנון, תכנות ETS, התקנה ושירות למערכות KNX קוויות עם ציוד Siemens בישראל."
+        "description": "תכנון תשתית KNX, תכנות ETS, אינטגרציה, תיעוד ושירות למערכות KNX בישראל."
+      },
+      {
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "איך לבחור אינטגרטור KNX בישראל?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "כדאי לבחור אינטגרטור שיודע לתכנן תשתית BUS, לתכנת ב-ETS, לתאם בין חשמל, תאורה, תריסים ומיזוג, למסור קבצי ETS ותיעוד מסודר ולספק שירות גם אחרי האכלוס."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "האם i-feel מספקת תכנון ותכנות KNX בישראל?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "כן. i-feel מרכזת תכנון, תכנות ETS, אינטגרציה וליווי למערכות KNX בישראל, עם תיעוד ושירות לאורך חיי המערכת."
+            }
+          }
+        ]
       }
     ]
   })
 };
 ---
 <BaseLayout {...meta}>
-  <Fragment set:html={content} />
+  <Fragment set:html={pageContent} />
   <KnxAdvisorCta />
 </BaseLayout>
