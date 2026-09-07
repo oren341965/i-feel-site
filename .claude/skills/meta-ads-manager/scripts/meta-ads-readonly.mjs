@@ -13,6 +13,7 @@ const META_ALLOWED_PATHS = Object.freeze([
   /^\/\d+\/leads$/,
 ]);
 const MAX_LEAD_FORMS = 50;
+const META_CREDENTIAL_PATTERN = /^[A-Za-z0-9._-]{32,4096}$/;
 const LEAD_PERMISSION_SIGNALS = Object.freeze([
   'ads_management',
   'leads_retrieval',
@@ -143,11 +144,17 @@ async function collectLeadDataReadOnly({ runtime, requestBase, now }) {
     const pages = await metaList({
       ...requestBase,
       path: '/me/accounts',
-      params: { fields: 'id,name', limit: 200 },
+      params: { fields: 'id,name,access_token', limit: 200 },
     });
-    if (!pages.some(({ id }) => String(id) === runtime.pageId)) {
+    const page = pages.find(({ id }) => String(id) === runtime.pageId);
+    if (!page) {
       return missingLeadData('PAGE_NOT_ACCESSIBLE_WITH_CURRENT_CREDENTIAL');
     }
+    const pageCredential = String(page.access_token ?? '').trim();
+    if (!META_CREDENTIAL_PATTERN.test(pageCredential)) {
+      return missingLeadData('PAGE_ACCESS_TOKEN_NOT_RETURNED');
+    }
+    const pageRequestBase = { ...requestBase, credential: pageCredential };
     try {
       const permissions = await metaList({
         ...requestBase,
@@ -163,7 +170,7 @@ async function collectLeadDataReadOnly({ runtime, requestBase, now }) {
     }
     stage = 'LEAD_FORM_LIST';
     const forms = await metaList({
-      ...requestBase,
+      ...pageRequestBase,
       path: `/${runtime.pageId}/leadgen_forms`,
       params: { fields: 'id,status,created_time', limit: 100 },
     });
@@ -175,7 +182,7 @@ async function collectLeadDataReadOnly({ runtime, requestBase, now }) {
       stage = 'LEAD_READ';
       const formId = normalizeMetaObjectId(form?.id, 'Meta Lead Form ID');
       const leads = await metaList({
-        ...requestBase,
+        ...pageRequestBase,
         path: `/${formId}/leads`,
         params: { fields: 'id,created_time', limit: 500 },
       });
@@ -212,7 +219,7 @@ async function collectLeadDataReadOnly({ runtime, requestBase, now }) {
 export async function collectMetaAdsReadOnly({ configPath, fetchImpl = fetch, now = new Date() }) {
   const runtime = await loadMetaRuntimeConfig(configPath);
   const credential = (await readFile(runtime.accessCredentialFile, 'utf8')).trim();
-  if (!/^[A-Za-z0-9._-]{32,4096}$/.test(credential)) throw new Error('Invalid Meta access credential');
+  if (!META_CREDENTIAL_PATTERN.test(credential)) throw new Error('Invalid Meta access credential');
   const requestBase = { fetchImpl, apiVersion: runtime.apiVersion, credential };
   const accessibleAccounts = await metaList({
     ...requestBase,
