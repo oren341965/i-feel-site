@@ -77,6 +77,59 @@ try {
         && $mcohomeWorkReportsInclude < $mcohomeLabelsInclude,
         'MCOHome must load navigation dependencies before _labels.php.'
     );
+    $mcohomeRecord = [
+        'eventId' => 'MCO-TEST-001',
+        'discoveryDate' => '2026-08-23',
+        'technician' => 'Test Worker',
+        'employeeEmail' => 'worker@i-feel.co.il',
+        'project' => 'Test Project',
+        'serialNumber' => 'SERIAL-1',
+        'model' => 'MH-TEST',
+        'deviceType' => 'מפסק 9',
+        'nineConfig' => '6 תאורה',
+        'channel' => 'CH2',
+        'faultType' => 'ממסר נדבק',
+        'description' => 'תיאור מקורי לבדיקה',
+        'loadContext' => 'Test load',
+        'inrushSuspected' => true,
+        'controller' => 'Home Assistant',
+        'nodeId' => '42',
+        'zwaveCheck' => 'Tested near controller',
+        'unitStatus' => 'פתוח',
+        'actionTaken' => 'איפוס',
+        'replaced' => false,
+        'notes' => 'הערה מקורית',
+        'media' => [['name' => 'fault-photo.jpg']],
+    ];
+    $mcohomeMessage = mcohome_build_vendor_draft($mcohomeRecord);
+    portal_test_expect(
+        str_contains($mcohomeMessage['subject'], '故障报告')
+        && str_contains($mcohomeMessage['body'], 'Fault: Relay stuck')
+        && str_contains($mcohomeMessage['body'], '故障：继电器粘连')
+        && str_contains($mcohomeMessage['body'], '技术员简要说明（希伯来语原文）'),
+        'MCOHome notification is not bilingual in English and Chinese.'
+    );
+    $mcohomeRecipients = mcohome_notification_recipients();
+    portal_test_expect(
+        count($mcohomeRecipients) === 7
+        && in_array('kristin@mcohome.com', $mcohomeRecipients, true)
+        && in_array('dzsh@mcohome.com', $mcohomeRecipients, true),
+        'MCOHome notification recipients do not include the internal team and vendor contacts.'
+    );
+    $capturedMcohomeMail = [];
+    $mcohomeResults = mcohome_send_notifications(
+        $mcohomeRecord,
+        static function (string $email, string $subject, string $body) use (&$capturedMcohomeMail): bool {
+            $capturedMcohomeMail[$email] = ['subject' => $subject, 'body' => $body];
+            return true;
+        }
+    );
+    portal_test_expect(
+        count(array_filter($mcohomeResults)) === 7
+        && str_contains($capturedMcohomeMail['oren@i-feel.co.il']['body'], 'mcohome-media.php')
+        && !str_contains($capturedMcohomeMail['kristin@mcohome.com']['body'], 'mcohome-media.php'),
+        'MCOHome notifications were not sent to every recipient with private media links restricted internally.'
+    );
 
     portal_test_expect(
         portal_normalize_company_email('Worker@I-FEEL.CO.IL') === 'worker@i-feel.co.il',

@@ -158,80 +158,130 @@ function mcohome_vendor_recipients(): array
     return ['kristin@mcohome.com', 'dzsh@mcohome.com'];
 }
 
+function mcohome_notification_recipients(): array
+{
+    return array_values(array_unique(array_merge(
+        mcohome_internal_recipients(),
+        mcohome_vendor_recipients()
+    )));
+}
+
 function mcohome_translate_choice(string $value): string
 {
     $map = [
         'תאורה בודד'=>'Single light switch','תאורה כפול'=>'Double light switch','3 לחצנים'=>'3-button switch','תריס'=>'Shutter switch','מפסק 9'=>'9-button switch','דימר Z-Wave 300W'=>'Z-Wave 300W dimmer','אחר'=>'Other',
         '6 תאורה'=>'6 lighting outputs','3 תריסים'=>'3 shutters','2 תריסים + 2 תאורה'=>'2 shutters + 2 lighting outputs','תריס 1 + 2 תאורה'=>'1 shutter + 2 lighting outputs',
         'ממסר נדבק'=>'Relay stuck','לא נדלק'=>'Does not turn on','לא נכבה'=>'Does not turn off','לא מגיב'=>'No response','תריס לא עובד'=>'Shutter not working','תריס עובד רק לכיוון אחד'=>'Shutter works in one direction only','יציאת תריס נשרפה'=>'Shutter output burned','קפיצת תאורה'=>'Light level jumps','הבהוב / Flickering'=>'Flickering','דימור לא חלק'=>'Non-smooth dimming','לא מגיע ל-100%'=>'Does not reach 100%','נכבה בעוצמה נמוכה'=>'Turns off at low dimming level','זמזום'=>'Buzzing','עומס יתר'=>'Overload','התחממות חריגה'=>'Abnormal heating','הפסקת פעולה לסירוגין'=>'Intermittent operation','הפסקת פעולה ללא סיבה ברורה'=>'Stopped operating without clear cause','לא ניתן לבצע Inclusion'=>'Cannot include device','Inclusion מתחיל ולא מסתיים'=>'Inclusion starts but does not finish','Dead / Failed Node'=>'Dead / Failed Node','תקשורת Z-Wave לסירוגין'=>'Intermittent Z-Wave communication','Status לא חוזר לקונטרולר'=>'Status is not reported back to controller','בעיית Range / Mesh'=>'Range / Mesh issue','נזק פיזי'=>'Physical damage',
+        'אחר / לא ידוע'=>'Other / unknown','פתוח'=>'Open','בבדיקה'=>'Under review','תקלה אומתה'=>'Fault confirmed','הוחלף'=>'Replaced','ממתין ל-RMA'=>'Waiting for RMA','נשלח ל-MCOHome'=>'Sent to MCOHome','ממתין לתשובת יצרן'=>'Awaiting manufacturer response','נסגר'=>'Closed',
+        'לא בוצעה פעולה'=>'No action taken','איפוס'=>'Reset','זיווג מחדש / Inclusion'=>'Re-pairing / Inclusion','בדיקת עומס'=>'Load test','בדיקה ליד הקונטרולר'=>'Test near controller','החלפת היחידה'=>'Unit replaced','ניתוק העומס'=>'Load disconnected',
+    ];
+    return $map[$value] ?? $value;
+}
+
+function mcohome_translate_choice_chinese(string $value): string
+{
+    $map = [
+        'תאורה בודד'=>'单路灯光开关','תאורה כפול'=>'双路灯光开关','3 לחצנים'=>'三键开关','תריס'=>'卷帘开关','מפסק 9'=>'九键开关','דימר Z-Wave 300W'=>'Z-Wave 300W 调光器','אחר'=>'其他',
+        '6 תאורה'=>'6 路照明输出','3 תריסים'=>'3 路卷帘','2 תריסים + 2 תאורה'=>'2 路卷帘 + 2 路照明','תריס 1 + 2 תאורה'=>'1 路卷帘 + 2 路照明',
+        'ממסר נדבק'=>'继电器粘连','לא נדלק'=>'无法开启','לא נכבה'=>'无法关闭','לא מגיב'=>'无响应','תריס לא עובד'=>'卷帘不工作','תריס עובד רק לכיוון אחד'=>'卷帘只能单向运行','יציאת תריס נשרפה'=>'卷帘输出烧毁','קפיצת תאורה'=>'亮度跳变','הבהוב / Flickering'=>'闪烁','דימור לא חלק'=>'调光不平滑','לא מגיע ל-100%'=>'无法达到 100%','נכבה בעוצמה נמוכה'=>'低亮度时关闭','זמזום'=>'嗡鸣','עומס יתר'=>'过载','התחממות חריגה'=>'异常发热','הפסקת פעולה לסירוגין'=>'间歇性工作','הפסקת פעולה ללא סיבה ברורה'=>'无明显原因停止工作','לא ניתן לבצע Inclusion'=>'无法将设备加入网络','Inclusion מתחיל ולא מסתיים'=>'加网开始但无法完成','Dead / Failed Node'=>'失效 / 故障节点','תקשורת Z-Wave לסירוגין'=>'Z-Wave 通信不稳定','Status לא חוזר לקונטרולר'=>'状态未回传控制器','בעיית Range / Mesh'=>'覆盖范围 / 网状网络问题','נזק פיזי'=>'物理损坏',
+        'אחר / לא ידוע'=>'其他 / 未知','פתוח'=>'待处理','בבדיקה'=>'检查中','תקלה אומתה'=>'故障已确认','הוחלף'=>'已更换','ממתין ל-RMA'=>'等待 RMA','נשלח ל-MCOHome'=>'已发送至 MCOHome','ממתין לתשובת יצרן'=>'等待制造商回复','נסגר'=>'已关闭',
+        'לא בוצעה פעולה'=>'未采取措施','איפוס'=>'复位','זיווג מחדש / Inclusion'=>'重新配对 / 加网','Exclusion'=>'移除网络','Factory Reset'=>'恢复出厂设置','Heal / Re-interview'=>'网络修复 / 重新查询','בדיקת עומס'=>'负载检查','בדיקה ליד הקונטרולר'=>'在控制器附近测试','החלפת היחידה'=>'更换设备','ניתוק העומס'=>'断开负载',
     ];
     return $map[$value] ?? $value;
 }
 
 function mcohome_build_vendor_draft(array $record): array
 {
-    $subject = '[I Feel] MCOHome fault report ' . $record['eventId'] . ' - ' . ($record['model'] ?: mcohome_translate_choice($record['deviceType']));
+    $notProvided = 'Not provided';
+    $notProvidedChinese = '未提供';
+    $subject = '[I Feel] MCOHome fault report / 故障报告 ' . $record['eventId'] . ' - ' . ($record['model'] ?: mcohome_translate_choice($record['deviceType']));
     $lines = [
         'Dear Kristin and MCOHome Technical Team,', '',
         'Please review the following field fault reported by our technical team in Israel.', '',
         'Event ID: ' . $record['eventId'],
         'Date: ' . $record['discoveryDate'],
-        'Project / customer: ' . ($record['project'] ?: 'Not provided'),
+        'Project / customer: ' . ($record['project'] ?: $notProvided),
         'Technician: ' . $record['technician'],
-        'Model / SKU: ' . ($record['model'] ?: 'Not provided'),
-        'Serial number: ' . ($record['serialNumber'] ?: 'Not provided'),
+        'Model / SKU: ' . ($record['model'] ?: $notProvided),
+        'Serial number: ' . ($record['serialNumber'] ?: $notProvided),
         'Device type: ' . mcohome_translate_choice($record['deviceType']),
         '9-button configuration: ' . ($record['nineConfig'] !== '' ? mcohome_translate_choice($record['nineConfig']) : 'N/A'),
-        'Channel / output: ' . ($record['channel'] ?: 'Not provided'),
+        'Channel / output: ' . ($record['channel'] ?: $notProvided),
         'Fault: ' . mcohome_translate_choice($record['faultType']),
         'Inrush current suspected: ' . ($record['inrushSuspected'] ? 'YES' : 'No'),
-        'Connected load: ' . ($record['loadContext'] ?: 'Not provided'),
-        'Controller: ' . ($record['controller'] ?: 'Not provided'),
-        'Node ID: ' . ($record['nodeId'] ?: 'Not provided'),
-        'Action already taken: ' . ($record['actionTaken'] ?: 'None reported'), '',
+        'Connected load: ' . ($record['loadContext'] ?: $notProvided),
+        'Controller: ' . ($record['controller'] !== '' ? mcohome_translate_choice($record['controller']) : $notProvided),
+        'Node ID: ' . ($record['nodeId'] ?: $notProvided),
+        'Z-Wave check: ' . ($record['zwaveCheck'] ?: $notProvided),
+        'Current status: ' . mcohome_translate_choice($record['unitStatus']),
+        'Unit replaced on site: ' . ($record['replaced'] ? 'Yes' : 'No'),
+        'Action already taken: ' . mcohome_translate_choice($record['actionTaken']), '',
         'Technician short explanation (original Hebrew):',
-        $record['description'] ?: 'Not provided', '',
+        $record['description'] ?: $notProvided, '',
         'Additional notes (original Hebrew):',
         $record['notes'] ?: 'None', '',
-        'Photo / video evidence is attached to the I Feel fault record. Please let us know if you need the original files sent by email.', '',
+        'Photo / video evidence: ' . count($record['media'] ?? []) . ' file(s) are stored in the secure I Feel fault record. Original files are available on request.', '',
         'Best regards,', 'I Feel Technical Team', 'Israel',
+        '', '------------------------------', '',
+        '亲爱的 Kristin 和 MCOHome 技术团队：', '',
+        '请查看以下由我们以色列技术团队提交的现场故障报告。', '',
+        '事件编号：' . $record['eventId'],
+        '日期：' . $record['discoveryDate'],
+        '项目 / 客户：' . ($record['project'] ?: $notProvidedChinese),
+        '技术员：' . $record['technician'],
+        '型号 / 料号：' . ($record['model'] ?: $notProvidedChinese),
+        '序列号：' . ($record['serialNumber'] ?: $notProvidedChinese),
+        '设备类型：' . mcohome_translate_choice_chinese($record['deviceType']),
+        '九键开关配置：' . ($record['nineConfig'] !== '' ? mcohome_translate_choice_chinese($record['nineConfig']) : '不适用'),
+        '通道 / 输出：' . ($record['channel'] ?: $notProvidedChinese),
+        '故障：' . mcohome_translate_choice_chinese($record['faultType']),
+        '怀疑有浪涌电流：' . ($record['inrushSuspected'] ? '是' : '否'),
+        '连接负载：' . ($record['loadContext'] ?: $notProvidedChinese),
+        '控制器：' . ($record['controller'] !== '' ? mcohome_translate_choice_chinese($record['controller']) : $notProvidedChinese),
+        '节点 ID：' . ($record['nodeId'] ?: $notProvidedChinese),
+        'Z-Wave 检查：' . ($record['zwaveCheck'] ?: $notProvidedChinese),
+        '当前状态：' . mcohome_translate_choice_chinese($record['unitStatus']),
+        '现场是否已更换设备：' . ($record['replaced'] ? '是' : '否'),
+        '已采取的措施：' . mcohome_translate_choice_chinese($record['actionTaken']), '',
+        '技术员简要说明（希伯来语原文）：',
+        $record['description'] ?: $notProvidedChinese, '',
+        '其他备注（希伯来语原文）：',
+        $record['notes'] ?: '无', '',
+        '照片 / 视频证据：' . count($record['media'] ?? []) . ' 个文件已保存在 I Feel 安全故障记录中。如有需要，可提供原始文件。', '',
+        '此致', 'I Feel 技术团队', '以色列',
     ];
     return ['to' => implode(',', mcohome_vendor_recipients()), 'subject' => $subject, 'body' => implode("\r\n", $lines)];
 }
 
-function mcohome_send_internal_notification(array $record): array
+function mcohome_internal_media_appendix(array $record): string
 {
-    $draft = mcohome_build_vendor_draft($record);
     $mediaLines = [];
     foreach (($record['media'] ?? []) as $index => $media) {
         $mediaLines[] = ($index + 1) . '. ' . ($media['name'] ?? 'media') . ' - ' . mcohome_media_url($record['eventId'], $index);
     }
-    $body = implode("\r\n", [
-        'דיווח תקלה חדש של MCOHome', '',
-        'מספר אירוע: ' . $record['eventId'],
-        'טכנאי: ' . $record['technician'] . ' (' . $record['employeeEmail'] . ')',
-        'לקוח / פרויקט: ' . ($record['project'] ?: 'לא צוין'),
-        'דגם / מק״ט: ' . ($record['model'] ?: 'לא צוין'),
-        'מספר סידורי: ' . ($record['serialNumber'] ?: 'לא צוין'),
-        'סוג יחידה: ' . $record['deviceType'] . ($record['nineConfig'] !== '' ? ' - ' . $record['nineConfig'] : ''),
-        'תקלה: ' . $record['faultType'],
-        'תיאור קצר: ' . ($record['description'] ?: 'לא צוין'),
-        'עומס / נסיבות: ' . ($record['loadContext'] ?: 'לא צוין'),
-        'חשד Inrush: ' . ($record['inrushSuspected'] ? 'כן' : 'לא'),
-        'קונטרולר: ' . ($record['controller'] ?: 'לא צוין'),
-        'Node ID: ' . ($record['nodeId'] ?: 'לא צוין'), '',
-        'מדיה מאובטחת (דורשת כניסה לאזור העובדים):',
-        $mediaLines === [] ? 'לא צורפה מדיה' : implode("\r\n", $mediaLines), '',
-        'טיוטה באנגלית ל-MCOHome, לא נשלחה ליצרן:',
-        'To: ' . $draft['to'],
-        'Subject: ' . $draft['subject'], '',
-        $draft['body'],
+    return implode("\r\n", [
+        '', 'Internal submitter: ' . $record['technician'] . ' (' . $record['employeeEmail'] . ')',
+        '内部提交人：' . $record['technician'] . ' (' . $record['employeeEmail'] . ')', '',
+        'Secure internal media links (employee login required):',
+        '内部安全媒体链接（需要员工登录）：',
+        $mediaLines === [] ? 'No media attached. / 未附加媒体。' : implode("\r\n", $mediaLines),
     ]);
-    $subject = 'MCOHome תקלה חדשה ' . $record['eventId'] . ' - ' . $record['faultType'];
+}
+
+function mcohome_send_notifications(array $record, ?callable $mailer = null): array
+{
+    $message = mcohome_build_vendor_draft($record);
+    $internalRecipients = mcohome_internal_recipients();
+    $mailer ??= static fn(string $email, string $subject, string $body): bool =>
+        portal_send_mail_with_attachments($email, $subject, $body);
     $results = [];
-    foreach (mcohome_internal_recipients() as $email) {
+    foreach (mcohome_notification_recipients() as $email) {
+        $body = $message['body'];
+        if (in_array($email, $internalRecipients, true)) {
+            $body .= mcohome_internal_media_appendix($record);
+        }
         try {
-            $results[$email] = portal_send_mail_with_attachments($email, $subject, $body);
+            $results[$email] = $mailer($email, $message['subject'], $body);
         } catch (Throwable $error) {
             error_log('[mcohome notification] ' . $email . ' ' . $error->getMessage());
             $results[$email] = false;
