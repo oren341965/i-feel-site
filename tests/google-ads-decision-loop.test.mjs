@@ -115,6 +115,68 @@ test('expired or unbounded policy is rejected', () => {
   }), /10%/);
 });
 
+test('preview mode works through the independent read gate while the write gate is disabled', async (t) => {
+  const root = await mkdtemp(join(tmpdir(), 'ifeel-google-preview-'));
+  t.after(() => rm(root, { recursive: true, force: true }));
+  const { privateKey } = generateKeyPairSync('rsa', { modulusLength: 2048 });
+  const serviceAccountCredentialFile = join(root, 'service.json');
+  const developerCredentialFile = join(root, 'developer.txt');
+  const configPath = join(root, 'config.json');
+  await writeFile(serviceAccountCredentialFile, JSON.stringify({
+    type: 'service_account', client_email: 'reader@example.invalid',
+    private_key: privateKey.export({ type: 'pkcs8', format: 'pem' }),
+  }), 'utf8');
+  await writeFile(developerCredentialFile, 'synthetic_dev_credential_123', 'utf8');
+  await writeFile(configPath, JSON.stringify({
+    runtimeRoot: root,
+    googleAdsAccountId: '251-497-1872',
+    connections: { googleAds: {
+      connected: true, liveVerified: true, readOnly: true, writeEnabled: false, apiVersion: 'v25',
+      serviceAccountCredentialFile, developerCredentialFile,
+    } },
+    marketingDecision: { ...POLICY, gates: GATES },
+  }), 'utf8');
+
+  let mutateCalls = 0;
+  const response = (payload, status = 200) => ({
+    ok: status >= 200 && status < 300, status, headers: { get: () => null }, json: async () => payload,
+  });
+  const fetchImpl = async (url, options = {}) => {
+    const target = String(url);
+    if (target === 'https://oauth2.googleapis.com/token') return response({ access_token: 'synthetic-token' });
+    if (target.endsWith('/customers:listAccessibleCustomers')) return response({ resourceNames: ['customers/2514971872'] });
+    if (target.includes(':mutate')) { mutateCalls += 1; return response({}); }
+    const query = JSON.parse(options.body).query;
+    if (/FROM campaign\b/.test(query)) return response([{ results: [] }]);
+    if (/FROM search_term_view/.test(query)) return response([{ results: [] }]);
+    throw new Error(`Unexpected request ${target}`);
+  };
+
+  const result = await runDailyGoogleAdsDecision({ configPath, mode: 'preview', fetchImpl, now: NOW });
+  assert.equal(result.mode, 'PREVIEW');
+  assert.equal(result.writes, 0);
+  assert.equal(mutateCalls, 0);
+});
+
+test('apply mode still fails closed while the bounded write gate is disabled', async (t) => {
+  const root = await mkdtemp(join(tmpdir(), 'ifeel-google-apply-gate-'));
+  t.after(() => rm(root, { recursive: true, force: true }));
+  const configPath = join(root, 'config.json');
+  await writeFile(configPath, JSON.stringify({
+    runtimeRoot: root,
+    googleAdsAccountId: '251-497-1872',
+    connections: { googleAds: {
+      connected: true, liveVerified: true, readOnly: true, writeEnabled: false, apiVersion: 'v25',
+    } },
+    marketingDecision: { ...POLICY, gates: GATES },
+  }), 'utf8');
+
+  await assert.rejects(
+    runDailyGoogleAdsDecision({ configPath, mode: 'apply', fetchImpl: async () => { throw new Error('network should not be reached'); }, now: NOW }),
+    /write gate must be enabled for apply mode/,
+  );
+});
+
 test('apply mode performs one exact-negative mutation, verifies it and persists only sanitized state', async (t) => {
   const root = await mkdtemp(join(tmpdir(), 'ifeel-google-decision-'));
   t.after(() => rm(root, { recursive: true, force: true }));
