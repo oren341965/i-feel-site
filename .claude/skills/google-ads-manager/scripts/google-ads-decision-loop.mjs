@@ -341,7 +341,7 @@ async function applyNegativeDecision(session, decision) {
   return 'CREATED';
 }
 
-async function loadRuntime(configPath, fetchImpl, now) {
+async function loadRuntime(configPath, fetchImpl, now, mode) {
   const config = JSON.parse(await readFile(configPath, 'utf8'));
   const googleAds = config.connections?.googleAds ?? {};
   const policy = assertPolicy(config.marketingDecision, now);
@@ -349,7 +349,8 @@ async function loadRuntime(configPath, fetchImpl, now) {
   if (customerId !== '2514971872') throw new Error('Google Ads account mismatch');
   if (googleAds.apiVersion !== GOOGLE_ADS_API_VERSION) throw new Error('Unsupported Google Ads API version');
   if (googleAds.connected !== true || googleAds.liveVerified !== true) throw new Error('Google Ads live connection is not verified');
-  if (googleAds.writeEnabled !== true || googleAds.readOnly !== true) throw new Error('Bounded write and independent read gates must both be enabled');
+  if (googleAds.readOnly !== true) throw new Error('Independent Google Ads read gate must be enabled');
+  if (mode === 'apply' && googleAds.writeEnabled !== true) throw new Error('Bounded Google Ads write gate must be enabled for apply mode');
   const serviceAccount = JSON.parse(await readFile(resolve(googleAds.serviceAccountCredentialFile), 'utf8'));
   const developerCredential = (await readFile(resolve(googleAds.developerCredentialFile), 'utf8')).trim();
   if (!/^[A-Za-z0-9_-]{20,64}$/.test(developerCredential)) throw new Error('Invalid Google Ads developer credential');
@@ -403,7 +404,8 @@ async function collectDecisionInputs(session) {
 }
 
 export async function runDailyGoogleAdsDecision({ configPath, mode = 'preview', fetchImpl = fetch, now = new Date() }) {
-  const session = await loadRuntime(configPath, fetchImpl, now);
+  if (!['preview', 'apply'].includes(mode)) throw new Error('Mode must be preview or apply');
+  const session = await loadRuntime(configPath, fetchImpl, now, mode);
   const prior = await readState(session.stateFile);
   const localDate = isoDateInJerusalem(now);
   if (mode === 'apply' && prior?.localDate === localDate && prior?.status === 'SUCCEEDED') {

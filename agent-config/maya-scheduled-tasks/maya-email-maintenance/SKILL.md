@@ -3,7 +3,7 @@ name: maya-email-maintenance
 description: Run Maya's bounded Gmail maintenance scheduler and authorized professional-content cycle.
 ---
 
-On every registered scheduler invocation, read `%USERPROFILE%\.claude\skills\maya-email-maintenance\SKILL.md` completely, then apply this scheduled-run contract.
+On every registered scheduler invocation, read `%USERPROFILE%\.codex\skills\maya-email-maintenance\SKILL.md` completely, then apply this scheduled-run contract.
 
 ## Base maturity-0 report-only pass
 
@@ -23,6 +23,7 @@ On every registered scheduler invocation, read `%USERPROFILE%\.claude\skills\may
 - Apply `SALES_ELIGIBILITY_FILTER` before counting a sales item as actionable.
 - Never infer that a person did not answer from one Gmail thread. Customer-specific reminder work still requires the cross-channel checks defined by its owning workflow.
 - Output only aggregate counts and bounded blocker codes from the ordinary report-only pass. Do not include names, addresses, subjects, bodies, message/thread IDs, attachment names, or customer data in scheduler logs.
+- The ordinary report-only pass must not request local-file `Edit` access.
 
 ## Existing Maya task queue
 
@@ -46,7 +47,7 @@ Read the installed canonical contracts at `C:\ifeel-maya\config\maya-task-protoc
 
 For an authorized professional-content control message:
 
-- read `%USERPROFILE%\.claude\skills\maya-email-maintenance\references\professional-content-cycle.md` and `professional-content-runtime.md` completely before acting;
+- read `%USERPROFILE%\.codex\skills\maya-email-maintenance\references\professional-content-cycle.md` and `professional-content-runtime.md` completely before acting;
 - Oren's direct start authorization was received on 2026-09-06, so the cycle is `AUTHORIZED_ACTIVE_PENDING_RUNTIME_GATES`;
 - the only permitted sender is exactly `myhome@i-feel.co.il`; never use `oren@i-feel.co.il` or another account;
 - professional email requires a verified Gmail send/write capability. `gmail.readonly` alone returns `GMAIL_SEND_SCOPE_REQUIRED`; follow the approved local reauthorization path described in `professional-content-runtime.md`, and if interactive consent is required return `NEEDS_INTERACTIVE_GMAIL_CONSENT` without sending;

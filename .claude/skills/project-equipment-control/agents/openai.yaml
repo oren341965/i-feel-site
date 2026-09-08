@@ -1,0 +1,4 @@
+interface:
+  display_name: "בקרת ציוד לפרויקט"
+  short_description: "התאמת ציוד נדרש, שהתקבל, יצא והותקן"
+  default_prompt: "Use $project-equipment-control to reconcile equipment and completion gaps for the requested I Feel projects."
