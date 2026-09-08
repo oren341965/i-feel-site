@@ -28,4 +28,6 @@ jobs:
       - name: Lint and test staff expenses portal
         run: |
           find public/staff-expenses -maxdepth 1 -type f -name '*.php' -print0 | xargs -0 -n1 php -l
+          node --check public/staff-expenses/portal.js
+          node --check public/staff-expenses/offline-worker.js
           php -d upload_max_filesize=12M -d post_max_size=64M -d max_file_uploads=20 tests/staff-expenses/portal-unit.php

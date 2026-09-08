@@ -1,6 +1,244 @@
 (() => {
     'use strict';
 
+    const offlineDatabaseName = 'ifeel-staff-offline-v1';
+    const offlineDatabaseVersion = 1;
+    const handoverQueueStore = 'handoverQueue';
+    const offlineSupported = 'serviceWorker' in navigator && 'indexedDB' in window;
+    const offlineStatus = document.querySelector('[data-handover-offline-status]');
+    const offlineTitle = offlineStatus?.querySelector('[data-handover-offline-title]');
+    const offlineMessage = offlineStatus?.querySelector('[data-handover-offline-message]');
+    const offlineQueueBadge = offlineStatus?.querySelector('[data-handover-offline-queue]');
+    let offlineRegistration = null;
+    let activeHandoverQueueId = '';
+
+    const openOfflineDatabase = () => new Promise((resolve, reject) => {
+        const request = indexedDB.open(offlineDatabaseName, offlineDatabaseVersion);
+        request.onupgradeneeded = () => {
+            const database = request.result;
+            if (!database.objectStoreNames.contains(handoverQueueStore)) {
+                database.createObjectStore(handoverQueueStore, { keyPath: 'id' });
+            }
+        };
+        request.onsuccess = () => resolve(request.result);
+        request.onerror = () => reject(request.error || new Error('לא ניתן לפתוח את האחסון המקומי.'));
+    });
+
+    const saveOfflineHandover = async (entry) => {
+        const database = await openOfflineDatabase();
+        return new Promise((resolve, reject) => {
+            const transaction = database.transaction(handoverQueueStore, 'readwrite');
+            transaction.objectStore(handoverQueueStore).put(entry);
+            transaction.oncomplete = () => {
+                database.close();
+                resolve();
+            };
+            transaction.onerror = () => reject(transaction.error || new Error('לא ניתן לשמור את המסירה במכשיר.'));
+        });
+    };
+
+    const offlineQueueCount = async () => {
+        if (!offlineSupported) return 0;
+        const database = await openOfflineDatabase();
+        return new Promise((resolve, reject) => {
+            const transaction = database.transaction(handoverQueueStore, 'readonly');
+            const request = transaction.objectStore(handoverQueueStore).count();
+            request.onsuccess = () => resolve(request.result || 0);
+            request.onerror = () => reject(request.error || new Error('לא ניתן לקרוא את תור המסירות.'));
+            transaction.oncomplete = () => database.close();
+        });
+    };
+
+    const setOfflineStatus = (state, title, message) => {
+        if (!offlineStatus) return;
+        offlineStatus.classList.remove('is-online', 'is-offline', 'is-ready', 'is-error', 'is-syncing');
+        if (state) offlineStatus.classList.add(state);
+        if (offlineTitle) offlineTitle.textContent = title;
+        if (offlineMessage) offlineMessage.textContent = message;
+    };
+
+    const refreshOfflineQueueBadge = async (providedCount = null) => {
+        if (!offlineQueueBadge) return;
+        const count = providedCount === null ? await offlineQueueCount() : providedCount;
+        offlineQueueBadge.hidden = count < 1;
+        offlineQueueBadge.textContent = count === 1 ? 'מסירה אחת ממתינה לסנכרון' : `${count} מסירות ממתינות לסנכרון`;
+    };
+
+    const handoverFormEntry = (form) => {
+        const formData = new FormData(form);
+        const fields = [];
+        const files = [];
+        formData.forEach((value, name) => {
+            if (value instanceof File) {
+                if (value.size > 0) {
+                    files.push({
+                        name,
+                        blob: value,
+                        fileName: value.name,
+                        type: value.type,
+                        lastModified: value.lastModified,
+                    });
+                }
+                return;
+            }
+            fields.push({ name, value: String(value) });
+        });
+        const valueFor = (name) => fields.find((field) => field.name === name)?.value || '';
+        const currentUrl = new URL(window.location.href);
+        const submitUrl = new URL(form.getAttribute('action') || currentUrl.href, currentUrl.href);
+        return {
+            id: valueFor('handover_client_id'),
+            createdAt: Date.now(),
+            url: submitUrl.href,
+            pageUrl: currentUrl.href,
+            projectId: valueFor('handover_project_id'),
+            residentId: valueFor('handover_resident_id'),
+            building: currentUrl.searchParams.get('handover_building') || '',
+            fields,
+            files,
+        };
+    };
+
+    const requestHandoverSync = async () => {
+        if (!offlineRegistration || !navigator.onLine) return;
+        try {
+            if ('sync' in offlineRegistration) {
+                await offlineRegistration.sync.register('tenant-handover-sync');
+            }
+        } catch (error) {
+            // The active page also asks the worker to sync, so Background Sync
+            // registration is an optional enhancement rather than a blocker.
+        }
+        (offlineRegistration.active || offlineRegistration.waiting)?.postMessage({ type: 'SYNC_HANDOVER_QUEUE' });
+    };
+
+    const storeHandoverPageOffline = (url, html) => new Promise((resolve, reject) => {
+        const worker = offlineRegistration?.active || offlineRegistration?.waiting;
+        if (!worker) {
+            reject(new Error('offline-worker-unavailable'));
+            return;
+        }
+        const channel = new MessageChannel();
+        const timeout = window.setTimeout(() => reject(new Error('offline-cache-timeout')), 15000);
+        channel.port1.onmessage = (event) => {
+            window.clearTimeout(timeout);
+            if (event.data?.ok) resolve();
+            else reject(new Error('offline-cache-failed'));
+        };
+        worker.postMessage({ type: 'CACHE_HANDOVER_PAGE', url, html }, [channel.port2]);
+    });
+
+    const cacheCurrentHandoverPage = () => {
+        const form = document.querySelector('[data-handover-form]');
+        if (!form) return;
+        storeHandoverPageOffline(
+            window.location.href,
+            `<!doctype html>\n${document.documentElement.outerHTML}`
+        ).catch(() => undefined);
+        setOfflineStatus(
+            navigator.onLine ? 'is-ready' : 'is-offline',
+            navigator.onLine ? 'הטופס מוכן לעבודה ללא קליטה' : 'עובדים כעת ללא קליטה',
+            navigator.onLine
+                ? 'אפשר להמשיך גם אם החיבור ייעלם. הטופס והתמונות יישמרו במכשיר עד לסנכרון.'
+                : 'מלאו כרגיל. בסיום המסירה תישמר במכשיר ותישלח אוטומטית לאחר חזרת האינטרנט.'
+        );
+    };
+
+    const updateConnectionStatus = async () => {
+        const hasForm = Boolean(document.querySelector('[data-handover-form]'));
+        const pending = await offlineQueueCount().catch(() => 0);
+        await refreshOfflineQueueBadge(pending).catch(() => undefined);
+        if (!offlineSupported) {
+            setOfflineStatus('is-error', 'מצב ללא קליטה אינו נתמך בדפדפן זה', 'יש לפתוח את אזור העובדים ב-Chrome, Edge או Safari מעודכן.');
+            return;
+        }
+        if (!navigator.onLine) {
+            setOfflineStatus(
+                'is-offline',
+                hasForm ? 'עובדים כעת ללא קליטה' : 'אין חיבור — לא נמצא טופס דייר שמור',
+                hasForm
+                    ? 'מלאו כרגיל. בסיום המסירה תישמר במכשיר ותישלח אוטומטית לאחר חזרת האינטרנט.'
+                    : 'יש לפתוח טופס דייר אחד בזמן חיבור לפני כניסה לאזור ללא קליטה.'
+            );
+            return;
+        }
+        if (pending > 0) {
+            setOfflineStatus('is-syncing', 'החיבור חזר — מסנכרן מסירות', 'אין לסגור את העמוד עד לסיום הסנכרון.');
+            return;
+        }
+        setOfflineStatus(
+            hasForm ? 'is-ready' : 'is-online',
+            hasForm ? 'הטופס מוכן לעבודה ללא קליטה' : 'מחובר לאינטרנט',
+            hasForm
+                ? 'אפשר להמשיך גם אם החיבור ייעלם. הטופס והתמונות יישמרו במכשיר עד לסנכרון.'
+                : 'בחרו פרויקט ודייר ופתחו את הטופס פעם אחת כדי להכין אותו לעבודה ללא קליטה.'
+        );
+    };
+
+    if (offlineSupported) {
+        navigator.serviceWorker.addEventListener('message', async (event) => {
+            const data = event.data || {};
+            if (data.type === 'HANDOVER_QUEUE_STATUS') {
+                await refreshOfflineQueueBadge(Number(data.pending || 0));
+                if (data.syncing) setOfflineStatus('is-syncing', 'מסנכרן מסירות שמורות', 'הנתונים והתמונות מועלים כעת לשרת.');
+            }
+            if (data.type === 'HANDOVER_SYNC_SUCCESS') {
+                await refreshOfflineQueueBadge();
+                setOfflineStatus(
+                    data.notificationsSent === false ? 'is-error' : 'is-ready',
+                    data.notificationsSent === false ? 'המסירה נשמרה — הודעת דוא״ל דורשת בדיקה' : 'המסירה סונכרנה בהצלחה',
+                    `מספר מסירה: ${data.handoverId || 'נשמר בשרת'}`
+                );
+                const submit = document.querySelector('[data-handover-submit]');
+                if (submit && (!activeHandoverQueueId || activeHandoverQueueId === data.queueId)) {
+                    submit.disabled = true;
+                    submit.textContent = 'נשמר ונשלח';
+                }
+                if (activeHandoverQueueId === data.queueId) {
+                    window.setTimeout(() => {
+                        window.location.href = `/staff-expenses/?tab=handovers&submitted=${encodeURIComponent(data.handoverId || '')}`;
+                    }, 1200);
+                }
+            }
+            if (data.type === 'HANDOVER_SYNC_AUTH_REQUIRED') {
+                setOfflineStatus('is-error', 'המסירה שמורה — נדרשת כניסה מחדש', 'התחברו שוב לאזור העובדים. לאחר הכניסה הסנכרון יימשך אוטומטית.');
+            }
+            if (data.type === 'HANDOVER_SYNC_ERROR') {
+                setOfflineStatus('is-error', 'המסירה נשארה שמורה במכשיר', data.message || 'הסנכרון ינסה שוב אוטומטית כאשר החיבור יהיה יציב.');
+                const submit = document.querySelector('[data-handover-submit]');
+                if (submit && activeHandoverQueueId === data.queueId) {
+                    submit.disabled = true;
+                    submit.textContent = 'נשמר וממתין לסנכרון';
+                }
+            }
+        });
+
+        navigator.serviceWorker.register('/staff-expenses/offline-worker.js', { scope: '/staff-expenses/' })
+            .then(async (registration) => {
+                offlineRegistration = registration;
+                await navigator.serviceWorker.ready;
+                cacheCurrentHandoverPage();
+                await updateConnectionStatus();
+                if (navigator.onLine) await requestHandoverSync();
+            })
+            .catch(() => setOfflineStatus('is-error', 'לא ניתן להכין מצב ללא קליטה', 'רעננו את העמוד בזמן שיש חיבור ונסו שוב.'));
+
+        window.addEventListener('online', async () => {
+            await updateConnectionStatus();
+            await requestHandoverSync();
+        });
+        window.addEventListener('offline', updateConnectionStatus);
+
+        document.querySelectorAll('form').forEach((candidate) => {
+            if (candidate.querySelector('input[name="action"][value="logout"]')) {
+                candidate.addEventListener('submit', () => {
+                    (offlineRegistration?.active || offlineRegistration?.waiting)?.postMessage({ type: 'CLEAR_OFFLINE_HANDOVERS' });
+                    indexedDB.deleteDatabase(offlineDatabaseName);
+                });
+            }
+        });
+    }
+
     const reportType = document.getElementById('report-type');
     const sections = Array.from(document.querySelectorAll('[data-report-section]'));
 
@@ -164,6 +402,64 @@
         control.addEventListener('change', () => handoverSelector.requestSubmit());
     });
 
+    const offlinePrepareButton = handoverSelector?.querySelector('[data-handover-offline-prepare]');
+    const offlinePrepareNote = handoverSelector?.querySelector('[data-handover-offline-prepare-note]');
+    offlinePrepareButton?.addEventListener('click', async () => {
+        if (!navigator.onLine) {
+            window.alert('הכנת פרויקט חדש דורשת חיבור. טפסים שכבר הוכנו ממשיכים לעבוד ללא קליטה.');
+            return;
+        }
+        if (!offlineSupported || !offlineRegistration) {
+            window.alert('מצב Offline עדיין לא מוכן. המתינו מספר שניות או רעננו את העמוד.');
+            return;
+        }
+        const projectId = handoverSelector.querySelector('[name="handover_project"]')?.value || '';
+        const residentIds = Array.from(handoverSelector.querySelectorAll('[data-handover-offline-resident-id]'))
+            .map((item) => item.dataset.handoverOfflineResidentId || '')
+            .filter(Boolean);
+        if (!projectId || residentIds.length < 1) {
+            window.alert('יש לבחור פרויקט הכולל דיירים לפני ההכנה לעבודה ללא קליטה.');
+            return;
+        }
+
+        offlinePrepareButton.disabled = true;
+        const originalLabel = offlinePrepareButton.textContent;
+        let prepared = 0;
+        try {
+            await storeHandoverPageOffline(
+                window.location.href,
+                `<!doctype html>\n${document.documentElement.outerHTML}`
+            );
+            for (const residentId of residentIds) {
+                offlinePrepareButton.textContent = `מכין ${prepared + 1} מתוך ${residentIds.length}…`;
+                setOfflineStatus('is-syncing', 'מכין את הפרויקט לעבודה ללא קליטה', `${prepared} מתוך ${residentIds.length} טפסי דיירים נשמרו במכשיר.`);
+                const residentUrl = new URL('/staff-expenses/', window.location.origin);
+                residentUrl.searchParams.set('tab', 'handovers');
+                residentUrl.searchParams.set('handover_project', projectId);
+                residentUrl.searchParams.set('handover_resident', residentId);
+                const response = await fetch(residentUrl.href, {
+                    credentials: 'include',
+                    cache: 'no-store',
+                    headers: { 'X-Ifeel-Offline-Prepare': '1' },
+                });
+                if (!response.ok || response.headers.get('X-Ifeel-Offline-Cache') !== 'handover') {
+                    throw new Error('offline-project-fetch-failed');
+                }
+                const html = await response.text();
+                if (!html.includes('data-handover-form')) throw new Error('offline-project-form-missing');
+                await storeHandoverPageOffline(residentUrl.href, html);
+                prepared += 1;
+            }
+            offlinePrepareButton.textContent = 'הפרויקט מוכן ללא קליטה';
+            if (offlinePrepareNote) offlinePrepareNote.textContent = `${prepared} טפסי דיירים נשמרו במכשיר זה. ניתן לעבור ביניהם גם ללא אינטרנט.`;
+            setOfflineStatus('is-ready', 'הפרויקט מוכן לעבודה ללא קליטה', `${prepared} טפסי דיירים זמינים במכשיר. מסירות חדשות יישמרו ויסתנכרנו אוטומטית.`);
+        } catch (error) {
+            offlinePrepareButton.disabled = false;
+            offlinePrepareButton.textContent = originalLabel;
+            setOfflineStatus('is-error', 'הכנת הפרויקט נעצרה', `${prepared} מתוך ${residentIds.length} טפסים נשמרו. ודאו שהחיבור יציב ונסו שוב.`);
+        }
+    });
+
     const handoverLocation = document.querySelector('[data-handover-location]');
     const handoverLocationOther = document.querySelector('[data-handover-location-other]');
     const handoverLocationOtherInput = handoverLocationOther?.querySelector('input');
@@ -181,15 +477,125 @@
     const handoverReady = handoverForm?.querySelector('[data-handover-ready]');
     const handoverCloudLinkField = handoverForm?.querySelector('[data-handover-cloud-link-field]');
     const handoverCloudLink = handoverForm?.querySelector('[data-handover-cloud-link]');
-    const updateHandoverCloudLink = () => {
-        if (!handoverReady || !handoverCloudLinkField || !handoverCloudLink) return;
-        const needsCloudLink = handoverReady.value === 'delivered_with_app_link';
-        handoverCloudLinkField.hidden = !needsCloudLink;
-        handoverCloudLink.required = needsCloudLink;
-        if (!needsCloudLink) handoverCloudLink.value = '';
+    const handoverCloudCopy = handoverForm?.querySelector('[data-handover-cloud-copy]');
+    const handoverCloudCopyStatus = handoverForm?.querySelector('[data-handover-cloud-copy-status]');
+    const handoverRecipientFields = handoverForm?.querySelector('[data-handover-recipient-fields]');
+    const handoverRecipientName = handoverForm?.querySelector('[data-handover-recipient-name]');
+    const handoverSignatureCanvas = handoverForm?.querySelector('[data-handover-signature-canvas]');
+    const handoverSignatureValue = handoverForm?.querySelector('[data-handover-signature-value]');
+    const handoverSignatureClear = handoverForm?.querySelector('[data-handover-signature-clear]');
+    const handoverSignatureHint = handoverForm?.querySelector('[data-handover-signature-hint]');
+    const signatureContext = handoverSignatureCanvas?.getContext('2d');
+    let signatureDrawing = false;
+    let signatureHasInk = false;
+
+    const clearHandoverSignature = () => {
+        if (!handoverSignatureCanvas || !signatureContext) return;
+        signatureContext.fillStyle = '#ffffff';
+        signatureContext.fillRect(0, 0, handoverSignatureCanvas.width, handoverSignatureCanvas.height);
+        signatureContext.strokeStyle = '#10233f';
+        signatureContext.lineWidth = 4;
+        signatureContext.lineCap = 'round';
+        signatureContext.lineJoin = 'round';
+        signatureHasInk = false;
+        if (handoverSignatureValue) handoverSignatureValue.value = '';
+        if (handoverSignatureHint) handoverSignatureHint.hidden = false;
     };
-    handoverReady?.addEventListener('change', updateHandoverCloudLink);
-    updateHandoverCloudLink();
+
+    const signaturePoint = (event) => {
+        const bounds = handoverSignatureCanvas.getBoundingClientRect();
+        return {
+            x: (event.clientX - bounds.left) * handoverSignatureCanvas.width / bounds.width,
+            y: (event.clientY - bounds.top) * handoverSignatureCanvas.height / bounds.height,
+        };
+    };
+
+    handoverSignatureCanvas?.addEventListener('pointerdown', (event) => {
+        if (!signatureContext) return;
+        event.preventDefault();
+        signatureDrawing = true;
+        signatureHasInk = true;
+        handoverSignatureCanvas.setPointerCapture?.(event.pointerId);
+        const point = signaturePoint(event);
+        signatureContext.beginPath();
+        signatureContext.moveTo(point.x, point.y);
+        signatureContext.lineTo(point.x + 0.1, point.y + 0.1);
+        signatureContext.stroke();
+        if (handoverSignatureHint) handoverSignatureHint.hidden = true;
+    });
+    handoverSignatureCanvas?.addEventListener('pointermove', (event) => {
+        if (!signatureDrawing || !signatureContext) return;
+        event.preventDefault();
+        const point = signaturePoint(event);
+        signatureContext.lineTo(point.x, point.y);
+        signatureContext.stroke();
+    });
+    const finishHandoverSignature = () => {
+        if (!signatureDrawing || !handoverSignatureCanvas || !handoverSignatureValue) return;
+        signatureDrawing = false;
+        handoverSignatureValue.value = signatureHasInk ? handoverSignatureCanvas.toDataURL('image/png') : '';
+    };
+    handoverSignatureCanvas?.addEventListener('pointerup', finishHandoverSignature);
+    handoverSignatureCanvas?.addEventListener('pointercancel', finishHandoverSignature);
+    handoverSignatureCanvas?.addEventListener('pointerleave', finishHandoverSignature);
+    handoverSignatureClear?.addEventListener('click', clearHandoverSignature);
+    clearHandoverSignature();
+
+    handoverCloudCopy?.addEventListener('click', async () => {
+        const value = handoverCloudLink?.textContent?.trim() || '';
+        if (!value) return;
+        try {
+            let copied = false;
+            if (navigator.clipboard?.writeText) {
+                try {
+                    await navigator.clipboard.writeText(value);
+                    copied = true;
+                } catch {
+                    // Offline/non-secure contexts can reject the modern clipboard API.
+                }
+            }
+            if (!copied) {
+                const helper = document.createElement('textarea');
+                helper.value = value;
+                helper.setAttribute('readonly', '');
+                helper.style.position = 'fixed';
+                helper.style.opacity = '0';
+                document.body.appendChild(helper);
+                try {
+                    helper.select();
+                    copied = document.execCommand('copy');
+                } finally {
+                    helper.remove();
+                }
+            }
+            if (!copied) throw new Error('copy failed');
+            handoverCloudCopy.textContent = 'הקישור הועתק';
+            if (handoverCloudCopyStatus) handoverCloudCopyStatus.textContent = 'אפשר להדביק אותו כעת בהגדרת הקונטרולר.';
+        } catch {
+            if (handoverCloudCopyStatus) handoverCloudCopyStatus.textContent = 'לא ניתן להעתיק אוטומטית. לחצו לחיצה ארוכה על הקישור והעתיקו אותו.';
+        }
+    });
+
+    const updateHandoverDelivery = () => {
+        if (!handoverReady) return;
+        const isDelivered = handoverReady.value === 'ready_delivered';
+        if (handoverCloudLinkField) {
+            const cloudAvailable = handoverCloudLinkField.dataset.handoverCloudAvailable === '1';
+            handoverReady.setCustomValidity(isDelivered && !cloudAvailable
+                ? 'לא ניתן להקצות לדייר כתובת פנויה ממאגר כתובות הענן.'
+                : '');
+        }
+        if (handoverRecipientFields && handoverRecipientName) {
+            handoverRecipientFields.hidden = !isDelivered;
+            handoverRecipientName.required = isDelivered;
+            if (!isDelivered) {
+                handoverRecipientName.value = '';
+                clearHandoverSignature();
+            }
+        }
+    };
+    handoverReady?.addEventListener('change', updateHandoverDelivery);
+    updateHandoverDelivery();
 
     const switch9CountInput = handoverForm?.querySelector('[data-handover-switch-9-count]');
     const switch9Units = handoverForm?.querySelector('[data-handover-switch-9-units]');
@@ -215,12 +621,14 @@
             const number = index + 1;
             const legend = unit.querySelector('[data-handover-switch-9-legend]');
             const configuration = unit.querySelector('[data-handover-switch-9-configuration]');
+            const configurationLabel = unit.querySelector('[data-handover-switch-9-configuration-label]');
             const location = unit.querySelector('[data-handover-switch-9-location]');
             const photo = unit.querySelector('[data-handover-switch-9-photo]');
             const photoHeading = unit.querySelector('[data-handover-switch-9-photo-heading]');
             const photoLabel = unit.querySelector('[data-handover-switch-9-photo-label]');
-            if (legend) legend.textContent = `מפסק 9 מס׳ ${number}`;
+            if (legend) legend.textContent = `מפסק 9 מס׳ ${number} — סיווג, מיקום וצילום`;
             if (configuration) configuration.name = `handover_switch_9_configuration_${number}`;
+            if (configurationLabel) configurationLabel.innerHTML = `סיווג מפסק 9 מס׳ ${number} <b>*</b>`;
             if (location) location.name = `handover_switch_9_location_${number}`;
             if (photo) photo.name = `handover_switch_photo_${number}`;
             if (photoHeading) photoHeading.innerHTML = `צילום מפסק 9 מס׳ ${number} <b>*</b>`;
@@ -231,20 +639,33 @@
     switch9CountInput?.addEventListener('change', updateSwitch9Units);
     updateSwitch9Units();
 
-    handoverForm?.querySelectorAll('[data-handover-component-count]').forEach((countInput) => {
-        const component = countInput.dataset.handoverComponentCount;
-        const locationField = handoverForm.querySelector(`[data-handover-component-location="${component}"]`);
-        const locationInput = locationField?.querySelector('input');
-        const updateComponentLocation = () => {
-            if (!locationField || !locationInput) return;
-            const hasComponents = Number.parseInt(countInput.value, 10) > 0;
-            locationField.hidden = !hasComponents;
-            locationInput.required = hasComponents;
-            if (!hasComponents) locationInput.value = '';
-        };
-        countInput.addEventListener('input', updateComponentLocation);
-        updateComponentLocation();
-    });
+    const componentPanelPresence = handoverForm?.querySelector('[data-handover-component-panel-presence]');
+    const componentPanels = handoverForm?.querySelector('[data-handover-component-panels]');
+    const componentSwitchStatus = handoverForm?.querySelector('[data-handover-component-switch-status]');
+    const componentSwitchStatusOtherField = handoverForm?.querySelector('[data-handover-component-switch-status-other]');
+    const componentSwitchStatusOtherInput = componentSwitchStatusOtherField?.querySelector('input');
+    const updateComponentSwitchStatusOther = () => {
+        if (!componentSwitchStatusOtherField || !componentSwitchStatusOtherInput) return;
+        const isOther = componentPanelPresence?.value === 'has_panels' && componentSwitchStatus?.value === 'other';
+        componentSwitchStatusOtherField.hidden = !isOther;
+        componentSwitchStatusOtherInput.required = isOther;
+        if (!isOther) componentSwitchStatusOtherInput.value = '';
+    };
+    const updateComponentPanels = () => {
+        if (!componentPanels || !componentSwitchStatus) return;
+        const hasPanels = componentPanelPresence?.value === 'has_panels';
+        componentPanels.hidden = !hasPanels;
+        componentPanels.querySelectorAll('input[type="number"]').forEach((input) => {
+            input.required = hasPanels;
+            if (!hasPanels) input.value = '0';
+        });
+        componentSwitchStatus.required = hasPanels;
+        if (!hasPanels) componentSwitchStatus.value = '';
+        updateComponentSwitchStatusOther();
+    };
+    componentPanelPresence?.addEventListener('change', updateComponentPanels);
+    componentSwitchStatus?.addEventListener('change', updateComponentSwitchStatusOther);
+    updateComponentPanels();
 
     const issueCountInput = handoverForm?.querySelector('[data-handover-issue-count]');
     const issueList = handoverForm?.querySelector('[data-handover-issue-list]');
@@ -261,11 +682,20 @@
             const photoLabel = issue.querySelector('[data-handover-issue-photo-label]');
             const photo = issue.querySelector('[data-handover-issue-photo]');
             const type = issue.querySelector('[data-handover-issue-type]');
+            const descriptionField = issue.querySelector('[data-handover-issue-description-field]');
+            const description = issue.querySelector('[data-handover-issue-description]');
             if (legend) legend.textContent = `תקלה מס׳ ${number}`;
             if (photoHeading) photoHeading.innerHTML = `צילום תקלה מס׳ ${number} <b>*</b>`;
             if (photoLabel) photoLabel.textContent = `צילום תקלה מס׳ ${number}`;
             if (photo) photo.name = `handover_issue_photo_${number}`;
             if (type) type.name = `handover_issue_type_${number}`;
+            if (description) description.name = `handover_issue_description_${number}`;
+            if (descriptionField && description) {
+                const isOther = type?.value === 'other';
+                descriptionField.hidden = !isOther;
+                description.required = isOther;
+                if (!isOther) description.value = '';
+            }
         });
     };
     issueAddButton?.addEventListener('click', () => {
@@ -287,10 +717,24 @@
         removeButton.closest('[data-handover-issue]')?.remove();
         refreshIssues();
     });
+    issueList?.addEventListener('change', (event) => {
+        const target = event.target instanceof Element ? event.target : null;
+        if (target?.matches('[data-handover-issue-type]')) refreshIssues();
+    });
     refreshIssues();
 
     const handoverSubmit = handoverForm?.querySelector('[data-handover-submit]');
     handoverForm?.addEventListener('submit', (event) => {
+        if (handoverReady?.value === 'ready_delivered') {
+            if (signatureHasInk && handoverSignatureCanvas && handoverSignatureValue && !handoverSignatureValue.value) {
+                handoverSignatureValue.value = handoverSignatureCanvas.toDataURL('image/png');
+            }
+            if (!handoverRecipientName?.value.trim() || !handoverSignatureValue?.value.startsWith('data:image/png;base64,')) {
+                event.preventDefault();
+                window.alert('במסירה ללקוח או לנציג חובה למלא את שם המקבל ולהחתים אותו על המסך.');
+                return;
+            }
+        }
         const photoInputs = Array.from(handoverForm.querySelectorAll('input[type="file"]'));
         const photos = photoInputs.map((input) => input.files?.[0]).filter(Boolean);
         const switch9Count = Number.parseInt(switch9CountInput?.value || '0', 10);
@@ -309,6 +753,36 @@
         if (photos.some((file) => file.size > 12 * 1024 * 1024)) {
             event.preventDefault();
             window.alert('כל תמונה חייבת להיות קטנה מ-12MB.');
+            return;
+        }
+        if (offlineSupported) {
+            event.preventDefault();
+            const entry = handoverFormEntry(handoverForm);
+            if (!entry.id || !entry.projectId || !entry.residentId) {
+                window.alert('לא ניתן להכין את המסירה לשמירה מקומית. רעננו את הטופס ונסו שוב.');
+                return;
+            }
+            if (handoverSubmit) {
+                handoverSubmit.disabled = true;
+                handoverSubmit.textContent = navigator.onLine ? 'שומר ומסנכרן…' : 'שומר במכשיר…';
+            }
+            saveOfflineHandover(entry).then(async () => {
+                activeHandoverQueueId = entry.id;
+                await refreshOfflineQueueBadge();
+                setOfflineStatus(
+                    navigator.onLine ? 'is-syncing' : 'is-offline',
+                    navigator.onLine ? 'המסירה נשמרה במכשיר ומסתנכרנת' : 'המסירה נשמרה במכשיר',
+                    navigator.onLine ? 'הנתונים והתמונות מועלים כעת לשרת.' : 'אפשר לצאת מהשטח. הסנכרון יתחיל אוטומטית לאחר חזרת האינטרנט.'
+                );
+                if (handoverSubmit && !navigator.onLine) handoverSubmit.textContent = 'נשמר וממתין לחיבור';
+                await requestHandoverSync();
+            }).catch(() => {
+                if (handoverSubmit) {
+                    handoverSubmit.disabled = false;
+                    handoverSubmit.textContent = 'סיום ושליחה';
+                }
+                setOfflineStatus('is-error', 'השמירה במכשיר נכשלה', 'אין לסגור את הטופס. פנו שטח אחסון במכשיר ונסו שוב.');
+            });
             return;
         }
         if (handoverSubmit) {

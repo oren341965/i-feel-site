@@ -846,6 +846,36 @@ function portal_handover_save_photo(string $recordDir, array $file, string $labe
     return $saved[0];
 }
 
+function portal_handover_save_signature(string $recordDir, string $dataUrl): array
+{
+    if (preg_match('/^data:image\/png;base64,([A-Za-z0-9+\/=]+)$/', $dataUrl, $match) !== 1) {
+        throw new RuntimeException('חתימת מקבל המסירה אינה תקינה. יש לחתום מחדש.');
+    }
+    $binary = base64_decode($match[1], true);
+    if (!is_string($binary) || strlen($binary) < 100 || strlen($binary) > 1024 * 1024 || substr($binary, 0, 8) !== "\x89PNG\r\n\x1a\n") {
+        throw new RuntimeException('חתימת מקבל המסירה אינה תקינה. יש לחתום מחדש.');
+    }
+    $imageInfo = @getimagesizefromstring($binary);
+    if (!is_array($imageInfo) || ($imageInfo['mime'] ?? '') !== 'image/png' || (int) ($imageInfo[0] ?? 0) < 1 || (int) ($imageInfo[1] ?? 0) < 1) {
+        throw new RuntimeException('חתימת מקבל המסירה אינה תקינה. יש לחתום מחדש.');
+    }
+    $filesDir = $recordDir . DIRECTORY_SEPARATOR . 'files';
+    portal_ensure_directory($filesDir);
+    $storageName = bin2hex(random_bytes(16)) . '.png';
+    $destination = $filesDir . DIRECTORY_SEPARATOR . $storageName;
+    if (file_put_contents($destination, $binary, LOCK_EX) !== strlen($binary)) {
+        throw new RuntimeException('לא ניתן לשמור את חתימת מקבל המסירה.');
+    }
+    @chmod($destination, 0600);
+    return [
+        'original_name' => 'recipient-signature.png',
+        'storage_name' => $storageName,
+        'mime' => 'image/png',
+        'size' => strlen($binary),
+        'sha256' => hash('sha256', $binary),
+    ];
+}
+
 function portal_handover_submission_token(): string
 {
     $token = $_SESSION['portal_handover_submission_token'] ?? '';
@@ -862,6 +892,84 @@ function portal_handover_verify_submission_token(string $token): void
     if ($expected === '' || !preg_match('/^[a-f0-9]{64}$/', $token) || !hash_equals($expected, $token)) {
         throw new RuntimeException('טופס המסירה פג תוקף או כבר נשלח. יש לטעון אותו מחדש.');
     }
+}
+
+function portal_handover_is_async_submission(): bool
+{
+    return trim((string) ($_SERVER['HTTP_X_IFEEL_OFFLINE_QUEUE'] ?? '')) === '1';
+}
+
+function portal_handover_async_response(array $payload, int $status = 200): never
+{
+    http_response_code($status);
+    header('Content-Type: application/json; charset=UTF-8');
+    header('Cache-Control: no-store, private, max-age=0');
+    echo json_encode($payload, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+    exit;
+}
+
+function portal_new_handover_client_id(): string
+{
+    $clientId = bin2hex(random_bytes(16));
+    $forms = is_array($_SESSION['portal_handover_forms'] ?? null)
+        ? $_SESSION['portal_handover_forms']
+        : [];
+    $forms[$clientId] = ['created_at' => gmdate('c')];
+    if (count($forms) > 100) {
+        $forms = array_slice($forms, -100, null, true);
+    }
+    $_SESSION['portal_handover_forms'] = $forms;
+    return $clientId;
+}
+
+function portal_handover_form_created_at(string $clientId): string
+{
+    $forms = is_array($_SESSION['portal_handover_forms'] ?? null)
+        ? $_SESSION['portal_handover_forms']
+        : [];
+    $form = $forms[$clientId] ?? null;
+    $createdAt = is_array($form) ? trim((string) ($form['created_at'] ?? '')) : '';
+    if ($createdAt === '') {
+        return '';
+    }
+    try {
+        return (new DateTimeImmutable($createdAt))->format('c');
+    } catch (Throwable $error) {
+        return '';
+    }
+}
+
+function portal_handover_form_date(string $clientId): string
+{
+    $createdAt = portal_handover_form_created_at($clientId);
+    if ($createdAt === '') {
+        throw new RuntimeException('לא ניתן לזהות את מועד פתיחת טופס המסירה. יש לטעון אותו מחדש.');
+    }
+    return (new DateTimeImmutable($createdAt))
+        ->setTimezone(new DateTimeZone('Asia/Jerusalem'))
+        ->format('Y-m-d');
+}
+
+function portal_handover_forget_form(string $clientId): void
+{
+    $forms = is_array($_SESSION['portal_handover_forms'] ?? null)
+        ? $_SESSION['portal_handover_forms']
+        : [];
+    unset($forms[$clientId]);
+    $_SESSION['portal_handover_forms'] = $forms;
+}
+
+function portal_handover_existing_client_submission(string $clientId, string $technicianEmail): ?array
+{
+    foreach (portal_all_handovers() as $handover) {
+        if (
+            hash_equals((string) ($handover['client_id'] ?? ''), $clientId)
+            && portal_normalize_company_email((string) ($handover['technician']['email'] ?? '')) === $technicianEmail
+        ) {
+            return $handover;
+        }
+    }
+    return null;
 }
 
 function portal_handover_attachment_path(array $handover, string $key): ?array
@@ -920,7 +1028,8 @@ function portal_handover_photo_keys(array $handover): array
     usort($issueKeys, static function (string $left, string $right): int {
         return (int) substr($left, 6) <=> (int) substr($right, 6);
     });
-    return array_merge($keys, $switchKeys, $issueKeys);
+    $signatureKeys = isset($photos['signature']) ? ['signature'] : [];
+    return array_merge($keys, $switchKeys, $issueKeys, $signatureKeys);
 }
 
 function portal_handover_protected_url(array $handover, string $key): string
@@ -942,6 +1051,8 @@ function portal_handover_photo_email_lines(array $handover): array
             $label = 'צילום מפסק 9';
         } elseif (str_starts_with($key, 'switch_')) {
             $label = 'צילום מפסק 9 מס׳ ' . (int) substr($key, 7);
+        } elseif ($key === 'signature') {
+            $label = 'חתימת מקבל המסירה';
         } else {
             $label = 'צילום תקלה בדירה מס׳ ' . (int) substr($key, 6);
         }
@@ -957,11 +1068,23 @@ function portal_handover_cloud_link(string $value): string
     if ($value === '') {
         return '';
     }
+    if (
+        !str_contains($value, '://')
+        && preg_match('/^[A-Za-z0-9](?:[A-Za-z0-9.-]{0,251}[A-Za-z0-9])?\.[A-Za-z]{2,63}(?:\/[^\s]*)?$/', $value) === 1
+    ) {
+        $value = 'https://' . $value;
+    }
     if (strlen($value) > 2000 || filter_var($value, FILTER_VALIDATE_URL) === false) {
         return '';
     }
     $parts = parse_url($value);
-    if (!is_array($parts) || strtolower((string) ($parts['scheme'] ?? '')) !== 'https' || trim((string) ($parts['host'] ?? '')) === '') {
+    if (
+        !is_array($parts)
+        || strtolower((string) ($parts['scheme'] ?? '')) !== 'https'
+        || trim((string) ($parts['host'] ?? '')) === ''
+        || isset($parts['user'])
+        || isset($parts['pass'])
+    ) {
         return '';
     }
     return $value;
@@ -984,7 +1107,7 @@ function portal_handover_internal_email_body(array $handover): string
     $credentials = is_array($handover['credentials'] ?? null) ? $handover['credentials'] : [];
     $details = is_array($handover['details'] ?? null) ? $handover['details'] : [];
     return implode("\r\n", array_merge([
-        'מסירת דייר הושלמה ונשמרה במערכת העובדים.',
+        'דיווח סטטוס מסירה נשמר במערכת העובדים.',
         '',
         'מספר מסירה: ' . (string) ($handover['id'] ?? ''),
         'פרויקט: ' . (string) ($resident['project_title'] ?? ''),
@@ -999,19 +1122,18 @@ function portal_handover_internal_email_body(array $handover): string
         'סיסמה ראשונית: ' . (string) ($credentials['password'] ?? ''),
         'קישור ענן ייעודי ללקוח: ' . ((string) ($details['cloud_link'] ?? '') ?: 'לא צורף'),
         '',
+        'סוג הדירה: ' . portal_handover_apartment_type_label((string) ($details['apartment_type'] ?? '')),
         'סטטוס המסירה: ' . portal_handover_ready_label((string) ($details['ready'] ?? '')),
+        'נמסר ל: ' . ((string) ($details['recipient_name'] ?? '') ?: 'לא נמסר'),
+        'חתימת מקבל המסירה: ' . (isset($handover['photos']['signature']) ? 'צורפה' : 'לא נדרשה'),
         'תאריך מסירה: ' . (string) ($details['date'] ?? ''),
         'מיקום קונטרולר: ' . (string) ($details['controller_location'] ?? ''),
         'קונטרולר: ' . portal_handover_controller_label((string) ($details['controller'] ?? '')),
         'אייקונים במפסק: ' . portal_handover_icons_label((string) ($details['icons'] ?? '')),
-    ], portal_handover_switch_9_email_lines($details), portal_handover_issue_email_lines($details), [
-        'כמות מפסקי תאורה: ' . (string) ($details['light_switch_count'] ?? '-'),
-        'מיקומי מפסקי תאורה: ' . ((string) ($details['light_switch_location'] ?? '') ?: '-'),
-        'כמות מפסקי תריס: ' . (string) ($details['shutter_switch_count'] ?? '-'),
-        'מיקומי מפסקי תריס: ' . ((string) ($details['shutter_switch_location'] ?? ($details['blinds'] ?? '')) ?: '-'),
+    ], portal_handover_switch_9_email_lines($details), portal_handover_issue_email_lines($details), portal_handover_component_switch_email_lines($details), [
         'מפסק 24V לתריס כלוא: ' . portal_handover_captive_shutter_24v_label((string) ($details['captive_shutter_24v'] ?? '')),
         'חיבור למזגן: ' . portal_handover_hvac_connection_label((string) ($details['hvac_connection'] ?? '')),
-        'דוד: ' . portal_handover_boiler_label((string) ($details['boiler'] ?? '')),
+        'סוג הדוד: ' . portal_handover_boiler_label((string) ($details['boiler'] ?? '')),
         'הערות: ' . (string) ($details['notes'] ?? ''),
         '',
         'טכנאי: ' . (string) ($technician['name'] ?? ''),
@@ -1125,7 +1247,7 @@ function portal_handover_send_internal(array $handover, array $user): array
     foreach ($recipients as $recipient) {
         $recipientOk = true;
         foreach ($batches as $index => $batch) {
-            $subject = 'מסירה הושלמה — ' . (string) ($handover['resident']['project_title'] ?? '')
+            $subject = 'סטטוס מסירה — ' . (string) ($handover['resident']['project_title'] ?? '')
                 . ' · דירה ' . (string) ($handover['resident']['apartment'] ?? '')
                 . (count($batches) > 1 ? ' · קבצים ' . ($index + 1) . '/' . count($batches) : '');
             if (!portal_send_mail_with_attachments($recipient, $subject, portal_handover_internal_email_body($handover), $batch)) {
@@ -1144,6 +1266,9 @@ function portal_handover_send_internal(array $handover, array $user): array
 
 function portal_handover_send_resident(array $handover): array
 {
+    if ((string) ($handover['details']['ready'] ?? '') !== 'ready_delivered') {
+        return ['recipient' => '', 'status' => 'skipped'];
+    }
     $email = strtolower(trim((string) ($handover['resident']['email'] ?? '')));
     if ($email === '' || $email === 'support@i-feel.co.il' || filter_var($email, FILTER_VALIDATE_EMAIL) === false) {
         return ['recipient' => '', 'status' => 'skipped'];
@@ -1162,14 +1287,27 @@ function portal_handover_send_resident(array $handover): array
     return ['recipient' => $email, 'status' => $sent ? 'sent' : 'failed'];
 }
 
+function portal_handover_apartment_type_label(string $value): string
+{
+    return [
+        'standard_central' => 'דירת סטנדרט — רק אזור מרכזי',
+        'upgraded' => 'דירה משודרגת',
+        'standard_corridor' => 'דירת סטנדרט + מסדרון',
+        'full' => 'דירה מלאה',
+    ][$value] ?? '-';
+}
+
 function portal_handover_ready_label(string $value): string
 {
     return [
+        'ready_not_delivered' => 'מוכן ולא נמסר',
+        'not_ready_not_delivered' => 'לא מוכן ולא נמסר',
+        'ready_delivered' => 'מוכן ונמסר ללקוח/נציג הלקוח',
+        // Backward-compatible labels for handovers stored before the status list was replaced.
         'delivered_with_app_link' => 'נמסר עם קישור לאפליקציה',
         'completed_without_app_link' => 'הסתיים ללא קישור לאפליקציה',
         'ready_for_delivery' => 'מוכן למסירה',
         'not_ready_return_required' => 'לא מוכן — יש לחזור',
-        // Backward-compatible labels for handovers stored before the status list was expanded.
         'ready' => 'מוכן',
         'not_ready' => 'לא מוכן',
         'delivered' => 'נמסר',
@@ -1225,8 +1363,9 @@ function portal_handover_issue_label(string $value): string
 {
     return [
         'electrical' => 'תקלת חשמל',
-        'cabling' => 'תקלת כבילה',
-        'contractor' => 'בעיית קבלנים (טיח או קופסא שבורה)',
+        'cabling' => 'כבילה לא נכונה / תקלת כבילה',
+        'contractor' => 'עבודת קבלן נדרשת (טיח, קופסה שבורה, קיר עקום וכו׳)',
+        'other' => 'אחר',
     ][$value] ?? '-';
 }
 
@@ -1241,9 +1380,57 @@ function portal_handover_issue_email_lines(array $details): array
         if (!is_array($issue)) {
             continue;
         }
-        $lines[] = 'תקלה מס׳ ' . ((int) $index + 1) . ': ' . portal_handover_issue_label((string) ($issue['type'] ?? ''));
+        $line = 'תקלה מס׳ ' . ((int) $index + 1) . ': ' . portal_handover_issue_label((string) ($issue['type'] ?? ''));
+        $description = trim((string) ($issue['description'] ?? ''));
+        $lines[] = $description !== '' ? $line . ' | פירוט: ' . $description : $line;
     }
     return $lines;
+}
+
+function portal_handover_component_switch_status_label(string $value): string
+{
+    return [
+        'operational_connected' => 'תקין ומחובר לקונטרולר',
+        'not_operational' => 'לא תקין',
+        'operational_not_connected' => 'תקין ולא מחובר לקונטרולר',
+        'other' => 'אחר',
+        'not_applicable' => 'אין פאנלים',
+    ][$value] ?? '-';
+}
+
+function portal_handover_component_panel_presence_label(string $value): string
+{
+    return ['has_panels' => 'יש פאנלים', 'none' => 'אין'][$value] ?? '-';
+}
+
+function portal_handover_component_switch_email_lines(array $details): array
+{
+    if (array_key_exists('light_switch_type_1_count', $details)) {
+        $presence = (string) ($details['component_panel_presence'] ?? 'has_panels');
+        $status = (string) ($details['component_switch_status'] ?? '');
+        $lines = ['פאנלים של תאורה ותריס: ' . portal_handover_component_panel_presence_label($presence)];
+        if ($presence === 'none') {
+            return $lines;
+        }
+        return array_merge($lines, [
+            'סך פאנלי התאורה: ' . (string) ($details['light_switch_count'] ?? '-'),
+            'כמות פאנלי תאורה מסוג 1: ' . (string) ($details['light_switch_type_1_count'] ?? '-'),
+            'כמות פאנלי תאורה מסוג 2: ' . (string) ($details['light_switch_type_2_count'] ?? '-'),
+            'כמות פאנלי תאורה מסוג 3: ' . (string) ($details['light_switch_type_3_count'] ?? '-'),
+            'כמות פאנלי תריס: ' . (string) ($details['shutter_switch_count'] ?? '-'),
+            'סטטוס הפאנלים: ' . portal_handover_component_switch_status_label($status),
+        ], $status === 'other' ? [
+            'פירוט סטטוס אחר: ' . ((string) ($details['component_switch_status_other'] ?? '') ?: '-'),
+        ] : []);
+    }
+
+    // Backward-compatible output for handovers stored before the quantity breakdown replaced locations.
+    return [
+        'כמות מפסקי תאורה: ' . (string) ($details['light_switch_count'] ?? '-'),
+        'מיקומי מפסקי תאורה: ' . ((string) ($details['light_switch_location'] ?? '') ?: '-'),
+        'כמות מפסקי תריס: ' . (string) ($details['shutter_switch_count'] ?? '-'),
+        'מיקומי מפסקי תריס: ' . ((string) ($details['shutter_switch_location'] ?? ($details['blinds'] ?? '')) ?: '-'),
+    ];
 }
 
 function portal_handover_captive_shutter_24v_label(string $value): string
@@ -1268,10 +1455,13 @@ function portal_handover_hvac_connection_label(string $value): string
 function portal_handover_boiler_label(string $value): string
 {
     return [
+        'none' => 'אין דוד',
+        'ava_dud' => 'AVA-DUD',
+        'ir' => 'IR',
+        'switcher' => 'סוויטשר',
+        // Backward-compatible labels for handovers stored before the boiler list was corrected.
         'avatto' => 'AVATTO',
         'domex' => 'DOMEX',
-        'none' => 'אין',
-        'switcher' => 'סוויטשר',
     ][$value] ?? ($value !== '' ? $value : '-');
 }
 
@@ -1294,6 +1484,23 @@ function portal_handover_controller_location(string $value, string $other): stri
 function portal_handle_tenant_handover_post(array $user): void
 {
     portal_verify_csrf();
+    $clientId = strtolower(portal_post('handover_client_id', 64));
+    if (preg_match('/^[a-f0-9]{32}$/', $clientId) !== 1) {
+        throw new RuntimeException('מזהה השמירה המקומית אינו תקין. יש לרענן את טופס המסירה ולנסות שוב.');
+    }
+    $technicianEmail = portal_normalize_company_email((string) ($user['email'] ?? ''));
+    if ($technicianEmail === null) {
+        throw new RuntimeException('לא ניתן לזהות את כתובת הדוא״ל הארגונית של הטכנאי.');
+    }
+    $existing = portal_handover_existing_client_submission($clientId, $technicianEmail);
+    if ($existing !== null) {
+        $existingId = (string) ($existing['id'] ?? '');
+        if (portal_handover_is_async_submission()) {
+            portal_handover_async_response(['ok' => true, 'handoverId' => $existingId, 'duplicate' => true]);
+        }
+        portal_flash_set('success', 'המסירה כבר נשמרה ונשלחה. מספר מסירה: ' . $existingId);
+        portal_redirect(['tab' => 'handovers', 'submitted' => $existingId]);
+    }
     portal_handover_verify_submission_token(portal_post('handover_submission_token', 64));
     $groupId = portal_post('handover_project_id', 128);
     $itemId = portal_post('handover_resident_id', 20);
@@ -1303,10 +1510,13 @@ function portal_handle_tenant_handover_post(array $user): void
         throw new RuntimeException('לדייר אין מספר טלפון תקין ב-Monday ולכן לא ניתן להפיק סיסמה.');
     }
 
+    $apartmentType = portal_post('handover_apartment_type', 40);
     $ready = portal_post('handover_ready', 30);
-    $cloudLinkInput = portal_post('handover_cloud_link', 2000);
-    $cloudLink = portal_handover_cloud_link($cloudLinkInput);
-    $date = portal_post('handover_date', 20);
+    $recipientName = portal_post('handover_recipient_name', 180);
+    $recipientSignature = portal_post('handover_recipient_signature', 1400000);
+    $cloudLink = '';
+    $formCreatedAt = portal_handover_form_created_at($clientId);
+    $date = portal_handover_form_date($clientId);
     $controllerLocationKey = portal_post('handover_controller_location', 40);
     $controllerLocation = portal_handover_controller_location(
         $controllerLocationKey,
@@ -1317,24 +1527,40 @@ function portal_handle_tenant_handover_post(array $user): void
     $switch9CountRaw = portal_post('handover_switch_9_count', 10);
     $issueCountRaw = portal_post('handover_issue_count', 10);
     $lightSwitchCountRaw = portal_post('handover_light_switch_count', 10);
+    $lightSwitchType1CountRaw = portal_post('handover_light_switch_type_1_count', 10);
+    $lightSwitchType2CountRaw = portal_post('handover_light_switch_type_2_count', 10);
+    $lightSwitchType3CountRaw = portal_post('handover_light_switch_type_3_count', 10);
     $shutterSwitchCountRaw = portal_post('handover_shutter_switch_count', 10);
-    $lightSwitchLocation = portal_post('handover_light_switch_location', 300);
-    $shutterSwitchLocation = portal_post('handover_shutter_switch_location', 300);
+    $componentPanelPresence = portal_post('handover_component_panel_presence', 40);
+    $componentSwitchStatus = portal_post('handover_component_switch_status', 40);
+    $componentSwitchStatusOther = portal_post('handover_component_switch_status_other', 500);
     $captiveShutter24v = portal_post('handover_captive_shutter_24v', 40);
     $hvacConnection = portal_post('handover_hvac_connection', 40);
     $boiler = portal_post('handover_boiler', 500);
     $notes = portal_post('handover_notes', 3000);
-    if (!in_array($ready, ['delivered_with_app_link', 'completed_without_app_link', 'ready_for_delivery', 'not_ready_return_required'], true)) {
+    if (!in_array($apartmentType, ['standard_central', 'upgraded', 'standard_corridor', 'full'], true)) {
+        throw new RuntimeException('יש לבחור סוג דירה תקין.');
+    }
+    if (!in_array($ready, ['ready_not_delivered', 'not_ready_not_delivered', 'ready_delivered'], true)) {
         throw new RuntimeException('יש לבחור סטטוס מסירה תקין.');
     }
-    if ($cloudLinkInput !== '' && $cloudLink === '') {
-        throw new RuntimeException('קישור הענן חייב להיות כתובת HTTPS תקינה.');
+    $isDelivered = $ready === 'ready_delivered';
+    if ($isDelivered) {
+        $cloudLookup = portal_handover_cloud_lookup($resident, true);
+        $cloudLink = portal_handover_cloud_link((string) ($cloudLookup['link'] ?? ''));
+        if ($cloudLink === '') {
+            throw new RuntimeException(portal_handover_cloud_lookup_message($cloudLookup));
+        }
     }
-    if ($ready === 'delivered_with_app_link' && $cloudLink === '') {
-        throw new RuntimeException('יש לצרף את קישור הענן הייעודי של הלקוח.');
+    if ($isDelivered && $recipientName === '') {
+        throw new RuntimeException('יש למלא את שם האדם שאליו נמסרה המערכת.');
     }
-    if (!portal_valid_date($date)) {
-        throw new RuntimeException('תאריך המסירה אינו תקין.');
+    if ($isDelivered && $recipientSignature === '') {
+        throw new RuntimeException('יש לצרף את חתימת האדם שאליו נמסרה המערכת.');
+    }
+    if (!$isDelivered) {
+        $recipientName = '';
+        $recipientSignature = '';
     }
     if (!in_array($controllerLocationKey, ['communications_cabinet', 'developer_rep', 'ifeel', 'other'], true) || $controllerLocation === '') {
         throw new RuntimeException('יש לבחור ולפרט את מיקום הקונטרולר.');
@@ -1354,7 +1580,7 @@ function portal_handle_tenant_handover_post(array $user): void
         $configuration = portal_post('handover_switch_9_configuration_' . $index, 40);
         $location = portal_post('handover_switch_9_location_' . $index, 300);
         if (!in_array($configuration, ['light_9', 'shutter_1_light_4', 'shutter_2_light_2', 'shutter_3'], true)) {
-            throw new RuntimeException('יש לבחור את סוג מפסק 9 מס׳ ' . $index . '.');
+            throw new RuntimeException('יש לבחור את סיווג מפסק 9 מס׳ ' . $index . '.');
         }
         if ($location === '') {
             throw new RuntimeException('יש לפרט את מיקום מפסק 9 מס׳ ' . $index . '.');
@@ -1368,24 +1594,58 @@ function portal_handle_tenant_handover_post(array $user): void
     $issues = [];
     for ($index = 1; $index <= $issueCount; $index++) {
         $issueType = portal_post('handover_issue_type_' . $index, 40);
-        if (!in_array($issueType, ['electrical', 'cabling', 'contractor'], true)) {
+        $issueDescription = portal_post('handover_issue_description_' . $index, 500);
+        if (!in_array($issueType, ['electrical', 'cabling', 'contractor', 'other'], true)) {
             throw new RuntimeException('יש לבחור את סוג התקלה המצולמת מס׳ ' . $index . '.');
         }
-        $issues[] = ['type' => $issueType];
+        if ($issueType === 'other' && $issueDescription === '') {
+            throw new RuntimeException('יש לפרט את התקלה האחרת המצולמת מס׳ ' . $index . '.');
+        }
+        if ($issueType !== 'other') {
+            $issueDescription = '';
+        }
+        $issues[] = ['type' => $issueType, 'description' => $issueDescription];
     }
-    if (!ctype_digit($lightSwitchCountRaw) || (int) $lightSwitchCountRaw > 99) {
-        throw new RuntimeException('יש להזין כמות תקינה של מפסקי תאורה (0 עד 99).');
+    if (!in_array($componentPanelPresence, ['has_panels', 'none'], true)) {
+        throw new RuntimeException('יש לבחור אם קיימים פאנלים של תאורה או תריס בדירה.');
     }
-    $lightSwitchCount = (int) $lightSwitchCountRaw;
-    if ($lightSwitchCount > 0 && $lightSwitchLocation === '') {
-        throw new RuntimeException('יש לפרט את מיקומי מפסקי התאורה.');
-    }
-    if (!ctype_digit($shutterSwitchCountRaw) || (int) $shutterSwitchCountRaw > 99) {
-        throw new RuntimeException('יש להזין כמות תקינה של מפסקי תריס (0 עד 99).');
-    }
-    $shutterSwitchCount = (int) $shutterSwitchCountRaw;
-    if ($shutterSwitchCount > 0 && $shutterSwitchLocation === '') {
-        throw new RuntimeException('יש לפרט את מיקומי מפסקי התריס.');
+    if ($componentPanelPresence === 'none') {
+        $lightSwitchCount = 0;
+        $lightSwitchTypeCounts = [0, 0, 0];
+        $shutterSwitchCount = 0;
+        $componentSwitchStatus = 'not_applicable';
+        $componentSwitchStatusOther = '';
+    } else {
+        if (!ctype_digit($lightSwitchCountRaw) || (int) $lightSwitchCountRaw > 99) {
+            throw new RuntimeException('יש להזין כמות תקינה של מפסקי תאורה (0 עד 99).');
+        }
+        $lightSwitchCount = (int) $lightSwitchCountRaw;
+        $lightSwitchTypeCounts = [];
+        foreach ([$lightSwitchType1CountRaw, $lightSwitchType2CountRaw, $lightSwitchType3CountRaw] as $index => $countRaw) {
+            if (!ctype_digit($countRaw) || (int) $countRaw > 99) {
+                throw new RuntimeException('יש להזין כמות תקינה של מפסקי תאורה מסוג ' . ($index + 1) . ' (0 עד 99).');
+            }
+            $lightSwitchTypeCounts[] = (int) $countRaw;
+        }
+        if (array_sum($lightSwitchTypeCounts) !== $lightSwitchCount) {
+            throw new RuntimeException('סך מפסקי התאורה חייב להיות שווה לסכום הכמויות מסוג 1, 2 ו-3.');
+        }
+        if (!ctype_digit($shutterSwitchCountRaw) || (int) $shutterSwitchCountRaw > 99) {
+            throw new RuntimeException('יש להזין כמות תקינה של מפסקי תריס בודדים (0 עד 99).');
+        }
+        $shutterSwitchCount = (int) $shutterSwitchCountRaw;
+        if ($lightSwitchCount + $shutterSwitchCount === 0) {
+            throw new RuntimeException('כאשר מסמנים שיש פאנלים, יש להזין כמות של לפחות סוג אחד.');
+        }
+        if (!in_array($componentSwitchStatus, ['operational_connected', 'not_operational', 'operational_not_connected', 'other'], true)) {
+            throw new RuntimeException('יש לבחור סטטוס למפסקי התאורה והתריסים.');
+        }
+        if ($componentSwitchStatus === 'other' && $componentSwitchStatusOther === '') {
+            throw new RuntimeException('יש לפרט את הסטטוס האחר של מפסקי התאורה והתריסים.');
+        }
+        if ($componentSwitchStatus !== 'other') {
+            $componentSwitchStatusOther = '';
+        }
     }
     if (!in_array($captiveShutter24v, ['installed_activated', 'installed_not_activated', 'not_in_project'], true)) {
         throw new RuntimeException('יש לבחור את מצב מפסק 24V לתריס הכלוא.');
@@ -1393,7 +1653,7 @@ function portal_handle_tenant_handover_post(array $user): void
     if (!in_array($hvacConnection, ['none', 'ir', 'dry_contact_panel_9', 'micromodule'], true)) {
         throw new RuntimeException('יש לבחור את סוג החיבור למזגן.');
     }
-    if (!in_array($boiler, ['avatto', 'domex', 'none', 'switcher'], true)) {
+    if (!in_array($boiler, ['none', 'ava_dud', 'ir', 'switcher'], true)) {
         throw new RuntimeException('יש לבחור אפשרות תקינה בשדה הדוד.');
     }
     if ($notes === '') {
@@ -1401,10 +1661,6 @@ function portal_handle_tenant_handover_post(array $user): void
     }
 
     $profile = portal_employee_profile($user);
-    $technicianEmail = portal_normalize_company_email((string) ($user['email'] ?? ''));
-    if ($technicianEmail === null) {
-        throw new RuntimeException('לא ניתן לזהות את כתובת הדוא״ל הארגונית של הטכנאי.');
-    }
     $technicianName = trim((string) ($profile['name'] ?? $user['display_name'] ?? ''));
     if ($technicianName === '') {
         $technicianName = $technicianEmail;
@@ -1416,6 +1672,9 @@ function portal_handle_tenant_handover_post(array $user): void
     try {
         $controllerPhoto = portal_handover_save_photo($recordDir, $_FILES['handover_controller_photo'] ?? [], 'צילום הקונטרולר');
         $photos = ['controller' => $controllerPhoto];
+        if ($isDelivered) {
+            $photos['signature'] = portal_handover_save_signature($recordDir, $recipientSignature);
+        }
         for ($index = 1; $index <= $switch9Count; $index++) {
             $photos['switch_' . $index] = portal_handover_save_photo(
                 $recordDir,
@@ -1432,6 +1691,7 @@ function portal_handle_tenant_handover_post(array $user): void
         }
         $handover = [
             'id' => $handoverId,
+            'client_id' => $clientId,
             'created_at' => gmdate('c'),
             'updated_at' => gmdate('c'),
             'source' => [
@@ -1444,19 +1704,26 @@ function portal_handle_tenant_handover_post(array $user): void
             'resident' => $resident,
             'credentials' => $credentials,
             'details' => [
+                'apartment_type' => $apartmentType,
                 'ready' => $ready,
+                'recipient_name' => $recipientName,
                 'cloud_link' => $cloudLink,
                 'date' => $date,
+                'form_created_at' => $formCreatedAt,
                 'controller_location' => $controllerLocation,
                 'controller' => $controller,
                 'icons' => $icons,
                 'switch_9_count' => $switch9Count,
                 'switch_9_units' => $switch9Units,
                 'issues' => $issues,
+                'component_panel_presence' => $componentPanelPresence,
                 'light_switch_count' => $lightSwitchCount,
-                'light_switch_location' => $lightSwitchLocation,
+                'light_switch_type_1_count' => $lightSwitchTypeCounts[0],
+                'light_switch_type_2_count' => $lightSwitchTypeCounts[1],
+                'light_switch_type_3_count' => $lightSwitchTypeCounts[2],
                 'shutter_switch_count' => $shutterSwitchCount,
-                'shutter_switch_location' => $shutterSwitchLocation,
+                'component_switch_status' => $componentSwitchStatus,
+                'component_switch_status_other' => $componentSwitchStatusOther,
                 'captive_shutter_24v' => $captiveShutter24v,
                 'hvac_connection' => $hvacConnection,
                 'boiler' => $boiler,
@@ -1473,7 +1740,16 @@ function portal_handle_tenant_handover_post(array $user): void
             ],
         ];
         portal_save_handover($handover);
+        if ($isDelivered) {
+            $cloudAllocation = portal_handover_cloud_finalize($resident, $handoverId);
+            $handover['details']['cloud_allocation'] = [
+                'state' => (string) ($cloudAllocation['state'] ?? 'assigned'),
+                'sheet_sync' => (string) ($cloudAllocation['sheet_sync'] ?? 'pending'),
+            ];
+            portal_save_handover($handover);
+        }
         unset($_SESSION['portal_handover_submission_token']);
+        portal_handover_forget_form($clientId);
 
         try {
             $handover['notifications']['internal'] = portal_handover_send_internal($handover, $user);
@@ -1506,6 +1782,13 @@ function portal_handle_tenant_handover_post(array $user): void
                 ? 'המסירה נשמרה, התמונות אובטחו וההודעות נשלחו. מספר מסירה: ' . $handoverId
                 : 'המסירה והתמונות נשמרו, אך לפחות הודעת דוא״ל אחת דורשת טיפול ידני. מספר מסירה: ' . $handoverId
         );
+        if (portal_handover_is_async_submission()) {
+            portal_handover_async_response([
+                'ok' => true,
+                'handoverId' => $handoverId,
+                'notificationsSent' => $allSent,
+            ]);
+        }
         portal_redirect(['tab' => 'handovers', 'submitted' => $handoverId]);
     } catch (Throwable $error) {
         if (!is_file(portal_handover_file($handoverId))) {
@@ -1523,6 +1806,7 @@ function portal_handle_handover_download(array $user): void
     if (
         $key !== 'controller'
         && $key !== 'switch'
+        && $key !== 'signature'
         && preg_match('/^switch_[1-9][0-9]*$/', $key) !== 1
         && preg_match('/^issue_[1-9][0-9]*$/', $key) !== 1
     ) {
@@ -1647,6 +1931,15 @@ function portal_render_tenant_handover_form(array $user, array $projects, string
         </div>
     </section>
 
+    <div class="handover-offline-status" data-handover-offline-status role="status" aria-live="polite">
+        <span class="handover-offline-status__dot" aria-hidden="true"></span>
+        <div>
+            <strong data-handover-offline-title>בודק זמינות לעבודה ללא קליטה…</strong>
+            <span data-handover-offline-message>לאחר פתיחת טופס דייר אחד בזמן חיבור, ניתן להמשיך למלא ולצלם גם ללא אינטרנט.</span>
+        </div>
+        <span class="handover-offline-status__queue" data-handover-offline-queue hidden></span>
+    </div>
+
     <?php portal_render_tenant_handover_search($search, $searchOutcome); ?>
 
     <form method="get" class="detail-card form-grid handover-selector" data-handover-selector autocomplete="off">
@@ -1680,7 +1973,16 @@ function portal_render_tenant_handover_form(array $user, array $projects, string
                     <?php endforeach; ?>
                 </select>
             </label>
-            <div class="field field--actions"><button type="submit" class="button button--secondary">טעינת טופס המסירה</button></div>
+            <div class="field field--actions handover-selector__actions">
+                <button type="submit" class="button button--secondary">טעינת טופס המסירה</button>
+                <button type="button" class="button button--ghost" data-handover-offline-prepare>הכנת הפרויקט לעבודה ללא קליטה</button>
+                <small class="form-note" data-handover-offline-prepare-note>הפעולה שומרת במכשיר זה רק את טפסי הדיירים בפרויקט שנבחר.</small>
+            </div>
+            <div hidden data-handover-offline-resident-list>
+                <?php foreach ($residents as $candidate): ?>
+                    <span data-handover-offline-resident-id="<?= portal_h($candidate['item_id']) ?>"></span>
+                <?php endforeach; ?>
+            </div>
         <?php endif; ?>
     </form>
 
@@ -1694,15 +1996,29 @@ function portal_render_tenant_handover_form(array $user, array $projects, string
             <h2>פרטי המסירה למילוי הטכנאי</h2>
             <p>לאחר בחירת פרויקט, בניין ודירה ייפתח כאן מיד הטופס המלא. אין צורך ללחוץ על כפתור נוסף.</p>
             <div class="handover-field-preview" aria-label="השדות שיופיעו בטופס">
-                <span>סטטוס המסירה</span><span>תאריך מסירה</span><span>מיקום וסוג קונטרולר</span>
-                <span>כמויות, סוגים ומיקומי מפסקים</span><span>מפסק 24V לתריס כלוא</span><span>חיבור למזגן</span>
-                <span>דוד והערות</span>
+                <span>סוג הדירה</span><span>סטטוס המסירה</span><span>תאריך מסירה</span><span>מיקום וסוג קונטרולר</span>
+                <span>כמות מפסקי 9 וסיווג נפרד לכל מפסק</span><span>פאנלים מסוג 1, 2, 3 ותריס — או אין</span><span>מפסק 24V לתריס כלוא</span><span>חיבור למזגן</span>
+                <span>סוג הדוד — 4 אפשרויות — והערות</span>
                 <span>פרטי הטכנאי</span><span>שני צילומי חובה</span><span>סיום ושליחה</span>
             </div>
         </section>
         <?php return; ?>
     <?php endif; ?>
-    <?php $credentials = portal_handover_credentials($resident); $profile = portal_employee_profile($user); ?>
+    <?php
+    $credentials = portal_handover_credentials($resident);
+    $profile = portal_employee_profile($user);
+    $cloudLookup = portal_handover_cloud_lookup($resident);
+    $cloudAvailable = (string) ($cloudLookup['status'] ?? '') === 'found'
+        && portal_handover_cloud_link((string) ($cloudLookup['link'] ?? '')) !== '';
+    $cloudLinkForTechnician = $cloudAvailable
+        ? portal_handover_cloud_link((string) ($cloudLookup['link'] ?? ''))
+        : '';
+    $handoverClientId = portal_new_handover_client_id();
+    $handoverCreatedAt = portal_handover_form_created_at($handoverClientId);
+    $handoverCreatedAtLabel = $handoverCreatedAt !== ''
+        ? (new DateTimeImmutable($handoverCreatedAt))->setTimezone(new DateTimeZone('Asia/Jerusalem'))->format('d/m/Y H:i')
+        : '';
+    ?>
     <section class="detail-card handover-resident-card">
         <h2>פרטי הדייר ופרטי הכניסה</h2>
         <div class="detail-grid">
@@ -1720,25 +2036,48 @@ function portal_render_tenant_handover_form(array $user, array $projects, string
         <input type="hidden" name="csrf" value="<?= portal_h(portal_csrf_token()) ?>">
         <input type="hidden" name="action" value="submit_tenant_handover">
         <input type="hidden" name="handover_submission_token" value="<?= portal_h(portal_handover_submission_token()) ?>">
+        <input type="hidden" name="handover_client_id" value="<?= portal_h($handoverClientId) ?>">
         <input type="hidden" name="handover_project_id" value="<?= portal_h($projectId) ?>">
         <input type="hidden" name="handover_resident_id" value="<?= portal_h($resident['item_id']) ?>">
         <div class="field--full handover-form-heading"><p class="eyebrow">שלב 2</p><h2>פרטי המסירה למילוי הטכנאי</h2><p>כל השדות בטופס הם שדות חובה. יש לצרף צילום קונטרולר וצילום נפרד לכל מפסק 9 שהוגדר.</p></div>
+        <label class="field field--full">
+            <span>סוג הדירה <b>*</b></span>
+            <select name="handover_apartment_type" required>
+                <option value="">בחירה</option>
+                <option value="standard_central">דירת סטנדרט — רק אזור מרכזי</option>
+                <option value="upgraded">דירה משודרגת</option>
+                <option value="standard_corridor">דירת סטנדרט + מסדרון</option>
+                <option value="full">דירה מלאה</option>
+            </select>
+        </label>
         <label class="field">
             <span>סטטוס המסירה <b>*</b></span>
             <select name="handover_ready" data-handover-ready required>
                 <option value="">בחירה</option>
-                <option value="delivered_with_app_link">נמסר עם קישור לאפליקציה</option>
-                <option value="completed_without_app_link">הסתיים ללא קישור לאפליקציה</option>
-                <option value="ready_for_delivery">מוכן למסירה</option>
-                <option value="not_ready_return_required">לא מוכן — יש לחזור</option>
+                <option value="ready_not_delivered">מוכן ולא נמסר</option>
+                <option value="not_ready_not_delivered">לא מוכן ולא נמסר</option>
+                <option value="ready_delivered">מוכן ונמסר ללקוח/נציג הלקוח</option>
             </select>
+            <small class="form-note">בבחירת „מוכן ונמסר” ייפתח בתחתית הטופס אזור חתימה של מקבל המסירה.</small>
         </label>
-        <label class="field field--full" data-handover-cloud-link-field hidden>
-            <span>קישור ענן ייעודי ללקוח <b>*</b></span>
-            <input type="url" name="handover_cloud_link" maxlength="2000" inputmode="url" autocomplete="off" dir="ltr" placeholder="https://..." data-handover-cloud-link>
-            <small class="form-note">יש להעתיק את הקישור הייעודי מרישום הקונטרולר בענן. הקישור יישמר עם המסירה ויישלח ללקוח.</small>
-        </label>
-        <label class="field"><span>תאריך מסירה <b>*</b></span><input type="date" name="handover_date" value="<?= portal_h(date('Y-m-d')) ?>" required></label>
+        <section class="field field--full handover-cloud-source <?= $cloudAvailable ? 'handover-cloud-source--ready' : 'handover-cloud-source--missing' ?>" data-handover-cloud-link-field data-handover-cloud-available="<?= $cloudAvailable ? '1' : '0' ?>">
+            <span>קישור ענן שהוקצה אוטומטית ללקוח <b>*</b></span>
+            <strong><?= portal_h(portal_handover_cloud_lookup_message($cloudLookup)) ?></strong>
+            <?php if ($cloudAvailable): ?>
+                <div class="handover-cloud-source__link" dir="ltr" data-handover-cloud-link><?= portal_h($cloudLinkForTechnician) ?></div>
+                <div class="handover-cloud-source__actions">
+                    <button type="button" class="button button--small" data-handover-cloud-copy>העתקת הקישור</button>
+                    <a class="button button--ghost button--small" href="<?= portal_h($cloudLinkForTechnician) ?>" target="_blank" rel="noopener noreferrer">פתיחת הקישור</a>
+                    <span class="handover-cloud-source__copy-status" data-handover-cloud-copy-status role="status" aria-live="polite"></span>
+                </div>
+            <?php endif; ?>
+            <small class="form-note">המערכת בחרה את הכתובת אוטומטית מתוך הקובץ של אריק. הטכנאי אינו בוחר כתובת ואינו מקבל גישה למאגר המלא. בסיום ושליחה הכתובת תינעל לדייר זה ותסומן כמוקצית.</small>
+        </section>
+        <div class="field handover-auto-date">
+            <span>מועד פתיחת טופס המסירה</span>
+            <strong><time datetime="<?= portal_h($handoverCreatedAt) ?>"><?= portal_h($handoverCreatedAtLabel) ?></time></strong>
+            <small class="form-note">המועד נקבע אוטומטית בשרת בעת פתיחת הטופס ואינו ניתן לשינוי.</small>
+        </div>
         <label class="field">
             <span>מיקום קונטרולר <b>*</b></span>
             <select name="handover_controller_location" data-handover-location required>
@@ -1749,14 +2088,15 @@ function portal_render_tenant_handover_form(array $user, array $projects, string
         <label class="field"><span>קונטרולר <b>*</b></span><select name="handover_controller" required><option value="">בחירה</option><option value="raspberry_pi">רספברי פיי</option><option value="ava_hab">AVA-HAB</option></select></label>
         <label class="field"><span>אייקונים במפסק <b>*</b></span><select name="handover_icons" required><option value="">בחירה</option><option value="done">בוצע</option><option value="not_done">לא בוצע</option><option value="partial">חלקי</option></select></label>
         <label class="field">
-            <span>כמות מפסקי 9 <b>*</b></span>
+            <span>כמות מפסקי 9 בדירה <b>*</b></span>
             <input type="number" name="handover_switch_9_count" value="1" min="1" max="50" step="1" inputmode="numeric" data-handover-switch-9-count required>
         </label>
+        <p class="field field--full form-note handover-switch-9-note">לפי הכמות שתוזן ייפתח כרטיס חובה נפרד לכל מפסק 9, ובו סיווג המפסק, מיקומו וצילום שלו.</p>
         <div class="field--full handover-switch-9-units" data-handover-switch-9-units>
             <fieldset class="handover-switch-9-unit" data-handover-switch-9-unit>
-                <legend data-handover-switch-9-legend>מפסק 9 מס׳ 1</legend>
+                <legend data-handover-switch-9-legend>מפסק 9 מס׳ 1 — סיווג, מיקום וצילום</legend>
                 <div class="handover-switch-9-unit__fields">
-                    <label class="field"><span>סוג מפסק 9 <b>*</b></span><select name="handover_switch_9_configuration_1" data-handover-switch-9-configuration required><option value="">בחירה</option><option value="light_9">9 לתאורה בלבד</option><option value="shutter_1_light_4">תריס אחד ו-4 תאורות</option><option value="shutter_2_light_2">2 תריסים ו-2 תאורות</option><option value="shutter_3">3 תריסים</option></select></label>
+                    <label class="field"><span data-handover-switch-9-configuration-label>סיווג מפסק 9 מס׳ 1 <b>*</b></span><select name="handover_switch_9_configuration_1" data-handover-switch-9-configuration required><option value="">בחירה</option><option value="light_9">9 לתאורה בלבד</option><option value="shutter_1_light_4">תריס אחד ו-4 תאורות</option><option value="shutter_2_light_2">2 תריסים ו-2 תאורות</option><option value="shutter_3">3 תריסים</option></select></label>
                     <label class="field"><span>מיקום מפסק 9 <b>*</b></span><input type="text" name="handover_switch_9_location_1" maxlength="300" data-handover-switch-9-location required></label>
                     <div class="field field--full handover-switch-9-photo"><span data-handover-switch-9-photo-heading>צילום מפסק 9 מס׳ 1 <b>*</b></span><label class="receipt-action receipt-action--camera"><span class="receipt-action__icon" aria-hidden="true">📷</span><strong data-handover-switch-9-photo-label>צילום מפסק 9 מס׳ 1 עם האייקונים</strong><input class="receipt-input" type="file" name="handover_switch_photo_1" accept="image/*" capture="environment" data-handover-switch-9-photo required></label></div>
                 </div>
@@ -1766,22 +2106,33 @@ function portal_render_tenant_handover_form(array $user, array $projects, string
             <fieldset class="handover-switch-9-unit" data-handover-switch-9-unit>
                 <legend data-handover-switch-9-legend></legend>
                 <div class="handover-switch-9-unit__fields">
-                    <label class="field"><span>סוג מפסק 9 <b>*</b></span><select data-handover-switch-9-configuration required><option value="">בחירה</option><option value="light_9">9 לתאורה בלבד</option><option value="shutter_1_light_4">תריס אחד ו-4 תאורות</option><option value="shutter_2_light_2">2 תריסים ו-2 תאורות</option><option value="shutter_3">3 תריסים</option></select></label>
+                    <label class="field"><span data-handover-switch-9-configuration-label>סיווג מפסק 9 <b>*</b></span><select data-handover-switch-9-configuration required><option value="">בחירה</option><option value="light_9">9 לתאורה בלבד</option><option value="shutter_1_light_4">תריס אחד ו-4 תאורות</option><option value="shutter_2_light_2">2 תריסים ו-2 תאורות</option><option value="shutter_3">3 תריסים</option></select></label>
                     <label class="field"><span>מיקום מפסק 9 <b>*</b></span><input type="text" maxlength="300" data-handover-switch-9-location required></label>
                     <div class="field field--full handover-switch-9-photo"><span data-handover-switch-9-photo-heading>צילום מפסק 9 <b>*</b></span><label class="receipt-action receipt-action--camera"><span class="receipt-action__icon" aria-hidden="true">📷</span><strong data-handover-switch-9-photo-label></strong><input class="receipt-input" type="file" accept="image/*" capture="environment" data-handover-switch-9-photo required></label></div>
                 </div>
             </fieldset>
         </template>
-        <label class="field">
-            <span>כמות מפסקי תאורה <b>*</b></span>
-            <input type="number" name="handover_light_switch_count" min="0" max="99" step="1" inputmode="numeric" data-handover-component-count="light" required>
+        <div class="field field--full handover-form-heading"><h3>פאנלים של תאורה ותריסים</h3><p>יש לבחור אם קיימים פאנלים. אם כן, יש להזין כמות לכל סוג: 1, 2, 3 ותריס. אין צורך לציין מיקומים.</p></div>
+        <label class="field field--full">
+            <span>פאנלים בדירה <b>*</b></span>
+            <select name="handover_component_panel_presence" data-handover-component-panel-presence required>
+                <option value="">בחירה</option>
+                <option value="has_panels">יש פאנלים</option>
+                <option value="none">אין</option>
+            </select>
         </label>
-        <label class="field" data-handover-component-location="light" hidden><span>מיקומי מפסקי תאורה <b>*</b></span><input type="text" name="handover_light_switch_location" maxlength="300"></label>
-        <label class="field">
-            <span>כמות מפסקי תריס <b>*</b></span>
-            <input type="number" name="handover_shutter_switch_count" min="0" max="99" step="1" inputmode="numeric" data-handover-component-count="shutter" required>
-        </label>
-        <label class="field" data-handover-component-location="shutter" hidden><span>מיקומי מפסקי תריס <b>*</b></span><input type="text" name="handover_shutter_switch_location" maxlength="300"></label>
+        <fieldset class="field--full handover-component-panels" data-handover-component-panels hidden>
+            <legend>כמות לכל סוג פאנל</legend>
+            <div class="handover-component-panels__fields">
+                <label class="field"><span>סך פאנלי התאורה <b>*</b></span><input type="number" name="handover_light_switch_count" value="0" min="0" max="99" step="1" inputmode="numeric"></label>
+                <label class="field"><span>כמות פאנלי תאורה מסוג 1 <b>*</b></span><input type="number" name="handover_light_switch_type_1_count" value="0" min="0" max="99" step="1" inputmode="numeric"></label>
+                <label class="field"><span>כמות פאנלי תאורה מסוג 2 <b>*</b></span><input type="number" name="handover_light_switch_type_2_count" value="0" min="0" max="99" step="1" inputmode="numeric"></label>
+                <label class="field"><span>כמות פאנלי תאורה מסוג 3 <b>*</b></span><input type="number" name="handover_light_switch_type_3_count" value="0" min="0" max="99" step="1" inputmode="numeric"></label>
+                <label class="field"><span>כמות פאנלי תריס <b>*</b></span><input type="number" name="handover_shutter_switch_count" value="0" min="0" max="99" step="1" inputmode="numeric"></label>
+                <label class="field"><span>סטטוס הפאנלים <b>*</b></span><select name="handover_component_switch_status" data-handover-component-switch-status><option value="">בחירה</option><option value="operational_connected">תקין ומחובר לקונטרולר</option><option value="not_operational">לא תקין</option><option value="operational_not_connected">תקין ולא מחובר לקונטרולר</option><option value="other">אחר</option></select></label>
+                <label class="field field--full" data-handover-component-switch-status-other hidden><span>פירוט אחר <b>*</b></span><input type="text" name="handover_component_switch_status_other" maxlength="500"></label>
+            </div>
+        </fieldset>
         <label class="field">
             <span>מפסק 24V לתריס כלוא <b>*</b></span>
             <select name="handover_captive_shutter_24v" required>
@@ -1802,14 +2153,15 @@ function portal_render_tenant_handover_form(array $user, array $projects, string
             </select>
         </label>
         <label class="field">
-            <span>דוד <b>*</b></span>
+            <span>סוג הדוד <b>*</b></span>
             <select name="handover_boiler" required>
                 <option value="">בחירה</option>
-                <option value="avatto">AVATTO</option>
-                <option value="domex">DOMEX</option>
-                <option value="none">אין</option>
+                <option value="none">אין דוד</option>
+                <option value="ava_dud">AVA-DUD</option>
+                <option value="ir">IR</option>
                 <option value="switcher">סוויטשר</option>
             </select>
+            <small class="form-note">יש לבחור אחת מארבע האפשרויות: אין דוד, AVA-DUD, IR או סוויטשר.</small>
         </label>
         <label class="field field--full"><span>הערות <b>*</b></span><textarea name="handover_notes" rows="4" maxlength="3000" placeholder="אם אין הערות, יש לכתוב: אין" required></textarea></label>
         <div class="field"><span>שם הטכנאי <b>*</b></span><input type="text" value="<?= portal_h($profile['name'] ?? $user['display_name'] ?? '') ?>" readonly></div>
@@ -1823,7 +2175,7 @@ function portal_render_tenant_handover_form(array $user, array $projects, string
         </div>
         <section class="field--full handover-issues" aria-labelledby="handover-issues-title">
             <div class="handover-issues__heading">
-                <div><h3 id="handover-issues-title">צילום תקלות בדירה</h3><p>אם קיימת תקלה, הוסיפו צילום ובחרו את סוג התקלה מתחתיו. ניתן להוסיף צילום נוסף בכל פעם.</p></div>
+                <div><h3 id="handover-issues-title">צילום תקלות בדירה</h3><p>לכל תקלה ניתן להוסיף צילום נפרד: חשמל, כבילה לא נכונה, עבודת קבלן כמו קיר עקום, או תקלה אחרת עם פירוט חופשי. ניתן להוסיף צילום נוסף בכל פעם.</p></div>
                 <button type="button" class="button button--secondary button--small" data-handover-issue-add>+ הוספת תקלה</button>
             </div>
             <input type="hidden" name="handover_issue_count" value="0" data-handover-issue-count>
@@ -1833,13 +2185,33 @@ function portal_render_tenant_handover_form(array $user, array $projects, string
                     <legend data-handover-issue-legend></legend>
                     <div class="handover-issue__fields">
                         <div class="field"><span data-handover-issue-photo-heading>צילום התקלה <b>*</b></span><label class="receipt-action receipt-action--camera"><span class="receipt-action__icon" aria-hidden="true">📷</span><strong data-handover-issue-photo-label></strong><input class="receipt-input" type="file" accept="image/*" capture="environment" data-handover-issue-photo required></label></div>
-                        <label class="field"><span>סוג התקלה <b>*</b></span><select data-handover-issue-type required><option value="">בחירה</option><option value="electrical">תקלת חשמל</option><option value="cabling">תקלת כבילה</option><option value="contractor">בעיית קבלנים (טיח או קופסא שבורה)</option></select></label>
+                        <label class="field"><span>סוג התקלה <b>*</b></span><select data-handover-issue-type required><option value="">בחירה</option><option value="electrical">תקלת חשמל</option><option value="cabling">כבילה לא נכונה / תקלת כבילה</option><option value="contractor">עבודת קבלן נדרשת (טיח, קופסה שבורה, קיר עקום וכו׳)</option><option value="other">אחר — פירוט חופשי</option></select></label>
+                        <label class="field field--full" data-handover-issue-description-field hidden><span>פירוט התקלה האחרת <b>*</b></span><input type="text" maxlength="500" data-handover-issue-description></label>
                         <button type="button" class="button button--ghost button--small handover-issue__remove" data-handover-issue-remove>הסרת התקלה</button>
                     </div>
                 </fieldset>
             </template>
         </section>
-        <div class="field--full submit-bar"><div><strong>פעולה אחת: שמירה ושליחה</strong><span>הנתונים ייטענו שוב מ-Monday לפני השמירה.</span></div><button type="submit" class="button button--primary" data-handover-submit <?= $credentials['password'] === '' ? 'disabled' : '' ?>>סיום ושליחה</button></div>
+        <section class="field--full handover-recipient" data-handover-recipient-fields hidden aria-labelledby="handover-recipient-title">
+            <div class="handover-recipient__heading">
+                <h3 id="handover-recipient-title">אישור וחתימת מקבל המסירה</h3>
+                <p>אזור זה נפתח רק כאשר סטטוס המסירה הוא „מוכן ונמסר”. יש למלא את שם הלקוח או הנציג שקיבל את המערכת ולהחתים אותו בתחתית הטופס.</p>
+            </div>
+            <label class="field">
+                <span>שם מקבל המסירה <b>*</b></span>
+                <input type="text" name="handover_recipient_name" maxlength="180" autocomplete="name" data-handover-recipient-name>
+            </label>
+            <div class="field handover-signature-field">
+                <span>חתימת מקבל המסירה <b>*</b></span>
+                <div class="handover-signature-pad" data-handover-signature-pad>
+                    <canvas width="640" height="220" data-handover-signature-canvas aria-label="משטח חתימה"></canvas>
+                    <span class="handover-signature-pad__hint" data-handover-signature-hint>מקבל המסירה חותם כאן</span>
+                </div>
+                <input type="hidden" name="handover_recipient_signature" data-handover-signature-value>
+                <button type="button" class="button button--ghost button--small" data-handover-signature-clear>ניקוי חתימה</button>
+            </div>
+        </section>
+        <div class="field--full submit-bar"><div><strong>פעולה אחת: שמירה ושליחה</strong><span>ללא קליטה, הטופס והתמונות נשמרים במכשיר ומסתנכרנים אוטומטית לאחר חזרת האינטרנט.</span></div><button type="submit" class="button button--primary" data-handover-submit <?= $credentials['password'] === '' ? 'disabled' : '' ?>>סיום ושליחה</button></div>
     </form>
     <?php
 }
