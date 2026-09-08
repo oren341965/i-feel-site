@@ -28,7 +28,7 @@
     if (thankYou && ['1', 'sent', 'sent-mail'].includes(leadStatus || '')) {
       thankYou.classList.remove('hidden');
       const proof = params.get('conversion_proof');
-      if (leadStatus === 'sent' && proof) {
+      if ((leadStatus === 'sent' || leadStatus === 'sent-mail') && proof) {
         fetch('/api/consume-conversion.php', {
           method: 'POST',
           credentials: 'same-origin',
@@ -36,11 +36,25 @@
           body: new URLSearchParams({ proof }).toString()
         }).then((response) => response.ok ? response.json() : { eligible: false })
           .then((result) => {
-            if (result?.eligible === true && typeof gtag === 'function') {
-              gtag('event', 'conversion', { send_to: 'AW-18038181913/az2mCJjbtcYcEJmgo5lD' });
-              gtag('event', 'generate_lead', { page_path: location.pathname });
+            params.delete('conversion_proof');
+            const query = params.toString();
+            history.replaceState(null, '', location.pathname + (query ? '?' + query : '') + location.hash);
+            if (result?.eligible === true && result.lead_id && typeof gtag === 'function') {
+              const transactionId = String(result.lead_id);
+              gtag('event', 'conversion', {
+                send_to: 'AW-18038181913/az2mCJjbtcYcEJmgo5lD',
+                transaction_id: transactionId
+              });
+              gtag('event', 'generate_lead', {
+                page_path: location.pathname,
+                transaction_id: transactionId
+              });
             }
-          }).catch(() => {});
+          }).catch(() => {
+            params.delete('conversion_proof');
+            const query = params.toString();
+            history.replaceState(null, '', location.pathname + (query ? '?' + query : '') + location.hash);
+          });
       }
     }
 

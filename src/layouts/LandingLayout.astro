@@ -75,7 +75,7 @@ const {
           thankYou.classList.remove('hidden');
           thankYou.scrollIntoView({ block: 'center' });
           var proof = params.get('conversion_proof');
-          if (leadStatus === 'sent' && proof) {
+          if ((leadStatus === 'sent' || leadStatus === 'sent-mail') && proof) {
             var body = new URLSearchParams({ proof: proof });
             fetch('/api/consume-conversion.php', {
               method: 'POST',
@@ -85,11 +85,25 @@ const {
             }).then(function (response) {
               return response.ok ? response.json() : { eligible: false };
             }).then(function (result) {
-              if (result && result.eligible === true) {
-                adsConversion('form');
-                gtag('event', 'generate_lead', { page_path: location.pathname });
+              params.delete('conversion_proof');
+              var query = params.toString();
+              history.replaceState(null, '', location.pathname + (query ? '?' + query : '') + location.hash);
+              if (result && result.eligible === true && result.lead_id) {
+                var transactionId = String(result.lead_id);
+                gtag('event', 'conversion', {
+                  send_to: 'AW-18038181913/' + ADS_LABELS.form,
+                  transaction_id: transactionId
+                });
+                gtag('event', 'generate_lead', {
+                  page_path: location.pathname,
+                  transaction_id: transactionId
+                });
               }
-            }).catch(function () {});
+            }).catch(function () {
+              params.delete('conversion_proof');
+              var query = params.toString();
+              history.replaceState(null, '', location.pathname + (query ? '?' + query : '') + location.hash);
+            });
           }
         } else if (formError && ['missing', 'bad-email', 'error'].indexOf(leadStatus) !== -1) {
           formError.classList.remove('hidden');
