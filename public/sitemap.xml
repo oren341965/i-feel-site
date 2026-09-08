@@ -26,7 +26,7 @@
   </url>
   <url>
     <loc>https://i-feel.co.il/smart-home-planning/</loc>
-    <lastmod>2026-07-11</lastmod>
+    <lastmod>2026-09-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -291,7 +291,7 @@
   </url>
   <url>
     <loc>https://i-feel.co.il/audio-and-sound-systems/</loc>
-    <lastmod>2026-05-22</lastmod>
+    <lastmod>2026-09-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -754,6 +754,12 @@
   <url>
     <loc>https://i-feel.co.il/samsung-tv-carpentry-planning/</loc>
     <lastmod>2026-08-29</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://i-feel.co.il/floor-to-ceiling-tv-pole/</loc>
+    <lastmod>2026-09-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
