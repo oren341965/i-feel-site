@@ -1693,12 +1693,19 @@ function portal_render_tenant_handover_form(array $user, array $projects, string
             <p class="eyebrow">שלב 2</p>
             <h2>פרטי המסירה למילוי הטכנאי</h2>
             <p>לאחר בחירת פרויקט, בניין ודירה ייפתח כאן מיד הטופס המלא. אין צורך ללחוץ על כפתור נוסף.</p>
-            <div class="handover-field-preview" aria-label="השדות שיופיעו בטופס">
-                <span>סטטוס המסירה</span><span>תאריך מסירה</span><span>מיקום וסוג קונטרולר</span>
-                <span>כמויות, סוגים ומיקומי מפסקים</span><span>מפסק 24V לתריס כלוא</span><span>חיבור למזגן</span>
-                <span>דוד והערות</span>
-                <span>פרטי הטכנאי</span><span>שני צילומי חובה</span><span>סיום ושליחה</span>
-            </div>
+            <ol class="handover-field-preview" aria-label="שלבי מילוי טופס המסירה">
+                <li>סטטוס המסירה ותאריך המסירה</li>
+                <li>קישור ענן ייעודי ללקוח, כאשר המסירה כוללת קישור לאפליקציה</li>
+                <li>מיקום וסוג הקונטרולר</li>
+                <li>מפסקי 9: כמות, תצורה, מיקום וצילום לכל מפסק</li>
+                <li>מפסקי תאורה ותריס: כמות ומיקום</li>
+                <li>מפסק 24V לתריס כלוא</li>
+                <li>חיבור למזגן</li>
+                <li>דוד והערות</li>
+                <li>פרטי הטכנאי</li>
+                <li>צילומי חובה: צילום קונטרולר וצילום לכל מפסק 9</li>
+                <li>סיום ושליחה</li>
+            </ol>
         </section>
         <?php return; ?>
     <?php endif; ?>
