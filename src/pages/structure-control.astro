@@ -110,6 +110,14 @@ const jsonLd = {
         },
         {
           '@type': 'Question',
+          name: 'מה ההבדל בין בקרת מבנה לבית חכם?',
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: 'בית חכם מתמקד בעיקר בנוחות ובשליטה בדירה או בבית פרטי. בקרת מבנה BMS מיועדת לניהול מרכזי של מערכות רבות במבנה מסחרי, ציבורי או משותף, כולל מיזוג, תאורה, אנרגיה, משאבות, התראות ותחזוקה.',
+          },
+        },
+        {
+          '@type': 'Question',
           name: 'כמה חוסך BMS באנרגיה?',
           acceptedAnswer: {
             '@type': 'Answer',
@@ -178,6 +186,29 @@ const jsonLd = {
   ],
 };
 
+const definitionBlock = `
+<section id="what-is-building-management-system" class="not-prose my-10 rounded-2xl border border-brand-100 bg-brand-50 p-6 md:p-8">
+  <p class="text-sm font-bold tracking-wide text-accent-600 mb-2">הסבר מקצועי בגובה העיניים</p>
+  <h2 class="text-2xl md:text-3xl font-extrabold text-brand-900 mb-4">מה זה בקרת מבנה BMS?</h2>
+  <p class="text-lg leading-8 text-brand-700">מערכת בקרת מבנה, המכונה BMS, היא מערכת מרכזית שמחברת את מערכות המבנה למסך ניהול אחד. היא אוספת מידע מחיישנים ובקרים, מפעילה ציוד לפי לוחות זמנים ותנאים, מציגה תקלות בזמן אמת ומאפשרת לצוות האחזקה לשלוט במיזוג, בתאורה, באנרגיה, במשאבות ובמערכות נוספות ממקום אחד.</p>
+  <p class="text-lg leading-8 text-brand-700 mt-4">במבנה מסחרי או ציבורי, המטרה אינה רק נוחות. מערכת BMS טובה מסייעת לצמצם בזבוז אנרגיה, לזהות חריגות לפני שהן הופכות להשבתה, לתעד ביצועים ולשפר את התחזוקה. המערכת יכולה לשלב Siemens Desigo, בקרי DDC ופרוטוקולים פתוחים כגון KNX, BACnet, DALI ו-Modbus בהתאם לצורכי הפרויקט.</p>
+  <div class="grid gap-4 md:grid-cols-3 mt-6">
+    <div class="rounded-xl bg-white border border-brand-100 p-4">
+      <h3 class="font-extrabold text-brand-900 mb-2">שליטה מרכזית</h3>
+      <p class="text-brand-700 leading-7">מסך אחד לניהול מערכות, קומות ואזורים במבנה.</p>
+    </div>
+    <div class="rounded-xl bg-white border border-brand-100 p-4">
+      <h3 class="font-extrabold text-brand-900 mb-2">חיסכון והתייעלות</h3>
+      <p class="text-brand-700 leading-7">הפעלה לפי תפוסה, שעות פעילות, טמפרטורה וצריכה.</p>
+    </div>
+    <div class="rounded-xl bg-white border border-brand-100 p-4">
+      <h3 class="font-extrabold text-brand-900 mb-2">התראות ותחזוקה</h3>
+      <p class="text-brand-700 leading-7">זיהוי תקלות וחריגות לפני פגיעה בפעילות המבנה.</p>
+    </div>
+  </div>
+</section>
+`;
+
 const daliBmsBlock = `
 <section id="dali-lighting-control" class="not-prose bg-brand-50 border border-brand-100 rounded-2xl p-6 md:p-8 my-10">
   <h2 class="text-2xl md:text-3xl font-extrabold text-brand-900 mb-4">בקרת תאורה DALI כחלק ממערכת BMS</h2>
@@ -219,7 +250,7 @@ const featuredCaseStudiesBlock = `
 `;
 
 const enhancedContent = content
-  .replace('<section id="case-studies"', `${featuredCaseStudiesBlock}<section id="case-studies"`)
+  .replace('<section id="case-studies"', `${definitionBlock}${featuredCaseStudiesBlock}<section id="case-studies"`)
   .replace('</div></article>', `${daliBmsBlock}</div></article>`);
 
 const meta = {
