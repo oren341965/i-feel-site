@@ -447,6 +447,10 @@ try {
     Invoke-PortalCurl "-o", $responseBody, "-b", $employeeCookies, "$baseUrl/staff-expenses/?tab=my_vehicle" | Out-Null
     $html = Get-Content -Raw -Encoding utf8 $responseBody
     Assert-PortalTest ($html -match 'name="action" value="submit_vehicle_monthly"') "Monthly vehicle form was not rendered."
+    Assert-PortalTest ($html -match 'name="monthly_fluids"') "Monthly oil and fluids check was not rendered."
+    Assert-PortalTest ($html -match 'name="monthly_warning_lights"') "Monthly warning lights check was not rendered."
+    Assert-PortalTest ($html -match 'name="monthly_accident"') "Monthly accident and damage check was not rendered."
+    Assert-PortalTest ($html -match 'מסמכים שנתיים') "Annual vehicle documents were not clearly separated from the monthly report."
     Assert-PortalTest ($html -match 'href="[^"]*tab=my_vehicle[^"]*"') "My vehicle navigation button was not rendered for an assigned driver."
     Assert-PortalTest ($html -match 'vehicle-documents-card') "Secure vehicle documents area was not rendered."
     $csrf = Get-CsrfFromHtml $html
@@ -461,6 +465,9 @@ try {
         "--data-urlencode", "monthly_odometer=123456", `
         "--data-urlencode", "monthly_treatment=none", `
         "--data-urlencode", "monthly_tires=ok", `
+        "--data-urlencode", "monthly_fluids=ok", `
+        "--data-urlencode", "monthly_warning_lights=none", `
+        "--data-urlencode", "monthly_accident=none", `
         "--data-urlencode", "monthly_general_status=ok", `
         "$baseUrl/staff-expenses/"
     Assert-PortalTest ($headers -match "HTTP/1\.1 303") "Monthly vehicle report was not accepted."
@@ -471,6 +478,9 @@ try {
     Assert-PortalTest ($null -ne $monthProperty) "Monthly report was not stored for the current month."
     $monthVersions = @($monthProperty.Value)
     Assert-PortalTest ($monthVersions[0].odometer -eq 123456) "Monthly odometer was not stored."
+    Assert-PortalTest ($monthVersions[0].fluids_status -eq "ok") "Monthly oil and fluids status was not stored."
+    Assert-PortalTest ($monthVersions[0].warning_lights -eq "none") "Monthly warning lights status was not stored."
+    Assert-PortalTest ($monthVersions[0].accident_status -eq "none") "Monthly accident status was not stored."
 
     Invoke-PortalCurl "-o", $responseBody, "-b", $employeeCookies, "$baseUrl/staff-expenses/?tab=history" | Out-Null
     $html = Get-Content -Raw -Encoding utf8 $responseBody
