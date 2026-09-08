@@ -456,11 +456,9 @@ function portal_process_vehicle_monthly_reminders(DateTimeImmutable $now, ?calla
     $mailer ??= static fn(string $email, string $subject, string $body, array $attachments): bool =>
         portal_send_mail_with_attachments($email, $subject, $body, $attachments);
     $local = $now->setTimezone(new DateTimeZone('Asia/Jerusalem'));
-    $day = (int) $local->format('j');
     $result = ['sent' => 0, 'missing_flagged' => 0, 'failed' => 0];
-    if (!in_array($day, [2, 4, 7, 8], true)) {
-        return $result;
-    }
+    $day = (int) $local->format('j');
+    $date = $local->format('Y-m-d');
     $month = portal_vehicle_month_key($local);
     $state = portal_json_read(portal_vehicle_monthly_reminder_state_file());
     foreach (portal_vehicle_directory() as $plate => $vehicle) {
@@ -473,21 +471,36 @@ function portal_process_vehicle_monthly_reminders(DateTimeImmutable $now, ?calla
         if ($email === null) {
             continue;
         }
-        $recipient = $day === 8 ? 'oren@' . portal_company_email_domain() : $email;
-        $token = $month . ':' . $day . ':' . $plate;
-        if (isset($state[$token])) {
-            continue;
+        $driverToken = 'driver:' . $date . ':' . $plate;
+        if (!isset($state[$driverToken])) {
+            $subject = 'תזכורת למילוי דיווח הרכב החודשי';
+            $body = 'יש למלא את הדיווח החודשי הקצר עבור הרכב '
+                . portal_format_vehicle_plate($plate) . ".\r\nהתזכורת תישלח מדי יום עד להשלמת הדיווח.\r\n"
+                . 'https://i-feel.co.il/staff-expenses/?tab=my_vehicle';
+            if ($mailer($email, $subject, $body, [])) {
+                $state[$driverToken] = gmdate('c');
+                $result['sent']++;
+            } else {
+                $result['failed']++;
+            }
         }
-        $subject = $day === 8 ? 'דיווח רכב חודשי חסר' : 'תזכורת למילוי דיווח הרכב החודשי';
-        $body = ($day === 8 ? 'הדיווח החודשי טרם מולא עבור הרכב ' : 'יש למלא את הדיווח החודשי הקצר עבור הרכב ')
-            . portal_format_vehicle_plate($plate) . ".\r\nhttps://i-feel.co.il/staff-expenses/?tab=my_vehicle";
-        if ($mailer($recipient, $subject, $body, [])) {
-            $state[$token] = gmdate('c');
-            $day === 8 ? $result['missing_flagged']++ : $result['sent']++;
-        } else {
-            $result['failed']++;
+
+        if ($day === 8) {
+            $managerToken = 'manager:' . $month . ':8:' . $plate;
+            if (!isset($state[$managerToken])) {
+                $subject = 'דיווח רכב חודשי חסר';
+                $body = 'הדיווח החודשי טרם מולא עבור הרכב '
+                    . portal_format_vehicle_plate($plate) . ".\r\nhttps://i-feel.co.il/staff-expenses/?tab=my_vehicle";
+                if ($mailer('oren@' . portal_company_email_domain(), $subject, $body, [])) {
+                    $state[$managerToken] = gmdate('c');
+                    $result['missing_flagged']++;
+                } else {
+                    $result['failed']++;
+                }
+            }
         }
     }
     portal_json_write(portal_vehicle_monthly_reminder_state_file(), $state);
     return $result;
 }
+
