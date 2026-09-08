@@ -3,6 +3,7 @@ import { dirname, relative, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const REQUIRED_SOURCES = ['requirements', 'orders', 'receipts', 'stockMovements', 'installation'];
+const REQUIRED_TRUTH_SYSTEMS = ['dropbox', 'gmail'];
 const QUANTITY_FIELDS = ['requiredQty', 'orderedQty', 'receivedQty', 'issuedQty', 'installedQty', 'returnedQty'];
 const CLOSING_FIELDS = [
   'inventoryCounted', 'technicianSummaryVerified', 'closingFormPresent',
@@ -52,6 +53,17 @@ export function reconcileProjectEquipment(envelope) {
   if (!Array.isArray(envelope.projects)) throw new Error('projects must be an array');
   const coverage = {};
   const missingSources = [];
+  const sourceSystems = {};
+  const missingSourceSystems = [];
+  for (const system of REQUIRED_TRUTH_SYSTEMS) {
+    const entry = envelope.sourceSystems?.[system];
+    if (!entry || !['live', 'stale', 'blocked', 'missing'].includes(entry.status)) {
+      throw new Error(`sourceSystems.${system}.status is required`);
+    }
+    if (entry.status === 'live') timestamp(entry.observedAt, `sourceSystems.${system}.observedAt`);
+    sourceSystems[system] = { status: entry.status, observedAt: entry.observedAt ?? null };
+    if (entry.status !== 'live') missingSourceSystems.push(system);
+  }
   for (const source of REQUIRED_SOURCES) {
     const entry = envelope.sourceCoverage?.[source];
     if (!entry || !['live', 'stale', 'blocked', 'missing'].includes(entry.status)) {
@@ -98,7 +110,7 @@ export function reconcileProjectEquipment(envelope) {
     if (!project.equipment.length) gaps.push('NO_EQUIPMENT_LINES');
     let equipmentState;
     if (conflicts.length) equipmentState = 'DATA_CONFLICT';
-    else if (missingSources.length || gaps.length) equipmentState = 'SOURCE_GAP';
+    else if (missingSourceSystems.length || missingSources.length || gaps.length) equipmentState = 'SOURCE_GAP';
     else if (lines.some((line) => line.balance.toOrderQty > 0)) equipmentState = 'EQUIPMENT_REQUIRED';
     else if (lines.some((line) => line.balance.toReceiveQty > 0)) equipmentState = 'WAITING_SUPPLIER';
     else if (lines.some((line) => line.balance.readyToIssueQty > 0)) equipmentState = 'READY_TO_ISSUE';
@@ -114,6 +126,8 @@ export function reconcileProjectEquipment(envelope) {
     schemaVersion: 1,
     capturedAt: envelope.capturedAt,
     sourceWindow: envelope.sourceWindow ?? null,
+    sourceSystems,
+    missingSourceSystems,
     sourceCoverage: coverage,
     missingSources,
     summary: { projects: projects.length, states, ...totals },
@@ -127,6 +141,8 @@ function publicResult(result, includeProjectDetails) {
     schemaVersion: result.schemaVersion,
     capturedAt: result.capturedAt,
     sourceWindow: result.sourceWindow,
+    sourceSystems: result.sourceSystems,
+    missingSourceSystems: result.missingSourceSystems,
     sourceCoverage: result.sourceCoverage,
     missingSources: result.missingSources,
     summary: result.summary,

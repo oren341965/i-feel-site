@@ -7,6 +7,10 @@ Use a private JSON envelope under `.ai-manager-data/operations/`:
   "schemaVersion": 1,
   "capturedAt": "2026-09-08T08:00:00.000Z",
   "sourceWindow": { "from": "2026-09-01", "to": "2026-09-08" },
+  "sourceSystems": {
+    "dropbox": { "status": "live", "observedAt": "2026-09-08T07:48:00.000Z" },
+    "gmail": { "status": "live", "observedAt": "2026-09-08T07:49:00.000Z" }
+  },
   "sourceCoverage": {
     "requirements": { "status": "live", "observedAt": "2026-09-08T07:50:00.000Z" },
     "orders": { "status": "live", "observedAt": "2026-09-08T07:51:00.000Z" },
@@ -18,7 +22,9 @@ Use a private JSON envelope under `.ai-manager-data/operations/`:
 }
 ```
 
-Allowed coverage statuses are `live`, `stale`, `blocked`, and `missing`. `capturedAt` and live `observedAt` values must be valid timestamps. The five coverage categories are required even when blocked so the report cannot silently shrink its scope.
+Dropbox and Gmail are the two mandatory source-of-truth systems for this control. Both `sourceSystems` entries are required. Dropbox is the durable project filing record; Gmail is the durable procurement and supplier correspondence record, including original attachments. WhatsApp may be an intake channel, but it is not source of truth after the document is filed. If either Dropbox or Gmail is not live, the result must fail closed as `SOURCE_GAP`.
+
+Allowed system and coverage statuses are `live`, `stale`, `blocked`, and `missing`. `capturedAt` and live `observedAt` values must be valid timestamps. The five evidence-coverage categories are required even when blocked so the report cannot silently shrink its scope.
 
 Each project contains:
 
@@ -80,3 +86,4 @@ The main and tenant boards contain closing controls, but the contractor board cu
 3. Preserve every conflicting source reference.
 4. A delivery-note file located by `upload-delivery-notes-to-dropbox` may supply a receipt only after its line item and quantity are extracted and tied to the project.
 5. Supplier order/invoice evidence from `procurement-po-tracker` is useful context but payment or invoice matching is not proof of project receipt, warehouse issue, or installation.
+6. Preserve both records when the same document exists in Gmail and Dropbox: Gmail proves the received correspondence and original attachment; Dropbox proves the controlled project filing. Reconcile them by a stable document number or content hash, never by filename alone.

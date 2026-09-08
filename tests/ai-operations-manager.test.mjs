@@ -17,6 +17,14 @@ const HASH_B = 'b'.repeat(64);
 const REPO = resolve(import.meta.dirname, '..');
 const SCRIPT = resolve(REPO, '.claude/skills/upload-delivery-notes-to-dropbox/scripts/plan-delivery-note-intake.mjs');
 
+function liveSourceSystems(overrides = {}) {
+  return {
+    dropbox: { status: 'live', observedAt: NOW },
+    gmail: { status: 'live', observedAt: NOW },
+    ...overrides,
+  };
+}
+
 function envelope(overrides = {}) {
   return {
     generatedAt: NOW,
@@ -223,6 +231,7 @@ test('equipment reconciliation separates ordering, receiving, issuing and field 
   const result = reconcileProjectEquipment({
     schemaVersion: 1,
     capturedAt: NOW,
+    sourceSystems: liveSourceSystems(),
     sourceCoverage: Object.fromEntries(['requirements', 'orders', 'receipts', 'stockMovements', 'installation']
       .map((key) => [key, { status: 'live', observedAt: NOW }])),
     projects: [{
@@ -248,7 +257,7 @@ test('equipment reconciliation fails closed for missing stock evidence and quant
   const sourceCoverage = Object.fromEntries(['requirements', 'orders', 'receipts', 'stockMovements', 'installation']
     .map((key) => [key, { status: key === 'stockMovements' ? 'missing' : 'live', observedAt: key === 'stockMovements' ? null : NOW }]));
   const gap = reconcileProjectEquipment({
-    schemaVersion: 1, capturedAt: NOW, sourceCoverage,
+    schemaVersion: 1, capturedAt: NOW, sourceSystems: liveSourceSystems(), sourceCoverage,
     projects: [{ projectRef: '3249720207:101', closing: {}, equipment: [{
       lineRef: 'quote-2:line-1', requiredQty: 1, orderedQty: 1, receivedQty: 1,
       issuedQty: null, installedQty: null, returnedQty: null,
@@ -259,6 +268,7 @@ test('equipment reconciliation fails closed for missing stock evidence and quant
 
   const conflict = reconcileProjectEquipment({
     schemaVersion: 1, capturedAt: NOW,
+    sourceSystems: liveSourceSystems(),
     sourceCoverage: Object.fromEntries(['requirements', 'orders', 'receipts', 'stockMovements', 'installation']
       .map((key) => [key, { status: 'live', observedAt: NOW }])),
     projects: [{ projectRef: '3249720207:102', closing: {}, equipment: [{
@@ -278,7 +288,7 @@ test('balanced equipment and verified closing controls produce an explicit compl
     'closingApproval', 'closingOwnerPresent', 'closingDatePresent',
   ].map((key) => [key, true]));
   const result = reconcileProjectEquipment({
-    schemaVersion: 1, capturedAt: NOW, sourceCoverage,
+    schemaVersion: 1, capturedAt: NOW, sourceSystems: liveSourceSystems(), sourceCoverage,
     projects: [{ projectRef: '3249720207:103', closing, equipment: [{
       lineRef: 'quote-4:line-1', requiredQty: 2, orderedQty: 2, receivedQty: 2,
       issuedQty: 2, installedQty: 2, returnedQty: 0,
@@ -295,4 +305,22 @@ test('operations manager routes project equipment without claiming a current inv
   assert.match(manager, /`project-equipment-control`/);
   assert.match(worker, /legacy 2022 inventory sheet/);
   assert.match(worker, /contains no writer/);
+});
+
+test('equipment reconciliation requires both Dropbox and Gmail source-of-truth systems', () => {
+  const sourceCoverage = Object.fromEntries(['requirements', 'orders', 'receipts', 'stockMovements', 'installation']
+    .map((key) => [key, { status: 'live', observedAt: NOW }]));
+  const result = reconcileProjectEquipment({
+    schemaVersion: 1,
+    capturedAt: NOW,
+    sourceSystems: liveSourceSystems({ gmail: { status: 'blocked', observedAt: null } }),
+    sourceCoverage,
+    projects: [{ projectRef: '3249720207:104', closing: {}, equipment: [{
+      lineRef: 'quote-5:line-1', requiredQty: 1, orderedQty: 1, receivedQty: 1,
+      issuedQty: 1, installedQty: 1, returnedQty: 0,
+    }] }],
+  });
+
+  assert.deepEqual(result.missingSourceSystems, ['gmail']);
+  assert.equal(result.projects[0].state, 'SOURCE_GAP');
 });

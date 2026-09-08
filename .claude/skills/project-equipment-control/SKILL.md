@@ -11,13 +11,14 @@ Build one evidence-backed equipment position per project without turning a gener
 
 Read [references/source-contract.md](references/source-contract.md) before a live or historical reconciliation. Keep each quantity tied to its source:
 
+- source-of-truth systems — Dropbox for durable project filing and Gmail for original procurement/supplier correspondence and attachments; both must be live;
 - required — approved BOM, quote, or current installation plan;
 - ordered — verified supplier purchase-order line;
 - received — verified delivery-note line, not merely a filed document;
 - issued and returned — explicit stock issue/return ledger;
 - installed — verified technician completion or project-closing evidence.
 
-The Monday field `סטטוס רכש ציוד` is workflow context only. It is never numeric proof. A Dropbox upload proves filing, not receipt quantity, stock ownership, issue to a technician, or installation.
+The Monday field `סטטוס רכש ציוד` is workflow context only. It is never numeric proof. A Dropbox upload proves filing, not receipt quantity, stock ownership, issue to a technician, or installation. WhatsApp is intake only; after filing, do not treat it as a competing source of truth.
 
 ## Workflow
 
