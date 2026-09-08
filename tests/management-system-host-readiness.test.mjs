@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import { createHash } from 'node:crypto';
 import { copyFile, mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { dirname, resolve } from 'node:path';
@@ -30,15 +31,14 @@ async function fixture(t) {
   await mkdir(resolve(telemetryRoot, 'scripts'), { recursive: true });
   await mkdir(resolve(vault, '02 Skills/Entries'), { recursive: true });
   await mkdir(resolve(installed, 'management-system-telemetry'), { recursive: true });
-  await writeFile(
-    resolve(telemetryRoot, 'SKILL.md'),
-    '---\nname: management-system-telemetry\ndescription: Test telemetry skill\n---\n\n# Test\n',
-    'utf8',
-  );
+  const skillContent = '---\nname: management-system-telemetry\ndescription: Test telemetry skill\n---\n\n# Test\n';
+  const sourceHash = createHash('sha256').update(skillContent).digest('hex');
+  await writeFile(resolve(telemetryRoot, 'SKILL.md'), skillContent, 'utf8');
+  await writeFile(resolve(installed, 'management-system-telemetry/SKILL.md'), skillContent, 'utf8');
   await copyFile(SOURCE_SYNC_SCRIPT, resolve(telemetryRoot, 'scripts/audit-source-sync.mjs'));
   await writeFile(
     resolve(vault, '02 Skills/Entries/management-system-telemetry.md'),
-    '---\ntype: skill-registry-entry\nstatus: Active\nversion: reviewed-earlier\n---\n\nPrivate reviewed body.\n',
+    `---\ntype: skill-registry-entry\nstatus: Active\nversion: reviewed-earlier\nsource_hash: ${sourceHash}\n---\n\nPrivate reviewed body.\n`,
     'utf8',
   );
 
@@ -108,7 +108,7 @@ test('host readiness allows provisioning and authenticated check-in without expo
   assert.equal(output.registration.knowledgeLinked, 1);
   assert.equal(output.registration.installedSkills, 1);
   assert.equal(output.installation.installedCommitMatchesHead, true);
-  assert.ok(output.warnings.includes('VAULT_KNOWLEDGE_VERSION_BEHIND_GIT'));
+  assert.equal(output.warnings.includes('VAULT_KNOWLEDGE_VERSION_BEHIND_GIT'), false);
   assert.equal(result.stdout.includes(siteToken), false);
   assert.equal(result.stdout.includes(runToken), false);
   assert.equal(result.stdout.includes(paths.root), false);
