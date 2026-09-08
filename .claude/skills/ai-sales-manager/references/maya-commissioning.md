@@ -19,8 +19,10 @@ This handoff makes Maya installation repeatable without copying prompts, source 
 4. On Maya, run the one command printed by the exporter with `-ConfirmMayaWorkstation`.
 5. Provision the scoped Management credentials with the installed `provision-management-telemetry.ps1` helper. After its hidden prompts succeed, it runs the current installer in network-free `-VerifyOnly` mode and publishes one new bounded `MAYA_COMMISSIONING_RESULT` to the existing Vault Bus. No token or absolute path is included.
 6. On Oren, run `check-maya-commissioning-result.ps1` against the Vault; do not copy logs, prompts or secrets between computers.
-7. Continue only when the newest result is `INSTALLED_PAUSED`, all four Codex Skill hashes and both Maya task contract hashes match, `managementCredentialsProvisioned=true`, `runtimeLocks=0`, `claudeRequired=false`, and all external-action counters are zero.
-8. Browser/account, Gmail, Instagram, Facebook, WhatsApp and Management System identity smoke tests are a later, separately approved gate. Scheduler activation remains a separate approval after those checks.
+7. On Maya, run `node C:\ifeel-maya\jobs\maya-task-e2e-smoke.mjs --config C:\ifeel-maya\config\config.json`. This uses a temporary isolated Vault and synthetic identifiers. It must prove Assignment, ACK, Result, isolated Monday read-back and task-id duplicate suppression while reporting zero external sends, Gmail mutations, Monday writes and scheduler activations.
+8. Treat `PASS_ISOLATED` as protocol evidence only. It must report `READY_FOR_REAL_TASKS=NO`; the status can change only after Maya's live read-only Codex, Gmail, WhatsApp, Monday and Management identity gates pass and action-specific approval exists.
+9. Continue only when the newest result is `INSTALLED_PAUSED`, all four Codex Skill hashes, both Maya task contract hashes and all three task-runtime hashes match, `managementCredentialsProvisioned=true`, `runtimeLocks=0`, `claudeRequired=false`, and all external-action counters are zero.
+10. Browser/account, Gmail, Instagram, Facebook, WhatsApp and Management System identity smoke tests are a later, separately approved gate. Scheduler activation remains a separate approval after those checks.
 
 ## Report-only scheduler gates
 
@@ -38,6 +40,7 @@ This handoff makes Maya installation repeatable without copying prompts, source 
 - Never install `ai-sales-manager`, `ai-service-manager`, `maya-admin`, `maya-billing-control`, or unrelated personal skills on Maya through this bundle. Sales and service management remain central; Maya's workers classify, acknowledge, follow up within scope, and return evidence.
 - Do not delete the canonical `.claude/skills` repository directory. Removing the Claude application from Maya is separate from the managed Skill source and is not required for Codex commissioning.
 - Never activate Claude, Codex, or Windows schedulers during commissioning.
+- The installed task runtime under `C:\ifeel-maya\jobs` is a deterministic role-scoped bridge. It is not a new `maya-agent` Skill, does not poll on its own and is not a scheduler.
 - Never send email or WhatsApp, create drafts, write Monday, change campaigns, delete data, or include customer PII in the manifest or result.
 - Never edit an installed managed skill. Fix the canonical source through a PR, merge it, and export a new release.
 - A hash mismatch, missing payload, wrong role, missing Vault, active lock, or incomplete result is a blocker.

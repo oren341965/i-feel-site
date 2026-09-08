@@ -38,7 +38,10 @@ $requiredPayload = @(
     'payload\email-review\draft_writer.py',
     'payload\runtime\maya-config.example.json',
     'payload\runtime\bus-message.schema.json',
-    'payload\runtime\maya-task-protocol.md'
+    'payload\runtime\maya-task-protocol.md',
+    'payload\runtime\orchestrate-sales-system.mjs',
+    'payload\runtime\maya-vault-bridge.mjs',
+    'payload\runtime\maya-task-e2e-smoke.mjs'
 )
 
 function Assert-SafeRoot {
@@ -137,12 +140,13 @@ $codexRoot = Join-Path $user '.codex'
 $backupRoot = Join-Path $user ".ifeel-agent-backups\$(Get-Date -Format 'yyyyMMdd-HHmmss')-maya-commissioning"
 $stagedTasksRoot = Join-Path $runtime 'staged-scheduled-tasks'
 $runtimeConfigRoot = Join-Path $runtime 'config'
+$runtimeJobsRoot = Join-Path $runtime 'jobs'
 $configPath = Join-Path $runtimeConfigRoot 'config.json'
 $emailRuntime = Join-Path $user 'ifeel-maya-gmail'
 $installPerformed = $false
 
 if (-not $VerifyOnly) {
-    foreach ($directory in @($backupRoot, $runtimeConfigRoot, $stagedTasksRoot, $emailRuntime, (Join-Path $runtime 'logs'))) {
+    foreach ($directory in @($backupRoot, $runtimeConfigRoot, $runtimeJobsRoot, $stagedTasksRoot, $emailRuntime, (Join-Path $runtime 'logs'))) {
         if ($PSCmdlet.ShouldProcess($directory, 'Create commissioning directory')) {
             New-Item -ItemType Directory -Path $directory -Force | Out-Null
         }
@@ -273,6 +277,19 @@ if (-not $VerifyOnly) {
             Copy-Item -LiteralPath (Join-Path $bundle "payload\runtime\$contract") -Destination $contractTarget -Force
         }
     }
+    foreach ($job in @('orchestrate-sales-system.mjs', 'maya-vault-bridge.mjs', 'maya-task-e2e-smoke.mjs')) {
+        $jobTarget = Join-Path $runtimeJobsRoot $job
+        if (Test-Path -LiteralPath $jobTarget -PathType Leaf) {
+            $jobBackup = Join-Path $backupRoot "runtime\jobs\$job"
+            if ($PSCmdlet.ShouldProcess($jobTarget, "Back up Maya task runtime $job to $jobBackup")) {
+                New-Item -ItemType Directory -Path (Split-Path $jobBackup -Parent) -Force | Out-Null
+                Copy-Item -LiteralPath $jobTarget -Destination $jobBackup
+            }
+        }
+        if ($PSCmdlet.ShouldProcess($jobTarget, "Install paused Maya task runtime $job")) {
+            Copy-Item -LiteralPath (Join-Path $bundle "payload\runtime\$job") -Destination $jobTarget -Force
+        }
+    }
 }
 
 $installedHashes = @()
@@ -299,6 +316,17 @@ $taskContractHashes = foreach ($contract in @('bus-message.schema.json', 'maya-t
     }
 }
 $allTaskContractsVerified = @($taskContractHashes | Where-Object { -not $_.hashMatch }).Count -eq 0
+$taskRuntimeHashes = foreach ($job in @('orchestrate-sales-system.mjs', 'maya-vault-bridge.mjs', 'maya-task-e2e-smoke.mjs')) {
+    $source = Join-Path $bundle "payload\runtime\$job"
+    $target = Join-Path $runtimeJobsRoot $job
+    [ordered]@{
+        name = $job
+        present = Test-Path -LiteralPath $target -PathType Leaf
+        hashMatch = (Test-Path -LiteralPath $target -PathType Leaf) -and
+            ((Get-FileHash -LiteralPath $source -Algorithm SHA256).Hash -eq (Get-FileHash -LiteralPath $target -Algorithm SHA256).Hash)
+    }
+}
+$allTaskRuntimeVerified = @($taskRuntimeHashes | Where-Object { -not $_.hashMatch }).Count -eq 0
 $lockCount = @(Get-ChildItem -LiteralPath $runtime -Filter '*.lock' -File -Recurse -ErrorAction SilentlyContinue).Count
 $managementSecretPath = Join-Path ([Environment]::GetFolderPath('LocalApplicationData')) 'I Feel\Management System\telemetry-secrets.dpapi'
 $managementWrapperPath = Join-Path ([Environment]::GetFolderPath('LocalApplicationData')) 'I Feel\Management System\invoke-telemetry.ps1'
@@ -344,7 +372,7 @@ $result = [ordered]@{
     source = 'maya-commissioning-installer'
     target = 'ai-sales-manager'
     type = 'MAYA_COMMISSIONING_RESULT'
-    status = if ($allSkillsVerified -and $allTaskContractsVerified -and $lockCount -eq 0) { 'INSTALLED_PAUSED' } else { 'BLOCKED' }
+    status = if ($allSkillsVerified -and $allTaskContractsVerified -and $allTaskRuntimeVerified -and $lockCount -eq 0) { 'INSTALLED_PAUSED' } else { 'BLOCKED' }
     payload = [ordered]@{
         commit = $manifest.commit
         role = 'maya-front-office'
@@ -353,6 +381,7 @@ $result = [ordered]@{
         installPerformed = $installPerformed
         skills = $installedHashes
         taskContracts = $taskContractHashes
+        taskRuntime = $taskRuntimeHashes
         stagedSchedulers = 2
         stagedSchedulerNames = @('maya-email-maintenance', 'maya-instagram-relations')
         schedulersActivated = 0
@@ -362,6 +391,7 @@ $result = [ordered]@{
         managementCredentialsProvisioned = $managementCredentialsProvisioned
         nextGate = 'CODEX_BROWSER_IDENTITY_AND_MANAGEMENT_SMOKE'
         taskProtocol = 'MAYA_SALES_TASK_V2'
+        isolatedTaskSmokeCommand = 'node C:\ifeel-maya\jobs\maya-task-e2e-smoke.mjs --config C:\ifeel-maya\config\config.json'
         externalSends = 0
         mondayWrites = 0
         deletions = 0

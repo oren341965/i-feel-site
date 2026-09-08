@@ -1,7 +1,9 @@
 import assert from 'node:assert/strict';
+import { execFile } from 'node:child_process';
 import { mkdir, readFile, rm, stat, writeFile } from 'node:fs/promises';
 import { join, resolve } from 'node:path';
 import test from 'node:test';
+import { promisify } from 'node:util';
 
 import {
   acknowledgeMayaSalesTask,
@@ -39,6 +41,7 @@ const CURRENT_MAYA_CONTROL = Object.freeze({
   proactiveMessagingApproval: 'PENDING',
 });
 let fixtureCounter = 0;
+const execFileAsync = promisify(execFile);
 
 async function fixture(t) {
   fixtureCounter += 1;
@@ -200,7 +203,7 @@ test('isolated Maya sales task completes Assignment -> ACK -> Result -> Monday g
       priority: 'NORMAL',
       next_action: null,
       next_treatment_date: null,
-      monday_item_source: 'MONDAY_LIVE',
+      monday_item_source: 'ISOLATED_TEST',
       monday_item_verified_at: NOW.toISOString(),
       test_task: true,
       control_state: CURRENT_MAYA_CONTROL,
@@ -340,6 +343,31 @@ test('isolated Maya sales task completes Assignment -> ACK -> Result -> Monday g
   assert.equal(assigned.assignment.monday_writes_performed, false);
 });
 
+test('installed Maya task smoke proves the isolated end-to-end bridge and remains fail-closed', async (t) => {
+  const { mayaConfigPath } = await fixture(t);
+  const installedConfig = JSON.parse(await readFile(mayaConfigPath, 'utf8'));
+  installedConfig.identity.machineRole = 'maya-front-office';
+  installedConfig.identity.primaryEngine = 'codex';
+  await writeFile(mayaConfigPath, JSON.stringify(installedConfig), 'utf8');
+  const smokePath = resolve(REPO, '.claude/skills/ai-sales-manager/scripts/maya-task-e2e-smoke.mjs');
+  const { stdout, stderr } = await execFileAsync(process.execPath, [smokePath, '--config', mayaConfigPath]);
+  assert.equal(stderr, '');
+  assert.match(stdout, /^MAYA_AGENT_FOUND=YES_ROLE_IDENTITY_ONLY$/m);
+  assert.match(stdout, /^CODEX_CONNECTION=OK_LOCAL_ROLE_CONFIG$/m);
+  assert.match(stdout, /^MONDAY_READ=OK_ISOLATED_ADAPTER$/m);
+  assert.match(stdout, /^MONDAY_WRITE=OK_ISOLATED_READBACK_NO_LIVE_WRITE$/m);
+  assert.match(stdout, /^GMAIL_READ=OK_ISOLATED_ADAPTER$/m);
+  assert.match(stdout, /^SALES_MANAGER_TASK_RECEIVED=OK$/m);
+  assert.match(stdout, /^ACK_RETURNED=OK$/m);
+  assert.match(stdout, /^RESULT_RETURNED=OK$/m);
+  assert.match(stdout, /^DUPLICATE_PROTECTION=OK$/m);
+  assert.match(stdout, /^END_TO_END_TEST=PASS_ISOLATED$/m);
+  assert.match(stdout, /^READY_FOR_REAL_TASKS=NO$/m);
+  assert.match(stdout, /^EXTERNAL_SENDS=0$/m);
+  assert.match(stdout, /^MONDAY_WRITES=0$/m);
+  assert.match(stdout, /^SCHEDULERS_ACTIVATED=0$/m);
+});
+
 test('Maya production gate reflects current control evidence and rejects an unverified workstation ACK', async (t) => {
   const readiness = evaluateMayaProductionReadiness(CURRENT_MAYA_CONTROL);
   assert.equal(readiness.ready, false);
@@ -431,6 +459,21 @@ test('Maya sales task JSON schema fixes the required fields and execution-state 
     'BLOCKED',
     'NEEDS_OREN_DECISION',
   ]);
+  assert.deepEqual(task.properties.monday_item_source.enum, ['MONDAY_LIVE', 'ISOLATED_TEST']);
+  assert.throws(() => createMayaSalesTask({
+    task_id: 'maya-sales-invalid-isolated-source-001',
+    monday_board_id: '2732725332',
+    monday_item_id: '1234567890',
+    customer_name: 'SOURCE POLICY TEST',
+    current_sales_status: 'INTERNAL_TEST',
+    instruction: 'Reject isolated source on a production task.',
+    required_action: 'INTERNAL_POLICY_TEST',
+    priority: 'LOW',
+    monday_item_source: 'ISOLATED_TEST',
+    monday_item_verified_at: NOW.toISOString(),
+    test_task: false,
+    control_state: CURRENT_MAYA_CONTROL,
+  }, { now: NOW }), /policy field is invalid/i);
 });
 
 test('WAITING_FOR_CUSTOMER requires a verified next-treatment Monday read-back', () => {
