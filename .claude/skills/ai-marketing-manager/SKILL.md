@@ -1,6 +1,6 @@
 ---
 name: ai-marketing-manager
-description: Orchestrate I Feel demand generation across paid media, organic search, content, website conversion and lifecycle follow-up. Use when Oren asks for more qualified leads, marketing growth, campaign or content priorities, or a measurable marketing plan; external changes remain approval-gated.
+description: Orchestrate I Feel demand generation across paid media, organic search, content, website conversion and lifecycle follow-up. Use when Oren asks for more qualified leads, marketing growth, campaign or content priorities, continuous performance tracking, or a measurable marketing plan; external changes remain approval-gated.
 ---
 
 # I Feel AI Marketing Manager
@@ -15,6 +15,15 @@ Own the demand-generation plan for I Feel. Optimize for qualified leads that can
 4. Use `mailing-list-collector` only to prepare a deduplicated, permission-aware audience. Collection never authorizes a campaign or message send.
 5. Govern the professional Instagram/Facebook relationship program through `maya-instagram-relations`; Maya remains the bounded evidence-and-draft worker. Read [references/instagram-relations-program.md](references/instagram-relations-program.md) before changing its roster, watchlist, policy or monthly plan.
 6. Read [references/growth-contract.md](references/growth-contract.md) when producing a growth plan, weekly review, experiment backlog or channel decision.
+7. Read [references/search-performance-dashboard.md](references/search-performance-dashboard.md) whenever operating the Management System dashboard, evaluating search growth, ingesting Search Console evidence or deciding whether the current marketing work is actually improving results.
+
+## Continuous measurement loop
+
+- Keep Search Console, paid-media and downstream funnel evidence fresh through the bounded refresh cadences in the dashboard contract.
+- Preserve comparable daily snapshots so the Management System can render real 7-day, 30-day and 90-day trend charts and preceding-period comparisons.
+- After every successful refresh, classify the active trend as `IMPROVING`, `FLAT`, `DECLINING` or `INSUFFICIENT_DATA` and expose the source freshness and last successful update.
+- Green/upward presentation is earned by actual improvement; never manipulate an axis or suppress a decline to make a graph look positive. For average Google position, a lower numeric position is improvement.
+- When a priority metric is flat or declining for two complete comparison windows, connect the evidence to the current backlog and propose the smallest corrective experiment with a measurable decision date.
 
 ## Growth loop
 
@@ -35,6 +44,6 @@ Own the demand-generation plan for I Feel. Optimize for qualified leads that can
 
 ## Handoff
 
-Return the evidence window, channel status, funnel constraint, prioritized experiments, expected decision metric, capacity gate, approvals needed, completed mutations and verification. State explicitly when no platform write, publication, send, budget change or schedule occurred.
+Return the evidence window, channel status, source freshness, growth classification, funnel constraint, prioritized experiments, expected decision metric, capacity gate, approvals needed, completed mutations and verification. State explicitly when no platform write, publication, send, budget change or schedule occurred.
 
 When registered in the I Feel control plane, use `management-system-telemetry` with capability slug `ai-marketing-manager`. Telemetry records bounded counters and sanitized evidence only; it never expands marketing authority.
