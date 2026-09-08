@@ -86,3 +86,23 @@ The Marketing Manager dashboard should show, above the charts:
 - main blocker, if any
 
 The user should be able to see in a few seconds whether I Feel is progressing toward more qualified demand and stronger organic visibility, and which action the manager is taking when progress stalls.
+
+## I Feel Management home page
+
+The I Feel Management opening page must include a permanent Marketing Growth summary, not only a link to the Marketing Manager page.
+
+The home-page summary should show at a glance:
+
+- overall marketing growth state: `IMPROVING`, `FLAT`, `DECLINING` or `INSUFFICIENT_DATA`
+- organic clicks trend and current comparison delta
+- organic impressions trend and current comparison delta
+- qualified leads trend and current comparison delta
+- proposals/wins trend when available
+- one compact trend chart using the selected 30-day window by default
+- last successful refresh time and any stale-source warning
+- the active SEO/marketing action currently being tested
+- a direct drill-down action into the full Marketing Manager dashboard
+
+The opening-page chart must use the same measured snapshots and comparison logic as the detailed Marketing Manager dashboard. Do not create a separate or decorative data source for the home page.
+
+When real performance improves, the home page may emphasize the improvement visually. When performance is flat or declining, it must show that truth clearly and surface the manager's corrective action instead of presenting a misleading upward trend.
