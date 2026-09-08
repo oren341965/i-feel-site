@@ -9,7 +9,7 @@ Use the existing Maya WhatsApp session on Maya's workstation. The shared `ai-sal
 
 ## Every invocation
 
-1. Verify that the active WhatsApp account and browser session are the approved I Feel/Maya session. Stop with `WHATSAPP_CONNECTION_MISSING` when identity or access cannot be proved.
+1. Verify that the active WhatsApp account and browser session are the approved I Feel/Maya session. Compare the visible business name, contact email, website host and a SHA-256 fingerprint of the normalized E.164 service number against `runtime/business-identity-allowlist.json` with `scripts/verify-business-identity.mjs`. Pass observed identity through stdin and never print or persist the raw number. Stop with `WHATSAPP_CONNECTION_MISSING` when identity or access cannot be proved, or `WHATSAPP_ALLOWLIST_MISMATCH` when the verified profile does not match the canonical allowlist.
 2. Triage unread conversations and prepare or send only actions that are already within an explicit approval scope. Never delete, block, change account settings, or scrape through an unsupported interface.
 3. Match a customer by a strong identifier before using Monday. A name alone is not enough. Keep Monday structure unchanged and do not claim a write succeeded without read-back.
 4. Before sending, read the recent direct conversation and the relevant operational record. Reject a duplicate request or an opt-out.

@@ -23,6 +23,10 @@ Maturity 0 is read-only for external systems and dry-run only for orchestration.
 - Runtime installation, scheduler creation/activation, connector activation, secret changes, or permission changes.
 - Deletion, Trash, archive of shared data, or irreversible operations.
 
+## Registered recurring Google Ads authorization
+
+Oren explicitly authorized a daily Google Ads improvement loop on 2026-09-07. This recurring authorization is valid only through the exact versioned policy `oren-google-ads-daily-bounded-v1` and its configured expiry. It permits the `google-ads-manager` child to perform one allowlisted, reversible action per Jerusalem calendar day with zero total account-budget growth, precondition read, read-back and rollback. It does not raise the parent manager's maturity or authorize any other campaign, platform, customer, message, CRM, publishing or financial action.
+
 ## Evidence gates
 
 - Reconcile full pagination, source counts, unique IDs, schema, timestamps, and freshness before reporting a live result.

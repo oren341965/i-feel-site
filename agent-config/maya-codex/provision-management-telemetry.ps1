@@ -11,6 +11,111 @@ $expectedComputer = 'DESKTOP-3LU7BMR'
 $hostSlug = 'maya-front-office'
 $runtimeConfigPath = 'C:\ifeel-maya\config\config.json'
 
+# MAYA_MANAGEMENT_GATE_HELPERS_START
+function Format-MayaGateNames {
+    param([Parameter()][string[]]$Names)
+    if (@($Names).Count -eq 0) { return '<none>' }
+    return (@($Names | Sort-Object -Unique) -join ',')
+}
+
+function Get-MayaCommissioningReleaseGate {
+    param(
+        [Parameter(Mandatory)][string]$VaultRoot,
+        [Parameter(Mandatory)]$Verification
+    )
+
+    $installerRoot = Join-Path $VaultRoot 'AI-Sales\Installers\Maya'
+    $currentPath = Join-Path $installerRoot 'current.json'
+    if (-not (Test-Path -LiteralPath $currentPath -PathType Leaf)) {
+        throw 'The current Maya commissioning pointer is unavailable.'
+    }
+    $current = Get-Content -LiteralPath $currentPath -Raw -Encoding UTF8 | ConvertFrom-Json
+    $currentCommit = ([string]$current.commit).Trim().ToLowerInvariant()
+    $relativeReleasePath = ([string]$current.relativeReleasePath).Trim()
+    if ($current.schemaVersion -ne 1 -or $currentCommit -notmatch '^[0-9a-f]{40}$' -or [string]::IsNullOrWhiteSpace($relativeReleasePath)) {
+        throw 'The current Maya commissioning pointer is invalid.'
+    }
+
+    $releasesRoot = [IO.Path]::GetFullPath((Join-Path $installerRoot 'releases'))
+    $releaseRoot = [IO.Path]::GetFullPath((Join-Path $installerRoot $relativeReleasePath))
+    if (-not $releaseRoot.StartsWith($releasesRoot + [IO.Path]::DirectorySeparatorChar, [StringComparison]::OrdinalIgnoreCase)) {
+        throw 'The current Maya commissioning release is outside the releases directory.'
+    }
+    $manifestPath = Join-Path $releaseRoot 'manifest.json'
+    if (-not (Test-Path -LiteralPath $manifestPath -PathType Leaf)) {
+        throw 'The current Maya commissioning manifest is unavailable.'
+    }
+    $manifest = Get-Content -LiteralPath $manifestPath -Raw -Encoding UTF8 | ConvertFrom-Json
+    $manifestCommit = ([string]$manifest.commit).Trim().ToLowerInvariant()
+    $verificationCommit = ([string]$Verification.payload.commit).Trim().ToLowerInvariant()
+    if ($manifest.schemaVersion -ne 1 -or $manifestCommit -ne $currentCommit -or $verificationCommit -ne $currentCommit) {
+        throw "Maya commissioning commit mismatch. Expected $currentCommit."
+    }
+
+    $expectedRaw = @($manifest.requiredSkills | ForEach-Object { ([string]$_).Trim() })
+    $expectedSkills = @($expectedRaw | Where-Object { $_ -match '^[a-z0-9]+(?:-[a-z0-9]+)*$' } | Sort-Object -Unique)
+    if ($expectedSkills.Count -eq 0 -or $expectedSkills.Count -ne $expectedRaw.Count) {
+        throw 'The current Maya commissioning manifest has an invalid requiredSkills set.'
+    }
+    $reported = @($Verification.payload.skills)
+    $reportedRaw = @($reported | ForEach-Object { ([string]$_.skill).Trim() })
+    $reportedSkills = @($reportedRaw | Where-Object { $_ -match '^[a-z0-9]+(?:-[a-z0-9]+)*$' } | Sort-Object -Unique)
+    if ($reportedSkills.Count -ne $reportedRaw.Count) {
+        throw 'Maya commissioning evidence has an invalid or duplicate skill set.'
+    }
+
+    $missing = @($expectedSkills | Where-Object { $reportedSkills -notcontains $_ })
+    $unexpected = @($reportedSkills | Where-Object { $expectedSkills -notcontains $_ })
+    $unverified = @($reported | Where-Object { $_.hashMatch -ne $true } | ForEach-Object { ([string]$_.skill).Trim() } | Sort-Object -Unique)
+    if ($missing.Count -gt 0 -or $unexpected.Count -gt 0 -or $unverified.Count -gt 0) {
+        throw ("Maya commissioning skill set mismatch. Missing: {0}; Unexpected: {1}; Unverified: {2}." -f `
+            (Format-MayaGateNames $missing),
+            (Format-MayaGateNames $unexpected),
+            (Format-MayaGateNames $unverified))
+    }
+
+    return [pscustomobject]@{
+        commit = $currentCommit
+        manifest = $manifest
+        installedSkills = $reportedSkills.Count
+    }
+}
+
+function Get-MayaCommissioningContractGate {
+    param(
+        [Parameter(Mandatory)]$Manifest,
+        [Parameter(Mandatory)]$Verification
+    )
+
+    $expectedContracts = @(
+        @($Manifest.files) |
+            ForEach-Object { ([string]$_.path).Replace('\', '/').Trim() } |
+            Where-Object { $_ -match '^payload/runtime/[^/]+$' -and ([IO.Path]::GetFileName($_)) -notmatch '\.example\.' } |
+            ForEach-Object { [IO.Path]::GetFileName($_) } |
+            Sort-Object -Unique
+    )
+    if ($expectedContracts.Count -eq 0) {
+        throw 'The current Maya commissioning manifest has no task contracts.'
+    }
+    $reported = @($Verification.payload.taskContracts)
+    $reportedRaw = @($reported | ForEach-Object { ([string]$_.name).Trim() })
+    $reportedContracts = @($reportedRaw | Where-Object { -not [string]::IsNullOrWhiteSpace($_) } | Sort-Object -Unique)
+    if ($reportedContracts.Count -ne $reportedRaw.Count) {
+        throw 'Maya commissioning evidence has an invalid or duplicate task-contract set.'
+    }
+    $missing = @($expectedContracts | Where-Object { $reportedContracts -notcontains $_ })
+    $unexpected = @($reportedContracts | Where-Object { $expectedContracts -notcontains $_ })
+    $unverified = @($reported | Where-Object { $_.hashMatch -ne $true } | ForEach-Object { ([string]$_.name).Trim() } | Sort-Object -Unique)
+    if ($missing.Count -gt 0 -or $unexpected.Count -gt 0 -or $unverified.Count -gt 0) {
+        throw ("Maya commissioning task-contract set mismatch. Missing: {0}; Unexpected: {1}; Unverified: {2}." -f `
+            (Format-MayaGateNames $missing),
+            (Format-MayaGateNames $unexpected),
+            (Format-MayaGateNames $unverified))
+    }
+    return [pscustomobject]@{ verifiedContracts = $reportedContracts.Count }
+}
+# MAYA_MANAGEMENT_GATE_HELPERS_END
+
 if (-not $ConfirmMayaWorkstation) {
     throw 'Pass -ConfirmMayaWorkstation only on Maya''s approved workstation.'
 }
@@ -78,14 +183,12 @@ if (-not $WhatIfPreference) {
     }
     $verificationOutput = & $verifyCurrent -RuntimeRoot 'C:\ifeel-maya' -UserRoot ([Environment]::GetFolderPath('UserProfile')) -VerifyOnly
     $verification = $verificationOutput | ConvertFrom-Json
-    $verifiedSkills = @($verification.payload.skills | Where-Object { $_.hashMatch }).Count
-    $verifiedContracts = @($verification.payload.taskContracts | Where-Object { $_.hashMatch }).Count
+    $releaseGate = Get-MayaCommissioningReleaseGate -VaultRoot $vaultRoot -Verification $verification
+    $contractGate = Get-MayaCommissioningContractGate -Manifest $releaseGate.manifest -Verification $verification
     if ($verification.status -ne 'INSTALLED_PAUSED' -or
         $verification.payload.primaryEngine -ne 'codex' -or
         $verification.payload.managementHostSlug -ne $hostSlug -or
         $verification.payload.managementCredentialsProvisioned -ne $true -or
-        $verifiedSkills -ne 3 -or
-        $verifiedContracts -ne 2 -or
         $verification.payload.runtimeLocks -ne 0 -or
         $verification.payload.schedulersActivated -ne 0 -or
         $verification.payload.externalSends -ne 0 -or

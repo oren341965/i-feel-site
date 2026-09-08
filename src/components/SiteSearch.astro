@@ -8,7 +8,7 @@
         <div class="mb-3 flex items-center justify-between gap-4">
           <div>
             <h2 id="site-search-title" class="text-xl font-extrabold text-brand-900">חיפוש באתר</h2>
-            <p class="mt-1 text-sm text-brand-600">אפשר לחפש נושא, מערכת, מוצר, מדריך או פרויקט</p>
+            <p class="mt-1 text-sm text-brand-600">אפשר לחפש מוצר, מק״ט, מפרט טכני, מערכת, מדריך או פרויקט</p>
           </div>
           <button
             id="site-search-close"
@@ -30,7 +30,7 @@
             inputmode="search"
             enterkeyhint="search"
             autocomplete="off"
-            placeholder="לדוגמה: בקרת מיזוג אוויר במלון"
+            placeholder="לדוגמה: בקר 8 יציאות או 5WG1532-1DB51"
             class="w-full rounded-xl border border-brand-200 bg-white py-3.5 pe-14 ps-4 text-base outline-none transition placeholder:text-brand-400 focus:border-accent-500 focus:ring-2 focus:ring-accent-500/20"
           />
           <button
@@ -92,6 +92,7 @@
     normalizedDescription: string;
     normalizedHeadings: string;
     normalizedBody: string;
+    compactSearch: string;
   };
 
   const openButton = document.querySelector<HTMLButtonElement>('#site-search-open');
@@ -113,19 +114,43 @@
     .replace(/[^\p{L}\p{N}]+/gu, ' ')
     .trim();
 
+  const TERM_SYNONYMS: Record<string, string[]> = {
+    'מוצא': ['יציאה', 'יציאות'],
+    'מוצאימ': ['יציאה', 'יציאות'],
+    'יציאה': ['יציאות', 'מוצא', 'מוצאימ'],
+    'יציאות': ['יציאה', 'מוצא', 'מוצאימ'],
+    'פלט': ['יציאה', 'יציאות'],
+    'פלטימ': ['יציאה', 'יציאות'],
+    'כניסה': ['כניסות'],
+    'כניסות': ['כניסה'],
+    'אקטואטור': ['בקר'],
+    'actuator': ['בקר'],
+  };
+
   const getTermVariants = (term: string) => {
     const variants = new Set([term]);
+    for (const synonym of TERM_SYNONYMS[term] || []) variants.add(synonym);
     if (!/[\u0590-\u05ff]/.test(term)) return [...variants];
 
-    // Hebrew search should tolerate common one-letter prefixes and construct-state endings.
     if (term.length > 3 && /^[ובכלמשה]/.test(term)) variants.add(term.slice(1));
     for (const variant of [...variants]) {
+      for (const synonym of TERM_SYNONYMS[variant] || []) variants.add(synonym);
       if (variant.length > 4 && variant.endsWith('ימ')) variants.add(variant.slice(0, -2));
       if (variant.length > 4 && variant.endsWith('ות')) variants.add(variant.slice(0, -2));
       if (variant.length > 3 && variant.endsWith('ת')) variants.add(`${variant.slice(0, -1)}ה`);
       if (variant.length > 3 && variant.endsWith('ה')) variants.add(`${variant.slice(0, -1)}ת`);
     }
     return [...variants].filter((variant) => variant.length > 1);
+  };
+
+  const isProductUrl = (url: string) =>
+    url === '/siemens-knx-products/' || url.startsWith('/articles/siemens-');
+
+  const containsTerm = (text: string, term: string) => {
+    if (/^\d+$/.test(term)) {
+      return (` ${text} `).includes(` ${term} `);
+    }
+    return text.includes(term);
   };
 
   const loadIndex = () => {
@@ -135,13 +160,20 @@
           if (!response.ok) throw new Error(`Search index returned ${response.status}`);
           return response.json() as Promise<SearchRecord[]>;
         })
-        .then((records) => records.map((record) => ({
-          ...record,
-          normalizedTitle: normalize(record.title),
-          normalizedDescription: normalize(record.description),
-          normalizedHeadings: normalize(record.headings),
-          normalizedBody: normalize(record.body),
-        })));
+        .then((records) => records.map((record) => {
+          const normalizedTitle = normalize(record.title);
+          const normalizedDescription = normalize(record.description);
+          const normalizedHeadings = normalize(record.headings);
+          const normalizedBody = normalize(record.body);
+          return {
+            ...record,
+            normalizedTitle,
+            normalizedDescription,
+            normalizedHeadings,
+            normalizedBody,
+            compactSearch: `${normalizedTitle} ${normalizedDescription} ${normalizedHeadings} ${normalizedBody}`.replace(/\s+/g, ''),
+          };
+        }));
     }
     return indexPromise;
   };
@@ -156,6 +188,10 @@
       .filter(Boolean)
       .sort((a, b) => b.length - a.length)
       .map((term) => term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
+    if (!escaped.length) {
+      element.textContent = text;
+      return;
+    }
     const matcher = new RegExp(`(${escaped.join('|')})`, 'giu');
     let cursor = 0;
 
@@ -186,26 +222,31 @@
     return `${start ? '…' : ''}${text.slice(start, end).trim()}${end < text.length ? '…' : ''}`;
   };
 
-  const scoreRecord = (record: PreparedRecord, normalizedQuery: string, termGroups: string[][]) => {
+  const scoreRecord = (record: PreparedRecord, normalizedQuery: string, compactQuery: string, termGroups: string[][]) => {
     let score = 0;
     let matchedTerms = 0;
 
-    if (record.normalizedTitle.includes(normalizedQuery)) score += 90;
+    if (record.normalizedTitle.includes(normalizedQuery)) score += 100;
     if (record.normalizedHeadings.includes(normalizedQuery)) score += 55;
     if (record.normalizedDescription.includes(normalizedQuery)) score += 35;
     if (record.normalizedBody.includes(normalizedQuery)) score += 14;
+    if (compactQuery.length >= 6 && record.compactSearch.includes(compactQuery)) score += 95;
 
     for (const variants of termGroups) {
       let matched = false;
-      if (variants.some((term) => record.normalizedTitle.includes(term))) { score += 32; matched = true; }
-      if (variants.some((term) => record.normalizedHeadings.includes(term))) { score += 20; matched = true; }
-      if (variants.some((term) => record.normalizedDescription.includes(term))) { score += 12; matched = true; }
-      if (variants.some((term) => record.normalizedBody.includes(term))) { score += 3; matched = true; }
+      if (variants.some((term) => containsTerm(record.normalizedTitle, term))) { score += 38; matched = true; }
+      if (variants.some((term) => containsTerm(record.normalizedHeadings, term))) { score += 22; matched = true; }
+      if (variants.some((term) => containsTerm(record.normalizedDescription, term))) { score += 14; matched = true; }
+      if (variants.some((term) => containsTerm(record.normalizedBody, term))) { score += 4; matched = true; }
       if (matched) matchedTerms += 1;
     }
 
     const requiredMatches = termGroups.length <= 4 ? termGroups.length : Math.ceil(termGroups.length * 0.7);
-    return matchedTerms >= requiredMatches ? score + matchedTerms * 4 : 0;
+    if (matchedTerms < requiredMatches) return 0;
+
+    if (isProductUrl(record.url)) score += 75;
+    if (record.url === '/siemens-knx-products/') score += 15;
+    return score + matchedTerms * 5;
   };
 
   const renderResults = (matches: Array<{ record: SearchRecord; score: number }>, query: string, terms: string[]) => {
@@ -213,7 +254,7 @@
     results.replaceChildren();
 
     if (!matches.length) {
-      status.textContent = `לא נמצאו תוצאות עבור „${query}”. נסו מונח קצר או כללי יותר.`;
+      status.textContent = `לא נמצאו תוצאות עבור „${query}”. נסו מונח קצר, מק״ט או מספר יציאות.`;
       return;
     }
 
@@ -223,6 +264,13 @@
       const link = document.createElement('a');
       link.href = record.url;
       link.className = 'group block rounded-xl border border-brand-100 p-4 transition hover:border-accent-400 hover:bg-brand-50 hover:shadow-sm focus:outline-none focus:ring-2 focus:ring-accent-500';
+
+      if (isProductUrl(record.url)) {
+        const type = document.createElement('span');
+        type.className = 'mb-1.5 inline-flex rounded-full bg-accent-50 px-2.5 py-1 text-xs font-bold text-accent-800';
+        type.textContent = record.url === '/siemens-knx-products/' ? 'מרכז מוצרים ומפרטים' : 'מוצר / מפרט טכני';
+        link.append(type);
+      }
 
       const title = document.createElement('h3');
       title.className = 'text-lg font-bold text-brand-900 transition group-hover:text-accent-700';
@@ -247,7 +295,8 @@
     if (!input || !status || !results) return;
     const query = input.value.trim();
     const normalizedQuery = normalize(query);
-    const terms = [...new Set(normalizedQuery.split(' ').filter((term) => term.length > 1))];
+    const compactQuery = normalizedQuery.replace(/\s+/g, '');
+    const terms = [...new Set(normalizedQuery.split(' ').filter((term) => term.length > 1 || /^\d+$/.test(term)))];
     const termGroups = terms.map(getTermVariants);
 
     if (normalizedQuery.length < 2 || !terms.length) {
@@ -260,11 +309,11 @@
     try {
       const records = await loadIndex();
       const matches = records
-        .map((record) => ({ record, score: scoreRecord(record, normalizedQuery, termGroups) }))
+        .map((record) => ({ record, score: scoreRecord(record, normalizedQuery, compactQuery, termGroups) }))
         .filter(({ score }) => score > 0)
         .sort((left, right) => right.score - left.score || left.record.title.localeCompare(right.record.title, 'he'))
         .slice(0, 10);
-      renderResults(matches, query, query.split(/\s+/).filter((term) => term.length > 1));
+      renderResults(matches, query, query.split(/\s+/).filter((term) => term.length > 1 || /^\d+$/.test(term)));
     } catch (error) {
       console.error(error);
       status.textContent = 'לא הצלחנו לטעון את החיפוש. נסו שוב בעוד רגע.';

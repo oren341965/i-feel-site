@@ -101,12 +101,19 @@ test('Meta lead-form read verifies the page and returns only aggregate lead evid
   });
   const calls = [];
   const fetchImpl = async (url, options) => {
-    calls.push(String(url));
+    calls.push({ url: String(url), authorization: options.headers.authorization });
     assert.equal(options.method, 'GET');
     const path = new URL(url).pathname.replace('/v99.0', '');
     assertMetaReadOnlyPath(path);
     if (path === '/me/adaccounts') return response({ data: [{ id: 'act_123456789' }] });
-    if (path === '/me/accounts') return response({ data: [{ id: '555', name: 'Synthetic Page' }] });
+    if (path === '/me/accounts') {
+      assert.equal(new URL(url).searchParams.get('fields'), 'id,name,access_token');
+      return response({ data: [{
+        id: '555',
+        name: 'Synthetic Page',
+        access_token: 'synthetic_page_access_credential_1234567890',
+      }] });
+    }
     if (path === '/me/permissions') return response({ data: [
       { permission: 'ads_management', status: 'granted' },
       { permission: 'leads_retrieval', status: 'granted' },
@@ -144,7 +151,29 @@ test('Meta lead-form read verifies the page and returns only aggregate lead evid
     missingPermissionSignals: [],
   });
   assert.equal(JSON.stringify(result).includes('must_not_escape'), false);
+  assert.equal(JSON.stringify(result).includes('synthetic_page_access_credential'), false);
   assert.equal(calls.length, 9);
+  const systemAuthorization = 'Bearer synthetic_meta_access_credential_1234567890';
+  const pageAuthorization = 'Bearer synthetic_page_access_credential_1234567890';
+  assert.equal(calls.find(({ url }) => url.includes('/me/accounts'))?.authorization, systemAuthorization);
+  assert.equal(calls.find(({ url }) => url.includes('/me/permissions'))?.authorization, systemAuthorization);
+  assert.equal(calls.find(({ url }) => url.includes('/555/leadgen_forms'))?.authorization, pageAuthorization);
+  assert.equal(calls.find(({ url }) => url.includes('/777/leads'))?.authorization, pageAuthorization);
+});
+
+test('Meta lead-form read fails closed when Meta does not return a Page access token', async (t) => {
+  const { configPath } = await fixture(t, { leadFormsReadOnly: true, pageId: '555' });
+  const fetchImpl = async (url) => {
+    const path = new URL(url).pathname.replace('/v99.0', '');
+    if (path === '/me/adaccounts') return response({ data: [{ id: 'act_123456789' }] });
+    if (path === '/me/accounts') return response({ data: [{ id: '555', name: 'Synthetic Page' }] });
+    return response({ data: [] });
+  };
+  const result = await collectMetaAdsReadOnly({ configPath, fetchImpl });
+  assert.deepEqual(result.leadData, {
+    status: 'CONNECTION_MISSING',
+    reason: 'PAGE_ACCESS_TOKEN_NOT_RETURNED',
+  });
 });
 
 test('Meta collector paginates by cursor without following credential-bearing next URLs', async (t) => {

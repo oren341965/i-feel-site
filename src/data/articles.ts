@@ -954,7 +954,7 @@ export const articles: Article[] = [
     category: 'שבת',
     updated: '2026-06-07',
     related: [
-      { label: 'שאלות נפוצות', href: '/שאלות-נפוצות/' },
+      { label: 'שאלות נפוצות', href: '/answers/' },
       { label: 'שירות ותחזוקה', href: '/service-and-maintenance/' },
     ],
     sections: [

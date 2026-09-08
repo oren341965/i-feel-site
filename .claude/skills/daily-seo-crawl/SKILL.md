@@ -332,3 +332,16 @@ https://www.googleapis.com/pagespeedonline/v5/runPagespeed?url=https://i-feel.co
 - סף PSI (5 נקודות / 0.5 CLS) — ניתן לכוונון אם אורן רוצה רגישות שונה
 - אם המעבר ל-GSC API יצליח — לבטל את ה-web_search fallback במיקומי מילות מפתח
 
+
+## Mandatory sitemap and 4xx gate
+
+Before every production publish or SEO-driven page change, run a full live sitemap integrity check. Every URL listed in `public/sitemap.xml` must resolve on production to HTTP 200 after deploy. Any 4xx or 5xx response is a release-blocking SEO defect until investigated and corrected.
+
+Rules:
+- Never publish a new sitemap URL without verifying the exact live URL returns 200.
+- Treat Unicode/Hebrew slugs as high-risk: verify UTF-8 encoding, canonical URL, internal links, generated route, and live server response. Prefer stable ASCII slugs when a Unicode slug causes encoding ambiguity or server inconsistency.
+- Detect duplicate sitemap URLs and remove duplicates before release.
+- If Google Search Console reports `Blocked due to other 4xx`, immediately identify the exact affected URLs, reproduce the live HTTP status, fix the route/link/sitemap source, redeploy, and re-check.
+- After deployment, re-fetch the live sitemap and test every listed URL. Do not report the issue as fixed until the production crawl has zero unexpected 4xx/5xx results.
+- Add this check to the daily SEO health review and to every `verify-live`/deployment verification flow.
+- Record the root cause and prevention rule when a new class of indexing error is discovered, so the same failure is not repeated.

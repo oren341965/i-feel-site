@@ -1,0 +1,79 @@
+name: Deploy Siemens N532D51 product image
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - '.github/workflows/deploy-siemens-product-image.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ifeel-siemens-product-image-production
+  cancel-in-progress: true
+
+jobs:
+  deploy-image:
+    name: Deploy Siemens N532D51 image
+    runs-on:
+      - self-hosted
+      - windows
+      - x64
+      - ifeel-deploy
+    environment:
+      name: production
+      url: https://i-feel.co.il/articles/siemens-n532d51-knx-8-switch-output/
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        env:
+          NODE_OPTIONS: --use-system-ca
+        with:
+          node-version: 24
+
+      - name: Download Siemens product image to deployment payload
+        shell: powershell -NoProfile -ExecutionPolicy Bypass -File {0}
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $destination = 'image-dist\assets\siemens-knx\images'
+          New-Item -ItemType Directory -Force -Path $destination | Out-Null
+          $out = Join-Path $destination '5WG1532-1DB51.jpg'
+          $url = 'https://mall.industry.siemens.com/mall/collaterals/files/198/jpg/04/80/P_I201_XX_08405i.jpg'
+          & curl.exe --fail --silent --show-error --location --user-agent 'Mozilla/5.0' --output $out --max-time 60 $url
+          if ($LASTEXITCODE -ne 0 -or -not (Test-Path -LiteralPath $out -PathType Leaf) -or (Get-Item -LiteralPath $out).Length -lt 5000) {
+            throw 'Siemens N532D51 product image download failed.'
+          }
+          Write-Host "Downloaded product image bytes=$((Get-Item -LiteralPath $out).Length)"
+
+      - name: Install deployment dependencies
+        shell: cmd
+        run: npm ci --legacy-peer-deps --ignore-scripts
+
+      - name: Upload product image through explicit FTPS
+        shell: cmd
+        env:
+          NODE_OPTIONS: --use-system-ca
+          IFEEL_FTP_SERVER: ${{ secrets.IFEEL_FTP_SERVER || secrets.FTP_SERVER }}
+          IFEEL_FTP_USERNAME: ${{ secrets.IFEEL_FTP_USERNAME || secrets.FTP_USERNAME }}
+          IFEEL_FTP_PASSWORD: ${{ secrets.IFEEL_FTP_PASSWORD || secrets.FTP_PASSWORD }}
+          IFEEL_FTP_SERVER_DIR: ${{ secrets.IFEEL_FTP_SERVER_DIR || secrets.FTP_SERVER_DIR }}
+        run: node scripts\deploy\ftps-upload.mjs image-dist
+
+      - name: Verify product image is live
+        shell: powershell -NoProfile -ExecutionPolicy Bypass -File {0}
+        run: |
+          $ErrorActionPreference = 'Stop'
+          Start-Sleep -Seconds 5
+          $url = 'https://i-feel.co.il/assets/siemens-knx/images/5WG1532-1DB51.jpg'
+          $status = & curl.exe --silent --show-error --location --ssl-revoke-best-effort --output NUL --write-out '%{http_code}' --max-time 45 $url
+          if ($LASTEXITCODE -ne 0 -or [int]$status -lt 200 -or [int]$status -ge 400) {
+            throw "Product image live verification failed: http=$status url=$url"
+          }
+          Write-Host "OK $status $url"

@@ -106,9 +106,23 @@ test('Maya standing communication scope is bounded and scheduled Gmail maintenan
   assert.match(emailTask, /once every three hours/);
   assert.match(emailTask, /REPORT_ONLY/);
   assert.match(emailTask, /hard maximum duration of 10 minutes/);
-  assert.match(emailTask, /Do not create drafts/);
+  assert.match(emailTask, /do not create drafts/i);
   assert.match(emailTask, /EXTERNAL_ACTIONS=0/);
   assert.match(emailTask, /must not request local-file `Edit` access/);
   assert.match(emailTask, /alter Monday/);
+  assert.match(emailTask, /%USERPROFILE%\\\.codex\\skills\\maya-email-maintenance\\SKILL\.md/);
+  assert.doesNotMatch(emailTask, /%USERPROFILE%\\\.claude\\skills/);
   assert.doesNotMatch(emailTask, /verify every label, archive or allowed send/i);
+});
+
+test('Maya scheduled prompts resolve only the installed Codex skill tree', async () => {
+  const { readFile } = await import('node:fs/promises');
+  const prompts = await Promise.all([
+    readFile(new URL('../agent-config/maya-scheduled-tasks/maya-email-maintenance/SKILL.md', import.meta.url), 'utf8'),
+    readFile(new URL('../agent-config/maya-scheduled-tasks/maya-whatsapp/SKILL.md', import.meta.url), 'utf8'),
+    readFile(new URL('../agent-config/maya-scheduled-tasks/maya-instagram-relations/SKILL.md', import.meta.url), 'utf8'),
+  ]);
+  for (const prompt of prompts) {
+    assert.doesNotMatch(prompt, /%USERPROFILE%\\\.claude\\skills/);
+  }
 });

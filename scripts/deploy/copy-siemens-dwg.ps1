@@ -18,7 +18,6 @@ $requiredFiles = @(
     '5WG1141-1AB03.dwg'
 )
 
-$relativeArchivePath = 'בקרת מבנה תיקיה מרכזית\Siemens DWG\DWG'
 $roots = New-Object 'System.Collections.Generic.HashSet[string]' ([System.StringComparer]::OrdinalIgnoreCase)
 
 function Add-DropboxRoot([string]$Path) {
@@ -27,6 +26,7 @@ function Add-DropboxRoot([string]$Path) {
         $fullPath = [System.IO.Path]::GetFullPath($Path)
         if (Test-Path -LiteralPath $fullPath -PathType Container) {
             [void]$roots.Add($fullPath)
+            Write-Host "Dropbox root candidate found: $fullPath"
         }
     }
     catch {
@@ -34,6 +34,7 @@ function Add-DropboxRoot([string]$Path) {
     }
 }
 
+# First try Dropbox's normal per-account discovery for the service account.
 $infoCandidates = @(
     (Join-Path $env:LOCALAPPDATA 'Dropbox\info.json'),
     (Join-Path $env:APPDATA 'Dropbox\info.json')
@@ -61,26 +62,47 @@ if ($env:USERPROFILE) {
         ForEach-Object { Add-DropboxRoot $_.FullName }
 }
 
-if ($roots.Count -eq 0) {
-    throw 'No local Dropbox sync root was detected on the I FEEL deployment runner.'
+# The self-hosted runner runs as NetworkService, while Dropbox is synchronized
+# under the interactive Windows user. Enumerate real user profiles explicitly.
+$windowsUsersRoot = 'C:\Users'
+if (Test-Path -LiteralPath $windowsUsersRoot -PathType Container) {
+    Get-ChildItem -LiteralPath $windowsUsersRoot -Directory -ErrorAction SilentlyContinue |
+        Where-Object { $_.Name -notin @('Public', 'Default', 'Default User', 'All Users') } |
+        ForEach-Object {
+            $profilePath = $_.FullName
+            Add-DropboxRoot (Join-Path $profilePath 'Dropbox')
+            Get-ChildItem -LiteralPath $profilePath -Directory -ErrorAction SilentlyContinue |
+                Where-Object { $_.Name -like 'Dropbox*' } |
+                ForEach-Object { Add-DropboxRoot $_.FullName }
+        }
 }
 
 $sourceDirectory = $null
 foreach ($root in $roots) {
-    $candidate = Join-Path $root $relativeArchivePath
-    if (Test-Path -LiteralPath $candidate -PathType Container) {
-        $sourceDirectory = $candidate
-        break
+    Write-Host "Searching Dropbox root for Siemens DWG archive: $root"
+    $markers = Get-ChildItem -LiteralPath $root -File -Filter '5WG1125-1AB22.dwg' -Recurse -ErrorAction SilentlyContinue
+    foreach ($marker in $markers) {
+        $parentName = Split-Path -Leaf $marker.DirectoryName
+        $grandParent = Split-Path -Parent $marker.DirectoryName
+        $grandParentName = Split-Path -Leaf $grandParent
+        if ($parentName -ieq 'DWG' -and $grandParentName -ieq 'Siemens DWG') {
+            $sourceDirectory = $marker.DirectoryName
+            break
+        }
     }
+    if ($sourceDirectory) { break }
 }
 
-if (-not $sourceDirectory) {
-    foreach ($root in $roots) {
-        Write-Host "Searching Dropbox root for Siemens DWG archive: $root"
-        $marker = Get-ChildItem -LiteralPath $root -File -Filter '5WG1125-1AB22.dwg' -Recurse -ErrorAction SilentlyContinue |
-            Where-Object { $_.DirectoryName -match 'Siemens DWG[\\/]DWG$' } |
-            Select-Object -First 1
-        if ($marker) {
+# Last-resort discovery: locate the marker anywhere below C:\Users. This avoids
+# depending on the exact Dropbox account/folder name on the office computer.
+if (-not $sourceDirectory -and (Test-Path -LiteralPath $windowsUsersRoot -PathType Container)) {
+    Write-Host 'Dropbox root was not resolved directly; searching Windows user profiles for the Siemens DWG marker.'
+    $markers = Get-ChildItem -LiteralPath $windowsUsersRoot -File -Filter '5WG1125-1AB22.dwg' -Recurse -ErrorAction SilentlyContinue
+    foreach ($marker in $markers) {
+        $parentName = Split-Path -Leaf $marker.DirectoryName
+        $grandParent = Split-Path -Parent $marker.DirectoryName
+        $grandParentName = Split-Path -Leaf $grandParent
+        if ($parentName -ieq 'DWG' -and $grandParentName -ieq 'Siemens DWG') {
             $sourceDirectory = $marker.DirectoryName
             break
         }
@@ -88,7 +110,7 @@ if (-not $sourceDirectory) {
 }
 
 if (-not $sourceDirectory) {
-    throw "Siemens DWG archive was not found under the detected Dropbox roots. Expected relative path: $relativeArchivePath"
+    throw 'Siemens DWG archive was not found on the I FEEL deployment computer.'
 }
 
 Write-Host "Using Siemens DWG archive: $sourceDirectory"

@@ -1,7 +1,7 @@
 interface:
   display_name: "I Feel AI Sales Manager"
-  short_description: "Dry-run sales orchestration and pipeline audit"
-  default_prompt: "Use $ai-sales-manager to run a maturity-0 I Feel sales-system audit without external writes."
+  short_description: "Sales orchestration and bounded marketing decisions"
+  default_prompt: "Use $ai-sales-manager to run the I Feel sales audit and route Google Ads to its registered bounded daily decision worker without expanding external-write authority."
 
 policy:
   allow_implicit_invocation: true

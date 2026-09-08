@@ -68,7 +68,7 @@ Also block growth for response-SLA breach, excess follow-up/plans/meeting/propos
 
 ## 90-day baseline
 
-Start the baseline on the local installation date. Do not scale or optimize budgets automatically during the 90 days. The manager may immediately produce report-only recommendations for clear waste, tracking repair and negative-keyword candidates; it still performs no platform write.
+Start the baseline on the local installation date. Do not scale the total account budget during the 90 days. The manager may produce recommendations for clear waste, tracking repair and negative-keyword candidates. The separately registered Google Ads maturity-1 child may apply one bounded daily exact-negative or zero-sum budget reallocation under its versioned policy; all other platform writes remain forbidden.
 
 ## Existing-skill handoff
 

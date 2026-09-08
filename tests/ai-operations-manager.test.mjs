@@ -9,12 +9,21 @@ import {
   OWNER_SKILL,
   planDeliveryNoteIntake,
 } from '../.claude/skills/upload-delivery-notes-to-dropbox/scripts/plan-delivery-note-intake.mjs';
+import { reconcileProjectEquipment } from '../.claude/skills/project-equipment-control/scripts/reconcile-project-equipment.mjs';
 
 const NOW = '2026-08-22T09:00:00.000Z';
 const HASH_A = 'a'.repeat(64);
 const HASH_B = 'b'.repeat(64);
 const REPO = resolve(import.meta.dirname, '..');
 const SCRIPT = resolve(REPO, '.claude/skills/upload-delivery-notes-to-dropbox/scripts/plan-delivery-note-intake.mjs');
+
+function liveSourceSystems(overrides = {}) {
+  return {
+    dropbox: { status: 'live', observedAt: NOW },
+    gmail: { status: 'live', observedAt: NOW },
+    ...overrides,
+  };
+}
 
 function envelope(overrides = {}) {
   return {
@@ -216,4 +225,102 @@ test('AI Operations Manager owns the finalized delivery-note worker without rece
   assert.match(worker, /Historical reconciliation and backfill/);
   assert.match(worker, /completion update to Oren and Ora/);
   assert.match(worker, /Do not create customer\/project folders/);
+});
+
+test('equipment reconciliation separates ordering, receiving, issuing and field completion balances', () => {
+  const result = reconcileProjectEquipment({
+    schemaVersion: 1,
+    capturedAt: NOW,
+    sourceSystems: liveSourceSystems(),
+    sourceCoverage: Object.fromEntries(['requirements', 'orders', 'receipts', 'stockMovements', 'installation']
+      .map((key) => [key, { status: 'live', observedAt: NOW }])),
+    projects: [{
+      projectRef: '3249720207:100',
+      closing: {},
+      equipment: [{
+        lineRef: 'quote-1:line-1', requiredQty: 10, orderedQty: 8, receivedQty: 5,
+        issuedQty: 4, installedQty: 3, returnedQty: 0,
+      }],
+    }],
+  });
+
+  assert.equal(result.projects[0].state, 'EQUIPMENT_REQUIRED');
+  assert.equal(result.projects[0].completionState, 'PROJECT_COMPLETION_GAP');
+  assert.equal(result.summary.toOrderQty, 2);
+  assert.equal(result.summary.toReceiveQty, 3);
+  assert.equal(result.summary.readyToIssueQty, 1);
+  assert.equal(result.summary.inFieldQty, 1);
+  assert.equal(result.summary.remainingToInstallQty, 7);
+});
+
+test('equipment reconciliation fails closed for missing stock evidence and quantity conflicts', () => {
+  const sourceCoverage = Object.fromEntries(['requirements', 'orders', 'receipts', 'stockMovements', 'installation']
+    .map((key) => [key, { status: key === 'stockMovements' ? 'missing' : 'live', observedAt: key === 'stockMovements' ? null : NOW }]));
+  const gap = reconcileProjectEquipment({
+    schemaVersion: 1, capturedAt: NOW, sourceSystems: liveSourceSystems(), sourceCoverage,
+    projects: [{ projectRef: '3249720207:101', closing: {}, equipment: [{
+      lineRef: 'quote-2:line-1', requiredQty: 1, orderedQty: 1, receivedQty: 1,
+      issuedQty: null, installedQty: null, returnedQty: null,
+    }] }],
+  });
+  assert.equal(gap.projects[0].state, 'SOURCE_GAP');
+  assert.deepEqual(gap.missingSources, ['stockMovements']);
+
+  const conflict = reconcileProjectEquipment({
+    schemaVersion: 1, capturedAt: NOW,
+    sourceSystems: liveSourceSystems(),
+    sourceCoverage: Object.fromEntries(['requirements', 'orders', 'receipts', 'stockMovements', 'installation']
+      .map((key) => [key, { status: 'live', observedAt: NOW }])),
+    projects: [{ projectRef: '3249720207:102', closing: {}, equipment: [{
+      lineRef: 'quote-3:line-1', requiredQty: 1, orderedQty: 1, receivedQty: 1,
+      issuedQty: 1, installedQty: 2, returnedQty: 0,
+    }] }],
+  });
+  assert.equal(conflict.projects[0].state, 'DATA_CONFLICT');
+  assert.ok(conflict.projects[0].conflicts.some((value) => value.includes('FIELD_DISPOSITION_EXCEEDS_ISSUED')));
+});
+
+test('balanced equipment and verified closing controls produce an explicit complete state', () => {
+  const sourceCoverage = Object.fromEntries(['requirements', 'orders', 'receipts', 'stockMovements', 'installation']
+    .map((key) => [key, { status: 'live', observedAt: NOW }]));
+  const closing = Object.fromEntries([
+    'inventoryCounted', 'technicianSummaryVerified', 'closingFormPresent',
+    'closingApproval', 'closingOwnerPresent', 'closingDatePresent',
+  ].map((key) => [key, true]));
+  const result = reconcileProjectEquipment({
+    schemaVersion: 1, capturedAt: NOW, sourceSystems: liveSourceSystems(), sourceCoverage,
+    projects: [{ projectRef: '3249720207:103', closing, equipment: [{
+      lineRef: 'quote-4:line-1', requiredQty: 2, orderedQty: 2, receivedQty: 2,
+      issuedQty: 2, installedQty: 2, returnedQty: 0,
+    }] }],
+  });
+  assert.equal(result.projects[0].equipmentState, 'RECONCILED');
+  assert.equal(result.projects[0].completionState, 'COMPLETE');
+  assert.equal(result.projects[0].state, 'COMPLETE');
+});
+
+test('operations manager routes project equipment without claiming a current inventory source', async () => {
+  const manager = await readFile(resolve(REPO, '.claude/skills/ai-operations-manager/SKILL.md'), 'utf8');
+  const worker = await readFile(resolve(REPO, '.claude/skills/project-equipment-control/SKILL.md'), 'utf8');
+  assert.match(manager, /`project-equipment-control`/);
+  assert.match(worker, /legacy 2022 inventory sheet/);
+  assert.match(worker, /contains no writer/);
+});
+
+test('equipment reconciliation requires both Dropbox and Gmail source-of-truth systems', () => {
+  const sourceCoverage = Object.fromEntries(['requirements', 'orders', 'receipts', 'stockMovements', 'installation']
+    .map((key) => [key, { status: 'live', observedAt: NOW }]));
+  const result = reconcileProjectEquipment({
+    schemaVersion: 1,
+    capturedAt: NOW,
+    sourceSystems: liveSourceSystems({ gmail: { status: 'blocked', observedAt: null } }),
+    sourceCoverage,
+    projects: [{ projectRef: '3249720207:104', closing: {}, equipment: [{
+      lineRef: 'quote-5:line-1', requiredQty: 1, orderedQty: 1, receivedQty: 1,
+      issuedQty: 1, installedQty: 1, returnedQty: 0,
+    }] }],
+  });
+
+  assert.deepEqual(result.missingSourceSystems, ['gmail']);
+  assert.equal(result.projects[0].state, 'SOURCE_GAP');
 });
