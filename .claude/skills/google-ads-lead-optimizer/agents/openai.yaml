@@ -1,0 +1,4 @@
+interface:
+  display_name: "Google Ads Lead Optimizer"
+  short_description: "בדיקות ושיפורים יומיים להשגת ליד מאומת אחד ביום"
+  default_prompt: "בדוק את Google Ads של i-feel, אמת לידים מול Monday, ובצע לכל היותר שיפור בטוח אחד בדרך לליד מאומת אחד ביום."
