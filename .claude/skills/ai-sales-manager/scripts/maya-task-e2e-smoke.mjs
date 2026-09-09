@@ -23,9 +23,17 @@ function line(key, value) {
   return `${key}=${value}`;
 }
 
+function parseJsonText(text) {
+  try {
+    return JSON.parse(String(text).replace(/^\uFEFF/, ''));
+  } catch {
+    throw new Error('MAYA_CONFIG_JSON_INVALID');
+  }
+}
+
 async function main() {
   const { configPath } = parseArgs(process.argv.slice(2));
-  const installed = JSON.parse(await readFile(configPath, 'utf8'));
+  const installed = parseJsonText(await readFile(configPath, 'utf8'));
   if (installed?.identity?.role !== 'maya-agent'
     || installed?.identity?.machineRole !== 'maya-front-office'
     || installed?.identity?.primaryEngine !== 'codex') {

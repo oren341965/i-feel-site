@@ -285,6 +285,7 @@ test('Maya commissioning is role-scoped, hash-verified, and activation-free', ()
   const telemetryInvoker = read('agent-config/maya-codex/invoke-telemetry.ps1');
   const hostCheckinInvoker = read('agent-config/maya-codex/invoke-host-checkin.ps1');
   const managementSmoke = read('agent-config/maya-codex/test-management-smoke.ps1');
+  const legacyRuntimeInstaller = read('scripts/workstations/install-maya-runtime.ps1');
 
   assert.match(installer, /maya-email-maintenance/);
   assert.match(installer, /maya-instagram-relations/);
@@ -316,7 +317,14 @@ test('Maya commissioning is role-scoped, hash-verified, and activation-free', ()
   assert.match(installer, /maya-task-e2e-smoke\.mjs/);
   assert.match(installer, /taskRuntimeHashes/);
   assert.match(installer, /isolatedTaskSmokeCommand/);
+  assert.match(installer, /UTF8Encoding\]::new\(\$false\)/);
+  assert.doesNotMatch(installer, /Set-Content -LiteralPath \$configPath -Encoding UTF8/);
   assert.doesNotMatch(installer, /Register-ScheduledTask|Enable-ScheduledTask|schtasks(?:\.exe)?\s+\/Create/i);
+
+  assert.match(provisioner, /UTF8Encoding\]::new\(\$false\)/);
+  assert.doesNotMatch(provisioner, /Set-Content -LiteralPath \$runtimeConfigPath -Encoding UTF8/);
+  assert.match(legacyRuntimeInstaller, /UTF8Encoding\]::new\(\$false\)/);
+  assert.doesNotMatch(legacyRuntimeInstaller, /Set-Content -LiteralPath \$configPath -Encoding UTF8/);
 
   assert.match(exporter, /Refusing to export a Maya release from a dirty worktree/);
   assert.match(exporter, /Local main does not match origin\/main/);

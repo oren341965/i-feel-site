@@ -105,7 +105,8 @@ else {
 }
 
 if ($PSCmdlet.ShouldProcess($configPath, "Create Maya maturity-0 runtime config")) {
-    $config | ConvertTo-Json -Depth 20 | Set-Content -LiteralPath $configPath -Encoding UTF8
+    $configJson = $config | ConvertTo-Json -Depth 20
+    [IO.File]::WriteAllText($configPath, $configJson, [Text.UTF8Encoding]::new($false))
 }
 
 [ordered]@{

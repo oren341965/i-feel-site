@@ -55,6 +55,18 @@ const MAYA_TASK_SNAPSHOT_FIELDS = Object.freeze([
   'requested_by',
 ]);
 
+function parseJsonText(text) {
+  try {
+    return JSON.parse(String(text).replace(/^\uFEFF/, ''));
+  } catch {
+    throw new Error('MAYA_BRIDGE_JSON_INVALID');
+  }
+}
+
+async function readJsonFile(path) {
+  return parseJsonText(await readFile(path, 'utf8'));
+}
+
 function boundedText(value, label, maxLength, { nullable = false } = {}) {
   if (value === null && nullable) return null;
   if (typeof value !== 'string' || value.trim() === '' || value.length > maxLength) {
@@ -193,7 +205,7 @@ async function isDirectory(path) {
 }
 
 export async function loadMayaBridgeConfig(configPath, options = {}) {
-  const config = JSON.parse(await readFile(resolve(configPath), 'utf8'));
+  const config = await readJsonFile(resolve(configPath));
   if (config.maturity !== 0) throw new Error('Maya Vault bridge is limited to maturity 0');
   if (typeof config.VAULT_ROOT !== 'string' || !isAbsolute(config.VAULT_ROOT)) {
     throw new Error('Maya Vault bridge requires an absolute VAULT_ROOT');
@@ -673,7 +685,7 @@ async function writeMessageOnce(directory, message, now) {
     return { path, created: true, idempotentReuse: false };
   } catch (error) {
     if (error?.code !== 'EEXIST') throw error;
-    const existing = JSON.parse(await readFile(path, 'utf8'));
+    const existing = await readJsonFile(path);
     const validation = validateBusMessage(existing, { now: now.toISOString() });
     if (!validation.accepted
       || existing.id !== message.id
@@ -694,7 +706,7 @@ async function readMessages(directory, now) {
     if (!name.endsWith('.json')) continue;
     const path = join(directory, name);
     try {
-      const message = JSON.parse(await readFile(path, 'utf8'));
+      const message = await readJsonFile(path);
       if (message?.schema_version === 2
         && String(message?.message_type ?? '').startsWith('MAYA_SALES_TASK_')) continue;
       const validation = validateBusMessage(message, { now: now.toISOString() });
@@ -717,7 +729,7 @@ async function readSystemTestMessages(directory, now, kind) {
     if (!name.endsWith('.json')) continue;
     const path = join(directory, name);
     try {
-      const message = JSON.parse(await readFile(path, 'utf8'));
+      const message = await readJsonFile(path);
       if (kind === 'event') {
         if (message?.event_type !== 'SYSTEM_TEST') continue;
         const validation = validateMayaSystemTestEvent(message, { now });
@@ -743,7 +755,7 @@ async function readMayaSalesTaskMessages(directory) {
     if (!name.endsWith('.json')) continue;
     const path = join(directory, name);
     try {
-      const message = JSON.parse(await readFile(path, 'utf8'));
+      const message = await readJsonFile(path);
       if (message?.schema_version !== 2 || !String(message?.message_type ?? '').startsWith('MAYA_SALES_TASK_')) {
         continue;
       }
@@ -770,7 +782,7 @@ async function writeMayaSalesTaskMessageOnce(directory, message) {
     return { path, created: true, idempotentReuse: false };
   } catch (error) {
     if (error?.code !== 'EEXIST') throw error;
-    const existing = JSON.parse(await readFile(path, 'utf8'));
+    const existing = await readJsonFile(path);
     const validation = validateMayaSalesTaskMessage(existing);
     const stableFields = [
       'message_id', 'message_type', 'task_id', 'execution_state', 'result', 'next_action',
@@ -1148,7 +1160,7 @@ async function writeSystemTestResponseOnce(directory, response) {
     return { path, created: true, idempotentReuse: false };
   } catch (error) {
     if (error?.code !== 'EEXIST') throw error;
-    const existing = JSON.parse(await readFile(path, 'utf8'));
+    const existing = await readJsonFile(path);
     if (!isManagerSystemTestResponse(existing)
       || existing.task_id !== response.task_id
       || existing.source_event_id !== response.source_event_id) {
@@ -1276,7 +1288,7 @@ export async function emitMayaReady({ configPath, now = new Date() }) {
   if (runtime.config.identity?.role !== 'maya-agent') throw new Error('Maya config identity.role mismatch');
   const inspection = await inspectMayaConnection({ configPath, now });
   if (!inspection.managerRequest) throw new Error('No current manager handshake is available');
-  const request = JSON.parse(await readFile(inspection.managerRequest.path, 'utf8'));
+  const request = await readJsonFile(inspection.managerRequest.path);
   const message = createMayaReadyResponse({
     request,
     machine: runtime.config.identity.machineId,
@@ -1296,9 +1308,9 @@ if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.ur
       taskId,
       executionOrigin,
     } = parseArgs(process.argv.slice(2));
-    const input = inputPath ? JSON.parse(await readFile(inputPath, 'utf8')) : null;
+    const input = inputPath ? await readJsonFile(inputPath) : null;
     const mondayReadback = mondayReadbackPath
-      ? JSON.parse(await readFile(mondayReadbackPath, 'utf8'))
+      ? await readJsonFile(mondayReadbackPath)
       : null;
     const result = action === 'emit-manager-handshake'
       ? await emitManagerHandshake({ configPath })
