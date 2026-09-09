@@ -156,6 +156,18 @@ test('Maya management gates accept the current four-skill release and report the
   assert.match(smokeSource, /--installed-skills', \(\[string\]\$releaseGate\.installedSkills\)/);
 });
 
+test('Maya management smoke does not treat a stale native exit code as a verifier failure', () => {
+  const smokeSource = readFileSync(SMOKE, 'utf8');
+  assert.doesNotMatch(
+    smokeSource,
+    /\$verificationOutput\s*=\s*&\s*\$verifyCurrent[\s\S]{0,300}\$LASTEXITCODE/,
+  );
+  assert.match(
+    smokeSource,
+    /try\s*\{[\s\S]*?\$verificationOutput\s*=\s*&\s*\$verifyCurrent[\s\S]*?\}\s*catch\s*\{[\s\S]*?Maya commissioning verification failed:/,
+  );
+});
+
 test('Maya management gates identify a missing Instagram relations skill', {
   skip: !POWERSHELL_AVAILABLE,
 }, () => {
