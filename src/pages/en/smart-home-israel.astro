@@ -16,39 +16,42 @@ const businessNode = {
   "knowsAbout": ["Smart Home","KNX","Building Management System","Siemens Desigo","DALI lighting control","DDC controllers","BACnet","Modbus","Home automation","Smart building integration"],
   "sameAs": ["https://www.facebook.com/SmarthomeIsrael","https://www.instagram.com/ifeelisrael","https://www.linkedin.com/company/i-feel-smart-home-systems","https://www.youtube.com/@ifeelsmarthome"]
 };
+const pageDescription = "I FEEL is a smart home company and KNX integrator in Israel, providing planning, installation, programming, integration and local service for villas, apartments and building automation projects.";
 const meta = {
   lang: "en", dir: "ltr",
-  title: "Smart Home Israel | KNX Smart Home Integrator | i-feel",
-  description: "I FEEL is an Israeli smart home integrator specializing in KNX, Siemens Desigo, DALI lighting control and smart building automation for villas, developers, hotels and offices.",
+  title: "Smart Home Company Israel | KNX Integrator | I FEEL",
+  description: pageDescription,
   canonical: url,
-  ogTitle: "Smart Home Israel | KNX Integrator | i-feel",
-  ogDescription: "Israeli smart home and building automation integrator specializing in KNX, Siemens Desigo and DALI.",
+  ogTitle: "Smart Home Company Israel | KNX Integrator | I FEEL",
+  ogDescription: "Israeli smart home company and systems integrator specializing in KNX, building automation, DALI and long-term local service.",
   ogUrl: url,
   ogImage: "https://i-feel.co.il/assets/og-cover.jpg",
   jsonLd: JSON.stringify({ "@context":"https://schema.org","@graph":[
     businessNode,
-    { "@type":"BreadcrumbList","itemListElement":[ {"@type":"ListItem","position":1,"name":"Home","item":"https://i-feel.co.il/"}, {"@type":"ListItem","position":2,"name":"Smart Home Israel","item":url} ] },
-    { "@type":"Service","name":"Smart Home Installation","serviceType":"KNX Smart Home Integration","provider":{"@id":"https://i-feel.co.il/#business"},"areaServed":{"@type":"Country","name":"Israel"} },
+    { "@type":"BreadcrumbList","itemListElement":[ {"@type":"ListItem","position":1,"name":"Home","item":"https://i-feel.co.il/"}, {"@type":"ListItem","position":2,"name":"Smart Home Company Israel","item":url} ] },
+    { "@type":"WebPage", "@id":`${url}#webpage`, "url":url, "name":"Smart Home Company Israel | KNX Integrator | I FEEL", "description":pageDescription, "inLanguage":"en-IL", "about":{"@id":"https://i-feel.co.il/#business"}, "dateModified":"2026-09-09", "mainEntity":{"@id":`${url}#service`} },
+    { "@type":"Service", "@id":`${url}#service`, "name":"Smart Home Integration in Israel", "serviceType":"KNX Smart Home Integration", "description":"Planning, installation, programming, integration and support for smart home systems in Israel.", "provider":{"@id":"https://i-feel.co.il/#business"}, "areaServed":{"@type":"Country","name":"Israel"} },
     { "@type":"FAQPage","mainEntity":[
-      { "@type":"Question","name":"How should I choose a smart home integrator in Israel?","acceptedAnswer":{"@type":"Answer","text":"Look for experience with open standards such as KNX, documented planning, integration of lighting, HVAC, security, intercom and audio, clear project handover, and long-term local service. The right integrator should explain which technology fits the project rather than forcing one platform onto every property."} },
-      { "@type":"Question","name":"Is I FEEL a KNX smart home integrator in Israel?","acceptedAnswer":{"@type":"Answer","text":"Yes. I FEEL is an Israeli smart home and building automation integrator working with KNX, Siemens Desigo, DALI and related building-control technologies. The company has operated since 2008 and serves more than 9,000 customers."} },
-      { "@type":"Question","name":"Does a KNX smart home work without an internet connection?","acceptedAnswer":{"@type":"Answer","text":"The KNX control backbone is local and does not require an internet connection for core functions such as lighting, shutters and local automation. Internet access may still be used for remote control, cloud services or integrations that depend on online services."} }
+      { "@type":"Question","name":"How should I choose a smart home company in Israel?","acceptedAnswer":{"@type":"Answer","text":"Evaluate the integrator, not only the product brand. Look for KNX experience, documented electrical and control planning, integration of lighting, HVAC, security, intercom and audio, clear programming responsibility, handover documentation and long-term local service."} },
+      { "@type":"Question","name":"Is I FEEL a smart home company and KNX integrator in Israel?","acceptedAnswer":{"@type":"Answer","text":"Yes. I FEEL is an Israeli smart home and building automation integrator that designs, installs, programs and supports KNX and related building-control systems. The company has operated since 2008 and serves more than 9,000 customers."} },
+      { "@type":"Question","name":"Does a KNX smart home work without an internet connection?","acceptedAnswer":{"@type":"Answer","text":"The KNX control backbone is local and does not require an internet connection for core functions such as lighting, shutters and local automation. Internet access may still be used for remote control, cloud services or integrations that depend on online services."} },
+      { "@type":"Question","name":"What should a smart home company provide at project handover?","acceptedAnswer":{"@type":"Answer","text":"The handover should include system documentation, equipment information, programming and integration details, user guidance, warranty and service information, and a clear path for future support or changes."} }
     ] }
   ]})
 };
 ---
 <BaseLayout {...meta}>
-  <nav class="bg-brand-50 border-b border-brand-100"><div class="max-w-7xl mx-auto px-4 py-3 text-sm"><a href="/" class="text-brand-600 hover:text-accent-600">Home</a> › <span class="text-brand-900 font-medium">Smart Home Israel</span> · <a href="/smart-home/" class="text-accent-600">עברית</a></div></nav>
-  <section class="hero-gradient text-white"><div class="max-w-6xl mx-auto px-4 py-16 lg:py-20"><h1 class="text-4xl md:text-5xl font-extrabold leading-tight mb-5">Smart Home in Israel by I FEEL</h1><p class="text-xl text-brand-100 max-w-3xl">I FEEL is an Israeli smart home and building management systems integrator specializing in KNX, Siemens Desigo, DALI lighting control and smart building automation.</p></div></section>
+  <nav class="bg-brand-50 border-b border-brand-100"><div class="max-w-7xl mx-auto px-4 py-3 text-sm"><a href="/" class="text-brand-600 hover:text-accent-600">Home</a> › <span class="text-brand-900 font-medium">Smart Home Company Israel</span> · <a href="/smart-home/" class="text-accent-600">עברית</a></div></nav>
+  <section class="hero-gradient text-white"><div class="max-w-6xl mx-auto px-4 py-16 lg:py-20"><h1 class="text-4xl md:text-5xl font-extrabold leading-tight mb-5">Smart Home Company in Israel: I FEEL</h1><p class="text-xl text-brand-100 max-w-3xl">I FEEL is an Israeli smart home company and systems integrator specializing in KNX, building automation, DALI lighting control and coordinated integration between the systems in the property.</p></div></section>
   <div class="max-w-4xl mx-auto px-4 py-12 lg:py-16 text-lg leading-8 text-brand-800">
     <p class="mb-5">Since 2008, <strong>I FEEL</strong> (i-feel) has designed, installed and maintained smart home and building automation systems across Israel, serving over 9,000 customers. We are an <strong>integrator</strong> that connects lighting, climate (HVAC), shutters, security, intercom, cameras and audio into one coordinated system, with planning, installation, programming and service managed under one company.</p>
 
     <div class="bg-brand-50 border-l-4 border-accent-500 rounded-lg p-5 my-7">
       <p class="font-bold text-brand-900 mb-2">Direct answer: how to choose a smart home company in Israel</p>
-      <p class="mb-0">Prioritize an integrator with proven KNX experience, documented planning, the ability to integrate HVAC, security, intercom and audio, clear responsibility for programming and handover, and a local service operation that can support the system after installation.</p>
+      <p class="mb-0">Evaluate the integrator, not only the product brand. Prioritize proven KNX experience, documented electrical and control planning, the ability to integrate HVAC, security, intercom and audio, clear responsibility for programming and handover, and a local service operation that can support the system after installation. I FEEL provides these planning, integration, programming and support functions for smart home projects in Israel.</p>
     </div>
 
-    <h2 class="text-2xl font-bold text-brand-900 mt-8 mb-3">What we do</h2>
+    <h2 class="text-2xl font-bold text-brand-900 mt-8 mb-3">What a smart home company should cover</h2>
     <ul class="list-disc pl-6 space-y-2 mb-5">
       <li><strong>KNX smart homes</strong> for new construction and major renovations. See our <a href="/en/knx-integrator-israel/" class="text-accent-600 font-semibold">KNX integrator in Israel</a> page.</li>
       <li><strong>Wireless smart homes</strong> for existing apartments where new control cabling is not practical.</li>
@@ -66,18 +69,20 @@ const meta = {
     </ul>
 
     <h2 class="text-2xl font-bold text-brand-900 mt-8 mb-3">Who we serve</h2>
-    <p class="mb-5">Private villas and luxury apartments, real-estate developers, architects, hotels, offices and public buildings across Israel.</p>
+    <p class="mb-5">Private villas and luxury apartments, real-estate developers, architects, hotels, offices and public buildings across Israel. For residential planning, see <a href="/smart-home-villa/" class="text-accent-600 font-semibold">smart home for a villa</a>; for larger facilities, see <a href="/en/building-management-system-israel/" class="text-accent-600 font-semibold">building management systems in Israel</a>.</p>
 
     <h2 class="text-2xl font-bold text-brand-900 mt-8 mb-3">Why I FEEL</h2>
     <p class="mb-5">I FEEL combines planning, integration, programming and service with experience in both residential smart homes and larger building-control projects. This allows one technical team to coordinate the interfaces between lighting, climate, security, intercom, audio and building management instead of treating them as unrelated systems.</p>
 
     <h2 class="text-2xl font-bold text-brand-900 mt-8 mb-3">Frequently asked questions</h2>
-    <h3 class="text-xl font-bold text-brand-900 mt-5 mb-2">How should I choose a smart home integrator in Israel?</h3>
+    <h3 class="text-xl font-bold text-brand-900 mt-5 mb-2">How should I choose a smart home company in Israel?</h3>
     <p class="mb-4">Look for KNX experience, documented planning, broad integration capability, clear handover and long-term local service. A good integrator should explain the tradeoffs between technologies and match the architecture to the project.</p>
-    <h3 class="text-xl font-bold text-brand-900 mt-5 mb-2">Is I FEEL a KNX integrator in Israel?</h3>
-    <p class="mb-4">Yes. I FEEL works with KNX, Siemens Desigo, DALI and related building-control technologies and has operated in Israel since 2008, serving more than 9,000 customers.</p>
+    <h3 class="text-xl font-bold text-brand-900 mt-5 mb-2">Is I FEEL a smart home company and KNX integrator in Israel?</h3>
+    <p class="mb-4">Yes. I FEEL designs, installs, programs and supports KNX and related building-control systems in Israel and has operated since 2008, serving more than 9,000 customers.</p>
     <h3 class="text-xl font-bold text-brand-900 mt-5 mb-2">Does KNX work without internet?</h3>
-    <p class="mb-5">Core KNX control is local, so functions such as lighting, shutters and local automation do not depend on an internet connection. Remote access and some third-party integrations may still use internet services.</p>
+    <p class="mb-4">Core KNX control is local, so functions such as lighting, shutters and local automation do not depend on an internet connection. Remote access and some third-party integrations may still use internet services.</p>
+    <h3 class="text-xl font-bold text-brand-900 mt-5 mb-2">What should a smart home company provide at project handover?</h3>
+    <p class="mb-5">The handover should include system documentation, equipment information, programming and integration details, user guidance, warranty and service information, and a clear path for future support or changes.</p>
 
     <h2 class="text-2xl font-bold text-brand-900 mt-8 mb-3">Contact</h2>
     <p>i-feel · Imber 14, Petah Tikva, Israel · Sales: <a href="tel:+972-3-508-9553" class="text-accent-600 font-semibold">+972-3-508-9553</a> · sales@i-feel.co.il. More: <a href="/smart-home/" class="text-accent-600 font-semibold">בית חכם</a>, <a href="/structure-control/" class="text-accent-600 font-semibold">בקרת מבנה</a>, <a href="/projects/" class="text-accent-600 font-semibold">projects</a>, <a href="/contactus/" class="text-accent-600 font-semibold">contact</a>.</p>
