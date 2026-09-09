@@ -116,8 +116,12 @@ $verifyCurrent = Join-Path $vaultRoot 'AI-Sales\Installers\Maya\INSTALL_CURRENT.
 if (-not (Test-Path -LiteralPath $verifyCurrent -PathType Leaf)) {
     throw 'The current Maya commissioning verifier is unavailable.'
 }
-$verificationOutput = & $verifyCurrent -RuntimeRoot 'C:\ifeel-maya' -UserRoot ([Environment]::GetFolderPath('UserProfile')) -VerifyOnly
-if ($LASTEXITCODE -ne 0) { throw 'Maya commissioning verification failed.' }
+try {
+    $verificationOutput = & $verifyCurrent -RuntimeRoot 'C:\ifeel-maya' -UserRoot ([Environment]::GetFolderPath('UserProfile')) -VerifyOnly
+}
+catch {
+    throw "Maya commissioning verification failed: $($_.Exception.Message)"
+}
 $verification = $verificationOutput | ConvertFrom-Json
 $releaseGate = Get-MayaCommissioningReleaseGate -VaultRoot $vaultRoot -Verification $verification
 if ($verification.status -ne 'INSTALLED_PAUSED' -or
