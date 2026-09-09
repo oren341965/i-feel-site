@@ -360,6 +360,8 @@ test('Maya commissioning is role-scoped, hash-verified, and activation-free', ()
   assert.match(provisioner, /INSTALL_CURRENT\.ps1/);
   assert.match(provisioner, /-VerifyOnly/);
   assert.match(provisioner, /Post-provisioning Maya verification did not pass every paused commissioning gate/);
+  assert.match(provisioner, /Get-MayaCommissioningRuntimeGate/);
+  assert.match(provisioner, /taskRuntime/);
   assert.match(provisioner, /verificationPublished = \$verificationPublished/);
   assert.match(provisioner, /Publish bounded post-provisioning Maya commissioning result/);
   assert.match(provisioner, /-not \$ReplaceExisting/);

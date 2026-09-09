@@ -23,6 +23,7 @@ const FOUR_SKILLS = [
   'management-system-telemetry',
 ];
 const CONTRACTS = ['bus-message.schema.json', 'maya-task-protocol.md'];
+const RUNTIMES = ['maya-task-e2e-smoke.mjs', 'maya-vault-bridge.mjs', 'orchestrate-sales-system.mjs'];
 
 function extractGateHelpers(scriptPath) {
   const source = readFileSync(scriptPath, 'utf8');
@@ -47,7 +48,9 @@ function runGate(scriptPath, {
   verificationCommit = COMMIT,
   manifestContracts = CONTRACTS,
   reportedContracts = manifestContracts,
-  checkContracts = false,
+  manifestRuntime = RUNTIMES,
+  reportedRuntime = manifestRuntime,
+  checkArtifacts = false,
 } = {}) {
   const root = mkdtempSync(join(tmpdir(), 'ifeel-maya-management-gate-'));
   const vault = join(root, 'vault');
@@ -70,6 +73,7 @@ function runGate(scriptPath, {
     files: [
       { path: 'payload/runtime/maya-config.example.json' },
       ...manifestContracts.map((name) => ({ path: 'payload/runtime/' + name })),
+      ...manifestRuntime.map((name) => ({ path: 'payload/runtime/' + name })),
     ],
   }));
   writeFileSync(verificationPath, JSON.stringify({
@@ -78,20 +82,27 @@ function runGate(scriptPath, {
       commit: verificationCommit,
       skills: reportedSkills.map((skill) => ({ skill, hashMatch: true })),
       taskContracts: reportedContracts.map((name) => ({ name, hashMatch: true })),
+      taskRuntime: reportedRuntime.map((name) => ({ name, hashMatch: true })),
     },
   }));
 
-  const contractCheck = checkContracts
-    ? '$contractGate = Get-MayaCommissioningContractGate -Manifest $releaseGate.manifest -Verification $verification'
-    : '$contractGate = [pscustomobject]@{ verifiedContracts = 0 }';
+  const artifactCheck = checkArtifacts
+    ? [
+        '$contractGate = Get-MayaCommissioningContractGate -Manifest $releaseGate.manifest -Verification $verification',
+        '$runtimeGate = Get-MayaCommissioningRuntimeGate -Manifest $releaseGate.manifest -Verification $verification',
+      ].join('\n    ')
+    : [
+        '$contractGate = [pscustomobject]@{ verifiedContracts = 0 }',
+        '$runtimeGate = [pscustomobject]@{ verifiedRuntime = 0 }',
+      ].join('\n    ');
   const harness = [
     "$ErrorActionPreference = 'Stop'",
     extractGateHelpers(scriptPath),
     '$verification = Get-Content -LiteralPath ' + psLiteral(verificationPath) + ' -Raw -Encoding UTF8 | ConvertFrom-Json',
     'try {',
     '    $releaseGate = Get-MayaCommissioningReleaseGate -VaultRoot ' + psLiteral(vault) + ' -Verification $verification',
-    '    ' + contractCheck,
-    "    [ordered]@{ status = 'PASSED'; installedSkills = $releaseGate.installedSkills; verifiedContracts = $contractGate.verifiedContracts } | ConvertTo-Json -Compress",
+    '    ' + artifactCheck,
+    "    [ordered]@{ status = 'PASSED'; installedSkills = $releaseGate.installedSkills; verifiedContracts = $contractGate.verifiedContracts; verifiedRuntime = $runtimeGate.verifiedRuntime } | ConvertTo-Json -Compress",
     '    exit 0',
     '}',
     'catch {',
@@ -115,12 +126,13 @@ function runGate(scriptPath, {
 }
 
 function assertPassesBoth(options, expectedSkills) {
-  for (const [scriptPath, checkContracts] of [[SMOKE, false], [PROVISION, true]]) {
-    const result = runGate(scriptPath, { ...options, checkContracts });
+  for (const [scriptPath, checkArtifacts] of [[SMOKE, false], [PROVISION, true]]) {
+    const result = runGate(scriptPath, { ...options, checkArtifacts });
     assert.equal(result.status, 0, scriptPath + '\n' + result.stderr + '\n' + result.stdout);
     assert.equal(result.output.status, 'PASSED');
     assert.equal(result.output.installedSkills, expectedSkills);
-    assert.equal(result.output.verifiedContracts, checkContracts ? 2 : 0);
+    assert.equal(result.output.verifiedContracts, checkArtifacts ? 2 : 0);
+    assert.equal(result.output.verifiedRuntime, checkArtifacts ? 3 : 0);
   }
 }
 
@@ -187,9 +199,20 @@ test('Maya provisioning gate derives task contracts from the release manifest', 
   skip: !POWERSHELL_AVAILABLE,
 }, () => {
   const result = runGate(PROVISION, {
-    checkContracts: true,
+    checkArtifacts: true,
     reportedContracts: ['bus-message.schema.json'],
   });
   assert.equal(result.status, 23, result.stderr + '\n' + result.stdout);
   assert.match(result.output.message, /Missing: maya-task-protocol\.md/);
+});
+
+test('Maya provisioning gate derives task runtime from the real release manifest', {
+  skip: !POWERSHELL_AVAILABLE,
+}, () => {
+  const result = runGate(PROVISION, {
+    checkArtifacts: true,
+    reportedRuntime: ['maya-task-e2e-smoke.mjs', 'maya-vault-bridge.mjs'],
+  });
+  assert.equal(result.status, 23, result.stderr + '\n' + result.stdout);
+  assert.match(result.output.message, /Missing: orchestrate-sales-system\.mjs/);
 });

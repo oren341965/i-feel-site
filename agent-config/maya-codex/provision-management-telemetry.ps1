@@ -90,7 +90,7 @@ function Get-MayaCommissioningContractGate {
     $expectedContracts = @(
         @($Manifest.files) |
             ForEach-Object { ([string]$_.path).Replace('\', '/').Trim() } |
-            Where-Object { $_ -match '^payload/runtime/[^/]+$' -and ([IO.Path]::GetFileName($_)) -notmatch '\.example\.' } |
+            Where-Object { $_ -match '^payload/runtime/[^/]+\.(json|md)$' -and ([IO.Path]::GetFileName($_)) -notmatch '\.example\.' } |
             ForEach-Object { [IO.Path]::GetFileName($_) } |
             Sort-Object -Unique
     )
@@ -113,6 +113,40 @@ function Get-MayaCommissioningContractGate {
             (Format-MayaGateNames $unverified))
     }
     return [pscustomobject]@{ verifiedContracts = $reportedContracts.Count }
+}
+
+function Get-MayaCommissioningRuntimeGate {
+    param(
+        [Parameter(Mandatory)]$Manifest,
+        [Parameter(Mandatory)]$Verification
+    )
+
+    $expectedRuntime = @(
+        @($Manifest.files) |
+            ForEach-Object { ([string]$_.path).Replace('\', '/').Trim() } |
+            Where-Object { $_ -match '^payload/runtime/[^/]+\.mjs$' } |
+            ForEach-Object { [IO.Path]::GetFileName($_) } |
+            Sort-Object -Unique
+    )
+    if ($expectedRuntime.Count -eq 0) {
+        throw 'The current Maya commissioning manifest has no task runtime.'
+    }
+    $reported = @($Verification.payload.taskRuntime)
+    $reportedRaw = @($reported | ForEach-Object { ([string]$_.name).Trim() })
+    $reportedRuntime = @($reportedRaw | Where-Object { -not [string]::IsNullOrWhiteSpace($_) } | Sort-Object -Unique)
+    if ($reportedRuntime.Count -ne $reportedRaw.Count) {
+        throw 'Maya commissioning evidence has an invalid or duplicate task-runtime set.'
+    }
+    $missing = @($expectedRuntime | Where-Object { $reportedRuntime -notcontains $_ })
+    $unexpected = @($reportedRuntime | Where-Object { $expectedRuntime -notcontains $_ })
+    $unverified = @($reported | Where-Object { $_.hashMatch -ne $true } | ForEach-Object { ([string]$_.name).Trim() } | Sort-Object -Unique)
+    if ($missing.Count -gt 0 -or $unexpected.Count -gt 0 -or $unverified.Count -gt 0) {
+        throw ("Maya commissioning task-runtime set mismatch. Missing: {0}; Unexpected: {1}; Unverified: {2}." -f `
+            (Format-MayaGateNames $missing),
+            (Format-MayaGateNames $unexpected),
+            (Format-MayaGateNames $unverified))
+    }
+    return [pscustomobject]@{ verifiedRuntime = $reportedRuntime.Count }
 }
 # MAYA_MANAGEMENT_GATE_HELPERS_END
 
@@ -185,6 +219,7 @@ if (-not $WhatIfPreference) {
     $verification = $verificationOutput | ConvertFrom-Json
     $releaseGate = Get-MayaCommissioningReleaseGate -VaultRoot $vaultRoot -Verification $verification
     $contractGate = Get-MayaCommissioningContractGate -Manifest $releaseGate.manifest -Verification $verification
+    $runtimeGate = Get-MayaCommissioningRuntimeGate -Manifest $releaseGate.manifest -Verification $verification
     if ($verification.status -ne 'INSTALLED_PAUSED' -or
         $verification.payload.primaryEngine -ne 'codex' -or
         $verification.payload.managementHostSlug -ne $hostSlug -or

@@ -191,6 +191,12 @@ const metadata = await readInstallationMetadata(metadataPath);
 
 const blockingReasons = [];
 const warnings = [];
+const sourceRegistrationGaps = [
+  ...(sourceSync.summary?.missingKnowledge ?? []),
+  ...(sourceSync.summary?.missingInstalled ?? []),
+  ...(sourceSync.summary?.staleInstalled ?? []),
+  ...(sourceSync.summary?.invalidDeclaredNames ?? []),
+];
 
 if (branch === 'main' || branch === 'master') blockingReasons.push('WORKING_ON_PRODUCTION_BRANCH');
 if (!originMainRevision) blockingReasons.push('ORIGIN_MAIN_UNAVAILABLE');
@@ -198,7 +204,7 @@ if (originMainRevision && !mainAncestor) blockingReasons.push('BRANCH_NOT_BASED_
 if (!worktreeClean) blockingReasons.push('WORKTREE_NOT_CLEAN');
 if (expectedComputer && !computerMatchesExpected) blockingReasons.push('WORKSTATION_IDENTITY_MISMATCH');
 if (environmentHostSlug && wrapperProbe.hostSlug && environmentHostSlug !== wrapperProbe.hostSlug) blockingReasons.push('CREDENTIAL_SOURCES_HOST_MISMATCH');
-if (!sourceSync.ok) blockingReasons.push('SOURCE_REGISTRATION_GAPS');
+if (sourceRegistrationGaps.length) blockingReasons.push('SOURCE_REGISTRATION_GAPS');
 if (!metadata.present) warnings.push('INSTALLATION_METADATA_MISSING');
 if (metadata.present && metadata.repository !== REPOSITORY) blockingReasons.push('INSTALLATION_REPOSITORY_MISMATCH');
 if (metadata.present && metadata.commit && metadata.commit !== headRevision) warnings.push('INSTALLED_AGENT_CONFIG_BEHIND_WORKTREE');

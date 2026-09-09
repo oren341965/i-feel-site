@@ -223,6 +223,43 @@ test('host readiness accepts installer metadata with a UTF-8 BOM', async (t) => 
   assert.equal(output.installation.installedCommitMatchesHead, true);
 });
 
+test('host readiness warns but does not block when only Vault knowledge is behind Git', async (t) => {
+  const paths = await fixture(t);
+  const updatedSkillContent = '---\nname: management-system-telemetry\ndescription: Updated test telemetry skill\n---\n\n# Test\n';
+  await writeFile(
+    resolve(paths.repo, '.claude/skills/management-system-telemetry/SKILL.md'),
+    updatedSkillContent,
+    'utf8',
+  );
+  await writeFile(
+    resolve(paths.installed, 'management-system-telemetry/SKILL.md'),
+    updatedSkillContent,
+    'utf8',
+  );
+  git(paths.repo, ['add', '.claude/skills/management-system-telemetry/SKILL.md']);
+  git(paths.repo, ['commit', '-m', 'update canonical skill']);
+  const updatedRevision = git(paths.repo, ['rev-parse', 'HEAD']);
+  await writeFile(paths.metadata, JSON.stringify({
+    repository: 'oren341965/i-feel-site',
+    commit: updatedRevision,
+    installedAt: '2026-09-01T00:00:00.000Z',
+  }), 'utf8');
+
+  const result = runPreflight(paths, ['--expected-host', 'ifeel160222', '--credential-wrapper', paths.credentialWrapper], {
+    IFEEL_MANAGEMENT_HOST_SLUG: '',
+    IFEEL_MANAGEMENT_SITE_TOKEN: '',
+    IFEEL_MANAGEMENT_RUN_TOKEN: '',
+  });
+
+  assert.equal(result.status, 0, result.stderr);
+  const output = JSON.parse(result.stdout);
+  assert.equal(output.gates.readyForProvisioning, true);
+  assert.equal(output.gates.readyForAuthenticatedCheckin, true);
+  assert.deepEqual(output.registration.staleKnowledge, ['management-system-telemetry']);
+  assert.equal(output.blockingReasons.includes('SOURCE_REGISTRATION_GAPS'), false);
+  assert.ok(output.warnings.includes('VAULT_KNOWLEDGE_SOURCE_HASH_BEHIND_GIT'));
+});
+
 test('host readiness blocks work directly on main', async (t) => {
   const paths = await fixture(t);
   git(paths.repo, ['checkout', 'main']);
