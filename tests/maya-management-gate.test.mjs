@@ -8,6 +8,7 @@ import test from 'node:test';
 const REPO = resolve(import.meta.dirname, '..');
 const SMOKE = join(REPO, 'agent-config', 'maya-codex', 'test-management-smoke.ps1');
 const PROVISION = join(REPO, 'agent-config', 'maya-codex', 'provision-management-telemetry.ps1');
+const INSTALLER = join(REPO, 'scripts', 'workstations', 'maya-commissioning-install.ps1');
 const POWERSHELL = process.platform === 'win32' ? 'powershell.exe' : 'pwsh';
 const POWERSHELL_AVAILABLE = spawnSync(
   POWERSHELL,
@@ -34,6 +35,18 @@ function extractGateHelpers(scriptPath) {
   assert.notEqual(start, -1, scriptPath + ' is missing the gate start marker');
   assert.notEqual(end, -1, scriptPath + ' is missing the gate end marker');
   assert.ok(end > start, scriptPath + ' has invalid gate markers');
+  return source.slice(start + startMarker.length, end);
+}
+
+function extractManagedFileHelpers() {
+  const source = readFileSync(INSTALLER, 'utf8');
+  const startMarker = '# MAYA_MANAGED_FILE_HELPERS_START';
+  const endMarker = '# MAYA_MANAGED_FILE_HELPERS_END';
+  const start = source.indexOf(startMarker);
+  const end = source.indexOf(endMarker);
+  assert.notEqual(start, -1, INSTALLER + ' is missing the managed-file start marker');
+  assert.notEqual(end, -1, INSTALLER + ' is missing the managed-file end marker');
+  assert.ok(end > start, INSTALLER + ' has invalid managed-file markers');
   return source.slice(start + startMarker.length, end);
 }
 
@@ -166,6 +179,44 @@ test('Maya management smoke does not treat a stale native exit code as a verifie
     smokeSource,
     /try\s*\{[\s\S]*?\$verificationOutput\s*=\s*&\s*\$verifyCurrent[\s\S]*?\}\s*catch\s*\{[\s\S]*?Maya commissioning verification failed:/,
   );
+});
+
+test('Maya installer skips identical protected helpers and atomically backs up changed helpers', {
+  skip: !POWERSHELL_AVAILABLE,
+}, () => {
+  const root = mkdtempSync(join(tmpdir(), 'ifeel-maya-managed-helper-'));
+  const source = join(root, 'source.ps1');
+  const destination = join(root, 'installed', 'helper.ps1');
+  const backup = join(root, 'backup', 'helper.ps1');
+  const harness = join(root, 'managed-helper-harness.ps1');
+  mkdirSync(join(root, 'installed'), { recursive: true });
+  writeFileSync(source, 'Write-Output "v1"\n');
+  writeFileSync(destination, 'Write-Output "v1"\n');
+  writeFileSync(harness, [
+    "$ErrorActionPreference = 'Stop'",
+    'Import-Module Microsoft.PowerShell.Utility',
+    extractManagedFileHelpers(),
+    "$aclBefore = [IO.File]::GetAccessControl(" + psLiteral(destination) + ").GetSecurityDescriptorSddlForm([Security.AccessControl.AccessControlSections]::All)",
+    '$same = Install-ManagedFile -Source ' + psLiteral(source) + ' -Destination ' + psLiteral(destination) + ' -BackupPath ' + psLiteral(backup),
+    "if ($same.changed -or (Test-Path -LiteralPath " + psLiteral(backup) + ")) { throw 'Identical helper was replaced.' }",
+    'Set-Content -LiteralPath ' + psLiteral(source) + " -Value 'Write-Output \"v2\"' -Encoding UTF8",
+    '$changed = Install-ManagedFile -Source ' + psLiteral(source) + ' -Destination ' + psLiteral(destination) + ' -BackupPath ' + psLiteral(backup),
+    "if (-not $changed.changed -or -not $changed.backupCreated) { throw 'Changed helper was not replaced.' }",
+    "if (-not (Test-Path -LiteralPath " + psLiteral(backup) + ")) { throw 'Managed backup is missing.' }",
+    "if ((Get-Content -LiteralPath " + psLiteral(backup) + " -Raw) -notmatch 'v1') { throw 'Managed backup content is wrong.' }",
+    "if ((Get-Content -LiteralPath " + psLiteral(destination) + " -Raw) -notmatch 'v2') { throw 'Managed destination content is wrong.' }",
+    "$aclAfter = [IO.File]::GetAccessControl(" + psLiteral(destination) + ").GetSecurityDescriptorSddlForm([Security.AccessControl.AccessControlSections]::All)",
+    "if ($aclAfter -ne $aclBefore) { throw 'Managed destination ACL changed.' }",
+  ].join('\n'));
+
+  try {
+    const result = spawnSync(POWERSHELL, ['-NoProfile', '-ExecutionPolicy', 'Bypass', '-File', harness], {
+      encoding: 'utf8',
+    });
+    assert.equal(result.status, 0, result.stderr + '\n' + result.stdout);
+  } finally {
+    rmSync(root, { recursive: true, force: true });
+  }
 });
 
 test('Maya management gates identify a missing Instagram relations skill', {

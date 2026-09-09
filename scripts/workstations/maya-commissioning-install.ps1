@@ -84,6 +84,60 @@ function Merge-MissingDefaults {
     }
 }
 
+# MAYA_MANAGED_FILE_HELPERS_START
+function Install-ManagedFile {
+    param(
+        [Parameter(Mandatory)][string]$Source,
+        [Parameter(Mandatory)][string]$Destination,
+        [Parameter(Mandatory)][string]$BackupPath
+    )
+
+    if (-not (Test-Path -LiteralPath $Source -PathType Leaf)) {
+        throw "Managed source is missing: $Source"
+    }
+
+    $sourceHash = (Get-FileHash -LiteralPath $Source -Algorithm SHA256).Hash
+    if (Test-Path -LiteralPath $Destination -PathType Leaf) {
+        $destinationHash = (Get-FileHash -LiteralPath $Destination -Algorithm SHA256).Hash
+        if ($sourceHash -eq $destinationHash) {
+            return [pscustomobject]@{ changed = $false; backupCreated = $false }
+        }
+    }
+
+    $destinationRoot = Split-Path $Destination -Parent
+    New-Item -ItemType Directory -Path $destinationRoot -Force | Out-Null
+    $stagedPath = Join-Path $destinationRoot ('.{0}.ifeel-new-{1}' -f ([IO.Path]::GetFileName($Destination)), [guid]::NewGuid().ToString('N'))
+
+    try {
+        Copy-Item -LiteralPath $Source -Destination $stagedPath -Force
+        if ((Get-FileHash -LiteralPath $stagedPath -Algorithm SHA256).Hash -ne $sourceHash) {
+            throw "Managed file staging hash mismatch: $Destination"
+        }
+
+        $backupCreated = $false
+        if (Test-Path -LiteralPath $Destination -PathType Leaf) {
+            New-Item -ItemType Directory -Path (Split-Path $BackupPath -Parent) -Force | Out-Null
+            [IO.File]::Replace($stagedPath, $Destination, $BackupPath, $true)
+            $backupCreated = $true
+        }
+        else {
+            Move-Item -LiteralPath $stagedPath -Destination $Destination
+        }
+
+        if ((Get-FileHash -LiteralPath $Destination -Algorithm SHA256).Hash -ne $sourceHash) {
+            throw "Managed file installation hash mismatch: $Destination"
+        }
+        return [pscustomobject]@{ changed = $true; backupCreated = $backupCreated }
+    }
+    catch {
+        if (Test-Path -LiteralPath $stagedPath -PathType Leaf) {
+            Remove-Item -LiteralPath $stagedPath -Force -ErrorAction SilentlyContinue
+        }
+        throw
+    }
+}
+# MAYA_MANAGED_FILE_HELPERS_END
+
 $bundle = Assert-SafeRoot -Path $BundleRoot -Label 'BundleRoot'
 $vault = Assert-SafeRoot -Path $VaultRoot -Label 'VaultRoot'
 $runtime = Assert-SafeRoot -Path $RuntimeRoot -Label 'RuntimeRoot'
@@ -185,10 +239,17 @@ if (-not $VerifyOnly) {
     $managementRoot = Join-Path ([Environment]::GetFolderPath('LocalApplicationData')) 'I Feel\Management System'
     if ($PSCmdlet.ShouldProcess($managementRoot, 'Install paused Maya Management System helpers')) {
         New-Item -ItemType Directory -Path $managementRoot -Force | Out-Null
-        Copy-Item -LiteralPath (Join-Path $bundle 'payload\management-system\invoke-telemetry.ps1') -Destination (Join-Path $managementRoot 'invoke-telemetry.ps1') -Force
-        Copy-Item -LiteralPath (Join-Path $bundle 'payload\management-system\invoke-host-checkin.ps1') -Destination (Join-Path $managementRoot 'invoke-host-checkin.ps1') -Force
-        Copy-Item -LiteralPath (Join-Path $bundle 'payload\management-system\test-management-smoke.ps1') -Destination (Join-Path $managementRoot 'test-management-smoke.ps1') -Force
-        Copy-Item -LiteralPath (Join-Path $bundle 'payload\management-system\provision-management-telemetry.ps1') -Destination (Join-Path $managementRoot 'provision-management-telemetry.ps1') -Force
+        foreach ($managementHelper in @(
+            'invoke-telemetry.ps1',
+            'invoke-host-checkin.ps1',
+            'test-management-smoke.ps1',
+            'provision-management-telemetry.ps1'
+        )) {
+            $source = Join-Path $bundle "payload\management-system\$managementHelper"
+            $target = Join-Path $managementRoot $managementHelper
+            $backup = Join-Path $backupRoot "management-system\$managementHelper"
+            Install-ManagedFile -Source $source -Destination $target -BackupPath $backup | Out-Null
+        }
     }
 
     foreach ($legacyTask in @('maya-whatsapp', 'maya-integrated-customer-operations')) {

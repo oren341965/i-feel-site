@@ -300,6 +300,9 @@ test('Maya commissioning is role-scoped, hash-verified, and activation-free', ()
   assert.doesNotMatch(installer, /requiredSkills\s*=.*maya-admin/);
   assert.doesNotMatch(installer, /requiredSkills\s*=.*maya-billing-control/);
   assert.match(installer, /Get-FileHash/);
+  assert.match(installer, /Install-ManagedFile/);
+  assert.match(installer, /\[IO\.File\]::Replace/);
+  assert.match(installer, /management-system\\\$managementHelper/);
   assert.match(installer, /INSTALLED_PAUSED/);
   assert.match(installer, /schedulersActivated\s*=\s*0/);
   assert.match(installer, /stagedSchedulers\s*=\s*2/);
