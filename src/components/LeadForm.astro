@@ -19,7 +19,14 @@ const {
   <h2 class="text-xl md:text-2xl font-extrabold text-brand-900 mb-1">{heading}</h2>
   <p class="text-sm text-brand-600 mb-5">ללא עלות וללא התחייבות</p>
 
-  <form action="/api/lead.php" method="post" accept-charset="UTF-8" class="grid gap-4">
+  <form
+    action="/api/lead.php"
+    method="post"
+    accept-charset="UTF-8"
+    class="grid gap-4"
+    toolname="request-ifeel-project-consultation"
+    tooldescription="Request a professional consultation from I Feel about a smart home, KNX, BMS, security, audio or building-controls project. The user must review and submit the form."
+  >
     <input type="hidden" name="lead_type" value={leadType}>
     <input type="hidden" name="subject" value={subject}>
     <input type="hidden" name="source_page" value={sourcePage}>
@@ -36,17 +43,17 @@ const {
 
     <label class="block">
       <span class="block text-sm font-bold text-brand-900 mb-1">שם מלא <span class="text-accent-600">*</span></span>
-      <input required name="name" type="text" autocomplete="name" class="w-full rounded-lg border border-brand-200 px-4 py-3 text-brand-900 focus:border-accent-500 focus:ring-2 focus:ring-accent-500/20" placeholder="שם פרטי ומשפחה">
+      <input required name="name" type="text" autocomplete="name" toolparamdescription="The full name of the person requesting the consultation." class="w-full rounded-lg border border-brand-200 px-4 py-3 text-brand-900 focus:border-accent-500 focus:ring-2 focus:ring-accent-500/20" placeholder="שם פרטי ומשפחה">
     </label>
 
     <label class="block">
       <span class="block text-sm font-bold text-brand-900 mb-1">טלפון <span class="text-accent-600">*</span></span>
-      <input required name="phone" type="tel" autocomplete="tel" inputmode="tel" dir="ltr" class="w-full rounded-lg border border-brand-200 px-4 py-3 text-brand-900 text-right focus:border-accent-500 focus:ring-2 focus:ring-accent-500/20" placeholder="050-0000000">
+      <input required name="phone" type="tel" autocomplete="tel" inputmode="tel" dir="ltr" toolparamdescription="A phone number where the I Feel team can return the call." class="w-full rounded-lg border border-brand-200 px-4 py-3 text-brand-900 text-right focus:border-accent-500 focus:ring-2 focus:ring-accent-500/20" placeholder="050-0000000">
     </label>
 
     <label class="block">
       <span class="block text-sm font-bold text-brand-900 mb-1">כמה מילים על הפרויקט <span class="text-brand-400 font-normal">(לא חובה)</span></span>
-      <textarea name="message" rows="2" class="w-full rounded-lg border border-brand-200 px-4 py-3 text-brand-900 focus:border-accent-500 focus:ring-2 focus:ring-accent-500/20" placeholder="עיר, שלב הבנייה, מה מעניין אתכם"></textarea>
+      <textarea name="message" rows="2" toolparamdescription="Optional project details such as city, building stage, plans, specification or systems of interest." class="w-full rounded-lg border border-brand-200 px-4 py-3 text-brand-900 focus:border-accent-500 focus:ring-2 focus:ring-accent-500/20" placeholder="עיר, שלב הבנייה, מה מעניין אתכם"></textarea>
     </label>
 
     <button type="submit" class="inline-flex items-center justify-center bg-accent-500 hover:bg-accent-600 text-white px-8 py-4 rounded-lg font-extrabold text-lg transition shadow-md w-full">
