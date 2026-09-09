@@ -368,6 +368,39 @@ test('installed Maya task smoke proves the isolated end-to-end bridge and remain
   assert.match(stdout, /^SCHEDULERS_ACTIVATED=0$/m);
 });
 
+test('installed Maya task smoke accepts the UTF-8 BOM written by Windows PowerShell 5.1', async (t) => {
+  const { mayaConfigPath } = await fixture(t);
+  const installedConfig = JSON.parse(await readFile(mayaConfigPath, 'utf8'));
+  installedConfig.identity.machineRole = 'maya-front-office';
+  installedConfig.identity.primaryEngine = 'codex';
+  await writeFile(mayaConfigPath, `\uFEFF${JSON.stringify(installedConfig)}`, 'utf8');
+
+  const smokePath = resolve(REPO, '.claude/skills/ai-sales-manager/scripts/maya-task-e2e-smoke.mjs');
+  const { stdout, stderr } = await execFileAsync(process.execPath, [smokePath, '--config', mayaConfigPath]);
+  assert.equal(stderr, '');
+  assert.match(stdout, /^END_TO_END_TEST=PASS_ISOLATED$/m);
+  assert.match(stdout, /^READY_FOR_REAL_TASKS=NO$/m);
+  assert.match(stdout, /^EXTERNAL_SENDS=0$/m);
+  assert.match(stdout, /^MONDAY_WRITES=0$/m);
+});
+
+test('Maya bridge accepts a UTF-8 BOM config and keeps invalid JSON errors bounded', async (t) => {
+  const { mayaConfigPath, vaultRoot } = await fixture(t);
+  await mkdir(join(vaultRoot, 'AI-Sales', '_bus', 'manager-to-maya'), { recursive: true });
+  await mkdir(join(vaultRoot, 'AI-Sales', '_bus', 'maya-to-manager'), { recursive: true });
+  const configText = await readFile(mayaConfigPath, 'utf8');
+  await writeFile(mayaConfigPath, `\uFEFF${configText}`, 'utf8');
+  const queue = await readAssignedMayaTasks({ configPath: mayaConfigPath });
+  assert.equal(queue.tasks.length, 0);
+
+  await writeFile(mayaConfigPath, '{"identity":"PRIVATE_CONFIG_FRAGMENT"', 'utf8');
+  await assert.rejects(
+    () => readAssignedMayaTasks({ configPath: mayaConfigPath }),
+    (error) => error?.message === 'MAYA_BRIDGE_JSON_INVALID'
+      && !error.message.includes('PRIVATE_CONFIG_FRAGMENT'),
+  );
+});
+
 test('Maya production gate reflects current control evidence and rejects an unverified workstation ACK', async (t) => {
   const readiness = evaluateMayaProductionReadiness(CURRENT_MAYA_CONTROL);
   assert.equal(readiness.ready, false);

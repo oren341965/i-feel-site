@@ -269,7 +269,8 @@ if (-not $VerifyOnly) {
     $config.managementSystem.credentialsProvisioned = $existingCredentialsProvisioned
     $config.managementSystem.capabilitySlugs = @('maya-email-maintenance', 'maya-instagram-relations', 'maya-whatsapp')
     if ($PSCmdlet.ShouldProcess($configPath, 'Write maturity-0 Maya runtime config')) {
-        $config | ConvertTo-Json -Depth 30 | Set-Content -LiteralPath $configPath -Encoding UTF8
+        $configJson = $config | ConvertTo-Json -Depth 30
+        [IO.File]::WriteAllText($configPath, $configJson, [Text.UTF8Encoding]::new($false))
     }
     foreach ($contract in @('bus-message.schema.json', 'maya-task-protocol.md')) {
         $contractTarget = Join-Path $runtimeConfigRoot $contract
@@ -407,7 +408,8 @@ if (-not $VerifyOnly -and -not $WhatIfPreference) {
     $safeMachine = ($env:COMPUTERNAME.ToLowerInvariant() -replace '[^a-z0-9-]', '-').Trim('-')
     $resultPath = Join-Path $busRoot ("maya-commissioning-{0}-{1}.json" -f $safeMachine, (Get-Date -Format 'yyyyMMdd-HHmmss'))
     if ($PSCmdlet.ShouldProcess($resultPath, 'Write bounded Maya commissioning result')) {
-        $result | ConvertTo-Json -Depth 20 | Set-Content -LiteralPath $resultPath -Encoding UTF8
+        $resultJson = $result | ConvertTo-Json -Depth 20
+        [IO.File]::WriteAllText($resultPath, $resultJson, [Text.UTF8Encoding]::new($false))
     }
 }
 

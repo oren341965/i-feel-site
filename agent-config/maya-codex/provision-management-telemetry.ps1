@@ -202,7 +202,8 @@ finally {
 
 $runtimeConfig.managementSystem.credentialsProvisioned = $true
 if ($PSCmdlet.ShouldProcess($runtimeConfigPath, 'Mark local Maya telemetry credentials as provisioned')) {
-    $runtimeConfig | ConvertTo-Json -Depth 30 | Set-Content -LiteralPath $runtimeConfigPath -Encoding UTF8
+    $runtimeConfigJson = $runtimeConfig | ConvertTo-Json -Depth 30
+    [IO.File]::WriteAllText($runtimeConfigPath, $runtimeConfigJson, [Text.UTF8Encoding]::new($false))
 }
 
 $verificationPublished = $false
@@ -239,7 +240,8 @@ if (-not $WhatIfPreference) {
     $safeMachine = ($env:COMPUTERNAME.ToLowerInvariant() -replace '[^a-z0-9-]', '-').Trim('-')
     $resultPath = Join-Path $busRoot ("maya-commissioning-{0}-{1}.json" -f $safeMachine, (Get-Date -Format 'yyyyMMdd-HHmmss'))
     if ($PSCmdlet.ShouldProcess($resultPath, 'Publish bounded post-provisioning Maya commissioning result')) {
-        $verification | ConvertTo-Json -Depth 20 | Set-Content -LiteralPath $resultPath -Encoding UTF8
+        $verificationJson = $verification | ConvertTo-Json -Depth 20
+        [IO.File]::WriteAllText($resultPath, $verificationJson, [Text.UTF8Encoding]::new($false))
         $verificationPublished = $true
     }
 }
