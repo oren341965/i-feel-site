@@ -16,7 +16,7 @@ i-feel משרתת לקוחות פרטיים, יזמי בנייה, אדריכלי
 - [ליווי אדריכלים](https://i-feel.co.il/architects-smart-home-planning/): תיאום תשתיות, מפרטים, תכנון מערכות וביצוע מול האדריכל, החשמלאי ויתר היועצים.
 - [אודיו וקולנוע ביתי](https://i-feel.co.il/audio-and-sound-systems/): מערכות אודיו רב אזוריות וקולנוע ביתי כחלק ממערכת הבית החכם.
 - [מסכי Samsung ותכנון נגרות](https://i-feel.co.il/samsung-tv-carpentry-planning/): השוואת QN70H, QN80H ו-U9000H, מידות, VESA והנחיות לנישה ולקיר טלוויזיה.
-- [עמוד טלוויזיה רצפה–תקרה](https://i-feel.co.il/floor-to-ceiling-tv-pole/): תכנון עמוד טלוויזיה בהתאמה אישית לחלל ולמסך, כולל צבע וגימור לבחירה, תשתיות ותיאום התקנה.
+- [עמוד טלוויזיה רצפתי](https://i-feel.co.il/floor-tv-pole/): עמוד עצמאי על בסיס רצפתי ללא חיבור לתקרה, בהתאמה למסך ובצבע לבחירה, כולל תיאום התקנה.
 - [מסכי LED חוץ לגינה ולווילה](https://i-feel.co.il/outdoor-led-screens/): תכנון מסך LED מודולרי לחוץ, כולל P2.976, בהירות, IP65, תחזוקה, NovaStar ותשתיות.
 - [מסכי LED מתגלגלים וקבועים](https://i-feel.co.il/rolling-led-displays/): מדריך, השוואת דגמים ומצגת להורדה על פתרונות Rolling LED ו-Fixed LED, כולל מחיר, בטיחות, הדרכה ואספקה.
 - [רשתות תקשורת](https://i-feel.co.il/communication-networks/): תכנון רשת, Wi-Fi, כבילה וציוד Aruba Instant On עבור מערכות הבית והמבנה.
