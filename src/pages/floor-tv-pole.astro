@@ -4,10 +4,10 @@ import content from '../page-html/floor-tv-pole.html?raw';
 
 const meta = {
   title: "עמוד טלוויזיה רצפתי בצבע לבחירה | i-feel",
-  description: "עמוד טלוויזיה רצפתי טלסקופי עם מעבר כבילה פנימי וכיסוי אחורי. מבצע עד 65 אינץ׳ ב־3,150 ₪. i-feel: 03-508-9553.",
+  description: "עמוד טלוויזיה רצפתי טלסקופי עם כבילה נסתרת. עד 65 אינץ׳ ב־3,150 ₪ כולל התקנה, לפני מע״מ. i-feel: 03-508-9553.",
   canonical: "https://i-feel.co.il/floor-tv-pole/",
   ogTitle: "עמוד טלוויזיה רצפתי בצבע לבחירה | i-feel",
-  ogDescription: "עמוד טלסקופי על בסיס רצפתי, עם מעבר כבילה פנימי וכיסוי אחורי. דגם עד 65 אינץ׳ ודגם מוגדל למסכי 79, 86 ו־100 אינץ׳.",
+  ogDescription: "עמוד טלסקופי עם כבילה נסתרת: עד 65 אינץ׳ ב־3,150 ₪ כולל התקנה, ודגם מוגדל ב־4,275 ₪ ללא התקנה. לפני מע״מ.",
   ogUrl: "https://i-feel.co.il/floor-tv-pole/",
   ogImage: "https://i-feel.co.il/assets/tv-pole/floor-tv-pole-open-space.jpg",
   jsonLd: JSON.stringify({
@@ -48,25 +48,40 @@ const meta = {
         areaServed: { '@type': 'AdministrativeArea', name: 'אזור המרכז, ישראל' },
         image: 'https://i-feel.co.il/assets/tv-pole/floor-tv-pole-open-space.jpg',
         description: 'אספקה והתקנה של עמוד טלוויזיה רצפתי טלסקופי, עם מעבר כבילה פנימי, כיסוי אחורי, גוון לבחירה ודגמים למסכים עד 65 אינץ׳ ולמסכי 79, 86 ו־100 אינץ׳.',
-        offers: {
-          '@type': 'Offer',
-          price: '3150',
-          priceCurrency: 'ILS',
-          priceValidUntil: '2026-09-20',
-          availability: 'https://schema.org/LimitedAvailability',
-          eligibleRegion: { '@type': 'AdministrativeArea', name: 'אזור המרכז, ישראל' },
-          description: 'לדגם עד 65 אינץ׳, כולל התאמת גובה וצבע, מעבר הכבילה הקיימת בתוך העמוד, כיסוי אחורי, מע״מ והתקנה באזור המרכז. הטלוויזיה והכבלים עצמם אינם כלולים. הזמנה ותשלום עד 20.9.2026 בשעה 14:00.'
-        }
+        offers: [
+          {
+            '@type': 'Offer',
+            name: 'עמוד טלוויזיה רצפתי עד 65 אינץ׳ כולל התקנה',
+            price: '3150',
+            priceCurrency: 'ILS',
+            priceValidUntil: '2026-09-20',
+            availability: 'https://schema.org/LimitedAvailability',
+            eligibleRegion: { '@type': 'AdministrativeArea', name: 'אזור המרכז, ישראל' },
+            priceSpecification: { '@type': 'UnitPriceSpecification', price: '3150', priceCurrency: 'ILS', valueAddedTaxIncluded: false },
+            description: 'לדגם עד 65 אינץ׳, כולל התאמת גובה וצבע, מעבר הכבילה הקיימת בתוך העמוד, כיסוי אחורי והתקנה באזור המרכז. המחיר אינו כולל מע״מ. הטלוויזיה והכבלים עצמם אינם כלולים. הזמנה ותשלום עד 20.9.2026 בשעה 14:00.'
+          },
+          {
+            '@type': 'Offer',
+            name: 'עמוד טלוויזיה רצפתי מעל 65 אינץ׳ לאחר הנחה',
+            price: '4275',
+            priceCurrency: 'ILS',
+            priceValidUntil: '2026-09-20',
+            availability: 'https://schema.org/LimitedAvailability',
+            eligibleRegion: { '@type': 'AdministrativeArea', name: 'אזור המרכז, ישראל' },
+            priceSpecification: { '@type': 'UnitPriceSpecification', price: '4275', priceCurrency: 'ILS', valueAddedTaxIncluded: false },
+            description: 'לדגם מעל 65 אינץ׳: 4,275 ₪ לאחר הנחה, במקום 4,500 ₪. התקנה אינה כלולה ועולה 1,500 ₪ נוספים. המחירים אינם כוללים מע״מ. הטלוויזיה והכבלים עצמם אינם כלולים. הזמנה ותשלום עד 20.9.2026 בשעה 14:00.'
+          }
+        ]
       },
       {
         '@type': 'FAQPage',
         mainEntity: [
           { '@type': 'Question', name: 'האם העמוד מחובר לתקרה?', acceptedAnswer: { '@type': 'Answer', text: 'לא. זהו עמוד טלוויזיה רצפתי שמותקן ברצפה ואינו ממשיך אל התקרה.' } },
-          { '@type': 'Question', name: 'לאילו מסכים המבצע מתאים?', acceptedAnswer: { '@type': 'Answer', text: 'המבצע מיועד לדגם למסכים עד 65 אינץ׳, בכפוף לבדיקת משקל, VESA ומיקום החיבורים. למסכי 79, 86 ו־100 אינץ׳ משתמשים בדגם המוגדל ומקבלים הצעה נפרדת.' } },
+          { '@type': 'Question', name: 'לאילו מסכים המבצע מתאים?', acceptedAnswer: { '@type': 'Answer', text: 'הדגם עד 65 אינץ׳ מוצע ב־3,150 ₪ כולל התקנה באזור המרכז. למסכי 79, 86 ו־100 אינץ׳ משתמשים בדגם המוגדל שמחירו 4,275 ₪ לאחר הנחה, במקום 4,500 ₪, בתוספת 1,500 ₪ להתקנה. כל המחירים לפני מע״מ ובכפוף לבדיקת משקל, VESA ומיקום החיבורים.' } },
           { '@type': 'Question', name: 'כיצד מסתירים את הכבלים?', acceptedAnswer: { '@type': 'Answer', text: 'הכבילה הקיימת מועברת בתוך העמוד עצמו, ומאחורי הטלוויזיה מותקן כיסוי אחורי שמסתיר את הכבלים ואת אזור החיבורים. הכבלים עצמם אינם כלולים במחיר.' } },
           { '@type': 'Question', name: 'האם אפשר להתאים את גובה הטלוויזיה?', acceptedAnswer: { '@type': 'Answer', text: 'כן. המבנה הטלסקופי מאפשר לכוון את גובה הטלוויזיה בהתאם לחלל ולנקודת הצפייה בעת ההתאמה וההתקנה.' } },
           { '@type': 'Question', name: 'האם אפשר לבחור את צבע העמוד?', acceptedAnswer: { '@type': 'Answer', text: 'כן. הגוון והגימור נבחרים עם הלקוח ומאושרים מראש לפי קוד צבע וזמינות הייצור.' } },
-          { '@type': 'Question', name: 'מה כלול במחיר של 3,150 ₪?', acceptedAnswer: { '@type': 'Answer', text: 'עמוד רצפתי טלסקופי למסך עד 65 אינץ׳, התאמת גובה וצבע, מעבר הכבילה הקיימת בתוך העמוד, כיסוי אחורי, התקנה באזור המרכז ומע״מ. הטלוויזיה והכבלים עצמם אינם כלולים.' } },
+          { '@type': 'Question', name: 'מה כלול במחירים?', acceptedAnswer: { '@type': 'Answer', text: 'בדגם עד 65 אינץ׳ המחיר הוא 3,150 ₪ וכולל התקנה באזור המרכז. מחיר התקנה בנפרד לדגם זה הוא 1,000 ₪. בדגם מעל 65 אינץ׳ מחיר העמוד לאחר הנחה הוא 4,275 ₪ וההתקנה עולה 1,500 ₪ נוספים. כל המחירים לפני מע״מ. הטלוויזיה והכבלים עצמם אינם כלולים.' } },
           { '@type': 'Question', name: 'עד מתי אפשר להזמין?', acceptedAnswer: { '@type': 'Answer', text: 'ההזמנה והתשלום צריכים להתבצע עד 20.9.2026 בשעה 14:00. מועד ההתקנה מתואם בנפרד עם מחלקת השירות.' } }
         ]
       }
