@@ -3,11 +3,11 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import content from '../page-html/wireless-alarm-system.html?raw';
 
 const meta = {
-  title: "מערכת אזעקה אלחוטית לדירה - RISCO WiComm Pro כחלק מהבית החכם | i-feel",
-  description: "מערכת אזעקה אלחוטית לדירה בלי חציבות ובלי עבודת חשמלאי. RISCO WiComm Pro מחוברת ל-SmartSphere ומנוהלת מאותה אפליקציה של הבית החכם. i-feel 03-508-9553.",
+  title: "מערכת אזעקה אלחוטית RISCO WiComm Pro במבצע | i-feel",
+  description: "מערכת RISCO WiComm Pro ב־3,500 ₪ כולל מע״מ והתקנה: רכזת, צופר, גלאי נפח, גלאי מגנט, שלט, קיבורד וחיבור לאפליקציה. 03-508-9553.",
   canonical: "https://i-feel.co.il/wireless-alarm-system/",
-  ogTitle: "מערכת אזעקה אלחוטית לדירה - חלק מהבית החכם | i-feel",
-  ogDescription: "RISCO WiComm Pro לדירה: התקנה ביום אחד בלי הכנות חשמל, אימות ויזואלי, תקשורת מגובה, ושילוב מלא עם SmartSphere והתרחישים של הבית החכם.",
+  ogTitle: "מערכת אזעקה אלחוטית RISCO WiComm Pro ב־3,500 ₪ | i-feel",
+  ogDescription: "ערכת אזעקה אלחוטית לדירה, כולל רכזת, צופר, גלאי נפח, גלאי מגנט, שלט, קיבורד, התקנה ומע״מ. שירותי הענן אינם כלולים.",
   ogUrl: "https://i-feel.co.il/wireless-alarm-system/",
   ogImage: "https://i-feel.co.il/assets/og-cover.jpg",
   jsonLd: JSON.stringify({
@@ -42,7 +42,17 @@ const meta = {
         "serviceType": "Wireless Home Alarm System Installation",
         "provider": { "@id": "https://i-feel.co.il/#business" },
         "areaServed": { "@type": "Country", "name": "Israel" },
-        "description": "תכנון והתקנה של מערכת אזעקה אלחוטית RISCO WiComm Pro לדירות, ללא הכנות חשמל וללא חציבות, בשילוב מלא עם מערכת הבית החכם SmartSphere."
+        "description": "אספקה והתקנה של מערכת אזעקה אלחוטית RISCO WiComm Pro לדירה, כולל רכזת, צופר וסוללת גיבוי, גלאי נפח פנימי, גלאי מגנט פנימי, שלט אלחוטי, קיבורד וחיבור ראשוני לאפליקציה.",
+        "offers": {
+          "@type": "Offer",
+          "name": "ערכת RISCO WiComm Pro כולל התקנה",
+          "price": "3500",
+          "priceCurrency": "ILS",
+          "priceValidUntil": "2026-09-20",
+          "availability": "https://schema.org/LimitedAvailability",
+          "priceSpecification": { "@type": "UnitPriceSpecification", "price": "3500", "priceCurrency": "ILS", "valueAddedTaxIncluded": true },
+          "description": "המחיר כולל מע״מ והתקנה. שירותי הענן של RISCO ודמי המנוי אינם כלולים. ההזמנה והתשלום עד 20.9.2026 בשעה 14:00, והביצוע בתיאום מחלקת השירות."
+        }
       }
     ]
   })
