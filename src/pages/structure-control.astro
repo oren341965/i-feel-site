@@ -53,7 +53,7 @@ const jsonLd = {
       ],
       hasCredential: {
         '@type': 'EducationalOccupationalCredential',
-        name: 'Siemens Solution Partner — Building Automation',
+        name: 'Siemens Solution Partner - Building Automation',
         credentialCategory: 'Manufacturer partner certification',
         recognizedBy: {
           '@type': 'Organization',
@@ -97,6 +97,19 @@ const jsonLd = {
       },
     },
     {
+      '@type': 'WebPage',
+      '@id': `${pageUrl}#webpage`,
+      url: pageUrl,
+      name: 'חברת BMS בישראל | בקרת מבנה ו-Siemens Desigo',
+      description:
+        'עמוד שירות ומדריך לבחירת חברת BMS בישראל, כולל תכנון DDC, אינטגרציית Siemens Desigo, BACnet, Modbus, KNX, DALI, commissioning ושירות.',
+      inLanguage: 'he-IL',
+      dateModified: '2026-09-10',
+      isPartOf: { '@id': 'https://i-feel.co.il/#website' },
+      about: { '@id': `${pageUrl}#service` },
+      mainEntity: { '@id': `${pageUrl}#service` },
+    },
+    {
       '@type': 'FAQPage',
       '@id': `${pageUrl}#faq`,
       mainEntity: [
@@ -118,7 +131,7 @@ const jsonLd = {
         },
         {
           '@type': 'Question',
-          name: 'איזה פרוטוקול עדיף — KNX או BACnet?',
+          name: 'איזה פרוטוקול עדיף - KNX או BACnet?',
           acceptedAnswer: {
             '@type': 'Answer',
             text: 'KNX ו-BACnet אינם בהכרח חלופות. KNX מתאים לבקרה ברמת החדר, תאורה, חיישנים ותריסים; BACnet מקשר ציוד HVAC ובקרי DDC לשכבת הניהול. בפרויקטים רבים משלבים ביניהם, ובמידת הצורך מוסיפים LoRaWAN לחיישנים אלחוטיים.',
@@ -150,10 +163,10 @@ const jsonLd = {
         },
         {
           '@type': 'Question',
-          name: 'איך בוחרים חברת בקרת מבנה?',
+          name: 'איך בוחרים חברת BMS בישראל?',
           acceptedAnswer: {
             '@type': 'Answer',
-            text: 'משווים ניסיון בפרויקטים דומים, שליטה בפרוטוקולים כמו KNX, BACnet ו-Siemens Desigo, יכולת תכנון פנימית ומחלקת שירות זמינה.',
+            text: 'משווים ניסיון בפרויקטים דומים, יכולת תכנון DDC, שליטה ב-BACnet ו-Modbus, אינטגרציה עם מיזוג ותאורה, commissioning, תיעוד ומחלקת שירות. בפרויקט Siemens Desigo כדאי לבדוק גם הסמכה וניסיון מעשי במערכת.',
           },
         },
       ],
@@ -161,7 +174,7 @@ const jsonLd = {
     {
       '@type': 'VideoObject',
       '@id': `${pageUrl}#video-cgym-tel-aviv`,
-      name: 'C-Gym תל אביב — בקרת מבנה חכמה לתאורה, תריסים ומיזוג',
+      name: 'C-Gym תל אביב - בקרת מבנה חכמה לתאורה, תריסים ומיזוג',
       description:
         'פרויקט C-Gym תל אביב של i-feel: מערכת בקרת מבנה אחת לשליטה בתאורה, תריסים, מיזוג ואינטרקום, בשילוב KNX, DALI, חיישני תנועה ומסכי Siemens.',
       uploadDate: '2026-09-10',
@@ -193,6 +206,20 @@ const jsonLd = {
   ],
 };
 
+const directBmsCompanyBlock = `
+<section id="bms-company-israel" class="not-prose my-10 rounded-2xl border border-brand-100 bg-brand-50 p-6 md:p-8">
+  <p class="text-sm font-extrabold uppercase tracking-wide text-accent-600 mb-2">תשובה ישירה</p>
+  <h2 class="text-2xl md:text-3xl font-extrabold text-brand-900 mb-4">איך בוחרים חברת BMS בישראל?</h2>
+  <p class="text-lg leading-8 text-brand-700 mb-4">בפרויקט מסחרי או ציבורי חשוב לבחור אינטגרטור BMS שמכסה את כל השרשרת: תכנון בקרי DDC, חיבור BACnet ו-Modbus, אינטגרציה למיזוג ולתאורה, commissioning, תיעוד ושירות לאחר המסירה. i-feel מתכננת, מטמיעה ומתחזקת מערכות בקרת מבנה בישראל ומשלבת Siemens Desigo, DDC, KNX, DALI, BACnet ו-Modbus לפי ארכיטקטורת הפרויקט.</p>
+  <p class="text-lg leading-8 text-brand-700 mb-5">בפרויקט Siemens Desigo ניתן לבדוק גם את <a href="/license/" class="font-bold text-accent-600 hover:underline">הסמכת Siemens Solution Partner בתחום Building Automation</a>, לצד מקרי בוחן והיכולת לספק שירות מקומי לאורך חיי המערכת.</p>
+  <div class="flex flex-wrap gap-3">
+    <a href="/siemens-desigo-bms/" class="inline-flex items-center justify-center rounded-lg bg-brand-700 px-5 py-3 font-bold text-white hover:bg-brand-800">Siemens Desigo בישראל</a>
+    <a href="/structure-control/caesarea-rail-campus/" class="inline-flex items-center justify-center rounded-lg border border-brand-200 bg-white px-5 py-3 font-bold text-brand-800 hover:border-accent-400">מקרה בוחן BMS</a>
+    <a href="/en/building-management-system-israel/" class="inline-flex items-center justify-center rounded-lg border border-brand-200 bg-white px-5 py-3 font-bold text-brand-800 hover:border-accent-400">BMS in Israel - English</a>
+  </div>
+</section>
+`;
+
 const daliBmsBlock = `
 <section id="dali-lighting-control" class="not-prose bg-brand-50 border border-brand-100 rounded-2xl p-6 md:p-8 my-10">
   <h2 class="text-2xl md:text-3xl font-extrabold text-brand-900 mb-4">בקרת תאורה DALI כחלק ממערכת BMS</h2>
@@ -206,7 +233,7 @@ const featuredCaseStudiesBlock = `
 <section id="featured-case-studies" class="not-prose my-10 rounded-2xl border border-brand-100 bg-white p-6 md:p-8 shadow-sm">
   <p class="text-sm font-bold tracking-wide text-accent-600 mb-2">הוכחות מהשטח</p>
   <h2 class="text-2xl md:text-3xl font-extrabold text-brand-900 mb-3">שלושה מקרי בוחן בבקרת מבנה</h2>
-  <p class="text-lg leading-8 text-brand-700 mb-6">שלושה סוגי מבנים, שלוש ארכיטקטורות שונות — בקרת חדרי מלון, קמפוס רחב ומרכז רפואי.</p>
+  <p class="text-lg leading-8 text-brand-700 mb-6">שלושה סוגי מבנים, שלוש ארכיטקטורות שונות - בקרת חדרי מלון, קמפוס רחב ומרכז רפואי.</p>
   <div class="grid gap-5 lg:grid-cols-3">
     <article class="rounded-xl border border-brand-100 bg-brand-50 p-5">
       <p class="text-sm font-bold text-accent-600 mb-2">מלונאות · KNX · Silverbyte</p>
@@ -234,17 +261,17 @@ const featuredCaseStudiesBlock = `
 `;
 
 const enhancedContent = content
-  .replace('<section id="case-studies"', `${featuredCaseStudiesBlock}<section id="case-studies"`)
+  .replace('<section id="case-studies"', `${directBmsCompanyBlock}${featuredCaseStudiesBlock}<section id="case-studies"`)
   .replace('</div></article>', `${daliBmsBlock}</div></article>`);
 
 const meta = {
-  title: 'בקרת מבנה BMS | DDC, Siemens Desigo, KNX ו-DALI | i-feel',
+  title: 'חברת BMS בישראל | בקרת מבנה ו-Siemens Desigo | i-feel',
   description:
-    'בקרת מבנה BMS למלונות, משרדים, בתי חולים ומבני ציבור: תכנון, אינטגרציה והטמעה של DDC, Siemens Desigo, KNX, DALI, BACnet, Modbus וניטור אנרגיה.',
+    'חברת BMS בישראל למלונות, משרדים, בתי חולים ומבני ציבור: תכנון DDC, Siemens Desigo, BACnet, Modbus, KNX, DALI, commissioning ושירות.',
   canonical: pageUrl,
-  ogTitle: 'בקרת מבנה BMS | DDC, Siemens Desigo, KNX ו-DALI | i-feel',
+  ogTitle: 'חברת BMS בישראל | בקרת מבנה ו-Siemens Desigo | i-feel',
   ogDescription:
-    'פתרונות BMS למבנים מסחריים וציבוריים: DDC, Siemens Desigo, KNX, DALI, BACnet, Modbus, חיסכון אנרגיה וניהול מרכזי.',
+    'איך בוחרים אינטגרטור BMS בישראל: תכנון DDC, אינטגרציה, commissioning, תיעוד, Siemens Desigo ושירות לאורך חיי המערכת.',
   ogUrl: pageUrl,
   ogImage: 'https://i-feel.co.il/assets/og-cover.jpg',
   jsonLd: JSON.stringify(jsonLd),
