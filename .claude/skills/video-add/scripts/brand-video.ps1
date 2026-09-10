@@ -42,6 +42,7 @@ $hasAudio=$srcInfo -match '(?m)Audio:'
 $w=[int]$vm.Groups[1].Value; $h=[int]$vm.Groups[2].Value
 $w-=$w%2; $h-=$h%2
 $lw=[Math]::Max(120,[Math]::Floor($w*0.58))
+$lh=[Math]::Max(120,[Math]::Floor($h*0.58))
 $srcDuration=Duration $InputFile $FfmpegPath
 
 $tmp=Join-Path $outDir ('.ifeel-brand-'+[guid]::NewGuid().ToString('N'))
@@ -50,7 +51,7 @@ try {
   $intro=Join-Path $tmp 'intro.mp4'; $main=Join-Path $tmp 'main.mp4'
   $outro=Join-Path $tmp 'outro.mp4'; $list=Join-Path $tmp 'concat.txt'
 
-  $vf="[1:v]scale=$($lw):-2[logo];[0:v][logo]overlay=(W-w)/2:(H-h)/2,fade=t=in:st=0:d=0.4,fade=t=out:st=2.1:d=0.4,format=yuv420p[v]"
+  $vf="[1:v]scale=$($lw):$($lh):force_original_aspect_ratio=decrease[logo];[0:v][logo]overlay=(W-w)/2:(H-h)/2,fade=t=in:st=0:d=0.4,fade=t=out:st=2.1:d=0.4,format=yuv420p[v]"
   Run-Ffmpeg @('-y','-f','lavfi','-i',"color=c=0xf7f8fa:s=$($w)x$($h):r=30:d=2.5",
     '-loop','1','-i',$LogoFile,'-f','lavfi','-i','anullsrc=channel_layout=stereo:sample_rate=48000',
     '-filter_complex',$vf,'-map','[v]','-map','2:a','-t','2.5','-r','30',
@@ -65,7 +66,7 @@ try {
       '-map','0:v:0','-map','1:a:0','-shortest')+$common+@($main)) $FfmpegPath
   }
 
-  $vf="[1:v]scale=$($lw):-2[logo];[0:v][logo]overlay=(W-w)/2:(H-h)/2,fade=t=in:st=0:d=0.4,fade=t=out:st=2.6:d=0.4,format=yuv420p[v]"
+  $vf="[1:v]scale=$($lw):$($lh):force_original_aspect_ratio=decrease[logo];[0:v][logo]overlay=(W-w)/2:(H-h)/2,fade=t=in:st=0:d=0.4,fade=t=out:st=2.6:d=0.4,format=yuv420p[v]"
   Run-Ffmpeg @('-y','-f','lavfi','-i',"color=c=0xf7f8fa:s=$($w)x$($h):r=30:d=3",
     '-loop','1','-i',$LogoFile,'-f','lavfi','-i','anullsrc=channel_layout=stereo:sample_rate=48000',
     '-filter_complex',$vf,'-map','[v]','-map','2:a','-t','3','-r','30',
