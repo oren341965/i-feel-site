@@ -5,7 +5,7 @@ This route applies only when Oren explicitly authorizes mailbox maintenance or r
 ## Execution and evidence
 
 1. Verify the required workstation and exact configured Maya Gmail profile through the same connector that will perform the operation. Never substitute another account. Tool availability alone does not prove write permission.
-2. Use one active mailbox run. If another run may still be sending, defer rather than overlap. Reuse the existing protected recipient/topic dedupe ledger for proactive sends; if it is unavailable, proactive sending is blocked, not cleanup or inbound classification.
+2. Use one active mailbox run. If another run may still be sending, defer rather than overlap. Use the protected recipient/topic ledger in `scripts/proactive-send-ledger.ps1` for every proactive send and follow [its transactional contract](proactive-send-ledger.md). A missing, corrupt, busy, wrong-identity or unreconciled ledger blocks proactive sending, not cleanup or inbound classification.
 3. Inspect new inbox mail with bounded pagination and the current draft inventory. Resume known open work separately; do not repeat a historical full scan. Keep a bounded continuation when the run deadline is reached and report PARTIAL.
 4. Use the connector's documented label, message-modify, draft and send tools only within the current authorization. Do not execute a local worker or change its scope to work around an error. Existing local runtime flags describe that runtime, not a separately verified connector.
 5. Verify every write by reading the affected message. After an uncertain send, inspect sent mail before any retry; if acceptance remains uncertain, stop that send and report it. Never resend because telemetry failed.
