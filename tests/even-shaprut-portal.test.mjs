@@ -71,6 +71,13 @@ test('the smoke detector row uses the verified RISCO X35S product image', () => 
   );
 });
 
+test('the magnetic detector row uses the verified RISCO wireless contact image', () => {
+  assert.match(
+    index,
+    /'גלאי מגנט או גלאי נפח אלחוטי מבוסס סוללה',[^\n]+detector-magnetic-risco-x78-x73\.jpg/
+  );
+});
+
 test('private PHP bootstrap is denied by Apache', () => {
   const htaccess = readFileSync(path.join(portalDir, '.htaccess'), 'utf8');
   assert.match(htaccess, /FilesMatch "\^_bootstrap\\\.php\$"[\s\S]*Require all denied/);

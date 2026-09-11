@@ -11,4 +11,8 @@ thumbnail uses the official RISCO X35S wireless smoke and heat detector image
 from the manufacturer's product page:
 https://riscogroup.com/pt-pt/rscm_produto/2-way-wireless-smoke-heat-detector/
 
+The magnetic-detector thumbnail uses RISCO's official wireless magnetic
+door/window contact image from the manufacturer's product page:
+https://riscogroup.com/en/rscm_product/magnetic-door-window-contacts/
+
 No resident email addresses or other personal data belong in this folder.
