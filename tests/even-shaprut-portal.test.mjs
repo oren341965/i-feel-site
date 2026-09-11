@@ -78,6 +78,17 @@ test('the magnetic detector row uses the verified RISCO wireless contact image',
   );
 });
 
+test('each standalone wireless detector states that an alarm hub is required', () => {
+  assert.equal(index.match(/'דורש רכזת אזעקה אלחוטית'/g)?.length, 3);
+  for (const detector of [
+    'גלאי מגנט או גלאי נפח אלחוטי מבוסס סוללה',
+    'גלאי עשן אלחוטי מבוסס סוללה',
+    'גלאי הצפה אלחוטי מבוסס סוללה',
+  ]) {
+    assert.match(index, new RegExp(`'${detector}', 'דורש רכזת אזעקה אלחוטית'`));
+  }
+});
+
 test('private PHP bootstrap is denied by Apache', () => {
   const htaccess = readFileSync(path.join(portalDir, '.htaccess'), 'utf8');
   assert.match(htaccess, /FilesMatch "\^_bootstrap\\\.php\$"[\s\S]*Require all denied/);
