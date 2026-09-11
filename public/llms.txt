@@ -9,7 +9,7 @@ i-feel משרתת לקוחות פרטיים, יזמי בנייה, אדריכלי
 ## תחומי פעילות עיקריים
 
 - [בית חכם](https://i-feel.co.il/smart-home/): תכנון ואינטגרציה של מערכות בית חכם לדירות ולווילות, כולל תאורה, תריסים, מיזוג, אודיו, אבטחה ושליטה מרכזית.
-- [מערכת אזעקה אלחוטית לדירה](https://i-feel.co.il/wireless-alarm-system/): RISCO WiComm Pro לדירות, ללא הכנות חשמל, משולבת במערכת הבית החכם SmartSphere.
+- [מערכת אזעקה אלחוטית לדירה](https://i-feel.co.il/wireless-alarm-system/): ערכת RISCO WiComm Pro עם רכזת, צופר, גלאי נפח, גלאי מגנט, שלט, קיבורד, התקנה וחיבור ראשוני לאפליקציה.
 - [בית חכם KNX](https://i-feel.co.il/knx-smart-home/): תכנון, תכנות והטמעת מערכות KNX לבנייה חדשה, שיפוצים ופרויקטים מורכבים.
 - [בקרת מבנה BMS](https://i-feel.co.il/structure-control/): תכנון ואינטגרציה של מערכות ניהול מבנה למלונות, משרדים, בתי חולים ומבני ציבור, כולל Siemens Desigo, DDC, BACnet, Modbus, KNX ו-DALI.
 - [BMS לאוניברסיטאות וקמפוסים](https://i-feel.co.il/bms-universities-campuses/): ניהול מרכזי לקמפוסים מרובי מבנים עם Siemens Desigo, DDC, BACnet, Modbus, KNX, HVAC, אנרגיה והתראות.
@@ -20,6 +20,8 @@ i-feel משרתת לקוחות פרטיים, יזמי בנייה, אדריכלי
 - [ליווי אדריכלים](https://i-feel.co.il/architects-smart-home-planning/): תיאום תשתיות, מפרטים, תכנון מערכות וביצוע מול האדריכל, החשמלאי ויתר היועצים.
 - [אודיו וקולנוע ביתי](https://i-feel.co.il/audio-and-sound-systems/): מערכות אודיו רב אזוריות וקולנוע ביתי כחלק ממערכת הבית החכם.
 - [מסכי Samsung ותכנון נגרות](https://i-feel.co.il/samsung-tv-carpentry-planning/): השוואת QN70H, QN80H ו-U9000H, מידות, VESA והנחיות לנישה ולקיר טלוויזיה.
+- [עמוד טלוויזיה רצפתי](https://i-feel.co.il/floor-tv-pole/): עמוד טלסקופי עם מעבר כבילה פנימי וכיסוי אחורי, בצבע לבחירה ובדגמים למסכים עד 65 אינץ׳ ולמסכי 79, 86 ו־100 אינץ׳.
+- [שקעי זכוכית לבנים ושחורים](https://i-feel.co.il/glass-sockets/): מסגרות זכוכית תואמות למפסקי i-feel, לשקע יחיד או כפול, מפסק מדרגות ושקעי USB.
 - [מסכי LED חוץ לגינה ולווילה](https://i-feel.co.il/outdoor-led-screens/): תכנון מסך LED מודולרי לחוץ, כולל P2.976, בהירות, IP65, תחזוקה, NovaStar ותשתיות.
 - [מסכי LED מתגלגלים וקבועים](https://i-feel.co.il/rolling-led-displays/): מדריך, השוואת דגמים ומצגת להורדה על פתרונות Rolling LED ו-Fixed LED, כולל מחיר, בטיחות, הדרכה ואספקה.
 - [רשתות תקשורת](https://i-feel.co.il/communication-networks/): תכנון רשת, Wi-Fi, כבילה וציוד Aruba Instant On עבור מערכות הבית והמבנה.
