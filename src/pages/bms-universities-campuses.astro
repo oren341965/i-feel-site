@@ -1,0 +1,54 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import content from '../page-html/bms-universities-campuses.html?raw';
+
+const meta = {
+  title: "BMS לאוניברסיטאות וקמפוסים | Siemens Desigo ו-DDC | i-feel",
+  description: "BMS לאוניברסיטאות וקמפוסים: Siemens Desigo, DDC, BACnet, Modbus, KNX וניהול אנרגיה מרכזי. בדיקת ארכיטקטורה — 03-508-9553.",
+  canonical: "https://i-feel.co.il/bms-universities-campuses/",
+  ogTitle: "BMS לאוניברסיטאות וקמפוסים | Siemens Desigo ו-DDC | i-feel",
+  ogDescription: "בקרת מבנה לקמפוסים מרובי מבנים — HVAC, תאורה, אנרגיה, התראות ו-Retrofit בשלבים.",
+  ogUrl: "https://i-feel.co.il/bms-universities-campuses/",
+  ogImage: "https://i-feel.co.il/structure-control/projects/iscar/iscar-siemens-control-panel.jpeg",
+  jsonLd: JSON.stringify({
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": ["LocalBusiness", "HomeAndConstructionBusiness"],
+        "@id": "https://i-feel.co.il/#business",
+        "name": "i-feel",
+        "alternateName": "i-feel מערכות בקרת מבנה ובית חכם",
+        "url": "https://i-feel.co.il/",
+        "logo": "https://i-feel.co.il/assets/ifeel-logo.png",
+        "image": "https://i-feel.co.il/assets/ifeel-logo.png",
+        "telephone": "+972-3-508-9553",
+        "email": "sales@i-feel.co.il",
+        "priceRange": "₪₪₪",
+        "address": { "@type": "PostalAddress", "streetAddress": "אימבר 14", "addressLocality": "פתח תקווה", "addressRegion": "מחוז המרכז", "postalCode": "4951148", "addressCountry": "IL" },
+        "areaServed": { "@type": "Country", "name": "Israel", "sameAs": "https://www.wikidata.org/wiki/Q801" },
+        "sameAs": ["https://www.facebook.com/SmarthomeIsrael", "https://www.instagram.com/ifeelisrael", "https://www.linkedin.com/company/i-feel-smart-home-systems"]
+      },
+      {
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          { "@type": "ListItem", "position": 1, "name": "דף הבית", "item": "https://i-feel.co.il/" },
+          { "@type": "ListItem", "position": 2, "name": "בקרת מבנה BMS", "item": "https://i-feel.co.il/structure-control/" },
+          { "@type": "ListItem", "position": 3, "name": "BMS לאוניברסיטאות וקמפוסים", "item": "https://i-feel.co.il/bms-universities-campuses/" }
+        ]
+      },
+      {
+        "@type": "Service",
+        "name": "BMS לאוניברסיטאות וקמפוסים",
+        "url": "https://i-feel.co.il/bms-universities-campuses/",
+        "serviceType": "Building Management System for Universities and Campuses",
+        "provider": { "@id": "https://i-feel.co.il/#business" },
+        "areaServed": { "@type": "Country", "name": "Israel" },
+        "description": "תכנון, אינטגרציה והטמעה של מערכות BMS לקמפוסים מרובי מבנים, עם Siemens Desigo, DDC, BACnet, Modbus ו-KNX."
+      }
+    ]
+  })
+};
+---
+<BaseLayout {...meta}>
+  <Fragment set:html={content} />
+</BaseLayout>

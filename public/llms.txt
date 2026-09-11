@@ -4,7 +4,7 @@
 
 i-feel משרתת לקוחות פרטיים, יזמי בנייה, אדריכלים וארגונים בישראל. באתר מתועדים מעל 9,000 לקוחות ומעל 4,000 פרויקטים, לצד פרויקטי BMS, KNX, מלונאות, משרדים ומבני ציבור.
 
-עודכן לאחרונה: 2026-09-07
+עודכן לאחרונה: 2026-09-11
 
 ## תחומי פעילות עיקריים
 
@@ -12,6 +12,7 @@ i-feel משרתת לקוחות פרטיים, יזמי בנייה, אדריכלי
 - [מערכת אזעקה אלחוטית לדירה](https://i-feel.co.il/wireless-alarm-system/): RISCO WiComm Pro לדירות, ללא הכנות חשמל, משולבת במערכת הבית החכם SmartSphere.
 - [בית חכם KNX](https://i-feel.co.il/knx-smart-home/): תכנון, תכנות והטמעת מערכות KNX לבנייה חדשה, שיפוצים ופרויקטים מורכבים.
 - [בקרת מבנה BMS](https://i-feel.co.il/structure-control/): תכנון ואינטגרציה של מערכות ניהול מבנה למלונות, משרדים, בתי חולים ומבני ציבור, כולל Siemens Desigo, DDC, BACnet, Modbus, KNX ו-DALI.
+- [BMS לאוניברסיטאות וקמפוסים](https://i-feel.co.il/bms-universities-campuses/): ניהול מרכזי לקמפוסים מרובי מבנים עם Siemens Desigo, DDC, BACnet, Modbus, KNX, HVAC, אנרגיה והתראות.
 - [פתרונות ליזמי בנייה](https://i-feel.co.il/contractor-customer-care/): תשתיות דירה חכמה, תכנון סטנדרט ושדרוגים לדיירים בפרויקטים של בנייה רוויה.
 - [ליווי אדריכלים](https://i-feel.co.il/architects-smart-home-planning/): תיאום תשתיות, מפרטים, תכנון מערכות וביצוע מול האדריכל, החשמלאי ויתר היועצים.
 - [אודיו וקולנוע ביתי](https://i-feel.co.il/audio-and-sound-systems/): מערכות אודיו רב אזוריות וקולנוע ביתי כחלק ממערכת הבית החכם.
@@ -75,6 +76,7 @@ i-feel משרתת לקוחות פרטיים, יזמי בנייה, אדריכלי
 - [BMS למלונות](https://i-feel.co.il/bms-hotels/)
 - [BMS למבני ציבור](https://i-feel.co.il/bms-public-buildings/)
 - [BMS לבתי חולים](https://i-feel.co.il/bms-hospitals/)
+- [BMS לאוניברסיטאות וקמפוסים](https://i-feel.co.il/bms-universities-campuses/)
 - [בנייה ירוקה](https://i-feel.co.il/green-building/)
 - [מאמרים](https://i-feel.co.il/articles/)
 - [מרכז תשובות](https://i-feel.co.il/answers/)
