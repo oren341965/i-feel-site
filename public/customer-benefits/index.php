@@ -55,6 +55,14 @@ header('Referrer-Policy: no-referrer');
       </div>
       <a class="button button--primary" href="/neve-shuster/">כניסה לאזור הדיירים</a>
     </section>
+    <section class="active-group" aria-labelledby="even-shaprut-title">
+      <div>
+        <p class="eyebrow" style="color:#8d672e">פרויקט דיירים פעיל</p>
+        <h3 id="even-shaprut-title">אבן שפרוט 5-7, הרצליה</h3>
+        <p>אזור ייעודי לדיירי הפרויקט: המפרט המסופק בדירה, מחירון שדרוגים כולל מע״מ והפלייר המלא של אשטרום ו-I Feel. הכניסה באמצעות כתובת הדואר המשויכת לקבוצת אבן שפרוט ב-Monday וקוד חד-פעמי.</p>
+      </div>
+      <a class="button button--primary" href="/even-shaprut/">כניסה לאזור הדיירים</a>
+    </section>
     <section class="active-group" aria-labelledby="mt-law-title">
       <div><p class="eyebrow" style="color:#8d672e">קבוצה פעילה</p><h3 id="mt-law-title">עובדי מרקמן טומשין ושות׳</h3><p>הטבה בלעדית לעובדי המשרד. הכניסה באמצעות כתובת המסתיימת ב-@mt-law.co.il וקוד חד פעמי שנשלח אליה.</p></div>
       <a class="button button--primary" href="/customer-benefits/mt-law/">כניסה לעמוד הקבוצה</a>

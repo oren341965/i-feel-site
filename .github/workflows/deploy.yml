@@ -70,6 +70,12 @@ jobs:
       - name: Test secure staff portal
         run: php -d upload_max_filesize=12M -d post_max_size=64M -d max_file_uploads=20 tests/staff-expenses/portal-unit.php
 
+      - name: Lint and test Even Shaprut resident portal
+        run: |
+          find public/even-shaprut -maxdepth 1 -type f -name '*.php' -print0 | xargs -0 -n1 php -l
+          php tests/even-shaprut-portal-unit.php
+          node --test tests/even-shaprut-portal.test.mjs
+
       - name: Patch MT-Law source for PHP 7.4
         run: node scripts/deploy/patch-mtlaw-php74.mjs public/mt-law/_bootstrap.php
 

@@ -1,0 +1,39 @@
+name: Validate Even Shaprut resident portal
+
+on:
+  pull_request:
+    paths:
+      - 'public/even-shaprut/**'
+      - 'public/customer-benefits/index.php'
+      - 'tests/even-shaprut-portal-unit.php'
+      - 'tests/even-shaprut-portal.test.mjs'
+      - '.github/workflows/validate-even-shaprut-pr.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    name: Validate resident portal on PHP 7.4
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Setup production-compatible PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '7.4'
+          coverage: none
+
+      - name: Lint PHP and test the portal contract
+        run: |
+          find public/even-shaprut -maxdepth 1 -type f -name '*.php' -print0 | xargs -0 -n1 php -l
+          php tests/even-shaprut-portal-unit.php
+          node --test tests/even-shaprut-portal.test.mjs
