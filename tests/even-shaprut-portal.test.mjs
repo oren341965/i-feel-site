@@ -64,6 +64,13 @@ test('all portal-local assets referenced by the page exist', () => {
   }
 });
 
+test('the smoke detector row uses the verified RISCO X35S product image', () => {
+  assert.match(
+    index,
+    /'גלאי עשן אלחוטי מבוסס סוללה',[^\n]+detector-smoke-risco-x35s\.jpg/
+  );
+});
+
 test('private PHP bootstrap is denied by Apache', () => {
   const htaccess = readFileSync(path.join(portalDir, '.htaccess'), 'utf8');
   assert.match(htaccess, /FilesMatch "\^_bootstrap\\\.php\$"[\s\S]*Require all denied/);

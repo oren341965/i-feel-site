@@ -84,7 +84,7 @@ $priceGroups = [
         'note' => 'הציוד אלחוטי ואינו דורש תשתיות מצד החשמלאי. נדרשת התאמת צרכים לפי טיפוס הדירה.',
         'rows' => [
             ['10000', 'גלאי מגנט או גלאי נפח אלחוטי מבוסס סוללה', '', esp_price_with_vat(370), 'detector-motion.jpg'],
-            ['10000', 'גלאי עשן אלחוטי מבוסס סוללה', '', esp_price_with_vat(385), 'detector-smoke.jpg'],
+            ['10000', 'גלאי עשן אלחוטי מבוסס סוללה', '', esp_price_with_vat(385), 'detector-smoke-risco-x35s.jpg'],
             ['10000', 'גלאי הצפה אלחוטי מבוסס סוללה', '', esp_price_with_vat(345), 'detector-flood.jpg'],
             ['10000', 'מערכת אזעקה אלחוטית עם גלאי מגנט בדלת וגלאי נפח פנימי', '', esp_price_with_vat(2460), 'alarm-system.jpg'],
         ],
