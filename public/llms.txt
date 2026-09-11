@@ -13,6 +13,9 @@ i-feel משרתת לקוחות פרטיים, יזמי בנייה, אדריכלי
 - [בית חכם KNX](https://i-feel.co.il/knx-smart-home/): תכנון, תכנות והטמעת מערכות KNX לבנייה חדשה, שיפוצים ופרויקטים מורכבים.
 - [בקרת מבנה BMS](https://i-feel.co.il/structure-control/): תכנון ואינטגרציה של מערכות ניהול מבנה למלונות, משרדים, בתי חולים ומבני ציבור, כולל Siemens Desigo, DDC, BACnet, Modbus, KNX ו-DALI.
 - [BMS לאוניברסיטאות וקמפוסים](https://i-feel.co.il/bms-universities-campuses/): ניהול מרכזי לקמפוסים מרובי מבנים עם Siemens Desigo, DDC, BACnet, Modbus, KNX, HVAC, אנרגיה והתראות.
+- [שדרוג מערכת BMS קיימת](https://i-feel.co.il/bms-retrofit/): מסלול Retrofit למבנים פעילים, כולל סקר בקרים, DDC, BACnet, Modbus, Desigo ותכנית שדרוג בשלבים.
+- [בקרי DDC לבקרת מבנה](https://i-feel.co.il/ddc-controllers-bms/): תכנון, חיווט, תכנות והפעלה של בקרי DDC שמחברים ציוד שטח לשרת BMS מרכזי.
+- [BMS לתעשייה ומפעלים](https://i-feel.co.il/bms-industry/): בקרת HVAC, חדרי מכונות, משאבות, אנרגיה, תאורה והתראות למפעלים ואתרים לוגיסטיים.
 - [פתרונות ליזמי בנייה](https://i-feel.co.il/contractor-customer-care/): תשתיות דירה חכמה, תכנון סטנדרט ושדרוגים לדיירים בפרויקטים של בנייה רוויה.
 - [ליווי אדריכלים](https://i-feel.co.il/architects-smart-home-planning/): תיאום תשתיות, מפרטים, תכנון מערכות וביצוע מול האדריכל, החשמלאי ויתר היועצים.
 - [אודיו וקולנוע ביתי](https://i-feel.co.il/audio-and-sound-systems/): מערכות אודיו רב אזוריות וקולנוע ביתי כחלק ממערכת הבית החכם.
@@ -77,6 +80,9 @@ i-feel משרתת לקוחות פרטיים, יזמי בנייה, אדריכלי
 - [BMS למבני ציבור](https://i-feel.co.il/bms-public-buildings/)
 - [BMS לבתי חולים](https://i-feel.co.il/bms-hospitals/)
 - [BMS לאוניברסיטאות וקמפוסים](https://i-feel.co.il/bms-universities-campuses/)
+- [BMS לתעשייה ומפעלים](https://i-feel.co.il/bms-industry/)
+- [שדרוג מערכת BMS קיימת](https://i-feel.co.il/bms-retrofit/)
+- [בקרי DDC לבקרת מבנה](https://i-feel.co.il/ddc-controllers-bms/)
 - [בנייה ירוקה](https://i-feel.co.il/green-building/)
 - [מאמרים](https://i-feel.co.il/articles/)
 - [מרכז תשובות](https://i-feel.co.il/answers/)
