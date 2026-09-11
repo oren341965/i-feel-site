@@ -130,10 +130,14 @@ try {
 
     $verifiedEmail = portal_normalize_company_email((string) ($user['email'] ?? ''));
     if ($verifiedEmail !== null) {
-        $directoryEntry = portal_employee_directory_entry($user);
-        $displayName = trim((string) ($directoryEntry['name'] ?? ''));
-        if ($displayName === '' && ($user['username'] ?? '') === 'employee') {
-            $displayName = $verifiedEmail;
+        if ($verifiedEmail === 'oren@' . portal_company_email_domain()) {
+            $displayName = 'אורן לוי';
+        } else {
+            $directoryEntry = portal_employee_directory_entry($user);
+            $displayName = trim((string) ($directoryEntry['name'] ?? ''));
+            if ($displayName === '' && ($user['username'] ?? '') === 'employee') {
+                $displayName = $verifiedEmail;
+            }
         }
         if ($displayName !== '') {
             $user['display_name'] = $displayName;

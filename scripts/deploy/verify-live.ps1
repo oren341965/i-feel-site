@@ -145,6 +145,7 @@ $targets = @(
     "$base/robots.txt",
     "$base/llms.txt",
     "$base/customer-benefits/",
+    "$base/even-shaprut/",
     "$base/siemens-knx-products/",
     "$base/articles/siemens-n12522-knx-power-supply-640ma/",
     "$base/articles/siemens-n262d51-knx-8-dry-contact-input/",
