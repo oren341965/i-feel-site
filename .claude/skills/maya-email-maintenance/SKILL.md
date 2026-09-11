@@ -9,7 +9,7 @@ Keep Maya's work inbox small, classified and actionable without losing customer 
 
 ## Identity and schedule gate
 
-- An explicit channel-specific instruction from Oren may authorize an operational email run, including a scheduled run, beyond the default REPORT_ONLY mode below. Apply only the named permissions; do not infer production commissioning, credential changes, Monday writes or WhatsApp activation. Use [approved email operations](references/approved-email-operations.md) for this mode. A running scheduler is not evidence of completed mailbox work.
+- An explicit channel-specific instruction from Oren may authorize an operational email run, including a scheduled run, beyond the default REPORT_ONLY mode below. Apply only the named permissions; do not infer production commissioning, credential changes, Monday writes or WhatsApp activation. Use [approved email operations](references/approved-email-operations.md) for this mode. For proactive sends, use the canonical protected ledger and transaction in [proactive send ledger](references/proactive-send-ledger.md). A running scheduler is not evidence of completed mailbox work.
 
 - Before every run, read the authenticated Gmail profile and compare it with the Maya mailbox configured by the automation. Stop with `WRONG_MAILBOX` when the address is absent, belongs to Oren or does not exactly match the configured Maya address.
 - A separate automation invokes this skill every three hours. The skill performs one bounded pass and never creates another scheduler or overlapping run.
