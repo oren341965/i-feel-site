@@ -34,9 +34,15 @@ $eligible = is_string($proof)
     && trim((string) $stored['monday_item_id']) !== ''
     && hash_equals($stored['hash'], hash('sha256', $proof));
 
+$response = ['eligible' => $eligible];
+$emailHash = $eligible ? ($stored['user_data']['sha256_email_address'] ?? null) : null;
+if (is_string($emailHash) && preg_match('/^[a-f0-9]{64}$/', $emailHash) === 1) {
+    $response['user_data'] = ['sha256_email_address' => $emailHash];
+}
+
 // Consume the server-side proof even when it is expired or malformed. This
 // makes every successful Monday lead eligible for at most one browser event.
 unset($_SESSION['ads_conversion_proof']);
 session_write_close();
 
-echo json_encode(['eligible' => $eligible], JSON_UNESCAPED_SLASHES);
+echo json_encode($response, JSON_UNESCAPED_SLASHES);

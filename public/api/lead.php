@@ -4,6 +4,8 @@ declare(strict_types=1);
 const DEFAULT_BOARD_ID = '2732725332';
 const DEFAULT_FALLBACK_EMAIL = 'sales@i-feel.co.il';
 
+require_once __DIR__ . '/enhanced-conversion-data.php';
+
 function start_lead_session(): void
 {
     if (session_status() === PHP_SESSION_ACTIVE) {
@@ -430,6 +432,7 @@ try {
         'hash' => hash('sha256', $conversionProof),
         'expires_at' => time() + 300,
         'monday_item_id' => (string) $itemId,
+        'user_data' => enhanced_conversion_data($_POST),
     ];
 
     redirect_back('sent', $conversionProof);

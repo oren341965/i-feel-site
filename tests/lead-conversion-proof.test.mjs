@@ -31,7 +31,7 @@ test('contact and landing clients require verifier eligibility before Ads conver
   const landing = await readFile(files.landing, 'utf8');
   const contact = await readFile(files.contact, 'utf8');
   assert.match(landing, /consume-conversion\.php/);
-  assert.match(landing, /eligible\s*===\s*true[^}]+adsConversion\('form'\)/s);
+  assert.match(landing, /eligible\s*===\s*true[^}]+ifeelSendVerifiedLeadConversion\(result\)/s);
   assert.match(contact, /consume-conversion\.php/);
-  assert.match(contact, /eligible\s*===\s*true[^}]+gtag\('event', 'conversion'/s);
+  assert.match(contact, /eligible\s*===\s*true[^}]+ifeelSendVerifiedLeadConversion\(result\)/s);
 });
