@@ -2,13 +2,53 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import content from '../page-html/bms-hotels.html?raw';
 
+const pageUrl = "https://i-feel.co.il/bms-hotels/";
+
+const faqNode = {
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "מה ההבדל בין BMS ל-GRMS במלון?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "BMS מנהל את מערכות המבנה המרכזיות, כגון מיזוג, אנרגיה ושטחים ציבוריים. GRMS מנהל את בקרת חדרי האורחים, כגון תאורה, מיזוג, וילונות ותרחישים. במלון ניתן לשלב בין שתי השכבות."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "אפשר לשלב BMS ו-GRMS עם מערכת ניהול המלון PMS?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "כן. ניתן לתכנן אינטגרציה בין מערכות הבקרה לבין PMS לצורך שימוש בסטטוס תפוסה, צ'ק-אין, צ'ק-אאוט והרשאות, בהתאם לממשקים הזמינים בפרויקט."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "איך BMS ו-GRMS יכולים לחסוך אנרגיה במלון?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "החיסכון נובע בעיקר מבקרה על מיזוג ותאורה בחדרים ריקים ובשטחים ציבוריים, לפי תפוסה, שעות פעילות ולוגיקת הבקרה שהוגדרה למלון. היקף החיסכון בפועל תלוי במבנה, בציוד ובדפוסי השימוש."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "אפשר להתקין מערכת BMS או GRMS במלון קיים?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "כן. ניתן לבצע retrofit במלון קיים לאחר בדיקת התשתיות, בקרי החדרים, מערכות המיזוג, התקשורת והממשקים הקיימים."
+      }
+    }
+  ]
+};
+
 const meta = {
-  title: "בקרת מבנה למלונות | BMS ו-GRMS לחדרי מלון | i-feel",
-  description: "בקרת מבנה למלונות: בקרת חדרים GRMS, חיסכון אנרגטי בחדרים ריקים ושילוב ל-PMS. תכנון, התקנה ושירות. אפיון מלון והערכת חיסכון — 03-508-9553.",
-  canonical: "https://i-feel.co.il/bms-hotels/",
-  ogTitle: "בקרת מבנה למלונות | BMS ו-GRMS | i-feel",
-  ogDescription: "בקרת חדרים GRMS וניהול מבנה אחד למלון — חוויית אורח אחידה, חיסכון אנרגטי ושילוב ל-PMS.",
-  ogUrl: "https://i-feel.co.il/bms-hotels/",
+  title: "BMS למלונות בישראל | בקרת מבנה ו-GRMS | i-feel",
+  description: "BMS למלונות בישראל: בקרת מבנה, GRMS לחדרי אורחים, אינטגרציה ל-PMS, חיסכון אנרגטי ושירות. תכנון והטמעה למלונות חדשים וקיימים.",
+  canonical: pageUrl,
+  ogTitle: "BMS למלונות בישראל | בקרת מבנה ו-GRMS | i-feel",
+  ogDescription: "בקרת מבנה BMS ובקרת חדרים GRMS למלונות בישראל, כולל אינטגרציה ל-PMS, ניהול אנרגיה ושירות מקומי.",
+  ogUrl: pageUrl,
   ogImage: "https://i-feel.co.il/assets/hotel-bms.png",
   jsonLd: JSON.stringify({
     "@context": "https://schema.org",
@@ -29,22 +69,35 @@ const meta = {
         "sameAs": ["https://www.facebook.com/SmarthomeIsrael", "https://www.instagram.com/ifeelisrael", "https://www.linkedin.com/company/i-feel-smart-home-systems"]
       },
       {
+        "@type": "WebPage",
+        "@id": `${pageUrl}#webpage`,
+        "url": pageUrl,
+        "name": "BMS למלונות בישראל | בקרת מבנה ו-GRMS",
+        "description": "מדריך ופתרונות BMS ו-GRMS למלונות בישראל, כולל בקרת חדרים, אינטגרציה ל-PMS, ניהול אנרגיה ו-retrofit למלונות קיימים.",
+        "inLanguage": "he-IL",
+        "dateModified": "2026-09-12",
+        "about": { "@id": `${pageUrl}#service` },
+        "publisher": { "@id": "https://i-feel.co.il/#business" }
+      },
+      {
         "@type": "BreadcrumbList",
         "itemListElement": [
           { "@type": "ListItem", "position": 1, "name": "דף הבית", "item": "https://i-feel.co.il/" },
           { "@type": "ListItem", "position": 2, "name": "בקרת מבנה BMS", "item": "https://i-feel.co.il/structure-control/" },
-          { "@type": "ListItem", "position": 3, "name": "בקרת מבנה למלונות", "item": "https://i-feel.co.il/bms-hotels/" }
+          { "@type": "ListItem", "position": 3, "name": "BMS למלונות בישראל", "item": pageUrl }
         ]
       },
       {
         "@type": "Service",
-        "name": "בקרת מבנה למלונות (BMS + GRMS)",
-        "serviceType": "Hotel Building Management & Guest Room Management",
-        "url": "https://i-feel.co.il/bms-hotels/",
+        "@id": `${pageUrl}#service`,
+        "name": "BMS ו-GRMS למלונות בישראל",
+        "serviceType": "Hotel Building Management System and Guest Room Management System",
+        "url": pageUrl,
         "provider": { "@id": "https://i-feel.co.il/#business" },
         "areaServed": { "@type": "Country", "name": "Israel" },
-        "description": "בקרת חדרים GRMS וניהול מבנה למלונות, כולל שילוב ל-PMS, חיסכון אנרגטי ושליטה מרכזית."
-      }
+        "description": "תכנון, אינטגרציה, הטמעה ושירות למערכות BMS ו-GRMS במלונות בישראל, כולל חיבור למערכות PMS וניהול אנרגיה."
+      },
+      faqNode
     ]
   })
 };
