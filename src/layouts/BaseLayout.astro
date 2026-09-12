@@ -170,6 +170,7 @@ const siteIdentityJsonLd = JSON.stringify({
     <script type="application/ld+json" set:html={siteIdentityJsonLd} />
     {effectiveJsonLd && <script type="application/ld+json" set:html={effectiveJsonLd} />}
 
+    <script is:inline src="/assets/lead-measurement.js" defer></script>
     <!-- Google tag (gtag.js) — Google Ads + GA4 -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=AW-18038181913"></script>
     <script is:inline>

@@ -90,6 +90,14 @@ jobs:
           php tests/mt-law/gate-unit.php
           php tests/mt-law/auth-unit.php
 
+      - name: Test lead conversion measurement
+        run: |
+          php -l public/api/enhanced-conversion-data.php
+          php -l public/api/consume-conversion.php
+          php tests/enhanced-conversion-data.test.php
+          php tests/consume-conversion-runtime.test.php
+          node --test tests/lead-conversion-proof.test.mjs tests/lead-measurement.test.mjs tests/lead-attribution-capture.test.mjs
+
       - name: Build and validate Astro site
         run: npm run build
 

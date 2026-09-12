@@ -56,12 +56,20 @@ const {
       <textarea name="message" rows="2" toolparamdescription="Optional project details such as city, building stage, plans, specification or systems of interest." class="w-full rounded-lg border border-brand-200 px-4 py-3 text-brand-900 focus:border-accent-500 focus:ring-2 focus:ring-accent-500/20" placeholder="עיר, שלב הבנייה, מה מעניין אתכם"></textarea>
     </label>
 
+    <label class="block">
+      <span class="block text-sm font-bold text-brand-900 mb-1">אימייל (לא חובה)</span>
+      <input name="email" type="email" autocomplete="email" maxlength="254" dir="ltr" class="w-full rounded-lg border border-brand-200 px-4 py-3 text-brand-900" placeholder="name@example.com">
+    </label>
+    <label class="flex items-start gap-2 text-xs text-brand-600">
+      <input type="checkbox" name="measurement_consent" value="1" class="mt-1">
+      <span>אני מאשר/ת שימוש באימייל בצורה מגובבת לצורך התאמת הפנייה לפרסום ב־Google. לא חובה לקבלת מענה. <a href="/privacy-policy/" class="underline">מדיניות פרטיות</a></span>
+    </label>
     <button type="submit" class="inline-flex items-center justify-center bg-accent-500 hover:bg-accent-600 text-white px-8 py-4 rounded-lg font-extrabold text-lg transition shadow-md w-full">
       {buttonText}
     </button>
 
     <p class="text-xs text-brand-500 text-center">
-      *פניות שמתקבלות בשעות הפעילות נענות בדרך כלל באותו יום עסקים. הפרטים משמשים למענה לפנייה בלבד.
+      *פניות שמתקבלות בשעות הפעילות נענות בדרך כלל באותו יום עסקים. הפרטים משמשים למענה לפנייה; שימוש באימייל למדידת פרסום ייעשה בהתאם לאישור שלמעלה.
     </p>
   </form>
 </div>
