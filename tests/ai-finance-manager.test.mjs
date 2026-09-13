@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
 import { execFile } from 'node:child_process';
+import { createServer } from 'node:http';
 import { mkdtemp, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
@@ -24,6 +25,26 @@ async function runWith(t, content) {
   const path = join(folder, 'audit.json');
   await writeFile(path, JSON.stringify(content));
   return execFileAsync(process.execPath, [script, '--analysis', path, '--audit-key', 'finance-audit:test-1', '--run-key', 'finance-run:test-1', '--dry-run']);
+}
+
+async function runAgainst(t, content, responseBody) {
+  const folder = await mkdtemp(join(tmpdir(), 'ifeel-finance-reporter-live-'));
+  t.after(() => rm(folder, { recursive: true, force: true }));
+  const path = join(folder, 'audit.json');
+  await writeFile(path, JSON.stringify(content));
+  const server = createServer((request, response) => {
+    request.resume();
+    request.on('end', () => {
+      response.writeHead(201, { 'Content-Type': 'application/json' });
+      response.end(JSON.stringify(responseBody));
+    });
+  });
+  await new Promise((resolve) => server.listen(0, '127.0.0.1', resolve));
+  t.after(() => server.close());
+  const address = server.address();
+  return execFileAsync(process.execPath, [script, '--analysis', path, '--audit-key', 'finance-audit:test-1', '--run-key', 'finance-run:test-1'], {
+    env: { ...process.env, IFEEL_MANAGEMENT_BASE_URL: `http://127.0.0.1:${address.port}`, IFEEL_MANAGEMENT_SITE_TOKEN: 'test-site', IFEEL_MANAGEMENT_RUN_TOKEN: 'test-run' },
+  });
 }
 
 test('finance reporter emits the bounded aggregate contract without raw rows', async (t) => {
@@ -61,5 +82,24 @@ test('finance reporter accepts the bounded comparison contract used by the Manag
   const result = JSON.parse(stdout);
   assert.equal(result.envelope.comparisons.expenseSameMonthLastYear.total, 850);
   assert.equal(result.envelope.comparisons.income.current.totalIncomeBeforeVat, 1000);
+});
+
+test('finance reporter emits only the evidence reference confirmed by the server', async (t) => {
+  const input = aggregate();
+  const { stdout } = await runAgainst(t, input, {
+    created: true,
+    evidenceRef: 'finance_audit_snapshots:finance-audit:test-1',
+    snapshot: { currentMonth: input.period, current: { rows: 10 }, revenue: { projects: { rows: 5 }, service: { rows: 8 } }, capturedAt: input.capturedAt },
+  });
+  assert.equal(JSON.parse(stdout).evidenceRef, 'finance_audit_snapshots:finance-audit:test-1');
+});
+
+test('finance reporter rejects an unverified evidence reference', async (t) => {
+  const input = aggregate();
+  await assert.rejects(runAgainst(t, input, {
+    created: true,
+    evidenceRef: 'finance_audit_snapshots:11',
+    snapshot: { currentMonth: input.period, current: { rows: 10 }, revenue: { projects: { rows: 5 }, service: { rows: 8 } }, capturedAt: input.capturedAt },
+  }), /unexpected response/);
 });
 
