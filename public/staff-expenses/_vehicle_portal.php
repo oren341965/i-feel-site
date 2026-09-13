@@ -299,14 +299,20 @@ function portal_handle_vehicle_monthly_submission(array $user): never
 
     $treatment = portal_post('monthly_treatment', 30);
     $tireStatus = portal_post('monthly_tires', 30);
+    $fluidsStatus = portal_post('monthly_fluids', 30);
+    $warningLights = portal_post('monthly_warning_lights', 30);
+    $accidentStatus = portal_post('monthly_accident', 30);
     $generalStatus = portal_post('monthly_general_status', 30);
     if (!in_array($treatment, ['none', 'required', 'scheduled', 'completed'], true)
         || !in_array($tireStatus, ['ok', 'check', 'replace', 'urgent'], true)
+        || !in_array($fluidsStatus, ['ok', 'check', 'low', 'urgent'], true)
+        || !in_array($warningLights, ['none', 'present'], true)
+        || !in_array($accidentStatus, ['none', 'damage', 'accident'], true)
         || !in_array($generalStatus, ['ok', 'issue', 'soon', 'unsafe'], true)) {
-        throw new RuntimeException('יש להשלים את מצב הטיפול, הצמיגים והתקינות הכללית.');
+        throw new RuntimeException('יש להשלים את כל בדיקות מצב הרכב החודשיות.');
     }
     $issueDescription = portal_post('monthly_issue_description', 1200);
-    if (($treatment !== 'none' || $tireStatus !== 'ok' || $generalStatus !== 'ok') && $issueDescription === '') {
+    if (($treatment !== 'none' || $tireStatus !== 'ok' || $fluidsStatus !== 'ok' || $warningLights !== 'none' || $accidentStatus !== 'none' || $generalStatus !== 'ok') && $issueDescription === '') {
         throw new RuntimeException('כאשר מסומנת תקלה או טיפול, יש להוסיף תיאור קצר.');
     }
 
@@ -332,10 +338,13 @@ function portal_handle_vehicle_monthly_submission(array $user): never
         'treatment_date' => portal_post('monthly_treatment_date', 10),
         'garage' => portal_post('monthly_garage', 200),
         'tire_status' => $tireStatus,
+        'fluids_status' => $fluidsStatus,
+        'warning_lights' => $warningLights,
+        'accident_status' => $accidentStatus,
         'general_status' => $generalStatus,
         'description' => $issueDescription,
         'attachments' => $attachments,
-        'manager_review_required' => ($previous > 0 && $odometer < $previous) || $generalStatus !== 'ok' || $tireStatus !== 'ok' || $treatment !== 'none',
+        'manager_review_required' => ($previous > 0 && $odometer < $previous) || $generalStatus !== 'ok' || $tireStatus !== 'ok' || $fluidsStatus !== 'ok' || $warningLights !== 'none' || $accidentStatus !== 'none' || $treatment !== 'none',
         'submitted_at' => gmdate('c'),
     ];
     $versions[] = $record;
@@ -397,7 +406,7 @@ function portal_render_vehicle_monthly_form(array $vehicle): void
     $previous = portal_vehicle_previous_odometer((string) $vehicle['plate']);
     ?>
     <section class="form-card vehicle-monthly-card" id="monthly-report">
-        <div class="form-card__header"><span class="step">1</span><div><h2>דיווח חודשי קצר</h2><p>הדיווח מיועד לקילומטראז׳ ולמצב הרכב בלבד. מסמכי טסט וביטוח מנוהלים בנפרד.</p></div></div>
+        <div class="form-card__header"><span class="step">2</span><div><h2>דיווח חודשי קצר</h2><p>ממלאים רק קילומטראז׳ ומצב רכב. טסט וביטוח אינם חלק מהדיווח החודשי.</p></div></div>
         <form method="post" enctype="multipart/form-data" class="field-grid field-grid--2">
             <input type="hidden" name="csrf" value="<?= portal_h(portal_csrf_token()) ?>">
             <input type="hidden" name="action" value="submit_vehicle_monthly">
@@ -406,12 +415,15 @@ function portal_render_vehicle_monthly_form(array $vehicle): void
             <label class="field"><span>אם הקילומטראז׳ ירד — הסבר</span><input type="text" name="odometer_decrease_explanation" maxlength="600"></label>
             <label class="field"><span>טיפולים <b>*</b></span><select name="monthly_treatment" required><option value="none">לא נדרש טיפול</option><option value="required">נדרש טיפול</option><option value="scheduled">נקבע טיפול</option><option value="completed">בוצע טיפול</option></select></label>
             <label class="field"><span>תקינות צמיגים <b>*</b></span><select name="monthly_tires" required><option value="ok">תקינים</option><option value="check">דורשים בדיקה</option><option value="replace">דורשים החלפה</option><option value="urgent">קיימת תקלה דחופה</option></select></label>
+            <label class="field"><span>שמן ונוזלים <b>*</b></span><select name="monthly_fluids" required><option value="ok">תקינים</option><option value="check">לא נבדקו / דרושה בדיקה</option><option value="low">חסר שמן או נוזל</option><option value="urgent">קיימת בעיה דחופה</option></select></label>
+            <label class="field"><span>נורות אזהרה בלוח המחוונים <b>*</b></span><select name="monthly_warning_lights" required><option value="none">אין נורות אזהרה</option><option value="present">נדלקה נורת אזהרה</option></select></label>
+            <label class="field"><span>תאונה או נזק מאז הדיווח הקודם <b>*</b></span><select name="monthly_accident" required><option value="none">לא היו תאונה או נזק</option><option value="damage">התגלה נזק לרכב</option><option value="accident">הייתה תאונה</option></select></label>
             <label class="field"><span>תקינות כללית <b>*</b></span><select name="monthly_general_status" required><option value="ok">הרכב תקין</option><option value="issue">קיימת תקלה שאינה דחופה</option><option value="soon">נדרש טיפול בהקדם</option><option value="unsafe">הרכב אינו בטוח לנסיעה</option></select></label>
             <label class="field"><span>סוג טיפול / תקלה</span><input type="text" name="monthly_treatment_type" maxlength="300"></label>
             <label class="field"><span>תאריך טיפול</span><input type="date" name="monthly_treatment_date"></label>
             <label class="field"><span>מוסך</span><input type="text" name="monthly_garage" maxlength="200"></label>
-            <label class="field field--full"><span>תיאור והערות במקרה של תקלה</span><textarea name="monthly_issue_description" rows="3" maxlength="1200"></textarea></label>
-            <label class="field field--full"><span>חשבונית, תמונה או מסמך</span><input type="file" name="monthly_attachments[]" multiple accept=".pdf,image/jpeg,image/png,image/webp,image/heic,image/heif,image/avif"></label>
+            <label class="field field--full"><span>תיאור במקרה של תקלה, נזק או תאונה</span><textarea name="monthly_issue_description" rows="3" maxlength="1200" placeholder="יש למלא רק אם אחד הסעיפים אינו תקין"></textarea></label>
+            <label class="field field--full"><span>תמונה או מסמך — רק אם יש בעיה</span><input type="file" name="monthly_attachments[]" multiple accept=".pdf,image/jpeg,image/png,image/webp,image/heic,image/heif,image/avif"></label>
             <div class="unsafe-warning field--full">אם הרכב אינו בטוח לנסיעה: אין להמשיך לנסוע ברכב לפני קבלת הנחיה מהמנהל.</div>
             <div class="field--full"><button type="submit" class="button button--primary button--large">שליחת הדיווח החודשי</button></div>
         </form>
@@ -424,16 +436,25 @@ function portal_render_my_vehicle_page(array $user, ?array $flash): void
     portal_render_flash($flash);
     $vehicles = portal_vehicles_for_employee($user);
     ?>
-    <section class="page-heading"><div><p class="eyebrow">רכב חברה</p><h1>הרכב שלי</h1><p>כאן ניתן לצפות בפרטי רכב החברה, במסמכים החשובים ובמועדי החידוש, ולשלוח את הדיווח החודשי הקצר.</p></div><a class="button button--primary button--large" href="#monthly-report">מילוי דיווח חודשי</a></section>
+    <section class="page-heading"><div><p class="eyebrow">רכב חברה</p><h1>הרכב שלי</h1><p>במסך אחד רואים מה דורש טיפול עכשיו, ממלאים דיווח חודשי קצר וצופים במסמכים השנתיים.</p></div><a class="button button--primary button--large" href="#monthly-report">מילוי דיווח חודשי</a></section>
     <?php foreach ($vehicles as $vehicle): ?>
-        <?php $latest = portal_vehicle_latest_monthly((string) $vehicle['plate']); $status = portal_vehicle_overall_status($vehicle, $latest); ?>
-        <section class="vehicle-hero">
+        <?php
+        $latest = portal_vehicle_latest_monthly((string) $vehicle['plate']);
+        $status = portal_vehicle_overall_status($vehicle, $latest);
+        $testDeadline = portal_vehicle_deadline_status((string) ($vehicle['test_due_date'] ?? ''));
+        $insuranceDeadline = portal_vehicle_deadline_status((string) ($vehicle['compulsory_insurance_due_date'] ?? ''));
+        $annualActionRequired = in_array($testDeadline['class'], ['status--missing', 'status--review', 'status--new'], true)
+            || in_array($insuranceDeadline['class'], ['status--missing', 'status--review', 'status--new'], true);
+        ?>
+        <section class="vehicle-hero" aria-labelledby="vehicle-action-title">
+            <div class="vehicle-section-label"><span class="step">1</span><strong id="vehicle-action-title">מה צריך לעשות עכשיו</strong></div>
             <div><p class="eyebrow"><?= portal_h(portal_employee_profile($user)['name']) ?></p><h2><?= portal_h($vehicle['make_model'] ?: 'פרטי הדגם טרם הושלמו') ?></h2><b dir="ltr"><?= portal_h(portal_format_vehicle_plate($vehicle['plate'])) ?></b></div>
             <span class="status <?= portal_h($status['class']) ?>"><?= portal_h($status['label']) ?></span>
-            <div class="vehicle-hero__stats"><span>טסט<strong><?= portal_h($vehicle['test_due_date'] ?: 'חסר') ?></strong></span><span>ביטוח חובה<strong><?= portal_h($vehicle['compulsory_insurance_due_date'] ?: 'חסר') ?></strong></span><span>ק״מ אחרון<strong><?= portal_h($vehicle['current_km'] ?: 'טרם דווח') ?></strong></span><span>עדכון אחרון<strong><?= portal_h($vehicle['last_update'] ?: 'טרם דווח') ?></strong></span></div>
+            <div class="vehicle-hero__stats"><span>טסט<strong><?= portal_h($vehicle['test_due_date'] ?: 'חסר') ?></strong><em class="status <?= portal_h($testDeadline['class']) ?>"><?= portal_h($testDeadline['label']) ?></em></span><span>ביטוח חובה<strong><?= portal_h($vehicle['compulsory_insurance_due_date'] ?: 'חסר') ?></strong><em class="status <?= portal_h($insuranceDeadline['class']) ?>"><?= portal_h($insuranceDeadline['label']) ?></em></span><span>ק״מ אחרון<strong><?= portal_h($vehicle['current_km'] ?: 'טרם דווח') ?></strong></span><span>עדכון אחרון<strong><?= portal_h($vehicle['last_update'] ?: 'טרם דווח') ?></strong></span></div>
         </section>
         <?php portal_render_vehicle_monthly_form($vehicle); ?>
-        <section class="detail-card vehicle-documents-card"><h2>מסמכי הרכב והנהג</h2>
+        <section class="detail-card vehicle-documents-card"><div class="vehicle-section-label"><span class="step">3</span><div><h2>מסמכים שנתיים</h2><p class="muted-text">טסט וביטוחים מעדכנים רק בחידוש השנתי. כל עוד המסמך בתוקף אין צורך בפעולה.</p></div></div>
+            <?php if ($annualActionRequired): ?><div class="alert alert--info">יש מסמך חסר או מועד חידוש שמתקרב. <a class="text-link" href="<?= portal_h(portal_url(['tab' => 'profile'])) ?>">לעדכון תאריכי הטסט והביטוח</a></div><?php else: ?><div class="alert alert--success">הטסט וביטוח החובה בתוקף — אין צורך לעדכן אותם החודש.</div><?php endif; ?>
             <?php $documents = portal_vehicle_documents_for_user($user, (string) $vehicle['plate']); ?>
             <?php if ($documents === []): ?><div class="alert alert--info">עדיין לא נשמרו מסמכים לרכב זה. מנהל יכול להעלות רישיון, טסט וביטוחים במסך רכבי העובדים.</div>
             <?php else: ?><div class="document-list"><?php foreach ($documents as $document): ?><div><strong><?= portal_h($document['type_label'] ?? 'מסמך') ?></strong><span><a class="text-link" href="<?= portal_h(portal_url(['action' => 'vehicle_document_download', 'plate' => $vehicle['plate'], 'document' => $document['id'] ?? ''])) ?>"><?= portal_h($document['name'] ?? '') ?></a></span><span><?= portal_h(($document['expires_on'] ?? '') !== '' ? 'תוקף ' . $document['expires_on'] : 'ללא תוקף') ?></span></div><?php endforeach; ?></div><?php endif; ?>
