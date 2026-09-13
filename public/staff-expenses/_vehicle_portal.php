@@ -473,13 +473,13 @@ function portal_process_vehicle_monthly_reminders(DateTimeImmutable $now, ?calla
         if ($email === null) {
             continue;
         }
-        $recipient = $day === 8 ? 'oren@' . portal_company_email_domain() : $email;
+        $recipient = $day === 8 ? 'myhome@' . portal_company_email_domain() : $email;
         $token = $month . ':' . $day . ':' . $plate;
         if (isset($state[$token])) {
             continue;
         }
         $subject = $day === 8 ? 'דיווח רכב חודשי חסר' : 'תזכורת למילוי דיווח הרכב החודשי';
-        $body = ($day === 8 ? 'הדיווח החודשי טרם מולא עבור הרכב ' : 'יש למלא את הדיווח החודשי הקצר עבור הרכב ')
+        $body = ($day === 8 ? 'הדיווח החודשי על קילומטראז׳ ותקלות טרם מולא בפורטל העובדים עבור הרכב ' : 'יש למלא את הדיווח החודשי הקצר עבור הרכב ')
             . portal_format_vehicle_plate($plate) . ".\r\nhttps://i-feel.co.il/staff-expenses/?tab=my_vehicle";
         if ($mailer($recipient, $subject, $body, [])) {
             $state[$token] = gmdate('c');
