@@ -204,6 +204,11 @@ try {
     Assert-PortalTest ($html -match 'id="camera-receipts"[^>]*capture="environment"') "Mobile receipt camera input is missing."
     Assert-PortalTest ($html -match '<option value="purchases">') "Travel purchases category is missing."
 
+    Invoke-PortalCurl "-o", $responseBody, "-b", $employeeCookies, "$baseUrl/staff-expenses/mcohome.php" | Out-Null
+    $mcohomeHtml = Get-Content -Raw -Encoding utf8 $responseBody
+    Assert-PortalTest ($mcohomeHtml -match 'name="action" value="submit_mcohome_fault"') "Authenticated MCOHome form was not rendered."
+    Assert-PortalTest ($mcohomeHtml -match 'באנגלית ובסינית') "MCOHome form does not disclose automatic bilingual delivery."
+
     Invoke-PortalCurl "-o", $responseBody, "-b", $employeeCookies, "$baseUrl/staff-expenses/?tab=handovers" | Out-Null
     $handoverLandingHtml = Get-Content -Raw -Encoding utf8 $responseBody
     Assert-PortalTest ($handoverLandingHtml -match 'class="detail-card handover-awaiting-card"') "Tenant handover technician-step preview was not rendered before resident selection."

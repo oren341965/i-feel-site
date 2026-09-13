@@ -98,7 +98,7 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
             'notes' => $record['notes'], 'mediaLinks' => array_map(static fn($i): string => mcohome_media_url($record['eventId'], $i), array_keys($media)),
         ];
         $record['sheetSync'] = mcohome_try_apps_script($sheetPayload);
-        $record['notificationResults'] = mcohome_send_internal_notification($record);
+        $record['notificationResults'] = mcohome_send_notifications($record);
         mcohome_save_record($record);
         portal_audit('mcohome_fault_submitted', [
             'event_id' => $record['eventId'],
@@ -110,7 +110,8 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
 
         $createdRecord = $record;
         $sentCount = count(array_filter($record['notificationResults']));
-        $success = 'הדיווח נשמר. מספר אירוע: ' . $eventId . '. הודעה נשלחה ל-' . $sentCount . ' אנשי צוות.';
+        $recipientCount = count($record['notificationResults']);
+        $success = 'הדיווח נשמר. מספר אירוע: ' . $eventId . '. הודעה באנגלית ובסינית נשלחה ל-' . $sentCount . ' מתוך ' . $recipientCount . ' נמענים.';
         $_POST = [];
     } catch (Throwable $submitError) {
         $error = $submitError->getMessage();
@@ -142,7 +143,7 @@ portal_nav('mcohome', $user);
                 <span class="form-note">הדיווח נשמר באתר. סנכרון Google Sheet עדיין ממתין להגדרת Web App.</span>
             <?php endif; ?>
             <?php $draft = $createdRecord['vendorDraft']; $mailto = 'mailto:' . rawurlencode(str_replace(',', ',', $draft['to'])) . '?subject=' . rawurlencode($draft['subject']) . '&body=' . rawurlencode($draft['body']); ?>
-            <a class="button button--secondary" href="<?= portal_h($mailto) ?>">פתיחת טיוטה באנגלית ל-MCOHome</a>
+            <a class="button button--secondary" href="<?= portal_h($mailto) ?>">פתיחת עותק באנגלית ובסינית ל-MCOHome</a>
         </div>
     <?php endif; ?>
 
@@ -197,7 +198,7 @@ portal_nav('mcohome', $user);
         </details>
 
         <button type="submit" class="button button--primary button--wide mcohome-submit" id="mcohome-submit">שליחת דיווח לצוות</button>
-        <p class="form-note">הדיווח נשלח לאורן, אריק, שגיב, מוחמד ועוביידה. בנוסף נוצרת טיוטת פנייה באנגלית ל-MCOHome.</p>
+        <p class="form-note">הדיווח נשלח אוטומטית באנגלית ובסינית לצוות הפנימי ולקריסטין וצוות MCOHome. קישורי המדיה המאובטחים נשלחים לצוות הפנימי בלבד.</p>
     </form>
 </section>
 <style>
