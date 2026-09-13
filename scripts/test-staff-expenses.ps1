@@ -207,7 +207,7 @@ try {
     Invoke-PortalCurl "-o", $responseBody, "-b", $employeeCookies, "$baseUrl/staff-expenses/?tab=handovers" | Out-Null
     $handoverLandingHtml = Get-Content -Raw -Encoding utf8 $responseBody
     Assert-PortalTest ($handoverLandingHtml -match 'class="detail-card handover-awaiting-card"') "Tenant handover technician-step preview was not rendered before resident selection."
-    Assert-PortalTest ($handoverLandingHtml -match 'class="handover-field-preview"') "Tenant handover technician fields were not explained on the landing state."
+    Assert-PortalTest ($handoverLandingHtml -match '<ol class="handover-field-preview"' -and $handoverLandingHtml -match 'צילום קונטרולר וצילום לכל מפסק 9' -and $handoverLandingHtml -notmatch 'שני צילומי חובה') "Tenant handover steps were not rendered as a clear and accurate ordered list."
     Assert-PortalTest (([regex]::Matches($handoverLandingHtml, 'value="test-project"')).Count -eq 1) "The canonical Monday project was not rendered exactly once."
     Assert-PortalTest ($handoverLandingHtml -notmatch 'value="duplicate-project"') "Duplicate Monday project groups were rendered more than once."
     Assert-PortalTest ($handoverLandingHtml -notmatch 'value="(?:import-project|import-only|facebook-group|website-leads|topics|group_title)"') "Non-project Monday groups were exposed in the project selector."
