@@ -183,9 +183,15 @@
   </url>
   <url>
     <loc>https://i-feel.co.il/siemens-desigo-bms/</loc>
-    <lastmod>2026-09-11</lastmod>
+    <lastmod>2026-09-14</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://i-feel.co.il/articles/epbd-bacs-building-automation-desigo/</loc>
+    <lastmod>2026-09-14</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
   </url>
   <url>
     <loc>https://i-feel.co.il/structure-control/</loc>
@@ -339,7 +345,7 @@
   </url>
   <url>
     <loc>https://i-feel.co.il/articles/</loc>
-    <lastmod>2026-06-07</lastmod>
+    <lastmod>2026-09-14</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>  <url>
@@ -525,7 +531,7 @@
   </url>
   <url>
     <loc>https://i-feel.co.il/bms-retrofit/</loc>
-    <lastmod>2026-09-11</lastmod>
+    <lastmod>2026-09-14</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -800,4 +806,3 @@
     <priority>0.7</priority>
   </url>
 </urlset>
-
