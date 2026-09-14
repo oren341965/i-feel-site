@@ -27,6 +27,17 @@ Prioritize work by whether the operational loop is open, not by who sent the mes
 - `READY_UNSENT_DRAFT`: a ready customer or sales Gmail draft that has not been sent and has no newer reply or closing evidence. Render it `🟡` and treat it as the highest-priority stuck email follow-up exception for the run. This priority does not grant send authority.
 - Scan Gmail Drafts on every run, not only when a draft is new or changed. For every potentially actionable draft, inspect enough current thread state to determine whether it is still needed. A newer reply, completed action or verified closed loop makes the draft stale or superseded and therefore not actionable.
 
+## Owner digest: unsent drafts first
+
+Every human-facing digest shown to Oren must begin with the exact heading `טיוטות שכתבת ולא שלחת`, before inbox counts, routing summaries or other work. This is the first revenue-protection queue.
+
+- Include only drafts that pass the fresh `READY_UNSENT_DRAFT` check. Exclude a draft when a newer reply, completed action, opt-out, duplicate, closed loop or superseding draft is found.
+- Number the remaining drafts in priority order. Use verified deal value or stated commercial urgency when available; otherwise order by oldest actionable draft first. Never invent a value or urgency.
+- For each numbered draft, show the verified recipient, subject and the complete current draft body without truncation, followed by one separate action line: `שלח טיוטה <number>`.
+- The action line is a proposed command, not an automatic send. A scheduled or `REPORT_ONLY` run must never execute it. If Oren returns that exact line, re-read the draft and thread immediately, re-run recipient, mailbox, response, opt-out, cooldown and duplicate guards, and send only when the existing scope authorizes that exact message; otherwise request the required approval or return the blocker.
+- If no actionable draft remains, still render the heading followed by `אין טיוטות ממתינות`.
+- Full draft text is allowed only in the private owner-facing Codex result. Never copy it into Telemetry, the Management System audit, Vault, Bus, shared logs, email notifications or WhatsApp.
+
 ## Three-hour pass
 
 1. Scan `INBOX` from the checkpoint through the current time and scan the current `DRAFT` inventory on every run regardless of checkpoint. Page through all matching inbox results and all drafts needed to establish current open-loop state. Read the full thread when its context affects classification, loop state or the proposed response.
@@ -126,7 +137,7 @@ Prices, discounts, contractual or technical commitments, liability, complaints, 
 
 ## Run result
 
-Return a concise Hebrew summary with:
+Return a concise Hebrew summary. Begin with the private owner digest defined above, then include:
 
 - mailbox identity and time window;
 - messages scanned, labeled, marked read and archived;
