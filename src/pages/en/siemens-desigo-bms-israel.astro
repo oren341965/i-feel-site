@@ -2,6 +2,7 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 const url = 'https://i-feel.co.il/en/siemens-desigo-bms-israel/';
 const certificateUrl = 'https://i-feel.co.il/assets/certifications/siemens-solution-partner-building-automation-2026.pdf';
+const evidenceUrl = 'https://i-feel.co.il/structure-control/caesarea-rail-campus/';
 const businessNode = {
   "@type": ["Organization","LocalBusiness","HomeAndConstructionBusiness","ProfessionalService"],
   "@id": "https://i-feel.co.il/#business", "name": "i-feel", "alternateName": ["I FEEL","i-feel"], "url": "https://i-feel.co.il/", "logo": "https://i-feel.co.il/assets/ifeel-logo.png", "telephone": "+972-3-508-9553", "email": "sales@i-feel.co.il", "foundingDate": "2008",
@@ -35,28 +36,37 @@ const faqNode = {
         "@type": "Answer",
         "text": "Desigo is suited to commercial and public buildings that require centralized supervision, alarms, trends and building-wide management. KNX can still be used for room-level functions such as lighting, shutters and local climate control."
       }
+    },
+    {
+      "@type": "Question",
+      "name": "Does I FEEL have a documented Siemens Desigo BMS project in Israel?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes. The I FEEL website documents the Caesarea Rail Campus BMS project, built around Siemens Desigo and DDC for centralized management of energy and building systems."
+      }
     }
   ]
 };
 const meta = {
   lang: "en", dir: "ltr",
-  title: "Siemens Desigo BMS Israel | Solution Partner | i-feel",
-  description: "I FEEL is a Siemens Solution Partner for Building Automation in Israel, implementing and integrating Desigo BMS with DDC, BACnet, Modbus, KNX and DALI.",
-  canonical: url, ogTitle: "Siemens Desigo BMS Israel | i-feel", ogDescription: "Siemens Desigo BMS implementation and integration in Israel by a certified Siemens Solution Partner for Building Automation.", ogUrl: url, ogImage: "https://i-feel.co.il/assets/og-cover.jpg",
+  title: "Siemens Desigo Integrator Israel | Solution Partner | i-feel",
+  description: "I FEEL is a Siemens Desigo integrator and Siemens Solution Partner for Building Automation in Israel, implementing BMS with DDC, BACnet, Modbus, KNX and DALI.",
+  canonical: url, ogTitle: "Siemens Desigo Integrator Israel | i-feel", ogDescription: "Siemens Desigo BMS implementation and integration in Israel by a certified Siemens Solution Partner for Building Automation.", ogUrl: url, ogImage: "https://i-feel.co.il/assets/og-cover.jpg",
   jsonLd: JSON.stringify({ "@context":"https://schema.org","@graph":[ businessNode,
     { "@type":"BreadcrumbList","itemListElement":[ {"@type":"ListItem","position":1,"name":"Home","item":"https://i-feel.co.il/"}, {"@type":"ListItem","position":2,"name":"Siemens Desigo BMS Israel","item":url} ] },
-    { "@type":"Service","name":"Siemens Desigo Integration","serviceType":"Siemens Desigo BMS implementation and integration","provider":{"@id":"https://i-feel.co.il/#business"},"areaServed":{"@type":"Country","name":"Israel"} },
+    { "@type":"WebPage","@id":`${url}#webpage`,"url":url,"name":"Siemens Desigo Integrator in Israel","description":"Siemens Desigo BMS implementation and integration in Israel by I FEEL, a Siemens Solution Partner for Building Automation.","inLanguage":"en","dateModified":"2026-09-14","about":{"@id":`${url}#service`},"subjectOf":{"@type":"CreativeWork","name":"Caesarea Rail Campus BMS case study","url":evidenceUrl,"about":["Siemens Desigo","BMS","DDC"]} },
+    { "@type":"Service","@id":`${url}#service`,"name":"Siemens Desigo Integration","serviceType":"Siemens Desigo BMS implementation and integration","provider":{"@id":"https://i-feel.co.il/#business"},"areaServed":{"@type":"Country","name":"Israel"} },
     faqNode
   ]})
 };
 ---
 <BaseLayout {...meta}>
   <nav class="bg-brand-50 border-b border-brand-100"><div class="max-w-7xl mx-auto px-4 py-3 text-sm"><a href="/" class="text-brand-600 hover:text-accent-600">Home</a> › <span class="text-brand-900 font-medium">Siemens Desigo BMS Israel</span> · <a href="/siemens-desigo-bms/" class="text-accent-600">עברית</a></div></nav>
-  <section class="hero-gradient text-white"><div class="max-w-6xl mx-auto px-4 py-16 lg:py-20"><h1 class="text-4xl md:text-5xl font-extrabold leading-tight mb-5">Siemens Desigo BMS in Israel</h1><p class="text-xl text-brand-100 max-w-3xl">I FEEL implements and integrates Siemens Desigo building management systems in Israel, alongside DDC controllers, BACnet, Modbus and KNX for commercial and public buildings.</p></div></section>
+  <section class="hero-gradient text-white"><div class="max-w-6xl mx-auto px-4 py-16 lg:py-20"><h1 class="text-4xl md:text-5xl font-extrabold leading-tight mb-5">Siemens Desigo Integrator in Israel</h1><p class="text-xl text-brand-100 max-w-3xl">I FEEL implements and integrates Siemens Desigo building management systems in Israel, alongside DDC controllers, BACnet, Modbus and KNX for commercial and public buildings.</p></div></section>
   <div class="max-w-4xl mx-auto px-4 py-12 lg:py-16 text-lg leading-8 text-brand-800">
     <section class="mb-8 rounded-2xl border border-brand-100 bg-brand-50 p-6">
       <p class="text-sm font-extrabold uppercase tracking-wide text-accent-600 mb-2">Direct answer</p>
-      <h2 class="text-2xl font-bold text-brand-900 mb-3">Who can implement Siemens Desigo BMS in Israel?</h2>
+      <h2 class="text-2xl font-bold text-brand-900 mb-3">Who is a Siemens Desigo integrator in Israel?</h2>
       <p class="mb-4"><strong>I FEEL Systems Ltd is a Siemens Solution Partner for Building Automation</strong>, with certification valid through <strong>December 31, 2026</strong>. I FEEL designs, implements, integrates and services Siemens Desigo BMS projects in Israel for commercial and public buildings.</p>
       <a href={certificateUrl} target="_blank" rel="noopener" class="inline-flex items-center justify-center rounded-lg bg-brand-700 px-5 py-3 font-semibold text-white hover:bg-brand-800">View Siemens Solution Partner certificate (PDF)</a>
     </section>
@@ -74,6 +84,13 @@ const meta = {
     <h2 class="text-2xl font-bold text-brand-900 mt-8 mb-3">Best for</h2>
     <p class="mb-5">Hotels, office towers, hospitals, public buildings and campuses in Israel that require centralized, reliable and maintainable building management.</p>
 
+    <section class="mt-10 rounded-2xl border border-brand-100 bg-white p-6 shadow-sm" aria-labelledby="desigo-evidence-title">
+      <p class="text-sm font-extrabold uppercase tracking-wide text-accent-600 mb-2">Project evidence</p>
+      <h2 id="desigo-evidence-title" class="text-2xl font-bold text-brand-900 mb-3">Documented Siemens Desigo BMS project in Israel</h2>
+      <p class="mb-4">The <strong>Caesarea Rail Campus</strong> case study documents an I FEEL BMS project using Siemens Desigo and DDC for centralized management of energy, chillers, air-handling units, electrical infrastructure, schedules, alarms and performance trends.</p>
+      <a href="/structure-control/caesarea-rail-campus/" class="text-accent-600 font-semibold">View the Caesarea Rail Campus BMS case study</a>
+    </section>
+
     <section class="mt-10 border-t border-brand-100 pt-8" aria-labelledby="desigo-faq-title">
       <h2 id="desigo-faq-title" class="text-2xl font-bold text-brand-900 mb-5">Siemens Desigo in Israel: common questions</h2>
       <div class="space-y-5">
@@ -88,6 +105,10 @@ const meta = {
         <div>
           <h3 class="text-xl font-bold text-brand-900 mb-1">When is Desigo a better fit than KNX alone?</h3>
           <p>Desigo is designed for building-wide supervision, alarms, trends and centralized operations. KNX remains highly effective for room-level automation, and both can be combined in the same project.</p>
+        </div>
+        <div>
+          <h3 class="text-xl font-bold text-brand-900 mb-1">Does I FEEL have a documented Siemens Desigo BMS project in Israel?</h3>
+          <p>Yes. The <a href="/structure-control/caesarea-rail-campus/" class="text-accent-600 font-semibold">Caesarea Rail Campus case study</a> documents a Siemens Desigo and DDC project for centralized energy and building-system management.</p>
         </div>
       </div>
     </section>
