@@ -21,6 +21,7 @@ function liveSourceSystems(overrides = {}) {
   return {
     dropbox: { status: 'live', observedAt: NOW },
     gmail: { status: 'live', observedAt: NOW },
+    monday: { status: 'live', observedAt: NOW },
     ...overrides,
   };
 }
@@ -303,17 +304,19 @@ test('operations manager routes project equipment without claiming a current inv
   const manager = await readFile(resolve(REPO, '.claude/skills/ai-operations-manager/SKILL.md'), 'utf8');
   const worker = await readFile(resolve(REPO, '.claude/skills/project-equipment-control/SKILL.md'), 'utf8');
   assert.match(manager, /`project-equipment-control`/);
+  assert.match(manager, /Dropbox, Gmail, and Monday/);
   assert.match(worker, /legacy 2022 inventory sheet/);
+  assert.match(worker, /all three must be live/);
   assert.match(worker, /contains no writer/);
 });
 
-test('equipment reconciliation requires both Dropbox and Gmail source-of-truth systems', () => {
+test('equipment reconciliation requires Dropbox, Gmail, and Monday source-of-truth systems', () => {
   const sourceCoverage = Object.fromEntries(['requirements', 'orders', 'receipts', 'stockMovements', 'installation']
     .map((key) => [key, { status: 'live', observedAt: NOW }]));
   const result = reconcileProjectEquipment({
     schemaVersion: 1,
     capturedAt: NOW,
-    sourceSystems: liveSourceSystems({ gmail: { status: 'blocked', observedAt: null } }),
+    sourceSystems: liveSourceSystems({ monday: { status: 'blocked', observedAt: null } }),
     sourceCoverage,
     projects: [{ projectRef: '3249720207:104', closing: {}, equipment: [{
       lineRef: 'quote-5:line-1', requiredQty: 1, orderedQty: 1, receivedQty: 1,
@@ -321,6 +324,6 @@ test('equipment reconciliation requires both Dropbox and Gmail source-of-truth s
     }] }],
   });
 
-  assert.deepEqual(result.missingSourceSystems, ['gmail']);
+  assert.deepEqual(result.missingSourceSystems, ['monday']);
   assert.equal(result.projects[0].state, 'SOURCE_GAP');
 });
