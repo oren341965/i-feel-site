@@ -1,0 +1,7 @@
+interface:
+  display_name: "I Feel AI Accounting Manager"
+  short_description: "Orchestrates I Feel accounting workflows"
+  default_prompt: "Use $ai-accounting-manager to coordinate an I Feel accounting workflow under its approval boundaries."
+
+policy:
+  allow_implicit_invocation: true
