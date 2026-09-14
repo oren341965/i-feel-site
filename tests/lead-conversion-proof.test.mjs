@@ -11,12 +11,22 @@ const files = {
 
 test('Monday success creates a server-side, expiring conversion proof', async () => {
   const source = await readFile(files.lead, 'utf8');
+  assert.match(source, /MONDAY_API_VERSION\s*=\s*'2026-07'/);
+  assert.doesNotMatch(source, /API-Version:\s*2025-01/);
   assert.match(source, /\$itemId\s*=.*create_item.*id/s);
   assert.match(source, /ads_conversion_proof/);
   assert.match(source, /random_bytes\(32\)/);
   assert.match(source, /redirect_back\('sent',\s*\$conversionProof\)/);
   assert.match(source, /redirect_back\('sent-mail'\)/);
   assert.doesNotMatch(source, /redirect_back\('sent-mail',/);
+});
+
+test('a failed Monday update cannot downgrade an already-created lead to email fallback', async () => {
+  const source = await readFile(files.lead, 'utf8');
+  const itemCreated = source.indexOf("if (!$itemId)");
+  const updateGuard = source.indexOf('catch (Throwable $updateError)');
+  const proofCreated = source.indexOf('$conversionProof = bin2hex');
+  assert.ok(itemCreated >= 0 && updateGuard > itemCreated && proofCreated > updateGuard);
 });
 
 test('conversion proof is session-bound and consumed once', async () => {
