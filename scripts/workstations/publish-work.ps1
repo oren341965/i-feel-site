@@ -102,7 +102,7 @@ if (-not $npm) {
 }
 
 if (-not (Test-Path -LiteralPath (Join-Path $RepositoryPath "node_modules"))) {
-    & $npm.Source --prefix $RepositoryPath ci --legacy-peer-deps
+    & $npm.Source --prefix $RepositoryPath ci
     if ($LASTEXITCODE -ne 0) {
         throw "npm ci failed."
     }

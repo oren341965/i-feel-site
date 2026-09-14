@@ -14,10 +14,14 @@ validation job still used Node 20 and the deployment job used Node 24.
 ## Decision
 
 - Upgrade Astro to 7.3.2 and Sharp to 0.35.4.
-- Keep Tailwind 3 and `@astrojs/tailwind` temporarily. This preserves the
-  current styling contract; Tailwind 4 migration is a separate change.
+- Keep Tailwind 3 through its standard PostCSS plugin and remove the deprecated
+  `@astrojs/tailwind` integration, whose peer range ends at Astro 5. This
+  preserves the current styling contract; Tailwind 4 migration is a separate
+  change.
 - Standardize development, validation and deployment on Node 24.
 - Declare the Node 24 runtime in both `package.json` and `.nvmrc`.
+- Remove the legacy peer-dependency bypass from CI and the safe publication
+  helper so a future incompatible dependency fails closed during installation.
 - Require the existing full static build and project test suites before this
   change can be considered for production.
 - Keep first-entry attribution query-free. Campaign parameters and click IDs
