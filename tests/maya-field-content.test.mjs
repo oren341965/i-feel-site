@@ -110,6 +110,13 @@ test('Maya standing communication scope is bounded and scheduled Gmail maintenan
   assert.match(emailTask, /EXTERNAL_ACTIONS=0/);
   assert.match(emailTask, /must not request local-file `Edit` access/);
   assert.match(emailTask, /alter Monday/);
+  assert.match(email, /טיוטות שכתבת ולא שלחת/);
+  assert.match(emailTask, /טיוטות שכתבת ולא שלחת/);
+  assert.match(email, /שלח טיוטה <number>/);
+  assert.match(emailTask, /שלח טיוטה <number>/);
+  assert.match(email, /private owner-facing Codex result/);
+  assert.match(emailTask, /private owner-facing Codex result/);
+  assert.match(emailTask, /this `REPORT_ONLY` run must not execute it/);
   assert.match(emailTask, /%USERPROFILE%\\\.codex\\skills\\maya-email-maintenance\\SKILL\.md/);
   assert.doesNotMatch(emailTask, /%USERPROFILE%\\\.claude\\skills/);
   assert.doesNotMatch(emailTask, /verify every label, archive or allowed send/i);

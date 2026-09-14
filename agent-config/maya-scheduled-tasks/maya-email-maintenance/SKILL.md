@@ -20,9 +20,10 @@ On every registered scheduler invocation, read `%USERPROFILE%\.codex\skills\maya
   - a failed GitHub Actions run that is not followed by verified recovery is `OPEN_OPERATIONAL_LOOP` and remains open until a later successful run or explicit resolution is verified;
   - a ready customer or sales Gmail draft that has not been sent, and for which no newer reply or closing evidence exists, is `READY_UNSENT_DRAFT`; this priority never grants permission to send it.
 - For every draft considered actionable, read enough of its target thread and current verified state to detect a newer response, completed action or closed loop.
+- In the private owner-facing Codex result, place `טיוטות שכתבת ולא שלחת` first. For every current `READY_UNSENT_DRAFT`, show its verified recipient, subject and complete draft body without truncation, then add `שלח טיוטה <number>` on a separate line. If none remain, show `אין טיוטות ממתינות`. The send line is only a proposed command: this `REPORT_ONLY` run must not execute it, and any later send requires a fresh re-read and all canonical send gates.
 - Apply `SALES_ELIGIBILITY_FILTER` before counting a sales item as actionable.
 - Never infer that a person did not answer from one Gmail thread. Customer-specific reminder work still requires the cross-channel checks defined by its owning workflow.
-- Output only aggregate counts and bounded blocker codes from the ordinary report-only pass. Do not include names, addresses, subjects, bodies, message/thread IDs, attachment names, or customer data in scheduler logs.
+- Keep scheduler logs, Telemetry and the Management System audit limited to aggregate counts and bounded blocker codes. Do not include names, addresses, subjects, bodies, message/thread IDs, attachment names or customer data in those shared records. The complete draft text exception applies only to the private owner-facing Codex result above.
 - The ordinary report-only pass must not request local-file `Edit` access.
 
 ## Existing Maya task queue
@@ -72,6 +73,6 @@ The professional-content exception does not authorize paid advertising changes, 
 
 ## Base run result
 
-When no professional-content control message is executed, return exactly: `REPORT_ONLY_STATUS`, `MAILBOX_VERIFIED`, `WINDOW`, `SCANNED_COUNT`, aggregate route counts, `OPEN_LOOP_COUNT`, `CLOSED_LOOP_COUNT`, `READY_UNSENT_DRAFT_COUNT`, `OPEN_OPERATIONAL_LOOP_COUNT`, `ACTIONABLE_SALES_COUNT`, `BLOCKERS`, `EXTERNAL_ACTIONS=0`, and `NEXT_RUN`.
+When no professional-content control message is executed, return the private `טיוטות שכתבת ולא שלחת` section first, followed by exactly: `REPORT_ONLY_STATUS`, `MAILBOX_VERIFIED`, `WINDOW`, `SCANNED_COUNT`, aggregate route counts, `OPEN_LOOP_COUNT`, `CLOSED_LOOP_COUNT`, `READY_UNSENT_DRAFT_COUNT`, `OPEN_OPERATIONAL_LOOP_COUNT`, `ACTIONABLE_SALES_COUNT`, `BLOCKERS`, `EXTERNAL_ACTIONS=0`, and `NEXT_RUN`.
 
 When a professional-content control message is executed, return its bounded workflow result in addition to the base report-only summary. Never report a send as complete unless Gmail sent state and the required Monday post-send state are verified after the action.
