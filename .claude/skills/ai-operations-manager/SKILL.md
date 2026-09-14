@@ -12,6 +12,7 @@ Act as I Feel's parent operations orchestrator. Identify the requested operation
 - `upload-delivery-notes-to-dropbox` — display name `העלאת תעודות משלוח לדרופבוקס`. It owns the complete delivery-note lifecycle: bounded intake from the designated WhatsApp group and office email, original-file retrieval, extraction, exact `מפתח` routing, duplicate and multi-part control, creation of a missing canonical delivery-note child folder under a verified existing project, routine no-overwrite Dropbox upload, verification, historical reconciliation, unresolved-note follow-up, and the completion update to Oren and Ora.
 - `procurement-po-tracker` — display name `מעקב הזמנות רכש`. It owns the read-only purchase-order → supply evidence → supplier-invoice reconciliation from the procurement mailbox.
 - `project-equipment-control` — display name `בקרת ציוד לפרויקט`. It owns the read-only project-level chain from approved requirement through ordered, received, issued, installed and returned quantities, plus project-closing evidence. Dropbox, Gmail, and Monday are its mandatory source-of-truth systems, with Monday authoritative for the operational project record rather than a substitute for line-level quantity evidence. It fails closed when one of those systems or the current stock-movement evidence is missing.
+- `daily-management-bi` — display name `דוח BI ניהולי יומי`. It owns the read-only reconciliation of fresh sanitized manager snapshots into one daily executive brief. It never reads raw customer rows and never grants authority for a recommended action.
 
 Add another worker only when it owns a distinct operations workflow with no overlapping source of truth.
 
@@ -21,8 +22,9 @@ Add another worker only when it owns a distinct operations workflow with no over
 2. For any delivery note, WhatsApp delivery-note group, `office@i-feel.co.il` delivery-note intake, Dropbox filing, missing delivery-note folder, `מפתח` routing, historical delivery-note audit, incomplete/multi-page delivery note, signed delivery-note follow-up, or related exception request, load and follow `upload-delivery-notes-to-dropbox`.
 3. For purchase-order status, supply evidence, missing supplier invoices or silent-supplier requests, load and follow `procurement-po-tracker`.
 4. For equipment required, ordered, received, issued, installed, returned, still missing, or project-closing completeness, load and follow `project-equipment-control`.
-5. When a request spans multiple worker skills, keep each worker's evidence, approval boundary, and result separate, then reconcile them in one manager summary.
-6. If no owned skill covers the request, report the capability gap. Do not improvise a new production workflow inside the manager.
+5. For the daily cross-company BI brief, management score, source coverage, health colors, cross-domain changes, priority-owner routing or consolidated approval queue, load and follow `daily-management-bi`.
+6. When a request spans multiple worker skills, keep each worker's evidence, approval boundary, and result separate, then reconcile them in one manager summary.
+7. If no owned skill covers the request, report the capability gap. Do not improvise a new production workflow inside the manager.
 
 ## Delivery-note delegation contract
 
@@ -82,4 +84,4 @@ remain zero/false. The reporter does not create or enable a scheduler; `--dry-ru
 
 Report the worker skill used, bounded source window, source coverage, observed facts, deterministic decisions, filed count, duplicate count, folders created, incomplete/multi-part count, unresolved exceptions, approvals requested or received, completed mutations, verification evidence, completion-update status, failures, and uncovered capabilities.
 
-For skill maintenance, run `npm run test:ai-managers`, `npm run build`, `quick_validate.py .claude/skills/ai-operations-manager`, `quick_validate.py .claude/skills/upload-delivery-notes-to-dropbox`, `quick_validate.py .claude/skills/project-equipment-control`, `quick_validate.py .claude/skills/management-system-telemetry`, and `git diff --check`.
+For skill maintenance, run `npm run test:ai-managers`, `npm run build`, `quick_validate.py .claude/skills/ai-operations-manager`, `quick_validate.py .claude/skills/upload-delivery-notes-to-dropbox`, `quick_validate.py .claude/skills/project-equipment-control`, `quick_validate.py .claude/skills/daily-management-bi`, `quick_validate.py .claude/skills/management-system-telemetry`, and `git diff --check`.
