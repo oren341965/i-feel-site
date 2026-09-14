@@ -8,6 +8,10 @@ description: Build, update, audit, and summarize the monthly i-feel expense file
 נהל את קובץ Google Sheets הפעיל **הוצאות איי פיל**:
 `https://docs.google.com/spreadsheets/d/1_iPaxL7UEwwtoljJ1Y10hrFhNDcrhxcCEzZ3oJPN270`
 
+הסקיל הוא עובד תחת `ai-accounting-manager` כאשר הבקשה משלבת הנהלת חשבונות, תכתובת, חשבוניות או דוח כספי. הניתוב דרך המנהל אינו מרחיב הרשאות כתיבה או שליחה.
+
+כאשר קיימת זהות שירות מצומצמת ומורשית, דווח סטטוס ומונים מחוטאים בלבד דרך `management-system-telemetry` תחת היכולת `expense-file`. אין לכלול בדיווח שורות כספיות, ספקים, חשבונות, אסמכתאות או מידע אישי.
+
 קרא את [מפת המקורות](references/source-map.md) לפני איסוף או עדכון חודשי.
 
 ## תהליך חודשי
