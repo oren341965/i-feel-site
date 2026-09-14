@@ -62,4 +62,3 @@ average, fixed health color, per-domain aggregate state, compatible deltas,
 priority owner routes and approval codes. It never emits raw rows, names,
 addresses, contact details, item IDs, transaction IDs, message bodies or free
 text from a source.
-

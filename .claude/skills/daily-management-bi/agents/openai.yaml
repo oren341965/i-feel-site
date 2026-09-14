@@ -2,4 +2,3 @@ interface:
   display_name: "I Feel Daily Management BI"
   short_description: "Build the sanitized daily executive BI brief"
   default_prompt: "Use $daily-management-bi under $ai-operations-manager to build today's read-only I Feel executive BI brief from fresh registered aggregate snapshots."
-

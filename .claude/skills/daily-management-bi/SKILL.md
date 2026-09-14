@@ -58,4 +58,3 @@ the underlying action.
 Run `node --test tests/daily-management-bi.test.mjs`,
 `npm run test:ai-managers`, `npm run build`, the Skill quick validator, and
 `git diff --check` before publication.
-
