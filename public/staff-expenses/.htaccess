@@ -16,15 +16,20 @@ DirectoryIndex index.php
 </IfModule>
 
 <IfModule mod_headers.c>
-  Header always set X-Robots-Tag "noindex, nofollow, noarchive, nosnippet, noimageindex"
+  Header always set X-Robots-Tag "noindex, nofollow,noarchive,nosnippet,noimageindex"
   Header always set Cache-Control "no-store, private, max-age=0, must-revalidate"
   Header always set X-Content-Type-Options "nosniff"
   Header always set X-Frame-Options "DENY"
   Header always set Referrer-Policy "no-referrer"
 </IfModule>
 
-LimitRequestBody 67108864
+<IfModule mod_mime.c>
+  AddType application/manifest+json .webmanifest
+</IfModule>
 
+# Allows a one-minute field video plus the form payload. PHP applies the
+# tighter per-file and total limits from .user.ini and application code.
+LimitRequestBody 262144000
 
 # php -- portal handler: keep the portal on modern PHP even if the
 # site-root .htaccess handler block is stripped by a main-site deploy.
