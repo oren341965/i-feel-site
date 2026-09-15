@@ -2,6 +2,7 @@ import { createHash, createSign } from 'node:crypto';
 import { mkdir, readFile, rename, writeFile } from 'node:fs/promises';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { loadDecisionReadiness } from './decision-readiness.mjs';
 
 import {
   GOOGLE_ADS_API_VERSION,
@@ -412,12 +413,23 @@ export async function runDailyGoogleAdsDecision({ configPath, mode = 'preview', 
     return { schemaVersion: 1, mode: 'BOUNDED_AUTONOMOUS', maturity: 1, status: 'ALREADY_COMPLETED', localDate, writes: 0 };
   }
   const inputs = await collectDecisionInputs(session);
+  const readiness = await loadDecisionReadiness(session.config, { now });
   const decision = chooseDailyGoogleAdsDecision({
-    ...inputs, policy: session.policy, gates: session.config.marketingDecision.gates, now,
+    ...inputs, policy: session.policy, gates: readiness.gates, now,
   });
+  // Human route selection is separately date-bound and retains its existing approval rules.
+  // Autonomous writes may never rely on untimed hand-edited config booleans.
+  if (decision.selectionMode !== 'HUMAN_APPROVED_ROUTE' && readiness.status !== 'READY') {
+    const attributionOnly = decision.action === 'ADD_EXACT_CAMPAIGN_NEGATIVE'
+      && readiness.blockers.every((code) => code.startsWith('ATTRIBUTION'));
+    if (!attributionOnly) {
+      decision.status = 'NO_SAFE_CHANGE';
+      decision.blockers = [...new Set([...(decision.blockers ?? []), ...readiness.blockers])];
+    }
+  }
   const decisionFingerprint = fingerprint(decision);
   if (mode === 'preview' || decision.status !== 'DECIDED') {
-    return { schemaVersion: 1, mode: mode.toUpperCase(), maturity: 1, decision, decisionFingerprint, writes: 0 };
+    return { schemaVersion: 1, mode: mode.toUpperCase(), maturity: 1, decision, readiness, decisionFingerprint, writes: 0 };
   }
   if (decision.action === 'REALLOCATE_DAILY_BUDGET') await applyBudgetDecision(session, decision);
   else if (decision.action === 'ADD_EXACT_CAMPAIGN_NEGATIVE') await applyNegativeDecision(session, decision);

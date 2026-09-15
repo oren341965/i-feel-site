@@ -107,6 +107,12 @@
     "minimumNegativeSpendMicros": 75000000,
     "approvedExactNegativeTerms": [],
     "approvedBudgetTransfers": [],
+    "evidenceFiles": {
+      "salesAnalysis": null,
+      "attribution": null,
+      "tracking": null,
+      "capacity": null
+    },
     "gates": {
       "trackingTrusted": false,
       "capacityStatus": "CAPACITY_THRESHOLD_MISSING",
