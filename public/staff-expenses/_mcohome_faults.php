@@ -1,9 +1,10 @@
 <?php
 declare(strict_types=1);
 
-const MCOHOME_MAX_FILES = 5;
-const MCOHOME_MAX_FILE_BYTES = 30 * 1024 * 1024;
-const MCOHOME_MAX_TOTAL_BYTES = 60 * 1024 * 1024;
+const MCOHOME_MAX_FILES = 6;
+const MCOHOME_MAX_FILE_BYTES = 140 * 1024 * 1024;
+const MCOHOME_MAX_TOTAL_BYTES = 220 * 1024 * 1024;
+const MCOHOME_EMAIL_ATTACHMENT_MAX_BYTES = 12 * 1024 * 1024;
 
 function mcohome_options(): array
 {
@@ -51,6 +52,15 @@ function mcohome_new_event_id(): string
     return 'MCO-' . date('Ymd-His') . '-' . strtoupper(bin2hex(random_bytes(3)));
 }
 
+function mcohome_resolve_event_id(string $candidate): string
+{
+    $candidate = strtoupper(trim($candidate));
+    if ($candidate !== '' && preg_match('/^MCO-\d{8}-\d{6}-[A-F0-9]{6}$/', $candidate)) {
+        return $candidate;
+    }
+    return mcohome_new_event_id();
+}
+
 function mcohome_event_dir(string $eventId): string
 {
     if (!preg_match('/^MCO-\d{8}-\d{6}-[A-F0-9]{6}$/', $eventId)) {
@@ -87,11 +97,11 @@ function mcohome_save_media(string $eventId, array $files): array
         }
         $size = (int) ($file['size'] ?? 0);
         if ($size <= 0 || $size > MCOHOME_MAX_FILE_BYTES) {
-            throw new RuntimeException('כל תמונה או סרטון חייבים להיות עד 30MB.');
+            throw new RuntimeException('כל תמונה או סרטון חייבים להיות עד 140MB.');
         }
         $total += $size;
         if ($total > MCOHOME_MAX_TOTAL_BYTES) {
-            throw new RuntimeException('סך המדיה בדיווח חייב להיות עד 60MB.');
+            throw new RuntimeException('סך המדיה בדיווח חייב להיות עד 220MB.');
         }
         $tmp = (string) ($file['tmp_name'] ?? '');
         if ($tmp === '' || !is_uploaded_file($tmp)) {
@@ -108,7 +118,15 @@ function mcohome_save_media(string $eventId, array $files): array
             throw new RuntimeException('לא ניתן היה לשמור את המדיה.');
         }
         @chmod($target, 0600);
-        $saved[] = ['stored' => $stored, 'name' => $original, 'mime' => $mime, 'size' => $size];
+        $saved[] = [
+            'stored' => $stored,
+            'name' => $original,
+            'mime' => $mime,
+            'size' => $size,
+            'dropboxStatus' => 'pending',
+            'dropboxPath' => '',
+            'dropboxUrl' => '',
+        ];
     }
     return $saved;
 }
@@ -134,6 +152,11 @@ function mcohome_load_record(string $eventId): ?array
     return $record === [] ? null : $record;
 }
 
+function mcohome_media_path(string $eventId, array $media): string
+{
+    return mcohome_event_dir($eventId) . DIRECTORY_SEPARATOR . 'media' . DIRECTORY_SEPARATOR . (string) ($media['stored'] ?? '');
+}
+
 function mcohome_media_url(string $eventId, int $index): string
 {
     return portal_public_origin() . portal_base_path() . 'mcohome-media.php?id=' . rawurlencode($eventId) . '&f=' . $index;
@@ -141,7 +164,10 @@ function mcohome_media_url(string $eventId, int $index): string
 
 function mcohome_internal_recipients(): array
 {
-    $defaults = ['oren@i-feel.co.il', 'support@i-feel.co.il', 'sagiv@i-feel.co.il', 'mohamad@i-feel.co.il', 'ovaide@i-feel.co.il'];
+    $defaults = [
+        'oren@i-feel.co.il', 'support@i-feel.co.il', 'sagiv@i-feel.co.il',
+        'mohamad@i-feel.co.il', 'ovaide@i-feel.co.il', 'arik@i-feel.co.il',
+    ];
     if (defined('MCOHOME_FAULT_INTERNAL_RECIPIENTS')) {
         $configured = constant('MCOHOME_FAULT_INTERNAL_RECIPIENTS');
         if (is_string($configured)) {
@@ -168,13 +194,267 @@ function mcohome_translate_choice(string $value): string
     return $map[$value] ?? $value;
 }
 
+function mcohome_translate_choice_cn(string $value): string
+{
+    $map = [
+        'תאורה בודד'=>'单路灯光开关','תאורה כפול'=>'双路灯光开关','3 לחצנים'=>'三键开关','תריס'=>'卷帘开关','מפסק 9'=>'九键开关','דימר Z-Wave 300W'=>'Z-Wave 300W 调光器','אחר'=>'其他',
+        '6 תאורה'=>'6路照明输出','3 תריסים'=>'3路卷帘','2 תריסים + 2 תאורה'=>'2路卷帘 + 2路照明','תריס 1 + 2 תאורה'=>'1路卷帘 + 2路照明',
+        'ממסר נדבק'=>'继电器粘连','לא נדלק'=>'无法开启','לא נכבה'=>'无法关闭','לא מגיב'=>'无响应','תריס לא עובד'=>'卷帘无法工作','תריס עובד רק לכיוון אחד'=>'卷帘只能单向运行','יציאת תריס נשרפה'=>'卷帘输出烧毁','קפיצת תאורה'=>'灯光亮度跳变','הבהוב / Flickering'=>'闪烁','דימור לא חלק'=>'调光不平滑','לא מגיע ל-100%'=>'无法达到100%','נכבה בעוצמה נמוכה'=>'低亮度时关闭','זמזום'=>'异响/嗡鸣','עומס יתר'=>'过载','התחממות חריגה'=>'异常发热','הפסקת פעולה לסירוגין'=>'间歇性停止工作','הפסקת פעולה ללא סיבה ברורה'=>'无明确原因停止工作','לא ניתן לבצע Inclusion'=>'无法加入网络','Inclusion מתחיל ולא מסתיים'=>'加入网络开始但无法完成','Dead / Failed Node'=>'失效节点','תקשורת Z-Wave לסירוגין'=>'Z-Wave 通信间歇异常','Status לא חוזר לקונטרולר'=>'状态未回传控制器','בעיית Range / Mesh'=>'距离/网状网络问题','נזק פיזי'=>'物理损坏',
+    ];
+    return $map[$value] ?? $value;
+}
+
+function mcohome_normalize_key(string $value): string
+{
+    return strtoupper(preg_replace('/\s+/', '', trim($value)) ?? trim($value));
+}
+
+function mcohome_existing_records(): array
+{
+    $pattern = mcohome_storage_root()
+        . DIRECTORY_SEPARATOR . '*'
+        . DIRECTORY_SEPARATOR . '*'
+        . DIRECTORY_SEPARATOR . 'MCO-*'
+        . DIRECTORY_SEPARATOR . 'metadata.json';
+    $files = glob($pattern) ?: [];
+    $records = [];
+    foreach ($files as $file) {
+        $record = portal_json_read($file);
+        if ($record !== []) {
+            $records[] = $record;
+        }
+    }
+    return $records;
+}
+
+function mcohome_apply_recurrence(array $record): array
+{
+    $model = mcohome_normalize_key((string) ($record['model'] ?? ''));
+    $fault = trim((string) ($record['faultType'] ?? ''));
+    $device = trim((string) ($record['deviceType'] ?? ''));
+    $serial = mcohome_normalize_key((string) ($record['serialNumber'] ?? ''));
+    $prior = 0;
+    $sameSerial = false;
+    foreach (mcohome_existing_records() as $existing) {
+        if (($existing['eventId'] ?? '') === ($record['eventId'] ?? '')) {
+            continue;
+        }
+        $existingModel = mcohome_normalize_key((string) ($existing['model'] ?? ''));
+        $sameModel = $model !== '' && $existingModel !== '' && $model === $existingModel;
+        $sameFallback = $model === '' && $existingModel === '' && (string) ($existing['deviceType'] ?? '') === $device;
+        if (($sameModel || $sameFallback) && (string) ($existing['faultType'] ?? '') === $fault) {
+            $prior++;
+            $existingSerial = mcohome_normalize_key((string) ($existing['serialNumber'] ?? ''));
+            if ($serial !== '' && $existingSerial !== '' && $serial === $existingSerial) {
+                $sameSerial = true;
+            }
+        }
+    }
+    $repeatCount = $prior + 1;
+    $record['repeatCount'] = $repeatCount;
+    $record['recurring'] = $repeatCount >= 2;
+    $record['severity'] = ($sameSerial || $repeatCount >= 3) ? 'CRITICAL' : ($repeatCount >= 2 ? 'HIGH' : 'NORMAL');
+    return $record;
+}
+
+function mcohome_dropbox_config(): ?array
+{
+    $token = defined('MCOHOME_DROPBOX_ACCESS_TOKEN')
+        ? trim((string) constant('MCOHOME_DROPBOX_ACCESS_TOKEN'))
+        : trim((string) getenv('MCOHOME_DROPBOX_ACCESS_TOKEN'));
+    if ($token === '') {
+        return null;
+    }
+    $root = defined('MCOHOME_DROPBOX_ROOT_PATH')
+        ? trim((string) constant('MCOHOME_DROPBOX_ROOT_PATH'))
+        : trim((string) getenv('MCOHOME_DROPBOX_ROOT_PATH'));
+    if ($root === '') {
+        $root = '/Apps/MCOHome Service Calls';
+    }
+    $root = '/' . trim(str_replace('\\', '/', $root), '/');
+    return ['token' => $token, 'root' => $root];
+}
+
+function mcohome_dropbox_json_request(string $token, string $endpoint, array $payload): array
+{
+    if (!function_exists('curl_init')) {
+        return ['ok' => false, 'status' => 0, 'body' => null];
+    }
+    $ch = curl_init('https://api.dropboxapi.com/2/' . ltrim($endpoint, '/'));
+    curl_setopt_array($ch, [
+        CURLOPT_POST => true,
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_CONNECTTIMEOUT => 8,
+        CURLOPT_TIMEOUT => 25,
+        CURLOPT_HTTPHEADER => [
+            'Authorization: Bearer ' . $token,
+            'Content-Type: application/json',
+        ],
+        CURLOPT_POSTFIELDS => json_encode($payload, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES),
+    ]);
+    $raw = curl_exec($ch);
+    $status = (int) curl_getinfo($ch, CURLINFO_RESPONSE_CODE);
+    curl_close($ch);
+    $decoded = is_string($raw) ? json_decode($raw, true) : null;
+    return ['ok' => $status >= 200 && $status < 300, 'status' => $status, 'body' => $decoded];
+}
+
+function mcohome_dropbox_ensure_folder(string $token, string $path): void
+{
+    $parts = array_values(array_filter(explode('/', trim($path, '/')), static fn($part): bool => $part !== ''));
+    $current = '';
+    foreach ($parts as $part) {
+        $current .= '/' . $part;
+        $result = mcohome_dropbox_json_request($token, 'files/create_folder_v2', ['path' => $current, 'autorename' => false]);
+        if (!$result['ok'] && (int) $result['status'] !== 409) {
+            throw new RuntimeException('Dropbox folder creation failed.');
+        }
+    }
+}
+
+function mcohome_dropbox_upload(string $token, string $path, string $localPath): array
+{
+    if (!function_exists('curl_init') || !is_file($localPath)) {
+        return ['ok' => false, 'status' => 0, 'body' => null];
+    }
+    $contents = file_get_contents($localPath);
+    if ($contents === false) {
+        return ['ok' => false, 'status' => 0, 'body' => null];
+    }
+    $ch = curl_init('https://content.dropboxapi.com/2/files/upload');
+    curl_setopt_array($ch, [
+        CURLOPT_POST => true,
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_CONNECTTIMEOUT => 8,
+        CURLOPT_TIMEOUT => 120,
+        CURLOPT_HTTPHEADER => [
+            'Authorization: Bearer ' . $token,
+            'Content-Type: application/octet-stream',
+            'Dropbox-API-Arg: ' . json_encode(['path' => $path, 'mode' => 'overwrite', 'autorename' => false, 'mute' => true], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES),
+        ],
+        CURLOPT_POSTFIELDS => $contents,
+    ]);
+    $raw = curl_exec($ch);
+    $status = (int) curl_getinfo($ch, CURLINFO_RESPONSE_CODE);
+    curl_close($ch);
+    $decoded = is_string($raw) ? json_decode($raw, true) : null;
+    return ['ok' => $status >= 200 && $status < 300, 'status' => $status, 'body' => $decoded];
+}
+
+function mcohome_dropbox_shared_url(string $token, string $path): string
+{
+    $create = mcohome_dropbox_json_request($token, 'sharing/create_shared_link_with_settings', ['path' => $path]);
+    if ($create['ok'] && is_array($create['body'])) {
+        return (string) ($create['body']['url'] ?? '');
+    }
+    $list = mcohome_dropbox_json_request($token, 'sharing/list_shared_links', ['path' => $path, 'direct_only' => true]);
+    if ($list['ok'] && is_array($list['body'])) {
+        $links = $list['body']['links'] ?? [];
+        if (is_array($links) && isset($links[0]['url'])) {
+            return (string) $links[0]['url'];
+        }
+    }
+    return '';
+}
+
+function mcohome_sync_media_to_dropbox(array $record): array
+{
+    $config = mcohome_dropbox_config();
+    if ($config === null) {
+        $record['dropboxSync'] = ['ok' => false, 'status' => 'not_configured'];
+        return $record;
+    }
+    $date = preg_replace('/[^0-9]/', '', (string) ($record['discoveryDate'] ?? '')) ?: date('Ymd');
+    $year = substr($date, 0, 4) ?: date('Y');
+    $month = substr($date, 4, 2) ?: date('m');
+    $folder = $config['root'] . '/' . $year . '/' . $month . '/' . $record['eventId'];
+    try {
+        mcohome_dropbox_ensure_folder($config['token'], $folder);
+        $okCount = 0;
+        foreach (($record['media'] ?? []) as $index => $media) {
+            $name = preg_replace('/[^A-Za-z0-9._ -]/u', '_', (string) ($media['name'] ?? 'media')) ?: ('media-' . ($index + 1));
+            $destination = $folder . '/' . sprintf('%02d-', $index + 1) . $name;
+            $result = mcohome_dropbox_upload($config['token'], $destination, mcohome_media_path((string) $record['eventId'], $media));
+            if ($result['ok']) {
+                $url = mcohome_dropbox_shared_url($config['token'], $destination);
+                $record['media'][$index]['dropboxStatus'] = 'uploaded';
+                $record['media'][$index]['dropboxPath'] = $destination;
+                $record['media'][$index]['dropboxUrl'] = $url;
+                $okCount++;
+            } else {
+                $record['media'][$index]['dropboxStatus'] = 'failed';
+            }
+        }
+        $record['dropboxSync'] = [
+            'ok' => $okCount === count($record['media']),
+            'status' => $okCount === count($record['media']) ? 'completed' : 'partial',
+            'folder' => $folder,
+            'uploaded' => $okCount,
+            'total' => count($record['media']),
+        ];
+    } catch (Throwable $error) {
+        error_log('[mcohome dropbox] ' . $error->getMessage());
+        $record['dropboxSync'] = ['ok' => false, 'status' => 'error', 'folder' => $folder];
+    }
+    return $record;
+}
+
+function mcohome_email_attachments(array $record): array
+{
+    $attachments = [];
+    $total = 0;
+    foreach (($record['media'] ?? []) as $media) {
+        $mime = (string) ($media['mime'] ?? '');
+        $size = (int) ($media['size'] ?? 0);
+        if (strpos($mime, 'image/') !== 0 || $size <= 0 || $total + $size > MCOHOME_EMAIL_ATTACHMENT_MAX_BYTES) {
+            continue;
+        }
+        $path = mcohome_media_path((string) $record['eventId'], $media);
+        if (is_file($path)) {
+            $attachments[] = ['path' => $path, 'name' => (string) ($media['name'] ?? 'image'), 'mime' => $mime];
+            $total += $size;
+        }
+    }
+    return $attachments;
+}
+
+function mcohome_dropbox_lines(array $record): array
+{
+    $lines = [];
+    foreach (($record['media'] ?? []) as $index => $media) {
+        $url = trim((string) ($media['dropboxUrl'] ?? ''));
+        $path = trim((string) ($media['dropboxPath'] ?? ''));
+        if ($url !== '') {
+            $lines[] = ($index + 1) . '. ' . $url;
+        } elseif ($path !== '') {
+            $lines[] = ($index + 1) . '. Dropbox: ' . $path;
+        }
+    }
+    return $lines;
+}
+
 function mcohome_build_vendor_draft(array $record): array
 {
-    $subject = '[I Feel] MCOHome fault report ' . $record['eventId'] . ' - ' . ($record['model'] ?: mcohome_translate_choice($record['deviceType']));
+    $recurring = (bool) ($record['recurring'] ?? false);
+    $severity = (string) ($record['severity'] ?? 'NORMAL');
+    $prefix = $recurring ? '[RECURRING ' . $severity . '] ' : '';
+    $subject = $prefix . '[I Feel] MCOHome fault ' . $record['eventId'] . ' - ' . ($record['model'] ?: mcohome_translate_choice($record['deviceType']));
+    $dropboxLines = mcohome_dropbox_lines($record);
+    $evidenceEn = $dropboxLines === [] ? 'Evidence: stored in the secured I Feel fault record. Dropbox sync may still be pending.' : "Evidence / Dropbox:\r\n" . implode("\r\n", $dropboxLines);
+    $evidenceCn = $dropboxLines === [] ? '证据资料：已保存在 I Feel 安全故障记录中，Dropbox 同步可能仍在等待。' : "证据 / Dropbox：\r\n" . implode("\r\n", $dropboxLines);
+    $recurringEn = $recurring
+        ? 'IMPORTANT: This fault has now been recorded ' . (int) ($record['repeatCount'] ?? 2) . ' times. We require Root Cause Analysis, corrective action and confirmation that the permanent solution is implemented.'
+        : 'Please investigate this field fault and provide the recommended corrective action.';
+    $recurringCn = $recurring
+        ? '重要：该故障现已记录 ' . (int) ($record['repeatCount'] ?? 2) . ' 次。请提供根本原因分析、纠正措施，并确认永久解决方案。'
+        : '请调查该现场故障并提供建议的纠正措施。';
+
     $lines = [
         'Dear Kristin and MCOHome Technical Team,', '',
-        'Please review the following field fault reported by our technical team in Israel.', '',
+        $recurringEn, '',
+        'ENGLISH',
         'Event ID: ' . $record['eventId'],
+        'Severity: ' . $severity,
         'Date: ' . $record['discoveryDate'],
         'Project / customer: ' . ($record['project'] ?: 'Not provided'),
         'Technician: ' . $record['technician'],
@@ -188,27 +468,71 @@ function mcohome_build_vendor_draft(array $record): array
         'Connected load: ' . ($record['loadContext'] ?: 'Not provided'),
         'Controller: ' . ($record['controller'] ?: 'Not provided'),
         'Node ID: ' . ($record['nodeId'] ?: 'Not provided'),
-        'Action already taken: ' . ($record['actionTaken'] ?: 'None reported'), '',
-        'Technician short explanation (original Hebrew):',
-        $record['description'] ?: 'Not provided', '',
-        'Additional notes (original Hebrew):',
-        $record['notes'] ?: 'None', '',
-        'Photo / video evidence is attached to the I Feel fault record. Please let us know if you need the original files sent by email.', '',
+        'Action already taken: ' . ($record['actionTaken'] ?: 'None reported'),
+        'Technician note - Hebrew original: ' . ($record['description'] ?: 'Not provided'),
+        'Additional notes - Hebrew original: ' . ($record['notes'] ?: 'None'),
+        $evidenceEn, '',
+        '中文',
+        $recurringCn,
+        '事件编号: ' . $record['eventId'],
+        '严重级别: ' . $severity,
+        '日期: ' . $record['discoveryDate'],
+        '项目 / 客户: ' . ($record['project'] ?: '未提供'),
+        '技术人员: ' . $record['technician'],
+        '型号 / SKU: ' . ($record['model'] ?: '未提供'),
+        '序列号: ' . ($record['serialNumber'] ?: '未提供'),
+        '设备类型: ' . mcohome_translate_choice_cn($record['deviceType']),
+        '九键配置: ' . ($record['nineConfig'] !== '' ? mcohome_translate_choice_cn($record['nineConfig']) : '不适用'),
+        '通道 / 输出: ' . ($record['channel'] ?: '未提供'),
+        '故障: ' . mcohome_translate_choice_cn($record['faultType']),
+        '怀疑浪涌电流: ' . ($record['inrushSuspected'] ? '是' : '否'),
+        '连接负载: ' . ($record['loadContext'] ?: '未提供'),
+        '控制器: ' . ($record['controller'] ?: '未提供'),
+        'Node ID: ' . ($record['nodeId'] ?: '未提供'),
+        '已执行操作: ' . ($record['actionTaken'] ?: '未报告'),
+        '技术人员说明 - 希伯来语原文: ' . ($record['description'] ?: '未提供'),
+        '附加说明 - 希伯来语原文: ' . ($record['notes'] ?: '无'),
+        $evidenceCn, '',
+        'Please keep the Event ID in every reply so we can track this issue until final closure.',
+        '请在每次回复中保留事件编号，以便我们持续跟踪直到问题最终关闭。', '',
         'Best regards,', 'I Feel Technical Team', 'Israel',
     ];
     return ['to' => implode(',', mcohome_vendor_recipients()), 'subject' => $subject, 'body' => implode("\r\n", $lines)];
 }
 
-function mcohome_send_internal_notification(array $record): array
+function mcohome_send_vendor_notification(array $record): array
 {
     $draft = mcohome_build_vendor_draft($record);
+    $attachments = mcohome_email_attachments($record);
+    $results = [];
+    foreach (mcohome_vendor_recipients() as $email) {
+        try {
+            $results[$email] = portal_send_mail_with_attachments($email, $draft['subject'], $draft['body'], $attachments);
+        } catch (Throwable $error) {
+            error_log('[mcohome vendor notification] ' . $email . ' ' . $error->getMessage());
+            $results[$email] = false;
+        }
+    }
+    return $results;
+}
+
+function mcohome_send_internal_notification(array $record): array
+{
     $mediaLines = [];
     foreach (($record['media'] ?? []) as $index => $media) {
-        $mediaLines[] = ($index + 1) . '. ' . ($media['name'] ?? 'media') . ' - ' . mcohome_media_url($record['eventId'], $index);
+        $line = ($index + 1) . '. ' . ($media['name'] ?? 'media') . ' - ' . mcohome_media_url($record['eventId'], $index);
+        if (($media['dropboxUrl'] ?? '') !== '') {
+            $line .= ' | Dropbox: ' . $media['dropboxUrl'];
+        }
+        $mediaLines[] = $line;
     }
+    $vendorResults = $record['vendorNotificationResults'] ?? [];
+    $vendorOk = count(array_filter(is_array($vendorResults) ? $vendorResults : []));
     $body = implode("\r\n", [
         'דיווח תקלה חדש של MCOHome', '',
         'מספר אירוע: ' . $record['eventId'],
+        'חומרה: ' . ($record['severity'] ?? 'NORMAL'),
+        'תקלה חוזרת: ' . (($record['recurring'] ?? false) ? 'כן - מופע מספר ' . ($record['repeatCount'] ?? 2) : 'לא'),
         'טכנאי: ' . $record['technician'] . ' (' . $record['employeeEmail'] . ')',
         'לקוח / פרויקט: ' . ($record['project'] ?: 'לא צוין'),
         'דגם / מק״ט: ' . ($record['model'] ?: 'לא צוין'),
@@ -219,15 +543,18 @@ function mcohome_send_internal_notification(array $record): array
         'עומס / נסיבות: ' . ($record['loadContext'] ?: 'לא צוין'),
         'חשד Inrush: ' . ($record['inrushSuspected'] ? 'כן' : 'לא'),
         'קונטרולר: ' . ($record['controller'] ?: 'לא צוין'),
-        'Node ID: ' . ($record['nodeId'] ?: 'לא צוין'), '',
-        'מדיה מאובטחת (דורשת כניסה לאזור העובדים):',
+        'Node ID: ' . ($record['nodeId'] ?: 'לא צוין'),
+        'סטטוס: ' . ($record['unitStatus'] ?? 'פתוח'),
+        'נשלח ל-MCOHome: ' . (($record['sentToMcohome'] ?? false) ? 'כן' : 'לא') . ' (' . $vendorOk . '/' . count(mcohome_vendor_recipients()) . ')',
+        'Dropbox: ' . (($record['dropboxSync']['status'] ?? '') ?: 'לא הוגדר'), '',
+        'מדיה מאובטחת:',
         $mediaLines === [] ? 'לא צורפה מדיה' : implode("\r\n", $mediaLines), '',
-        'טיוטה באנגלית ל-MCOHome, לא נשלחה ליצרן:',
-        'To: ' . $draft['to'],
-        'Subject: ' . $draft['subject'], '',
-        $draft['body'],
+        ($record['recurring'] ?? false)
+            ? 'שימו לב: זו תקלה חוזרת. יש לנהל אותה כתקלה חמורה עד לקבלת Root Cause ופתרון קבוע מהיצרן.'
+            : 'התקלה נשארת פתוחה במעקב עד לקבלת פתרון וסגירה מתועדת מול היצרן.',
     ]);
-    $subject = 'MCOHome תקלה חדשה ' . $record['eventId'] . ' - ' . $record['faultType'];
+    $subjectPrefix = ($record['recurring'] ?? false) ? '[חוזרת ' . ($record['severity'] ?? 'HIGH') . '] ' : '';
+    $subject = $subjectPrefix . 'MCOHome תקלה ' . $record['eventId'] . ' - ' . $record['faultType'];
     $results = [];
     foreach (mcohome_internal_recipients() as $email) {
         try {
@@ -238,6 +565,78 @@ function mcohome_send_internal_notification(array $record): array
         }
     }
     return $results;
+}
+
+function mcohome_sheet_payload(array $record): array
+{
+    $dropboxLinks = [];
+    foreach (($record['media'] ?? []) as $media) {
+        if (($media['dropboxUrl'] ?? '') !== '') {
+            $dropboxLinks[] = $media['dropboxUrl'];
+        } elseif (($media['dropboxPath'] ?? '') !== '') {
+            $dropboxLinks[] = $media['dropboxPath'];
+        }
+    }
+    return [
+        'eventId' => $record['eventId'],
+        'discoveryDate' => $record['discoveryDate'],
+        'technician' => $record['technician'],
+        'employeeEmail' => $record['employeeEmail'],
+        'project' => $record['project'],
+        'serialNumber' => $record['serialNumber'],
+        'model' => $record['model'],
+        'deviceType' => $record['deviceType'],
+        'nineConfig' => $record['nineConfig'],
+        'channel' => $record['channel'],
+        'faultType' => $record['faultType'],
+        'description' => $record['description'],
+        'loadContext' => $record['loadContext'],
+        'inrushSuspected' => $record['inrushSuspected'],
+        'unitStatus' => $record['unitStatus'],
+        'actionTaken' => $record['actionTaken'],
+        'replaced' => $record['replaced'],
+        'replacementDate' => $record['replacementDate'] ?? '',
+        'sentToMcohome' => $record['sentToMcohome'],
+        'rma' => $record['rma'] ?? '',
+        'manufacturerConclusion' => $record['manufacturerConclusion'] ?? '',
+        'manufacturerCredit' => $record['manufacturerCredit'] ?? '',
+        'notes' => $record['notes'],
+        'mediaLinks' => array_map(static fn($i): string => mcohome_media_url($record['eventId'], $i), array_keys($record['media'] ?? [])),
+        'controller' => $record['controller'],
+        'nodeId' => $record['nodeId'],
+        'repeatCount' => $record['repeatCount'] ?? 1,
+        'recurring' => $record['recurring'] ?? false,
+        'severity' => $record['severity'] ?? 'NORMAL',
+        'updatedAt' => $record['updatedAt'] ?? date(DATE_ATOM),
+        'dropboxLinks' => $dropboxLinks,
+        'rootCause' => $record['rootCause'] ?? '',
+        'resolution' => $record['resolution'] ?? '',
+        'owner' => $record['owner'] ?? 'שירות I Feel / MCOHome',
+    ];
+}
+
+function mcohome_finalize_record(array $record): array
+{
+    $record = mcohome_apply_recurrence($record);
+    $record['updatedAt'] = date(DATE_ATOM);
+    $record['sheetSync'] = ['ok' => false, 'status' => 'pending'];
+    $record['notificationResults'] = [];
+    $record['vendorNotificationResults'] = [];
+    $record['dropboxSync'] = ['ok' => false, 'status' => 'pending'];
+    mcohome_save_record($record);
+
+    $record = mcohome_sync_media_to_dropbox($record);
+    $record['vendorDraft'] = mcohome_build_vendor_draft($record);
+    $record['vendorNotificationResults'] = mcohome_send_vendor_notification($record);
+    $record['sentToMcohome'] = count(array_filter($record['vendorNotificationResults'])) > 0;
+    if ($record['sentToMcohome'] && ($record['unitStatus'] ?? '') !== 'נסגר') {
+        $record['unitStatus'] = 'ממתין לתשובת יצרן';
+    }
+    $record['updatedAt'] = date(DATE_ATOM);
+    $record['sheetSync'] = mcohome_try_apps_script(mcohome_sheet_payload($record));
+    $record['notificationResults'] = mcohome_send_internal_notification($record);
+    mcohome_save_record($record);
+    return $record;
 }
 
 function mcohome_try_apps_script(array $payload): array
@@ -255,7 +654,7 @@ function mcohome_try_apps_script(array $payload): array
     $ch = curl_init($url);
     curl_setopt_array($ch, [
         CURLOPT_POST => true, CURLOPT_RETURNTRANSFER => true, CURLOPT_FOLLOWLOCATION => true,
-        CURLOPT_MAXREDIRS => 3, CURLOPT_CONNECTTIMEOUT => 5, CURLOPT_TIMEOUT => 12,
+        CURLOPT_MAXREDIRS => 3, CURLOPT_CONNECTTIMEOUT => 5, CURLOPT_TIMEOUT => 15,
         CURLOPT_HTTPHEADER => ['Content-Type: application/json; charset=utf-8'],
         CURLOPT_POSTFIELDS => json_encode(['secret' => $secret, 'payload' => $payload], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES),
     ]);
