@@ -8,7 +8,7 @@ require_once __DIR__ . '/_mcohome_faults.php';
 header('Content-Type: application/json; charset=UTF-8');
 header("Content-Security-Policy: default-src 'none'; frame-ancestors 'none'; base-uri 'none'");
 
-function mcohome_api_reply(int $status, array $payload): never
+function mcohome_api_reply(int $status, array $payload): void
 {
     http_response_code($status);
     echo json_encode($payload, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
