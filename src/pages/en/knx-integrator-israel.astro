@@ -10,15 +10,16 @@ const businessNode = {
 };
 const meta = {
   lang: "en", dir: "ltr",
-  title: "KNX Integrator Israel | Smart Home & Building Control | i-feel",
-  description: "I FEEL is a KNX integrator in Israel for villas, new construction, developers, hotels and offices, with planning, programming, commissioning and long-term service.",
-  canonical: url, ogTitle: "KNX Integrator Israel | i-feel", ogDescription: "KNX smart home and building control integration across Israel.", ogUrl: url, ogImage: "https://i-feel.co.il/assets/og-cover.jpg",
+  title: "KNX Smart Home Israel | KNX Integrator & Programming | i-feel",
+  description: "KNX smart home integration in Israel for villas, new construction, developers, hotels and offices, including planning, ETS programming, commissioning, documentation and local service.",
+  canonical: url, ogTitle: "KNX Smart Home Israel | KNX Integrator | i-feel", ogDescription: "KNX planning, ETS programming, commissioning and long-term local service for smart homes and building control projects in Israel.", ogUrl: url, ogImage: "https://i-feel.co.il/assets/og-cover.jpg",
   jsonLd: JSON.stringify({ "@context":"https://schema.org","@graph":[ businessNode,
-    { "@type":"BreadcrumbList","itemListElement":[ {"@type":"ListItem","position":1,"name":"Home","item":"https://i-feel.co.il/"}, {"@type":"ListItem","position":2,"name":"KNX Integrator Israel","item":url} ] },
-    { "@type":"WebPage","@id":`${url}#webpage`,"url":url,"name":"KNX Integrator Israel","dateModified":"2026-08-20" },
-    { "@type":"Service","name":"KNX Integration","serviceType":"KNX Integration","provider":{"@id":"https://i-feel.co.il/#business"},"areaServed":{"@type":"Country","name":"Israel"} },
+    { "@type":"BreadcrumbList","itemListElement":[ {"@type":"ListItem","position":1,"name":"Home","item":"https://i-feel.co.il/"}, {"@type":"ListItem","position":2,"name":"KNX Smart Home Israel","item":url} ] },
+    { "@type":"WebPage","@id":`${url}#webpage`,"url":url,"name":"KNX Smart Home Israel | KNX Integrator & Programming","description":"KNX smart home integration in Israel for villas, new construction and building-control projects.","inLanguage":"en-IL","dateModified":"2026-09-15","about":{"@id":`${url}#service`},"subjectOf":[{"@type":"CreativeWork","url":"https://i-feel.co.il/projects/smart-villa-caesarea/","name":"Caesarea smart villa integration case study"},{"@type":"CollectionPage","url":"https://i-feel.co.il/projects/private-homes/","name":"Private home projects by i-feel"}] },
+    { "@type":"Service","@id":`${url}#service`,"name":"KNX Smart Home Integration in Israel","serviceType":"KNX Integration and ETS Programming","provider":{"@id":"https://i-feel.co.il/#business"},"areaServed":{"@type":"Country","name":"Israel"},"url":url,"description":"Planning, ETS programming, integration, commissioning, documentation and local service for KNX smart homes and building-control projects in Israel." },
     { "@type":"FAQPage","mainEntity":[
       { "@type":"Question","name":"How should I choose a KNX integrator in Israel?","acceptedAnswer":{"@type":"Answer","text":"Choose an integrator that can document the KNX design, coordinate lighting, HVAC, shading and other interfaces, program and commission the system, explain handover and backup procedures, and provide local service after completion."} },
+      { "@type":"Question","name":"Is KNX suitable for a new villa in Israel?","acceptedAnswer":{"@type":"Answer","text":"KNX is especially suitable for a new villa or major renovation when the control backbone can be planned together with the electrical system. Lighting, shutters, HVAC, scenes and other interfaces can then be engineered as one documented local control system."} },
       { "@type":"Question","name":"Can KNX products from different manufacturers work together?","acceptedAnswer":{"@type":"Answer","text":"KNX is designed as an open multi-manufacturer standard. Certified KNX products from different manufacturers are intended to interoperate when correctly selected, engineered and configured in ETS."} },
       { "@type":"Question","name":"Does KNX need the internet for core home-control functions?","acceptedAnswer":{"@type":"Answer","text":"Core KNX control can operate locally without an internet connection. Internet access may still be used for remote control, cloud services or third-party integrations that depend on online services."} }
     ] }
@@ -26,15 +27,18 @@ const meta = {
 };
 ---
 <BaseLayout {...meta}>
-  <nav class="bg-brand-50 border-b border-brand-100"><div class="max-w-7xl mx-auto px-4 py-3 text-sm"><a href="/" class="text-brand-600 hover:text-accent-600">Home</a> › <span class="text-brand-900 font-medium">KNX Integrator Israel</span> · <a href="/knx-smart-home/" class="text-accent-600">עברית</a></div></nav>
-  <section class="hero-gradient text-white"><div class="max-w-6xl mx-auto px-4 py-16 lg:py-20"><h1 class="text-4xl md:text-5xl font-extrabold leading-tight mb-5">KNX Integrator in Israel</h1><p class="text-xl text-brand-100 max-w-3xl">I FEEL is an Israeli KNX integrator specializing in KNX smart homes, building control, Siemens Desigo and DALI lighting, with planning, programming, commissioning and service under one company.</p></div></section>
+  <nav class="bg-brand-50 border-b border-brand-100"><div class="max-w-7xl mx-auto px-4 py-3 text-sm"><a href="/" class="text-brand-600 hover:text-accent-600">Home</a> › <span class="text-brand-900 font-medium">KNX Smart Home Israel</span> · <a href="/knx-smart-home/" class="text-accent-600">עברית</a></div></nav>
+  <section class="hero-gradient text-white"><div class="max-w-6xl mx-auto px-4 py-16 lg:py-20"><h1 class="text-4xl md:text-5xl font-extrabold leading-tight mb-5">KNX Smart Home in Israel: Planning, Programming and Integration</h1><p class="text-xl text-brand-100 max-w-3xl">I FEEL is an Israeli KNX integrator for villas, new construction and building-control projects, providing planning, ETS programming, commissioning, documentation and long-term local service.</p></div></section>
   <div class="max-w-4xl mx-auto px-4 py-12 lg:py-16 text-lg leading-8 text-brand-800">
     <p class="mb-5"><strong>KNX</strong> is an open international standard for home and building control with a multi-manufacturer ecosystem. I FEEL has worked with KNX in Israel since 2008, serving villas, apartments, developer projects, hotels, offices and other building-control projects.</p>
 
     <div class="bg-brand-50 border-l-4 border-accent-500 rounded-lg p-5 my-7">
-      <p class="font-bold text-brand-900 mb-2">Direct answer: what should a KNX integrator in Israel deliver?</p>
-      <p class="mb-0">A qualified KNX integrator should translate the electrical and control requirements into a documented KNX design, coordinate the interfaces with HVAC, lighting, shading and other systems, program and commission the installation, define the handover and backup process, and remain available for local service and future changes.</p>
+      <p class="font-bold text-brand-900 mb-2">Direct answer: what should a KNX smart home integrator in Israel deliver?</p>
+      <p class="mb-0">A qualified KNX integrator should translate the electrical and control requirements into a documented KNX design, coordinate HVAC, lighting, shading and other interfaces, program the project in ETS, commission the installation on site, define the handover and backup process, and remain available for local service and future changes.</p>
     </div>
+
+    <h2 class="text-2xl font-bold text-brand-900 mt-8 mb-3">When KNX is a good fit for a villa in Israel</h2>
+    <p class="mb-5">KNX is especially suitable for a new villa or a major renovation where the electrical infrastructure can be planned before installation. In that situation, lighting circuits, shutters, HVAC, scenes, sensors and other interfaces can be designed around a local wired control backbone instead of being added later as separate systems. For detailed residential planning, see our <a href="/smart-home-villa/" class="text-accent-600 font-semibold">smart home for a villa</a> guide.</p>
 
     <h2 class="text-2xl font-bold text-brand-900 mt-8 mb-3">What we deliver with KNX</h2>
     <ul class="list-disc pl-6 space-y-2 mb-5">
@@ -53,12 +57,18 @@ const meta = {
       <li><strong>Local service:</strong> verify that the same technical organization can support the installation after the project is completed.</li>
     </ul>
 
+    <h2 class="text-2xl font-bold text-brand-900 mt-8 mb-3">Project evidence</h2>
+    <p class="mb-5">I FEEL publishes completed private-home work so decision makers can review the type of integration actually delivered. The <a href="/projects/private-homes/" class="text-accent-600 font-semibold">private-home project gallery</a> shows residential projects, and our <a href="/projects/smart-villa-caesarea/" class="text-accent-600 font-semibold">Caesarea smart villa case study</a> documents a real integration project combining Control4, Siemens, KNX devices, Aruba networking, intercom, multi-room audio and analytics cameras.</p>
+
     <h2 class="text-2xl font-bold text-brand-900 mt-8 mb-3">Best fit for KNX</h2>
     <p class="mb-5">KNX is especially suitable for new construction and major renovations where lighting, shading, HVAC and automation can be planned as part of the electrical infrastructure. For existing apartments where new control cabling is impractical, a wireless architecture may be more appropriate. See our broader <a href="/en/smart-home-israel/" class="text-accent-600 font-semibold">Smart Home Israel</a> overview.</p>
 
     <h2 class="text-2xl font-bold text-brand-900 mt-8 mb-3">Frequently asked questions</h2>
     <h3 class="text-xl font-bold text-brand-900 mt-5 mb-2">How should I choose a KNX integrator in Israel?</h3>
     <p class="mb-4">Choose a company that can own the design, integration, programming, commissioning and service process rather than treating KNX programming as an isolated task. Require clear documentation and confirm who is responsible for every external interface.</p>
+
+    <h3 class="text-xl font-bold text-brand-900 mt-5 mb-2">Is KNX suitable for a new villa in Israel?</h3>
+    <p class="mb-4">Yes, especially when the system is planned before the electrical design is finalized. A new-build project gives the integrator the opportunity to coordinate the wired control backbone, cabinet design, lighting circuits, shutters, HVAC and interfaces from the start.</p>
 
     <h3 class="text-xl font-bold text-brand-900 mt-5 mb-2">Can KNX products from different manufacturers work together?</h3>
     <p class="mb-4">Yes. KNX is built around a multi-manufacturer ecosystem, and certified KNX products are designed to interoperate when correctly selected and configured. This gives the project more flexibility than a single-brand architecture.</p>
