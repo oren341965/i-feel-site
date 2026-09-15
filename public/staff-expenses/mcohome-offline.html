@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex,nofollow,noarchive">
+  <meta name="theme-color" content="#1769aa">
+  <title>דיווח תקלה MCOHome | I Feel</title>
+  <link rel="manifest" href="mcohome-manifest.webmanifest">
+  <link rel="stylesheet" href="portal.css">
+  <style>
+    body{background:#f4f7fb}.offline-wrap{max-width:920px;margin:0 auto;padding:18px}.offline-head{display:flex;gap:12px;align-items:center;margin-bottom:14px}.offline-head img{width:92px;height:auto}.offline-card{background:#fff;border:1px solid #dbe4ef;border-radius:18px;padding:18px}.mcohome-quick-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.mcohome-fieldset{border:1px solid #dbe4ef;border-radius:16px;padding:14px;margin:14px 0}.mcohome-chip-grid,.mcohome-fault-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.mcohome-chip{position:relative}.mcohome-chip input{position:absolute;opacity:0}.mcohome-chip span{display:flex;min-height:52px;align-items:center;justify-content:center;text-align:center;border:1px solid #cdd8e6;border-radius:12px;padding:8px;background:#fff;font-weight:700}.mcohome-chip input:checked+span{background:#1769aa;color:#fff}.mcohome-media-box{display:block;border:2px dashed #a9bdd2;border-radius:16px;padding:16px;background:#f8fbff;margin:14px 0}.mcohome-details{border:1px solid #dbe4ef;border-radius:14px;padding:14px;margin:14px 0}.mcohome-details summary{font-weight:800}.queue-line{font-weight:700;margin:10px 0}.button-row{display:flex;gap:8px;flex-wrap:wrap}@media(max-width:720px){.mcohome-quick-grid{grid-template-columns:1fr}.offline-wrap{padding:10px}}
+  </style>
+</head>
+<body>
+<div class="offline-wrap">
+  <div class="offline-head"><img src="/assets/ifeel-logo.png" alt="I Feel"><div><strong>אפליקציית תקלות MCOHome</strong><div>עובדת גם ללא אינטרנט</div></div></div>
+  <div class="offline-card">
+    <div id="mcohome-app-status" class="alert alert--info">אין חיבור לשרת כרגע. אפשר למלא את התקלה, לצלם סרטון עד דקה ולשמור. הדיווח יישלח אוטומטית כשהאינטרנט יחזור.</div>
+    <div class="queue-line">דיווחים שממתינים לשליחה: <span id="mcohome-queue-count">0</span></div>
+    <div class="button-row"><button type="button" class="button button--secondary" id="mcohome-install">התקנת האפליקציה</button></div>
+
+    <form class="stack-form" id="mcohome-fault-form" enctype="multipart/form-data">
+      <input type="hidden" name="action" value="submit_mcohome_fault">
+      <input type="hidden" name="client_event_id" value="">
+      <div class="mcohome-quick-grid">
+        <label><span>לקוח / פרויקט</span><input type="text" name="project" maxlength="200" required></label>
+        <label><span>מספר סידורי</span><input type="text" name="serial_number" maxlength="150"></label>
+        <label><span>דגם / מקט</span><input type="text" name="model" maxlength="150" required></label>
+        <label><span>תאריך</span><input type="date" name="discovery_date" required></label>
+      </div>
+
+      <fieldset class="mcohome-fieldset"><legend>מה התקלקל?</legend><div class="mcohome-chip-grid">
+        <label class="mcohome-chip"><input type="radio" name="device_type" value="תאורה בודד" required><span>תאורה בודד</span></label>
+        <label class="mcohome-chip"><input type="radio" name="device_type" value="תאורה כפול" required><span>תאורה כפול</span></label>
+        <label class="mcohome-chip"><input type="radio" name="device_type" value="3 לחצנים" required><span>3 לחצנים</span></label>
+        <label class="mcohome-chip"><input type="radio" name="device_type" value="תריס" required><span>תריס</span></label>
+        <label class="mcohome-chip"><input type="radio" name="device_type" value="מפסק 9" required><span>מפסק 9</span></label>
+        <label class="mcohome-chip"><input type="radio" name="device_type" value="דימר Z-Wave 300W" required><span>דימר Z-Wave 300W</span></label>
+        <label class="mcohome-chip"><input type="radio" name="device_type" value="אחר" required><span>אחר</span></label>
+      </div></fieldset>
+
+      <label id="mcohome-nine-wrap"><span>תצורת מפסק 9</span><select name="nine_config" id="mcohome-nine-config"><option value="">בחר תצורה</option><option>6 תאורה</option><option>3 תריסים</option><option>2 תריסים + 2 תאורה</option><option>תריס 1 + 2 תאורה</option><option>אחר</option></select></label>
+
+      <fieldset class="mcohome-fieldset"><legend>מה התקלה?</legend><div class="mcohome-fault-grid">
+        <label class="mcohome-chip"><input type="radio" name="fault_type" value="ממסר נדבק" required><span>ממסר נדבק</span></label>
+        <label class="mcohome-chip"><input type="radio" name="fault_type" value="לא נדלק" required><span>לא נדלק</span></label>
+        <label class="mcohome-chip"><input type="radio" name="fault_type" value="לא נכבה" required><span>לא נכבה</span></label>
+        <label class="mcohome-chip"><input type="radio" name="fault_type" value="לא מגיב" required><span>לא מגיב</span></label>
+        <label class="mcohome-chip"><input type="radio" name="fault_type" value="תריס לא עובד" required><span>תריס לא עובד</span></label>
+        <label class="mcohome-chip"><input type="radio" name="fault_type" value="תריס עובד רק לכיוון אחד" required><span>תריס עובד רק לכיוון אחד</span></label>
+        <label class="mcohome-chip"><input type="radio" name="fault_type" value="יציאת תריס נשרפה" required><span>יציאת תריס נשרפה</span></label>
+        <label class="mcohome-chip"><input type="radio" name="fault_type" value="התחממות חריגה" required><span>התחממות חריגה</span></label>
+        <label class="mcohome-chip"><input type="radio" name="fault_type" value="תקשורת Z-Wave לסירוגין" required><span>תקשורת Z-Wave לסירוגין</span></label>
+        <label class="mcohome-chip"><input type="radio" name="fault_type" value="אחר" required><span>אחר</span></label>
+      </div></fieldset>
+
+      <label><span>הסבר קצר</span><textarea name="description" rows="4" maxlength="600" required placeholder="מה קורה, מה ניסיתם ומה התוצאה"></textarea></label>
+      <label class="mcohome-media-box"><span>סרטון הסבר עד דקה או תמונות</span><input type="file" name="media[]" id="mcohome-media" accept="image/*,video/*" capture="environment" multiple><small>הסרטון נשמר במכשיר גם ללא אינטרנט. לאחר הסנכרון הוא יישמר גם בארכיון Dropbox כאשר חיבור Dropbox מוגדר.</small><div id="mcohome-media-list"></div></label>
+
+      <details class="mcohome-details"><summary>פרטים טכניים נוספים</summary>
+        <label><span>ערוץ / יציאה</span><input type="text" name="channel" maxlength="100"></label>
+        <label><span>קונטרולר</span><select name="controller"><option value="">לא צוין</option><option>Home Assistant</option><option>Touchwand</option><option>Fibaro</option><option>Vera</option><option>SmartThings</option><option>אחר / לא ידוע</option></select></label>
+        <label><span>Node ID</span><input type="text" name="node_id" maxlength="80"></label>
+        <label><span>בדיקת Z-Wave</span><input type="text" name="zwave_check" maxlength="300"></label>
+        <label><span>עומס / דרייבר / מנוע</span><input type="text" name="load_context" maxlength="400"></label>
+        <label><span>סטטוס</span><select name="unit_status"><option>פתוח</option><option>בבדיקה</option><option>תקלה אומתה</option><option>הוחלף</option><option>ממתין ל-RMA</option><option>נשלח ל-MCOHome</option><option>ממתין לתשובת יצרן</option><option>נסגר</option></select></label>
+        <label><span>פעולה שבוצעה</span><select name="action_taken"><option>לא בוצעה פעולה</option><option>איפוס</option><option>זיווג מחדש / Inclusion</option><option>Exclusion</option><option>Factory Reset</option><option>Heal / Re-interview</option><option>בדיקת עומס</option><option>בדיקה ליד הקונטרולר</option><option>החלפת היחידה</option><option>ניתוק העומס</option><option>אחר</option></select></label>
+        <label><input type="checkbox" name="inrush" id="mcohome-inrush"> חשד ל-Inrush Current</label>
+        <label><input type="checkbox" name="replaced"> הוחלפה יחידה באתר</label>
+        <label><span>הערות נוספות</span><textarea name="notes" rows="3" maxlength="1000"></textarea></label>
+      </details>
+
+      <button type="submit" class="button button--primary button--wide" id="mcohome-submit">שמירת ושליחת התקלה</button>
+    </form>
+  </div>
+</div>
+<script src="mcohome-app.js" defer></script>
+<script>document.querySelector('input[name="discovery_date"]').value=new Date().toISOString().slice(0,10);</script>
+</body>
+</html>
