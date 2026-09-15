@@ -7,8 +7,8 @@
     const API_URL = 'mcohome-submit.php';
     const SW_URL = 'mcohome-sw.js';
     const MANIFEST_URL = 'mcohome-manifest.webmanifest';
-    const MAX_VIDEO_SECONDS = 75;
-    const MAX_FILE_BYTES = 180 * 1024 * 1024;
+    const MAX_VIDEO_SECONDS = 60;
+    const MAX_FILE_BYTES = 140 * 1024 * 1024;
     let deferredInstallPrompt = null;
 
     function $(id) { return document.getElementById(id); }
@@ -159,7 +159,7 @@
         if (!input || !input.files) return true;
         for (const file of input.files) {
             if (file.size > MAX_FILE_BYTES) {
-                setStatus('הקובץ גדול מדי. ניתן לצרף עד 180MB לקובץ.', 'error');
+                setStatus('הקובץ גדול מדי. ניתן לצרף עד 140MB לקובץ.', 'error');
                 return false;
             }
             const duration = await fileDuration(file);
