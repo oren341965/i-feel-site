@@ -1,0 +1,20 @@
+{
+  "name": "I Feel - MCOHome Faults",
+  "short_name": "MCOHome",
+  "description": "Offline field fault reporting for I Feel technicians",
+  "start_url": "./mcohome.php",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#1769aa",
+  "lang": "he",
+  "dir": "rtl",
+  "icons": [
+    {
+      "src": "./mcohome-icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
