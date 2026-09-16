@@ -24,7 +24,12 @@ const FOUR_SKILLS = [
   'management-system-telemetry',
 ];
 const CONTRACTS = ['bus-message.schema.json', 'maya-task-protocol.md'];
-const RUNTIMES = ['maya-task-e2e-smoke.mjs', 'maya-vault-bridge.mjs', 'orchestrate-sales-system.mjs'];
+const RUNTIMES = [
+  'maya-task-e2e-smoke.mjs',
+  'maya-task-production-runner.mjs',
+  'maya-vault-bridge.mjs',
+  'orchestrate-sales-system.mjs',
+];
 
 function extractGateHelpers(scriptPath) {
   const source = readFileSync(scriptPath, 'utf8');
@@ -145,7 +150,7 @@ function assertPassesBoth(options, expectedSkills) {
     assert.equal(result.output.status, 'PASSED');
     assert.equal(result.output.installedSkills, expectedSkills);
     assert.equal(result.output.verifiedContracts, checkArtifacts ? 2 : 0);
-    assert.equal(result.output.verifiedRuntime, checkArtifacts ? 3 : 0);
+    assert.equal(result.output.verifiedRuntime, checkArtifacts ? RUNTIMES.length : 0);
   }
 }
 
@@ -277,5 +282,5 @@ test('Maya provisioning gate derives task runtime from the real release manifest
     reportedRuntime: ['maya-task-e2e-smoke.mjs', 'maya-vault-bridge.mjs'],
   });
   assert.equal(result.status, 23, result.stderr + '\n' + result.stdout);
-  assert.match(result.output.message, /Missing: orchestrate-sales-system\.mjs/);
+  assert.match(result.output.message, /Missing: .*orchestrate-sales-system\.mjs/);
 });

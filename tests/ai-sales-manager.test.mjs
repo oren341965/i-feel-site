@@ -286,6 +286,7 @@ test('Maya commissioning is role-scoped, hash-verified, and activation-free', ()
   const hostCheckinInvoker = read('agent-config/maya-codex/invoke-host-checkin.ps1');
   const managementSmoke = read('agent-config/maya-codex/test-management-smoke.ps1');
   const legacyRuntimeInstaller = read('scripts/workstations/install-maya-runtime.ps1');
+  const productionRunner = read('.claude/skills/ai-sales-manager/scripts/maya-task-production-runner.mjs');
 
   assert.match(installer, /maya-email-maintenance/);
   assert.match(installer, /maya-instagram-relations/);
@@ -318,11 +319,17 @@ test('Maya commissioning is role-scoped, hash-verified, and activation-free', ()
   assert.match(installer, /maya-task-protocol\.md/);
   assert.match(installer, /maya-vault-bridge\.mjs/);
   assert.match(installer, /maya-task-e2e-smoke\.mjs/);
+  assert.match(installer, /maya-task-production-runner\.mjs/);
   assert.match(installer, /taskRuntimeHashes/);
   assert.match(installer, /isolatedTaskSmokeCommand/);
+  assert.match(installer, /productionTaskRunnerCommand/);
   assert.match(installer, /UTF8Encoding\]::new\(\$false\)/);
   assert.doesNotMatch(installer, /Set-Content -LiteralPath \$configPath -Encoding UTF8/);
   assert.doesNotMatch(installer, /Register-ScheduledTask|Enable-ScheduledTask|schtasks(?:\.exe)?\s+\/Create/i);
+  assert.match(productionRunner, /readFile\(0, 'utf8'\)/);
+  assert.match(productionRunner, /prepareMayaProductionTask/);
+  assert.match(productionRunner, /completeMayaProductionTask/);
+  assert.doesNotMatch(productionRunner, /https?:\/\/|fetch\(|spawn\(|exec(?:File)?\(/);
 
   assert.match(provisioner, /UTF8Encoding\]::new\(\$false\)/);
   assert.doesNotMatch(provisioner, /Set-Content -LiteralPath \$runtimeConfigPath -Encoding UTF8/);
@@ -351,6 +358,7 @@ test('Maya commissioning is role-scoped, hash-verified, and activation-free', ()
   assert.match(exporter, /maya-task-protocol\.md/);
   assert.match(exporter, /maya-vault-bridge\.mjs/);
   assert.match(exporter, /maya-task-e2e-smoke\.mjs/);
+  assert.match(exporter, /maya-task-production-runner\.mjs/);
   assert.match(exporter, /orchestrate-sales-system\.mjs/);
   assert.match(bootstrap, /relativeReleasePath/);
   assert.match(bootstrap, /ConfirmMayaWorkstation/);
@@ -427,6 +435,7 @@ test('Maya commissioning export writes parseable BOM-free release pointers under
     '.claude/skills/ai-sales-manager/scripts/orchestrate-sales-system.mjs',
     '.claude/skills/ai-sales-manager/scripts/maya-vault-bridge.mjs',
     '.claude/skills/ai-sales-manager/scripts/maya-task-e2e-smoke.mjs',
+    '.claude/skills/ai-sales-manager/scripts/maya-task-production-runner.mjs',
     'agent-config/maya-codex/AGENTS.md',
     'agent-config/maya-codex/invoke-telemetry.ps1',
     'agent-config/maya-codex/invoke-host-checkin.ps1',

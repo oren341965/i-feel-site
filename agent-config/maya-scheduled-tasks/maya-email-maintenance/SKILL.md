@@ -42,6 +42,7 @@ Read the installed canonical contracts at `C:\ifeel-maya\config\maya-task-protoc
 - Process a production V2 Assignment only after the Maya Service Identity, installed Skills, correct Maya Gmail profile, fresh worker evidence, and the assignment execution gate are verified.
 - Write one immutable correlated ACK to `maya-to-manager` before V2 work.
 - A V2 assigned action may proceed only through its canonical worker skill and action-specific authority. Return a structured Result or bounded `BLOCKED`/`NEEDS_OREN_DECISION` outcome.
+- For a production customer action, use only `C:\ifeel-maya\jobs\maya-task-production-runner.mjs`. Supply the live Monday, Gmail, direct-channel and exact-content preview evidence as bounded JSON over stdin to `prepare`; the hashed direct-recipient identity must match across Monday, the channel, preview and receipt. Never put customer content on the command line. Continue only after `READY_FOR_EXACT_APPROVED_ACTION`. After the exact approved action, supply the verified direct-conversation receipt over stdin to `complete`. If preparation is pending, expired, mismatched, or the action cannot be verified, do not send or retry; return the bounded blocker for reconciliation.
 - Maya does not write Monday for V2 sales-task reconciliation; the manager owns that exact outcome/read-back flow.
 
 ### Professional content control messages
@@ -67,7 +68,8 @@ For the ordinary maturity-0 report-only pass, do not create drafts; send email o
 The only exceptions are:
 
 1. exact V2 ACK/Result Bus writes after their gates pass; and
-2. the explicitly authorized professional-content workflow above, which may send professional email from `myhome@i-feel.co.il` and make the bounded Monday board `3040781819` post-send documentation writes only after its own runtime gates pass.
+2. bounded PII-free V2 preparation/execution-ledger writes under `C:\ifeel-maya\state\maya-tasks` by the canonical two-phase runner; and
+3. the explicitly authorized professional-content workflow above, which may send professional email from `myhome@i-feel.co.il` and make the bounded Monday board `3040781819` post-send documentation writes only after its own runtime gates pass.
 
 The professional-content exception does not authorize paid advertising changes, unrelated Gmail mutation, unrelated Monday writes, WhatsApp sends, credential export, token display, or use of Oren's mailbox.
 
