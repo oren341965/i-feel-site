@@ -162,6 +162,38 @@
             }
           }
         },
+        "action_authorization": {
+          "type": ["object", "null"],
+          "additionalProperties": false,
+          "required": [
+            "approval_id",
+            "approved_by",
+            "approved_at",
+            "expires_at",
+            "channel",
+            "action_kind",
+            "approved_content_sha256",
+            "recipient_type",
+            "external_send_authorized",
+            "monday_write_authorized",
+            "next_treatment_date",
+            "no_further_outreach_before"
+          ],
+          "properties": {
+            "approval_id": { "type": "string", "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._:-]{0,127}$" },
+            "approved_by": { "const": "oren" },
+            "approved_at": { "type": "string", "format": "date-time" },
+            "expires_at": { "type": "string", "format": "date-time" },
+            "channel": { "enum": ["WHATSAPP", "EMAIL"] },
+            "action_kind": { "type": "string", "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._:-]{0,127}$" },
+            "approved_content_sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+            "recipient_type": { "const": "CUSTOMER" },
+            "external_send_authorized": { "const": true },
+            "monday_write_authorized": { "const": false },
+            "next_treatment_date": { "type": ["string", "null"] },
+            "no_further_outreach_before": { "type": ["string", "null"] }
+          }
+        },
         "external_actions_performed": { "type": "boolean" },
         "monday_writes_performed": { "type": "boolean" },
         "service_identity_verified": { "type": "boolean" },

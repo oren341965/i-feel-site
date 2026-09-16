@@ -33,6 +33,12 @@ Every Assignment, ACK, and Result carries the same immutable task snapshot:
 
 The assignment also records `monday_item_source=MONDAY_LIVE`, `monday_item_verified_at`, an execution gate, test origin, and external-action counters. A synthetic isolated smoke must instead use `monday_item_source=ISOLATED_TEST`; that value is forbidden for production tasks. Reject a response when any immutable snapshot value differs from the assignment.
 
+## Action-specific authorization
+
+A production task that may contact a customer must also carry `action_authorization`. Legacy assignments without it remain readable, but the production executor must return `BLOCKED` and must not contact anyone. The authorization is immutable with the task and contains only bounded control data: Oren's approval ID and timestamps, channel, action kind, `CUSTOMER` recipient type, SHA-256 of the exact approved content, the approved next-treatment date, and the no-further-outreach date. It never contains a phone number, email address, raw thread or credential.
+
+The runtime must resolve the approved content locally, calculate the same hash, and produce a recipient/content preview before it may call the channel adapter. The adapter must guarantee idempotency using the task ID. A valid receipt must prove the same task ID, channel, `CUSTOMER` recipient type, content hash, send time and verified appearance in the direct conversation. A mismatch is a blocker. Maya's authorization always has `monday_write_authorized=false`; the manager owns any later Monday write and live read-back.
+
 ## State machine
 
 Only these values are valid:
@@ -68,6 +74,8 @@ During a sales review, use only board `2732725332`. Exclude the exact group `ת�
 ## Production execution gate
 
 Assignment is allowed even when Maya is not ready, because the task must remain visible and traceable. Production ACK and Result evidence are accepted as real only from the commissioned Maya workstation. Execution remains blocked when the live control state lacks verified skills, Service Identity, fresh worker evidence, the correct Maya Gmail profile, WhatsApp telemetry for WhatsApp work, or the required action-specific approval.
+
+The local config also requires `taskQueue.productionExecutionAllowed=true`; the distributed default is `false`. Enabling it is a separate commissioning act after the canonical runtime is installed and live identity/connectors pass. Before an approved send, the executor re-reads the exact sales item, Gmail evidence and verified direct channel, rejects future/ended items, opt-outs, recent equivalent messages and the two-unanswered-attempt limit, and enforces the Sunday–Thursday 09:00–18:00 Israel window plus a verified non-holiday signal. A successful customer contact returns `WAITING_FOR_CUSTOMER`; Maya still performs no Monday write.
 
 Control evidence observed on `2026-08-30` is fail-closed and must be re-verified before production use:
 
