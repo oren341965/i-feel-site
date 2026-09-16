@@ -478,12 +478,32 @@ try {
     portal_test_expect(portal_csv_value('=2+2') === "'=2+2", 'CSV formula was not neutralized.');
     portal_test_expect(portal_csv_value('  @SUM(A1)') === "'  @SUM(A1)", 'CSV formula with whitespace was not neutralized.');
     portal_test_expect(portal_csv_value('ordinary text') === 'ordinary text', 'Safe CSV text was modified.');
-    $notificationRecipients = portal_expense_notification_recipients();
+    $notificationRecipients = portal_expense_notification_recipients(['employee' => ['email' => 'Worker@I-FEEL.CO.IL']]);
     portal_test_expect(
         in_array('account@i-feel.co.il', $notificationRecipients, true)
-        && in_array('oren@i-feel.co.il', $notificationRecipients, true),
+        && in_array('oren@i-feel.co.il', $notificationRecipients, true)
+        && in_array('worker@i-feel.co.il', $notificationRecipients, true)
+        && count($notificationRecipients) === 3,
         'Expense notification recipients are incomplete.'
     );
+    $oldExpenseRecipients = getenv('EXPENSE_PORTAL_REPORT_RECIPIENTS');
+    putenv('EXPENSE_PORTAL_REPORT_RECIPIENTS=oren@i-feel.co.il,other@i-feel.co.il');
+    portal_test_expect(
+        portal_expense_notification_recipients(['employee' => ['email' => 'worker@i-feel.co.il']])
+            === ['oren@i-feel.co.il', 'account@i-feel.co.il', 'worker@i-feel.co.il'],
+        'Legacy configuration must not omit required recipients or add unrelated employees.'
+    );
+    portal_test_expect(
+        portal_expense_notification_recipients(['employee' => ['email' => 'ACCOUNT@I-FEEL.CO.IL']])
+            === ['oren@i-feel.co.il', 'account@i-feel.co.il'],
+        'An expense submitted by accounting must not be sent twice to accounting.'
+    );
+    portal_test_expect(
+        portal_expense_notification_recipients(['employee' => ['email' => 'worker@example.com']])
+            === ['oren@i-feel.co.il', 'account@i-feel.co.il'],
+        'Invalid employee addresses must not receive expense documents.'
+    );
+    putenv($oldExpenseRecipients === false ? 'EXPENSE_PORTAL_REPORT_RECIPIENTS' : 'EXPENSE_PORTAL_REPORT_RECIPIENTS=' . $oldExpenseRecipients);
     portal_test_expect(
         portal_work_report_recipient() === 'myhome@i-feel.co.il',
         'Work report recipient is not MyHome.'
