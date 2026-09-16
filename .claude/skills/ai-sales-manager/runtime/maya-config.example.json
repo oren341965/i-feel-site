@@ -96,6 +96,7 @@
     "mayaToManager": "AI-Sales\\_bus\\maya-to-manager",
     "existingSchedulerPollingAllowed": true,
     "ackResultWritesAllowed": true,
+    "commissioningReadOnlyWritesAllowed": false,
     "mondayWritesAllowed": false,
     "productionExecutionAllowed": false,
     "productionExecutionRequiresReadyGate": true,

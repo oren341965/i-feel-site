@@ -285,6 +285,7 @@ test('Maya commissioning is role-scoped, hash-verified, and activation-free', ()
   const telemetryInvoker = read('agent-config/maya-codex/invoke-telemetry.ps1');
   const hostCheckinInvoker = read('agent-config/maya-codex/invoke-host-checkin.ps1');
   const managementSmoke = read('agent-config/maya-codex/test-management-smoke.ps1');
+  const liveReadonlyPreflight = read('agent-config/maya-codex/test-live-readonly-preflight.ps1');
   const legacyRuntimeInstaller = read('scripts/workstations/install-maya-runtime.ps1');
   const productionRunner = read('.claude/skills/ai-sales-manager/scripts/maya-task-production-runner.mjs');
 
@@ -348,6 +349,7 @@ test('Maya commissioning is role-scoped, hash-verified, and activation-free', ()
   assert.match(exporter, /provision-management-telemetry\.ps1/);
   assert.match(exporter, /invoke-host-checkin\.ps1/);
   assert.match(exporter, /test-management-smoke\.ps1/);
+  assert.match(exporter, /test-live-readonly-preflight\.ps1/);
   assert.match(exporter, /claudeRequired = \$false/);
   assert.match(exporter, /stagedSchedulers\s*=\s*@\('maya-email-maintenance', 'maya-instagram-relations'\)/);
   assert.match(exporter, /payload\\scheduled-tasks\\maya-instagram-relations/);
@@ -388,6 +390,9 @@ test('Maya commissioning is role-scoped, hash-verified, and activation-free', ()
   assert.match(installer, /existingCredentialsProvisioned/);
   assert.match(installer, /invoke-host-checkin\.ps1/);
   assert.match(installer, /test-management-smoke\.ps1/);
+  assert.match(installer, /test-live-readonly-preflight\.ps1/);
+  assert.match(installer, /commissioningReadOnlyWritesAllowed = \$false/);
+  assert.match(installer, /productionExecutionAllowed = \$false/);
   assert.match(installer, /maya-commissioning-credential-probe/);
   assert.match(installer, /--dry-run/);
   assert.match(installer, /\$probe\.envelope\.hostSlug -eq 'maya-front-office'/);
@@ -402,7 +407,20 @@ test('Maya commissioning is role-scoped, hash-verified, and activation-free', ()
   assert.match(managementSmoke, /schedulersActivated = 0/);
   assert.match(managementSmoke, /externalSends = 0/);
   assert.match(managementSmoke, /mondayWrites = 0/);
-  assert.doesNotMatch(provisioner + telemetryInvoker + hostCheckinInvoker + managementSmoke, /Bearer\s+[A-Za-z0-9._-]{16,}/i);
+  assert.match(liveReadonlyPreflight, /WHATSAPP_INSTALLED_HASH_MISMATCH/);
+  assert.match(liveReadonlyPreflight, /DORMANT_PRODUCTION_DISABLED/);
+  assert.match(liveReadonlyPreflight, /CURRENT_COMMISSIONING_RESULT/);
+  assert.match(liveReadonlyPreflight, /ACK_RESULT_WRITES_NOT_CONFIGURED/);
+  assert.match(liveReadonlyPreflight, /COMMISSIONING_SKILLS_NOT_VERIFIED/);
+  assert.match(liveReadonlyPreflight, /COMMISSIONING_CONTRACTS_NOT_VERIFIED/);
+  assert.match(liveReadonlyPreflight, /COMMISSIONING_RUNTIME_NOT_VERIFIED/);
+  assert.match(liveReadonlyPreflight, /COMMISSIONING_SAFETY_COUNTERS_INVALID/);
+  assert.match(liveReadonlyPreflight, /MANAGEMENT_CREDENTIALS_NOT_PROVISIONED/);
+  assert.match(liveReadonlyPreflight, /\^\[0-9a-f\]\{40\}\$/);
+  assert.match(liveReadonlyPreflight, /--dry-run/);
+  assert.match(liveReadonlyPreflight, /busWrites = \$busDelta/);
+  assert.doesNotMatch(liveReadonlyPreflight, /Get-ScheduledTask|Register-ScheduledTask|Enable-ScheduledTask/);
+  assert.doesNotMatch(provisioner + telemetryInvoker + hostCheckinInvoker + managementSmoke + liveReadonlyPreflight, /Bearer\s+[A-Za-z0-9._-]{16,}/i);
 });
 
 test('morning launcher persists a bounded failure code without raw command output', () => {
@@ -440,6 +458,7 @@ test('Maya commissioning export writes parseable BOM-free release pointers under
     'agent-config/maya-codex/invoke-telemetry.ps1',
     'agent-config/maya-codex/invoke-host-checkin.ps1',
     'agent-config/maya-codex/test-management-smoke.ps1',
+    'agent-config/maya-codex/test-live-readonly-preflight.ps1',
     'agent-config/maya-codex/provision-management-telemetry.ps1',
     'agent-config/maya-scheduled-tasks/maya-email-maintenance/SKILL.md',
     'agent-config/maya-scheduled-tasks/maya-instagram-relations/SKILL.md',
