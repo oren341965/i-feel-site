@@ -32,6 +32,7 @@ $requiredPayload = @(
     'payload\management-system\invoke-telemetry.ps1',
     'payload\management-system\invoke-host-checkin.ps1',
     'payload\management-system\test-management-smoke.ps1',
+    'payload\management-system\test-live-readonly-preflight.ps1',
     'payload\management-system\provision-management-telemetry.ps1',
     'payload\scheduled-tasks\maya-email-maintenance\SKILL.md',
     'payload\scheduled-tasks\maya-instagram-relations\SKILL.md',
@@ -244,6 +245,7 @@ if (-not $VerifyOnly) {
             'invoke-telemetry.ps1',
             'invoke-host-checkin.ps1',
             'test-management-smoke.ps1',
+            'test-live-readonly-preflight.ps1',
             'provision-management-telemetry.ps1'
         )) {
             $source = Join-Path $bundle "payload\management-system\$managementHelper"
@@ -330,6 +332,10 @@ if (-not $VerifyOnly) {
     $config.managementSystem.credentialsStorage = 'DPAPI_LOCAL_ONLY'
     $config.managementSystem.credentialsProvisioned = $existingCredentialsProvisioned
     $config.managementSystem.capabilitySlugs = @('maya-email-maintenance', 'maya-instagram-relations', 'maya-whatsapp')
+    $config.taskQueue.ackResultWritesAllowed = $true
+    $config.taskQueue.commissioningReadOnlyWritesAllowed = $false
+    $config.taskQueue.mondayWritesAllowed = $false
+    $config.taskQueue.productionExecutionAllowed = $false
     if ($PSCmdlet.ShouldProcess($configPath, 'Write maturity-0 Maya runtime config')) {
         $configJson = $config | ConvertTo-Json -Depth 30
         [IO.File]::WriteAllText($configPath, $configJson, [Text.UTF8Encoding]::new($false))
@@ -452,7 +458,8 @@ $result = [ordered]@{
         runtimeLocks = $lockCount
         managementHostSlug = 'maya-front-office'
         managementCredentialsProvisioned = $managementCredentialsProvisioned
-        nextGate = 'CODEX_BROWSER_IDENTITY_AND_MANAGEMENT_SMOKE'
+        nextGate = 'LOCAL_PREFLIGHT_THEN_CODEX_BROWSER_IDENTITY_AND_MANAGEMENT_SMOKE'
+        localReadOnlyPreflightCommand = 'powershell -NoProfile -ExecutionPolicy Bypass -File "$env:LOCALAPPDATA\I Feel\Management System\test-live-readonly-preflight.ps1" -ConfirmMayaWorkstation'
         taskProtocol = 'MAYA_SALES_TASK_V2'
         isolatedTaskSmokeCommand = 'node C:\ifeel-maya\jobs\maya-task-e2e-smoke.mjs --config C:\ifeel-maya\config\config.json'
         productionTaskRunnerCommand = 'node C:\ifeel-maya\jobs\maya-task-production-runner.mjs <prepare|complete> --config C:\ifeel-maya\config\config.json --task-id <task_id>'
