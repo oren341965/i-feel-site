@@ -410,6 +410,13 @@ test('Maya commissioning is role-scoped, hash-verified, and activation-free', ()
   assert.match(liveReadonlyPreflight, /WHATSAPP_INSTALLED_HASH_MISMATCH/);
   assert.match(liveReadonlyPreflight, /DORMANT_PRODUCTION_DISABLED/);
   assert.match(liveReadonlyPreflight, /CURRENT_COMMISSIONING_RESULT/);
+  assert.match(liveReadonlyPreflight, /ACK_RESULT_WRITES_NOT_CONFIGURED/);
+  assert.match(liveReadonlyPreflight, /COMMISSIONING_SKILLS_NOT_VERIFIED/);
+  assert.match(liveReadonlyPreflight, /COMMISSIONING_CONTRACTS_NOT_VERIFIED/);
+  assert.match(liveReadonlyPreflight, /COMMISSIONING_RUNTIME_NOT_VERIFIED/);
+  assert.match(liveReadonlyPreflight, /COMMISSIONING_SAFETY_COUNTERS_INVALID/);
+  assert.match(liveReadonlyPreflight, /MANAGEMENT_CREDENTIALS_NOT_PROVISIONED/);
+  assert.match(liveReadonlyPreflight, /\^\[0-9a-f\]\{40\}\$/);
   assert.match(liveReadonlyPreflight, /--dry-run/);
   assert.match(liveReadonlyPreflight, /busWrites = \$busDelta/);
   assert.doesNotMatch(liveReadonlyPreflight, /Get-ScheduledTask|Register-ScheduledTask|Enable-ScheduledTask/);

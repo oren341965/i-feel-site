@@ -23,6 +23,24 @@ function Get-BusFileCount {
     return @(Get-ChildItem -LiteralPath $Root -File -Recurse -ErrorAction Stop).Count
 }
 
+function Test-JsonProperty {
+    param(
+        [AllowNull()][object]$InputObject,
+        [Parameter(Mandatory)][string]$Name
+    )
+    return $null -ne $InputObject -and @($InputObject.PSObject.Properties.Name) -contains $Name
+}
+
+function Test-VerifiedEntries {
+    param(
+        [AllowNull()][object[]]$Entries,
+        [Parameter(Mandatory)][int]$ExpectedCount
+    )
+    $items = @($Entries)
+    return $items.Count -eq $ExpectedCount -and
+        @($items | Where-Object { $_.present -ne $true -or $_.hashMatch -ne $true }).Count -eq 0
+}
+
 if (-not $ConfirmMayaWorkstation) {
     throw 'Pass -ConfirmMayaWorkstation only on Maya''s approved workstation.'
 }
@@ -34,6 +52,12 @@ if (-not (Test-Path -LiteralPath $runtimeConfigPath -PathType Leaf)) {
 }
 
 $config = Get-Content -LiteralPath $runtimeConfigPath -Raw -Encoding UTF8 | ConvertFrom-Json
+$taskQueue = if (Test-JsonProperty -InputObject $config -Name 'taskQueue') { $config.taskQueue } else { $null }
+$automation = if (Test-JsonProperty -InputObject $config -Name 'automation') { $config.automation } else { $null }
+if (-not (Test-JsonProperty -InputObject $config -Name 'VAULT_ROOT') -or
+    [string]::IsNullOrWhiteSpace([string]$config.VAULT_ROOT)) {
+    throw 'VAULT_ROOT is missing from the Maya runtime config.'
+}
 $vaultRoot = [IO.Path]::GetFullPath([string]$config.VAULT_ROOT)
 $installerRoot = Join-Path $vaultRoot 'AI-Sales\Installers\Maya'
 $currentPath = Join-Path $installerRoot 'current.json'
@@ -42,6 +66,9 @@ if (-not (Test-Path -LiteralPath $currentPath -PathType Leaf)) {
 }
 $current = Get-Content -LiteralPath $currentPath -Raw -Encoding UTF8 | ConvertFrom-Json
 $currentCommit = ([string]$current.commit).Trim().ToLowerInvariant()
+if ($currentCommit -notmatch '^[0-9a-f]{40}$') {
+    throw 'The current Maya release commit is invalid.'
+}
 $releasesRoot = [IO.Path]::GetFullPath((Join-Path $installerRoot 'releases'))
 $releaseRoot = [IO.Path]::GetFullPath((Join-Path $installerRoot ([string]$current.relativeReleasePath)))
 if (-not $releaseRoot.StartsWith($releasesRoot + [IO.Path]::DirectorySeparatorChar, [StringComparison]::OrdinalIgnoreCase)) {
@@ -75,12 +102,37 @@ $managerToMaya = Join-Path $vaultRoot 'AI-Sales\_bus\manager-to-maya'
 $mayaToManager = Join-Path $vaultRoot 'AI-Sales\_bus\maya-to-manager'
 $busFilesBefore = (Get-BusFileCount -Root $managerToMaya) + (Get-BusFileCount -Root $mayaToManager)
 
-$productionExecutionAllowed = $config.taskQueue.productionExecutionAllowed -eq $true
-$commissioningReadOnlyWritesAllowed = $config.taskQueue.commissioningReadOnlyWritesAllowed -eq $true
-$ackResultWritesConfigured = $config.taskQueue.ackResultWritesAllowed -eq $true
-$schedulersActivated = [int]$config.automation.schedulersActivated
+$productionExecutionAllowed = if (Test-JsonProperty -InputObject $taskQueue -Name 'productionExecutionAllowed') {
+    $taskQueue.productionExecutionAllowed -eq $true
+}
+else {
+    Add-PreflightBlocker 'PRODUCTION_EXECUTION_FLAG_MISSING'
+    $true
+}
+$commissioningReadOnlyWritesAllowed = if (Test-JsonProperty -InputObject $taskQueue -Name 'commissioningReadOnlyWritesAllowed') {
+    $taskQueue.commissioningReadOnlyWritesAllowed -eq $true
+}
+else {
+    Add-PreflightBlocker 'COMMISSIONING_WRITE_FLAG_MISSING'
+    $true
+}
+$ackResultWritesConfigured = if (Test-JsonProperty -InputObject $taskQueue -Name 'ackResultWritesAllowed') {
+    $taskQueue.ackResultWritesAllowed -eq $true
+}
+else {
+    Add-PreflightBlocker 'ACK_RESULT_WRITE_FLAG_MISSING'
+    $false
+}
+$schedulersActivated = if (Test-JsonProperty -InputObject $automation -Name 'schedulersActivated') {
+    [int]$automation.schedulersActivated
+}
+else {
+    Add-PreflightBlocker 'SCHEDULER_ACTIVATION_COUNT_MISSING'
+    -1
+}
 if ($productionExecutionAllowed) { Add-PreflightBlocker 'PRODUCTION_EXECUTION_MUST_REMAIN_DISABLED' }
 if ($commissioningReadOnlyWritesAllowed) { Add-PreflightBlocker 'COMMISSIONING_BUS_WRITES_MUST_REMAIN_DISABLED' }
+if (-not $ackResultWritesConfigured) { Add-PreflightBlocker 'ACK_RESULT_WRITES_NOT_CONFIGURED' }
 if ($schedulersActivated -ne 0) { Add-PreflightBlocker 'SCHEDULERS_MUST_REMAIN_DISABLED' }
 
 $commissioningResults = @()
@@ -103,9 +155,38 @@ if ($commissioning.Count -ne 1) {
     $runtimeLocks = -1
 }
 else {
-    $windowsEmailTaskEvidence = [string]$commissioning[0].payload.windowsEmailTask
-    $runtimeLocks = [int]$commissioning[0].payload.runtimeLocks
+    $commissioningPayload = $commissioning[0].payload
+    $windowsEmailTaskEvidence = [string]$commissioningPayload.windowsEmailTask
+    $runtimeLocks = [int]$commissioningPayload.runtimeLocks
     if ($commissioning[0].status -ne 'INSTALLED_PAUSED') { Add-PreflightBlocker 'INSTALLATION_NOT_PAUSED' }
+    if ($commissioning[0].source -ne 'maya-commissioning-installer' -or
+        $commissioning[0].target -ne 'ai-sales-manager' -or
+        $commissioningPayload.role -ne $expectedHost -or
+        $commissioningPayload.managementHostSlug -ne $expectedHost) {
+        Add-PreflightBlocker 'COMMISSIONING_IDENTITY_MISMATCH'
+    }
+    if ($commissioningPayload.primaryEngine -ne 'codex' -or $commissioningPayload.claudeRequired -ne $false) {
+        Add-PreflightBlocker 'COMMISSIONING_ENGINE_MISMATCH'
+    }
+    if (-not (Test-VerifiedEntries -Entries @($commissioningPayload.skills) -ExpectedCount 4)) {
+        Add-PreflightBlocker 'COMMISSIONING_SKILLS_NOT_VERIFIED'
+    }
+    if (-not (Test-VerifiedEntries -Entries @($commissioningPayload.taskContracts) -ExpectedCount 2)) {
+        Add-PreflightBlocker 'COMMISSIONING_CONTRACTS_NOT_VERIFIED'
+    }
+    if (-not (Test-VerifiedEntries -Entries @($commissioningPayload.taskRuntime) -ExpectedCount 4)) {
+        Add-PreflightBlocker 'COMMISSIONING_RUNTIME_NOT_VERIFIED'
+    }
+    if ($commissioningPayload.managementCredentialsProvisioned -ne $true) {
+        Add-PreflightBlocker 'MANAGEMENT_CREDENTIALS_NOT_PROVISIONED'
+    }
+    if ([int]$commissioningPayload.schedulersActivated -ne 0 -or
+        [int]$commissioningPayload.externalSends -ne 0 -or
+        [int]$commissioningPayload.mondayWrites -ne 0 -or
+        [int]$commissioningPayload.deletions -ne 0 -or
+        $commissioningPayload.customerDataIncluded -ne $false) {
+        Add-PreflightBlocker 'COMMISSIONING_SAFETY_COUNTERS_INVALID'
+    }
     if ($windowsEmailTaskEvidence -ne 'Disabled') { Add-PreflightBlocker 'WINDOWS_EMAIL_TASK_NOT_DISABLED' }
     if ($runtimeLocks -ne 0) { Add-PreflightBlocker 'RUNTIME_LOCKS_PRESENT' }
 }
