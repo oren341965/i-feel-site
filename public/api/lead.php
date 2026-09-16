@@ -418,6 +418,10 @@ try {
         throw new RuntimeException('Monday item was not created');
     }
 
+    // Opaque correlation ID: never expose contact details or the Monday item ID
+    // to analytics. Reuse the existing update request; no new board columns.
+    $conversionEventId = 'ifeel_' . bin2hex(random_bytes(16));
+    $updateBody .= '<br>Measurement reference: ' . $conversionEventId;
     monday_request(
         'mutation ($itemId: ID!, $body: String!) { create_update(item_id: $itemId, body: $body) { id } }',
         [
@@ -432,6 +436,7 @@ try {
         'hash' => hash('sha256', $conversionProof),
         'expires_at' => time() + 300,
         'monday_item_id' => (string) $itemId,
+        'event_id' => $conversionEventId,
         'user_data' => enhanced_conversion_data($_POST),
     ];
 

@@ -3,6 +3,7 @@ import { mkdir, readFile, rename, writeFile } from 'node:fs/promises';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { loadDecisionReadiness } from './decision-readiness.mjs';
+import { qualifiedLeadWindow } from '../../lead-attribution-feedback/scripts/qualified-lead-feedback.mjs';
 
 import {
   GOOGLE_ADS_API_VERSION,
@@ -125,12 +126,15 @@ function assertPolicy(policy, now) {
   if (number(policy.maxSourceBudgetReductionPct) <= 0 || number(policy.maxSourceBudgetReductionPct) > 0.1) {
     throw new Error('Source budget reduction must be between 0 and 10%');
   }
-  if (number(policy.maxDailyTransferMicros) <= 0) throw new Error('maxDailyTransferMicros must be positive');
+  if (!Number.isSafeInteger(policy.maxDailyTransferMicros)
+    || policy.maxDailyTransferMicros <= 0 || policy.maxDailyTransferMicros > 25_000_000) {
+    throw new Error('Daily transfer ceiling must be positive and at most NIS 25');
+  }
   if (number(policy.accountBudgetIncreaseMicros) !== 0) throw new Error('Account budget growth is forbidden');
   return policy;
 }
 
-export function chooseDailyGoogleAdsDecision({ campaigns, searchTerms, policy, gates, now = new Date() }) {
+export function chooseDailyGoogleAdsDecision({ campaigns, searchTerms, policy, gates, leadGoal, now = new Date() }) {
   assertPolicy(policy, now);
   const localDate = isoDateInJerusalem(now);
   const approvedTransfer = (policy.approvedBudgetTransfers ?? []).find((entry) => entry?.localDate === localDate);
@@ -204,17 +208,29 @@ export function chooseDailyGoogleAdsDecision({ campaigns, searchTerms, policy, g
   if (number(gates?.attributionCoverage) < number(policy.minimumAttributionCoverage)) blockers.push('ATTRIBUTION_LOW');
   if (blockers.length) return { status: 'NO_SAFE_CHANGE', localDate, blockers: [...new Set(blockers)] };
 
+  if (!leadGoal || leadGoal.status === 'UNKNOWN' || leadGoal.window?.today !== localDate
+    || !['BELOW_TARGET', 'ON_TARGET', 'ABOVE_TARGET'].includes(leadGoal.status)
+    || !leadGoal.googleQualified14Days) {
+    return { status: 'NO_SAFE_CHANGE', localDate, blockers: ['QUALIFIED_LEAD_FEEDBACK_REQUIRED'] };
+  }
+  if (leadGoal.status !== 'BELOW_TARGET') {
+    return { status: 'NO_SAFE_CHANGE', localDate, blockers: ['WEEKLY_QUALIFIED_LEAD_TARGET_REACHED'] };
+  }
+  // All recent CRM acquisitions must be classified before absent campaign counts
+  // mean zero. Raw/fractional platform conversions never become qualified leads.
+  const qualified = (row) => leadGoal.googleQualified14Days[String(row.campaignId)] ?? 0;
+
   const eligible = (campaigns ?? []).filter((row) => row.status === 'ENABLED' && row.explicitlyShared !== true);
   const losers = eligible
-    .filter((row) => number(row.conversions) === 0)
+    .filter((row) => qualified(row) === 0 && number(row.conversions) === 0)
     .filter((row) => number(row.spendMicros) >= number(policy.minimumLoserSpendMicros))
     .filter((row) => number(row.budgetMicros) > number(policy.minimumCampaignBudgetMicros))
     .sort((a, b) => number(b.spendMicros) - number(a.spendMicros));
   const winners = eligible
-    .filter((row) => number(row.conversions) >= number(policy.minimumWinnerConversions))
-    .filter((row) => number(row.spendMicros) / number(row.conversions) <= number(policy.maximumWinnerCpaMicros))
-    .sort((a, b) => (number(b.conversions) - number(a.conversions))
-      || ((number(a.spendMicros) / number(a.conversions)) - (number(b.spendMicros) / number(b.conversions))));
+    .filter((row) => qualified(row) >= Math.max(1, number(policy.minimumWinnerConversions)))
+    .filter((row) => number(row.spendMicros) / qualified(row) <= number(policy.maximumWinnerCpaMicros))
+    .sort((a, b) => (qualified(b) - qualified(a))
+      || ((number(a.spendMicros) / qualified(a)) - (number(b.spendMicros) / qualified(b))));
 
   const source = losers[0];
   const target = winners.find((row) => row.budgetResourceName !== source?.budgetResourceName);
@@ -231,6 +247,10 @@ export function chooseDailyGoogleAdsDecision({ campaigns, searchTerms, policy, g
     status: 'DECIDED',
     action: 'REALLOCATE_DAILY_BUDGET',
     localDate,
+    selectionMode: 'VERIFIED_QUALIFIED_LEADS',
+    evidence: { qualifiedCurrent: leadGoal.qualifiedCurrent, qualifiedPrevious: leadGoal.qualifiedPrevious,
+      targetMinimum: 5, targetMaximum: 6, targetQualified14Days: qualified(target),
+      qualifiedCplMicros: Math.round(number(target.spendMicros) / qualified(target)) },
     source: {
       campaignId: String(source.campaignId), campaignName: String(source.campaignName ?? ''),
       budgetResourceName: source.budgetResourceName, beforeMicros: number(source.budgetMicros),
@@ -373,19 +393,23 @@ async function loadRuntime(configPath, fetchImpl, now, mode) {
   return session;
 }
 
-async function collectDecisionInputs(session) {
+async function collectDecisionInputs(session, now) {
+  const [account] = await search(session, 'SELECT customer.id, customer.currency_code, customer.time_zone FROM customer');
+  if (String(account?.customer?.id) !== session.customerId || account?.customer?.currencyCode !== 'ILS'
+    || account?.customer?.timeZone !== 'Asia/Jerusalem') throw new Error('Account currency/time-zone evidence mismatch');
+  const window = qualifiedLeadWindow(now);
   const rows = await search(session, `
     SELECT campaign.id, campaign.name, campaign.status, campaign_budget.resource_name,
       campaign_budget.amount_micros, campaign_budget.explicitly_shared,
       metrics.cost_micros, metrics.conversions
     FROM campaign
-    WHERE segments.date DURING LAST_14_DAYS AND campaign.status = 'ENABLED'
+    WHERE segments.date BETWEEN '${window.start}' AND '${window.end}' AND campaign.status = 'ENABLED'
   `);
   const terms = await search(session, `
     SELECT search_term_view.search_term, campaign.id, campaign.name, metrics.clicks,
       metrics.cost_micros, metrics.conversions
     FROM search_term_view
-    WHERE segments.date DURING LAST_14_DAYS AND metrics.clicks > 0
+    WHERE segments.date BETWEEN '${window.start}' AND '${window.end}' AND metrics.clicks > 0
     ORDER BY metrics.cost_micros DESC
     LIMIT 100
   `);
@@ -412,10 +436,14 @@ export async function runDailyGoogleAdsDecision({ configPath, mode = 'preview', 
   if (mode === 'apply' && prior?.localDate === localDate && prior?.status === 'SUCCEEDED') {
     return { schemaVersion: 1, mode: 'BOUNDED_AUTONOMOUS', maturity: 1, status: 'ALREADY_COMPLETED', localDate, writes: 0 };
   }
-  const inputs = await collectDecisionInputs(session);
+  if (mode === 'apply' && ['RUNNING', 'FAILED_REQUIRES_REVIEW'].includes(prior?.status)) {
+    return { schemaVersion: 1, mode: 'BOUNDED_AUTONOMOUS', maturity: 1,
+      status: 'DAILY_ATTEMPT_REQUIRES_REVIEW', localDate, writes: 0 };
+  }
+  const inputs = await collectDecisionInputs(session, now);
   const readiness = await loadDecisionReadiness(session.config, { now });
   const decision = chooseDailyGoogleAdsDecision({
-    ...inputs, policy: session.policy, gates: readiness.gates, now,
+    ...inputs, policy: session.policy, gates: readiness.gates, leadGoal: readiness.leadGoal, now,
   });
   // Human route selection is separately date-bound and retains its existing approval rules.
   // Autonomous writes may never rely on untimed hand-edited config booleans.
@@ -431,17 +459,37 @@ export async function runDailyGoogleAdsDecision({ configPath, mode = 'preview', 
   if (mode === 'preview' || decision.status !== 'DECIDED') {
     return { schemaVersion: 1, mode: mode.toUpperCase(), maturity: 1, decision, readiness, decisionFingerprint, writes: 0 };
   }
-  if (decision.action === 'REALLOCATE_DAILY_BUDGET') await applyBudgetDecision(session, decision);
-  else if (decision.action === 'ADD_EXACT_CAMPAIGN_NEGATIVE') await applyNegativeDecision(session, decision);
-  else throw new Error('Unsupported decision action');
-
   const state = {
-    schemaVersion: 1, localDate, status: 'SUCCEEDED', decisionFingerprint,
-    action: decision.action, accountId: session.customerId, completedAt: now.toISOString(),
+    schemaVersion: 1, localDate, status: 'RUNNING', decisionFingerprint,
+    action: decision.action, accountId: session.customerId, startedAt: now.toISOString(),
     totalAccountBudgetDeltaMicros: 0,
   };
+  // Cross-process reservation BEFORE any mutation. Never auto-delete or retry an
+  // ambiguous attempt; a crash or failed read-back requires operator review.
+  await mkdir(dirname(session.stateFile), { recursive: true });
+  const reservation = resolve(dirname(session.stateFile), `google-ads-daily-${localDate}.lock`);
+  try { await writeFile(reservation, JSON.stringify(state), { encoding: 'utf8', flag: 'wx' }); }
+  catch (error) {
+    if (error.code !== 'EEXIST') throw error;
+    return { schemaVersion: 1, mode: 'BOUNDED_AUTONOMOUS', maturity: 1,
+      status: 'DAILY_ATTEMPT_REQUIRES_REVIEW', localDate, writes: 0 };
+  }
   await writeState(session.stateFile, state);
-  return { schemaVersion: 1, mode: 'BOUNDED_AUTONOMOUS', maturity: 1, ...state, writes: 1 };
+  try {
+    let outcome;
+    if (decision.action === 'REALLOCATE_DAILY_BUDGET') await applyBudgetDecision(session, decision);
+    else if (decision.action === 'ADD_EXACT_CAMPAIGN_NEGATIVE') outcome = await applyNegativeDecision(session, decision);
+    else throw new Error('Unsupported decision action');
+    state.status = 'SUCCEEDED';
+    state.actionChanges = outcome === 'ALREADY_EXISTS' ? 0 : 1;
+    state.completedAt = new Date().toISOString();
+    await writeState(session.stateFile, state);
+  } catch (error) {
+    state.status = 'FAILED_REQUIRES_REVIEW';
+    await writeState(session.stateFile, state);
+    throw error;
+  }
+  return { schemaVersion: 1, mode: 'BOUNDED_AUTONOMOUS', maturity: 1, ...state, writes: state.actionChanges };
 }
 
 if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
