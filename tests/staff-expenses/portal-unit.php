@@ -185,6 +185,41 @@ try {
         && portal_vehicle_documents_for_user(['email' => 'other@i-feel.co.il', 'role' => 'employee'], '12345678') === [],
         'Vehicle document access control is incorrect.'
     );
+    $repairRecord = [
+        'id' => portal_new_record_id(),
+        'type' => 'vehicle',
+        'created_at' => gmdate('c'),
+        'details' => ['vehicle_category' => 'repair', 'vehicle_plate' => '123-45-678', 'invoice_number' => 'TEST-INVOICE'],
+        'attachments' => [['original_name' => 'repair.pdf', 'storage_name' => 'repair.pdf', 'mime' => 'application/pdf']],
+    ];
+    $worker = ['email' => 'worker@i-feel.co.il', 'role' => 'employee'];
+    $linkedRepair = portal_link_vehicle_expense($repairRecord, $worker);
+    portal_save_record($linkedRepair);
+    $repairFiles = portal_record_dir($linkedRepair['id']) . '/files';
+    portal_ensure_directory($repairFiles);
+    file_put_contents($repairFiles . '/repair.pdf', 'test invoice');
+    $archivedInvoices = array_values(array_filter(portal_vehicle_documents_for_user($worker, '12345678'), static fn(array $doc): bool => isset($doc['source_record_id'])));
+    portal_test_expect(
+        count($archivedInvoices) === 1
+        && $archivedInvoices[0]['source_record_id'] === $linkedRepair['id']
+        && $archivedInvoices[0]['policy_number'] === 'TEST-INVOICE'
+        && file_get_contents(portal_record_dir($archivedInvoices[0]['source_record_id']) . '/files/' . $archivedInvoices[0]['attachment']['storage_name']) === 'test invoice',
+        'Repair invoice is not available from the correct vehicle file.'
+    );
+    portal_test_expect(
+        count(portal_vehicle_documents_for_user($worker, '12345678')) === 2
+        && portal_vehicle_expense_documents('87654321') === []
+        && portal_vehicle_documents_for_user(['email' => 'other@i-feel.co.il', 'role' => 'employee'], '12345678') === [],
+        'Vehicle invoices were duplicated or exposed outside the matching vehicle.'
+    );
+    $wrongVehicleRejected = false;
+    try {
+        portal_link_vehicle_expense($repairRecord, ['email' => 'other@i-feel.co.il', 'role' => 'employee']);
+    } catch (RuntimeException $expected) {
+        $wrongVehicleRejected = true;
+    }
+    portal_test_expect($wrongVehicleRejected, 'An employee can archive an invoice under another employee vehicle.');
+    portal_remove_tree(portal_record_dir($linkedRepair['id']));
     $minimalVehicleRows = implode("\n", [
         "דוא״ל עובד\tמספר רכב",
         "worker@i-feel.co.il\t876-54-321",
@@ -478,12 +513,32 @@ try {
     portal_test_expect(portal_csv_value('=2+2') === "'=2+2", 'CSV formula was not neutralized.');
     portal_test_expect(portal_csv_value('  @SUM(A1)') === "'  @SUM(A1)", 'CSV formula with whitespace was not neutralized.');
     portal_test_expect(portal_csv_value('ordinary text') === 'ordinary text', 'Safe CSV text was modified.');
-    $notificationRecipients = portal_expense_notification_recipients();
+    $notificationRecipients = portal_expense_notification_recipients(['employee' => ['email' => 'Worker@I-FEEL.CO.IL']]);
     portal_test_expect(
         in_array('account@i-feel.co.il', $notificationRecipients, true)
-        && in_array('oren@i-feel.co.il', $notificationRecipients, true),
+        && in_array('oren@i-feel.co.il', $notificationRecipients, true)
+        && in_array('worker@i-feel.co.il', $notificationRecipients, true)
+        && count($notificationRecipients) === 3,
         'Expense notification recipients are incomplete.'
     );
+    $oldExpenseRecipients = getenv('EXPENSE_PORTAL_REPORT_RECIPIENTS');
+    putenv('EXPENSE_PORTAL_REPORT_RECIPIENTS=oren@i-feel.co.il,other@i-feel.co.il');
+    portal_test_expect(
+        portal_expense_notification_recipients(['employee' => ['email' => 'worker@i-feel.co.il']])
+            === ['oren@i-feel.co.il', 'account@i-feel.co.il', 'worker@i-feel.co.il'],
+        'Legacy configuration must not omit required recipients or add unrelated employees.'
+    );
+    portal_test_expect(
+        portal_expense_notification_recipients(['employee' => ['email' => 'ACCOUNT@I-FEEL.CO.IL']])
+            === ['oren@i-feel.co.il', 'account@i-feel.co.il'],
+        'An expense submitted by accounting must not be sent twice to accounting.'
+    );
+    portal_test_expect(
+        portal_expense_notification_recipients(['employee' => ['email' => 'worker@example.com']])
+            === ['oren@i-feel.co.il', 'account@i-feel.co.il'],
+        'Invalid employee addresses must not receive expense documents.'
+    );
+    putenv($oldExpenseRecipients === false ? 'EXPENSE_PORTAL_REPORT_RECIPIENTS' : 'EXPENSE_PORTAL_REPORT_RECIPIENTS=' . $oldExpenseRecipients);
     portal_test_expect(
         portal_work_report_recipient() === 'myhome@i-feel.co.il',
         'Work report recipient is not MyHome.'

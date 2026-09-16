@@ -218,6 +218,7 @@ function portal_build_record(array $user): array
                 'status' => 'new',
             ]],
         ];
+        $record = portal_link_vehicle_expense($record, $user);
         portal_save_record($record);
         portal_audit('record_created', ['record_id' => $recordId, 'type' => $type, 'attachments' => count($attachments)]);
         return $record;
@@ -284,7 +285,7 @@ function portal_handle_post(array $user): never
             error_log('[i-feel staff expenses notification] record=' . $record['id'] . ' send_failed');
         }
         $record['email_notification'] = [
-            'recipients' => portal_expense_notification_recipients(),
+            'recipients' => portal_expense_notification_recipients($record),
             'status' => $emailSent ? 'sent' : 'failed',
             'updated_at' => gmdate('c'),
         ];
@@ -298,12 +299,12 @@ function portal_handle_post(array $user): never
         portal_save_record($record);
         portal_audit($emailSent ? 'record_email_sent' : 'record_email_failed', [
             'record_id' => $record['id'],
-            'recipients' => portal_expense_notification_recipients(),
+            'recipients' => portal_expense_notification_recipients($record),
         ]);
         portal_flash_set(
             $emailSent ? 'success' : 'error',
             ($emailSent
-                ? 'הדיווח נשמר והמסמכים נשלחו להנהלת החשבונות ולאורן. '
+                ? 'הדיווח נשמר והמסמכים נשלחו לאורן, להנהלת החשבונות ולעובד המדווח. '
                 : 'הדיווח נשמר, אך שליחת המסמכים בדוא״ל נכשלה ויש לטפל בכך ידנית. ')
             . 'מספר הדיווח: ' . $record['id']
         );
