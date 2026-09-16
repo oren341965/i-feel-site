@@ -111,7 +111,8 @@
       "salesAnalysis": null,
       "attribution": null,
       "tracking": null,
-      "capacity": null
+      "capacity": null,
+      "qualifiedLeads": null
     },
     "gates": {
       "trackingTrusted": false,

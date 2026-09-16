@@ -1,10 +1,11 @@
 import { readFile, stat } from 'node:fs/promises';
 import { isAbsolute, relative, resolve } from 'node:path';
 import { validateAttributionSnapshot } from '../../lead-attribution-feedback/scripts/attribution-readonly.mjs';
+import { evaluateQualifiedLeadFeedback } from '../../lead-attribution-feedback/scripts/qualified-lead-feedback.mjs';
 
 // Evidence is not permission. Never modify the runtime gates or lower a threshold.
 const MAX_BYTES = 10 * 1024 * 1024;
-const KINDS = ['salesAnalysis', 'attribution', 'tracking', 'capacity'];
+const KINDS = ['salesAnalysis', 'attribution', 'tracking', 'capacity', 'qualifiedLeads'];
 const RECONCILIATION = ['populationMatchesTotal', 'uniqueIdsMatchTotal',
   'treatmentPopulationMatchesOpen', 'treatmentHealthMatchesOpen', 'treatmentExclusionsMatchOpen'];
 const CAPACITY_CHECKS = ['responseSlaPassed', 'plansToProposalPassed', 'backlogWithinCapacity', 'serviceRiskWithinCapacity'];
@@ -22,7 +23,7 @@ function rate(value) { return typeof value === 'number' && Number.isFinite(value
 function ref(value) { return typeof value === 'string' && /^[a-z][a-z0-9._:-]{3,119}$/.test(value); }
 
 export function evaluateDecisionReadiness({ salesAnalysis, attribution, tracking, capacity,
-  policy, capacityPolicy, now = new Date(), maxAgeHours = 24 } = {}) {
+  qualifiedLeads, policy, capacityPolicy, now = new Date(), maxAgeHours = 24 } = {}) {
   if (!(now instanceof Date) || !Number.isFinite(now.getTime())
     || !Number.isFinite(maxAgeHours) || maxAgeHours <= 0 || maxAgeHours > 24) {
     throw new Error('Invalid readiness evidence window');
@@ -116,7 +117,8 @@ export function evaluateDecisionReadiness({ salesAnalysis, attribution, tracking
     if (gates.attributionCoverage < policy.minimumAttributionCoverage) blockers.push('ATTRIBUTION_LOW');
   }
   return { schemaVersion: 1, observedAt: now.toISOString(), status: blockers.length ? 'BLOCKED' : 'READY',
-    gates, blockers, evidence, safety: { platformWrites: 0, budgetChanges: 0, externalSends: 0, configWrites: 0 } };
+    gates, blockers, evidence, leadGoal: evaluateQualifiedLeadFeedback(qualifiedLeads, { now }),
+    safety: { platformWrites: 0, budgetChanges: 0, externalSends: 0, configWrites: 0 } };
 }
 
 export async function loadDecisionReadiness(config, { now = new Date() } = {}) {
@@ -139,7 +141,11 @@ export async function loadDecisionReadiness(config, { now = new Date() } = {}) {
           mode: 'READ_ONLY', connection: { status: 'LOCAL_SNAPSHOT_READ_ONLY', sourceVerified: true },
           safety: { sourceWrites: 0, mondayWrites: 0, externalSends: 0, rawPiiAccepted: false } };
       }
-    } catch { failures.push(`${kind.toUpperCase()}_EVIDENCE_FILE_UNAVAILABLE`); }
+    } catch {
+      // Missing lead feedback blocks autonomous budget inference in the selector,
+      // not an already-authorized exact negative or a date-bound human route.
+      if (kind !== 'qualifiedLeads') failures.push(`${kind.toUpperCase()}_EVIDENCE_FILE_UNAVAILABLE`);
+    }
   }
   const result = evaluateDecisionReadiness({ ...inputs, policy: config.marketingDecision,
     capacityPolicy: config.capacity, now });

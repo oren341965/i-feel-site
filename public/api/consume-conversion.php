@@ -27,7 +27,9 @@ $stored = $_SESSION['ads_conversion_proof'] ?? null;
 $eligible = is_string($proof)
     && preg_match('/^[a-f0-9]{64}$/', $proof) === 1
     && is_array($stored)
-    && isset($stored['hash'], $stored['expires_at'], $stored['monday_item_id'])
+    && isset($stored['hash'], $stored['expires_at'], $stored['monday_item_id'], $stored['event_id'])
+    && is_string($stored['event_id'])
+    && preg_match('/^ifeel_[a-f0-9]{32}$/', $stored['event_id']) === 1
     && is_string($stored['hash'])
     && is_numeric($stored['expires_at'])
     && (int) $stored['expires_at'] >= time()
@@ -35,6 +37,9 @@ $eligible = is_string($proof)
     && hash_equals($stored['hash'], hash('sha256', $proof));
 
 $response = ['eligible' => $eligible];
+if ($eligible) {
+    $response['event_id'] = $stored['event_id'];
+}
 $emailHash = $eligible ? ($stored['user_data']['sha256_email_address'] ?? null) : null;
 if (is_string($emailHash) && preg_match('/^[a-f0-9]{64}$/', $emailHash) === 1) {
     $response['user_data'] = ['sha256_email_address' => $emailHash];

@@ -38,7 +38,16 @@ This priority is a business constraint, not a substitute for live evidence. Repo
 - one successful action at most per Jerusalem calendar day;
 - source and target budgets are not explicitly shared;
 - source reduction is at most 10% and does not cross the configured floor;
-- target CPA and minimum-conversion evidence pass the configured rules.
+- target qualified CPL and minimum-qualified-acquisition evidence pass the configured rules;
+- a verified complete cross-platform qualified-lead export shows fewer than five
+  acquisitions in seven completed Jerusalem days. Read the qualified-lead contract
+  in the sibling `lead-attribution-feedback` skill; do not substitute raw conversions.
+
+The existing `minimumWinnerConversions` / `maximumWinnerCpaMicros` configuration
+keys now refer to verified qualified CRM acquisitions and their period CPL for
+autonomous budget selection. Existing tracking/capacity/attribution gates remain
+mandatory. This does not remove the separately approved exact-negative or dated
+human-route paths. A verified goal of five or above holds budget reallocation.
 
 ## Forbidden actions
 
@@ -56,6 +65,12 @@ This priority is a business constraint, not a substitute for live evidence. Repo
 The decision loop reads the current state immediately before a write. Budget reallocation uses one two-operation mutate request with partial failure disabled, then reads both budgets again. If the read-back differs, it performs one reverse mutate and verifies the restored values. A failed rollback is a critical terminal state and no further write is allowed.
 
 Only sanitized evidence is persisted: date, account ID, action kind, decision fingerprint, completion time and zero account-budget delta. Search terms, campaign names and credentials are not placed in shared telemetry.
+
+Before a mutation the worker exclusively creates a dated local reservation. It is
+retained after success or ambiguity, without retention/deletion. A failed or
+crashed attempt blocks automatic replay even if no success state was saved. An
+operator must reconcile Google state before approving recovery. Currency/timezone
+must be verified as ILS/Asia/Jerusalem, and the hard ceiling remains NIS 25/day.
 
 ## Long-term rationale
 

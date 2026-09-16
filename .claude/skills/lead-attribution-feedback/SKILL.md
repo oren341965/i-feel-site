@@ -29,6 +29,12 @@ Support at least: `how_did_you_hear`, `first_touch`, `last_touch`, `referrer`, `
 
 Produce structured, confidence-labeled aggregate feedback for `google-ads-manager`, `meta-ads-manager`, daily website/SEO, professional referrals and `ai-sales-manager`.
 
+For the 5–6 qualified-leads weekly goal, read [references/qualified-lead-contract.md](references/qualified-lead-contract.md).
+Use `scripts/qualified-lead-feedback.mjs` for the deterministic projection. It is
+not a live qualification producer. Require a complete, fresh, reviewed CRM export
+with historical deduplication; never infer qualification from a conversion or
+invent READY evidence. Missing evidence is UNKNOWN, not zero.
+
 At maturity 0, do not write to Monday, Google, Meta or the external attribution store. Finish with a self-check confirming that the result was a dry run and contained no raw PII.
 
 ## Local read-only adapter

@@ -9,6 +9,12 @@ Operate only as a child of `ai-sales-manager`. Read [../ai-sales-manager/referen
 
 For the bounded daily decision path, read [references/daily-decision-policy.md](references/daily-decision-policy.md). This is a child-worker permission only; it does not grant Monday, Meta, email, WhatsApp, publishing or sales-system write authority.
 
+Read [../lead-attribution-feedback/references/qualified-lead-contract.md](../lead-attribution-feedback/references/qualified-lead-contract.md)
+before evaluating the weekly acquisition goal. Autonomous budget selection requires
+fresh verified qualified-lead feedback across all sources and holds at 5 or more
+qualified acquisitions in seven completed Jerusalem days. Missing feedback blocks
+budget inference; raw platform conversions cannot substitute for it.
+
 ## Pre-run
 
 1. Confirm account `251-497-1872` and a verified live read connection.
@@ -54,8 +60,8 @@ Historical reference only, never current fact: 30 days, NIS 6,553 spend, 955 cli
 
 ## Output and self-check
 
-Return connection status, evidence time, tracking findings, qualified-funnel metrics, bounded recommendations, capacity status and approval requirements. Finish by asserting that no platform write, budget change or external send occurred.
+Return connection status, evidence time, tracking findings, qualified-funnel metrics, bounded recommendations, capacity status and approval requirements. Report actual counters: Preview has zero writes; a successful bounded Apply must explicitly report the verified change, never assert that no write occurred.
 
 When both `connected` and `liveVerified` are true in the machine-local runtime configuration, `morning-run.mjs` invokes this connector and exposes the live read under `googleAdsReadOnly`. A connector failure stops the run; it must never be silently replaced with historical reference data.
 
-The maturity-1 entrypoint is `scripts/google-ads-decision-loop.mjs`. Run it with `--mode preview` until the policy, credentials and live gates are verified. `--mode apply` is idempotent per Jerusalem calendar day and never prints credential values.
+The maturity-1 entrypoint is `scripts/google-ads-decision-loop.mjs`. Run it with `--mode preview` until the policy, credentials and live gates are verified. `--mode apply` reserves the Jerusalem day before mutation and never prints credential values. Do not delete a reservation or automatically retry `FAILED_REQUIRES_REVIEW`; first reconcile actual Google state. Telemetry failure never authorizes a business-write retry.

@@ -6,6 +6,10 @@ import { tmpdir } from 'node:os';
 import test from 'node:test';
 import { readinessFixture } from './fixtures/marketing-readiness.mjs';
 import './marketing-readiness.test.mjs';
+import './qualified-lead-feedback.test.mjs';
+import './marketing-daily-recovery.test.mjs';
+import { qualifiedLeadFixture } from './fixtures/qualified-leads.mjs';
+import { evaluateQualifiedLeadFeedback } from '../.claude/skills/lead-attribution-feedback/scripts/qualified-lead-feedback.mjs';
 
 import {
   chooseDailyGoogleAdsDecision,
@@ -32,10 +36,11 @@ const POLICY = {
   approvedExactNegativeTerms: ['דרושים בית חכם'],
 };
 const GATES = { trackingTrusted: true, capacityStatus: 'READY', dataQualityScore: 0.9, attributionCoverage: 0.8 };
+const LEAD_GOAL = evaluateQualifiedLeadFeedback(qualifiedLeadFixture(NOW), { now: NOW });
 
 test('decision loop preserves the total account budget and limits the daily source reduction to 10%', () => {
   const decision = chooseDailyGoogleAdsDecision({
-    policy: POLICY, gates: GATES, now: NOW, searchTerms: [],
+    policy: POLICY, gates: GATES, leadGoal: LEAD_GOAL, now: NOW, searchTerms: [],
     campaigns: [
       { campaignId: '1', campaignName: 'Waste', status: 'ENABLED', budgetResourceName: 'customers/2514971872/campaignBudgets/1', budgetMicros: 100_000_000, spendMicros: 500_000_000, conversions: 0 },
       { campaignId: '2', campaignName: 'Winner', status: 'ENABLED', budgetResourceName: 'customers/2514971872/campaignBudgets/2', budgetMicros: 50_000_000, spendMicros: 500_000_000, conversions: 4 },
@@ -149,6 +154,7 @@ test('preview mode works through the independent read gate while the write gate 
     if (target.endsWith('/customers:listAccessibleCustomers')) return response({ resourceNames: ['customers/2514971872'] });
     if (target.includes(':mutate')) { mutateCalls += 1; return response({}); }
     const query = JSON.parse(options.body).query;
+    if (/FROM customer\b/.test(query)) return response([{ results: [{ customer: { id: '2514971872', currencyCode: 'ILS', timeZone: 'Asia/Jerusalem' } }] }]);
     if (/FROM campaign\b/.test(query)) return response([{ results: [] }]);
     if (/FROM search_term_view/.test(query)) return response([{ results: [] }]);
     throw new Error(`Unexpected request ${target}`);
@@ -227,6 +233,7 @@ test('apply mode performs one exact-negative mutation, verifies it and persists 
       return response({ results: [{ resourceName: 'customers/2514971872/campaignCriteria/10~1' }] });
     }
     const query = JSON.parse(options.body).query;
+    if (/FROM customer\b/.test(query)) return response([{ results: [{ customer: { id: '2514971872', currencyCode: 'ILS', timeZone: 'Asia/Jerusalem' } }] }]);
     if (/FROM campaign\b/.test(query)) return response([{ results: [] }]);
     if (/FROM search_term_view/.test(query)) return response([{ results: [{
       searchTermView: { searchTerm: 'דרושים בית חכם' }, campaign: { id: '10', name: 'Search' },
@@ -248,4 +255,25 @@ test('apply mode performs one exact-negative mutation, verifies it and persists 
   assert.equal(persisted.includes('דרושים'), false);
   assert.equal(persisted.includes('Search'), false);
   assert.equal(persisted.includes('synthetic-token'), false);
+  const retry = await runDailyGoogleAdsDecision({ configPath, mode: 'apply', fetchImpl, now: NOW });
+  assert.equal(retry.status, 'ALREADY_COMPLETED');
+  assert.equal(mutateCalls, 1);
+  const reservation = await readFile(join(root, 'state', 'google-ads-daily-2026-09-07.lock'), 'utf8');
+  assert.equal(JSON.parse(reservation).status, 'RUNNING');
+  assert.equal(reservation.includes('דרושים'), false);
+});
+
+test('raw conversions alone cannot select a budget winner; target reached holds budget', () => {
+  const input = { policy: POLICY, gates: GATES, now: NOW, searchTerms: [], campaigns: [
+    { campaignId: '1', status: 'ENABLED', budgetResourceName: 'b/1', budgetMicros: 100e6, spendMicros: 500e6, conversions: 0 },
+    { campaignId: '2', status: 'ENABLED', budgetResourceName: 'b/2', budgetMicros: 50e6, spendMicros: 500e6, conversions: 99 },
+  ] };
+  assert.deepEqual(chooseDailyGoogleAdsDecision(input).blockers, ['QUALIFIED_LEAD_FEEDBACK_REQUIRED']);
+  const empty = evaluateQualifiedLeadFeedback(qualifiedLeadFixture(NOW, 0), { now: NOW });
+  assert.deepEqual(chooseDailyGoogleAdsDecision({ ...input, leadGoal: empty }).blockers, ['NO_ELIGIBLE_BUDGET_PAIR']);
+  for (const count of [5, 6, 7]) {
+    const leadGoal = evaluateQualifiedLeadFeedback(qualifiedLeadFixture(NOW, count), { now: NOW });
+    assert.deepEqual(chooseDailyGoogleAdsDecision({ ...input, leadGoal }).blockers, ['WEEKLY_QUALIFIED_LEAD_TARGET_REACHED']);
+  }
+  assert.throws(() => chooseDailyGoogleAdsDecision({ ...input, policy: { ...POLICY, maxDailyTransferMicros: 26e6 } }), /at most NIS 25/);
 });
