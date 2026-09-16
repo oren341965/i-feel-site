@@ -185,6 +185,41 @@ try {
         && portal_vehicle_documents_for_user(['email' => 'other@i-feel.co.il', 'role' => 'employee'], '12345678') === [],
         'Vehicle document access control is incorrect.'
     );
+    $repairRecord = [
+        'id' => portal_new_record_id(),
+        'type' => 'vehicle',
+        'created_at' => gmdate('c'),
+        'details' => ['vehicle_category' => 'repair', 'vehicle_plate' => '123-45-678', 'invoice_number' => 'TEST-INVOICE'],
+        'attachments' => [['original_name' => 'repair.pdf', 'storage_name' => 'repair.pdf', 'mime' => 'application/pdf']],
+    ];
+    $worker = ['email' => 'worker@i-feel.co.il', 'role' => 'employee'];
+    $linkedRepair = portal_link_vehicle_expense($repairRecord, $worker);
+    portal_save_record($linkedRepair);
+    $repairFiles = portal_record_dir($linkedRepair['id']) . '/files';
+    portal_ensure_directory($repairFiles);
+    file_put_contents($repairFiles . '/repair.pdf', 'test invoice');
+    $archivedInvoices = array_values(array_filter(portal_vehicle_documents_for_user($worker, '12345678'), static fn(array $doc): bool => isset($doc['source_record_id'])));
+    portal_test_expect(
+        count($archivedInvoices) === 1
+        && $archivedInvoices[0]['source_record_id'] === $linkedRepair['id']
+        && $archivedInvoices[0]['policy_number'] === 'TEST-INVOICE'
+        && file_get_contents(portal_record_dir($archivedInvoices[0]['source_record_id']) . '/files/' . $archivedInvoices[0]['attachment']['storage_name']) === 'test invoice',
+        'Repair invoice is not available from the correct vehicle file.'
+    );
+    portal_test_expect(
+        count(portal_vehicle_documents_for_user($worker, '12345678')) === 2
+        && portal_vehicle_expense_documents('87654321') === []
+        && portal_vehicle_documents_for_user(['email' => 'other@i-feel.co.il', 'role' => 'employee'], '12345678') === [],
+        'Vehicle invoices were duplicated or exposed outside the matching vehicle.'
+    );
+    $wrongVehicleRejected = false;
+    try {
+        portal_link_vehicle_expense($repairRecord, ['email' => 'other@i-feel.co.il', 'role' => 'employee']);
+    } catch (RuntimeException $expected) {
+        $wrongVehicleRejected = true;
+    }
+    portal_test_expect($wrongVehicleRejected, 'An employee can archive an invoice under another employee vehicle.');
+    portal_remove_tree(portal_record_dir($linkedRepair['id']));
     $minimalVehicleRows = implode("\n", [
         "דוא״ל עובד\tמספר רכב",
         "worker@i-feel.co.il\t876-54-321",
