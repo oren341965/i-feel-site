@@ -326,7 +326,7 @@ test('Maya commissioning is role-scoped, hash-verified, and activation-free', ()
   assert.match(installer, /UTF8Encoding\]::new\(\$false\)/);
   assert.doesNotMatch(installer, /Set-Content -LiteralPath \$configPath -Encoding UTF8/);
   assert.doesNotMatch(installer, /Register-ScheduledTask|Enable-ScheduledTask|schtasks(?:\.exe)?\s+\/Create/i);
-  assert.match(productionRunner, /readFile\(0, 'utf8'\)/);
+  assert.match(productionRunner, /for await \(const chunk of process\.stdin\)/);
   assert.match(productionRunner, /prepareMayaProductionTask/);
   assert.match(productionRunner, /completeMayaProductionTask/);
   assert.doesNotMatch(productionRunner, /https?:\/\/|fetch\(|spawn\(|exec(?:File)?\(/);

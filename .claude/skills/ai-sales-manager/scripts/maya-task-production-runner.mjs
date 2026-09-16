@@ -1,4 +1,3 @@
-import { readFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -40,8 +39,14 @@ function parseArgs(argv) {
 }
 
 async function readBoundedStdin() {
-  const text = await readFile(0, 'utf8');
-  if (Buffer.byteLength(text, 'utf8') > MAX_STDIN_BYTES) throw new Error('RUNNER_STDIN_TOO_LARGE');
+  process.stdin.setEncoding('utf8');
+  let text = '';
+  let bytes = 0;
+  for await (const chunk of process.stdin) {
+    bytes += Buffer.byteLength(chunk, 'utf8');
+    if (bytes > MAX_STDIN_BYTES) throw new Error('RUNNER_STDIN_TOO_LARGE');
+    text += chunk;
+  }
   try {
     const value = JSON.parse(text.replace(/^\uFEFF/, ''));
     if (!value || typeof value !== 'object' || Array.isArray(value)) throw new Error();

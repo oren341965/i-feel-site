@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { execFile } from 'node:child_process';
+import { execFile, spawnSync } from 'node:child_process';
 import { mkdir, readFile, rm, stat, writeFile } from 'node:fs/promises';
 import { join, resolve } from 'node:path';
 import test from 'node:test';
@@ -642,6 +642,27 @@ test('installed Maya task smoke accepts the UTF-8 BOM written by Windows PowerSh
   assert.match(stdout, /^READY_FOR_REAL_TASKS=NO$/m);
   assert.match(stdout, /^EXTERNAL_SENDS=0$/m);
   assert.match(stdout, /^MONDAY_WRITES=0$/m);
+});
+
+test('production runner reads stdin and never echoes malformed private input', () => {
+  const runnerPath = resolve(
+    REPO,
+    '.claude/skills/ai-sales-manager/scripts/maya-task-production-runner.mjs',
+  );
+  const privateInput = '{"customer":"PRIVATE CUSTOMER","email":"private@example.invalid"';
+  const result = spawnSync(process.execPath, [
+    runnerPath,
+    'prepare',
+    '--config',
+    resolve(REPO, '.ai-manager-data/nonexistent-config.json'),
+    '--task-id',
+    'synthetic-task-001',
+  ], { input: privateInput, encoding: 'utf8' });
+  assert.equal(result.status, 1);
+  assert.equal(result.stdout, '');
+  assert.equal(result.stderr.trim(), 'RUNNER_STDIN_JSON_INVALID');
+  assert.equal(`${result.stdout}${result.stderr}`.includes('PRIVATE CUSTOMER'), false);
+  assert.equal(`${result.stdout}${result.stderr}`.includes('private@example.invalid'), false);
 });
 
 test('Maya bridge accepts a UTF-8 BOM config and keeps invalid JSON errors bounded', async (t) => {
