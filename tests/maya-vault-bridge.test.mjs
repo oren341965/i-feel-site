@@ -9,6 +9,7 @@ import {
   acknowledgeMayaSalesTask,
   assignMayaSalesTask,
   createMayaSalesTask,
+  createMayaActionAuthorization,
   createMayaSalesTaskAck,
   createMayaSalesTaskResult,
   createManagerHandshake,
@@ -343,6 +344,192 @@ test('isolated Maya sales task completes Assignment -> ACK -> Result -> Monday g
   assert.equal(assigned.assignment.monday_writes_performed, false);
 });
 
+test('production Maya task requires exact authorization and an idempotent verified action receipt', async (t) => {
+  const { managerConfigPath, mayaConfigPath } = await fixture(t);
+  const productionNow = new Date('2026-08-20T10:00:00.000Z');
+  const mayaConfig = JSON.parse(await readFile(mayaConfigPath, 'utf8'));
+  mayaConfig.identity = {
+    role: 'maya-agent',
+    machineId: 'desktop-maya',
+    serviceIdentityVerified: true,
+    serviceIdentityId: 'maya-front-office-codex-v10',
+  };
+  mayaConfig.taskQueue = {
+    productionExecutionAllowed: true,
+    productionExecutionRequiresReadyGate: true,
+    mondayWritesAllowed: false,
+  };
+  mayaConfig.controlState = {
+    mayaState: 'ACTIVE', documentedOnly: false, verifiedSkillCount: 4,
+    serviceIdentityVerified: true, whatsappTelemetryVerified: true,
+    emailSnapshotFresh: true, gmailProfileRole: 'MAYA', proactiveMessagingApproval: 'APPROVED',
+  };
+  await writeFile(mayaConfigPath, JSON.stringify(mayaConfig), 'utf8');
+
+  const authorization = createMayaActionAuthorization({
+    approval_id: 'oren-customer-followup-20260820-001',
+    approved_at: '2026-08-20T09:00:00.000Z',
+    expires_at: '2026-08-21T14:59:59.000Z',
+    channel: 'WHATSAPP',
+    action_kind: 'STATUS_FOLLOWUP',
+    approved_content: 'Exact approved customer follow-up.',
+    next_treatment_date: '2026-08-23',
+    no_further_outreach_before: '2026-08-26',
+  });
+  const assigned = await assignMayaSalesTask({
+    configPath: managerConfigPath,
+    now: productionNow,
+    input: {
+      task_id: 'maya-sales-production-action-001',
+      monday_board_id: '2732725332',
+      monday_item_id: '1234567890',
+      customer_name: 'PRODUCTION TEST CUSTOMER',
+      current_sales_status: '9. וידוא קבלת ההצעה',
+      instruction: 'Perform only the separately approved status follow-up.',
+      required_action: 'STATUS_FOLLOWUP',
+      priority: 'NORMAL',
+      monday_item_source: 'MONDAY_LIVE',
+      monday_item_verified_at: productionNow.toISOString(),
+      test_task: false,
+      execution_gate: { ready: true, status: 'MAYA_PRODUCTION_READY', blockers: [] },
+      action_authorization: authorization,
+    },
+  });
+
+  let sends = 0;
+  const processed = await processAssignedMayaTask({
+    configPath: mayaConfigPath,
+    task: assigned.assignment,
+    now: productionNow,
+    executionOrigin: 'MAYA_WORKSTATION',
+    adapters: {
+      idempotencyGuaranteed: true,
+      mondayRead: async ({ boardId, itemId }) => ({
+        boardId,
+        itemId,
+        verified: true,
+        verifiedAt: productionNow.toISOString(),
+        eligible: true,
+        futureTimeline: false,
+        salesEnded: false,
+      }),
+      gmailRead: async () => ({
+        checked: true,
+        checkedAt: productionNow.toISOString(),
+        responseFound: false,
+        optOutFound: false,
+        needsOrenDecision: false,
+      }),
+      channelRead: async () => ({
+        channel: 'WHATSAPP',
+        identityVerified: true,
+        directRecipientVerified: true,
+        recentConversationRead: true,
+        responseFound: false,
+        optOutFound: false,
+        equivalentMessageWithinDays: false,
+        unansweredAttempts: 0,
+        isIsraeliHoliday: false,
+        verifiedAt: productionNow.toISOString(),
+      }),
+      previewApprovedAction: async ({ idempotencyKey }) => ({
+        ready: true,
+        idempotencyKey,
+        channel: 'WHATSAPP',
+        recipientType: 'CUSTOMER',
+        directRecipientVerified: true,
+        approvedContentSha256: authorization.approved_content_sha256,
+      }),
+      executeApprovedAction: async ({ idempotencyKey, approvedPreview }) => {
+        sends += 1;
+        assert.equal(approvedPreview.approvedContentSha256, authorization.approved_content_sha256);
+        assert.equal(approvedPreview.directRecipientVerified, true);
+        return {
+          sent: true,
+          verifiedInConversation: true,
+          idempotencyKey,
+          channel: 'WHATSAPP',
+          recipientType: 'CUSTOMER',
+          approvedContentSha256: authorization.approved_content_sha256,
+          externalActionId: 'whatsapp-message-test-001',
+          sentAt: productionNow.toISOString(),
+        };
+      },
+    },
+  });
+  assert.equal(processed.status, 'WAITING_FOR_CUSTOMER');
+  assert.equal(processed.result.external_actions_performed, true);
+  assert.equal(processed.result.monday_writes_performed, false);
+  assert.equal(processed.result.next_treatment_date, '2026-08-23');
+  assert.deepEqual(processed.safety, { externalSends: 1, gmailMutations: 0, mondayWrites: 0 });
+  assert.equal(sends, 1);
+
+  const duplicate = await processAssignedMayaTask({
+    configPath: mayaConfigPath,
+    task: assigned.assignment,
+    now: new Date('2026-08-20T10:01:00.000Z'),
+    executionOrigin: 'MAYA_WORKSTATION',
+    adapters: {
+      mondayRead: async () => { throw new Error('DUPLICATE_READ_FORBIDDEN'); },
+      gmailRead: async () => { throw new Error('DUPLICATE_READ_FORBIDDEN'); },
+    },
+  });
+  assert.equal(duplicate.status, 'DUPLICATE_RESULT_REUSED');
+  assert.equal(sends, 1);
+});
+
+test('production Maya task without an action authorization fails closed before sending', async (t) => {
+  const { managerConfigPath, mayaConfigPath } = await fixture(t);
+  const productionNow = new Date('2026-08-20T10:00:00.000Z');
+  const mayaConfig = JSON.parse(await readFile(mayaConfigPath, 'utf8'));
+  mayaConfig.identity = {
+    role: 'maya-agent', machineId: 'desktop-maya', serviceIdentityVerified: true,
+    serviceIdentityId: 'maya-front-office-codex-v10',
+  };
+  mayaConfig.taskQueue = {
+    productionExecutionAllowed: true,
+    productionExecutionRequiresReadyGate: true,
+    mondayWritesAllowed: false,
+  };
+  mayaConfig.controlState = {
+    mayaState: 'ACTIVE', documentedOnly: false, verifiedSkillCount: 4,
+    serviceIdentityVerified: true, whatsappTelemetryVerified: true,
+    emailSnapshotFresh: true, gmailProfileRole: 'MAYA', proactiveMessagingApproval: 'APPROVED',
+  };
+  await writeFile(mayaConfigPath, JSON.stringify(mayaConfig), 'utf8');
+  const assigned = await assignMayaSalesTask({
+    configPath: managerConfigPath,
+    now: productionNow,
+    input: {
+      task_id: 'maya-sales-production-no-approval-001',
+      monday_board_id: '2732725332',
+      monday_item_id: '1234567890',
+      customer_name: 'NO APPROVAL CUSTOMER',
+      current_sales_status: '9. וידוא קבלת ההצעה',
+      instruction: 'No action is authorized.',
+      required_action: 'STATUS_FOLLOWUP',
+      priority: 'NORMAL',
+      monday_item_source: 'MONDAY_LIVE',
+      monday_item_verified_at: productionNow.toISOString(),
+      test_task: false,
+      execution_gate: { ready: true, status: 'MAYA_PRODUCTION_READY', blockers: [] },
+    },
+  });
+  const processed = await processAssignedMayaTask({
+    configPath: mayaConfigPath,
+    task: assigned.assignment,
+    now: productionNow,
+    executionOrigin: 'MAYA_WORKSTATION',
+    adapters: {
+      mondayRead: async ({ boardId, itemId }) => ({ boardId, itemId }),
+      gmailRead: async () => ({}),
+    },
+  });
+  assert.equal(processed.status, 'BLOCKED');
+  assert.equal(processed.result.next_action, 'MAYA_ACTION_AUTHORIZATION_MISSING');
+  assert.deepEqual(processed.safety, { externalSends: 0, gmailMutations: 0, mondayWrites: 0 });
+});
+
 test('installed Maya task smoke proves the isolated end-to-end bridge and remains fail-closed', async (t) => {
   const { mayaConfigPath } = await fixture(t);
   const installedConfig = JSON.parse(await readFile(mayaConfigPath, 'utf8'));
@@ -493,6 +680,10 @@ test('Maya sales task JSON schema fixes the required fields and execution-state 
     'NEEDS_OREN_DECISION',
   ]);
   assert.deepEqual(task.properties.monday_item_source.enum, ['MONDAY_LIVE', 'ISOLATED_TEST']);
+  assert.deepEqual(task.properties.action_authorization.properties.channel.enum, ['WHATSAPP', 'EMAIL']);
+  assert.equal(task.properties.action_authorization.properties.approved_by.const, 'oren');
+  assert.equal(task.properties.action_authorization.properties.recipient_type.const, 'CUSTOMER');
+  assert.equal(task.properties.action_authorization.properties.monday_write_authorized.const, false);
   assert.throws(() => createMayaSalesTask({
     task_id: 'maya-sales-invalid-isolated-source-001',
     monday_board_id: '2732725332',
