@@ -4,15 +4,15 @@ declare(strict_types=1);
 // Base64 adds roughly 33%, so keep each raw batch below common 20–25 MB limits.
 const IFEEL_PORTAL_EMAIL_ATTACHMENT_BATCH_BYTES = 14680064;
 
-function portal_expense_notification_recipients(): array
+function portal_expense_notification_recipients(array $record): array
 {
-    $configured = trim((string) getenv('EXPENSE_PORTAL_REPORT_RECIPIENTS'));
-    if ($configured === '') {
-        $candidates = ['account@i-feel.co.il', 'oren@i-feel.co.il'];
-    } else {
-        $split = preg_split('/[\s,;]+/', $configured);
-        $candidates = is_array($split) ? $split : [];
-    }
+    // These three roles are mandatory; legacy server overrides must not omit them
+    // or disclose an employee's expense documents to additional recipients.
+    $candidates = [
+        'oren@i-feel.co.il',
+        'account@i-feel.co.il',
+        (string) ($record['employee']['email'] ?? ''),
+    ];
     $recipients = [];
     foreach ($candidates as $candidate) {
         $email = portal_normalize_company_email((string) $candidate);
@@ -97,7 +97,7 @@ function portal_expense_notification_body(array $record): string
 
 function portal_notify_expense_submission(array $record): bool
 {
-    $recipients = portal_expense_notification_recipients();
+    $recipients = portal_expense_notification_recipients($record);
     if ($recipients === []) {
         return false;
     }
@@ -106,19 +106,19 @@ function portal_notify_expense_submission(array $record): bool
     $subjectBase = 'דיווח הוצאה חדש ' . (string) ($record['id'] ?? '');
     $body = portal_expense_notification_body($record);
 
+    $allSent = portal_normalize_company_email((string) ($record['employee']['email'] ?? '')) !== null;
     if ((string) getenv('IFEEL_PORTAL_TEST_MODE') === '1') {
-        return count($batches) >= 1;
+        return $allSent && count($batches) >= 1;
     }
-
     foreach ($recipients as $recipient) {
         foreach ($batches as $index => $batch) {
             $subject = count($batches) > 1
                 ? $subjectBase . ' — מסמכים ' . ($index + 1) . '/' . count($batches)
                 : $subjectBase;
             if (!portal_send_mail_with_attachments($recipient, $subject, $body, $batch)) {
-                return false;
+                $allSent = false;
             }
         }
     }
-    return true;
+    return $allSent;
 }
