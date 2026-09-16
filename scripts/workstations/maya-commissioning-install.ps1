@@ -41,7 +41,8 @@ $requiredPayload = @(
     'payload\runtime\maya-task-protocol.md',
     'payload\runtime\orchestrate-sales-system.mjs',
     'payload\runtime\maya-vault-bridge.mjs',
-    'payload\runtime\maya-task-e2e-smoke.mjs'
+    'payload\runtime\maya-task-e2e-smoke.mjs',
+    'payload\runtime\maya-task-production-runner.mjs'
 )
 
 function Assert-SafeRoot {
@@ -339,7 +340,7 @@ if (-not $VerifyOnly) {
             Copy-Item -LiteralPath (Join-Path $bundle "payload\runtime\$contract") -Destination $contractTarget -Force
         }
     }
-    foreach ($job in @('orchestrate-sales-system.mjs', 'maya-vault-bridge.mjs', 'maya-task-e2e-smoke.mjs')) {
+    foreach ($job in @('orchestrate-sales-system.mjs', 'maya-vault-bridge.mjs', 'maya-task-e2e-smoke.mjs', 'maya-task-production-runner.mjs')) {
         $jobTarget = Join-Path $runtimeJobsRoot $job
         if (Test-Path -LiteralPath $jobTarget -PathType Leaf) {
             $jobBackup = Join-Path $backupRoot "runtime\jobs\$job"
@@ -378,7 +379,7 @@ $taskContractHashes = foreach ($contract in @('bus-message.schema.json', 'maya-t
     }
 }
 $allTaskContractsVerified = @($taskContractHashes | Where-Object { -not $_.hashMatch }).Count -eq 0
-$taskRuntimeHashes = foreach ($job in @('orchestrate-sales-system.mjs', 'maya-vault-bridge.mjs', 'maya-task-e2e-smoke.mjs')) {
+$taskRuntimeHashes = foreach ($job in @('orchestrate-sales-system.mjs', 'maya-vault-bridge.mjs', 'maya-task-e2e-smoke.mjs', 'maya-task-production-runner.mjs')) {
     $source = Join-Path $bundle "payload\runtime\$job"
     $target = Join-Path $runtimeJobsRoot $job
     [ordered]@{
@@ -454,6 +455,7 @@ $result = [ordered]@{
         nextGate = 'CODEX_BROWSER_IDENTITY_AND_MANAGEMENT_SMOKE'
         taskProtocol = 'MAYA_SALES_TASK_V2'
         isolatedTaskSmokeCommand = 'node C:\ifeel-maya\jobs\maya-task-e2e-smoke.mjs --config C:\ifeel-maya\config\config.json'
+        productionTaskRunnerCommand = 'node C:\ifeel-maya\jobs\maya-task-production-runner.mjs <prepare|complete> --config C:\ifeel-maya\config\config.json --task-id <task_id>'
         externalSends = 0
         mondayWrites = 0
         deletions = 0

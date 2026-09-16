@@ -97,7 +97,9 @@
     "existingSchedulerPollingAllowed": true,
     "ackResultWritesAllowed": true,
     "mondayWritesAllowed": false,
+    "productionExecutionAllowed": false,
     "productionExecutionRequiresReadyGate": true,
+    "productionExecutionMode": "TWO_PHASE_APPROVED_ACTION",
     "isolatedTestsAllowed": true
   },
   "controlState": {

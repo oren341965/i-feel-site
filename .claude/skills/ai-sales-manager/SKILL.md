@@ -48,7 +48,7 @@ description: Orchestrate I Feel's sales and marketing system, deterministic read
 - Bounded daily Google Ads decision: `../google-ads-manager/scripts/google-ads-decision-loop.mjs`
 - Local morning dry run: `scripts/morning-run.mjs`
 - No-write source preflight: `scripts/preflight-readonly.mjs`
-- Vault boundaries: `scripts/vault-runtime.mjs`, `scripts/maya-vault-bridge.mjs`, and `scripts/claude-vault-bridge.mjs`
+- Vault boundaries: `scripts/vault-runtime.mjs`, `scripts/maya-vault-bridge.mjs`, `scripts/maya-task-production-runner.mjs`, and `scripts/claude-vault-bridge.mjs`
 
 Missing evidence or authority is a blocker, not permission to simulate success.
 
