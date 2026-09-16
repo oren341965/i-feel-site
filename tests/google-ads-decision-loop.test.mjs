@@ -4,6 +4,8 @@ import { mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { tmpdir } from 'node:os';
 import test from 'node:test';
+import { readinessFixture } from './fixtures/marketing-readiness.mjs';
+import './marketing-readiness.test.mjs';
 
 import {
   chooseDailyGoogleAdsDecision,
@@ -185,6 +187,12 @@ test('apply mode performs one exact-negative mutation, verifies it and persists 
   const developerCredentialFile = join(root, 'developer.txt');
   const configPath = join(root, 'config.json');
   await mkdir(root, { recursive: true });
+  await mkdir(join(root, 'state'), { recursive: true });
+  const evidenceFiles = {};
+  for (const [kind, value] of Object.entries(readinessFixture(NOW))) {
+    evidenceFiles[kind] = join(root, 'state', `${kind}.json`);
+    await writeFile(evidenceFiles[kind], JSON.stringify(value), 'utf8');
+  }
   await writeFile(serviceAccountCredentialFile, JSON.stringify({
     type: 'service_account', client_email: 'writer@example.invalid',
     private_key: privateKey.export({ type: 'pkcs8', format: 'pem' }),
@@ -197,7 +205,8 @@ test('apply mode performs one exact-negative mutation, verifies it and persists 
       connected: true, liveVerified: true, readOnly: true, writeEnabled: true, apiVersion: 'v25',
       serviceAccountCredentialFile, developerCredentialFile,
     } },
-    marketingDecision: { ...POLICY, gates: GATES },
+    capacity: { activeUnownedLeadThreshold: 5 },
+    marketingDecision: { ...POLICY, gates: GATES, evidenceFiles },
   }), 'utf8');
 
   let mutateCalls = 0;

@@ -450,6 +450,20 @@ export function analyzeSales(input, options = {}) {
   const owners = ownerMetrics(classified);
   const eligibleOpen = open.filter((item) => item.salesEligibility.eligible);
   const excludedOpen = open.filter((item) => !item.salesEligibility.eligible);
+  const eligibleIds = new Set(eligibleOpen.map((item) => item.id));
+  const cohorts = {
+    all: sourceItems,
+    open: openSource,
+    treatment: sourceItems.filter((item) => eligibleIds.has(String(item.id))),
+    recent7Days: sourceItems.filter((item) => {
+      const created = strictDate(item.createdAt, { timezone: config.timezone });
+      return created && created <= now && now - created <= 7 * DAY_MS;
+    }),
+  };
+  const dataQualityByPopulation = Object.fromEntries(Object.entries(cohorts).map(([key, items]) => {
+    const cohortCoverage = fieldCoverage(items, config);
+    return [key, { count: items.length, score: dataQualityScore(cohortCoverage), coverage: cohortCoverage }];
+  }));
   const treatmentFlagCount = (flag) => eligibleOpen.filter((item) => item.flags[flag]).length;
   const exclusionBucket = (item) => {
     const reasons = item.salesEligibility.reasons;
@@ -505,6 +519,7 @@ export function analyzeSales(input, options = {}) {
   const mappingWarnings = classified.flatMap((item) => item.mappingWarnings.map((warning) => ({ id: item.id, warning })));
   return {
     ...snapshot,
+    dataQualityByPopulation,
     source: { mode: source.mode ?? 'offline', uniqueIds },
     valuePriorityEnabled,
     ownerMetrics: owners,
