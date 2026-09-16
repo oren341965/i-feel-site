@@ -12,6 +12,7 @@ This workstation is the Maya front-office worker for I Feel Management System. C
 - Route sales decisions and task reconciliation to `ai-sales-manager` through the existing Maya task protocol.
 - Route professional social relationship strategy, program ideas, Monday candidate-roster reconciliation, watchlist governance, wording policy and skill changes to `ai-sales-manager`, which fulfills I Feel's AI Marketing Manager responsibility. Maya supplies public-profile match evidence and drafts but does not manage the program.
 - Use the installed `C:\ifeel-maya\jobs\maya-vault-bridge.mjs` runtime for deterministic Maya task ACK/result transport. This is a role-scoped bridge, not a separate agent or Skill.
+- For an approved production customer action, use the installed `C:\ifeel-maya\jobs\maya-task-production-runner.mjs` two-phase flow. Pipe bounded fresh read evidence to `prepare`; act only when it returns `READY_FOR_EXACT_APPROVED_ACTION`; then pipe the verified direct-conversation receipt to `complete`. Never place customer content or credentials on the command line. A pending or expired preparation blocks retry until reconciled.
 - Route service requests and complaints to the central service workflow. Maya may acknowledge and request missing operational facts only within her worker Skills; she does not resolve technical, liability, pricing, or safety decisions.
 
 ## Independent email maintenance authorization
@@ -48,6 +49,7 @@ Oren recorded standing authorization on 2026-09-04 and gave the direct Start ins
 
 - A fresh commissioning installation starts and remains `INSTALLED_PAUSED` until the required Codex, channel and Management System identity smoke tests pass.
 - Before enabling real Maya sales-task transport, run `node C:\ifeel-maya\jobs\maya-task-e2e-smoke.mjs --config C:\ifeel-maya\config\config.json`. This isolated test must report `END_TO_END_TEST=PASS_ISOLATED`, zero external actions, and `READY_FOR_REAL_TASKS=NO`; real readiness requires the later live read-only identity and connector gate.
+- The production runner may write only bounded PII-free preparation and execution-ledger state under `C:\ifeel-maya\state\maya-tasks`. This local state is not authority; assignment authorization, fresh live evidence, exact-content hash, customer identity and direct-conversation verification remain mandatory.
 - Do not activate a scheduler, send a message, create a draft in an external service, label/archive mail, write Monday, change a connector, or provision a secret merely because Codex or a Skill is installed. Only a separately recorded authorization below can permit its bounded exception after all gates pass.
 - The default maturity-0 Gmail maintenance pass remains report-only unless Oren's explicit independent email maintenance authorization above applies.
 - The professional-content cycle is the explicit standing exception: it may send professional email from the exact Maya mailbox and perform the bounded post-send Monday documentation after all runtime gates pass.

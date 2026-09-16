@@ -100,6 +100,7 @@ $copyMap = [ordered]@{
     '.claude\skills\ai-sales-manager\scripts\orchestrate-sales-system.mjs' = 'payload\runtime\orchestrate-sales-system.mjs'
     '.claude\skills\ai-sales-manager\scripts\maya-vault-bridge.mjs' = 'payload\runtime\maya-vault-bridge.mjs'
     '.claude\skills\ai-sales-manager\scripts\maya-task-e2e-smoke.mjs' = 'payload\runtime\maya-task-e2e-smoke.mjs'
+    '.claude\skills\ai-sales-manager\scripts\maya-task-production-runner.mjs' = 'payload\runtime\maya-task-production-runner.mjs'
     'scripts\workstations\maya-commissioning-install.ps1' = 'INSTALL.ps1'
 }
 

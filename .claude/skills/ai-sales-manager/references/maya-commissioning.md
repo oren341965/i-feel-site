@@ -20,9 +20,10 @@ This handoff makes Maya installation repeatable without copying prompts, source 
 5. Provision the scoped Management credentials with the installed `provision-management-telemetry.ps1` helper. After its hidden prompts succeed, it runs the current installer in network-free `-VerifyOnly` mode and publishes one new bounded `MAYA_COMMISSIONING_RESULT` to the existing Vault Bus. No token or absolute path is included.
 6. On Oren, run `check-maya-commissioning-result.ps1` against the Vault; do not copy logs, prompts or secrets between computers.
 7. On Maya, run `node C:\ifeel-maya\jobs\maya-task-e2e-smoke.mjs --config C:\ifeel-maya\config\config.json`. This uses a temporary isolated Vault and synthetic identifiers. It must prove Assignment, ACK, Result, isolated Monday read-back and task-id duplicate suppression while reporting zero external sends, Gmail mutations, Monday writes and scheduler activations.
-8. Treat `PASS_ISOLATED` as protocol evidence only. It must report `READY_FOR_REAL_TASKS=NO`; the status can change only after Maya's live read-only Codex, Gmail, WhatsApp, Monday and Management identity gates pass and action-specific approval exists.
-9. Continue only when the newest result is `INSTALLED_PAUSED`, all four Codex Skill hashes, both Maya task contract hashes and all three task-runtime hashes match, `managementCredentialsProvisioned=true`, `runtimeLocks=0`, `claudeRequired=false`, and all external-action counters are zero.
-10. Browser/account, Gmail, Instagram, Facebook, WhatsApp and Management System identity smoke tests are a later, separately approved gate. Scheduler activation remains a separate approval after those checks.
+8. After separate live-read gates and action-specific approval, production customer work must use `maya-task-production-runner.mjs prepare` followed by `complete`; no installed caller may use the bridge's isolated processor as a production shortcut.
+9. Treat `PASS_ISOLATED` as protocol evidence only. It must report `READY_FOR_REAL_TASKS=NO`; the status can change only after Maya's live read-only Codex, Gmail, WhatsApp, Monday and Management identity gates pass and action-specific approval exists.
+10. Continue only when the newest result is `INSTALLED_PAUSED`, all four Codex Skill hashes, both Maya task contract hashes and all four task-runtime hashes match, `managementCredentialsProvisioned=true`, `runtimeLocks=0`, `claudeRequired=false`, and all external-action counters are zero.
+11. Browser/account, Gmail, Instagram, Facebook, WhatsApp and Management System identity smoke tests are a later, separately approved gate. Scheduler activation remains a separate approval after those checks.
 
 ## Report-only scheduler gates
 

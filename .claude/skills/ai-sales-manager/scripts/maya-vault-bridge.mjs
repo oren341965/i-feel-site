@@ -1118,6 +1118,12 @@ function validateProductionReadEvidence({ task, monday, gmail, channel, authoriz
     throw new Error('MONDAY_ITEM_MISMATCH');
   }
   requireFreshEvidenceTimestamp(monday.verifiedAt, 'MONDAY_EVIDENCE', now);
+  const mondayIdentityHash = String(monday.customerIdentitySha256 ?? '').toLowerCase();
+  const channelIdentityHash = String(channel?.recipientIdentitySha256 ?? '').toLowerCase();
+  if (!/^[a-f0-9]{64}$/.test(mondayIdentityHash)
+    || channelIdentityHash !== mondayIdentityHash) {
+    throw new Error('CUSTOMER_IDENTITY_HASH_MISMATCH');
+  }
   if (monday.eligible !== true || monday.futureTimeline === true || monday.salesEnded === true) {
     throw new Error('SALES_ITEM_NOT_ELIGIBLE');
   }
@@ -1139,11 +1145,12 @@ function validateProductionReadEvidence({ task, monday, gmail, channel, authoriz
   }
 }
 
-function validateApprovedActionReceipt(receipt, { task, authorization, now }) {
+function validateApprovedActionReceipt(receipt, { task, authorization, now, recipientIdentitySha256 }) {
   if (!receipt || receipt.sent !== true || receipt.verifiedInConversation !== true
     || receipt.idempotencyKey !== task.task_id
     || receipt.channel !== authorization.channel
     || receipt.recipientType !== 'CUSTOMER'
+    || String(receipt.recipientIdentitySha256 ?? '').toLowerCase() !== recipientIdentitySha256
     || String(receipt.approvedContentSha256 ?? '').toLowerCase() !== authorization.approved_content_sha256) {
     throw new Error('APPROVED_ACTION_RECEIPT_INVALID');
   }
@@ -1152,16 +1159,341 @@ function validateApprovedActionReceipt(receipt, { task, authorization, now }) {
   return receipt;
 }
 
-function validateApprovedActionPreview(preview, { task, authorization }) {
+function validateApprovedActionPreview(preview, { task, authorization, recipientIdentitySha256 }) {
   if (!preview || preview.ready !== true
     || preview.idempotencyKey !== task.task_id
     || preview.channel !== authorization.channel
     || preview.recipientType !== 'CUSTOMER'
     || preview.directRecipientVerified !== true
+    || String(preview.recipientIdentitySha256 ?? '').toLowerCase() !== recipientIdentitySha256
     || String(preview.approvedContentSha256 ?? '').toLowerCase() !== authorization.approved_content_sha256) {
     throw new Error('APPROVED_ACTION_PREVIEW_INVALID');
   }
   return preview;
+}
+
+function mayaProductionServiceIdentity(runtime) {
+  return {
+    verified: runtime.config.identity?.serviceIdentityVerified === true,
+    identityId: runtime.config.identity?.serviceIdentityId,
+    machineId: runtime.config.identity?.machineId,
+  };
+}
+
+function validateMayaProductionRuntimePolicy(runtime, task) {
+  const validation = validateMayaSalesTaskMessage(task);
+  if (!validation.accepted
+    || task.message_type !== 'MAYA_SALES_TASK_ASSIGNMENT'
+    || task.test_task !== false) {
+    throw new Error('MAYA_PRODUCTION_ASSIGNMENT_INVALID');
+  }
+  if (task.execution_gate.ready !== true) throw new Error('MAYA_PRODUCTION_GATE_BLOCKED');
+  if (evaluateMayaProductionReadiness(runtime.config.controlState).ready !== true) {
+    throw new Error('MAYA_LIVE_CONTROL_GATE_BLOCKED');
+  }
+  const queuePolicy = runtime.config.taskQueue;
+  if (queuePolicy?.productionExecutionAllowed !== true
+    || queuePolicy?.productionExecutionRequiresReadyGate !== true
+    || queuePolicy?.productionExecutionMode !== 'TWO_PHASE_APPROVED_ACTION'
+    || queuePolicy?.mondayWritesAllowed !== false) {
+    throw new Error('MAYA_PRODUCTION_POLICY_DISABLED');
+  }
+  serviceIdentityFields(mayaProductionServiceIdentity(runtime), 'MAYA_WORKSTATION');
+}
+
+function validateMayaProductionTaskRuntime(runtime, task, now) {
+  validateMayaProductionRuntimePolicy(runtime, task);
+  const authorization = validatedActionAuthorization(task.action_authorization, {
+    now,
+    requireActive: true,
+  });
+  if (!authorization) throw new Error('MAYA_ACTION_AUTHORIZATION_MISSING');
+  if (!authorization.next_treatment_date) throw new Error('NEXT_TREATMENT_DATE_MISSING');
+  return authorization;
+}
+
+async function findExistingMayaTaskResult(runtime, task) {
+  const responses = await readMayaSalesTaskMessages(runtime.mayaToManager);
+  const existing = responses.messages.find(({ message }) => (
+    message.task_id === task.task_id && message.message_type === 'MAYA_SALES_TASK_RESULT'
+  ));
+  if (existing) assertSameTaskSnapshot(task, existing.message);
+  return existing ?? null;
+}
+
+function mayaPreparedActionPath(runtime, taskId) {
+  const runtimeRoot = runtime.config.runtimeRoot;
+  if (typeof runtimeRoot !== 'string' || !isAbsolute(runtimeRoot)) {
+    throw new Error('Maya prepared action requires an absolute runtimeRoot');
+  }
+  return join(
+    resolve(runtimeRoot),
+    'state',
+    'maya-tasks',
+    `${boundedId(taskId, 'task_id').replace(/:/g, '-')}.prepared.json`,
+  );
+}
+
+async function readJsonFileIfPresent(path) {
+  try {
+    return await readJsonFile(path);
+  } catch (error) {
+    if (error?.code === 'ENOENT') return null;
+    throw error;
+  }
+}
+
+async function writeJsonExclusively(path, value) {
+  await mkdir(resolve(path, '..'), { recursive: true });
+  await writeFile(path, `${JSON.stringify(value, null, 2)}\n`, { encoding: 'utf8', flag: 'wx' });
+}
+
+async function writeProductionNoSendResult({ runtime, task, now, executionState, result, nextAction, nextTreatmentDate }) {
+  const message = createMayaSalesTaskResult({
+    assignment: task,
+    executionState,
+    result,
+    nextAction,
+    nextTreatmentDate,
+    externalActionsPerformed: false,
+    mondayWritesPerformed: false,
+    now,
+    executionOrigin: 'MAYA_WORKSTATION',
+    serviceIdentity: mayaProductionServiceIdentity(runtime),
+  });
+  const write = await writeMayaSalesTaskMessageOnce(runtime.mayaToManager, message);
+  return { message, write };
+}
+
+export async function prepareMayaProductionTask({
+  configPath,
+  taskId,
+  evidence,
+  now = new Date(),
+}) {
+  const runtime = await loadMayaBridgeConfig(configPath);
+  if (runtime.config.identity?.role !== 'maya-agent') throw new Error('Maya config identity.role mismatch');
+  const { entry, warnings } = await loadMayaSalesTaskAssignment(runtime, taskId);
+  const task = entry.message;
+  const existingResult = await findExistingMayaTaskResult(runtime, task);
+  if (existingResult) {
+    return {
+      status: 'DUPLICATE_RESULT_REUSED',
+      duplicate: true,
+      result: existingResult.message,
+      warnings,
+      safety: { externalSends: 0, gmailMutations: 0, mondayWrites: 0 },
+    };
+  }
+  validateMayaProductionRuntimePolicy(runtime, task);
+  const preparedPath = mayaPreparedActionPath(runtime, task.task_id);
+  const pending = await readJsonFileIfPresent(preparedPath);
+  if (pending) {
+    const expiresAt = new Date(pending.expires_at).getTime();
+    throw new Error(expiresAt >= new Date(now).getTime()
+      ? 'MAYA_PREPARED_ACTION_PENDING'
+      : 'MAYA_PREPARED_ACTION_EXPIRED_RECONCILIATION_REQUIRED');
+  }
+
+  const acknowledgement = createMayaSalesTaskAck({
+    assignment: task,
+    now,
+    executionOrigin: 'MAYA_WORKSTATION',
+    serviceIdentity: mayaProductionServiceIdentity(runtime),
+  });
+  const ackWrite = await writeMayaSalesTaskMessageOnce(runtime.mayaToManager, acknowledgement);
+  let authorization;
+  try {
+    authorization = validateMayaProductionTaskRuntime(runtime, task, now);
+    validateProductionReadEvidence({
+      task,
+      monday: evidence?.monday,
+      gmail: evidence?.gmail,
+      channel: evidence?.channel,
+      authorization,
+      now,
+      timezone: runtime.timezone,
+    });
+    if (evidence.gmail.needsOrenDecision !== true
+      && evidence.gmail.responseFound !== true
+      && evidence.channel.responseFound !== true) {
+      validateApprovedActionPreview(evidence?.preview, {
+        task,
+        authorization,
+        recipientIdentitySha256: String(evidence.monday.customerIdentitySha256).toLowerCase(),
+      });
+    }
+  } catch (error) {
+    const blocker = safeTaskBlocker(error);
+    const blocked = await writeProductionNoSendResult({
+      runtime,
+      task,
+      now,
+      executionState: 'BLOCKED',
+      result: `The production Maya task was blocked: ${blocker}.`,
+      nextAction: blocker,
+      nextTreatmentDate: null,
+    });
+    await appendMayaTaskExecutionLog(runtime, {
+      taskId: task.task_id,
+      startTime: new Date(now).toISOString(),
+      endTime: new Date(now).toISOString(),
+      action: 'PRODUCTION_PREPARE_BLOCKED',
+      gmailResult: 'NO_RESPONSE_OR_BLOCKED',
+      mondayResult: 'READ_ONLY',
+      managerCallbackResult: blocked.write.created ? 'RESULT_CREATED' : 'RESULT_REUSED',
+      error: blocker,
+    });
+    return {
+      status: 'BLOCKED', acknowledgement, ackWrite, result: blocked.message,
+      resultWrite: blocked.write, warnings,
+      safety: { externalSends: 0, gmailMutations: 0, mondayWrites: 0 },
+    };
+  }
+
+  if (evidence.gmail.needsOrenDecision === true) {
+    const noSend = await writeProductionNoSendResult({
+      runtime,
+      task,
+      now,
+      executionState: 'NEEDS_OREN_DECISION',
+      result: 'Fresh production evidence requires an Oren decision; no external action occurred.',
+      nextAction: 'REQUEST_OREN_DECISION',
+      nextTreatmentDate: authorization.next_treatment_date,
+    });
+    return {
+      status: 'NEEDS_OREN_DECISION', acknowledgement, ackWrite, result: noSend.message,
+      resultWrite: noSend.write, warnings,
+      safety: { externalSends: 0, gmailMutations: 0, mondayWrites: 0 },
+    };
+  }
+  if (evidence.gmail.responseFound === true || evidence.channel.responseFound === true) {
+    const noSend = await writeProductionNoSendResult({
+      runtime,
+      task,
+      now,
+      executionState: 'MAYA_EXECUTED',
+      result: 'A fresh customer response already exists; the approved follow-up was not sent.',
+      nextAction: 'MANAGER_REVIEW_EXISTING_RESPONSE',
+      nextTreatmentDate: authorization.next_treatment_date,
+    });
+    return {
+      status: 'MAYA_EXECUTED', acknowledgement, ackWrite, result: noSend.message,
+      resultWrite: noSend.write, warnings,
+      safety: { externalSends: 0, gmailMutations: 0, mondayWrites: 0 },
+    };
+  }
+
+  const preparedAt = new Date(now);
+  const expiresAt = new Date(Math.min(
+    preparedAt.getTime() + 5 * 60_000,
+    new Date(authorization.expires_at).getTime(),
+  ));
+  const prepared = {
+    schema_version: 1,
+    record_type: 'MAYA_PREPARED_ACTION',
+    task_id: task.task_id,
+    approval_id: authorization.approval_id,
+    prepared_at: preparedAt.toISOString(),
+    expires_at: expiresAt.toISOString(),
+    channel: authorization.channel,
+    action_kind: authorization.action_kind,
+    recipient_type: 'CUSTOMER',
+    recipient_identity_sha256: String(evidence.monday.customerIdentitySha256).toLowerCase(),
+    approved_content_sha256: authorization.approved_content_sha256,
+    idempotency_key: task.task_id,
+    next_treatment_date: authorization.next_treatment_date,
+    no_further_outreach_before: authorization.no_further_outreach_before,
+  };
+  await writeJsonExclusively(preparedPath, prepared);
+  return {
+    status: 'READY_FOR_EXACT_APPROVED_ACTION',
+    acknowledgement,
+    ackWrite,
+    action: prepared,
+    warnings,
+    safety: { externalSends: 0, gmailMutations: 0, mondayWrites: 0 },
+  };
+}
+
+export async function completeMayaProductionTask({
+  configPath,
+  taskId,
+  receipt,
+  now = new Date(),
+}) {
+  const runtime = await loadMayaBridgeConfig(configPath);
+  if (runtime.config.identity?.role !== 'maya-agent') throw new Error('Maya config identity.role mismatch');
+  const { entry, warnings } = await loadMayaSalesTaskAssignment(runtime, taskId);
+  const task = entry.message;
+  const existingResult = await findExistingMayaTaskResult(runtime, task);
+  if (existingResult) {
+    return {
+      status: 'DUPLICATE_RESULT_REUSED', duplicate: true, result: existingResult.message, warnings,
+      safety: { externalSends: 0, gmailMutations: 0, mondayWrites: 0 },
+    };
+  }
+  const authorization = validateMayaProductionTaskRuntime(runtime, task, now);
+  const preparedPath = mayaPreparedActionPath(runtime, task.task_id);
+  const prepared = await readJsonFileIfPresent(preparedPath);
+  const preparedAt = new Date(prepared?.prepared_at);
+  const preparedExpiresAt = new Date(prepared?.expires_at);
+  if (!prepared
+    || prepared.record_type !== 'MAYA_PREPARED_ACTION'
+    || prepared.task_id !== task.task_id
+    || prepared.approval_id !== authorization.approval_id
+    || prepared.channel !== authorization.channel
+    || prepared.action_kind !== authorization.action_kind
+    || prepared.recipient_type !== 'CUSTOMER'
+    || !/^[a-f0-9]{64}$/.test(String(prepared.recipient_identity_sha256 ?? ''))
+    || prepared.approved_content_sha256 !== authorization.approved_content_sha256
+    || prepared.idempotency_key !== task.task_id
+    || prepared.next_treatment_date !== authorization.next_treatment_date
+    || prepared.no_further_outreach_before !== authorization.no_further_outreach_before
+    || Number.isNaN(preparedAt.getTime())
+    || Number.isNaN(preparedExpiresAt.getTime())
+    || preparedExpiresAt <= preparedAt
+    || preparedExpiresAt.getTime() - preparedAt.getTime() > 5 * 60_000
+    || preparedExpiresAt.getTime() > new Date(authorization.expires_at).getTime()) {
+    throw new Error('MAYA_PREPARED_ACTION_MISSING_OR_INVALID');
+  }
+  if (preparedExpiresAt.getTime() < new Date(now).getTime()) {
+    throw new Error('MAYA_PREPARED_ACTION_EXPIRED');
+  }
+  validateApprovedActionReceipt(receipt, {
+    task,
+    authorization,
+    now,
+    recipientIdentitySha256: prepared.recipient_identity_sha256,
+  });
+  const result = createMayaSalesTaskResult({
+    assignment: task,
+    executionState: 'WAITING_FOR_CUSTOMER',
+    result: 'The exact approved customer follow-up was sent once and verified in the direct conversation.',
+    nextAction: 'CHECK_FOR_CUSTOMER_RESPONSE',
+    nextTreatmentDate: authorization.next_treatment_date,
+    externalActionsPerformed: true,
+    mondayWritesPerformed: false,
+    now,
+    executionOrigin: 'MAYA_WORKSTATION',
+    serviceIdentity: mayaProductionServiceIdentity(runtime),
+  });
+  const resultWrite = await writeMayaSalesTaskMessageOnce(runtime.mayaToManager, result);
+  const completedPath = preparedPath.replace(/\.prepared\.json$/, `.completed.${new Date(now).getTime()}.json`);
+  await rename(preparedPath, completedPath);
+  await appendMayaTaskExecutionLog(runtime, {
+    taskId: task.task_id,
+    startTime: prepared.prepared_at,
+    endTime: new Date(now).toISOString(),
+    action: 'APPROVED_ACTION_VERIFIED',
+    gmailResult: 'READ_OK',
+    mondayResult: 'READ_ONLY',
+    managerCallbackResult: resultWrite.created ? 'RESULT_CREATED' : 'RESULT_REUSED',
+  });
+  return {
+    status: 'WAITING_FOR_CUSTOMER', duplicate: false, result, resultWrite, completedPath, warnings,
+    safety: { externalSends: 1, gmailMutations: 0, mondayWrites: 0 },
+  };
 }
 
 async function appendMayaTaskExecutionLog(runtime, entry) {
@@ -1210,6 +1542,9 @@ export async function processAssignedMayaTask({
   const productionExecution = task.test_task === false && executionOrigin === 'MAYA_WORKSTATION';
   if (!isolatedExecution && !productionExecution) {
     return { accepted: false, status: 'MAYA_PRODUCTION_EXECUTOR_NOT_COMMISSIONED' };
+  }
+  if (productionExecution) {
+    return { accepted: false, status: 'MAYA_TWO_PHASE_RUNNER_REQUIRED' };
   }
 
   const runtime = await loadMayaBridgeConfig(configPath);
@@ -1263,6 +1598,7 @@ export async function processAssignedMayaTask({
       }
       if (queuePolicy?.productionExecutionAllowed !== true
         || queuePolicy?.productionExecutionRequiresReadyGate !== true
+        || queuePolicy?.productionExecutionMode !== 'TWO_PHASE_APPROVED_ACTION'
         || queuePolicy?.mondayWritesAllowed !== false) {
         throw new Error('MAYA_PRODUCTION_POLICY_DISABLED');
       }
