@@ -78,6 +78,48 @@ function portal_vehicle_document_directory(string $plate, string $documentId): s
         . DIRECTORY_SEPARATOR . $plate . DIRECTORY_SEPARATOR . $documentId;
 }
 
+function portal_link_vehicle_expense(array $record, array $user): array
+{
+    if (($record['type'] ?? '') !== 'vehicle'
+        || !in_array($record['details']['vehicle_category'] ?? '', ['repair', 'service'], true)) {
+        return $record;
+    }
+    $plate = portal_normalize_vehicle_plate((string) ($record['details']['vehicle_plate'] ?? '')) ?? '';
+    if ($plate === '' || !portal_user_can_access_vehicle($user, $plate)) {
+        throw new RuntimeException('לשמירת חשבונית טיפול או תיקון יש לבחור מספר רכב המשויך לעובד. מנהל יכול לשייך את הרכב במערכת.');
+    }
+    // Persist the verified vehicle association with the original invoice files.
+    $record['vehicle_archive_plate'] = $plate;
+    return $record;
+}
+
+function portal_vehicle_expense_documents(string $plate): array
+{
+    $documents = [];
+    foreach (portal_all_records() as $record) {
+        if (($record['vehicle_archive_plate'] ?? '') !== $plate) {
+            continue;
+        }
+        foreach (($record['attachments'] ?? []) as $index => $attachment) {
+            if (!is_array($attachment)) {
+                continue;
+            }
+            $documents[] = [
+                'id' => substr(hash('sha256', $record['id'] . ':' . $index), 0, 24),
+                'type' => 'expense_invoice',
+                'type_label' => 'חשבונית / מסמך טיפול ותיקון',
+                'name' => (string) ($attachment['original_name'] ?? 'חשבונית תיקון'),
+                'expires_on' => '',
+                'policy_number' => (string) ($record['details']['invoice_number'] ?? ''),
+                'attachment' => $attachment,
+                'source_record_id' => (string) $record['id'],
+                'uploaded_at' => (string) ($record['created_at'] ?? ''),
+            ];
+        }
+    }
+    return $documents;
+}
+
 function portal_vehicle_documents(string $plate): array
 {
     $plate = portal_normalize_vehicle_plate($plate) ?? '';
@@ -89,7 +131,7 @@ function portal_vehicle_documents(string $plate): array
     if (!is_array($documents)) {
         return [];
     }
-    $documents = array_values(array_filter($documents, 'is_array'));
+    $documents = array_merge(array_values(array_filter($documents, 'is_array')), portal_vehicle_expense_documents($plate));
     usort($documents, static fn(array $a, array $b): int => strcmp(
         (string) ($b['uploaded_at'] ?? ''),
         (string) ($a['uploaded_at'] ?? '')
@@ -235,8 +277,10 @@ function portal_handle_vehicle_document_download(array $user): never
         http_response_code(400);
         exit('Bad request');
     }
-    $path = portal_vehicle_document_directory($plate, $documentId)
-        . DIRECTORY_SEPARATOR . 'files' . DIRECTORY_SEPARATOR . $storageName;
+    $sourceDirectory = isset($document['source_record_id'])
+        ? portal_record_dir((string) $document['source_record_id'])
+        : portal_vehicle_document_directory($plate, $documentId);
+    $path = $sourceDirectory . DIRECTORY_SEPARATOR . 'files' . DIRECTORY_SEPARATOR . $storageName;
     if (!is_file($path)) {
         http_response_code(404);
         exit('Not found');
