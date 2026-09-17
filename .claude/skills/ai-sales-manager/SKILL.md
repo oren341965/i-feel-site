@@ -47,6 +47,10 @@ description: Orchestrate I Feel's sales and marketing system, deterministic read
 - Full-system dry run: `scripts/orchestrate-sales-system.mjs`
 - Bounded daily Google Ads decision: `../google-ads-manager/scripts/google-ads-decision-loop.mjs`
 - Local morning dry run: `scripts/morning-run.mjs`
+- Capacity evidence preparation: `scripts/prepare-capacity-evidence.mjs` (pure;
+  requires dated assessments, never infers capacity from owner availability alone).
+  Read [capacity evidence preparation](references/capacity-evidence-preparation.md)
+  before supplying its assessments. Missing actual observations remain UNKNOWN.
 - No-write source preflight: `scripts/preflight-readonly.mjs`
 - Vault boundaries: `scripts/vault-runtime.mjs`, `scripts/maya-vault-bridge.mjs`, `scripts/maya-task-production-runner.mjs`, and `scripts/claude-vault-bridge.mjs`
 

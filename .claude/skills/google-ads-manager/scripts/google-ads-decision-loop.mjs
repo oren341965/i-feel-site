@@ -2,7 +2,7 @@ import { createHash, createSign } from 'node:crypto';
 import { mkdir, readFile, rename, writeFile } from 'node:fs/promises';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { loadDecisionReadiness } from './decision-readiness.mjs';
+import { evaluateBusinessTarget, loadDecisionReadiness } from './decision-readiness.mjs';
 import { qualifiedLeadWindow } from '../../lead-attribution-feedback/scripts/qualified-lead-feedback.mjs';
 
 import {
@@ -137,6 +137,7 @@ function assertPolicy(policy, now) {
 export function chooseDailyGoogleAdsDecision({ campaigns, searchTerms, policy, gates, leadGoal, now = new Date() }) {
   assertPolicy(policy, now);
   const localDate = isoDateInJerusalem(now);
+  const businessTarget = evaluateBusinessTarget(policy);
   const approvedTransfer = (policy.approvedBudgetTransfers ?? []).find((entry) => entry?.localDate === localDate);
   if (approvedTransfer) {
     const sourceId = String(approvedTransfer.sourceCampaignId ?? '');
@@ -202,18 +203,23 @@ export function chooseDailyGoogleAdsDecision({ campaigns, searchTerms, policy, g
       searchTerm: String(negative.searchTerm),
       evidence: { clicks: number(negative.clicks), spendMicros: number(negative.spendMicros), conversions: 0 },
       totalAccountBudgetDeltaMicros: 0,
+      businessTarget,
     };
   }
 
   if (number(gates?.attributionCoverage) < number(policy.minimumAttributionCoverage)) blockers.push('ATTRIBUTION_LOW');
-  if (blockers.length) return { status: 'NO_SAFE_CHANGE', localDate, blockers: [...new Set(blockers)] };
+  // The nine-lead business target does not silently raise v1's five-lead hold.
+  // Report the mismatch even when other evidence gates are currently blocked.
+  blockers.push(...businessTarget.blockers);
+  if (blockers.length) return { status: 'NO_SAFE_CHANGE', localDate, businessTarget, blockers: [...new Set(blockers)] };
 
   if (!leadGoal || leadGoal.status === 'UNKNOWN' || leadGoal.window?.today !== localDate
     || !['BELOW_TARGET', 'ON_TARGET', 'ABOVE_TARGET'].includes(leadGoal.status)
+    || !Number.isSafeInteger(leadGoal.qualifiedCurrent) || leadGoal.qualifiedCurrent < 0
     || !leadGoal.googleQualified14Days) {
     return { status: 'NO_SAFE_CHANGE', localDate, blockers: ['QUALIFIED_LEAD_FEEDBACK_REQUIRED'] };
   }
-  if (leadGoal.status !== 'BELOW_TARGET') {
+  if (leadGoal.status !== 'BELOW_TARGET' || leadGoal.qualifiedCurrent >= businessTarget.writePolicy.holdAt) {
     return { status: 'NO_SAFE_CHANGE', localDate, blockers: ['WEEKLY_QUALIFIED_LEAD_TARGET_REACHED'] };
   }
   // All recent CRM acquisitions must be classified before absent campaign counts
@@ -448,9 +454,11 @@ export async function runDailyGoogleAdsDecision({ configPath, mode = 'preview', 
   // Human route selection is separately date-bound and retains its existing approval rules.
   // Autonomous writes may never rely on untimed hand-edited config booleans.
   if (decision.selectionMode !== 'HUMAN_APPROVED_ROUTE' && readiness.status !== 'READY') {
-    const attributionOnly = decision.action === 'ADD_EXACT_CAMPAIGN_NEGATIVE'
-      && readiness.blockers.every((code) => code.startsWith('ATTRIBUTION'));
-    if (!attributionOnly) {
+    // Exact negatives do not use the weekly acquisition budget-selection target.
+    // Their already-approved scope still requires every tracking/capacity/data gate.
+    const negativeUnrelatedGapsOnly = decision.action === 'ADD_EXACT_CAMPAIGN_NEGATIVE'
+      && readiness.blockers.every((code) => code.startsWith('ATTRIBUTION') || code === 'POLICY_TARGET_MISMATCH');
+    if (!negativeUnrelatedGapsOnly) {
       decision.status = 'NO_SAFE_CHANGE';
       decision.blockers = [...new Set([...(decision.blockers ?? []), ...readiness.blockers])];
     }

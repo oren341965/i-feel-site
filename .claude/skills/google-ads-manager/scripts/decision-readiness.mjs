@@ -1,11 +1,12 @@
-import { readFile, stat } from 'node:fs/promises';
+import { readFile, realpath, stat } from 'node:fs/promises';
 import { isAbsolute, relative, resolve } from 'node:path';
 import { validateAttributionSnapshot } from '../../lead-attribution-feedback/scripts/attribution-readonly.mjs';
 import { evaluateQualifiedLeadFeedback } from '../../lead-attribution-feedback/scripts/qualified-lead-feedback.mjs';
+import { evaluateOwnerDispositions } from '../../lead-attribution-feedback/scripts/qualified-lead-preparation.mjs';
 
 // Evidence is not permission. Never modify the runtime gates or lower a threshold.
 const MAX_BYTES = 10 * 1024 * 1024;
-const KINDS = ['salesAnalysis', 'attribution', 'tracking', 'capacity', 'qualifiedLeads'];
+const KINDS = ['salesAnalysis', 'attribution', 'tracking', 'capacity', 'qualifiedLeads', 'ownerDispositions'];
 const RECONCILIATION = ['populationMatchesTotal', 'uniqueIdsMatchTotal',
   'treatmentPopulationMatchesOpen', 'treatmentHealthMatchesOpen', 'treatmentExclusionsMatchOpen'];
 const CAPACITY_CHECKS = ['responseSlaPassed', 'plansToProposalPassed', 'backlogWithinCapacity', 'serviceRiskWithinCapacity'];
@@ -22,13 +23,60 @@ function count(value) { return Number.isSafeInteger(value) && value >= 0; }
 function rate(value) { return typeof value === 'number' && Number.isFinite(value) && value >= 0 && value <= 1; }
 function ref(value) { return typeof value === 'string' && /^[a-z][a-z0-9._:-]{3,119}$/.test(value); }
 
+// A business goal is reporting context, not a revision of an approved write
+// policy. The registered v1 policy still holds autonomous budget moves at five.
+// Changing that boundary requires a separately reviewed policy implementation;
+// no config boolean, target or claimed approval can widen it here.
+export function evaluateBusinessTarget(policy = {}) {
+  const writePolicy = { authorizationId: 'oren-google-ads-daily-bounded-v1', holdAt: 5 };
+  const period = '7_COMPLETED_JERUSALEM_DAYS';
+  if (policy?.businessTarget === undefined) {
+    return { status: 'LEGACY_DEFAULT', minimum: 5, maximum: 6, period, segments: null,
+      writePolicy, policyCompatibility: 'MATCHED', blockers: [] };
+  }
+  const input = policy.businessTarget;
+  const goals = input?.weeklyNewQualifiedTargets;
+  const keys = ['villas', 'electricalContractors', 'bmsNewCompanies', 'totalMinimum'];
+  const valid = input && typeof input === 'object' && !Array.isArray(input)
+    && Object.keys(input).length === 2 && input.schemaVersion === 1
+    && goals && typeof goals === 'object' && !Array.isArray(goals)
+    && Object.keys(goals).length === keys.length
+    && keys.every((key) => Object.hasOwn(goals, key) && count(goals[key]) && goals[key] <= 10_000)
+    && goals.totalMinimum > 0
+    && goals.villas + goals.electricalContractors + goals.bmsNewCompanies === goals.totalMinimum;
+  if (!valid) {
+    return { status: 'INVALID', minimum: null, maximum: null, period, segments: null,
+      writePolicy, policyCompatibility: 'UNKNOWN', blockers: ['BUSINESS_TARGET_INVALID'] };
+  }
+  const mismatch = goals.totalMinimum !== writePolicy.holdAt;
+  return { status: 'CONFIGURED', minimum: goals.totalMinimum, maximum: null, period,
+    segments: { villas: goals.villas, electricalContractors: goals.electricalContractors,
+      bmsNewCompanies: goals.bmsNewCompanies }, writePolicy,
+    policyCompatibility: mismatch ? 'MISMATCH' : 'MATCHED',
+    blockers: mismatch ? ['POLICY_TARGET_MISMATCH'] : [] };
+}
+
+function reportBusinessLeadGoal(target, leadGoal) {
+  const verified = target.minimum !== null && leadGoal.status !== 'UNKNOWN'
+    && count(leadGoal.qualifiedCurrent) && count(leadGoal.qualifiedPrevious);
+  return { status: !verified ? 'UNKNOWN' : leadGoal.qualifiedCurrent < target.minimum
+    ? 'BELOW_TARGET' : 'TARGET_MINIMUM_MET', targetMinimum: target.minimum,
+  period: target.period, qualifiedCurrent: verified ? leadGoal.qualifiedCurrent : null,
+  qualifiedPrevious: verified ? leadGoal.qualifiedPrevious : null,
+  gapToMinimum: verified ? Math.max(0, target.minimum - leadGoal.qualifiedCurrent) : null,
+  // The qualification v1 contract contains no verified segment dimension.
+  // Never infer segment completion from platform, campaign or customer names.
+  segmentProgress: null, affectsWriteAuthorization: false };
+}
+
 export function evaluateDecisionReadiness({ salesAnalysis, attribution, tracking, capacity,
-  qualifiedLeads, policy, capacityPolicy, now = new Date(), maxAgeHours = 24 } = {}) {
+  qualifiedLeads, ownerDispositions, policy, capacityPolicy, now = new Date(), maxAgeHours = 24 } = {}) {
   if (!(now instanceof Date) || !Number.isFinite(now.getTime())
     || !Number.isFinite(maxAgeHours) || maxAgeHours <= 0 || maxAgeHours > 24) {
     throw new Error('Invalid readiness evidence window');
   }
-  const blockers = [];
+  const businessTarget = evaluateBusinessTarget(policy);
+  const blockers = [...businessTarget.blockers];
   const gates = { trackingTrusted: false, capacityStatus: 'BLOCKED', dataQualityScore: 0, attributionCoverage: 0 };
   const evidence = {};
   const s = salesAnalysis;
@@ -116,8 +164,13 @@ export function evaluateDecisionReadiness({ salesAnalysis, attribution, tracking
     if (gates.dataQualityScore < policy.minimumDataQualityScore) blockers.push('DATA_QUALITY_LOW');
     if (gates.attributionCoverage < policy.minimumAttributionCoverage) blockers.push('ATTRIBUTION_LOW');
   }
+  const leadGoal = evaluateQualifiedLeadFeedback(qualifiedLeads, { now });
   return { schemaVersion: 1, observedAt: now.toISOString(), status: blockers.length ? 'BLOCKED' : 'READY',
-    gates, blockers, evidence, leadGoal: evaluateQualifiedLeadFeedback(qualifiedLeads, { now }),
+    gates, blockers, evidence, leadGoal, businessTarget,
+    businessLeadGoal: reportBusinessLeadGoal(businessTarget, leadGoal),
+    // Connect the owner's review as diagnostics, never as verified acquisition,
+    // contact/identity matching, source attribution, or a safety-gate override.
+    ownerReview: evaluateOwnerDispositions(ownerDispositions, { now }),
     safety: { platformWrites: 0, budgetChanges: 0, externalSends: 0, configWrites: 0 } };
 }
 
@@ -131,9 +184,15 @@ export async function loadDecisionReadiness(config, { now = new Date() } = {}) {
       const target = resolve(file);
       const child = relative(resolve(config.runtimeRoot), target);
       if (!child || child.startsWith('..') || isAbsolute(child) || !/^(state|data)[\\/]/i.test(child)) throw new Error();
-      const metadata = await stat(target);
+      // An evidence-looking symlink/junction must not redirect reads to config,
+      // credentials or another directory outside the private state/data boundary.
+      const canonical = await realpath(target);
+      const canonicalChild = relative(await realpath(config.runtimeRoot), canonical);
+      if (!canonicalChild || canonicalChild.startsWith('..') || isAbsolute(canonicalChild)
+        || !/^(state|data)[\\/]/i.test(canonicalChild)) throw new Error();
+      const metadata = await stat(canonical);
       if (!metadata.isFile() || metadata.size > MAX_BYTES) throw new Error();
-      inputs[kind] = JSON.parse(await readFile(target, 'utf8'));
+      inputs[kind] = JSON.parse(await readFile(canonical, 'utf8'));
       if (kind === 'attribution' && inputs[kind]?.schema_version === 1) {
         const connection = config.connections?.attribution;
         if (connection?.connected !== true || connection.sourceVerified !== true || connection.readOnly !== true) throw new Error();
@@ -144,7 +203,7 @@ export async function loadDecisionReadiness(config, { now = new Date() } = {}) {
     } catch {
       // Missing lead feedback blocks autonomous budget inference in the selector,
       // not an already-authorized exact negative or a date-bound human route.
-      if (kind !== 'qualifiedLeads') failures.push(`${kind.toUpperCase()}_EVIDENCE_FILE_UNAVAILABLE`);
+      if (!['qualifiedLeads', 'ownerDispositions'].includes(kind)) failures.push(`${kind.toUpperCase()}_EVIDENCE_FILE_UNAVAILABLE`);
     }
   }
   const result = evaluateDecisionReadiness({ ...inputs, policy: config.marketingDecision,
