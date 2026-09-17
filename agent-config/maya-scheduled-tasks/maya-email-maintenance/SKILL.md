@@ -39,6 +39,8 @@ Read the installed canonical contracts at `C:\ifeel-maya\config\maya-task-protoc
 
 ### V2 sales assignments
 
+- For an explicitly assigned read-only inspection or local proposal, use the existing runner's `review-read-only` command with fresh verified Maya identity and exact-item live Monday evidence. Return the separate `READ_ONLY_REVIEW` ACK/Result; customer-send readiness, Gmail/WhatsApp access and send authorization are not prerequisites for a Monday-only review. Missing source evidence must be reported as a bounded blocked review after identity/transport checks, not silently skipped. If identity/transport cannot be verified, report the blocker locally without fabricating an ACK.
+- A read-only review does not change the immutable assignment, permit customer contact, satisfy a production ACK or complete a customer-action obligation. Reuse its existing immutable result on repeated runs. Keep the ordinary inbox pass and all production-action gates below unchanged. This contract does not activate this scheduler.
 - Process a production V2 Assignment only after the Maya Service Identity, installed Skills, correct Maya Gmail profile, fresh worker evidence, and the assignment execution gate are verified.
 - Write one immutable correlated ACK to `maya-to-manager` before V2 work.
 - A V2 assigned action may proceed only through its canonical worker skill and action-specific authority. Return a structured Result or bounded `BLOCKED`/`NEEDS_OREN_DECISION` outcome.

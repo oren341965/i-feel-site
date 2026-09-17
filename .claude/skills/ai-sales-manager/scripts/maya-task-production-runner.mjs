@@ -4,6 +4,7 @@ import { fileURLToPath } from 'node:url';
 import {
   completeMayaProductionTask,
   prepareMayaProductionTask,
+  reviewMayaTaskReadOnly,
 } from './maya-vault-bridge.mjs';
 
 const MAX_STDIN_BYTES = 32 * 1024;
@@ -22,7 +23,7 @@ function parseArgs(argv) {
   let taskId = null;
   for (let index = 0; index < argv.length; index += 1) {
     const arg = argv[index];
-    if (['prepare', 'complete'].includes(arg) && command === null) {
+    if (['prepare', 'complete', 'review-read-only'].includes(arg) && command === null) {
       command = arg;
     } else if (arg === '--config' && argv[index + 1]) {
       configPath = resolve(argv[index + 1]);
@@ -71,15 +72,24 @@ function publicResult(result) {
       next_treatment_date: result.result.next_treatment_date,
       external_actions_performed: result.result.external_actions_performed,
       monday_writes_performed: result.result.monday_writes_performed,
+      ...(result.result.execution_mode === 'READ_ONLY_REVIEW' ? {
+        execution_mode: 'READ_ONLY_REVIEW',
+        review_attempt_id: result.result.review_attempt_id,
+        read_only_evidence: result.result.read_only_evidence,
+        business_task_completed: false,
+      } : {}),
     };
   }
   return output;
 }
 
 export async function runMayaTaskProductionCommand({ command, configPath, taskId, input, now = new Date() }) {
+  if (!['prepare', 'complete', 'review-read-only'].includes(command)) throw new Error('RUNNER_ARGUMENT_INVALID');
   const result = command === 'prepare'
     ? await prepareMayaProductionTask({ configPath, taskId, evidence: input, now })
-    : await completeMayaProductionTask({ configPath, taskId, receipt: input, now });
+    : command === 'complete'
+      ? await completeMayaProductionTask({ configPath, taskId, receipt: input, now })
+      : await reviewMayaTaskReadOnly({ configPath, taskId, evidence: input, now });
   return publicResult(result);
 }
 

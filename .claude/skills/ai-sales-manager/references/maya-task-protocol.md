@@ -39,6 +39,18 @@ A production task that may contact a customer must also carry `action_authorizat
 
 The runtime must resolve the approved content locally, calculate the same hash, and produce a recipient/content preview before it may call the channel adapter. The adapter must guarantee idempotency using the task ID. A valid receipt must prove the same task ID, channel, `CUSTOMER` recipient type, content hash, send time and verified appearance in the direct conversation. A mismatch is a blocker. Maya's authorization always has `monday_write_authorized=false`; the manager owns any later Monday write and live read-back.
 
+## Read-only assignment review
+
+An assigned inspection or draft does not require authority to contact a customer. Use the existing runner's `review-read-only` command to return a real, bounded review of an existing immutable assignment. Do not change the assignment's production gate, add a send authorization, or use `prepare` merely to report a read-only result.
+
+The review requires execution on the verified Maya workstation, a matching service identity, permitted ACK/Result transport, fresh matching identity evidence, and a fresh live Monday read for the exact sales board and assigned item. A configured connection flag, commissioning smoke, old snapshot or invented evidence cannot satisfy these checks. Missing/stale source evidence yields a correlated blocked review when identity and transport are verified; an unverified identity or a different computer must not emit a Maya ACK.
+
+Review ACKs and Results carry `execution_mode=READ_ONLY_REVIEW` and separate immutable message IDs. They always record zero external actions and zero Monday writes; input claiming a protected action must be rejected before any review ACK. The manager exposes them under `read_only_review`; they do not advance the underlying customer-action state, satisfy its ACK, consume its production result, or complete the business task, even if a later Monday read-back is supplied. Existing assignments and production prepare/complete behavior remain unchanged. Each real review attempt has a stable identifier. Retries of the same attempt reuse its result, while a new attempt after a source recovers preserves the earlier blocked evidence and requires a new matching ACK.
+
+The command accepts bounded real evidence over stdin. Keep names, contact details, raw correspondence and credentials out of review findings. Installing this capability does not activate a scheduler or prove that the existing scheduler runs. After an approved release, synchronize both the manager's validator and Maya's runtime/contracts before using this response mode.
+
+The installed command is `node C:\ifeel-maya\jobs\maya-task-production-runner.mjs review-read-only --config C:\ifeel-maya\config\config.json --task-id <existing-task-id>`. Its stdin object contains `taskId`, a stable `reviewAttemptId`, fresh `identity` evidence (`verified`, `verifiedAt`, `serviceIdentityId`, `machineId`), exact-item `monday` evidence (`verified`, `sourceMode=LIVE_READ_ONLY`, `verifiedAt`, `boardId`, `itemId`), bounded `review` findings (`scopeComplete`, `evidenceRef`, `result`, `nextAction`), and zero-valued `safety` counters (`externalSends`, `gmailMutations`, `mondayWrites`). The worker must actually read every source required by the assignment before asserting `scopeComplete`; the assigned primary item alone does not prove a requested historical comparison was performed. Never populate these assertions from a fixture or a previous run.
+
 ## State machine
 
 Only these values are valid:

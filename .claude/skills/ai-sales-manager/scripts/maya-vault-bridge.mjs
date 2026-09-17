@@ -1,6 +1,7 @@
 import { createHash, randomUUID } from 'node:crypto';
 import { access, appendFile, constants, mkdir, readFile, readdir, rename, stat, writeFile } from 'node:fs/promises';
 import { isAbsolute, join, resolve } from 'node:path';
+import { hostname } from 'node:os';
 import { fileURLToPath } from 'node:url';
 
 import { validateBusMessage } from './orchestrate-sales-system.mjs';
@@ -404,6 +405,9 @@ export function validateMayaSalesTaskMessage(message) {
     }
     const allowed = new Set(required);
     allowed.add('action_authorization');
+    allowed.add('execution_mode');
+    allowed.add('review_attempt_id');
+    allowed.add('read_only_evidence');
     const unknown = Object.keys(message).filter((field) => !allowed.has(field));
     if (unknown.length > 0) throw new Error(`Unknown Maya sales task fields: ${unknown.join(',')}`);
     if (message.schema_version !== 2
@@ -458,6 +462,42 @@ export function validateMayaSalesTaskMessage(message) {
     }
     validatedExecutionGate(message.execution_gate);
     validatedActionAuthorization(message.action_authorization);
+    if (Object.hasOwn(message, 'execution_mode')) {
+      boundedId(message.review_attempt_id, 'review_attempt_id');
+      if (message.execution_mode !== 'READ_ONLY_REVIEW'
+        || message.message_type === 'MAYA_SALES_TASK_ASSIGNMENT'
+        || message.execution_origin !== 'MAYA_WORKSTATION'
+        || message.test_task !== false
+        || message.external_actions_performed !== false
+        || message.monday_writes_performed !== false) {
+        throw new Error('Maya read-only review cannot claim production actions');
+      }
+      if (message.message_type === 'MAYA_SALES_TASK_ACK') {
+        if (message.execution_state !== 'MAYA_ACKNOWLEDGED' || Object.hasOwn(message, 'read_only_evidence')) {
+          throw new Error('Maya read-only ACK is receipt only');
+        }
+      } else {
+        const evidence = message.read_only_evidence;
+        const fields = ['disposition', 'identity_verified_at', 'monday_verified_at', 'evidence_ref'];
+        if (!evidence || typeof evidence !== 'object' || Array.isArray(evidence)
+          || fields.some((field) => !Object.hasOwn(evidence, field))
+          || Object.keys(evidence).some((field) => !fields.includes(field))
+          || !['REVIEWED', 'BLOCKED'].includes(evidence.disposition)
+          || message.execution_state !== (evidence.disposition === 'REVIEWED' ? 'MAYA_EXECUTED' : 'BLOCKED')
+          || message.next_treatment_date !== null) {
+          throw new Error('Maya read-only result disposition is invalid');
+        }
+        requireFreshEvidenceTimestamp(evidence.identity_verified_at, 'MAYA_IDENTITY_EVIDENCE', message.event_at);
+        if (evidence.disposition === 'REVIEWED') {
+          requireFreshEvidenceTimestamp(evidence.monday_verified_at, 'MONDAY_EVIDENCE', message.event_at);
+          boundedId(evidence.evidence_ref, 'evidence_ref');
+        } else if (evidence.monday_verified_at !== null || evidence.evidence_ref !== null) {
+          throw new Error('Blocked read-only review cannot claim verified source evidence');
+        }
+      }
+    } else if (Object.hasOwn(message, 'read_only_evidence') || Object.hasOwn(message, 'review_attempt_id')) {
+      throw new Error('Maya read-only evidence requires explicit execution mode');
+    }
     optionalBoundedText(message.result, 'result', 4000);
     optionalBoundedText(message.next_action, 'next_action', 1000);
     const text = [
@@ -572,6 +612,7 @@ export function createMayaSalesTask(input = {}, options = {}) {
 
 export function createMayaSalesTaskAck({
   assignment,
+  messageId = null,
   now = new Date(),
   executionOrigin = 'MAYA_WORKSTATION',
   serviceIdentity = null,
@@ -583,7 +624,7 @@ export function createMayaSalesTaskAck({
   const eventAt = new Date(now);
   const ack = {
     ...assignment,
-    message_id: taskMessageId(assignment.task_id, 'ack'),
+    message_id: messageId ?? taskMessageId(assignment.task_id, 'ack'),
     message_type: 'MAYA_SALES_TASK_ACK',
     source: 'maya-agent',
     target: 'ai-sales-manager',
@@ -598,6 +639,7 @@ export function createMayaSalesTaskAck({
 
 export function createMayaSalesTaskResult({
   assignment,
+  messageId = null,
   executionState,
   result,
   nextAction = null,
@@ -615,7 +657,7 @@ export function createMayaSalesTaskResult({
   const eventAt = new Date(now);
   const message = {
     ...assignment,
-    message_id: taskMessageId(
+    message_id: messageId ?? taskMessageId(
       assignment.task_id,
       `result-${String(executionState ?? '').toLowerCase().replace(/_/g, '-')}`,
     ),
@@ -884,6 +926,7 @@ async function writeMayaSalesTaskMessageOnce(directory, message) {
       'next_treatment_date', 'execution_origin', 'external_actions_performed',
       'monday_writes_performed', 'service_identity_verified', 'service_identity_id', 'maya_machine_id',
       'monday_item_source', 'monday_item_verified_at', 'test_task', 'execution_gate', 'action_authorization',
+      'execution_mode', 'review_attempt_id', 'read_only_evidence',
       ...MAYA_TASK_SNAPSHOT_FIELDS,
     ];
     if (!validation.accepted
@@ -921,9 +964,27 @@ export function reconcileMayaSalesTask({ assignment, responses = [], mondayReadb
     assertSameTaskSnapshot(assignment, message);
     return message;
   }).sort((left, right) => left.event_at.localeCompare(right.event_at));
-  const ack = ordered.find((message) => message.message_type === 'MAYA_SALES_TASK_ACK') ?? null;
+  // A review is evidence about a task, never completion of its customer-action obligation.
+  const businessResponses = ordered.filter((message) => message.execution_mode !== 'READ_ONLY_REVIEW');
+  const reviewResponses = ordered.filter((message) => message.execution_mode === 'READ_ONLY_REVIEW');
+  const matchingReviewAck = (result) => reviewResponses.find((message) => (
+    message.message_type === 'MAYA_SALES_TASK_ACK'
+      && message.review_attempt_id === result.review_attempt_id
+      && new Date(result.event_at) >= new Date(message.event_at)
+      && message.service_identity_id === result.service_identity_id
+      && message.maya_machine_id === result.maya_machine_id
+  ));
+  const reviewAck = reviewResponses.filter(
+    (message) => message.message_type === 'MAYA_SALES_TASK_ACK',
+  ).at(-1) ?? null;
+  const reviewResult = reviewResponses.filter((message) => (
+    message.message_type === 'MAYA_SALES_TASK_RESULT'
+      && reviewAck !== null
+      && matchingReviewAck(message) === reviewAck
+  )).at(-1) ?? null;
+  const ack = businessResponses.find((message) => message.message_type === 'MAYA_SALES_TASK_ACK') ?? null;
   const ackTime = ack ? new Date(ack.event_at).getTime() : null;
-  const results = ordered.filter((message) => (
+  const results = businessResponses.filter((message) => (
     message.message_type === 'MAYA_SALES_TASK_RESULT'
       && ackTime !== null
       && new Date(message.event_at).getTime() >= ackTime
@@ -933,8 +994,13 @@ export function reconcileMayaSalesTask({ assignment, responses = [], mondayReadb
   let executionState = ack ? 'MAYA_ACKNOWLEDGED' : 'ASSIGNED_TO_MAYA';
   let mondayUpdateVerified = false;
 
-  if (!ack && ordered.some((message) => message.message_type === 'MAYA_SALES_TASK_RESULT')) {
+  if (!ack && businessResponses.some((message) => message.message_type === 'MAYA_SALES_TASK_RESULT')) {
     errors.push('MAYA_ACK_MISSING');
+  }
+  if (reviewResponses.some((message) => (
+    message.message_type === 'MAYA_SALES_TASK_RESULT' && !matchingReviewAck(message)
+  ))) {
+    errors.push('MAYA_READ_ONLY_ACK_MISSING_OR_MISMATCHED');
   }
   if (latestResult) {
     executionState = latestResult.execution_state;
@@ -976,6 +1042,16 @@ export function reconcileMayaSalesTask({ assignment, responses = [], mondayReadb
     completed,
     isolated_test: isolated,
     execution_gate: assignment.execution_gate,
+    read_only_review: reviewAck || reviewResult ? {
+      review_attempt_id: reviewResult?.review_attempt_id ?? reviewAck.review_attempt_id,
+      ack_received: Boolean(reviewAck),
+      result_received: Boolean(reviewResult),
+      disposition: reviewResult?.read_only_evidence.disposition ?? 'ACKNOWLEDGED',
+      result: reviewResult?.result ?? null,
+      next_action: reviewResult?.next_action ?? null,
+      evidence: reviewResult?.read_only_evidence ?? null,
+      business_task_completed: false,
+    } : null,
     errors,
   };
 }
@@ -1216,6 +1292,7 @@ async function findExistingMayaTaskResult(runtime, task) {
   const responses = await readMayaSalesTaskMessages(runtime.mayaToManager);
   const existing = responses.messages.find(({ message }) => (
     message.task_id === task.task_id && message.message_type === 'MAYA_SALES_TASK_RESULT'
+      && message.execution_mode !== 'READ_ONLY_REVIEW'
   ));
   if (existing) assertSameTaskSnapshot(task, existing.message);
   return existing ?? null;
@@ -1263,6 +1340,133 @@ async function writeProductionNoSendResult({ runtime, task, now, executionState,
   });
   const write = await writeMayaSalesTaskMessageOnce(runtime.mayaToManager, message);
   return { message, write };
+}
+
+// Evidence is supplied by the verified Maya caller after live reads. This path has
+// no customer/channel adapter and never changes the immutable assignment or its gates.
+export async function reviewMayaTaskReadOnly({ configPath, taskId, evidence, now = new Date() }) {
+  const runtime = await loadMayaBridgeConfig(configPath);
+  if (runtime.config.identity?.role !== 'maya-agent') throw new Error('MAYA_ROLE_MISMATCH');
+  const identity = mayaProductionServiceIdentity(runtime);
+  if (identity.verified !== true || !identity.identityId || !identity.machineId) {
+    throw new Error('MAYA_SERVICE_IDENTITY_MISSING');
+  }
+  serviceIdentityFields(identity, 'MAYA_WORKSTATION');
+  if (hostname().toLowerCase() !== String(identity.machineId).toLowerCase()) {
+    throw new Error('MAYA_WORKSTATION_HOST_MISMATCH');
+  }
+  if (evidence?.identity?.verified !== true
+    || evidence.identity.serviceIdentityId !== identity.identityId
+    || evidence.identity.machineId !== identity.machineId) {
+    throw new Error('MAYA_LIVE_IDENTITY_NOT_VERIFIED');
+  }
+  const identityVerifiedAt = requireFreshEvidenceTimestamp(
+    evidence.identity.verifiedAt, 'MAYA_IDENTITY_EVIDENCE', now,
+  );
+  if (runtime.config.taskQueue?.protocol !== 'MAYA_SALES_TASK_V2'
+    || runtime.config.taskQueue?.ackResultWritesAllowed !== true
+    || runtime.config.taskQueue?.mondayWritesAllowed !== false) {
+    throw new Error('MAYA_READ_ONLY_TRANSPORT_DISABLED');
+  }
+  const safety = { externalSends: 0, gmailMutations: 0, mondayWrites: 0 };
+  if (!evidence.safety || Object.keys(safety).some((field) => evidence.safety[field] !== 0)) {
+    throw new Error('MAYA_READ_ONLY_ZERO_ACTION_EVIDENCE_REQUIRED');
+  }
+  const reviewAttemptId = boundedId(evidence.reviewAttemptId, 'review_attempt_id');
+  const { entry, warnings } = await loadMayaSalesTaskAssignment(runtime, taskId);
+  const task = entry.message;
+  if (task.test_task !== false || task.execution_origin !== 'MANAGER') {
+    throw new Error('MAYA_READ_ONLY_ASSIGNMENT_INVALID');
+  }
+  const responses = await readMayaSalesTaskMessages(runtime.mayaToManager);
+  const existing = responses.messages.find(({ message }) => (
+    message.task_id === task.task_id && message.message_type === 'MAYA_SALES_TASK_RESULT'
+      && message.execution_mode === 'READ_ONLY_REVIEW'
+      && message.review_attempt_id === reviewAttemptId
+  ));
+  if (existing) {
+    assertSameTaskSnapshot(task, existing.message);
+    const ack = responses.messages.find(({ message }) => (
+      message.task_id === task.task_id && message.message_type === 'MAYA_SALES_TASK_ACK'
+        && message.execution_mode === 'READ_ONLY_REVIEW'
+        && message.review_attempt_id === reviewAttemptId
+        && message.service_identity_id === existing.message.service_identity_id
+        && message.maya_machine_id === existing.message.maya_machine_id
+        && new Date(message.event_at) <= new Date(existing.message.event_at)
+    ));
+    if (!ack || existing.message.service_identity_id !== identity.identityId
+      || machineId(existing.message.maya_machine_id) !== machineId(identity.machineId)) {
+      throw new Error('MAYA_READ_ONLY_RESULT_RECONCILIATION_REQUIRED');
+    }
+    assertSameTaskSnapshot(task, ack.message);
+    return { status: 'DUPLICATE_READ_ONLY_RESULT_REUSED', duplicate: true, result: existing.message, warnings, safety };
+  }
+  const messageKey = createHash('sha256').update(`${task.task_id}\n${reviewAttemptId}`).digest('hex').slice(0, 32);
+  const acknowledgement = validateCreatedMayaSalesTaskMessage({
+    ...createMayaSalesTaskAck({
+      assignment: task, messageId: `maya-review-${messageKey}-ack`, now, serviceIdentity: identity,
+    }),
+    execution_mode: 'READ_ONLY_REVIEW',
+    review_attempt_id: reviewAttemptId,
+  });
+  const ackWrite = await writeMayaSalesTaskMessageOnce(runtime.mayaToManager, acknowledgement);
+  let disposition = 'REVIEWED';
+  let resultText;
+  let nextAction;
+  let mondayVerifiedAt = null;
+  let evidenceRef = null;
+  try {
+    if (evidence.taskId !== task.task_id) throw new Error('MAYA_READ_ONLY_TASK_MISMATCH');
+    const monday = evidence.monday;
+    if (!monday || monday.verified !== true || monday.sourceMode !== 'LIVE_READ_ONLY'
+      || String(monday.boardId ?? '') !== task.monday_board_id
+      || String(monday.itemId ?? '') !== task.monday_item_id) {
+      throw new Error('MONDAY_ITEM_MISMATCH');
+    }
+    mondayVerifiedAt = requireFreshEvidenceTimestamp(monday.verifiedAt, 'MONDAY_EVIDENCE', now);
+    if (evidence.review?.scopeComplete !== true) throw new Error('MAYA_READ_ONLY_SCOPE_INCOMPLETE');
+    evidenceRef = boundedId(evidence.review.evidenceRef, 'evidence_ref');
+    resultText = boundedText(evidence.review.result, 'review result', 2000);
+    nextAction = boundedText(evidence.review.nextAction, 'review next action', 1000);
+    if (hasForbiddenTaskContactData(`${resultText} ${nextAction}`)) {
+      throw new Error('MAYA_READ_ONLY_RESULT_CONTAINS_CONTACT_DATA');
+    }
+  } catch (error) {
+    disposition = 'BLOCKED';
+    const blocker = safeTaskBlocker(error);
+    resultText = `The read-only Maya review was blocked: ${blocker}. No customer action or Monday write occurred.`;
+    nextAction = blocker;
+    mondayVerifiedAt = null;
+    evidenceRef = null;
+  }
+  const result = validateCreatedMayaSalesTaskMessage({
+    ...createMayaSalesTaskResult({
+      assignment: task,
+      messageId: `maya-review-${messageKey}-result`,
+      executionState: disposition === 'REVIEWED' ? 'MAYA_EXECUTED' : 'BLOCKED',
+      result: resultText,
+      nextAction,
+      now,
+      serviceIdentity: identity,
+    }),
+    execution_mode: 'READ_ONLY_REVIEW',
+    review_attempt_id: reviewAttemptId,
+    read_only_evidence: {
+      disposition,
+      identity_verified_at: identityVerifiedAt,
+      monday_verified_at: mondayVerifiedAt,
+      evidence_ref: evidenceRef,
+    },
+  });
+  const resultWrite = await writeMayaSalesTaskMessageOnce(runtime.mayaToManager, result);
+  await appendMayaTaskExecutionLog(runtime, {
+    taskId: task.task_id, startTime: new Date(now).toISOString(), endTime: new Date(now).toISOString(),
+    action: 'READ_ONLY_REVIEW', gmailResult: 'NOT_USED',
+    mondayResult: disposition === 'REVIEWED' ? 'READ_ONLY_VERIFIED' : 'READ_ONLY_BLOCKED',
+    managerCallbackResult: resultWrite.created ? 'RESULT_CREATED' : 'RESULT_REUSED',
+    error: disposition === 'BLOCKED' ? nextAction : null,
+  });
+  return { status: `READ_ONLY_${disposition}`, duplicate: false, acknowledgement, ackWrite, result, resultWrite, warnings, safety };
 }
 
 export async function prepareMayaProductionTask({
