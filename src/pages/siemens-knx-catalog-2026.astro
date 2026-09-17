@@ -1,0 +1,118 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+const canonical = 'https://i-feel.co.il/siemens-knx-catalog-2026/';
+const title = 'קטלוג Siemens KNX 2026 | חיפוש מק״טים ומוצרים | I FEEL';
+const description = 'קטלוג Siemens KNX Building Control 2026 לצפייה באתר I FEEL. ניתן לאתר מוצרים ומק״טים דרך מנוע החיפוש באתר ולפתוח את עמוד הקטלוג הרלוונטי.';
+const officialLandingUrl = 'https://sid.siemens.com/v/u/A6V11881306';
+const officialPdfUrl = 'https://sid.siemens.com/api/khub/documents/pxiirCC1QXYsizqLlqfv8Q/content';
+const jsonLd = JSON.stringify({
+  '@context': 'https://schema.org',
+  '@type': 'TechArticle',
+  name: 'Siemens KNX Building Control Product Catalog 2026',
+  description,
+  url: canonical,
+  inLanguage: ['he-IL', 'en'],
+  publisher: { '@type': 'Organization', name: 'I FEEL', url: 'https://i-feel.co.il/' },
+  about: ['Siemens KNX', 'KNX Building Control', 'GAMMA', 'Building Automation'],
+});
+---
+
+<BaseLayout title={title} description={description} canonical={canonical} ogTitle={title} ogDescription={description} ogUrl={canonical} jsonLd={jsonLd}>
+  <main dir="rtl" class="bg-white">
+    <section class="bg-brand-900 text-white py-12 md:py-16">
+      <div class="max-w-7xl mx-auto px-4">
+        <p class="text-accent-400 font-bold mb-3">Siemens Smart Infrastructure · KNX Building Control</p>
+        <h1 class="text-4xl md:text-5xl font-extrabold mb-5">קטלוג Siemens KNX 2026</h1>
+        <p class="max-w-4xl text-lg leading-8 text-brand-100">
+          קטלוג המוצרים הרשמי של Siemens לשנת 2026. מנוע החיפוש של I FEEL כולל את אינדקס המוצרים והמק״טים שבקטלוג, כך שאפשר לחפש דגם או מק״ט ולפתוח את עמוד הקטלוג הרלוונטי.
+        </p>
+        <div class="mt-7 flex flex-wrap gap-3">
+          <a href={officialPdfUrl} target="_blank" rel="noopener noreferrer" class="inline-flex items-center justify-center rounded-lg bg-accent-500 px-5 py-3 font-bold text-white hover:bg-accent-600 transition">
+            פתיחת PDF בחלון חדש
+          </a>
+          <a href="/siemens-knx-products/" class="inline-flex items-center justify-center rounded-lg border border-white/30 bg-white/10 px-5 py-3 font-bold text-white hover:bg-white/20 transition">
+            מרכז מוצרי Siemens KNX
+          </a>
+          <a href={officialLandingUrl} target="_blank" rel="noopener noreferrer" class="inline-flex items-center justify-center rounded-lg border border-white/30 px-5 py-3 font-bold text-white hover:bg-white/10 transition">
+            עמוד המסמך הרשמי ב-Siemens
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <section class="border-b border-brand-100 bg-brand-50 py-6">
+      <div class="max-w-7xl mx-auto px-4">
+        <div class="grid gap-4 md:grid-cols-[1fr_auto] md:items-end">
+          <div>
+            <h2 class="text-xl font-extrabold text-brand-900 mb-2">מעבר לעמוד בקטלוג</h2>
+            <p class="text-sm text-brand-700">הקלידו מספר עמוד ולחצו על מעבר. תוצאות החיפוש באתר משתמשות באותו מנגנון.</p>
+          </div>
+          <form id="catalog-page-form" class="flex gap-2" aria-label="מעבר לעמוד בקטלוג">
+            <label for="catalog-page" class="sr-only">מספר עמוד</label>
+            <input id="catalog-page" name="page" type="number" min="1" max="424" inputmode="numeric" placeholder="לדוגמה 82" class="w-36 rounded-lg border border-brand-200 bg-white px-4 py-3 text-left outline-none focus:border-accent-500 focus:ring-2 focus:ring-accent-500/20" />
+            <button type="submit" class="rounded-lg bg-brand-700 px-5 py-3 font-bold text-white hover:bg-brand-800 transition">מעבר</button>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <section class="py-8 md:py-10">
+      <div class="max-w-7xl mx-auto px-4">
+        <div class="mb-4 flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <h2 class="text-2xl font-extrabold text-brand-900">צפייה בקטלוג</h2>
+            <p id="catalog-page-status" class="mt-1 text-sm text-brand-600" aria-live="polite">טוען את הקטלוג הרשמי של Siemens.</p>
+          </div>
+          <span class="rounded-full bg-brand-50 px-4 py-2 text-sm font-bold text-brand-700">424 עמודים · Product Catalog 2026</span>
+        </div>
+
+        <div class="overflow-hidden rounded-2xl border border-brand-200 bg-brand-50 shadow-sm">
+          <iframe
+            id="siemens-catalog-frame"
+            data-pdf-url={officialPdfUrl}
+            src={officialPdfUrl}
+            title="Siemens KNX Building Control Product Catalog 2026"
+            class="block h-[78vh] min-h-[620px] w-full bg-white"
+            loading="eager"
+          ></iframe>
+        </div>
+
+        <div class="mt-5 rounded-xl border border-brand-100 bg-brand-50 p-4 text-sm leading-6 text-brand-700">
+          אם הדפדפן חוסם הצגת PDF בתוך החלון, השתמשו בכפתור "פתיחת PDF בחלון חדש". המסמך נטען מהמקור הרשמי של Siemens.
+        </div>
+      </div>
+    </section>
+  </main>
+</BaseLayout>
+
+<script>
+  const frame = document.querySelector<HTMLIFrameElement>('#siemens-catalog-frame');
+  const form = document.querySelector<HTMLFormElement>('#catalog-page-form');
+  const input = document.querySelector<HTMLInputElement>('#catalog-page');
+  const status = document.querySelector<HTMLElement>('#catalog-page-status');
+
+  const getPageFromHash = () => {
+    const params = new URLSearchParams(window.location.hash.replace(/^#/, ''));
+    const page = Number.parseInt(params.get('page') || '1', 10);
+    return Number.isFinite(page) ? Math.min(424, Math.max(1, page)) : 1;
+  };
+
+  const showPage = () => {
+    if (!frame) return;
+    const page = getPageFromHash();
+    const pdfUrl = frame.dataset.pdfUrl || frame.src.split('#')[0];
+    frame.src = `${pdfUrl}#page=${page}&view=FitH`;
+    if (input) input.value = String(page);
+    if (status) status.textContent = `מציג עמוד ${page} מתוך 424.`;
+  };
+
+  form?.addEventListener('submit', (event) => {
+    event.preventDefault();
+    const page = Math.min(424, Math.max(1, Number.parseInt(input?.value || '1', 10) || 1));
+    window.location.hash = `page=${page}`;
+  });
+
+  window.addEventListener('hashchange', showPage);
+  showPage();
+</script>
