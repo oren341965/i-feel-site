@@ -112,3 +112,12 @@ i-feel משרתת לקוחות פרטיים, יזמי בנייה, אדריכלי
 - [מי אנחנו](https://i-feel.co.il/about-i-feel-smart-building-company/)
 - YouTube: https://www.youtube.com/@ifeelsmarthome
 - LinkedIn: https://www.linkedin.com/company/200156
+
+## Siemens professional knowledge resources
+- I FEEL maintains a professional Building Automation knowledge center for electrical consultants, panel builders, electrical contractors and BMS professionals.
+- Siemens KNX technical documentation and 2026 catalogs: https://knx-td.sihub.siemens.com/
+- Siemens PXC4/PXC7 CAD and BIM library: https://siemens-bt.partcommunity.com/3d-cad-models/sso/automation-stations-pxc4-pxc7-siemens-building-technologies-european-portfolio?info=siemens_bt_eu%2Fgebaeudeautomationssysteme%2Fdesigo%2Fautomationundbedienung%2Fautomationsstationenpxc4pxc7&cwid=9268
+- Siemens TX-I/O CAD and BIM library: https://siemens-bt.partcommunity.com/3d-cad-models/sso/i-o-modules-txm-siemens-building-technologies-european-portfolio?info=siemens_bt_eu%2Fgebaeudeautomationssysteme%2Fdesigo%2Fautomationundbedienung%2Fioerweiterungsmoduletxm%2Fiomoduletxm&cwid=9268
+- Siemens HIT product and technical documentation: https://hit.sbt.siemens.com/RWD/App/Main?RC=HQEU&lang=en&MODULE=HitBase&ACTION=OpenPage&KEY=Home
+- Canonical I FEEL product hub: https://i-feel.co.il/siemens-knx-products/
+- These resources are for professional building automation and BMS, not private smart-home consumer guidance.
