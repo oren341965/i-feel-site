@@ -1,11 +1,20 @@
 import { readdir, readFile, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import siemensCatalogSearch1 from '../data/siemens-knx-catalog-2026-search-1.mjs';
+import siemensCatalogSearch2 from '../data/siemens-knx-catalog-2026-search-2.mjs';
+import siemensCatalogSearch3 from '../data/siemens-knx-catalog-2026-search-3.mjs';
 
 const ENTITY_MAP = {
   amp: '&', apos: "'", gt: '>', hellip: '…', laquo: '«', ldquo: '“', lsquo: '‘',
   lt: '<', mdash: '—', nbsp: ' ', ndash: '–', quot: '"', raquo: '»', rdquo: '”', rsquo: '’',
 };
+
+const SIEMENS_KNX_CATALOG_SEARCH = [
+  ...siemensCatalogSearch1,
+  ...siemensCatalogSearch2,
+  ...siemensCatalogSearch3,
+];
 
 function decodeEntities(value) {
   return value.replace(/&(#x?[0-9a-f]+|[a-z]+);/gi, (entity, code) => {
@@ -61,6 +70,16 @@ async function findHtmlFiles(directory) {
   return files;
 }
 
+function catalogSearchRecords() {
+  return SIEMENS_KNX_CATALOG_SEARCH.map(({ page, body }) => ({
+    url: `/siemens-knx-catalog-2026/#page=${page}`,
+    title: `קטלוג Siemens KNX 2026 | אינדקס מוצרים, עמוד ${page}`,
+    description: 'אינדקס המוצרים הרשמי מתוך קטלוג Siemens KNX Building Control 2026, כולל מק״טים, דגמים ושמות מוצרים.',
+    headings: 'Siemens KNX · GAMMA · Building Control · קטלוג 2026 · מק״טים · דגמים · מפרטים טכניים',
+    body,
+  }));
+}
+
 async function buildSearchIndex(outputDirectory) {
   const files = await findHtmlFiles(outputDirectory);
   const records = [];
@@ -84,6 +103,7 @@ async function buildSearchIndex(outputDirectory) {
     records.push({ url, title: pageTitle.slice(0, 180), description, headings, body });
   }
 
+  records.push(...catalogSearchRecords());
   records.sort((left, right) => left.url.localeCompare(right.url, 'he'));
   await writeFile(path.join(outputDirectory, 'search-index.json'), JSON.stringify(records), 'utf8');
   return records.length;
@@ -95,7 +115,7 @@ export default function searchIndex() {
     hooks: {
       'astro:build:done': async ({ dir, logger }) => {
         const count = await buildSearchIndex(fileURLToPath(dir));
-        logger.info(`Indexed ${count} pages for free-text search.`);
+        logger.info(`Indexed ${count} pages and catalog records for free-text search.`);
       },
     },
   };
