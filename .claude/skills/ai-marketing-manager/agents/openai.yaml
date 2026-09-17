@@ -1,0 +1,7 @@
+interface:
+  display_name: "I Feel AI Marketing Manager"
+  short_description: "Builds measurable plans for more qualified I Feel leads"
+  default_prompt: "Use $ai-marketing-manager to build a measurable plan for more qualified I Feel leads."
+
+policy:
+  allow_implicit_invocation: true
