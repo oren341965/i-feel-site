@@ -15,6 +15,17 @@ An exact, date-bound transfer route supplied by Oren may select a named source a
 
 `NO_SAFE_CHANGE` is a valid decision. A daily improvement loop is not a requirement to write when evidence is weak.
 
+## Business target and owner-review context
+
+The owner may configure `marketingDecision.businessTarget` with schemaVersion 1
+and `weeklyNewQualifiedTargets` containing integer villas, electricalContractors,
+bmsNewCompanies and their positive sum totalMinimum. The reader displays this
+business target separately from the registered v1 write-policy hold at five.
+Different targets emit `POLICY_TARGET_MISMATCH`; this never silently changes
+spending authority. Segment completion remains unknown until segment evidence exists.
+The optional private `evidenceFiles.ownerDispositions` input preserves reviewed
+classifications as aggregates, not as a verified period acquisition export.
+
 ## Current portfolio strategy
 
 Oren's business direction recorded on 2026-09-07 is:

@@ -35,6 +35,14 @@ not a live qualification producer. Require a complete, fresh, reviewed CRM expor
 with historical deduplication; never infer qualification from a conversion or
 invent READY evidence. Missing evidence is UNKNOWN, not zero.
 
+For owner-reviewed classifications, use the pure `scripts/qualified-lead-preparation.mjs`.
+`evaluateOwnerDispositions` exposes aggregate historical owner feedback without
+claiming fresh CRM qualification. `prepareQualifiedLeadEvidence` reconciles it
+with a complete normalized board; it returns no publishable qualified snapshot
+while identity, acquisition dates, contact validation or source proof are missing.
+The existing Ads readiness loader reads private owner feedback from
+`marketingDecision.evidenceFiles.ownerDispositions`; it is not a gate override.
+
 At maturity 0, do not write to Monday, Google, Meta or the external attribution store. Finish with a self-check confirming that the result was a dry run and contained no raw PII.
 
 ## Local read-only adapter
