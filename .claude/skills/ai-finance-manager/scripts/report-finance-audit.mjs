@@ -72,6 +72,7 @@ if (args.help) {
 }
 const analysis = await load(args.analysis);
 const envelope = { auditKey: requiredKey(args, 'audit-key'), runKey: requiredKey(args, 'run-key'), sourceMode: 'live_read_only', ...analysis };
+const expectedEvidenceRef = `finance_audit_snapshots:${envelope.auditKey}`;
 if (args.dryRun) {
   process.stdout.write(`${JSON.stringify({ ok: true, dryRun: true, envelope }, null, 2)}\n`);
   process.exit(0);
@@ -87,8 +88,8 @@ try {
   const response = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json', 'OAI-Sites-Authorization': `Bearer ${siteToken}`, Authorization: `Bearer ${runToken}` }, body: JSON.stringify(envelope), signal: AbortSignal.timeout(60_000) });
   const body = await response.json().catch(() => null);
   if (!response.ok) fail(`Management System rejected finance audit with HTTP ${response.status}`, [401, 403].includes(response.status) ? 3 : 4);
-  if (typeof body?.created !== 'boolean' || body.snapshot?.currentMonth !== envelope.period) fail('Management System returned an unexpected response', 4);
-  process.stdout.write(`${JSON.stringify({ ok: true, created: body.created, snapshot: { period: body.snapshot.currentMonth, expenseRows: body.snapshot.current.rows, projectIncomeRows: body.snapshot.revenue.projects.rows, serviceIncomeRows: body.snapshot.revenue.service.rows, capturedAt: body.snapshot.capturedAt } })}\n`);
+  if (typeof body?.created !== 'boolean' || body.snapshot?.currentMonth !== envelope.period || body.evidenceRef !== expectedEvidenceRef) fail('Management System returned an unexpected response', 4);
+  process.stdout.write(`${JSON.stringify({ ok: true, created: body.created, evidenceRef: body.evidenceRef, snapshot: { period: body.snapshot.currentMonth, expenseRows: body.snapshot.current.rows, projectIncomeRows: body.snapshot.revenue.projects.rows, serviceIncomeRows: body.snapshot.revenue.service.rows, capturedAt: body.snapshot.capturedAt } })}\n`);
 } catch (error) {
   if (error?.name === 'TimeoutError') fail('Management System finance audit request timed out', 4);
   fail('Management System finance audit request failed', 4);
