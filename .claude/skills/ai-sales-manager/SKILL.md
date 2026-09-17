@@ -9,17 +9,17 @@ description: Orchestrate I Feel's sales and marketing system, deterministic read
 
 ## Route the request
 
-- For system boundaries and data flow, read [references/architecture.md](references/architecture.md).
-- Before assigning work or interpreting approval, read [references/roles-and-authority.md](references/roles-and-authority.md).
-- For component ownership, migration, or duplication questions, read [references/component-lifecycle.md](references/component-lifecycle.md).
-- For a live Monday audit, read [references/board-contract.md](references/board-contract.md), then [references/classification-and-scoring.md](references/classification-and-scoring.md). Read [references/report-contract.md](references/report-contract.md) when rendering the result.
+- For system boundaries and data flow, read [architecture](references/architecture.md).
+- Before assigning work or interpreting approval, read [roles and authority](references/roles-and-authority.md).
+- For ownership, migration, or duplication, read [component lifecycle](references/component-lifecycle.md).
+- For a live Monday audit, read [board contract](references/board-contract.md), then [classification and scoring](references/classification-and-scoring.md). Use the [report contract](references/report-contract.md) for results.
 - For authorized Hashavshevet-to-Monday intake, read [references/hashavshevet-customer-intake.md](references/hashavshevet-customer-intake.md).
 - For a full-system dry run, plans queue, quote reconciliation, paid-media coordination, website feedback, project video, or Claude judgment request, read [references/orchestration-contract.md](references/orchestration-contract.md).
-- For Vault or Bus work, read [references/vault-layout.md](references/vault-layout.md). For local runtime or installer work, read [references/local-runtime.md](references/local-runtime.md).
-- Before any action beyond local read-only analysis, read [references/safety-and-approvals.md](references/safety-and-approvals.md).
-- For maintenance or handoff, read [references/phase-1-audit.md](references/phase-1-audit.md) and [references/validation-and-handoff.md](references/validation-and-handoff.md).
-- For Oren commissioning, read [references/phase-2-local-core.md](references/phase-2-local-core.md).
-- For Maya commissioning, Codex cutover, Skill scope or assignments, read [references/maya-commissioning.md](references/maya-commissioning.md), [references/maya-codex-cutover.md](references/maya-codex-cutover.md), [references/maya-codex-skill-review.md](references/maya-codex-skill-review.md), and [references/maya-task-protocol.md](references/maya-task-protocol.md) as applicable.
+- For Vault/Bus work, read [Vault layout](references/vault-layout.md); for runtime/installers, read [local runtime](references/local-runtime.md).
+- Before acting beyond local read-only analysis, read [safety and approvals](references/safety-and-approvals.md).
+- For maintenance or handoff, read [phase-1 audit](references/phase-1-audit.md) and [validation and handoff](references/validation-and-handoff.md).
+- For Oren commissioning, read [phase-2 local core](references/phase-2-local-core.md).
+- For Maya, read [commissioning](references/maya-commissioning.md), [Codex cutover](references/maya-codex-cutover.md), [Skill scope](references/maya-codex-skill-review.md), and [task protocol](references/maya-task-protocol.md) as applicable.
 - The AI Sales Manager owns the program as I Feel's AI Marketing Manager; for the Maya-executed professional relations workflow, read [references/instagram-relations-program.md](references/instagram-relations-program.md).
 
 ## Non-negotiable invariants
@@ -38,6 +38,7 @@ description: Orchestrate I Feel's sales and marketing system, deterministic read
 - Maya business routines and WhatsApp remain paused. The existing Windows Email Task is outside this refactor and remains unchanged.
 - Maya commissioning installs the three canonical Maya workers plus the telemetry adapter into Codex only. It never installs the parent manager on Maya, never activates a scheduler, never requires Claude, and never treats the Vault as executable source truth.
 - Manager-assigned Maya work uses only the existing Vault bridge. An enqueued task is only `ASSIGNED_TO_MAYA`; only `RESPONSE_RECEIVED_AND_MONDAY_UPDATED` after a real Maya ACK, a real Maya Result, and live Monday read-back is fully completed. Duplicate task IDs reuse the existing immutable result, and isolated tests never count as production completion.
+- Report `read_only_review` findings separately under `maya-task-protocol.md`; a verified inspection needs no send authority and never completes customer-action work.
 
 ## Deterministic entrypoints
 

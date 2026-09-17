@@ -1,7 +1,8 @@
 import assert from 'node:assert/strict';
 import { execFile, spawnSync } from 'node:child_process';
-import { mkdir, readFile, rm, stat, writeFile } from 'node:fs/promises';
+import { mkdir, readFile, readdir, rm, stat, writeFile } from 'node:fs/promises';
 import { join, resolve } from 'node:path';
+import { hostname } from 'node:os';
 import test from 'node:test';
 import { promisify } from 'node:util';
 
@@ -24,12 +25,14 @@ import {
   processAssignedMayaTask,
   readAssignedMayaTasks,
   reconcileMayaSalesTask,
+  reviewMayaTaskReadOnly,
   respondToMayaSystemTests,
   submitMayaSalesTaskResult,
   syncMayaSalesTaskState,
   validateMayaSalesTaskMessage,
   validateMayaSystemTestEvent,
 } from '../.claude/skills/ai-sales-manager/scripts/maya-vault-bridge.mjs';
+import { runMayaTaskProductionCommand } from '../.claude/skills/ai-sales-manager/scripts/maya-task-production-runner.mjs';
 
 const REPO = resolve(import.meta.dirname, '..');
 const NOW = new Date('2026-08-21T10:00:00.000Z');
@@ -74,6 +77,248 @@ async function fixture(t) {
   });
   return { root, vaultRoot, managerConfigPath, mayaConfigPath };
 }
+
+async function readOnlyReviewFixture(t, { taskId = null } = {}) {
+  const context = await fixture(t);
+  const config = JSON.parse(await readFile(context.mayaConfigPath, 'utf8'));
+  config.identity = {
+    role: 'maya-agent', machineId: hostname(), serviceIdentityVerified: true,
+    serviceIdentityId: 'maya-test-read-only-identity',
+  };
+  config.taskQueue = {
+    protocol: 'MAYA_SALES_TASK_V2', ackResultWritesAllowed: true,
+    mondayWritesAllowed: false, productionExecutionAllowed: false,
+    commissioningReadOnlyWritesAllowed: false,
+  };
+  config.controlState = CURRENT_MAYA_CONTROL;
+  await writeFile(context.mayaConfigPath, JSON.stringify(config), 'utf8');
+  const assigned = await assignMayaSalesTask({
+    configPath: context.managerConfigPath, now: NOW,
+    input: {
+      task_id: taskId ?? `maya-review-test-${fixtureCounter}`,
+      monday_board_id: '2732725332', monday_item_id: '1234567890',
+      customer_name: 'Synthetic test customer', current_sales_status: 'Proposal preparation',
+      instruction: 'Read the assigned item and historical evidence; prepare a local recommendation.',
+      required_action: 'REPORT_ONLY: no customer contact and no Monday changes.',
+      monday_item_source: 'MONDAY_LIVE', monday_item_verified_at: NOW.toISOString(),
+      test_task: false,
+      execution_gate: { ready: false, status: 'MAYA_PRODUCTION_BLOCKED', blockers: ['CUSTOMER_OUTREACH_NOT_AUTHORIZED'] },
+    },
+  });
+  // Prove backwards-compatible transport for the immutable pre-authorization contract.
+  const assignment = { ...assigned.assignment };
+  delete assignment.action_authorization;
+  await writeFile(assigned.write.path, JSON.stringify(assignment), 'utf8');
+  const evidence = {
+    taskId: assignment.task_id,
+    reviewAttemptId: 'review-attempt-1',
+    identity: {
+      verified: true, verifiedAt: NOW.toISOString(),
+      serviceIdentityId: config.identity.serviceIdentityId, machineId: config.identity.machineId,
+    },
+    monday: {
+      verified: true, sourceMode: 'LIVE_READ_ONLY', verifiedAt: NOW.toISOString(),
+      boardId: assignment.monday_board_id, itemId: assignment.monday_item_id,
+    },
+    review: {
+      scopeComplete: true, evidenceRef: 'review-live-source-evidence-001',
+      result: 'The assigned source review is recorded; no customer action was performed.',
+      nextAction: 'OWNER_REVIEW_LOCAL_RECOMMENDATION',
+    },
+    safety: { externalSends: 0, gmailMutations: 0, mondayWrites: 0 },
+  };
+  return { ...context, assignment, assignedPath: assigned.write.path, config, evidence };
+}
+
+test('real read-only review preserves a legacy assignment and never completes its business task', async (t) => {
+  const f = await readOnlyReviewFixture(t);
+  const original = await readFile(f.assignedPath, 'utf8');
+  const reviewed = await reviewMayaTaskReadOnly({
+    configPath: f.mayaConfigPath, taskId: f.assignment.task_id, evidence: f.evidence, now: NOW,
+  });
+  assert.equal(reviewed.status, 'READ_ONLY_REVIEWED');
+  assert.equal(reviewed.acknowledgement.execution_origin, 'MAYA_WORKSTATION');
+  assert.equal(reviewed.result.execution_mode, 'READ_ONLY_REVIEW');
+  assert.equal(reviewed.result.read_only_evidence.disposition, 'REVIEWED');
+  assert.equal(reviewed.result.next_treatment_date, null);
+  assert.deepEqual(reviewed.safety, { externalSends: 0, gmailMutations: 0, mondayWrites: 0 });
+  assert.equal(await readFile(f.assignedPath, 'utf8'), original);
+  assert.deepEqual(JSON.parse(await readFile(f.mayaConfigPath, 'utf8')), f.config);
+  const state = reconcileMayaSalesTask({
+    assignment: f.assignment, responses: [reviewed.acknowledgement, reviewed.result],
+    mondayReadback: {
+      mode: 'LIVE', verified: true, monday_board_id: f.assignment.monday_board_id,
+      monday_item_id: f.assignment.monday_item_id, verified_at: NOW.toISOString(),
+      result_recorded: true, next_action_recorded: true,
+    },
+  });
+  assert.equal(state.execution_state, 'ASSIGNED_TO_MAYA');
+  assert.equal(state.ack_received, false);
+  assert.equal(state.result_received, false);
+  assert.equal(state.completed, false);
+  assert.equal(state.protocol_completed, false);
+  assert.equal(state.monday_update_verified, false);
+  assert.equal(state.read_only_review.disposition, 'REVIEWED');
+  assert.equal(state.read_only_review.business_task_completed, false);
+  const busFiles = await readdir(join(f.vaultRoot, 'AI-Sales', '_bus', 'maya-to-manager'));
+  assert.equal(busFiles.length, 2);
+  await assert.rejects(stat(join(f.root, 'maya', 'state', 'maya-tasks')), { code: 'ENOENT' });
+});
+
+test('read-only review requires actual host and fresh matching identity before writing an ACK', async (t) => {
+  const cases = [
+    ['missing configured identity', (f) => { f.config.identity.serviceIdentityVerified = false; }, 'MAYA_SERVICE_IDENTITY_MISSING'],
+    ['wrong actual host', (f) => { f.config.identity.machineId = 'another-maya-host'; f.evidence.identity.machineId = 'another-maya-host'; }, 'MAYA_WORKSTATION_HOST_MISMATCH'],
+    ['missing live identity', (f) => { delete f.evidence.identity; }, 'MAYA_LIVE_IDENTITY_NOT_VERIFIED'],
+    ['wrong service identity', (f) => { f.evidence.identity.serviceIdentityId = 'another-identity'; }, 'MAYA_LIVE_IDENTITY_NOT_VERIFIED'],
+    ['stale live identity', (f) => { f.evidence.identity.verifiedAt = '2026-08-20T10:00:00.000Z'; }, 'MAYA_IDENTITY_EVIDENCE_STALE'],
+    ['transport disabled', (f) => { f.config.taskQueue.ackResultWritesAllowed = false; }, 'MAYA_READ_ONLY_TRANSPORT_DISABLED'],
+  ];
+  for (const [name, modify, code] of cases) await t.test(name, async (st) => {
+    const f = await readOnlyReviewFixture(st);
+    modify(f);
+    await writeFile(f.mayaConfigPath, JSON.stringify(f.config), 'utf8');
+    await assert.rejects(() => reviewMayaTaskReadOnly({
+      configPath: f.mayaConfigPath, taskId: f.assignment.task_id, evidence: f.evidence, now: NOW,
+    }), new RegExp(code));
+    assert.deepEqual(await readdir(join(f.vaultRoot, 'AI-Sales', '_bus', 'maya-to-manager')), []);
+  });
+});
+
+test('read-only review rejects absent or nonzero caller safety before any ACK or result', async (t) => {
+  for (const field of ['missing', 'externalSends', 'gmailMutations', 'mondayWrites']) await t.test(field, async (st) => {
+    const f = await readOnlyReviewFixture(st);
+    if (field === 'missing') delete f.evidence.safety;
+    else f.evidence.safety[field] = 1;
+    await assert.rejects(() => reviewMayaTaskReadOnly({
+      configPath: f.mayaConfigPath, taskId: f.assignment.task_id, evidence: f.evidence, now: NOW,
+    }), /MAYA_READ_ONLY_ZERO_ACTION_EVIDENCE_REQUIRED/);
+    assert.deepEqual(await readdir(join(f.vaultRoot, 'AI-Sales', '_bus', 'maya-to-manager')), []);
+  });
+});
+
+test('read-only source failures return authenticated structured blockers without claiming source success', async (t) => {
+  const cases = [
+    ['missing Monday', (e) => { delete e.monday; }, 'MONDAY_ITEM_MISMATCH'],
+    ['wrong item', (e) => { e.monday.itemId = '987654321'; }, 'MONDAY_ITEM_MISMATCH'],
+    ['wrong board', (e) => { e.monday.boardId = '987654321'; }, 'MONDAY_ITEM_MISMATCH'],
+    ['wrong task', (e) => { e.taskId = 'another-task'; }, 'MAYA_READ_ONLY_TASK_MISMATCH'],
+    ['stale evidence', (e) => { e.monday.verifiedAt = '2026-08-20T10:00:00.000Z'; }, 'MONDAY_EVIDENCE_STALE'],
+    ['future evidence', (e) => { e.monday.verifiedAt = '2026-08-22T10:00:00.000Z'; }, 'MONDAY_EVIDENCE_STALE'],
+    ['snapshot source', (e) => { e.monday.sourceMode = 'LOCAL_SNAPSHOT'; }, 'MONDAY_ITEM_MISMATCH'],
+    ['partial scope', (e) => { e.review.scopeComplete = false; }, 'MAYA_READ_ONLY_SCOPE_INCOMPLETE'],
+    ['private contact', (e) => { e.review.result = 'Contact private@example.test'; }, 'MAYA_READ_ONLY_RESULT_CONTAINS_CONTACT_DATA'],
+  ];
+  for (const [name, modify, code] of cases) await t.test(name, async (st) => {
+    const f = await readOnlyReviewFixture(st);
+    modify(f.evidence);
+    const blocked = await reviewMayaTaskReadOnly({
+      configPath: f.mayaConfigPath, taskId: f.assignment.task_id, evidence: f.evidence, now: NOW,
+    });
+    assert.equal(blocked.status, 'READ_ONLY_BLOCKED');
+    assert.equal(blocked.result.next_action, code);
+    assert.equal(blocked.acknowledgement.service_identity_verified, true);
+    assert.equal(blocked.result.read_only_evidence.monday_verified_at, null);
+    assert.equal(blocked.result.read_only_evidence.evidence_ref, null);
+    assert.equal(blocked.result.external_actions_performed, false);
+    assert.equal(blocked.result.monday_writes_performed, false);
+    assert.equal(JSON.stringify(blocked).includes('private@example.test'), false);
+  });
+});
+
+test('read-only retries reuse one attempt but recover transient blockers with a new immutable attempt', async (t) => {
+  const f = await readOnlyReviewFixture(t);
+  const blockedEvidence = structuredClone(f.evidence);
+  delete blockedEvidence.monday;
+  const args = { configPath: f.mayaConfigPath, taskId: f.assignment.task_id, now: NOW };
+  const blocked = await reviewMayaTaskReadOnly({ ...args, evidence: blockedEvidence });
+  const duplicate = await reviewMayaTaskReadOnly({ ...args, evidence: f.evidence });
+  assert.equal(duplicate.status, 'DUPLICATE_READ_ONLY_RESULT_REUSED');
+  assert.deepEqual(duplicate.result, blocked.result);
+  f.evidence.reviewAttemptId = 'review-attempt-2';
+  const recovered = await reviewMayaTaskReadOnly({ ...args, evidence: f.evidence, now: new Date(NOW.getTime() + 60_000) });
+  assert.equal(recovered.status, 'READ_ONLY_REVIEWED');
+  assert.notEqual(recovered.result.message_id, blocked.result.message_id);
+  const state = reconcileMayaSalesTask({
+    assignment: f.assignment,
+    responses: [blocked.acknowledgement, blocked.result, recovered.acknowledgement, recovered.result],
+  });
+  assert.equal(state.read_only_review.disposition, 'REVIEWED');
+  assert.equal(state.read_only_review.review_attempt_id, 'review-attempt-2');
+  assert.equal(state.completed, false);
+  const missingAck = reconcileMayaSalesTask({
+    assignment: f.assignment, responses: [blocked.acknowledgement, recovered.result],
+  });
+  assert.equal(missingAck.read_only_review.result_received, false);
+  assert.ok(missingAck.errors.includes('MAYA_READ_ONLY_ACK_MISSING_OR_MISMATCHED'));
+  const newestPendingAck = {
+    ...recovered.acknowledgement,
+    message_id: 'review-attempt-3-ack', review_attempt_id: 'review-attempt-3',
+    event_at: new Date(NOW.getTime() + 120_000).toISOString(),
+  };
+  const pendingState = reconcileMayaSalesTask({
+    assignment: f.assignment,
+    responses: [blocked.acknowledgement, blocked.result, recovered.acknowledgement, recovered.result, newestPendingAck],
+  });
+  assert.equal(pendingState.read_only_review.review_attempt_id, 'review-attempt-3');
+  assert.equal(pendingState.read_only_review.disposition, 'ACKNOWLEDGED');
+  assert.equal(pendingState.read_only_review.result_received, false);
+  assert.deepEqual(pendingState.errors, []);
+  assert.equal((await readdir(join(f.vaultRoot, 'AI-Sales', '_bus', 'maya-to-manager'))).length, 4);
+});
+
+test('read-only duplicate result needs the matching authenticated ACK and current identity', async (t) => {
+  for (const change of ['missing ACK', 'different identity']) await t.test(change, async (st) => {
+    const f = await readOnlyReviewFixture(st);
+    const args = { configPath: f.mayaConfigPath, taskId: f.assignment.task_id, evidence: f.evidence, now: NOW };
+    const reviewed = await reviewMayaTaskReadOnly(args);
+    if (change === 'missing ACK') {
+      // This file is owned by this test's isolated fixture, never a live Bus.
+      await rm(reviewed.ackWrite.path);
+    } else {
+      f.config.identity.serviceIdentityId = 'replacement-maya-test-identity';
+      f.evidence.identity.serviceIdentityId = f.config.identity.serviceIdentityId;
+      await writeFile(f.mayaConfigPath, JSON.stringify(f.config), 'utf8');
+    }
+    await assert.rejects(() => reviewMayaTaskReadOnly(args), /MAYA_READ_ONLY_RESULT_RECONCILIATION_REQUIRED/);
+  });
+});
+
+test('read-only results cannot claim a send, Monday write, or customer-action completion', async (t) => {
+  const f = await readOnlyReviewFixture(t);
+  const reviewed = await reviewMayaTaskReadOnly({
+    configPath: f.mayaConfigPath, taskId: f.assignment.task_id, evidence: f.evidence, now: NOW,
+  });
+  for (const edit of [
+    { external_actions_performed: true }, { monday_writes_performed: true },
+    { execution_state: 'RESPONSE_RECEIVED_AND_MONDAY_UPDATED' },
+    { execution_state: 'WAITING_FOR_CUSTOMER' }, { next_treatment_date: '2026-08-24' },
+    { execution_origin: 'ISOLATED_TEST' },
+  ]) assert.equal(validateMayaSalesTaskMessage({ ...reviewed.result, ...edit }).accepted, false);
+  const missingMode = { ...reviewed.result };
+  delete missingMode.execution_mode;
+  assert.equal(validateMayaSalesTaskMessage(missingMode).accepted, false);
+  await assert.rejects(() => prepareMayaProductionTask({
+    configPath: f.mayaConfigPath, taskId: f.assignment.task_id, evidence: {}, now: NOW,
+  }), /MAYA_PRODUCTION_GATE_BLOCKED/);
+  await assert.rejects(() => submitMayaSalesTaskResult({
+    configPath: f.mayaConfigPath, taskId: f.assignment.task_id, now: NOW,
+    resultInput: { execution_state: 'MAYA_EXECUTED', result: 'Do not bypass the production gate.' },
+  }), /production execution is blocked/);
+});
+
+test('existing runner exposes read-only mode without interpreting it as production completion', async (t) => {
+  const f = await readOnlyReviewFixture(t, { taskId: 'a'.repeat(128) });
+  const result = await runMayaTaskProductionCommand({
+    command: 'review-read-only', configPath: f.mayaConfigPath, taskId: f.assignment.task_id,
+    input: f.evidence, now: NOW,
+  });
+  assert.equal(result.status, 'READ_ONLY_REVIEWED');
+  assert.equal(result.action, null);
+  assert.equal(result.result.execution_mode, 'READ_ONLY_REVIEW');
+  assert.equal(result.result.business_task_completed, false);
+  assert.deepEqual(result.safety, { externalSends: 0, gmailMutations: 0, mondayWrites: 0 });
+});
 
 test('manager and Maya handshake completes through the shared Vault without external actions', async (t) => {
   const { managerConfigPath, mayaConfigPath } = await fixture(t);

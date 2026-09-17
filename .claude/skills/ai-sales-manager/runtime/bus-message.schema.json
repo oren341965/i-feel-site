@@ -148,6 +148,19 @@
         "monday_item_verified_at": { "type": "string", "format": "date-time" },
         "test_task": { "type": "boolean" },
         "execution_origin": { "enum": ["MANAGER", "MAYA_WORKSTATION", "ISOLATED_TEST"] },
+        "execution_mode": { "const": "READ_ONLY_REVIEW" },
+        "review_attempt_id": { "type": "string", "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._:-]{0,127}$" },
+        "read_only_evidence": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["disposition", "identity_verified_at", "monday_verified_at", "evidence_ref"],
+          "properties": {
+            "disposition": { "enum": ["REVIEWED", "BLOCKED"] },
+            "identity_verified_at": { "type": "string", "format": "date-time" },
+            "monday_verified_at": { "type": ["string", "null"], "format": "date-time" },
+            "evidence_ref": { "type": ["string", "null"], "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._:-]{0,127}$" }
+          }
+        },
         "execution_gate": {
           "type": "object",
           "additionalProperties": false,
@@ -199,7 +212,46 @@
         "service_identity_verified": { "type": "boolean" },
         "service_identity_id": { "type": ["string", "null"], "maxLength": 128 },
         "maya_machine_id": { "type": ["string", "null"], "maxLength": 63 }
-      }
+      },
+      "allOf": [
+        {
+          "if": { "anyOf": [{ "required": ["read_only_evidence"] }, { "required": ["review_attempt_id"] }] },
+          "then": { "required": ["execution_mode"] }
+        },
+        {
+          "if": { "required": ["execution_mode"] },
+          "then": {
+            "required": ["review_attempt_id"],
+            "properties": {
+              "message_type": { "enum": ["MAYA_SALES_TASK_ACK", "MAYA_SALES_TASK_RESULT"] },
+              "execution_origin": { "const": "MAYA_WORKSTATION" },
+              "test_task": { "const": false },
+              "service_identity_verified": { "const": true },
+              "external_actions_performed": { "const": false },
+              "monday_writes_performed": { "const": false }
+            },
+            "allOf": [
+              {
+                "if": { "properties": { "message_type": { "const": "MAYA_SALES_TASK_ACK" } } },
+                "then": {
+                  "not": { "required": ["read_only_evidence"] },
+                  "properties": { "execution_state": { "const": "MAYA_ACKNOWLEDGED" }, "result": { "const": null } }
+                }
+              },
+              {
+                "if": { "properties": { "message_type": { "const": "MAYA_SALES_TASK_RESULT" } } },
+                "then": {
+                  "required": ["read_only_evidence"],
+                  "properties": {
+                    "execution_state": { "enum": ["MAYA_EXECUTED", "BLOCKED"] },
+                    "next_treatment_date": { "const": null }
+                  }
+                }
+              }
+            ]
+          }
+        }
+      ]
     },
     "legacyBridgeMessage": {
       "type": "object",
