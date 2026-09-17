@@ -44,6 +44,33 @@ const products = [
   },
 ];
 
+const siemensKnowledgeResources = [
+  {
+    title: 'קטלוג ומסמכי Siemens KNX לשנת 2026',
+    description: 'קטלוגים, דפי נתונים, מדריכי התקנה ומסמכים טכניים רשמיים של Siemens KNX.',
+    href: 'https://knx-td.sihub.siemens.com/',
+    label: 'פתיחת מרכז KNX הרשמי',
+  },
+  {
+    title: 'שרטוטי CAD ו-BIM לבקרי PXC4 ו-PXC7',
+    description: 'מודלים דו-ממדיים ותלת-ממדיים, CAD/BIM ונתוני תכנון לתחנות האוטומציה Siemens PXC4 ו-PXC7.',
+    href: 'https://siemens-bt.partcommunity.com/3d-cad-models/sso/automation-stations-pxc4-pxc7-siemens-building-technologies-european-portfolio?info=siemens_bt_eu%2Fgebaeudeautomationssysteme%2Fdesigo%2Fautomationundbedienung%2Fautomationsstationenpxc4pxc7&cwid=9268',
+    label: 'פתיחת ספריית PXC4/PXC7',
+  },
+  {
+    title: 'שרטוטי CAD ו-BIM למודולי Siemens TX-I/O',
+    description: 'מודלים ונתוני תכנון למודולי TXM ו-TX-I/O עבור יועצי חשמל, מתכננים, יצרני לוחות ואנשי BMS.',
+    href: 'https://siemens-bt.partcommunity.com/3d-cad-models/sso/i-o-modules-txm-siemens-building-technologies-european-portfolio?info=siemens_bt_eu%2Fgebaeudeautomationssysteme%2Fdesigo%2Fautomationundbedienung%2Fioerweiterungsmoduletxm%2Fiomoduletxm&cwid=9268',
+    label: 'פתיחת ספריית TX-I/O',
+  },
+  {
+    title: 'Siemens HIT - מידע טכני וקטלוגי Building Automation',
+    description: 'איתור מוצרים, דפי נתונים ומסמכים רשמיים למערכות Siemens Building Automation ו-Desigo.',
+    href: 'https://hit.sbt.siemens.com/RWD/App/Main?RC=HQEU&lang=en&MODULE=HitBase&ACTION=OpenPage&KEY=Home',
+    label: 'פתיחת Siemens HIT',
+  },
+];
+
 const allItems = products.flatMap((group) => group.items);
 const canonical = 'https://i-feel.co.il/siemens-knx-products/';
 const title = 'מוצרים ומפרטים טכניים Siemens KNX | DWG ומק״טים | i-feel';
@@ -68,6 +95,31 @@ const jsonLd = JSON.stringify({
         <p class="max-w-4xl text-lg text-brand-100 leading-relaxed">מרכז המוצרים של Siemens KNX באתר I FEEL. אפשר לאתר מוצר לפי מספר יציאות, שימוש, דגם או מק״ט, לפתוח מפרט טכני ולהוריד DWG כאשר הקובץ זמין.</p>
       </div>
     </section>
+
+
+  <section id="siemens-professional-resources" class="bg-white py-12 lg:py-16 border-b border-brand-100" dir="rtl">
+    <div class="max-w-7xl mx-auto px-4">
+      <div class="mb-7">
+        <p class="text-accent-700 font-bold mb-2">מרכז ידע מקצועי לבקרת מבנה</p>
+        <h2 class="text-2xl md:text-3xl font-extrabold text-brand-900 border-r-4 border-accent-500 pr-3 mb-3">קטלוגים, CAD ו-BIM רשמיים של Siemens</h2>
+        <p class="text-brand-700 max-w-4xl leading-7">
+          קישורים ציבוריים שאושרו להפניה על ידי Siemens עבור יועצי חשמל, יצרני לוחות, קבלני חשמל ואנשי BMS. החומר עוסק בבקרת מבנה מקצועית, Siemens Desigo, בקרי PXC ומודולי TX-I/O - ולא במוצרי בית חכם ללקוח פרטי.
+        </p>
+      </div>
+      <div class="grid md:grid-cols-2 gap-5">
+        {siemensKnowledgeResources.map((resource) => (
+          <article class="rounded-2xl border border-brand-100 bg-brand-50 p-6 shadow-sm hover:border-accent-400 hover:shadow-lg transition">
+            <h3 class="text-xl font-extrabold text-brand-900 mb-2">{resource.title}</h3>
+            <p class="text-brand-700 leading-7 mb-5">{resource.description}</p>
+            <a href={resource.href} target="_blank" rel="noopener noreferrer" class="inline-flex items-center justify-center rounded-lg bg-brand-700 px-5 py-3 font-bold text-white hover:bg-brand-800 transition">
+              {resource.label} <span aria-hidden="true">↗</span>
+            </a>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
 
     <section class="py-8 bg-brand-50 border-b border-brand-100">
       <div class="max-w-7xl mx-auto px-4 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
