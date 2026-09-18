@@ -123,9 +123,9 @@ function mcohome_save_media(string $eventId, array $files): array
             'name' => $original,
             'mime' => $mime,
             'size' => $size,
-            'dropboxStatus' => 'pending',
-            'dropboxPath' => '',
-            'dropboxUrl' => '',
+            'googleDriveStatus' => 'pending',
+            'googleDriveFileId' => '',
+            'googleDriveUrl' => '',
         ];
     }
     return $saved;
@@ -643,7 +643,8 @@ function mcohome_sheet_payload(array $record): array
         'recurring' => $record['recurring'] ?? false,
         'severity' => $record['severity'] ?? 'NORMAL',
         'updatedAt' => $record['updatedAt'] ?? date(DATE_ATOM),
-        'googleDriveLinks' => $googleDriveLinks,\n        'dropboxLinks' => $googleDriveLinks,
+        'googleDriveLinks' => $googleDriveLinks,
+        'dropboxLinks' => $googleDriveLinks,
         'rootCause' => $record['rootCause'] ?? '',
         'resolution' => $record['resolution'] ?? '',
         'owner' => $record['owner'] ?? 'שירות I Feel / MCOHome',
