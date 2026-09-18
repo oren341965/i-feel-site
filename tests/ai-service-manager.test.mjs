@@ -68,6 +68,10 @@ test('service analyzer keeps customer waiting separate and snapshots exclude cus
         category: 'תיקון', createdAt: NOW, lastUpdated: NOW,
       },
       {
+        id: 'payment-unpaid', name: 'Unpaid Repair Customer', status: 'לקוח לא שילם עבור התיקון', owners: ['שירות'],
+        category: 'תיקון', createdAt: NOW, lastUpdated: NOW,
+      },
+      {
         id: 'cancelled', name: 'Cancelled Customer', status: 'בוטל', owners: [],
         category: 'אחר', createdAt: NOW, lastUpdated: NOW,
       },
@@ -76,7 +80,7 @@ test('service analyzer keeps customer waiting separate and snapshots exclude cus
 
   assert.equal(result.counts.waitingCustomer, 1);
   assert.equal(result.counts.internalBottleneck, 0);
-  assert.equal(result.counts.paymentFollowUp, 1);
+  assert.equal(result.counts.paymentFollowUp, 2);
   assert.equal(result.counts.cancelled, 1);
   assert.equal(result.reconciliation.populationMatchesTotal, true);
   assert.equal(JSON.stringify(result.snapshot).includes('Private Customer'), false);

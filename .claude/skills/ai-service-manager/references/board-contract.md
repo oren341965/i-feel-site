@@ -48,7 +48,7 @@ Subitem `Stuck` is a critical override. Subitem `הסתיים` is done. Preserve
 
 The main status `8. הסתיים` is explicitly done. Treat these terminal labels separately:
 
-- `הסתיים - יש לקחת תשלום`: operational work finished, commercial follow-up still open as a separate flag.
+- `הסתיים - יש לקחת תשלום` and `לקוח לא שילם עבור התיקון`: operational work finished, commercial follow-up still open as a separate flag.
 - `הסתיים-חוסר תגובה`: closed due to no response; report separately from resolved service.
 - `בוטל`: cancelled.
 
