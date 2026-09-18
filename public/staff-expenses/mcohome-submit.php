@@ -122,7 +122,7 @@ try {
         'severity' => (string) ($record['severity'] ?? 'NORMAL'),
         'vendorSent' => (bool) ($record['sentToMcohome'] ?? false),
         'sheetSync' => $record['sheetSync'] ?? [],
-        'dropboxSync' => $record['dropboxSync'] ?? [],
+        'googleDriveSync' => $record['googleDriveSync'] ?? [],
     ]);
 } catch (Throwable $error) {
     error_log('[mcohome app submit] ' . $error->getMessage());
