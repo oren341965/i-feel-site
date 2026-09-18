@@ -82,10 +82,11 @@ When Oren provides a start date or asks to go over all delivery notes again, run
 
 ## Issued-number sequence control
 
-- Maintain the private issued-delivery-note register and investigate sequence gaps from `2026-08-01` onward according to [references/delivery-note-sequence-control.md](references/delivery-note-sequence-control.md).
-- Treat a missing number as an operational exception to investigate, not as proof that equipment was lost. Verify the document series and check for cancellation, voiding, drafts, alternate series, delayed source arrival, and already-filed copies before escalating.
-- For every confirmed unresolved sequence gap, notify Oren, Sagiv, Kiril, and Cheyne using only verified organizational identities. Include Ora when the normal exception workflow requires her. Never guess an address from a name.
-- Keep the gap open and recheck it on the normal daily run until the source document is received and filed or authoritative evidence closes the number as void/cancelled/non-delivery-note. Stop reminders immediately after closure.
+- Maintain the private issued-delivery-note register and investigate numerical sequence candidates from `2026-08-01` onward according to [references/delivery-note-sequence-control.md](references/delivery-note-sequence-control.md).
+- A numerical gap is only a `gap-candidate`. Before escalation, search the exact number across every available approved source, including the designated WhatsApp group, qualifying `office@i-feel.co.il` mail, the private unresolved register, and verified Dropbox delivery-note destinations. Inspect supported image/PDF evidence when the number may exist only inside the document.
+- If the exact number is not found but an authoritative issued-document register or ERP/export source is unavailable, classify it only as `needs-check`. Do not call it missing, do not imply that it was issued, and do not send a broad sequence-gap alert.
+- Only an exact number that authoritative evidence confirms was issued as a delivery note and that remains absent after the exact-number source search may be classified `issued-unfiled`. Only this state may trigger the sequence-gap alert to Oren, Sagiv, Kiril, and Cheyne using verified organizational identities. Include Ora when the normal exception workflow requires her. Never guess an address from a name.
+- Recheck `needs-check` and `issued-unfiled` records on the normal daily run. Broad reminders apply only to `issued-unfiled`. Stop reminders immediately after closure.
 
 ## Signed delivery-note control
 
@@ -119,6 +120,6 @@ When Oren provides a start date or asks to go over all delivery notes again, run
 
 ## Handoff
 
-Report the source window, connector identities, source coverage, total source attachments, unique delivery notes, uploaded count, duplicate count, canonical folders created, incomplete/multi-part count, issued-number range checked, open sequence-gap count, transport-blocked count, open File Request cleanup count, notification count, review count by reason, completion-update status, exception-email status, failures, and any coverage gap. Separate observed source facts, deterministic routing decisions, and assumptions that still require confirmation. The count of staging/handoff emails created for routine ready records must always be zero.
+Report the source window, connector identities, source coverage, total source attachments, unique delivery notes, uploaded count, duplicate count, canonical folders created, incomplete/multi-part count, issued-number range checked, numerical candidates needing issuance verification, confirmed `issued-unfiled` count, transport-blocked count, open File Request cleanup count, notification count, review count by reason, completion-update status, exception-email status, failures, and any coverage gap. Separate observed source facts, deterministic routing decisions, and assumptions that still require confirmation. The count of staging/handoff emails created for routine ready records must always be zero.
 
 For skill maintenance, run `npm run test:ai-managers`, `npm run build`, `quick_validate.py .claude/skills/upload-delivery-notes-to-dropbox`, and `git diff --check`.
