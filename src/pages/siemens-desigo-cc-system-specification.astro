@@ -1,0 +1,40 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import SiemensTechnicalDocument from '../components/SiemensTechnicalDocument.astro';
+import documentHtml from '../page-html/siemens-desigo-cc-system-specification.html?raw';
+
+const canonical = 'https://i-feel.co.il/siemens-desigo-cc-system-specification/';
+const title = 'מפרט מערכת הניהול Siemens Desigo CC';
+const description = 'מפרט מקצועי מלא של Siemens Desigo CC למערכות BMS: SCADA, BIM, ניהול אנרגיה, BACnet, KNX, Modbus, OPC, SNMP, אבטחה, אירועים ודוחות.';
+const jsonLd = JSON.stringify({
+  '@context': 'https://schema.org',
+  '@type': 'TechArticle',
+  headline: title,
+  description,
+  url: canonical,
+  inLanguage: ['he-IL', 'en'],
+  dateModified: '2026-09-18',
+  about: ['Siemens Desigo CC', 'SCADA', 'BIM', 'Energy Management', 'BACnet', 'KNX', 'Modbus', 'OPC', 'SNMP'],
+  publisher: { '@id': 'https://i-feel.co.il/#business' },
+});
+---
+
+<BaseLayout title={`${title} | i-feel`} description={description} canonical={canonical} ogTitle={title} ogDescription={description} ogUrl={canonical} jsonLd={jsonLd}>
+  <SiemensTechnicalDocument
+    title={title}
+    intro="מסמך דרישות למערכת הניהול Siemens Desigo CC, כולל תפעול BMS רב תחומי, ניהול אנרגיה, BIM, אירועים, משתמשים, דוחות, אבטחה ואינטגרציה למערכות צד שלישי."
+    sourceName="Siemens Building Technologies"
+    sourceDate="07.10.2025"
+    summaryPoints={[
+      'פלטפורמת SCADA רב תחומית ל-BMS, חשמל, אש, אבטחה, וידאו ובקרת כניסה.',
+      'תמיכה ב-BACnet/SC, KNX Secure, Modbus TCP, OPC UA, SNMP, IEC 61850 ו-S7.',
+      'ניהול אנרגיה, דוחות, מגמות, לוחות זמנים, התראות וארכיון ארוך טווח.',
+      'תצוגת BIM דו ממדית ותלת ממדית, ניווט לציוד והצגת נתוני זמן אמת.',
+      'ממשקי REST, חיבור ענן, תפעול מרחוק, הרשאות משתמשים ודרישות אבטחת מידע.',
+    ]}
+    keywords={['Siemens Desigo CC', 'מערכת ניהול BMS', 'SCADA לבקרת מבנה', 'BIM', 'ניהול אנרגיה', 'BACnet', 'KNX Secure', 'OPC UA', 'SNMP', 'Building X']}
+    documentHtml={documentHtml}
+    docxUrl="/assets/siemens-bms/documents/siemens-desigo-cc-system-specification.docx"
+    pdfUrl="/assets/siemens-bms/documents/siemens-desigo-cc-system-specification.pdf"
+  />
+</BaseLayout>

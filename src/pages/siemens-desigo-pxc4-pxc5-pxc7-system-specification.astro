@@ -1,0 +1,40 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import SiemensTechnicalDocument from '../components/SiemensTechnicalDocument.astro';
+import documentHtml from '../page-html/siemens-desigo-pxc4-pxc5-pxc7-system-specification.html?raw';
+
+const canonical = 'https://i-feel.co.il/siemens-desigo-pxc4-pxc5-pxc7-system-specification/';
+const title = 'מפרט Siemens Desigo PXC4 PXC5 PXC7 לבקרת מבנה';
+const description = 'מפרט טכני מלא למערכת Siemens Desigo עם בקרי PXC4, PXC5 ו-PXC7: DDC, BACnet/SC, Modbus, KNX PL-Link, TX-I/O, אבטחת רשת וניהול אנרגיה.';
+const jsonLd = JSON.stringify({
+  '@context': 'https://schema.org',
+  '@type': 'TechArticle',
+  headline: title,
+  description,
+  url: canonical,
+  inLanguage: ['he-IL', 'en'],
+  dateModified: '2026-09-18',
+  about: ['PXC4', 'PXC5', 'PXC7', 'DDC', 'BACnet/SC', 'Modbus', 'KNX PL-Link', 'TX-I/O', 'Building Automation'],
+  publisher: { '@id': 'https://i-feel.co.il/#business' },
+});
+---
+
+<BaseLayout title={`${title} | i-feel`} description={description} canonical={canonical} ogTitle={title} ogDescription={description} ogUrl={canonical} jsonLd={jsonLd}>
+  <SiemensTechnicalDocument
+    title={title}
+    intro="מסמך דרישות מערכת לבקרת מבנה עם תחנות האוטומציה Siemens Desigo PXC4, PXC5 ו-PXC7. התוכן המלא זמין לקריאה ולחיפוש, לצד קובצי Word ו-PDF להורדה."
+    sourceName="Siemens Building Technologies"
+    sourceDate="22.01.2026"
+    summaryPoints={[
+      'ארכיטקטורת BMS בשלוש שכבות: ניהול, אוטומציה וציוד שטח.',
+      'תקשורת BACnet ו-BACnet/SC, אינטגרציית Modbus, M-Bus ו-KNX PL-Link.',
+      'דרישות לבקרי DDC, הרחבות I/O, הפעלה מקומית, ניטור וטרנדים.',
+      'אבטחת רשת, הצפנה, תעודות TLS ותהליך פיתוח לפי IEC 62443-4-1.',
+      'ניהול אנרגיה, מדידה, אופטימיזציה, התראות, שרידות ושחזור לאחר הפסקת חשמל.',
+    ]}
+    keywords={['Siemens PXC4', 'Siemens PXC5', 'Siemens PXC7', 'בקרי DDC', 'BACnet/SC', 'TX-I/O', 'Modbus RTU', 'KNX PL-Link', 'ניהול אנרגיה', 'מפרט מכרז BMS']}
+    documentHtml={documentHtml}
+    docxUrl="/assets/siemens-bms/documents/siemens-desigo-pxc4-pxc5-pxc7-system-specification.docx"
+    pdfUrl="/assets/siemens-bms/documents/siemens-desigo-pxc4-pxc5-pxc7-system-specification.pdf"
+  />
+</BaseLayout>

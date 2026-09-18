@@ -1,0 +1,829 @@
+<ol type="1">
+<li><p>System description</p>
+<ol type="1">
+<li><p>General</p>
+<ol type="1">
+<li><p>Building automation and control system requirements</p></li>
+</ol></li>
+</ol></li>
+</ol>
+<p>System requirements</p>
+<p>General requirement including energy monitoring</p>
+<p>Include a digital (DDC) building technology control system to operate
+technical equipment in buildings. The system must be able to carry out
+comprehensive measuring, control, optimization, and monitoring
+functions. The possibility for free programming of individual system
+components should be available to individually modify customer-specific
+requests.</p>
+<p>All systems deployed supply information on operating states and
+energy use to render current energy efficiency transparent or to display
+weaknesses. Measures can be made pursuant to this information that
+contributes to increased energy efficiency.</p>
+<p>User designation</p>
+<p>The entire system (management, automation level including room
+automation) must be designed to define a clear, user designation UD
+encompassing 255 characters. The UD must be fully usable in the user
+programs on the management level. The UD structure must allow to use
+separators (e.g. -*/| etc.) in order to be better readable for the
+operator. On the automation level as well, the UD must at a minimum be
+able to query details via local operating units.</p>
+<p>Requirement for a project as per BACnet</p>
+<p>Communications through the entire building automation and control
+system must be based on the BACnet standard in a recent BACnet revision
+version (that qualifies as a "minimum protocol revision” according to
+the official BTL test policies at the time of the bidding and has been
+certified by BTL with a valid, official BACnet certificate / BTL
+Listing). It must be possible to change/assign the BACnet Object in
+according to the user preferences during the engineering process. All
+BACnet communication shall have the ability to be configured for
+encryption by utilizing BACnet/SC.</p>
+<p>Specified product: Siemens / Desigo System or similar</p>
+<p>System up-to-dateness</p>
+<p>Product lifecycle</p>
+<p>The system provider must offer a transparent product lifecycle to
+ensure the required consistency. All equipment offered for this project
+must be contained in the current product portfolio. The existing system
+environment must allow for easy and smooth integration of devices and
+extensions.</p>
+<p>The system provider must offer Software- and Firmware-Patches during
+the lifecycle.</p>
+<p>Specified product: Siemens / Desigo System or similar</p>
+<p>System continuity</p>
+<p>Products used must have a label for a global standard that ensures
+interaction with products from various manufacturers. Products with
+these labels can also be combined if manufactured at intervals of more
+than 10 years.</p>
+<p>Specified product: Siemens / Desigo System or similar</p>
+<p>Architecture</p>
+<p>Three system levels</p>
+<p>A building automation and control system featuring system
+architecture as per ISO EN 16484-3 is required. The three system levels
+must be interconnected via communications.</p>
+<ul>
+<li><p>Management level</p></li>
+<li><p>Automation level (building automation stations and individual
+room automation stations)</p></li>
+<li><p>Field level (field device)</p></li>
+</ul>
+<p>Building automation stations</p>
+<p>The system offered must provide largely decentralized intelligence to
+achieve high operational and plant availability. The devices are
+autonomous components that can independently execute assigned building
+automation and control.</p>
+<p>Implement third-party systems</p>
+<p>Third-party systems must be able to be integrated on both management
+and automation levels to ensure full system consistency. Default
+interfaces must be provided. Third-party protocol implementation must be
+possible and require little effort. To do this, all hardware and
+software required for integration, all required services, clarifications
+with other technical and mechanical building installations, interface
+testing, data transmission testing, data point generation/integration as
+well as plant picture creation, backup, test protocol generation and
+specific documentation must be included in total costs.</p>
+<p>Location-independent operation</p>
+<p>The building automation and control system technology must allow for
+location-independent operation and management of all messages and trends
+on all available types and views for the entire building automation and
+control system.</p>
+<p>Specified product: Siemens / Desigo System or similar</p>
+<p>Consistency</p>
+<p>Uniform system</p>
+<p>The supplier must prove that the required functions originate from a
+single manufacturer and using one automation and control system, where
+the hardware and software are developed in a manner that allow for
+simple modification while operational for subsequent function extensions
+or changes.</p>
+<p>Implement new data points</p>
+<p>Building automation and control must be coherent to ensure
+possibility of future extensions and changes. This means that data
+points must be acquired once only, and then be provided automatically as
+needed to operator units and management level.</p>
+<p>Specified product: Siemens / Desigo System or similar</p>
+<p>Integration of open standards</p>
+<p>General</p>
+<p>Implement via BACnet</p>
+<p>Default protocols and suitable physical communications media must
+guarantee interoperability (ISO standard). Use only listed protocols and
+communications media. Third-party systems are integrated via BACnet.
+Provide only data required to operate building services plants
+efficiently and economically. BACnet communication, in compliance with
+the BACnet standard including B-BC profile.</p>
+<p>Decentralized integration of communicating devices/equipment</p>
+<p>A decentralized interface module must allow for connecting
+communicating pumps to a BACnet-capable building automation station. The
+building automation station provides the following functions:</p>
+<ul>
+<li><p>Event-oriented communications</p></li>
+<li><p>Peer-to-peer (cross communication)</p></li>
+<li><p>Alarm and message processing, distribution to local operator
+units and building automation and control system.</p></li>
+<li><p>Scheduler with days of the week</p></li>
+<li><p>Calendar function</p></li>
+<li><p>local trend recording in device buffer (long-term trend)</p></li>
+</ul>
+<p>Communication &amp; protocols</p>
+<p>KNX PL-Link bus connection for sensors, actuators, and control units
+(including power supply of the devices) with "Plug and Play" connection
+to field devices with KNX PL-Link</p>
+<p>BAS communication shall support KNX PL-Link bus connection for
+sensors, actuators, and control units (including power supply of the
+devices) with "Plug and Play" connection to field devices with KNX
+PL-Link .</p>
+<p>BAS communication shall support Modbus and Mbus protocols.</p>
+<p>Specified product: Siemens / Desigo System or similar</p>
+<p>Electrical substations</p>
+<p>Building automation and control systems to monitor decentralized
+electrical installations are used in electrical substations. To this
+end, the most important information (messages/monitoring) from the
+existing systems (fire detection plants, doors, elevators, etc.) is
+activated for takeover.</p>
+<p>All technical installations in the building are joined in one
+building automation and control system and operated and optimized via
+the management station. The building automation and control system as a
+whole enables the building operator to acquire and influence processes
+and their effects throughout the building.</p>
+<p>Specified product: Siemens / Desigo System or similar</p>
+<p>Integrate fire detection systems</p>
+<p>Fire detection system, BACnet-based</p>
+<p>BACnet-based fire detection systems supporting BACnet BIBB AE-LS-B as
+well as objects LifeSafetyPoint and LifeSafetyZone as per the PICS
+(Protocol Implementation Conformance Statement) document must be able to
+be integrated for best deployment of a building automation and control
+system. The following functions must be supported:</p>
+<ul>
+<li><p>Alarms and events from the fire detection system must be
+identified clearly and unambiguously.</p></li>
+<li><p>Signaling device states must be displayed as per the BACnet
+standard.</p></li>
+<li><p>Instruction texts must be able to be added to detectors and
+zones.</p></li>
+<li><p>Situational and floor plans as well as dynamic symbols must be
+used for visualization.</p></li>
+<li><p>A technical hierarchy, e.g. building, building part, zone,
+detector, must be provided to the operator for ease of
+operation.</p></li>
+</ul>
+<p>Specified product: Siemens / Desigo System or similar</p>
+<p>Integrate Modbus devices</p>
+<p>Integrate third-party devices via Modbus</p>
+<p>Modbus-capable devices must be able to be connected to a
+BACnet-capable automation station for bidirectional data exchange. This
+connection must be direct via RS232 or RS485 interface and without
+conversion. The data points of the third-party system are mapped to
+input/output functions in BACnet and are then available as fully
+communicating data points for further processing and connection, e.g.
+for:</p>
+<ul>
+<li><p>Alarm handling and prioritization</p></li>
+<li><p>Override control, priority control and commands for central
+operation.</p></li>
+<li><p>Grouping</p></li>
+<li><p>Scheduler</p></li>
+<li><p>Trend recording</p></li>
+</ul>
+<p>System must support the following Modbus properties:</p>
+<ul>
+<li><p>natively support Integration of Modbus devices via RTU and / or
+TCP</p></li>
+<li><p>Baud rate options of 1200, 2400, 4800, 9600, 19200, 38400, 57600,
+115200</p></li>
+<li><p>integration of multiple Modbus RTU devices on the same trunk,
+even if the devices have different characteristics (e.g. baud rate,
+parity, stop bits)</p></li>
+<li><p>on-board bus termination, switchable with DIP switch</p></li>
+<li><p>on-board pull-up/pull-down resistances, switchable with DIP
+switch</p></li>
+<li><p>signed, unsigned, floats and double register data types</p></li>
+<li><p>support up to 64 bit big- and little-endian registers</p>
+<p>Specified product: Siemens / Desigo System or similar </p></li>
+</ul>
+<p>Power failure</p>
+<p>Building automation station – on board power back-up</p>
+<p>Building automation station must provide power to the real-time clock
+via a super capacitor.</p>
+<p>Data backup</p>
+<p>The data must be saved for extended periods of time in case of power
+failure or extensions or removal of building automation stations.</p>
+<p>The applications and all vital operating parameters (including
+setpoints, scheduler values, etc.) must not be lost due to a power
+outage. Other operating values such as alarms, etc. must be capable of
+being saved locally on the building automation station.</p>
+<p>Power restoration strategy based on backup power supply in case of
+power failure</p>
+<p>Important and vital plant data including controls (building
+automation station) must continue to run during power failure
+(switch-off via power switch or control fuse, etc.).</p>
+<p>The backup power supply continues to provide power to the power
+portion as well as plant control including building automation station.
+Power failure must be signaled via software, vital plants must continue
+to operate, non-vital plants and their aggregates and components must be
+switched to a safe operating mode or shut down immediately. After power
+returns, all building automation stations and plants including their
+aggregates and components must start automatically. The various plants
+must be switched on and released at intervals to prevent switch-on peak
+loads. The current status for all switching and positioning commands,
+setpoints, manual interventions, etc. remains saved in the building
+automation station and/or is reenabled following power restoration and
+used for the current operating mode.</p>
+<p>Power restoration strategy in case of power failure</p>
+<p>All plants and their aggregates and components as well as all
+building automation stations fail during a power failure (switch-off via
+power switch or control fuse, etc.).</p>
+<p>After power returns, all building automation stations and plants
+including their aggregates and components must start automatically. The
+various plants must be switched on and released at intervals to prevent
+switch-on peak loads. The current status for all switching and
+positioning commands, setpoints, manual interventions, etc. remains
+saved in the building automation station and/or is reenabled following
+power restoration and used for the current operating mode.</p>
+<p>Specified product: Siemens / Desigo System or similar</p>
+<p>System time</p>
+<p>General</p>
+<p>System must support the maintenance of a real time clock up to 7
+days.</p>
+<p>Time synchronization in BACnet: Local time</p>
+<p>The building automation and control system must have a uniform system
+time. To this end, a time master supporting BACnet BIBB DM-TS-A as per
+the PICS document must be defined. The time master must receive the
+DCF77, GPS or Internet NTP signal and provide it synchronized to all
+remaining system devices.</p>
+<p>Time synchronization in BACnet: UTC time (coordinated universal
+time)</p>
+<p>The building automation and control system must have a uniform system
+time. To this end, a time master supporting BACnet BIBB DM-UTC-A as per
+the PICS document must be defined. The time master must receive the
+DCF77, GPS or Internet NTP signal and provide it synchronized to all
+remaining system devices.</p>
+<p>Subsystem autonomy</p>
+<p>The building automation stations must autonomously run their own time
+if the time master fails. The building automation and control time must
+be resynchronized automatically after the time master becomes available
+again.</p>
+<p>Specified product: Siemens / Desigo System or similar</p>
+<p>Self monitoring and self diagnosis</p>
+<p>Watchdog</p>
+<p>The building automation and control system must monitor itself to
+always know its latest and current status. A watchdog function helps
+detect and signal failed system devices and restarts them in a defined
+mode.</p>
+<p>Self diagnosis</p>
+<p>Self diagnosis must be available to quickly detect errors. It must
+provide information on system function and load.</p>
+<p>e.g. CPU and memory load must be displayed.</p>
+<p>Specified product: Siemens / Desigo System or similar</p>
+<p>General plant operating states</p>
+<p>Overview of operating modes</p>
+<p>There are five higher operating modes for all plants:</p>
+<ul>
+<li><p>Local emergency operation without building automation station
+functionality (direct via I/O module or directly on the control cabinet
+as agreed to with owner).</p></li>
+<li><p>Local manual operation with building automation station
+functionality (control panel in the control cabinet).</p></li>
+<li><p>Local - manual operation via visualization on the management
+level (all functions on the local building automation station are set to
+Auto).</p></li>
+<li><p>Scheduler program under the condition that all plants are enabled
+for automatic operation.</p></li>
+<li><p>Automatic detection.</p></li>
+</ul>
+<p>All control functions of the building automation stations must be set
+to and remain on automatic for highest plant availability if a plant or
+aggregate is switched to MANUAL. In individual cases, automatic mode
+must change over to this unit in case of redundancies when a plant or
+aggregate is switched off locally.</p>
+<p>All safety and interlocking functions must take highest priority for
+operation independent of operating mode.</p>
+<p>Automatic detection</p>
+<p>The plants of the building automation and control system are switched
+on and off either automatic, or dependent on time or event. The
+following functions apply to the actual plant descriptions. All control
+loops, safety and interlocking functions must be guaranteed to work
+regardless of operating mode.</p>
+<p>Controlled via scheduler program</p>
+<p>All plants must be set to automatic for this operating mode. The
+plants of the building automation and control system must be switched on
+and off by individual use via a day, week, month, or annual scheduler
+program.</p>
+<p>Manual operation</p>
+<p>Different options are required for manual operation.</p>
+<ul>
+<li><p>Manual operation via management level (remote operation)</p></li>
+<li><p>Manual operation via local operator unit or laptop directly at
+the control cabinet.</p></li>
+<li><p>Manual operation via operator unit or directly at the control
+cabinet.</p>
+<p>Manual operation generally is possible only if the corresponding
+building automation station is running. Manual operation allows for
+manually overriding scheduled plant switchings. Plants switched off by
+schedule can be switched on via plant switching command. Manual control
+of the plant switching command is equal to automatic control, i.e. the
+scheduled control is retained for as long as the scheduler remains
+active.</p></li>
+</ul>
+<p>Emergency operation</p>
+<p>Local priority override takes place directly via the I/O modules. To
+this end, the I/O modules must have an integrated local override
+priority as per ISO 16484-2. All aggregates on the module must be able
+to be switched via this operation. To this end, the I/O modules must
+feature preselection switches Automatic - Manual as well as LED status
+displays or LCDs.</p>
+<p>Valves, dampers, etc. must allow for continuous manual adaption. All
+interventions are signaled to the management station via building
+automation station, and are then logged and visualized accordingly.</p>
+<p>A manual operating level at the control cabinet must be included in
+the unit price if no integrated local priority override can be offered
+due to the system type.</p>
+<p>Specified product: Siemens / Desigo System or similar</p>
+<p>Energy efficiency and references to applicable standards</p>
+<p>General</p>
+<p>The building is constructed under strict energy guidelines. The
+control technology deployed must contain all functions required to
+efficiently consume energy.</p>
+<p>Monitoring and evaluation</p>
+<p>Automation level</p>
+<p>Key performance indicators on the automation level</p>
+<p>Monitoring and evaluation of measured values for primary plants
+(components and plant parts, software/program/system functions,
+setpoints, et.) must occur directly on the automation level. Monitoring
+and evaluation is intended to recognize unfavorable operations of
+plants/components early on and thus lower or optimize energy consumption
+and wear and tear.</p>
+<p>Monitoring and evaluating analog measured values</p>
+<p>The following monitoring and evaluation must be able to be
+implemented for analog measured values (sensors, setpoint, modulating
+control of valves, dampers, variable speed drives, etc.):</p>
+<p>• Determine the minimum value (lowest value) within a defined
+timeframe.</p>
+<p>• Determine the maximum value (lowest value) within a defined
+timeframe.</p>
+<p>• Determine the average value (lowest value) within a defined
+timeframe.</p>
+<p>• Determine the linger period (in hours) during which the measured
+value moves between freely definable limit values.</p>
+<p>• Determine deviation that the measured value deviated from the upper
+and lower setpoint within a defined timeframe.</p>
+<p>The determined value is monitored to a minimum and maximum and
+displayed as quality state for breach and/or exceeding thereof. The
+value from the current timeframe is displayed; the value from the
+previous timeframe is also displayed and made available to the trend
+data. The evaluation ceases for a fault to the measured value (sensor
+interrupt, module fault, etc.), until the measured value once again
+assumes a reliable state. This fact must also be recognizable in the
+trend data.</p>
+<p>Monitoring and evaluation of digital and multi-stage measured
+values</p>
+<p>Digital measured values (messages, switching commands, operating
+modes, etc.) must be definable as key performance indicators and make
+possible the following evaluation and monitoring:</p>
+<p>• Determine the runtime (operating hours) within a defined
+timeframe.</p>
+<p>• Determine the switch-on frequency within a defined timeframe.</p>
+<p>• Determine the runtime (operating hours) for each stage within a
+defined timeframe.</p>
+<p>• Determine the switch-on frequency for each stage within a defined
+timeframe.</p>
+<p>The determined value is monitored to a minimum and maximum and
+displayed as quality state for breach and/or exceeding thereof. The
+value from the current timeframe is displayed; the value from the
+previous timeframe is also displayed and made available to the trend
+data. The evaluation ceases for a fault to the measured value (sensor
+interrupt, module fault, etc.), until the value once again assumes a
+reliable state. This fact must also be recognizable in the trend
+data.</p>
+<p>Monitoring and evaluating metered values</p>
+<p>Metered values (consumption meters, pulse meters, etc) must be
+definable as key performance indicators and make possible the following
+evaluation and monitoring:</p>
+<p>• Determine the difference value (consumption value within a defined
+timeframe.</p>
+<p>The determined value is monitored to a minimum and maximum and
+displayed as quality state for breach and/or exceeding thereof.</p>
+<p>The value from the current timeframe is displayed; the value from the
+previous timeframe is also displayed and made available to the trend
+data. The evaluation ceases for a fault to the measured value (sensor
+interrupt, module fault, etc.), until the value once again assumes a
+reliable state. This fact must also be recognizable in the trend
+data.</p>
+<p>Evaluation over different timeframes</p>
+<p>Monitoring and evaluation must be able to occur over definable
+timeframes (annually, monthly, weekly, daily, hourly, 15-minutes).</p>
+<p>Weighting of monitoring and evaluation criteria</p>
+<p>Since an aggregate or component may include multiple evaluations, it
+is required to be able to weigh them so that they are included
+differently in the calculation of the resulting quality state.</p>
+<p>Specified product: Siemens / Desigo System or similar</p>
+<ol type="1">
+<li><p>Network security</p></li>
+</ol>
+<p>Network hardware</p>
+<p>In general</p>
+<p>Automation hardware shall have built in standard security features,
+including:</p>
+<ul>
+<li><blockquote>
+<p>support firmware signature for verifying the integrity of installed
+firmware</p>
+</blockquote></li>
+<li><blockquote>
+<p>provide encrypted communication via HTTPS with the embedded web
+interface, incl. TLS/SSL certificates handling</p>
+</blockquote></li>
+<li><blockquote>
+<p>ensure a password protection policy and the force of password change
+on the first use</p>
+</blockquote></li>
+<li><blockquote>
+<p>on board WLAN connection to be protected by WPA2</p>
+</blockquote></li>
+</ul>
+<p>Specification and selection of required network devices</p>
+<p>The supplier specifies and selects required network devices, required
+to build BACS network and interfaces to other networks as well as
+implementation of specified IT security functions. All network devices
+must have the latest available firmware.</p>
+<p>Specified product: Siemens / Desigo System or similar</p>
+<ol type="1">
+<li><p>Engineering tools and engineering efficiency</p></li>
+</ol>
+<p>Engineering efficiency</p>
+<p>System and tool platform</p>
+<p>Creating solutions must be as efficient as possible, i.e. programming
+on construction sites; use of pre-defined application blocks, fast
+exchange of standard functions, etc. The goal is to achieve the maximum
+required level of flexibility at as little expense as possible.</p>
+<p>A version of the engineering tool must be freely distributed and
+license free base software. It must be possible to keep the tool up to
+date via unattended user interactions (e.g. patch distribution over
+cloud)</p>
+<p>Specified product: Siemens / Desigo System or similar</p>
+<p>Harmonized tools and workflows</p>
+<p>Consistent tools</p>
+<p>Uniform data and functions must be used by the building automation
+and control system in a consistent manner throughout all tools to
+achieve a high level of data consistency. In other words, all data is
+only entered once in the system. Consistent tool processes avoid a
+manual exchange of data (Import/Export).</p>
+<p>One tool shall provide optimized workflow for both engineering and
+commissioning processes across the automation system. Commissioning
+workflows will also be supported with a mobile device based application,
+available for iOS and Android devices – it will enable simple workflows
+possible for non-expert users.</p>
+<p>System must be freely programmable with resemblance to CEN standard
+11312 using block programming</p>
+<p>Specified product: Siemens / Desigo System or similar</p>
+<p>Transparency for customers</p>
+<p>Data backup</p>
+<p>A data backup concept must be presented that provides the current
+state of a project in a form that is useable and complete to the
+customer. In includes raw data from plants, applications, engineering
+data (e.g. DP, labeling, links, parameters), documentation.</p>
+<p>Customer changes</p>
+<p>The technical operator at the customer be able independently make
+simple changes to the project. Potential training proposals must be
+appended to the bid.</p>
+<p>Specified product: Siemens / Desigo System or similar</p>
+<ol type="1">
+<li><p>Automation level</p>
+<ol type="1">
+<li><p>Requirements on the automation level</p></li>
+</ol></li>
+</ol>
+<p>General</p>
+<p>Building automation station standard</p>
+<p>Building automation stations must be intelligent. They must be
+autonomous. They must allow to build large systems with highly
+decentralized small units (DDC).</p>
+<p>Building automation stations must be freely programmable and feature
+graphical programming optimized for building automation and control. The
+following functions must be possible with it: Control, measure, signal
+at various priorities and by event, monitor, alarm, count, calculate,
+schedule, save trend values, and log as per DIN EN ISO 16484-5. BACnet
+server (building automation stations) certificates must be added to the
+bid.</p>
+<p>Building automation stations must have:</p>
+<ul>
+<li><p>an embedded WLAN interface conforming to IEEE 802.11b/g/n,
+operating in the frequency band 2.4…2.462 GHz, protected by WPA2,
+Non-Wireless variants of the controllers shall be available to meet U.S.
+government and enterprise cybersecurity requirements.</p></li>
+<li><p>a 2-port Ethernet switch 10Base-T / 100Base-TX, IEEE 802.3
+compatible</p></li>
+<li><p>a processor speed of at least 300MHz</p></li>
+<li><p>configurable RS485 interfaces either for integration of Modbus
+RTU, M-bus or BACnet MS/TP</p></li>
+<li><p>KNX PL-Link bus connection for sensors, actuators, and control
+units (including power supply of the devices) with "Plug and Play"
+connection to field devices with KNX PL-Link</p></li>
+<li></li>
+</ul>
+<p>Building automation station I/O</p>
+<p>Building automation station must have the ability to expand via I/O
+modules. Expanded I/O must support the following signal types:</p>
+<ul>
+<li><p>Passive sensors LG-Ni 1000, 2x LG-Ni1000, Pt 1000 (*75,
+385)</p></li>
+<li><p>NTC 10k, NTC 100k</p></li>
+<li><p>Resistance sensors 1000 Ohm, 2500 Ohm, 2650 Ohm, 1000...1175 Ohm
+(for setpoint shift)</p></li>
+<li><p>Active sensors DC 0 ... 10 V</p></li>
+<li><p>Current measurement analog DC 0...20 mA or 4...20 mA</p></li>
+<li><p>Binary potential-free contacts for signaling functions</p></li>
+<li><p>Counter to 25 Hz (electronic switch to 100 Hz)</p></li>
+<li><p>Analog outputs DC 0…10 V</p></li>
+<li><p>Relay outputs for binary controls, changeover contact (NO, NC,
+pulse)</p></li>
+</ul>
+<p>System design</p>
+<p>Manufacturer must prove that they have various scalable building
+automation stations to ensure optimal building automation station
+design. Associated system documentation must be added to the bid and
+included in system evaluation. Documentation must show that the hardware
+(DDC and I/O modules) is designed optimally for the number of the
+required data points.</p>
+<p>Delineation, primary and system automation to management level</p>
+<p>All management level functions must be fully engineered in the
+building automation station to increase plant availability. Delineation
+is defined to ensure that no additional engineering is required at the
+management level (BACnet client).</p>
+<p>Delineation, room automation to management level</p>
+<p>All management level functions must be fully engineered in the room
+automation station to increase plant availability. Delineation is
+defined to ensure that no additional engineering is required at the
+management level (BACnet client).</p>
+<p>Specified product: Siemens / Desigo System or similar</p>
+<ol type="1">
+<li><p>Operation concept at automation level</p></li>
+</ol>
+<p>Local operation</p>
+<p>General</p>
+<p>Local operation with access for the corresponding building automation
+station, or network operation via BACnet to all or selected building
+automation stations, or simple room operation must be available.</p>
+<p>Specified product: Siemens / Desigo System or similar</p>
+<p>Operator and monitoring units</p>
+<p>Requirements planned on operator and monitoring units</p>
+<p>Networkable operator and monitoring unit</p>
+<p>Plant operation must be possible both locally and via management
+level.</p>
+<p>Operation must allow for access to all values (current values,
+setpoints, parameters, maintenance and fault messages) without special
+engineering as well as plant-specific composition of vital values.</p>
+<p>Operation must allow for graphic display of weekday and exception
+programs, heating curves and trends set up individually.</p>
+<p>Graphical plant operation via network-capable touch panel</p>
+<p>The building management system is operated via a networked touch
+panel. They must inform the operator without log on using plant graphics
+on the present state of the plant. Multiple plants must be able to be
+operate via touch panel. Is must be capable of displaying and
+acknowledging alarms. The operator should be informed about faults
+directly by a common alarm display via faults even when the display is
+switched off. At the same time, functions to control the plant must be
+supported, so that plants must be able to be graphically operated and
+displayed using select data points, schedulers as well as trend views. A
+capacitive display is used to operate. The touch panel as be added as an
+integral component of the overall system via a scalable web interface as
+well as a pleasant form of polished aluminum frames. User name and
+password is required to run functions that can change to plant settings
+in order to protect the plant. Authentication must be able to be
+disabled as an option.</p>
+<p>Web operation independent of hardware</p>
+<p>Operation must allow for graphic display of weekday and exception
+programs, heating curves and trends set up individually.</p>
+<p>Operation via web browser or mobile clients</p>
+<p>Vital functions must be viewable regardless of plant location. To
+this end, access is required via mobile clients (mobile phone, pocket
+PC, PDA, etc.) to all actual values and setpoints, plants and operating
+states.</p>
+<p>Operator intervention via operator units</p>
+<p>Plant operators must be able to switch via operator units the plant
+and individual aggregates and components and deactivate Auto mode via
+operator units. Read/write access rights must be considered in this
+regard.</p>
+<p>Manual intervention signal</p>
+<p>An alarm message must be generated following manual operator
+intervention as the plants are designed and controlled for highest
+possible energy efficiency.</p>
+<p>Monitoring</p>
+<p>Manual intervention (override), switching frequency</p>
+<p>Monitoring, evaluation, and display of switching frequency is
+required for manual interventions over a defined timeframe. The
+determined value is monitored to a minimum and maximum and displayed as
+quality state for breach and/or exceeding thereof. The determined value
+from the current timeframe is displayed; the value from the previous
+timeframe is also displayed and made available to the trend data.</p>
+<p>Manual intervention (override), runtime</p>
+<p>Monitoring, evaluation, and display of runtime is required for manual
+interventions over a defined timeframe. The determined value is
+monitored to a minimum and maximum and displayed as quality state for
+breach and/or exceeding thereof. The determined value from the current
+timeframe is displayed; the value from the previous timeframe is also
+displayed and made available to the trend data.</p>
+<p>Specified product: Siemens / Desigo System or similar</p>
+<ol start="2" type="1">
+<li><p>I/O modules</p></li>
+</ol>
+<p>General</p>
+<p>Construction</p>
+<p>As highly flexible I/O modules are needed for complex and large
+technical equipment in buildings, they must be composed individually for
+each plant. To this end, modules must be configurable for various signal
+types, grouped, labeled per channel with clear text, two-sided readable,
+and distributed or set across several control cabinets/panels. Building
+automation stations must allow for flexible expansion of I/O via these
+modules.</p>
+<p>The entire module electronics must be protected by a stable plastic
+housing against touch and soiling.</p>
+<p>Diagnostic function</p>
+<p>A status diagnosis for each channel is required to quickly locate
+installation or plant errors. The status is displayed by LED or on the
+module.</p>
+<p>LED display</p>
+<p>The color of the status LED must be configurable to correspond with
+message type to provide and easy overview in the control cabinet.
+Feedback: green, maintenance: yellow, warning: red.</p>
+<p>Remote I/O modules</p>
+<p>Remote I/O modules must be able to be used for small plants or parts
+thereof to keep the size and number of control cabinets/panels as low as
+possible. The modules must be able to be as far as 200 m from the
+building automation station. The maximum number of data points edited
+this way may only be limited by the maximum capacity of the building
+automation station.</p>
+<p>Isolating terminal functionality</p>
+<p>The electronic modules must have isolating terminals to simplify
+hardware tests and commissioning. As a result, connected field devices
+can be measured at the test plug sockets without module electronics
+influence. At the same time, the connection terminals must act as
+cabinet/panel terminal strips. If the bidder cannot provide proof for
+this function, all inputs and outputs must be run via separate isolating
+terminals. The resulting costs must be included in the unit prices.</p>
+<p>Specified product: Siemens / Desigo System or similar</p>
+<p>Local priority control</p>
+<p>Level for manual local priority control</p>
+<p>The module must have an optical status message facility to avoid
+faulty positions.</p>
+<p>Monitoring local priority control</p>
+<p>The building automation and control system must be able to indicate
+any intervention via the local priority control. This indication must be
+well displayed at the management level.</p>
+<p>Specified product: Siemens / Desigo System or similar</p>
+<p>Connection</p>
+<p>Short-circuit proof</p>
+<p>Field devices and motors must be connected directly without requiring
+coupling relays or other proprietary hardware. All terminals are
+protected against short circuit and incorrect wiring using AC/DC 24 V.
+Field device errors must be recognized and displayed reliably to retain
+high plant availability.</p>
+<p>Broken wire interlock</p>
+<p>Interlocks (hardware) and fault messages must be designed for
+possible wire breaks or loose terminals under closed-loop rules, i.e.
+the building automation station then has status "1" OK (closed
+monitoring loop) or no fault, and status "0" (interrupted monitoring
+loop) or fault.</p>
+<p>Specified product: Siemens / Desigo System or similar</p>
+<p>Connect field devices</p>
+<p>Field device standards</p>
+<p>The building automation stations and I/O modules must support all
+common sensors (e.g. temperature, humidity) and actuators (valves,
+damper actuators) without requiring additional conversion hardware. The
+bidder must provide proof that the field devices used for the project
+were tested under the entire system and documented accordingly.</p>
+<p>Use of I/O modules on the automation level</p>
+<p>Functionality for the I/O system must be implemented on the
+automation level.</p>
+<p>Specified product: Siemens / Desigo System or similar</p>
+<ol start="3" type="1">
+<li><p>Updates and adaptions</p></li>
+</ol>
+<p>Updates</p>
+<p>Changes during operation</p>
+<p>Customer-specific plant programs must allow for minor adjustments
+without having to switch off unrelated plants and without changing set
+parameters and setpoints.</p>
+<p>Changes to applications during operation</p>
+<p>Minor program changes must be able to be introduced without
+operational interruptions.</p>
+<p>Adaptations</p>
+<p>Access to system network</p>
+<p>Operators must be able to enter adapted parameters, setpoints, times
+etc. in each building automation station via the system network under
+their password.</p>
+<p>Specified product: Siemens / Desigo System or similar</p>
+<ol type="1">
+<li><p>Communication</p>
+<ol type="1">
+<li><p>Standard BACnet / AMEV</p></li>
+</ol></li>
+</ol>
+<p>DIN EN ISO 16484-5 / AMEV</p>
+<p>BACnet conformance and BTL logo</p>
+<p>The BACnet servers (building automation stations) used must support
+at least BACnet in a recent BACnet revision version (=that qualifies as
+a "minimum protocol revision” according to the official BTL test
+policies at the time of the bidding).</p>
+<p>B-BC (building automation station)</p>
+<p>Building automation stations must match the BACnet Profile B-BC,
+B-AWS / B-ALSWS (Building Controller) as per the BTL Listing.</p>
+<p>AMEV (Building automation station)</p>
+<p>The building automation stations must meet AMEV profiles for at least
+AS-D as per AMEV guideline "BACnet 2017”.</p>
+<p>Conformance declaration</p>
+<p>Protocol implementation, and conformance statement (PICS)</p>
+<p>Manufacturer self-declaration PICS is required prior to executing
+work to gain information on the type of communication for the building
+automation and control system.</p>
+<p>Communication via BACnet / IP</p>
+<p>BACnet/IP(v4) to BACnet/MS/TP</p>
+<p>The building automation station must be able to integrate, using a
+BACnet router manufactured by the same vendor, the MS/TP protocol via
+BACnet/IP.</p>
+<p>Specified product: Siemens / Desigo System or similar</p>
+<p>Communication via BACnet / SC</p>
+<p>Responsibility of certificates</p>
+<p>The end customer shall define the responsibility to generate and
+maintain required TLS certificates</p>
+<p>BACnet/IP to BACnet/SC</p>
+<p>Automation Stations and Management Stations shall support BACnet/SC
+datalink to ensure secure communication. If not all devices of the
+BACnet system can support BACnet/SC, the alternative solution shall
+consist of a mix with a recommendation to migrate all devices to
+BACnet/SC (future upgrade via firmware must be possible).</p>
+<p>The building automation stations supporting BACnet/IP must also
+support BACnet/SC or at least allow for a software upgrade to BACnet/SC
+(without exchanging the hardware).</p>
+<p>Building automation stations that support BACnet/SC must support both
+self-signed certificates as well as the use of digital certificates that
+are generated by an arbitrary 3<sup>rd</sup> party certification
+authority (“CA”). The engineering tool shall also be capable of handling
+TLS certificates generated by an external CA.</p>
+<p>Building automation stations that work as a BACnet/SC “hub” must also
+simultaneously work as BACnet/IP router to support an easy parallel use
+of both BACnet datalinks and a step-wise migration towards a secure
+system-wide BACnet communication and to support a mixed system.</p>
+<p>Building automation stations that work as BACnet/SC “hub” must
+support at least 100 simultaneous BACnet/SC "node” connections. It shall
+be possible to build systems larger than a single BACnet/SC hub
+supports.</p>
+<p>BACnet/SC devices shall be tested and certified by the BACnet Testing
+Laboratory.</p>
+<p>The automation equipment manufacturer must ensure cyber secure
+product development process and demonstrate compliance with IEC62443
+4-1.</p>
+<p>Specified product: Siemens / Desigo System or similar</p>
+<ol start="2" type="1">
+<li><p>Physical structure</p></li>
+</ol>
+<p>Network structure</p>
+<p>Structure</p>
+<p>The offered network must be flexible and allow for all types of
+networks (line, star, ring, tree, etc.) to satisfy all owner/operator
+needs.</p>
+<ol start="3" type="1">
+<li><p>Building automation and control system - Building automation
+stations</p></li>
+</ol>
+<p>Openness</p>
+<p>Integration of third-party systems</p>
+<p>If possible, the same communication protocol must be used as for the
+existing technical equipment in the building to integrate third-party
+systems (refrigeration machines, lighting and building automation and
+control systems, etc.). Building automation and control systems not
+offering this integration as specified must include and clearly declare
+any additional conversion hardware (gateways) in their price.</p>
+<p>Open and neutral communication via BACnet</p>
+<p>Building automation stations are connected to the management level
+via communication bus. System structure must allow open, neutral and
+manufacturer-independent communication. Communications must take place
+in principle via BACnet even if proprietary communications would be
+possible based on the building automation stations used. Intermediate
+OPC servers are not allowed.</p>
+<p>Specified product: Siemens / Desigo System or similar</p>
+<ol start="4" type="1">
+<li><p>Building automation station - Building automation
+station</p></li>
+</ol>
+<p>Standard protocol</p>
+<p>Uniform protocol</p>
+<p>Communication must also be standardized even between individual
+modules and building automation stations. All devices must communicate
+on the same protocol on the entire primary and room system levels.</p>
+<p>Specified product: Siemens / Desigo System or similar</p>
+<ol start="5" type="1">
+<li><p>Building automation station - Field level</p></li>
+</ol>
+<p>Field device connection</p>
+<p>Connect field devices</p>
+<p>The building automation stations and I/O modules must support all
+common sensors (e.g. temperature, humidity) and actuators (valves,
+damper actuators, lighting control, blinds drives) without requiring
+additional conversion hardware. The bidder must provide proof that the
+field devices used for the project were tested under the entire system
+and documented accordingly.</p>
+<p>Connect communicating field devices</p>
+<p>Common manufacturers must be integrable to connect third-party
+devices and subsystems. (e.g. communicating pumps, Modbus subsystems
+etc. ).</p>
+<p>Third-party system connection</p>
+<p>A interface is required to connect various third-party devices that
+supports communication protocols such as Modbus</p>
+<p>Specified product: Siemens / Desigo System or similar</p>
