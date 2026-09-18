@@ -94,6 +94,18 @@ Record, when fields exist, the send date, segment, subject, content URL, UTM/cam
 
 If the current board lacks dedicated columns for subject, URL, UTM, asset, CTA or response, write those details as one concise item update rather than creating columns automatically.
 
+### Hard-bounce handling after a send
+
+After each professional-email batch, inspect permanent delivery failures and follow the verified bounce-handling workflow in the parent `SKILL.md`.
+
+- Use Gmail to identify the exact failed recipient and original sent message.
+- Match the exact professional contact on board `3040781819`, then check current direct Gmail history, Monday evidence and current official public sources using name, company and phone.
+- Replace the email and resend once only when one address is strongly verified. Never guess an address pattern.
+- When no verified replacement exists, delete only the exact matched professional-contact item from board `3040781819`; check and remove proven duplicate items for the same person. Never delete sales, project, service or customer items.
+- Verify the corrected value or deleted item IDs and confirm that the failed address no longer exists on the professional-contact board.
+- After verified handling, move only the bounce notification to Gmail Trash and keep the original sent message. A deleted contact receives no resend.
+- Keep partial or ambiguous cases labeled `bounce` in the inbox and return `NEEDS_OREN` or `PARTIAL_BOUNCE_HANDLING`.
+
 For every daily run also retain counts: sent, disqualified for opt-out, duplicate, relevance or 14-day cooldown; and business outcomes by segment/content: replies, real leads, qualified leads, meetings, RFQs, proposals and deals.
 
 ## I Feel Management integration
