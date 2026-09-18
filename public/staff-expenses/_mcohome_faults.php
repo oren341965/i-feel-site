@@ -606,10 +606,8 @@ function mcohome_sheet_payload(array $record): array
 {
     $googleDriveLinks = [];
     foreach (($record['media'] ?? []) as $media) {
-        if (($media['dropboxUrl'] ?? '') !== '') {
-            $dropboxLinks[] = $media['dropboxUrl'];
-        } elseif (($media['dropboxPath'] ?? '') !== '') {
-            $dropboxLinks[] = $media['dropboxPath'];
+        if (($media['googleDriveUrl'] ?? '') !== '') {
+            $googleDriveLinks[] = $media['googleDriveUrl'];
         }
     }
     return [
@@ -663,9 +661,16 @@ function mcohome_finalize_record(array $record): array
 
     $record = mcohome_sync_media_to_gdrive($record);
     $record['vendorDraft'] = mcohome_build_vendor_draft($record);
-    $record['vendorNotificationResults'] = mcohome_send_vendor_notification($record);
-    $record['sentToMcohome'] = count($record['vendorNotificationResults']) === count(mcohome_vendor_recipients()) && count(array_filter($record['vendorNotificationResults'])) === count(mcohome_vendor_recipients());
-    if ($record['sentToMcohome'] && ($record['unitStatus'] ?? '') !== 'נסגר') {
+    $hasMedia = count($record['media'] ?? []) > 0;
+    $mediaReady = !$hasMedia || (($record['googleDriveSync']['ok'] ?? false) === true);
+    $record['vendorNotificationResults'] = $mediaReady ? mcohome_send_vendor_notification($record) : [];
+    $vendorCount = count(mcohome_vendor_recipients());
+    $record['sentToMcohome'] = $vendorCount > 0
+        && count($record['vendorNotificationResults']) === $vendorCount
+        && count(array_filter($record['vendorNotificationResults'])) === $vendorCount;
+    if (!$mediaReady && ($record['unitStatus'] ?? '') !== 'נסגר') {
+        $record['unitStatus'] = 'ממתין לסנכרון מדיה ל-Google Drive';
+    } elseif ($record['sentToMcohome'] && ($record['unitStatus'] ?? '') !== 'נסגר') {
         $record['unitStatus'] = 'ממתין לתשובת יצרן';
     }
     $record['updatedAt'] = date(DATE_ATOM);
