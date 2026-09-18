@@ -13,10 +13,12 @@ const MAX_SOURCE_BYTES = 10 * 1024 * 1024;
 const SOURCE_FIELDS = ['schemaVersion', 'accountId', 'boardId', 'observedAt', 'evidenceRef',
   'sourceMode', 'windowStart', 'windowEnd', 'expectedRows', 'paginationComplete',
   'crossHistoryDedupVerified', 'rows'];
-const SOURCE_ROW_FIELDS = ['mondayItemId', 'identity', 'acquiredDate', 'kind', 'qualification',
+const SOURCE_ROW_FIELDS = ['mondayItemId', 'identity', 'acquiredDate', 'kind', 'acquisitionOrigin', 'qualification',
   'contactValidated', 'platform', 'campaignId', 'attributionMethod'];
 const IDENTITY_FIELDS = ['type', 'value'];
 const KINDS = ['NEW_LEAD', 'EXISTING_CUSTOMER', 'SERVICE', 'PROJECT', 'UNKNOWN'];
+const ACQUISITION_ORIGINS = ['NET_NEW', 'EXISTING_CUSTOMER_ADD_ON',
+  'EXISTING_CUSTOMER_UPGRADE', 'EXISTING_CUSTOMER_REFERRAL', 'UNKNOWN'];
 const QUALIFICATIONS = ['QUALIFIED', 'DISQUALIFIED', 'UNKNOWN'];
 const PLATFORMS = ['google_ads', 'meta_ads', 'organic', 'referral', 'direct', 'other', 'unknown'];
 const ATTRIBUTION_METHODS = ['click_id', 'verified_manual', 'unknown'];
@@ -78,6 +80,7 @@ function validateSource(source, now) {
       || !/^\d{1,24}$/.test(row.mondayItemId) || itemIds.has(row.mondayItemId)
       || !date(row.acquiredDate) || row.acquiredDate < window.start || row.acquiredDate > window.end
       || !KINDS.includes(row.kind) || !QUALIFICATIONS.includes(row.qualification)
+      || !ACQUISITION_ORIGINS.includes(row.acquisitionOrigin)
       || ![true, false, null].includes(row.contactValidated) || !PLATFORMS.includes(row.platform)
       || !(row.campaignId === null || (typeof row.campaignId === 'string' && /^\d+$/.test(row.campaignId)))
       || !ATTRIBUTION_METHODS.includes(row.attributionMethod)) {
@@ -133,6 +136,7 @@ export async function produceQualifiedLeadSnapshot({ configPath, now = new Date(
     leadKey: createHmac('sha256', key).update(normalizeIdentity(row.identity), 'utf8').digest('hex'),
     acquiredDate: row.acquiredDate,
     kind: row.kind,
+    acquisitionOrigin: row.acquisitionOrigin,
     qualification: row.qualification,
     contactValidated: row.contactValidated,
     platform: row.platform,

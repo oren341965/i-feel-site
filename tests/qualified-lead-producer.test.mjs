@@ -67,6 +67,7 @@ function row(overrides = {}) {
     identity: { type: 'email', value: 'Synthetic.Person@Example.invalid' },
     acquiredDate: '2026-09-17',
     kind: 'NEW_LEAD',
+    acquisitionOrigin: 'NET_NEW',
     qualification: 'QUALIFIED',
     contactValidated: true,
     platform: 'google_ads',
@@ -94,6 +95,7 @@ test('qualified lead producer hashes identity locally and emits only the strict 
   const saved = JSON.parse(await readFile(outputFile, 'utf8'));
   assert.match(saved.rows[0].leadKey, /^[a-f0-9]{64}$/);
   assert.equal(saved.rows[0].identity, undefined);
+  assert.equal(saved.rows[0].acquisitionOrigin, 'NET_NEW');
   assert.equal(JSON.stringify(saved).includes('Synthetic.Person'), false);
   assert.equal(saved.sourceMode, 'verified_crm_qualification');
 });
@@ -101,6 +103,7 @@ test('qualified lead producer hashes identity locally and emits only the strict 
 test('qualified lead producer preserves unknown business evidence as a blocker', async (t) => {
   const { configPath, outputFile } = await fixture(t, [row({
     kind: 'UNKNOWN',
+    acquisitionOrigin: 'UNKNOWN',
     qualification: 'UNKNOWN',
     contactValidated: null,
     platform: 'unknown',
@@ -112,6 +115,23 @@ test('qualified lead producer preserves unknown business evidence as a blocker',
   assert.ok(result.blockers.includes('ACQUISITION_CLASSIFICATION_REQUIRED'));
   const saved = JSON.parse(await readFile(outputFile, 'utf8'));
   assert.equal(saved.rows[0].kind, 'UNKNOWN');
+});
+
+test('qualified lead producer excludes existing-customer add-ons, upgrades and referrals from target', async (t) => {
+  const origins = ['EXISTING_CUSTOMER_ADD_ON', 'EXISTING_CUSTOMER_UPGRADE', 'EXISTING_CUSTOMER_REFERRAL'];
+  const rows = origins.map((acquisitionOrigin, index) => row({
+    mondayItemId: String(2001 + index),
+    identity: { type: 'email', value: `synthetic-${index}@example.invalid` },
+    acquisitionOrigin,
+    platform: 'referral',
+    campaignId: null,
+    attributionMethod: 'verified_manual',
+  }));
+  const { configPath } = await fixture(t, rows);
+  const result = await produceQualifiedLeadSnapshot({ configPath, now: NOW });
+  assert.equal(result.status, 'BELOW_TARGET');
+  assert.equal(result.qualifiedCurrent, 0);
+  assert.deepEqual(result.blockers, []);
 });
 
 test('qualified lead producer rejects stale or incomplete source evidence', async (t) => {

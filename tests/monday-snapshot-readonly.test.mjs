@@ -4,6 +4,7 @@ import { join, resolve } from 'node:path';
 import test from 'node:test';
 
 import { runMorningDryRun } from '../.claude/skills/ai-sales-manager/scripts/morning-run.mjs';
+import { buildUrgentOperationalAlert } from '../.claude/skills/ai-sales-manager/scripts/vault-runtime.mjs';
 import {
   collectMondaySnapshotReadOnly,
 } from '../.claude/skills/ai-sales-manager/scripts/monday-snapshot-readonly.mjs';
@@ -109,6 +110,34 @@ test('sanitized Monday aggregate snapshot is accepted without enabling liveVerif
   });
 });
 
+test('urgent capacity and service alerts route locally to the approved recipients without sending', () => {
+  const result = {
+    capacity: { reasons: ['FOLLOWUP_BACKLOG_OVER_CAPACITY', 'SERVICE_BACKLOG_RISK'] },
+    mondaySnapshotReadOnly: { counts: {
+      activeUnowned: 5, noOwner: 5, noNextAction: 15, overdue: 6,
+    } },
+    serviceRisk: { criticalUnattended: 1 },
+  };
+  const capacityPolicy = {
+    activeUnownedLeadThreshold: 5,
+    followupBacklogThreshold: 20,
+    criticalUnattendedServiceThreshold: 0,
+    urgentAlerts: {
+      enabled: true,
+      capacityRecipients: ['oren'],
+      serviceRiskRecipients: ['oren', 'arik'],
+      externalSendEnabled: false,
+    },
+  };
+  const alert = buildUrgentOperationalAlert(result, capacityPolicy, { now: NOW });
+  assert.equal(alert.status, 'URGENT_ACTION_REQUIRED');
+  assert.deepEqual(alert.recipients, ['oren', 'arik']);
+  assert.equal(alert.measurements.followupBacklog, 21);
+  assert.equal(alert.measurements.criticalUnattendedService, 1);
+  assert.equal(alert.delivery.externalSend, false);
+  assert.deepEqual(alert.safety, { externalSends: 0, mondayWrites: 0, platformWrites: 0 });
+});
+
 test('Monday snapshot fails closed when stale, operational, or outside runtime state', async (t) => {
   const stale = await createFixture(t, validSnapshot({ generatedAt: '2026-08-01T11:00:00.000Z' }));
   await assert.rejects(
@@ -137,7 +166,7 @@ test('morning run uses the aggregate snapshot for capacity evidence and bounded 
   const result = await runMorningDryRun({ configPath: fixture.configPath, now: NOW });
   assert.equal(result.connections?.monday?.status, undefined);
   assert.equal(result.mondaySnapshotReadOnly.connection.status, 'LOCAL_SNAPSHOT_READ_ONLY');
-  assert.equal(result.capacity.status, 'CAPACITY_THRESHOLD_MISSING');
+  assert.equal(result.capacity.status, 'CAPACITY_INPUT_MISSING');
   assert.equal(result.capacity.budgetGrowthAllowed, false);
 
   const state = JSON.parse(await readFile(result.artifacts.stateFile, 'utf8'));
@@ -150,6 +179,9 @@ test('morning run uses the aggregate snapshot for capacity evidence and bounded 
   const brief = await readFile(result.artifacts.dailyOrenBriefFile, 'utf8');
   assert.match(brief, /Monday snapshot: LOCAL_SNAPSHOT_READ_ONLY/);
   assert.match(brief, /אינו חיבור live/);
+  const alert = JSON.parse(await readFile(result.artifacts.urgentAlertFile, 'utf8'));
+  assert.equal(alert.status, 'CLEAR');
+  assert.equal(alert.delivery.externalSend, false);
   const request = JSON.parse(await readFile(result.artifacts.toClaudeFile, 'utf8'));
   assert.equal(request.payload.current_target_status, 'LOCAL_SNAPSHOT_READ_ONLY');
   assert.deepEqual(request.payload.monday_counts, {

@@ -214,13 +214,29 @@ export function evaluateLiveConnection(connection) {
 
 export function evaluateCapacity(input = {}) {
   const plansDays = finiteNonNegativeNumber(input.plansToProposalBusinessDays);
+  const plansLimit = finiteNonNegativeNumber(input.plansToProposalMaxBusinessDays) ?? 7;
+  const responseHours = finiteNonNegativeNumber(input.qualifiedLeadResponseBusinessHours);
+  const responseLimit = finiteNonNegativeNumber(input.responseSlaMaxBusinessHours);
   const activeUnowned = finiteNonNegativeNumber(input.activeUnownedLeads);
   const threshold = finiteNonNegativeNumber(input.unownedLeadThreshold);
+  const followupBacklog = finiteNonNegativeNumber(input.followupBacklogCount);
+  const followupThreshold = finiteNonNegativeNumber(input.followupBacklogThreshold);
+  const criticalService = finiteNonNegativeNumber(input.criticalUnattendedServiceCount);
+  const criticalServiceThreshold = finiteNonNegativeNumber(input.criticalUnattendedServiceThreshold);
   const reasons = [];
 
-  if (plansDays !== null && plansDays > 7) reasons.push('PLANS_TO_PROPOSAL_OVER_7_BUSINESS_DAYS');
+  if (plansDays !== null && plansDays > plansLimit) reasons.push('PLANS_TO_PROPOSAL_OVER_APPROVED_LIMIT');
+  if (responseHours !== null && responseLimit !== null && responseHours > responseLimit) {
+    reasons.push('QUALIFIED_LEAD_RESPONSE_SLA_BREACHED');
+  }
   if (threshold !== null && activeUnowned !== null && activeUnowned > threshold) {
     reasons.push('ACTIVE_UNOWNED_LEADS_OVER_THRESHOLD');
+  }
+  if (followupThreshold !== null && followupBacklog !== null && followupBacklog > followupThreshold) {
+    reasons.push('FOLLOWUP_BACKLOG_OVER_CAPACITY');
+  }
+  if (criticalServiceThreshold !== null && criticalService !== null && criticalService > criticalServiceThreshold) {
+    reasons.push('SERVICE_BACKLOG_RISK');
   }
   const booleanStops = [
     ['qualifiedLeadResponseSlaBreached', 'QUALIFIED_LEAD_RESPONSE_SLA_BREACHED'],

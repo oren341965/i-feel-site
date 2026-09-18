@@ -150,6 +150,60 @@ function mondayRuntimeEvidence(result) {
   };
 }
 
+export function buildUrgentOperationalAlert(result, capacityPolicy = {}, options = {}) {
+  const generatedAt = new Date(options.now ?? Date.now());
+  if (Number.isNaN(generatedAt.getTime())) throw new Error('Invalid urgent-alert timestamp');
+  if (capacityPolicy.urgentAlerts?.externalSendEnabled === true) {
+    throw new Error('External urgent-alert delivery is not authorized');
+  }
+  const allowedRecipients = new Set(['oren', 'arik']);
+  const capacityRecipients = capacityPolicy.urgentAlerts?.capacityRecipients ?? [];
+  const serviceRecipients = capacityPolicy.urgentAlerts?.serviceRiskRecipients ?? [];
+  if (![capacityRecipients, serviceRecipients].every((values) => Array.isArray(values)
+    && values.every((value) => allowedRecipients.has(value)))) {
+    throw new Error('Urgent-alert recipients are invalid');
+  }
+  const urgentCodes = new Set([
+    'QUALIFIED_LEAD_RESPONSE_SLA_BREACHED',
+    'PLANS_TO_PROPOSAL_OVER_APPROVED_LIMIT',
+    'ACTIVE_UNOWNED_LEADS_OVER_THRESHOLD',
+    'FOLLOWUP_BACKLOG_OVER_CAPACITY',
+    'SERVICE_BACKLOG_RISK',
+  ]);
+  const reasons = [...new Set(result.capacity?.reasons ?? [])].filter((reason) => urgentCodes.has(reason));
+  const capacityCodes = reasons.filter((reason) => reason !== 'SERVICE_BACKLOG_RISK');
+  const serviceCodes = reasons.filter((reason) => reason === 'SERVICE_BACKLOG_RISK');
+  const recipients = [...new Set([
+    ...(capacityCodes.length > 0 ? capacityRecipients : []),
+    ...(serviceCodes.length > 0 ? serviceRecipients : []),
+  ])];
+  const counts = result.mondaySnapshotReadOnly?.counts;
+  const alertEnabled = capacityPolicy.urgentAlerts?.enabled === true;
+  return {
+    schemaVersion: 1,
+    status: alertEnabled && reasons.length > 0 ? 'URGENT_ACTION_REQUIRED' : 'CLEAR',
+    generatedAt: generatedAt.toISOString(),
+    sourceObservedAt: mondayRuntimeEvidence(result).generatedAt,
+    reasons: alertEnabled ? reasons : [],
+    recipients: alertEnabled ? recipients : [],
+    measurements: {
+      activeUnownedLeads: counts?.activeUnowned ?? counts?.noOwner ?? null,
+      activeUnownedLeadThreshold: capacityPolicy.activeUnownedLeadThreshold ?? null,
+      followupBacklog: counts ? counts.noNextAction + counts.overdue : null,
+      followupBacklogThreshold: capacityPolicy.followupBacklogThreshold ?? null,
+      criticalUnattendedService: result.serviceRisk?.criticalUnattended ?? null,
+      criticalUnattendedServiceThreshold: capacityPolicy.criticalUnattendedServiceThreshold ?? null,
+    },
+    delivery: {
+      localDailyBrief: true,
+      localAlertFile: true,
+      externalSend: false,
+      status: 'LOCAL_ONLY_PENDING_APPROVED_DELIVERY_CHANNEL',
+    },
+    safety: { externalSends: 0, mondayWrites: 0, platformWrites: 0 },
+  };
+}
+
 export function buildMorningJudgmentRequest(result, options = {}) {
   const generatedAt = new Date(options.now ?? Date.now());
   if (Number.isNaN(generatedAt.getTime())) throw new Error('Invalid morning-run timestamp');
@@ -223,6 +277,10 @@ export function buildDailyOrenBrief(result, options = {}) {
     : 'none';
   const mondayEvidence = mondayRuntimeEvidence(result);
   const mondaySnapshot = mondayEvidence.snapshot;
+  const urgentAlert = buildUrgentOperationalAlert(result, options.capacityPolicy ?? {}, { now: generatedAt });
+  const urgentLine = urgentAlert.status === 'URGENT_ACTION_REQUIRED'
+    ? `🚨 עדכון דחוף ל-${urgentAlert.recipients.join(' ול-') || 'אורן'}: ${urgentAlert.reasons.join(', ')}; ללא שליחה חיצונית עד הגדרת ערוץ מאושר.`
+    : 'התראה דחופה: אין חריגה מדודה במקורות הזמינים.';
   const mondayLine = mondaySnapshot && mondayEvidence.live
     ? `Monday live read: CONNECTED_READ_ONLY מ-${mondayEvidence.generatedAt}; נסרקו ${result.mondayLiveRefresh.records} פריטים; פתוחים ${mondaySnapshot.counts.open}; חריגים ${mondaySnapshot.counts.exceptionLeads}; באיחור ${mondaySnapshot.counts.overdue}; ללא אחראי ${mondaySnapshot.counts.noOwner}; health ${mondaySnapshot.healthScore}/100; data quality ${mondaySnapshot.dataQualityScore}/100; preview מקומי ${result.mondayLiveRefresh.repairPreviewFile}.`
     : mondaySnapshot
@@ -232,6 +290,7 @@ export function buildDailyOrenBrief(result, options = {}) {
     `# בריף אורן — ${date}`,
     '',
     `מצב: DRY_RUN / maturity ${result.maturity}; לא בוצעה פעולה חיצונית.`,
+    urgentLine,
     `Baseline: 90 יום מ-${result.baseline.startedOn ?? date}; scaling אוטומטי חסום.`,
     `מאיה: ${result.maya.status}; Vault bus: ${result.maya.busReady ? 'READY' : 'NOT_READY'}; Maya stack קיים בלבד.`,
     mondayLine,
@@ -244,7 +303,7 @@ export function buildDailyOrenBrief(result, options = {}) {
     `חיבורים/סקילים משלימים חסרים: ${missing.join(', ') || 'none'}.`,
     '',
     '## סדר עדיפות להיום',
-    '1. לאשר/להגדיר סף קיבולת X ונתוני backlog לפני כל המלצת צמיחה.',
+    '1. לטפל בכל חריגה מספי הקיבולת המאושרים לפני כל המלצת צמיחה.',
     '2. להשלים credentials חסרים ולאמת Google/Meta בקריאה בלבד.',
     '3. לספק export attribution מאושר ללא PII, keyed by monday_item_id.',
     '4. לבדוק תשובת Claude ב-to-codex; התשובה נשארת review-only.',
@@ -272,6 +331,7 @@ export async function persistMorningArtifacts(config, result, vault, options = {
   const busWrite = await writeBusMessageOnce(requestPath, request, request.generated_at);
   const date = request.request_id.slice(-10);
   const mondayEvidence = mondayRuntimeEvidence(result);
+  const urgentAlert = buildUrgentOperationalAlert(result, config.capacity ?? {}, { now: request.generated_at });
 
   const statePath = join(stateDirectory, 'system-state.json');
   const state = {
@@ -299,9 +359,13 @@ export async function persistMorningArtifacts(config, result, vault, options = {
 
   const logPath = join(logsDirectory, `morning-run-${date}.json`);
   const briefPath = join(logsDirectory, `daily-oren-brief-${date}.md`);
+  const urgentAlertPath = join(stateDirectory, 'urgent-alert-current.json');
+  assertNoForbiddenData(urgentAlert, 'urgent alert');
+  await writeFile(urgentAlertPath, `${JSON.stringify(urgentAlert, null, 2)}\n`, 'utf8');
   const brief = buildDailyOrenBrief(result, {
     now: request.generated_at,
     timezone: config.timezone,
+    capacityPolicy: config.capacity,
   });
   await writeFile(briefPath, brief, 'utf8');
   const log = {
@@ -328,6 +392,7 @@ export async function persistMorningArtifacts(config, result, vault, options = {
       state_file: statePath,
       log_file: logPath,
       daily_oren_brief_file: briefPath,
+      urgent_alert_file: urgentAlertPath,
       to_claude_file: requestPath,
       request_id: request.request_id,
       bus_file_created: busWrite.created,
@@ -349,6 +414,7 @@ export async function persistMorningArtifacts(config, result, vault, options = {
     stateFile: statePath,
     logFile: logPath,
     dailyOrenBriefFile: briefPath,
+    urgentAlertFile: urgentAlertPath,
     toClaudeFile: requestPath,
     requestId: request.request_id,
     busFileCreated: busWrite.created,

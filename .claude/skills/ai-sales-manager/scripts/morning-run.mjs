@@ -96,10 +96,19 @@ export async function runMorningDryRun({
     availableSkills: config.availableSkills,
     capacity: {
       plansToProposalBusinessDays: null,
+      plansToProposalMaxBusinessDays: config.capacity?.plansToProposalMaxBusinessDays,
+      qualifiedLeadResponseBusinessHours: null,
+      responseSlaMaxBusinessHours: config.capacity?.responseSlaMaxBusinessHours,
       activeUnownedLeads: mondaySnapshotReadOnly?.counts?.activeUnowned
         ?? mondaySnapshotReadOnly?.counts?.noOwner
         ?? null,
       unownedLeadThreshold: config.capacity?.activeUnownedLeadThreshold,
+      followupBacklogCount: mondaySnapshotReadOnly
+        ? mondaySnapshotReadOnly.counts.noNextAction + mondaySnapshotReadOnly.counts.overdue
+        : null,
+      followupBacklogThreshold: config.capacity?.followupBacklogThreshold,
+      criticalUnattendedServiceCount: null,
+      criticalUnattendedServiceThreshold: config.capacity?.criticalUnattendedServiceThreshold,
     },
     connections: config.connections,
     baseline: config.baseline,

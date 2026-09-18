@@ -1,9 +1,11 @@
 // Pure, read-only projection. No network, file writes, PII, click IDs or mutable gates.
 const PLATFORMS = ['google_ads', 'meta_ads', 'organic', 'referral', 'direct', 'other'];
+const ACQUISITION_ORIGINS = ['NET_NEW', 'EXISTING_CUSTOMER_ADD_ON',
+  'EXISTING_CUSTOMER_UPGRADE', 'EXISTING_CUSTOMER_REFERRAL', 'UNKNOWN'];
 const TOP = ['schemaVersion', 'accountId', 'boardId', 'observedAt', 'evidenceRef',
   'sourceMode', 'windowStart', 'windowEnd', 'expectedRows', 'paginationComplete',
   'crossHistoryDedupVerified', 'rows'];
-const FIELDS = ['mondayItemId', 'leadKey', 'acquiredDate', 'kind', 'qualification',
+const FIELDS = ['mondayItemId', 'leadKey', 'acquiredDate', 'kind', 'acquisitionOrigin', 'qualification',
   'contactValidated', 'platform', 'campaignId', 'attributionMethod'];
 const target = Object.freeze({ minimum: 5, maximum: 6, period: '7_COMPLETED_JERUSALEM_DAYS' });
 const datePattern = /^\d{4}-\d{2}-\d{2}$/;
@@ -51,6 +53,7 @@ export function evaluateQualifiedLeadFeedback(snapshot, { now = new Date() } = {
       || itemIds.has(row.mondayItemId) || typeof row.leadKey !== 'string' || !/^[a-f0-9]{64}$/.test(row.leadKey)
       || !validDate(row.acquiredDate) || row.acquiredDate < window.start || row.acquiredDate > window.end
       || !['NEW_LEAD', 'EXISTING_CUSTOMER', 'SERVICE', 'PROJECT', 'UNKNOWN'].includes(row.kind)
+      || !ACQUISITION_ORIGINS.includes(row.acquisitionOrigin)
       || !['QUALIFIED', 'DISQUALIFIED', 'UNKNOWN'].includes(row.qualification)
       || ![true, false, null].includes(row.contactValidated)
       || ![...PLATFORMS, 'unknown'].includes(row.platform)
@@ -73,6 +76,10 @@ export function evaluateQualifiedLeadFeedback(snapshot, { now = new Date() } = {
   for (const row of leads.values()) {
     if (row.kind === 'UNKNOWN') { blockers.add('ACQUISITION_CLASSIFICATION_REQUIRED'); continue; }
     if (row.kind !== 'NEW_LEAD') { excluded += 1; continue; }
+    if (row.acquisitionOrigin === 'UNKNOWN') {
+      blockers.add('ACQUISITION_ORIGIN_REQUIRED'); continue;
+    }
+    if (row.acquisitionOrigin !== 'NET_NEW') { excluded += 1; continue; }
     if (row.qualification === 'UNKNOWN' || row.contactValidated === null) {
       blockers.add('LEAD_QUALIFICATION_REQUIRED'); continue;
     }

@@ -43,6 +43,15 @@ test('service, projects, existing customers and invalid contacts are not new qua
   f.rows[3].contactValidated = false;
   assert.equal(evaluate(f).qualifiedCurrent, 0);
 });
+test('existing-customer add-ons, upgrades and referrals never count toward the net-new target', () => {
+  const f = qualifiedLeadFixture(now, 3);
+  ['EXISTING_CUSTOMER_ADD_ON', 'EXISTING_CUSTOMER_UPGRADE', 'EXISTING_CUSTOMER_REFERRAL']
+    .forEach((origin, index) => { f.rows[index].acquisitionOrigin = origin; });
+  const result = evaluate(f);
+  assert.equal(result.status, 'BELOW_TARGET');
+  assert.equal(result.qualifiedCurrent, 0);
+  assert.equal(result.excluded, 3);
+});
 for (const [label, change] of [
   ['partial pagination', f => { f.paginationComplete = false; }],
   ['no historical dedup', f => { f.crossHistoryDedupVerified = false; }],
@@ -58,6 +67,7 @@ for (const [label, change] of [
   ['invalid date', f => { f.rows[0].acquiredDate = '2026-99-99'; }],
   ['invalid day', f => { f.rows[0].acquiredDate = '2026-02-30'; }],
   ['no qualification', f => { f.rows[0].qualification = 'UNKNOWN'; }],
+  ['unknown acquisition origin', f => { f.rows[0].acquisitionOrigin = 'UNKNOWN'; }],
   ['no identity validation', f => { f.rows[0].contactValidated = null; }],
   ['no source', f => { f.rows[0].platform = 'unknown'; }],
   ['no attribution verification', f => { f.rows[0].attributionMethod = 'unknown'; }],

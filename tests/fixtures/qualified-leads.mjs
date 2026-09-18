@@ -8,6 +8,6 @@ export function qualifiedLeadFixture(now, count = 4) {
     expectedRows: count, paginationComplete: true, crossHistoryDedupVerified: true,
     rows: Array.from({ length: count }, (_, i) => ({ mondayItemId: String(i + 1),
       leadKey: String(i + 1).padStart(64, '0'), acquiredDate: window.end,
-      kind: 'NEW_LEAD', qualification: 'QUALIFIED', contactValidated: true,
+      kind: 'NEW_LEAD', acquisitionOrigin: 'NET_NEW', qualification: 'QUALIFIED', contactValidated: true,
       platform: 'google_ads', campaignId: '2', attributionMethod: 'click_id' })) };
 }

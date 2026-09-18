@@ -5,13 +5,15 @@ import { evaluateQualifiedLeadFeedback, qualifiedLeadWindow } from './qualified-
 
 const PLATFORMS = ['google_ads', 'meta_ads', 'organic', 'referral', 'direct', 'other', 'unknown'];
 const KINDS = ['NEW_LEAD', 'EXISTING_CUSTOMER', 'SERVICE', 'PROJECT', 'UNKNOWN'];
+const ACQUISITION_ORIGINS = ['NET_NEW', 'EXISTING_CUSTOMER_ADD_ON',
+  'EXISTING_CUSTOMER_UPGRADE', 'EXISTING_CUSTOMER_REFERRAL', 'UNKNOWN'];
 const QUALIFICATIONS = ['QUALIFIED', 'DISQUALIFIED', 'UNKNOWN'];
 const CHANNELS = ['chatgpt', 'newsletter', 'contractor', 'existing_relationship', 'spam', 'unknown'];
 const OWNER_FIELDS = ['schemaVersion', 'boardId', 'observedAt', 'evidenceRef', 'sourceMode', 'rows'];
 const OWNER_ROW_FIELDS = ['mondayItemId', 'kind', 'qualification', 'reportedPlatform', 'reportedChannel', 'reviewedAt'];
 const SOURCE_FIELDS = ['schemaVersion', 'accountId', 'boardId', 'observedAt', 'evidenceRef',
   'sourceMode', 'expectedRows', 'paginationComplete', 'crossHistoryDedupVerified', 'rows'];
-const SOURCE_ROW_FIELDS = ['mondayItemId', 'leadKey', 'acquiredDate', 'kind', 'qualification',
+const SOURCE_ROW_FIELDS = ['mondayItemId', 'leadKey', 'acquiredDate', 'kind', 'acquisitionOrigin', 'qualification',
   'contactValidated', 'platform', 'campaignId', 'attributionMethod'];
 const safeCounters = () => ({ platformWrites: 0, mondayWrites: 0, externalSends: 0 });
 const exact = (value, fields) => value && typeof value === 'object' && !Array.isArray(value)
@@ -87,7 +89,8 @@ function validSource(snapshot) {
     if (!exact(row, SOURCE_ROW_FIELDS) || !id(row.mondayItemId) || ids.has(row.mondayItemId)
       || !(row.leadKey === null || (typeof row.leadKey === 'string' && /^[a-f0-9]{64}$/.test(row.leadKey)))
       || !(row.acquiredDate === null || validDate(row.acquiredDate))
-      || !KINDS.includes(row.kind) || !QUALIFICATIONS.includes(row.qualification)
+      || !KINDS.includes(row.kind) || !ACQUISITION_ORIGINS.includes(row.acquisitionOrigin)
+      || !QUALIFICATIONS.includes(row.qualification)
       || ![true, false, null].includes(row.contactValidated) || !PLATFORMS.includes(row.platform)
       || !(row.campaignId === null || id(row.campaignId))
       || !['click_id', 'verified_manual', 'unknown'].includes(row.attributionMethod)) return false;
@@ -116,6 +119,7 @@ export function prepareQualifiedLeadEvidence(boardSnapshot, ownerDispositions, {
   const counts = { sourceRecords: 0, matchedOwnerReviews: 0, unmatchedOwnerReviews: 0,
     acquisitionsInWindow: 0, acquisitionsOutsideWindow: 0, missingAcquisitionDates: 0,
     missingIdentityKeys: 0, unresolvedClassifications: 0, unresolvedQualifications: 0,
+    unresolvedAcquisitionOrigins: 0,
     unvalidatedContacts: 0, unverifiedSources: 0, unmatchedGoogleCampaigns: 0,
     dispositionConflicts: 0, sourceDisagreements: 0 };
   const report = (feedback = null) => ({ schemaVersion: 1, status: 'BLOCKED', window,
@@ -165,6 +169,7 @@ export function prepareQualifiedLeadEvidence(boardSnapshot, ownerDispositions, {
     if (row.leadKey === null) { counts.missingIdentityKeys += 1; blockers.add('CANONICAL_IDENTITY_REQUIRED'); }
     if (row.kind === 'UNKNOWN') counts.unresolvedClassifications += 1;
     if (row.kind === 'NEW_LEAD') {
+      if (row.acquisitionOrigin === 'UNKNOWN') counts.unresolvedAcquisitionOrigins += 1;
       if (row.qualification === 'UNKNOWN') counts.unresolvedQualifications += 1;
       if (row.contactValidated === null) counts.unvalidatedContacts += 1;
       if (row.platform === 'unknown' || row.attributionMethod === 'unknown') counts.unverifiedSources += 1;

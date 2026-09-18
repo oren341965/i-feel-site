@@ -135,8 +135,17 @@
     }
   },
   "capacity": {
-    "activeUnownedLeadThreshold": null,
+    "responseSlaMaxBusinessHours": 4,
     "plansToProposalMaxBusinessDays": 7,
+    "activeUnownedLeadThreshold": 5,
+    "followupBacklogThreshold": 20,
+    "criticalUnattendedServiceThreshold": 0,
+    "urgentAlerts": {
+      "enabled": true,
+      "capacityRecipients": ["oren"],
+      "serviceRiskRecipients": ["oren", "arik"],
+      "externalSendEnabled": false
+    },
     "requireTrustedAttribution": true,
     "requireTrustedDataQuality": true,
     "minimumDataQualityScore": null

@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { spawnSync } from 'node:child_process';
 import { EventEmitter } from 'node:events';
-import { mkdir, mkdtemp, readFile, rm } from 'node:fs/promises';
+import { mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { resolve } from 'node:path';
 import { PassThrough } from 'node:stream';
@@ -111,6 +111,16 @@ test('Oren runtime installer writes BOM-free JSON under Windows PowerShell 5.1',
   const vault = resolve(fixture, 'vault');
   const runtime = resolve(fixture, 'runtime');
   await mkdir(resolve(vault, '.obsidian'), { recursive: true });
+  await mkdir(resolve(runtime, 'config'), { recursive: true });
+  const seed = JSON.parse(await readFile(resolve(
+    repository,
+    '.claude/skills/ai-sales-manager/runtime/config.example.json',
+  ), 'utf8'));
+  seed.marketingDecision.businessTarget = {
+    schemaVersion: 1,
+    weeklyNewQualifiedTargets: { villas: 3, electricalContractors: 3, bmsNewCompanies: 3, totalMinimum: 9 },
+  };
+  await writeFile(resolve(runtime, 'config/config.json'), JSON.stringify(seed), 'utf8');
 
   const result = spawnSync('powershell.exe', [
     '-NoProfile',
@@ -130,6 +140,15 @@ test('Oren runtime installer writes BOM-free JSON under Windows PowerShell 5.1',
   const report = JSON.parse(reportBytes.toString('utf8'));
   assert.equal(config.maturity, 0);
   assert.equal(config.connections.monday.writesAllowed, false);
+  assert.equal(config.capacity.responseSlaMaxBusinessHours, 4);
+  assert.equal(config.capacity.plansToProposalMaxBusinessDays, 7);
+  assert.equal(config.capacity.activeUnownedLeadThreshold, 5);
+  assert.equal(config.capacity.followupBacklogThreshold, 20);
+  assert.equal(config.capacity.criticalUnattendedServiceThreshold, 0);
+  assert.deepEqual(config.capacity.urgentAlerts.capacityRecipients, ['oren']);
+  assert.deepEqual(config.capacity.urgentAlerts.serviceRiskRecipients, ['oren', 'arik']);
+  assert.equal(config.capacity.urgentAlerts.externalSendEnabled, false);
+  assert.equal(config.marketingDecision.businessTarget, undefined);
   assert.equal(report.external_actions_performed, false);
   assert.equal(report.task_scheduler_installed, false);
 });

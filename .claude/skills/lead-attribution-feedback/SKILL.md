@@ -34,6 +34,8 @@ Use `scripts/qualified-lead-feedback.mjs` for the deterministic projection. It i
 not a live qualification producer. Require a complete, fresh, reviewed CRM export
 with historical deduplication; never infer qualification from a conversion or
 invent READY evidence. Missing evidence is UNKNOWN, not zero.
+Count only verified `NET_NEW` acquisition origin. Existing-customer add-ons,
+upgrades, and referrals from an existing customer are excluded from the target.
 
 For owner-reviewed classifications, use the pure `scripts/qualified-lead-preparation.mjs`.
 `evaluateOwnerDispositions` exposes aggregate historical owner feedback without
