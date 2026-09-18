@@ -137,12 +137,26 @@ function dateInTimezone(date, timezone) {
   return `${values.year}-${values.month}-${values.day}`;
 }
 
+function mondayRuntimeEvidence(result) {
+  const snapshot = result.mondaySnapshotReadOnly;
+  const liveRefresh = result.mondayLiveRefresh;
+  return {
+    snapshot,
+    live: liveRefresh?.mode === 'LIVE_READ_ONLY_LOCAL_REFRESH',
+    status: liveRefresh?.mode === 'LIVE_READ_ONLY_LOCAL_REFRESH'
+      ? 'LIVE_READ_ONLY_LOCAL_REFRESH'
+      : snapshot?.connection?.status ?? 'CONNECTION_MISSING',
+    generatedAt: liveRefresh?.generatedAt ?? snapshot?.connection?.snapshotGeneratedAt ?? null,
+  };
+}
+
 export function buildMorningJudgmentRequest(result, options = {}) {
   const generatedAt = new Date(options.now ?? Date.now());
   if (Number.isNaN(generatedAt.getTime())) throw new Error('Invalid morning-run timestamp');
   const date = dateInTimezone(generatedAt, options.timezone ?? 'Asia/Jerusalem');
   const requestId = `morning-sales-judgment-${date}`;
-  const mondaySnapshot = result.mondaySnapshotReadOnly;
+  const mondayEvidence = mondayRuntimeEvidence(result);
+  const mondaySnapshot = mondayEvidence.snapshot;
   const message = {
     schema_version: 1,
     request_id: requestId,
@@ -153,8 +167,10 @@ export function buildMorningJudgmentRequest(result, options = {}) {
     dry_run: true,
     approval_required: false,
     payload: {
-      current_target_status: mondaySnapshot?.connection?.status ?? 'NO_LIVE_TARGET_DATA',
-      monday_snapshot_generated_at: mondaySnapshot?.connection?.snapshotGeneratedAt ?? null,
+      current_target_status: mondayEvidence.status === 'CONNECTION_MISSING'
+        ? 'NO_LIVE_TARGET_DATA'
+        : mondayEvidence.status,
+      monday_snapshot_generated_at: mondayEvidence.generatedAt,
       monday_counts: mondaySnapshot ? {
         open: mondaySnapshot.counts.open,
         exception_leads: mondaySnapshot.counts.exceptionLeads,
@@ -205,8 +221,11 @@ export function buildDailyOrenBrief(result, options = {}) {
   const capacityReasons = result.capacity.reasons.length > 0
     ? result.capacity.reasons.join(', ')
     : 'none';
-  const mondaySnapshot = result.mondaySnapshotReadOnly;
-  const mondayLine = mondaySnapshot
+  const mondayEvidence = mondayRuntimeEvidence(result);
+  const mondaySnapshot = mondayEvidence.snapshot;
+  const mondayLine = mondaySnapshot && mondayEvidence.live
+    ? `Monday live read: CONNECTED_READ_ONLY מ-${mondayEvidence.generatedAt}; נסרקו ${result.mondayLiveRefresh.records} פריטים; פתוחים ${mondaySnapshot.counts.open}; חריגים ${mondaySnapshot.counts.exceptionLeads}; באיחור ${mondaySnapshot.counts.overdue}; ללא אחראי ${mondaySnapshot.counts.noOwner}; health ${mondaySnapshot.healthScore}/100; data quality ${mondaySnapshot.dataQualityScore}/100; preview מקומי ${result.mondayLiveRefresh.repairPreviewFile}.`
+    : mondaySnapshot
     ? `Monday snapshot: LOCAL_SNAPSHOT_READ_ONLY מ-${mondaySnapshot.connection.snapshotGeneratedAt}; פתוחים ${mondaySnapshot.counts.open}; חריגים ${mondaySnapshot.counts.exceptionLeads}; באיחור ${mondaySnapshot.counts.overdue}; ללא אחראי ${mondaySnapshot.counts.noOwner}; health ${mondaySnapshot.healthScore}/100; data quality ${mondaySnapshot.dataQualityScore}/100; אינו חיבור live.`
     : 'Monday snapshot: CONNECTION_MISSING; אין baseline מצרפי מאומת בריצת הבוקר.';
   const lines = [
@@ -252,6 +271,7 @@ export async function persistMorningArtifacts(config, result, vault, options = {
   const requestPath = join(vault.root, 'AI-Sales', '_bus', 'to-claude', `${request.request_id}.json`);
   const busWrite = await writeBusMessageOnce(requestPath, request, request.generated_at);
   const date = request.request_id.slice(-10);
+  const mondayEvidence = mondayRuntimeEvidence(result);
 
   const statePath = join(stateDirectory, 'system-state.json');
   const state = {
@@ -259,8 +279,8 @@ export async function persistMorningArtifacts(config, result, vault, options = {
     last_morning_run: request.generated_at,
     maturity: result.maturity,
     vault_status: vault.status,
-    monday_snapshot_status: result.mondaySnapshotReadOnly?.connection?.status ?? 'CONNECTION_MISSING',
-    monday_snapshot_generated_at: result.mondaySnapshotReadOnly?.connection?.snapshotGeneratedAt ?? null,
+    monday_snapshot_status: mondayEvidence.status,
+    monday_snapshot_generated_at: mondayEvidence.generatedAt,
     monday_open: result.mondaySnapshotReadOnly?.counts?.open ?? null,
     monday_exception_leads: result.mondaySnapshotReadOnly?.counts?.exceptionLeads ?? null,
     monday_no_owner: result.mondaySnapshotReadOnly?.counts?.noOwner ?? null,
@@ -292,8 +312,8 @@ export async function persistMorningArtifacts(config, result, vault, options = {
     maturity: result.maturity,
     summary: {
       vault_status: vault.status,
-      monday_snapshot_status: result.mondaySnapshotReadOnly?.connection?.status ?? 'CONNECTION_MISSING',
-      monday_snapshot_generated_at: result.mondaySnapshotReadOnly?.connection?.snapshotGeneratedAt ?? null,
+      monday_snapshot_status: mondayEvidence.status,
+      monday_snapshot_generated_at: mondayEvidence.generatedAt,
       monday_open: result.mondaySnapshotReadOnly?.counts?.open ?? null,
       monday_exception_leads: result.mondaySnapshotReadOnly?.counts?.exceptionLeads ?? null,
       monday_no_owner: result.mondaySnapshotReadOnly?.counts?.noOwner ?? null,

@@ -125,6 +125,8 @@ if ((-not $config.connections.monday.snapshotFile) -and $snapshotCandidate.Count
 $config.connections.googleAds.readOnly = $true
 $config.connections.metaAds.readOnly = $true
 $config.connections.attribution.readOnly = $true
+$config.connections.qualifiedLeads.readOnly = $true
+$config.connections.qualifiedLeads.externalWritesAllowed = $false
 $config.websiteImprovement.enabled = $true
 $config.websiteImprovement.automaticPublishAllowed = $false
 

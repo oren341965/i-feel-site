@@ -160,3 +160,27 @@ test('morning run uses the aggregate snapshot for capacity evidence and bounded 
     no_owner: 2,
   });
 });
+
+test('morning run reports a verified live refresh before consuming the aggregate snapshot', async (t) => {
+  const fixture = await createFixture(t);
+  fixture.config.connections.monday.connected = true;
+  fixture.config.connections.monday.liveVerified = true;
+  fixture.config.connections.monday.localBridge = { enabled: true };
+  await writeFile(fixture.configPath, JSON.stringify(fixture.config), 'utf8');
+  const result = await runMorningDryRun({
+    configPath: fixture.configPath,
+    now: NOW,
+    mondaySnapshotRefresher: async () => ({
+      mode: 'LIVE_READ_ONLY_LOCAL_REFRESH',
+      generatedAt: '2026-08-21T11:00:00.000Z',
+      records: 10,
+      repairPreviewFile: 'monday-repair-preview-current.json',
+    }),
+  });
+  assert.equal(result.mondayLiveRefresh.mode, 'LIVE_READ_ONLY_LOCAL_REFRESH');
+  const state = JSON.parse(await readFile(result.artifacts.stateFile, 'utf8'));
+  assert.equal(state.monday_snapshot_status, 'LIVE_READ_ONLY_LOCAL_REFRESH');
+  const brief = await readFile(result.artifacts.dailyOrenBriefFile, 'utf8');
+  assert.match(brief, /Monday live read: CONNECTED_READ_ONLY/);
+  assert.match(brief, /monday-repair-preview-current\.json/);
+});
