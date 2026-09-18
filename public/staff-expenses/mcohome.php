@@ -135,7 +135,7 @@ portal_nav('mcohome', $user);
             <span>חומרה: <?= portal_h($createdRecord['severity'] ?? 'NORMAL') ?></span>
             <span>תקלה חוזרת: <?= ($createdRecord['recurring'] ?? false) ? 'כן, מופע ' . (int) ($createdRecord['repeatCount'] ?? 2) : 'לא' ?></span>
             <span>נשלח ל-MCOHome: <?= ($createdRecord['sentToMcohome'] ?? false) ? 'כן' : 'לא' ?></span>
-            <span>Dropbox: <?= portal_h($createdRecord['dropboxSync']['status'] ?? 'לא הוגדר') ?></span>
+            <span>Google Drive: <?= portal_h($createdRecord['googleDriveSync']['status'] ?? 'לא הוגדר') ?></span>
         </div>
     <?php endif; ?>
 
