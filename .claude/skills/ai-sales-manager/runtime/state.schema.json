@@ -29,7 +29,9 @@
     "last_morning_run": { "type": "string", "format": "date-time" },
     "maturity": { "const": 0 },
     "vault_status": { "enum": ["READY", "MISSING", "INVALID"] },
-    "monday_snapshot_status": { "enum": ["LOCAL_SNAPSHOT_READ_ONLY", "CONNECTION_MISSING"] },
+    "monday_snapshot_status": {
+      "enum": ["LOCAL_SNAPSHOT_READ_ONLY", "LIVE_READ_ONLY_LOCAL_REFRESH", "CONNECTION_MISSING"]
+    },
     "monday_snapshot_generated_at": {
       "type": ["string", "null"],
       "format": "date-time"

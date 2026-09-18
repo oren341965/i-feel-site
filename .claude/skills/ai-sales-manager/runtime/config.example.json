@@ -57,7 +57,13 @@
       "snapshotFile": null,
       "snapshotMaxAgeHours": 168,
       "writesAllowed": false,
-      "structuralChangesAllowed": false
+      "structuralChangesAllowed": false,
+      "localBridge": {
+        "enabled": false,
+        "apiVersion": "2026-07",
+        "paginationCompleteRequired": true,
+        "apiTokenCredentialFile": null
+      }
     },
     "googleAds": {
       "connected": false,
@@ -87,6 +93,13 @@
       "sourceType": "LOCAL_JSON_EXPORT",
       "sourceFile": null,
       "maxAgeHours": 168
+    },
+    "qualifiedLeads": {
+      "readOnly": true,
+      "externalWritesAllowed": false,
+      "sourceFile": null,
+      "outputFile": null,
+      "identityHmacCredentialFile": null
     }
   },
   "marketingDecision": {
