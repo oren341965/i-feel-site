@@ -26,7 +26,7 @@ function mcohome_options(): array
             'בעיית Range / Mesh', 'נזק פיזי', 'אחר',
         ],
         'controllers' => ['Home Assistant', 'Touchwand', 'Fibaro', 'Vera', 'SmartThings', 'אחר / לא ידוע'],
-        'statuses' => ['פתוח', 'בבדיקה', 'תקלה אומתה', 'הוחלף', 'ממתין ל-RMA', 'נשלח ל-MCOHome', 'ממתין לתשובת יצרן', 'נסגר'],
+        'statuses' => ['פתוח', 'בבדיקה', 'תקלה אומתה', 'הוחלף', 'ממתין ל-RMA', 'נשלח ל-MCOHome', 'ממתין לתשובת יצרן', 'ממתין לסנכרון מדיה ל-Google Drive', 'נסגר'],
         'actions' => ['לא בוצעה פעולה', 'איפוס', 'זיווג מחדש / Inclusion', 'Exclusion', 'Factory Reset', 'Heal / Re-interview', 'בדיקת עומס', 'בדיקה ליד הקונטרולר', 'החלפת היחידה', 'ניתוק העומס', 'אחר'],
     ];
 }
