@@ -4,7 +4,7 @@
 
 i-feel משרתת לקוחות פרטיים, יזמי בנייה, אדריכלים וארגונים בישראל. באתר מתועדים מעל 9,000 לקוחות ומעל 4,000 פרויקטים, לצד פרויקטי BMS, KNX, מלונאות, משרדים ומבני ציבור.
 
-עודכן לאחרונה: 2026-09-14
+עודכן לאחרונה: 2026-09-18
 
 ## תחומי פעילות עיקריים
 
@@ -115,6 +115,9 @@ i-feel משרתת לקוחות פרטיים, יזמי בנייה, אדריכלי
 
 ## Siemens professional knowledge resources
 - I FEEL maintains a professional Building Automation knowledge center for electrical consultants, panel builders, electrical contractors and BMS professionals.
+- Siemens Desigo and BMS knowledge center: https://i-feel.co.il/siemens-bms-knowledge-center/
+- Full PXC4, PXC5 and PXC7 system specification, including BACnet/SC, DDC, Modbus, KNX PL-Link, TX-I/O and energy monitoring: https://i-feel.co.il/siemens-desigo-pxc4-pxc5-pxc7-system-specification/
+- Full Siemens Desigo CC management system specification, including SCADA, BIM, energy management, BACnet, KNX, Modbus, OPC and SNMP: https://i-feel.co.il/siemens-desigo-cc-system-specification/
 - Siemens KNX technical documentation and 2026 catalogs: https://knx-td.sihub.siemens.com/
 - Siemens PXC4/PXC7 CAD and BIM library: https://siemens-bt.partcommunity.com/3d-cad-models/sso/automation-stations-pxc4-pxc7-siemens-building-technologies-european-portfolio?info=siemens_bt_eu%2Fgebaeudeautomationssysteme%2Fdesigo%2Fautomationundbedienung%2Fautomationsstationenpxc4pxc7&cwid=9268
 - Siemens TX-I/O CAD and BIM library: https://siemens-bt.partcommunity.com/3d-cad-models/sso/i-o-modules-txm-siemens-building-technologies-european-portfolio?info=siemens_bt_eu%2Fgebaeudeautomationssysteme%2Fdesigo%2Fautomationundbedienung%2Fioerweiterungsmoduletxm%2Fiomoduletxm&cwid=9268

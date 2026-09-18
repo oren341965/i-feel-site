@@ -1,0 +1,110 @@
+---
+export interface Props {
+  title: string;
+  intro: string;
+  sourceName: string;
+  sourceDate: string;
+  summaryPoints: string[];
+  keywords: string[];
+  documentHtml: string;
+  docxUrl: string;
+  pdfUrl: string;
+}
+
+const {
+  title,
+  intro,
+  sourceName,
+  sourceDate,
+  summaryPoints,
+  keywords,
+  documentHtml,
+  docxUrl,
+  pdfUrl,
+} = Astro.props;
+---
+
+<nav class="bg-brand-50 border-b border-brand-100" aria-label="פירורי לחם">
+  <div class="max-w-7xl mx-auto px-4 py-3 text-sm" dir="rtl">
+    <a href="/" class="text-brand-600 hover:text-accent-600">דף הבית</a>
+    <span class="mx-2 text-brand-400">›</span>
+    <a href="/siemens-bms-knowledge-center/" class="text-brand-600 hover:text-accent-600">מרכז הידע Siemens BMS</a>
+    <span class="mx-2 text-brand-400">›</span>
+    <span class="text-brand-900 font-medium">{title}</span>
+  </div>
+</nav>
+
+<section class="bg-brand-900 text-white py-14 md:py-20" dir="rtl">
+  <div class="max-w-6xl mx-auto px-4">
+    <p class="text-accent-400 font-bold mb-3">Siemens Desigo · מסמך מקצועי לבקרת מבנה</p>
+    <h1 class="text-3xl md:text-5xl font-extrabold leading-tight mb-5">{title}</h1>
+    <p class="max-w-4xl text-lg md:text-xl text-brand-100 leading-8">{intro}</p>
+    <div class="flex flex-wrap gap-3 mt-7">
+      <a href={pdfUrl} target="_blank" rel="noopener" class="rounded-lg bg-accent-500 px-5 py-3 font-bold text-white hover:bg-accent-600 transition">צפייה ב-PDF</a>
+      <a href={docxUrl} download class="rounded-lg border border-white/30 bg-white/10 px-5 py-3 font-bold text-white hover:bg-white/20 transition">הורדת מסמך Word</a>
+    </div>
+  </div>
+</section>
+
+<div class="bg-white" dir="rtl">
+  <section class="max-w-6xl mx-auto px-4 py-10 md:py-14">
+    <div class="grid gap-8 lg:grid-cols-[1.2fr_0.8fr]">
+      <div>
+        <h2 class="text-2xl md:text-3xl font-extrabold text-brand-900 mb-4">מה כולל המסמך</h2>
+        <ul class="grid gap-3 text-brand-700 leading-7">
+          {summaryPoints.map((point) => (
+            <li class="flex gap-3"><span class="text-accent-600 font-black" aria-hidden="true">✓</span><span>{point}</span></li>
+          ))}
+        </ul>
+      </div>
+      <aside class="rounded-2xl border border-brand-100 bg-brand-50 p-6">
+        <h2 class="text-xl font-extrabold text-brand-900 mb-3">פרטי מקור</h2>
+        <dl class="space-y-3 text-sm text-brand-700">
+          <div><dt class="font-bold inline">מקור: </dt><dd class="inline">{sourceName}</dd></div>
+          <div><dt class="font-bold inline">תאריך מסמך: </dt><dd class="inline">{sourceDate}</dd></div>
+          <div><dt class="font-bold inline">קהל מקצועי: </dt><dd class="inline">יועצי חשמל, יצרני לוחות, קבלני חשמל, אנשי BMS ומנהלי אחזקה</dd></div>
+        </dl>
+        <p class="mt-5 text-sm leading-6 text-brand-600">זהו חומר מקצועי לבקרת מבנה מסחרית וציבורית. הוא אינו מיועד ללקוחות בית חכם פרטיים. לפני מכרז או ביצוע יש לוודא התאמה לגרסה העדכנית ולדרישות הפרויקט.</p>
+      </aside>
+    </div>
+
+    <div class="mt-10 border-t border-brand-100 pt-8">
+      <h2 class="text-2xl font-extrabold text-brand-900 mb-4">מונחים שניתן לחפש באתר</h2>
+      <div class="flex flex-wrap gap-2">
+        {keywords.map((keyword) => <span class="rounded-full bg-brand-50 border border-brand-100 px-3 py-1.5 text-sm font-semibold text-brand-700">{keyword}</span>)}
+      </div>
+    </div>
+  </section>
+
+  <section class="border-y border-brand-100 bg-brand-50 py-10 md:py-14">
+    <div class="max-w-6xl mx-auto px-4">
+      <div class="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-7" dir="rtl">
+        <div>
+          <p class="text-accent-700 font-bold mb-2">המסמך המלא באנגלית</p>
+          <h2 class="text-2xl md:text-3xl font-extrabold text-brand-900">תוכן טכני מלא ונגיש לחיפוש</h2>
+        </div>
+        <a href="/contactus/" class="font-bold text-accent-700 hover:text-accent-800">שאלה מקצועית לצוות הבקרה ←</a>
+      </div>
+      <article class="siemens-doc-body rounded-2xl border border-brand-100 bg-white p-5 md:p-9 shadow-sm" dir="ltr" lang="en" set:html={documentHtml} />
+    </div>
+  </section>
+</div>
+
+<style is:global>
+  .siemens-doc-body { color: #23344d; line-height: 1.7; overflow-wrap: anywhere; }
+  .siemens-doc-body h1 { font-size: 2rem; font-weight: 800; color: #10233f; margin: 0 0 1.25rem; }
+  .siemens-doc-body h2 { font-size: 1.55rem; font-weight: 800; color: #10233f; margin: 2.3rem 0 0.8rem; }
+  .siemens-doc-body h3 { font-size: 1.2rem; font-weight: 800; color: #17375e; margin: 1.8rem 0 0.65rem; }
+  .siemens-doc-body p { margin: 0.75rem 0; }
+  .siemens-doc-body ul, .siemens-doc-body ol { margin: 0.75rem 0 1rem 1.4rem; padding-left: 1.1rem; }
+  .siemens-doc-body li { margin: 0.35rem 0; }
+  .siemens-doc-body ul { list-style: disc; }
+  .siemens-doc-body ol { list-style: decimal; }
+  .siemens-doc-body blockquote { border: 0; margin: 0; padding: 0; color: inherit; font-style: normal; }
+  .siemens-doc-body strong { color: #10233f; }
+  @media (max-width: 640px) {
+    .siemens-doc-body { font-size: 0.95rem; }
+    .siemens-doc-body h1 { font-size: 1.65rem; }
+    .siemens-doc-body h2 { font-size: 1.35rem; }
+  }
+</style>
