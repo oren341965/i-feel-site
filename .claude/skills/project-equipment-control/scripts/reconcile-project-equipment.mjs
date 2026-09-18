@@ -3,7 +3,7 @@ import { dirname, relative, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const REQUIRED_SOURCES = ['requirements', 'orders', 'receipts', 'stockMovements', 'installation'];
-const REQUIRED_TRUTH_SYSTEMS = ['dropbox', 'gmail'];
+const REQUIRED_TRUTH_SYSTEMS = ['dropbox', 'gmail', 'monday'];
 const QUANTITY_FIELDS = ['requiredQty', 'orderedQty', 'receivedQty', 'issuedQty', 'installedQty', 'returnedQty'];
 const CLOSING_FIELDS = [
   'inventoryCounted', 'technicianSummaryVerified', 'closingFormPresent',
