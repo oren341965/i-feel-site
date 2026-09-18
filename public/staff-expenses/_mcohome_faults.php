@@ -468,21 +468,6 @@ function mcohome_email_attachments(array $record): array
     return $attachments;
 }
 
-function mcohome_dropbox_lines(array $record): array
-{
-    $lines = [];
-    foreach (($record['media'] ?? []) as $index => $media) {
-        $url = trim((string) ($media['dropboxUrl'] ?? ''));
-        $path = trim((string) ($media['dropboxPath'] ?? ''));
-        if ($url !== '') {
-            $lines[] = ($index + 1) . '. ' . $url;
-        } elseif ($path !== '') {
-            $lines[] = ($index + 1) . '. Dropbox: ' . $path;
-        }
-    }
-    return $lines;
-}
-
 function mcohome_build_vendor_draft(array $record): array
 {
     $recurring = (bool) ($record['recurring'] ?? false);
@@ -571,8 +556,8 @@ function mcohome_send_internal_notification(array $record): array
     $mediaLines = [];
     foreach (($record['media'] ?? []) as $index => $media) {
         $line = ($index + 1) . '. ' . ($media['name'] ?? 'media') . ' - ' . mcohome_media_url($record['eventId'], $index);
-        if (($media['dropboxUrl'] ?? '') !== '') {
-            $line .= ' | Dropbox: ' . $media['dropboxUrl'];
+        if (($media['googleDriveUrl'] ?? '') !== '') {
+            $line .= ' | Google Drive: ' . $media['googleDriveUrl'];
         }
         $mediaLines[] = $line;
     }
