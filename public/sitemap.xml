@@ -188,6 +188,24 @@
     <priority>0.8</priority>
   </url>
   <url>
+    <loc>https://i-feel.co.il/siemens-bms-knowledge-center/</loc>
+    <lastmod>2026-09-18</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://i-feel.co.il/siemens-desigo-pxc4-pxc5-pxc7-system-specification/</loc>
+    <lastmod>2026-09-18</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://i-feel.co.il/siemens-desigo-cc-system-specification/</loc>
+    <lastmod>2026-09-18</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://i-feel.co.il/articles/epbd-bacs-building-automation-desigo/</loc>
     <lastmod>2026-09-14</lastmod>
     <changefreq>monthly</changefreq>
