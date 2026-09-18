@@ -12,7 +12,7 @@ export const DEFAULT_SERVICE_CONFIG = Object.freeze({
   resolvedStatuses: ['8. הסתיים'],
   noResponseStatuses: ['הסתיים-חוסר תגובה'],
   cancelledStatuses: ['בוטל'],
-  paymentStatuses: ['הסתיים - יש לקחת תשלום'],
+  paymentStatuses: ['הסתיים - יש לקחת תשלום', 'לקוח לא שילם עבור התיקון'],
   newStatuses: ['1. פניה חדשה', 'פניה מטופס / אתר החברה', 'פניה מהאתר-אישור לתשלום'],
   waitingCustomerStatuses: ['ממתין ללקוח', '3. המתנה לטופס קריאת שירות מהלקוח'],
   scheduledVisitStatuses: ['5א – תואם ביקור טכנאי'],
