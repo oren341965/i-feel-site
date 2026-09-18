@@ -190,8 +190,15 @@ export async function runSalesPreflightReadOnly({
     && attribution.value.connection?.status === 'LOCAL_SNAPSHOT_READ_ONLY';
   const capacity = evaluateCapacity({
     plansToProposalBusinessDays: null,
+    plansToProposalMaxBusinessDays: config.capacity?.plansToProposalMaxBusinessDays,
+    qualifiedLeadResponseBusinessHours: null,
+    responseSlaMaxBusinessHours: config.capacity?.responseSlaMaxBusinessHours,
     activeUnownedLeads: mondayCounts.activeUnowned ?? mondayCounts.noOwner,
     unownedLeadThreshold: config.capacity?.activeUnownedLeadThreshold,
+    followupBacklogCount: monday.ok ? mondayCounts.noNextAction + mondayCounts.overdue : null,
+    followupBacklogThreshold: config.capacity?.followupBacklogThreshold,
+    criticalUnattendedServiceCount: null,
+    criticalUnattendedServiceThreshold: config.capacity?.criticalUnattendedServiceThreshold,
     attributionTrusted,
     dataQualityTrusted,
   });

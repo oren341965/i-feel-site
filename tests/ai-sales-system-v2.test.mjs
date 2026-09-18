@@ -169,6 +169,25 @@ test('capacity stop rule covers operational backlog and untrusted evidence', () 
   assert.equal(result.reasons.includes('ATTRIBUTION_NOT_TRUSTED'), true);
 });
 
+test('approved numeric SLA, backlog and service limits block on an observed breach', () => {
+  const result = evaluateCapacity({
+    plansToProposalBusinessDays: 7,
+    plansToProposalMaxBusinessDays: 7,
+    qualifiedLeadResponseBusinessHours: 5,
+    responseSlaMaxBusinessHours: 4,
+    activeUnownedLeads: 5,
+    unownedLeadThreshold: 5,
+    followupBacklogCount: 21,
+    followupBacklogThreshold: 20,
+    criticalUnattendedServiceCount: 1,
+    criticalUnattendedServiceThreshold: 0,
+  });
+  assert.equal(result.status, 'CAPACITY_BLOCKED');
+  assert.ok(result.reasons.includes('QUALIFIED_LEAD_RESPONSE_SLA_BREACHED'));
+  assert.ok(result.reasons.includes('FOLLOWUP_BACKLOG_OVER_CAPACITY'));
+  assert.ok(result.reasons.includes('SERVICE_BACKLOG_RISK'));
+});
+
 test('Monday remains read-only and structurally untouched', () => {
   const result = orchestrateSalesSystem({
     mondayBoardId: '2732725332',

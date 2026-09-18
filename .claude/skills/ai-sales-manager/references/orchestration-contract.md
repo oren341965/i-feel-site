@@ -60,9 +60,11 @@ When Oren says `מאיה תבדוק`, `תעביר למאיה`, `תבקש ממא�
 Set `budget_growth_allowed=false` when either:
 
 - `plans_to_proposal_business_days > 7`; or
-- `active_unowned_leads > X`.
+- a qualified net-new lead waits more than 4 business hours for a response;
+- `active_unowned_leads > 5`; or
+- the measured follow-up backlog exceeds 20.
 
-Never guess X. If it is missing, return `CAPACITY_THRESHOLD_MISSING` and forbid budget growth. If an observed rule is breached, return `CAPACITY_BLOCKED`.
+These thresholds were approved by Oren on 2026-09-18. If a required threshold is missing, return `CAPACITY_THRESHOLD_MISSING` and forbid budget growth. If an observed rule is breached, return `CAPACITY_BLOCKED` and create the local urgent-alert artifact for Oren. The approved unattended critical-service threshold is zero; a measured breach routes the local alert to Oren and Arik. External delivery remains disabled until its channel and recipient identities are separately approved and verified.
 
 Also block growth for response-SLA breach, excess follow-up/plans/meeting/proposal backlog, missing opportunity ownership, degrading response/proposal time, service-backlog risk, untrusted attribution or untrusted data quality.
 

@@ -19,6 +19,21 @@ C:\ifeel-sales\
   The runtime validates freshness, schema, aggregate reconciliation and absence of operational rows
   before exposing `LOCAL_SNAPSHOT_READ_ONLY`. This is capacity/brief evidence only and never changes
   `connections.monday.connected` or `liveVerified`.
+- When the verified read-only Monday bridge is configured, the morning runner first performs a complete
+  paginated board read, atomically refreshes that sanitized aggregate snapshot, and writes a local
+  `monday-repair-preview-current.json` containing item IDs and repair codes but no customer or employee
+  names. It then refreshes the attribution snapshot from a separate complete read. Either reconciliation
+  failure stops the morning run; neither refresh can write to Monday.
+- The qualified-lead producer accepts only an approved private CRM export inside the runtime, derives
+  opaque identity keys with a machine-local HMAC credential, and emits the strict PII-free snapshot under
+  `data\` or `state\`. The installer never creates that credential or fabricates business classifications.
+- Approved capacity policy: 4 business-hour response SLA, 7 business days from plans to proposal,
+  at most 5 active unowned leads, follow-up backlog at most 20, and zero unattended critical service
+  cases. A measured breach writes `state\urgent-alert-current.json` and appears at the top of the Daily
+  Oren Brief. Capacity alerts name Oren; critical-service alerts name Oren and Arik. The artifact does
+  not send externally until a delivery channel and exact recipient identities receive separate approval.
+- Installation removes the former reporting-only target 9 and returns decision readiness to the
+  registered v1 5–6 net-new target. No campaign or budget is changed by this config migration.
 - Set `VAULT_ROOT` in each machine's local `config.json`; never commit the machine-specific path.
 - Copy aggregate snapshots to the Vault only after a future maturity/approval change.
 - `morning-run.mjs` may write `state/system-state.json`, one daily local log, one local Daily Oren Brief, one idempotent dry-run request under `${VAULT_ROOT}/AI-Sales/_bus/to-claude`, and one idempotent Maya `SYSTEM_TEST_RESPONSE`. It performs no external send or platform mutation.

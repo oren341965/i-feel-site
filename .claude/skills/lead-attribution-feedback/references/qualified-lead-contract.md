@@ -5,11 +5,13 @@ bounded Google consumer: `google-ads-manager`. No new standalone agent or schedu
 
 ## Business definition
 
-The goal is **5–6 unique, contact-validated, explicitly qualified NEW leads across
+The goal is **5–6 unique, contact-validated, explicitly qualified net-new leads across
 all sources in seven completed Asia/Jerusalem calendar days**, excluding today.
 Compare the preceding seven completed days. Google Ads conversions, calls,
 directions and engagement events are separate platform metrics, never additions
 to this count. Existing customers, projects and service requests are excluded.
+An existing customer's add-on, upgrade, or referred new customer is also excluded;
+only `acquisitionOrigin=NET_NEW` can enter the target.
 
 Use `scripts/qualified-lead-feedback.mjs` to project an approved local snapshot.
 The pure function `evaluateQualifiedLeadFeedback(snapshot, { now })` reads no
@@ -61,6 +63,10 @@ Row fields:
 - `leadKey`: opaque 64-character lowercase hex canonical identity; never returned.
 - `acquiredDate`: valid local YYYY-MM-DD in the declared window.
 - `kind`: `NEW_LEAD`, `EXISTING_CUSTOMER`, `SERVICE`, `PROJECT`, or `UNKNOWN`.
+- `acquisitionOrigin`: `NET_NEW`, `EXISTING_CUSTOMER_ADD_ON`,
+  `EXISTING_CUSTOMER_UPGRADE`, `EXISTING_CUSTOMER_REFERRAL`, or `UNKNOWN`.
+  `UNKNOWN` blocks autonomous inference; every value other than `NET_NEW` is
+  excluded from the 5–6 target.
 - `qualification`: `QUALIFIED`, `DISQUALIFIED`, or `UNKNOWN`.
 - `contactValidated`: true, false, or null (unknown).
 - `platform`: `google_ads`, `meta_ads`, `organic`, `referral`, `direct`, `other`, or `unknown`.

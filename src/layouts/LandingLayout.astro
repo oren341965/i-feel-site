@@ -1,6 +1,7 @@
 ---
 import '../styles/global.css';
 import LeadAttributionCapture from '../components/LeadAttributionCapture.astro';
+import VerifiedLeadConversion from '../components/VerifiedLeadConversion.astro';
 
 export interface Props {
   title: string;
@@ -75,22 +76,6 @@ const {
         if (thankYou && ['1', 'sent', 'sent-mail'].indexOf(leadStatus) !== -1) {
           thankYou.classList.remove('hidden');
           thankYou.scrollIntoView({ block: 'center' });
-          var proof = params.get('conversion_proof');
-          if (leadStatus === 'sent' && proof) {
-            var body = new URLSearchParams({ proof: proof });
-            fetch('/api/consume-conversion.php', {
-              method: 'POST',
-              credentials: 'same-origin',
-              headers: { 'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8' },
-              body: body.toString()
-            }).then(function (response) {
-              return response.ok ? response.json() : { eligible: false };
-            }).then(function (result) {
-              if (result && result.eligible === true) {
-                window.ifeelSendVerifiedLeadConversion(result);
-              }
-            }).catch(function () {});
-          }
         } else if (formError && ['missing', 'bad-email', 'error'].indexOf(leadStatus) !== -1) {
           formError.classList.remove('hidden');
           formError.scrollIntoView({ block: 'center' });
@@ -162,6 +147,7 @@ const {
     </div>
 
     <LeadAttributionCapture />
+    <VerifiedLeadConversion />
 
   </body>
 </html>

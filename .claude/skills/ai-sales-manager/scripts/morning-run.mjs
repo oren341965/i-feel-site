@@ -9,6 +9,8 @@ import { persistMorningArtifacts, prepareVault } from './vault-runtime.mjs';
 import { collectGoogleAdsReadOnly } from '../../google-ads-manager/scripts/google-ads-readonly.mjs';
 import { collectMetaAdsReadOnly } from '../../meta-ads-manager/scripts/meta-ads-readonly.mjs';
 import { collectAttributionReadOnly } from '../../lead-attribution-feedback/scripts/attribution-readonly.mjs';
+import { refreshAttributionSnapshotReadOnly } from '../../lead-attribution-feedback/scripts/refresh-attribution-snapshot-readonly.mjs';
+import { refreshMondaySalesSnapshotReadOnly } from './monday-sales-live-readonly.mjs';
 import { collectMondaySnapshotReadOnly } from './monday-snapshot-readonly.mjs';
 
 const DEFAULT_CONFIG = fileURLToPath(new URL('../runtime/config.example.json', import.meta.url));
@@ -28,12 +30,23 @@ export async function runMorningDryRun({
   googleAdsCollector = collectGoogleAdsReadOnly,
   metaAdsCollector = collectMetaAdsReadOnly,
   attributionCollector = collectAttributionReadOnly,
+  attributionSnapshotRefresher = refreshAttributionSnapshotReadOnly,
+  mondaySnapshotRefresher = refreshMondaySalesSnapshotReadOnly,
   mondaySnapshotCollector = collectMondaySnapshotReadOnly,
   claudeResponseInspector = inspectClaudeJudgmentResponses,
 } = {}) {
   const config = JSON.parse(await readFile(configPath, 'utf8'));
   const vault = await prepareVault(config, { createMissing: true });
   if (vault.status !== 'READY') throw new Error(`Vault validation failed: ${vault.status} (${vault.reason})`);
+  const mondayLiveRefreshConfigured = config.connections?.monday?.connected === true
+    && config.connections?.monday?.liveVerified === true
+    && config.connections?.monday?.localBridge?.enabled === true;
+  const mondayLiveRefresh = mondayLiveRefreshConfigured
+    ? await mondaySnapshotRefresher({ configPath, now: new Date(now ?? Date.now()) })
+    : null;
+  if (mondayLiveRefresh && mondayLiveRefresh.mode !== 'LIVE_READ_ONLY_LOCAL_REFRESH') {
+    throw new Error('Monday live refresh failed closed');
+  }
   const mondaySnapshotConfigured = typeof config.connections?.monday?.snapshotFile === 'string'
     && config.connections.monday.snapshotFile.trim() !== '';
   const mondaySnapshotReadOnly = mondaySnapshotConfigured
@@ -61,6 +74,12 @@ export async function runMorningDryRun({
   }
   const attributionConfigured = config.connections?.attribution?.connected === true
     && config.connections?.attribution?.sourceVerified === true;
+  const attributionLiveRefresh = attributionConfigured && mondayLiveRefreshConfigured
+    ? await attributionSnapshotRefresher({ configPath, now: new Date(now ?? Date.now()) })
+    : null;
+  if (attributionLiveRefresh && attributionLiveRefresh.mode !== 'LIVE_READ_ONLY_LOCAL_EXPORT') {
+    throw new Error('Attribution live refresh failed closed');
+  }
   const attributionReadOnly = attributionConfigured
     ? await attributionCollector({ configPath, now: new Date(now ?? Date.now()) })
     : null;
@@ -77,10 +96,19 @@ export async function runMorningDryRun({
     availableSkills: config.availableSkills,
     capacity: {
       plansToProposalBusinessDays: null,
+      plansToProposalMaxBusinessDays: config.capacity?.plansToProposalMaxBusinessDays,
+      qualifiedLeadResponseBusinessHours: null,
+      responseSlaMaxBusinessHours: config.capacity?.responseSlaMaxBusinessHours,
       activeUnownedLeads: mondaySnapshotReadOnly?.counts?.activeUnowned
         ?? mondaySnapshotReadOnly?.counts?.noOwner
         ?? null,
       unownedLeadThreshold: config.capacity?.activeUnownedLeadThreshold,
+      followupBacklogCount: mondaySnapshotReadOnly
+        ? mondaySnapshotReadOnly.counts.noNextAction + mondaySnapshotReadOnly.counts.overdue
+        : null,
+      followupBacklogThreshold: config.capacity?.followupBacklogThreshold,
+      criticalUnattendedServiceCount: null,
+      criticalUnattendedServiceThreshold: config.capacity?.criticalUnattendedServiceThreshold,
     },
     connections: config.connections,
     baseline: config.baseline,
@@ -89,7 +117,7 @@ export async function runMorningDryRun({
     mayaConnection,
     vault,
   });
-  const runtimeResult = { ...result, mondaySnapshotReadOnly };
+  const runtimeResult = { ...result, mondayLiveRefresh, mondaySnapshotReadOnly, attributionLiveRefresh };
 
   const artifacts = await persistMorningArtifacts(config, runtimeResult, vault, { now });
   const claudeJudgment = await claudeResponseInspector({

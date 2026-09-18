@@ -28,8 +28,12 @@ reconciliation, coverage or values. Offline/sample data must remain offline and
 cannot supply operational evidence. All counts and coverage are recalculated or
 cross-checked. Historical DQ is retained, not replaced with a recent cohort score.
 
-`capacityPolicy` contains only the already approved non-negative integer
-`activeUnownedLeadThreshold`. `evidenceRef` identifies the retained combined audit,
+The runtime policy approved on 2026-09-18 is: response SLA 4 business hours,
+plans-to-proposal at most 7 business days, at most 5 active unowned leads,
+follow-up backlog at most 20, and zero unattended critical service cases.
+The current preparation interface receives the already approved non-negative integer
+`activeUnownedLeadThreshold`; each owning source assessment must retain evidence that
+it applied the other approved threshold for its domain. `evidenceRef` identifies the retained combined audit,
 using the existing bounded non-personal `[a-z][a-z0-9._:-]{3,119}` convention.
 
 Supply four explicit entries in `assessments`: `responseSla`, `plansToProposal`,

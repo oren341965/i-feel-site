@@ -125,6 +125,22 @@ if ((-not $config.connections.monday.snapshotFile) -and $snapshotCandidate.Count
 $config.connections.googleAds.readOnly = $true
 $config.connections.metaAds.readOnly = $true
 $config.connections.attribution.readOnly = $true
+$config.connections.qualifiedLeads.readOnly = $true
+$config.connections.qualifiedLeads.externalWritesAllowed = $false
+$config.capacity.responseSlaMaxBusinessHours = 4
+$config.capacity.plansToProposalMaxBusinessDays = 7
+$config.capacity.activeUnownedLeadThreshold = 5
+$config.capacity.followupBacklogThreshold = 20
+$config.capacity.criticalUnattendedServiceThreshold = 0
+$config.capacity.urgentAlerts.enabled = $true
+$config.capacity.urgentAlerts.capacityRecipients = @('oren')
+$config.capacity.urgentAlerts.serviceRiskRecipients = @('oren', 'arik')
+$config.capacity.urgentAlerts.externalSendEnabled = $false
+if ($config.marketingDecision.PSObject.Properties['businessTarget']) {
+    # Oren approved the registered v1 5-6 net-new target on 2026-09-18.
+    # Remove the prior reporting-only target 9 so it cannot keep the safety gate in mismatch.
+    $config.marketingDecision.PSObject.Properties.Remove('businessTarget') | Out-Null
+}
 $config.websiteImprovement.enabled = $true
 $config.websiteImprovement.automaticPublishAllowed = $false
 

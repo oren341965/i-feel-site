@@ -34,6 +34,8 @@ Use `scripts/qualified-lead-feedback.mjs` for the deterministic projection. It i
 not a live qualification producer. Require a complete, fresh, reviewed CRM export
 with historical deduplication; never infer qualification from a conversion or
 invent READY evidence. Missing evidence is UNKNOWN, not zero.
+Count only verified `NET_NEW` acquisition origin. Existing-customer add-ons,
+upgrades, and referrals from an existing customer are excluded from the target.
 
 For owner-reviewed classifications, use the pure `scripts/qualified-lead-preparation.mjs`.
 `evaluateOwnerDispositions` exposes aggregate historical owner feedback without
@@ -52,5 +54,7 @@ At maturity 0, do not write to Monday, Google, Meta or the external attribution 
 `scripts/monday-attribution-coverage-readonly.mjs` measures live source-field coverage on the complete Monday sales board without emitting item IDs, names, contact fields or source text. It must reconcile board count, pagination and unique IDs before reporting aggregate all-time, 30-day and 7-day windows. Use the cohort windows to distinguish legacy attribution debt from a current capture regression; never treat a partial page or a manually populated source label as proof that paid click IDs are working.
 
 `scripts/refresh-attribution-snapshot-readonly.mjs --config <runtime-config>` is the canonical manual recovery path when the approved local attribution snapshot is stale. It performs a complete read-only Monday scan, writes only normalized source categories and safe UTM tokens keyed by `monday_item_id`, validates the result before atomically replacing the local runtime snapshot, and retains a timestamped local backup. It must never emit raw customer fields, click IDs or source text, and it does not write to Monday or any external system.
+
+`scripts/qualified-lead-producer.mjs --config <runtime-config>` converts one complete, approved private CRM export into the strict qualified-lead snapshot. It reads the identity HMAC key only from the machine-local runtime config directory, hashes normalized phone/email identities in memory, overwrites no source, emits no raw PII or secret, and writes only inside the local runtime `data` or `state` directory. It never invents acquisition dates, qualification, contact validation, source, campaign or historical-dedup evidence; incomplete business classifications remain blockers in the deterministic feedback result.
 
 This adapter is a safe local boundary for synthetic and approved exports. It is not a live Google Drive connection. Keep `connections.attribution.connected=false` and `sourceVerified=false` until an approved export is actually present and verified.

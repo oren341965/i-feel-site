@@ -25,6 +25,9 @@ Different targets emit `POLICY_TARGET_MISMATCH`; this never silently changes
 spending authority. Segment completion remains unknown until segment evidence exists.
 The optional private `evidenceFiles.ownerDispositions` input preserves reviewed
 classifications as aggregates, not as a verified period acquisition export.
+The active v1 target remains 5–6 verified net-new qualified leads. Existing-customer
+add-ons, upgrades, and referrals originating from an existing customer do not enter
+this target, even when the referred person is new to I Feel.
 
 ## Current portfolio strategy
 

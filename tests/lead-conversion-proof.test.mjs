@@ -5,6 +5,8 @@ import test from 'node:test';
 const files = {
   lead: new URL('../public/api/lead.php', import.meta.url),
   consume: new URL('../public/api/consume-conversion.php', import.meta.url),
+  sharedClient: new URL('../src/components/VerifiedLeadConversion.astro', import.meta.url),
+  base: new URL('../src/layouts/BaseLayout.astro', import.meta.url),
   landing: new URL('../src/layouts/LandingLayout.astro', import.meta.url),
   contact: new URL('../src/page-html/page-07.html', import.meta.url),
 };
@@ -27,11 +29,16 @@ test('conversion proof is session-bound and consumed once', async () => {
   assert.match(source, /\['eligible'\s*=>\s*\$eligible\]/);
 });
 
-test('contact and landing clients require verifier eligibility before Ads conversion', async () => {
+test('all site layouts use one verifier-gated, single-attempt conversion client', async () => {
+  const sharedClient = await readFile(files.sharedClient, 'utf8');
+  const base = await readFile(files.base, 'utf8');
   const landing = await readFile(files.landing, 'utf8');
   const contact = await readFile(files.contact, 'utf8');
-  assert.match(landing, /consume-conversion\.php/);
-  assert.match(landing, /eligible\s*===\s*true[^}]+ifeelSendVerifiedLeadConversion\(result\)/s);
-  assert.match(contact, /consume-conversion\.php/);
-  assert.match(contact, /eligible\s*===\s*true[^}]+ifeelSendVerifiedLeadConversion\(result\)/s);
+  assert.match(sharedClient, /consume-conversion\.php/);
+  assert.match(sharedClient, /eligible\s*===\s*true[\s\S]+ifeelSendVerifiedLeadConversion\(result\)/);
+  assert.match(sharedClient, /__ifeelVerifiedLeadConversionRequested/);
+  assert.match(base, /import VerifiedLeadConversion[\s\S]+<VerifiedLeadConversion\s*\/>/);
+  assert.match(landing, /import VerifiedLeadConversion[\s\S]+<VerifiedLeadConversion\s*\/>/);
+  assert.doesNotMatch(contact, /consume-conversion\.php/);
+  assert.doesNotMatch(landing, /fetch\('\/api\/consume-conversion\.php'/);
 });
