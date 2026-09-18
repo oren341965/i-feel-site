@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "capability": {
+    "slug": "daily-management-bi",
+    "displayName": "דוח BI ניהולי יומי",
+    "kind": "skill",
+    "parent": "ai-operations-manager",
+    "executionMode": "REPORT_ONLY",
+    "sourceOfTruth": ".claude/skills/daily-management-bi/SKILL.md",
+    "requiresExplicitApprovalFor": [
+      "external_send",
+      "business_system_write",
+      "schedule_change",
+      "financial_action",
+      "deployment",
+      "permission_change",
+      "maya_activation"
+    ]
+  }
+}

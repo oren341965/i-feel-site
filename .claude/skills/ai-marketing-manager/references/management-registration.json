@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "system": "I FEEL MANAGEMENT SYSTEM",
+  "domain": "marketing",
+  "capabilities": [
+    {
+      "slug": "ai-marketing-manager",
+      "owner": "I Feel Marketing",
+      "role": "domain-orchestrator",
+      "dependencies": ["management-system-telemetry", "ai-sales-manager", "daily-seo-crawl", "content-inbox", "lead-attribution-feedback"],
+      "workers": ["google-ads-manager", "meta-ads-manager", "daily-seo-crawl", "content-inbox", "mailing-list-collector", "maya-instagram-relations"],
+      "dataSources": ["Google Ads via ai-sales-manager", "Meta via ai-sales-manager", "Google Search Console", "Monday aggregate funnel evidence", "website evidence"],
+      "permissions": {"read": "approved-connected-sources", "recommend": "allowed", "draft": "allowed locally", "write": "action-specific approval required", "send": "action-specific approval required", "budget": "action-specific approval required", "secretsOrExternalPermissions": "restricted"},
+      "logging": {"adapter": "management-system-telemetry", "payload": "aggregate counters and sanitized evidence references only", "statuses": ["running", "succeeded", "failed", "blocked"]}
+    }
+  ]
+}

@@ -7,6 +7,8 @@ description: Audit I Feel expense, project-income and service-income Google Shee
 
 Own the aggregate read-only finance audit. Use the three canonical spreadsheets and keep each source's freshness independent.
 
+This worker is orchestrated by `ai-accounting-manager` for cross-accounting requests. Its read-only finance boundary remains unchanged when routed through that manager.
+
 ## Workflow
 
 1. Read [references/source-contract.md](references/source-contract.md) before collecting data.
