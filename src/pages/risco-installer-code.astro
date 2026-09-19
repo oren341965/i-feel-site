@@ -1,0 +1,22 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import content from '../page-html/risco-installer-code.html?raw';
+
+const url = 'https://i-feel.co.il/risco-installer-code/';
+const title = 'קוד מתקין RISCO: דרך בטוחה לקבלת תמיכה';
+const description = 'מה ההבדל בין קוד משתמש לקוד מתקין, ואיך מבקשים עזרה בחיבור RISCO לבית חכם בלי לשלוח פרטי גישה. מחלקת השירות של i-feel: 03-508-9553.';
+const jsonLd = JSON.stringify({
+  '@context': 'https://schema.org',
+  '@graph': [
+    { '@type': 'LocalBusiness', '@id': 'https://i-feel.co.il/#business', name: 'i-feel', url: 'https://i-feel.co.il/', telephone: '+972-3-508-9553', address: { '@type': 'PostalAddress', streetAddress: 'אימבר 14', addressLocality: 'פתח תקווה', addressCountry: 'IL' } },
+    { '@type': 'WebPage', '@id': `${url}#page`, url, name: title, description, inLanguage: 'he-IL', isPartOf: { '@id': 'https://i-feel.co.il/#website' } },
+    { '@type': 'BreadcrumbList', itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'דף הבית', item: 'https://i-feel.co.il/' },
+      { '@type': 'ListItem', position: 2, name: 'שירות לקוחות', item: 'https://i-feel.co.il/service-and-maintenance/' },
+      { '@type': 'ListItem', position: 3, name: 'קוד מתקין RISCO', item: url }
+    ] }
+  ]
+});
+const meta = { title: `${title} | i-feel`, description, canonical: url, ogTitle: title, ogDescription: description, ogUrl: url, ogImage: 'https://i-feel.co.il/assets/articles/smart-home-alarm-system.jpg', jsonLd };
+---
+<BaseLayout {...meta}><Fragment set:html={content} /></BaseLayout>
