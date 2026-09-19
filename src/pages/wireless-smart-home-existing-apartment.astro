@@ -3,11 +3,11 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import content from '../page-html/wireless-smart-home-existing-apartment.html?raw';
 
 const meta = {
-  title: "שדרוג בית חכם לדירה קיימת | מערכת אלחוטית בלי שיפוץ | i-feel",
-  description: "שדרוג בית חכם לדירה קיימת — הופכים דירה רגילה לחכמה בלי לפרק קירות: תאורה, תריסים, מיזוג ואבטחה. התקנה מהירה, הרחבה בהדרגה ושירות פנימי. אפיון וטווח תקציב — 03-508-9553.",
+  title: "בית חכם אלחוטי לדירה קיימת | בלי שיפוץ | i-feel",
+  description: "בית חכם אלחוטי לדירה קיימת בישראל: שדרוג תאורה, תריסים, מיזוג ואבטחה בלי לפרק קירות. השוואה מול KNX, הרחבה בהדרגה וטווח תקציב ראשוני.",
   canonical: "https://i-feel.co.il/wireless-smart-home-existing-apartment/",
   ogTitle: "בית חכם אלחוטי לדירה קיימת | בלי שיפוץ | i-feel",
-  ogDescription: "הופכים דירה קיימת לחכמה בלי לפרק קירות. תאורה, תריסים, מיזוג ואבטחה לשליטה אחת. התקנה מהירה והרחבה בהדרגה.",
+  ogDescription: "הופכים דירה קיימת לחכמה בלי לפרק קירות: תאורה, תריסים, מיזוג ואבטחה בשליטה אחת, עם אפשרות להרחיב בהדרגה.",
   ogUrl: "https://i-feel.co.il/wireless-smart-home-existing-apartment/",
   ogImage: "https://i-feel.co.il/assets/og-cover.jpg",
   jsonLd: JSON.stringify({
@@ -29,6 +29,18 @@ const meta = {
         "sameAs": ["https://www.facebook.com/SmarthomeIsrael", "https://www.instagram.com/ifeelisrael", "https://www.linkedin.com/company/i-feel-smart-home-systems"]
       },
       {
+        "@type": "WebPage",
+        "@id": "https://i-feel.co.il/wireless-smart-home-existing-apartment/#webpage",
+        "url": "https://i-feel.co.il/wireless-smart-home-existing-apartment/",
+        "name": "בית חכם אלחוטי לדירה קיימת | בלי שיפוץ | i-feel",
+        "description": "מדריך ופתרון לבית חכם אלחוטי בדירה קיימת בישראל, כולל תאורה, תריסים, מיזוג, אבטחה, השוואה ל-KNX והרחבה בהדרגה.",
+        "inLanguage": "he-IL",
+        "dateModified": "2026-09-19",
+        "about": { "@id": "https://i-feel.co.il/wireless-smart-home-existing-apartment/#service" },
+        "mainEntity": { "@id": "https://i-feel.co.il/wireless-smart-home-existing-apartment/#service" },
+        "keywords": "בית חכם אלחוטי לדירה קיימת, בית חכם לדירה קיימת, דירה חכמה בלי שיפוץ, שדרוג בית חכם"
+      },
+      {
         "@type": "BreadcrumbList",
         "itemListElement": [
           { "@type": "ListItem", "position": 1, "name": "דף הבית", "item": "https://i-feel.co.il/" },
@@ -38,11 +50,13 @@ const meta = {
       },
       {
         "@type": "Service",
+        "@id": "https://i-feel.co.il/wireless-smart-home-existing-apartment/#service",
         "name": "בית חכם אלחוטי לדירה קיימת",
         "serviceType": "Wireless Smart Home Retrofit",
         "provider": { "@id": "https://i-feel.co.il/#business" },
         "areaServed": { "@type": "Country", "name": "Israel" },
-        "description": "התקנת מערכת בית חכם אלחוטית בדירה קיימת בלי שיפוץ — תאורה, תריסים, מיזוג ואבטחה."
+        "audience": { "@type": "PeopleAudience", "audienceType": "בעלי ושוכרי דירות קיימות בישראל" },
+        "description": "התקנת מערכת בית חכם אלחוטית בדירה קיימת בלי שיפוץ, עם שליטה בתאורה, תריסים, מיזוג ואבטחה והרחבה הדרגתית."
       }
     ]
   })
