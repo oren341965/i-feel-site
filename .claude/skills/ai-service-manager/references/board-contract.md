@@ -1,6 +1,6 @@
 # Service board contract
 
-Verified against Monday on 2026-08-20. Re-read live metadata on every run.
+Verified against Monday on 2026-09-16. Re-read live metadata on every run.
 
 ## Identity
 
@@ -49,6 +49,7 @@ Subitem `Stuck` is a critical override. Subitem `הסתיים` is done. Preserve
 The main status `8. הסתיים` is explicitly done. Treat these terminal labels separately:
 
 - `הסתיים - יש לקחת תשלום`: operational work finished, commercial follow-up still open as a separate flag.
+- `לקוח לא שילם עבור התיקון`: operational work finished, unpaid repair remains open as a commercial follow-up flag.
 - `הסתיים-חוסר תגובה`: closed due to no response; report separately from resolved service.
 - `בוטל`: cancelled.
 
