@@ -3,11 +3,11 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import content from '../page-html/bms-offices.html?raw';
 
 const meta = {
-  title: "מערכת BMS למשרדים | בקרת מבנה למגדלי משרדים | i-feel",
-  description: "מערכת BMS למשרדים ולמגדלים: ניהול מרכזי של מיזוג, תאורה ואנרגיה, חיסכון בעלויות והתראות תקלות. תכנון, התקנה ושירות. אפיון והערכת חיסכון — 03-508-9553.",
+  title: "BMS למשרדים בישראל | בקרת מבנה למגדלי משרדים | i-feel",
+  description: "BMS למשרדים בישראל: ניהול מרכזי של מיזוג, תאורה ואנרגיה במשרדים ובמגדלים, עם Siemens Desigo, DDC, KNX ו-BACnet. תכנון, התקנה ושירות של i-feel.",
   canonical: "https://i-feel.co.il/bms-offices/",
-  ogTitle: "מערכת BMS למשרדים | בקרת מבנה | i-feel",
-  ogDescription: "ניהול מרכזי של מיזוג, תאורה ואנרגיה למשרדים ולמגדלים, חיסכון בעלויות והתראות תקלות.",
+  ogTitle: "BMS למשרדים בישראל | בקרת מבנה | i-feel",
+  ogDescription: "מערכת BMS למשרדים ולמגדלים בישראל לניהול מיזוג, תאורה, אנרגיה והתראות ממערכת מרכזית אחת.",
   ogUrl: "https://i-feel.co.il/bms-offices/",
   ogImage: "https://i-feel.co.il/assets/office-bms.jpeg",
   jsonLd: JSON.stringify({
@@ -37,13 +37,59 @@ const meta = {
         ]
       },
       {
+        "@type": "WebPage",
+        "@id": "https://i-feel.co.il/bms-offices/#webpage",
+        "url": "https://i-feel.co.il/bms-offices/",
+        "name": "BMS למשרדים בישראל",
+        "description": "מדריך ושירות להקמת מערכת בקרת מבנה BMS במשרדים ובמגדלי משרדים בישראל, כולל מיזוג, תאורה, אנרגיה, התראות ואינטגרציה.",
+        "inLanguage": "he-IL",
+        "dateModified": "2026-09-18",
+        "about": { "@id": "https://i-feel.co.il/bms-offices/#service" },
+        "mainEntity": { "@id": "https://i-feel.co.il/bms-offices/#service" },
+        "mentions": [
+          { "@type": "Thing", "name": "Siemens Desigo", "url": "https://i-feel.co.il/siemens-desigo-bms/" },
+          { "@type": "Thing", "name": "DDC" },
+          { "@type": "Thing", "name": "KNX", "url": "https://i-feel.co.il/knx-smart-home/" },
+          { "@type": "Thing", "name": "BACnet" },
+          { "@type": "Thing", "name": "DALI", "url": "https://i-feel.co.il/structure-control/dali-lighting-control/" }
+        ]
+      },
+      {
         "@type": "Service",
-        "name": "מערכת BMS למשרדים",
+        "@id": "https://i-feel.co.il/bms-offices/#service",
+        "name": "מערכת BMS למשרדים בישראל",
         "url": "https://i-feel.co.il/bms-offices/",
         "serviceType": "Building Management System for Offices",
         "provider": { "@id": "https://i-feel.co.il/#business" },
         "areaServed": { "@type": "Country", "name": "Israel" },
-        "description": "תכנון, התקנה ושירות למערכות בקרת מבנה למשרדים ומגדלים — מיזוג, תאורה, אנרגיה והתראות תקלות."
+        "audience": { "@type": "BusinessAudience", "audienceType": "משרדים, מגדלי משרדים ומתחמי עבודה" },
+        "description": "תכנון, התקנה ושירות למערכות בקרת מבנה BMS למשרדים ומגדלים בישראל, כולל מיזוג, תאורה, אנרגיה, התראות ואינטגרציה למערכות מבנה."
+      },
+      {
+        "@type": "FAQPage",
+        "@id": "https://i-feel.co.il/bms-offices/#faq",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "מה ההבדל בין BMS למשרד לבית חכם?",
+            "acceptedAnswer": { "@type": "Answer", "text": "בית חכם פונה למגורים ולחוויית המשתמש; BMS למשרד מתמקד בניהול תפעולי ואנרגטי מרכזי של כל הבניין ממסך אחד." }
+          },
+          {
+            "@type": "Question",
+            "name": "כמה חוסך BMS במשרד?",
+            "acceptedAnswer": { "@type": "Answer", "text": "החיסכון תלוי בגודל המבנה, בציוד הקיים, בשעות הפעילות, במצב התחזוקה ובלוגיקת הבקרה. ניתן להעריך אותו רק לאחר סקר ואפיון של המבנה." }
+          },
+          {
+            "@type": "Question",
+            "name": "אפשר להוסיף BMS למשרד קיים?",
+            "acceptedAnswer": { "@type": "Answer", "text": "כן. ניתן לבצע retrofit למשרד קיים, כאשר היקף השדרוג נקבע לפי התשתית, הבקרים והציוד שכבר מותקנים במבנה." }
+          },
+          {
+            "@type": "Question",
+            "name": "אילו מערכות אפשר לאחד ב-BMS למשרד?",
+            "acceptedAnswer": { "@type": "Answer", "text": "ניתן לאחד מיזוג, תאורה, חשמל, ניטור אנרגיה והתראות, ובפרויקטים מתאימים גם מערכות נוספות, לפלטפורמת ניהול מרכזית אחת." }
+          }
+        ]
       }
     ]
   })
