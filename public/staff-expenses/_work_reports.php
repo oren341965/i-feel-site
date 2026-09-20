@@ -252,7 +252,8 @@ function portal_work_report_stats(array $reports): array
 {
     $stats = [];
     foreach ($reports as $report) {
-        $email = portal_normalize_company_email((string) ($report['employee']['email'] ?? '')) ?? 'unknown';
+        $rawEmail = strtolower(trim((string) ($report['employee']['email'] ?? '')));
+        $email = filter_var($rawEmail, FILTER_VALIDATE_EMAIL) !== false ? $rawEmail : 'unknown';
         $name = trim((string) ($report['employee']['name'] ?? $email));
         $stats[$email] ??= [
             'name' => $name,
