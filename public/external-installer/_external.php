@@ -58,6 +58,8 @@ function external_installer_allowlist(): array
         $normalized[$email] = [
             'email' => $email,
             'name' => trim((string) ($entry['name'] ?? $email)),
+            'phone' => trim((string) ($entry['phone'] ?? '')),
+            'company' => trim((string) ($entry['company'] ?? '')),
             'active' => true,
         ];
     }
@@ -131,10 +133,12 @@ function external_profile_path(string $email): string
 function external_profile(string $email): array
 {
     $record = portal_json_read(external_profile_path($email));
+    $allow = external_installer_allowlist()[$email] ?? [];
     return [
         'email' => $email,
-        'name' => trim((string) ($record['name'] ?? '')),
-        'phone' => trim((string) ($record['phone'] ?? '')),
+        'name' => trim((string) ($record['name'] ?? $allow['name'] ?? '')),
+        'phone' => trim((string) ($record['phone'] ?? $allow['phone'] ?? '')),
+        'company' => trim((string) ($record['company'] ?? $allow['company'] ?? '')),
     ];
 }
 
@@ -152,6 +156,7 @@ function external_save_profile(string $email, string $name, string $phone): arra
         'email' => $email,
         'name' => portal_substr($name, 0, 120),
         'phone' => portal_substr($phone, 0, 30),
+        'company' => trim((string) ((external_installer_allowlist()[$email]['company'] ?? ''))),
         'updated_at' => gmdate('c'),
     ];
     portal_json_write(external_profile_path($email), $profile);
