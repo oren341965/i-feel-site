@@ -59,3 +59,27 @@ test('external work reports reuse protected work-report storage and internal rec
   assert.match(external, /kiril@/);
   assert.match(external, /kind' => 'external_installer'/);
 });
+
+
+test('work order exposes fixed installation subtasks with live progress', () => {
+  assert.match(external, /'cabling' => 'התקנת כבילה'/);
+  assert.match(external, /'alarm' => 'התקנת מערכת אזעקה'/);
+  assert.match(external, /'cameras' => 'התקנת מצלמות'/);
+  assert.match(external, /'intercom' => 'התקנת אינטרקום'/);
+  assert.match(external, /'network' => 'התקנת רשת תקשורת'/);
+  assert.match(external, /external_work_order/);
+  assert.match(external, /save_external_subtask/);
+  assert.match(index, /save_external_subtask/);
+  assert.match(external, /טרם התחיל/);
+  assert.match(external, /בביצוע/);
+  assert.match(external, /הושלם/);
+  assert.match(external, /חסום/);
+});
+
+test('cabling completion notifies Cheyne once and records idempotent evidence', () => {
+  assert.match(external, /external_notify_cabling_completed/);
+  assert.match(external, /cheyne@/);
+  assert.match(external, /cabling_completed_at/);
+  assert.match(external, /previousStatus !== 'completed'/);
+  assert.match(external, /סיום התקנת הכבילה שולח לשיין עדכון אוטומטי פעם אחת בלבד/);
+});
