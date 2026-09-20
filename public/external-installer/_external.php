@@ -1039,7 +1039,7 @@ function external_report_body(array $report): string
         'I Feel',
     ]);
     return implode("\r\n", $lines);
-
+}
 
 function external_submit_work_report(array $installer, array $grant): array
 {
