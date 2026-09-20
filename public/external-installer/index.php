@@ -12,7 +12,7 @@ require_once dirname(__DIR__) . '/staff-expenses/_notifications.php';
 require_once dirname(__DIR__) . '/staff-expenses/_work_reports.php';
 require_once __DIR__ . '/_external.php';
 
-function external_render_message(string $title, string $message, bool $success = true): never
+function external_render_message(string $title, string $message, bool $success = true): void
 {
     external_page_start($title);
     ?>
