@@ -23,17 +23,21 @@ test('service dispatch reconciles Monday and schedule in both directions before 
   assert.match(skill, /After any reconciliation write, re-read both systems/);
 });
 
-test('external technicians use verified completion form without fake Monday users', async () => {
+test('external technicians use protected customer-approved portal without fake Monday users', async () => {
   const skill = await readFile(skillUrl, 'utf8');
   assert.match(skill, /גקי סליבה \/ Jacky Saliba/);
   assert.match(skill, /אחמד גיאר \/ Ahmad Giar/);
   assert.match(skill, /Do not create a fake Monday user/);
-  assert.match(skill, /MISSING_EXTERNAL_TECH_COMPLETION_FORM_URL/);
-  assert.match(skill, /Do not use an old iForms URL/);
+  assert.match(skill, /https:\/\/i-feel\.co\.il\/external-installer\//);
+  assert.match(skill, /legacy Jotform/);
+  assert.match(skill, /WAITING_FOR_EXTERNAL_CUSTOMER_APPROVAL/);
+  assert.match(skill, /EXTERNAL_INSTALLER_PORTAL_UNAVAILABLE/);
+  assert.match(skill, /WAITING_FOR_EXTERNAL_TECH_REPORT/);
+  assert.match(skill, /Oren, Cheyne or Support/);
   assert.match(skill, /oren@i-feel\.co\.il/);
   assert.match(skill, /cheyne@i-feel\.co\.il/);
   assert.match(skill, /kiril@i-feel\.co\.il/);
-  assert.match(skill, /WAITING_FOR_EXTERNAL_TECH_COMPLETION_FORM/);
+  assert.match(skill, /Never commit them to Git/);
 });
 
 test('monthly dispatch is preview-gated and Jev is advisory only', async () => {
