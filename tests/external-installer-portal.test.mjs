@@ -83,3 +83,10 @@ test('cabling completion notifies Cheyne once and records idempotent evidence', 
   assert.match(external, /previousStatus !== 'completed'/);
   assert.match(external, /סיום התקנת הכבילה שולח לשיין עדכון אוטומטי פעם אחת בלבד/);
 });
+
+
+test('installer profile auto-fills from private allowlist metadata', () => {
+  assert.match(external, /'phone' => trim\(\(string\) \(\$entry\['phone'\]/);
+  assert.match(external, /'company' => trim\(\(string\) \(\$entry\['company'\]/);
+  assert.match(external, /\$allow = external_installer_allowlist\(\)\[\$email\]/);
+});
