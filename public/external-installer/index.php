@@ -174,6 +174,30 @@ try {
             }
         }
 
+        if ($action === 'save_external_subtask') {
+            $installer = external_installer_user();
+            if ($installer === null) {
+                external_render_installer_login('יש להתחבר מחדש.');
+            }
+            $grant = external_active_grant($installer);
+            if ($grant === null) {
+                external_render_customer_search($installer, 'אישור הגישה ללקוח פג. יש לבקש אישור חדש.');
+            }
+            try {
+                external_update_subtask(
+                    $installer,
+                    $grant,
+                    portal_post('subtask_key', 40),
+                    portal_post('subtask_status', 40),
+                    portal_post('actual_quantity', 80),
+                    portal_post('subtask_notes', 1500)
+                );
+                external_render_approved_customer($installer, $grant, 'ההתקדמות נשמרה.');
+            } catch (Throwable $error) {
+                external_render_approved_customer($installer, $grant, $error->getMessage());
+            }
+        }
+
         if ($action === 'submit_external_work_report') {
             $installer = external_installer_user();
             if ($installer === null) {
