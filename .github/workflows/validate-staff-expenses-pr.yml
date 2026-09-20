@@ -4,7 +4,9 @@ on:
   pull_request:
     paths:
       - 'public/staff-expenses/**'
+      - 'public/external-installer/**'
       - 'tests/staff-expenses/**'
+      - 'tests/external-installer-portal.test.mjs'
       - '.github/workflows/validate-staff-expenses-pr.yml'
 
 permissions:
@@ -19,13 +21,20 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
       - name: Setup production-compatible PHP
         uses: shivammathur/setup-php@v2
         with:
           php-version: '7.4'
           coverage: none
 
-      - name: Lint and test staff expenses portal
+      - name: Lint and test staff expenses and external installer portals
         run: |
           find public/staff-expenses -maxdepth 1 -type f -name '*.php' -print0 | xargs -0 -n1 php -l
+          find public/external-installer -maxdepth 1 -type f -name '*.php' -print0 | xargs -0 -n1 php -l
           php -d upload_max_filesize=12M -d post_max_size=64M -d max_file_uploads=20 tests/staff-expenses/portal-unit.php
+          node --test tests/external-installer-portal.test.mjs
