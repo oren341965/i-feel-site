@@ -98,6 +98,24 @@ All installer profiles, access requests, grant tokens, audit data, uploaded phot
 
 Tokens are stored by hash-derived filenames. Approval and grant tokens are removed when used or decided.
 
+## Live work order and subtasks
+
+After a customer is approved, the installer works inside a persistent work-order view rather than a one-time completion form.
+
+The initial fixed subtasks are:
+
+- התקנת כבילה
+- התקנת מערכת אזעקה
+- התקנת מצלמות
+- התקנת אינטרקום
+- התקנת רשת תקשורת
+
+Each subtask stores a status (`not_started`, `in_progress`, `completed`, or `blocked`), actual quantity/execution text, notes and the last update time. The installer can save progress repeatedly during the work and later continue from the stored state after re-authentication and a valid customer grant.
+
+When the cabling subtask changes to `completed`, the portal sends a one-time email update to Cheyne and records an idempotent notification marker so repeated saves do not send duplicate completion messages.
+
+The final work report includes the overall work-order status and a snapshot of all subtask statuses, actual quantities and notes.
+
 ## Production acceptance
 
 Before enabling the URL for installers:
