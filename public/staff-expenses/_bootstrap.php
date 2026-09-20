@@ -90,7 +90,7 @@ ini_set('session.cookie_samesite', 'Strict');
 session_name(IFEEL_PORTAL_SESSION);
 session_set_cookie_params([
     'lifetime' => 0,
-    'path' => '/staff-expenses/',
+    'path' => IFEEL_PORTAL_SESSION_COOKIE_PATH,
     'secure' => portal_cookie_secure(),
     'httponly' => true,
     'samesite' => 'Strict',
