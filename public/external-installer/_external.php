@@ -937,7 +937,7 @@ function external_page_end(): void
 <?php
 }
 
-function external_render_installer_login(?string $error = null): never
+function external_render_installer_login(?string $error = null): void
 {
     external_page_start('אזור מתקין חיצוני');
     ?>
@@ -960,7 +960,7 @@ function external_render_installer_login(?string $error = null): never
     exit;
 }
 
-function external_render_code(string $purpose, ?string $error = null): never
+function external_render_code(string $purpose, ?string $error = null): void
 {
     external_page_start($purpose === 'approver' ? 'אישור גישת מתקין' : 'אימות מתקין');
     ?>
@@ -981,7 +981,7 @@ function external_render_code(string $purpose, ?string $error = null): never
     exit;
 }
 
-function external_render_profile(array $installer, ?string $error = null): never
+function external_render_profile(array $installer, ?string $error = null): void
 {
     $profile = external_profile((string) $installer['email']);
     external_page_start('פרטי מתקין');
@@ -1004,7 +1004,7 @@ function external_render_profile(array $installer, ?string $error = null): never
     exit;
 }
 
-function external_render_customer_search(array $installer, ?string $error = null, array $results = []): never
+function external_render_customer_search(array $installer, ?string $error = null, array $results = []): void
 {
     $profile = external_profile((string) $installer['email']);
     $lastRequest = isset($_SESSION['external_last_request_id']) ? external_load_request((string) $_SESSION['external_last_request_id']) : [];
@@ -1052,7 +1052,7 @@ function external_render_customer_search(array $installer, ?string $error = null
     exit;
 }
 
-function external_render_approved_customer(array $installer, array $grant, ?string $error = null): never
+function external_render_approved_customer(array $installer, array $grant, ?string $error = null): void
 {
     $customer = external_fetch_customer((string) $grant['board_id'], (string) $grant['item_id']);
     $profile = external_profile((string) $installer['email']);
@@ -1092,7 +1092,7 @@ function external_render_approved_customer(array $installer, array $grant, ?stri
     exit;
 }
 
-function external_render_approval_login(string $token, ?string $error = null): never
+function external_render_approval_login(string $token, ?string $error = null): void
 {
     $request = external_request_from_approval_token($token);
     external_page_start('אישור גישת מתקין');
@@ -1116,7 +1116,7 @@ function external_render_approval_login(string $token, ?string $error = null): n
     exit;
 }
 
-function external_render_approval_decision(string $token, string $approverEmail, ?string $error = null): never
+function external_render_approval_decision(string $token, string $approverEmail, ?string $error = null): void
 {
     $request = external_request_from_approval_token($token);
     external_page_start('החלטה על גישת מתקין');
