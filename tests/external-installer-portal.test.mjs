@@ -88,7 +88,7 @@ test('cabling completion notifies Cheyne once and records idempotent evidence', 
 test('installer profile auto-fills from private allowlist metadata', () => {
   assert.match(external, /'phone' => trim\(\(string\) \(\$entry\['phone'\]/);
   assert.match(external, /'company' => trim\(\(string\) \(\$entry\['company'\]/);
-  assert.match(external, /\$allow = external_installer_allowlist\(\)\[\$email\]/);
+  assert.match(external, /\$allow = external_installer_record\(\$email\)/);
 });
 
 
