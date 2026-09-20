@@ -51,3 +51,11 @@ test('monthly dispatch is preview-gated and Jev is advisory only', async () => {
   assert.match(skill, /Noul/);
   assert.match(skill, /A Jev result alone can never trigger an email/);
 });
+
+
+test('external installer workflow tracks live subtasks and cabling handoff', async () => {
+  const skill = await readFile(skillUrl, 'utf8');
+  assert.match(skill, /live work-order view/);
+  assert.match(skill, /cabling, alarm system, cameras, intercom, and data network/);
+  assert.match(skill, /send Cheyne one idempotent completion update/);
+});
