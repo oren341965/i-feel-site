@@ -3,6 +3,11 @@ declare(strict_types=1);
 
 const EXTERNAL_INSTALLER_SERVICE_BOARD_ID = '3011387201';
 const EXTERNAL_INSTALLER_PROJECT_BOARD_ID = '3249720207';
+const EXTERNAL_INSTALLER_DIRECTORY_BOARD_ID = '18431928427';
+const EXTERNAL_INSTALLER_DIRECTORY_EMAIL_COLUMN = 'email_mm7cnsba';
+const EXTERNAL_INSTALLER_DIRECTORY_PHONE_COLUMN = 'phone_mm7cg6d2';
+const EXTERNAL_INSTALLER_DIRECTORY_COMPANY_COLUMN = 'text_mm7c7avc';
+const EXTERNAL_INSTALLER_DIRECTORY_STATUS_COLUMN = 'color_mm7ctgxw';
 const EXTERNAL_INSTALLER_OTP_TTL = 600;
 const EXTERNAL_INSTALLER_OTP_MAX_ATTEMPTS = 5;
 const EXTERNAL_INSTALLER_OTP_RESEND_SECONDS = 60;
@@ -64,6 +69,61 @@ function external_installer_allowlist(): array
         ];
     }
     return $normalized;
+}
+
+function external_installer_record(string $email): ?array
+{
+    $email = external_normalize_email($email);
+    if ($email === null) {
+        return null;
+    }
+
+    $configured = external_installer_allowlist();
+    if (isset($configured[$email])) {
+        return $configured[$email];
+    }
+
+    static $directory = null;
+    if ($directory === null) {
+        $directory = [];
+        try {
+            $query = 'query ExternalInstallers($boardIds: [ID!]) { boards(ids: $boardIds) { items_page(limit: 100) { items { id name column_values(ids: ["'
+                . EXTERNAL_INSTALLER_DIRECTORY_EMAIL_COLUMN . '","'
+                . EXTERNAL_INSTALLER_DIRECTORY_PHONE_COLUMN . '","'
+                . EXTERNAL_INSTALLER_DIRECTORY_COMPANY_COLUMN . '","'
+                . EXTERNAL_INSTALLER_DIRECTORY_STATUS_COLUMN
+                . '"]) { id text } } } } }';
+            $response = external_monday_request($query, ['boardIds' => [EXTERNAL_INSTALLER_DIRECTORY_BOARD_ID]]);
+            foreach (($response['data']['boards'][0]['items_page']['items'] ?? []) as $item) {
+                if (!is_array($item)) {
+                    continue;
+                }
+                $values = [];
+                foreach (($item['column_values'] ?? []) as $column) {
+                    if (is_array($column)) {
+                        $values[(string) ($column['id'] ?? '')] = trim((string) ($column['text'] ?? ''));
+                    }
+                }
+                $candidate = external_normalize_email((string) ($values[EXTERNAL_INSTALLER_DIRECTORY_EMAIL_COLUMN] ?? ''));
+                $status = (string) ($values[EXTERNAL_INSTALLER_DIRECTORY_STATUS_COLUMN] ?? '');
+                if ($candidate === null || $status !== 'פעיל') {
+                    continue;
+                }
+                $directory[$candidate] = [
+                    'email' => $candidate,
+                    'name' => trim((string) ($item['name'] ?? $candidate)),
+                    'phone' => trim((string) ($values[EXTERNAL_INSTALLER_DIRECTORY_PHONE_COLUMN] ?? '')),
+                    'company' => trim((string) ($values[EXTERNAL_INSTALLER_DIRECTORY_COMPANY_COLUMN] ?? '')),
+                    'active' => true,
+                    'source' => 'monday-directory',
+                ];
+            }
+        } catch (Throwable $error) {
+            error_log('[i-feel external installer] directory_lookup_failed');
+        }
+    }
+
+    return $directory[$email] ?? null;
 }
 
 function external_approver_emails(): array
@@ -133,7 +193,7 @@ function external_profile_path(string $email): string
 function external_profile(string $email): array
 {
     $record = portal_json_read(external_profile_path($email));
-    $allow = external_installer_allowlist()[$email] ?? [];
+    $allow = external_installer_record($email) ?? [];
     return [
         'email' => $email,
         'name' => trim((string) ($record['name'] ?? $allow['name'] ?? '')),
@@ -156,7 +216,7 @@ function external_save_profile(string $email, string $name, string $phone): arra
         'email' => $email,
         'name' => portal_substr($name, 0, 120),
         'phone' => portal_substr($phone, 0, 30),
-        'company' => trim((string) ((external_installer_allowlist()[$email]['company'] ?? ''))),
+        'company' => trim((string) ((external_installer_record($email)['company'] ?? ''))),
         'updated_at' => gmdate('c'),
     ];
     portal_json_write(external_profile_path($email), $profile);
@@ -170,7 +230,7 @@ function external_installer_user(): ?array
         return null;
     }
     $email = external_normalize_email((string) ($user['email'] ?? ''));
-    if ($email === null || !isset(external_installer_allowlist()[$email])) {
+    if ($email === null || external_installer_record($email) === null) {
         unset($_SESSION['external_installer_user'], $_SESSION['external_customer_grant']);
         return null;
     }
@@ -240,7 +300,7 @@ function external_request_otp(string $input, string $purpose, ?string $requestId
     }
 
     if ($purpose === 'installer') {
-        if (!isset(external_installer_allowlist()[$email])) {
+        if (external_installer_record($email) === null) {
             usleep(random_int(200000, 500000));
             throw new RuntimeException('כתובת הדוא"ל אינה מורשית באזור המתקינים החיצוניים.');
         }
@@ -328,7 +388,7 @@ function external_verify_otp(string $code, string $purpose): array
     session_regenerate_id(true);
 
     if ($purpose === 'installer') {
-        $allow = external_installer_allowlist()[$email] ?? null;
+        $allow = external_installer_record($email);
         if (!is_array($allow)) {
             throw new RuntimeException('הגישה לכתובת זו אינה פעילה.');
         }
@@ -791,7 +851,7 @@ function external_public_url(array $params = []): string
 function external_create_access_request(array $user, string $boardId, string $itemId): array
 {
     $email = external_normalize_email((string) ($user['email'] ?? ''));
-    if ($email === null || !isset(external_installer_allowlist()[$email])) {
+    if ($email === null || external_installer_record($email) === null) {
         throw new RuntimeException('המתקין אינו מזוהה.');
     }
 
