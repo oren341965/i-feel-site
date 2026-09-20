@@ -14,6 +14,11 @@ Coordinate one service visit as a single cross-system transaction. A visit is no
 - Assigned technician's own Google Calendar. Do not confuse it with the `לו"ז` Sheet.
 - The authenticated I Feel Gmail account.
 
+The field visit belongs to the assigned technician, not to Oren. Unless Oren explicitly says
+that he is participating, never create or retain the visit in Oren's primary calendar. An event
+organized from Oren's calendar with the technician merely added as a guest does not satisfy the
+technician-calendar requirement.
+
 Resolve every recipient before sending. For a known technician, verify the exact work address from recent I Feel evidence. Do not guess from a first name.
 
 ## Preflight
@@ -23,6 +28,10 @@ Resolve every recipient before sending. For a known technician, verify the exact
 3. Confirm that the customer accepted the visit time from direct email or another explicit source. Keep an unconfirmed proposal visibly marked `לתיאום בלבד`; do not present it as confirmed.
 4. Search Monday in this order: service-call number, customer name, then phone. Update the existing item when found. Do not create a duplicate item for a form-originated call.
 5. Check the technician's calendar for conflicts and duplicates in the exact date window.
+6. Establish one shared identity for the visit: the existing Monday item ID/link and service-call
+   number when available. Carry that identity into the `לו"ז` block, technician calendar event,
+   technician email, customer email, and the Monday operational update so the records can be
+   traced back to one another.
 
 ## Dispatch transaction
 
@@ -36,12 +45,14 @@ Complete all applicable steps before reporting success:
    - Add a short operational update recording the confirmation source and completed dispatch surfaces. Never put credentials or passwords in an open update.
 2. **Google Sheet `לו"ז`**
    - Resolve the exact month tab, service date row, and assigned technician column from live metadata and headers.
-   - Enter one complete block containing time window, customer name, phone, full address, optional apartment number when relevant, fault, equipment/pickup instructions, and confirmation state.
+   - Enter one complete block containing time window, customer name, phone, full address, optional apartment number when relevant, fault, equipment/pickup instructions, confirmation state, and Monday item link or service-call number.
    - Preserve the existing layout and formatting. Never write only a name and time when more details are available.
 3. **Technician Google Calendar**
-   - Create or update one event in the technician's own calendar for the exact visit window.
+   - Create or update one event directly in the technician's own calendar for the exact visit window. Use the technician's verified work calendar ID as `calendar_id`; verify that the returned organizer/calendar owner is the technician.
+   - Do not use Oren's primary calendar as a staging calendar and do not leave Oren as organizer, attendee, or calendar owner unless Oren explicitly participates in that visit.
    - Include customer name, phone, full address, optional apartment number when relevant, fault, equipment/pickup instructions, service-call number, and Monday link.
    - Search first and update the matching event instead of creating a duplicate.
+   - If a matching event was mistakenly created in Oren's calendar, first create and re-read the event in the technician's calendar. Only after that succeeds, remove the wrong Oren-calendar event when the user's instruction authorizes the correction.
 4. **Technician email**
    - Send directly to the verified technician address.
    - Include date, time window, customer name, phone, full address, optional apartment number when relevant, fault, equipment/pickup instructions, service-call number, and Monday link.
@@ -62,7 +73,7 @@ After every write, re-read the exact record. Report `הושלם` only when all f
 | --- | --- |
 | Monday | Existing item ID, correct group, status, date, hour, technician, and customer/service details |
 | `לו"ז` Sheet | Exact month tab and technician cell contain the complete visit block |
-| Technician Calendar | Exact event ID, calendar owner, time window, phone, full address, fault, and apartment number only when relevant |
+| Technician Calendar | Exact event ID, technician is calendar owner/organizer, Oren is absent unless explicitly participating, time window, phone, full address, fault, Monday link/service-call number, and apartment number only when relevant |
 | Technician email | Sent-message ID addressed directly to the verified technician |
 | Customer email | Sent-message ID addressed directly to the verified customer |
 
@@ -73,6 +84,7 @@ For several visits, run the full gate independently for each customer and return
 ## Safety and consistency
 
 - Monday remains the operational source of truth; do not add or restructure board columns.
+- `לו"ז`, Monday, and the technician calendar must point to the same visit through the Monday item link or service-call number. A matching name and date alone is not sufficient linkage.
 - Preserve conflicts between sources and ask Oren when the difference changes the technician, date, time, customer, or address.
 - Do not overwrite another employee's `לו"ז` cell or unrelated text.
 - Do not delete or cancel items, events, or messages as part of normal coordination.
