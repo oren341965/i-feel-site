@@ -85,13 +85,17 @@ Apply these rules only after matching the technician to the approved identity us
 2. Keep the customer/service call itself in Monday. When the board cannot store the external technician in its employee column, preserve the external technician name in the appropriate operational update or existing free-text technician field without restructuring the board.
 3. Use the exact external-technician column in the `לו"ז` Sheet when one exists. If it cannot be resolved unambiguously, return `EXTERNAL_TECH_SCHEDULE_COLUMN_MISSING` rather than writing into another technician's column.
 4. Send the technician the normal dispatch email with all service details.
-5. At the end of an installation performed by Jacky Saliba or Ahmad Giar, send the current verified Google Apps Script completion-form link to that technician and request completion before the installation is closed.
-6. The form URL must come from the approved current configuration or other verified current I Feel evidence. If it is missing, return `MISSING_EXTERNAL_TECH_COMPLETION_FORM_URL`. Do not use an old iForms URL, search-engine result, guessed URL, or stale email link.
-7. The completion result must be delivered to and verifiably include all three internal recipients:
+5. The canonical completion path is the protected I Feel external-installer portal at `https://i-feel.co.il/external-installer/` after that portal has been merged, deployed, configured and live-verified. Do not send the legacy Jotform, old iForms, SuperForm, Google Apps Script or another public form as the normal completion path.
+6. The external installer must authenticate through the server-side allowlist and a one-time code sent to the verified installer email. The external installer must never receive access to the employee portal, employee data, vehicles, expenses, tenant handovers, supervision or admin pages.
+7. Before customer approval, the external portal may expose only a minimal customer/project search result. The installer must request access to the exact customer. The approval request must be handled by an authenticated authorized I Feel approver: Oren, Cheyne or Support. A forwarded approval link without internal email verification is not sufficient.
+8. Customer access must be bound to the verified installer email and exact Monday board/item identity, be time-limited, and expose only the operational details required for the approved visit. If access is still pending, return `WAITING_FOR_EXTERNAL_CUSTOMER_APPROVAL`. If the portal is unavailable or not live-verified, return `EXTERNAL_INSTALLER_PORTAL_UNAVAILABLE`.
+9. At the end of the approved installation or service visit, the external installer must submit the protected work report, including at least one completion photo/document. The report must identify the approved customer server-side; client-editable board/item values are not sufficient evidence.
+10. The completion result must be delivered to and verifiably include all three internal recipients:
    - Oren Levy: `oren@i-feel.co.il`
    - Cheyne Evans: `cheyne@i-feel.co.il`
    - Kiril Bannikh: `kiril@i-feel.co.il`
-8. Do not mark an external installation complete until the form submission or completion receipt is verified and all three required internal recipients are present. If the form was requested but the result is not yet verified, return `WAITING_FOR_EXTERNAL_TECH_COMPLETION_FORM`.
+11. Do not mark an external visit complete until the protected report submission is verified and all applicable internal notifications were attempted. If customer access was approved but the report is not yet submitted, return `WAITING_FOR_EXTERNAL_TECH_REPORT`.
+12. Personal external-installer email addresses belong only in the server-side allowlist or other protected operational records. Never commit them to Git, public site assets, skill text, test fixtures or shared logs.
 
 ## Cloud-service credentials
 
