@@ -90,3 +90,12 @@ test('installer profile auto-fills from private allowlist metadata', () => {
   assert.match(external, /'company' => trim\(\(string\) \(\$entry\['company'\]/);
   assert.match(external, /\$allow = external_installer_allowlist\(\)\[\$email\]/);
 });
+
+
+test('installer identities may be resolved from private Monday directory without committing PII', () => {
+  assert.match(external, /EXTERNAL_INSTALLER_DIRECTORY_BOARD_ID = '18431928427'/);
+  assert.match(external, /function external_installer_record/);
+  assert.match(external, /source' => 'monday-directory'/);
+  assert.doesNotMatch(external, /Ahmadjayyar@gmail\.com/i);
+  assert.doesNotMatch(external, /sentinal2@gmail\.com/i);
+});
