@@ -994,10 +994,13 @@ function external_active_grant(array $installer): ?array
 function external_report_body(array $report): string
 {
     $employee = is_array($report['employee'] ?? null) ? $report['employee'] : [];
-    return implode("\r\n", [
+    $workOrder = is_array($report['work_order'] ?? null) ? $report['work_order'] : [];
+    $lines = [
         'נשמר דיווח עבודה ממתקין חיצוני מאושר.',
         '',
         'מספר דיווח: ' . (string) ($report['id'] ?? ''),
+        'הזמנת עבודה: ' . ((string) ($workOrder['work_order_number'] ?? '') !== '' ? (string) $workOrder['work_order_number'] : 'לא הוזנה'),
+        'סטטוס הזמנת עבודה: ' . external_work_status_label((string) ($workOrder['status'] ?? 'not_started')),
         'מתקין: ' . (string) ($employee['name'] ?? ''),
         'דוא"ל מאומת: ' . (string) ($employee['email'] ?? ''),
         'טלפון: ' . (string) ($employee['phone'] ?? ''),
@@ -1006,6 +1009,24 @@ function external_report_body(array $report): string
         'תאריך עבודה: ' . (string) ($report['work_date'] ?? ''),
         'כתובת: ' . (string) ($report['site_address'] ?? ''),
         'תוצאה: ' . portal_work_report_outcome_label((string) ($report['outcome'] ?? 'completed')),
+        '',
+        'סטטוס תתי משימות:',
+    ];
+    foreach (($workOrder['subtasks'] ?? []) as $subtask) {
+        if (!is_array($subtask)) {
+            continue;
+        }
+        $line = '- ' . (string) ($subtask['label'] ?? '')
+            . ': ' . external_work_status_label((string) ($subtask['status'] ?? 'not_started'));
+        if (trim((string) ($subtask['actual_quantity'] ?? '')) !== '') {
+            $line .= ' | בפועל: ' . trim((string) $subtask['actual_quantity']);
+        }
+        if (trim((string) ($subtask['notes'] ?? '')) !== '') {
+            $line .= ' | הערה: ' . trim((string) $subtask['notes']);
+        }
+        $lines[] = $line;
+    }
+    $lines = array_merge($lines, [
         '',
         'סיכום:',
         (string) ($report['summary'] ?? ''),
@@ -1017,7 +1038,8 @@ function external_report_body(array $report): string
         '',
         'I Feel',
     ]);
-}
+    return implode("\r\n", $lines);
+
 
 function external_submit_work_report(array $installer, array $grant): array
 {
@@ -1027,6 +1049,7 @@ function external_submit_work_report(array $installer, array $grant): array
     }
     $customer = external_fetch_customer((string) $grant['board_id'], (string) $grant['item_id']);
     $profile = external_profile((string) $installer['email']);
+    $workOrder = external_work_order($request);
 
     $type = portal_post('work_type', 40);
     $outcome = portal_post('work_outcome', 40);
@@ -1075,6 +1098,7 @@ function external_submit_work_report(array $installer, array $grant): array
                 'board_id' => $customer['board_id'],
                 'item_id' => $customer['item_id'],
             ],
+            'work_order' => $workOrder,
             'attachments' => $attachments,
             'created_at' => gmdate('c'),
             'email_sent' => false,
@@ -1290,7 +1314,10 @@ function external_render_approved_customer(array $installer, array $grant, ?stri
             <h2>סטטוס הזמנת העבודה</h2>
             <p>התקדמות נשמרת בכל שלב. ניתן לצאת ולחזור בהמשך לאחר הזדהות ואישור גישה תקף.</p>
         </div>
-        <div class="total-card"><span>הושלמו</span><strong><?= $completedSubtasks ?>/<?= $totalSubtasks ?></strong></div>
+        <div class="heading-stats">
+            <div class="total-card"><span>סטטוס</span><strong><?= portal_h(external_work_status_label((string) ($workOrder['status'] ?? 'not_started'))) ?></strong></div>
+            <div class="total-card"><span>הושלמו</span><strong><?= $completedSubtasks ?>/<?= $totalSubtasks ?></strong></div>
+        </div>
     </div>
     <?php if (($workOrder['work_order_number'] ?? '') !== ''): ?>
         <p><strong>הזמנת עבודה:</strong> <?= portal_h($workOrder['work_order_number']) ?></p>
