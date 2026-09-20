@@ -6,6 +6,7 @@ define('IFEEL_PORTAL_SESSION_COOKIE_PATH', '/external-installer/');
 define('IFEEL_PORTAL_IDLE_TIMEOUT', 3600);
 
 require_once dirname(__DIR__) . '/staff-expenses/_bootstrap.php';
+require_once dirname(__DIR__) . '/staff-expenses/_ui.php';
 require_once dirname(__DIR__) . '/staff-expenses/_email_auth.php';
 require_once dirname(__DIR__) . '/staff-expenses/_notifications.php';
 require_once dirname(__DIR__) . '/staff-expenses/_work_reports.php';
