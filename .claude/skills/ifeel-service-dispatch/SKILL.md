@@ -94,8 +94,10 @@ Apply these rules only after matching the technician to the approved identity us
    - Oren Levy: `oren@i-feel.co.il`
    - Cheyne Evans: `cheyne@i-feel.co.il`
    - Kiril Bannikh: `kiril@i-feel.co.il`
-11. Do not mark an external visit complete until the protected report submission is verified and all applicable internal notifications were attempted. If customer access was approved but the report is not yet submitted, return `WAITING_FOR_EXTERNAL_TECH_REPORT`.
-12. Personal external-installer email addresses belong only in the server-side allowlist or other protected operational records. Never commit them to Git, public site assets, skill text, test fixtures or shared logs.
+11. The approved customer view is a live work-order view, not only an end-of-job form. Track these initial subtasks independently: cabling, alarm system, cameras, intercom, and data network. Each subtask has a persisted status, actual execution/quantity, notes, and update time.
+12. When the cabling subtask changes to completed, send Cheyne one idempotent completion update so the next project stage can be coordinated. Repeated saves must not create duplicate notifications.
+13. Do not mark an external visit complete until the protected report submission is verified and all applicable internal notifications were attempted. If customer access was approved but the report is not yet submitted, return `WAITING_FOR_EXTERNAL_TECH_REPORT`.
+14. Personal external-installer email addresses belong only in the server-side allowlist or other protected operational records. Never commit them to Git, public site assets, skill text, test fixtures or shared logs.
 
 ## Cloud-service credentials
 
