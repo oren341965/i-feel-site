@@ -714,6 +714,7 @@ export const articles: Article[] = [
     image: '/assets/articles/smart-home-security-cameras.jpg',
     imageAlt: 'כניסה לבית פרטי עם מצלמות אבטחה ותאורת חוץ — פרויקט i-feel',
     related: [
+      { label: 'מצלמות, אזעקה ואינטרקום — מדריך לשילוב ושדרוג הבית', href: '/articles/smart-home-security-knx-ai-guide/' },
       { label: 'מערכת אזעקה לבית חכם', href: '/articles/smart-home-alarm-system/' },
       { label: 'הבית החכם — הכול עובד יחד', href: '/articles/smart-home-everything-works-together/' },
       { label: 'פתרונות בית חכם', href: '/smart-home/' },
@@ -780,6 +781,7 @@ export const articles: Article[] = [
     image: '/assets/articles/smart-home-alarm-system.jpg',
     imageAlt: 'מסך בקרה ואינטרקום חכם עם פאנל מגע מותקנים בקיר — פרויקט בית חכם של i-feel בהרצליה פיתוח',
     related: [
+      { label: 'מהאזעקה לכל הבית — תרחישים, שדרוגים ושירות', href: '/articles/smart-home-security-knx-ai-guide/' },
       { label: 'מצלמות אבטחה לבית חכם', href: '/articles/smart-home-security-cameras/' },
       { label: 'הבית החכם — הכול עובד יחד', href: '/articles/smart-home-everything-works-together/' },
       { label: 'פתרונות בית חכם', href: '/smart-home/' },
@@ -1262,6 +1264,7 @@ export const articles: Article[] = [
     category: 'בית חכם',
     updated: '2026-06-27',
     related: [
+      { label: 'אבטחה ושדרוגים בבית חכם — מה לחבר ומה להשאיר עצמאי', href: '/articles/smart-home-security-knx-ai-guide/' },
       { label: 'פתרונות בית חכם', href: '/smart-home/' },
       { label: 'מה זה KNX', href: '/articles/what-is-knx/' },
     ],
@@ -1368,6 +1371,7 @@ export const articles: Article[] = [
     imageWidth: 1200,
     imageHeight: 573,
     related: [
+      { label: 'הצפה כחלק מהגנת הבית — שילוב חיישנים, התראות ושירות', href: '/articles/smart-home-security-knx-ai-guide/' },
       { label: 'תרחיש חופשה בבית חכם', href: '/articles/smart-home-vacation-scenario/' },
       { label: 'בית חכם KNX', href: '/knx-smart-home/' },
       { label: 'מערכת אזעקה בבית חכם', href: '/articles/smart-home-alarm-system/' },
