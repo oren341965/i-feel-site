@@ -10,7 +10,7 @@ const serviceLinks = {
   other: serviceMessage('שלום, יש לי מערכת בית חכם שהותקנה על ידי ספק אחר. אני מחפש שירות ושדרוג ואשמח לבדוק התאמה.'),
   newHome: serviceMessage('שלום, אני מתכנן מערכת בית חכם ורוצה לשוחח על אבטחה, שליטה והפתרונות שמתאימים לבית שלי.')
 };
-const jsonLd = JSON.stringify({
+const articleSchema = {
   '@context': 'https://schema.org',
   '@type': 'Article',
   headline: 'הבית החכם שלכם יכול לעשות יותר: אבטחה, שדרוגים ושירות עם I Feel',
@@ -22,7 +22,8 @@ const jsonLd = JSON.stringify({
   image: 'https://i-feel.co.il/projects/knx-smart-home-central-moshav/16-smart-home-entrance-knx-akuvox.jpg',
   author: { '@type': 'Organization', name: 'I Feel', url: 'https://i-feel.co.il/' },
   publisher: { '@type': 'Organization', name: 'I Feel', url: 'https://i-feel.co.il/' }
-});
+};
+const jsonLd = JSON.stringify({ '@context': 'https://schema.org', '@graph': [articleSchema, { '@type': 'FAQPage', mainEntity: [{"@type":"Question","name":"האם חייבים להחליף מערכת קיימת כדי לשפר את האבטחה?","acceptedAnswer":{"@type":"Answer","text":"לא בהכרח. מתחילים בבדיקת הציוד, התכנות והרשת. לפעמים שינוי הגדרות או תוספת ממוקדת מספיקים; ההמלצה תלויה במצב המערכת ובממשקים הזמינים."}},{"@type":"Question","name":"האם אפשר לקבל שירות גם אם חברה אחרת התקינה את הבית החכם?","acceptedAnswer":{"@type":"Answer","text":"אפשר לפנות לבדיקת התאמה. היכולת לבצע שינויים תלויה בסוג המערכת, בתיעוד ובהרשאות. חוסרים ומגבלות יוצגו לפני התחייבות לעבודה."}},{"@type":"Question","name":"אני לא יודע מה מותקן אצלי. אפשר בכל זאת לפנות?","acceptedAnswer":{"@type":"Answer","text":"כן. מספיק לתאר מה מפריע לכם או מה תרצו לשפר. בשיחה ננחה אתכם, ואם נדרש נציע בדיקה ממוקדת. אין צורך לזהות לבד את הבקרים."}},{"@type":"Question","name":"האם AI תוכל לפתוח שער או לנטרל אזעקה לבדה?","acceptedAnswer":{"@type":"Answer","text":"לא במסגרת הגישה המוצעת כאן. AI מיועדת לסיוע, סיכום וסיווג; פעולות גישה ואבטחה רגישות נשארות תחת הרשאה והחלטה של אדם."}}] }, { '@type': 'BreadcrumbList', itemListElement: [{ '@type': 'ListItem', position: 1, name: 'עמוד הבית', item: 'https://i-feel.co.il/' }, { '@type': 'ListItem', position: 2, name: 'מאמרים', item: 'https://i-feel.co.il/articles/' }, { '@type': 'ListItem', position: 3, name: 'בית חכם ואבטחה', item: canonical }] }] });
 ---
 <BaseLayout title={title} description={description} canonical={canonical} ogTitle={title} ogDescription={description} ogUrl={canonical} jsonLd={jsonLd}>
   <article class="bg-white" dir="rtl">
@@ -36,6 +37,8 @@ const jsonLd = JSON.stringify({
       </div>
     </header>
     <div class="max-w-4xl mx-auto px-4 py-12 article-content">
+<nav aria-label="פירורי לחם"><a href="/">עמוד הבית</a> / <a href="/articles/">מאמרים</a> / בית חכם ואבטחה</nav>
+<section aria-labelledby="quick-answer"><h2 id="quick-answer">איך בית חכם יכול לשפר את האבטחה?</h2><p>בית חכם יכול לתאם בין אזעקה, מצלמות IP, אינטרקום, תאורה וגלאי הצפה כדי להציג מצב ברור ולהפעיל תרחישים כמו יציאה, לילה וחופשה. לעיתים ניתן לשדרג מערכת קיימת בלי להחליף אותה, גם אם נרכשה מספק אחר. I Feel מתחילה בבדיקת הצורך, הציוד וההרשאות; מערכת האזעקה נשארת עצמאית ופעולות רגישות דורשות אישור אדם.</p></section>
 
 <section>
 <h2>לא עוד מערכת בבית. בית שעובד טוב יותר בשבילכם</h2>
