@@ -1462,7 +1462,7 @@ function external_render_code(string $purpose, ?string $error = null): void
     <?php if ($error !== null): ?><div class="alert alert--error"><?= portal_h($error) ?></div><?php endif; ?>
     <form method="post" class="stack-form">
         <input type="hidden" name="csrf" value="<?= portal_h(portal_csrf_token()) ?>">
-        <input type="hidden" name="action" value="<?= $purpose === 'approver' ? 'verify_approver_code' : 'verify_installer_code' ?>">
+        <input type="hidden" name="action" value="<?= $purpose === 'approver' ? (($_SESSION['pending_external_review'] ?? false) ? 'verify_reviewer_code' : 'verify_approver_code') : 'verify_installer_code' ?>">
         <label><span>קוד</span><input type="text" name="code" inputmode="numeric" pattern="[0-9]{6}" minlength="6" maxlength="6" required dir="ltr" autofocus></label>
         <button class="button button--primary button--wide" type="submit">אימות</button>
     </form>
