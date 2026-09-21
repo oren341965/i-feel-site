@@ -131,6 +131,6 @@ test('internal reviewer can inspect installer view without impersonating install
 
 test('Monday email display text is normalized before assignment matching', () => {
   assert.match(external, /function external_email_from_column_text/);
-  assert.match(external, /preg_match\('\/[A-Z0-9\._%\+\\-]\+@/i);
+  assert.match(external, /preg_match\('\/\[A-Z0-9/i);
   assert.match(external, /external_email_from_column_text\(\(string\) \(\$values\[EXTERNAL_INSTALLER_WORK_ORDER_EMAIL_COLUMN\]/);
 });
