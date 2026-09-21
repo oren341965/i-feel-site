@@ -8,6 +8,17 @@ const EXTERNAL_INSTALLER_DIRECTORY_EMAIL_COLUMN = 'email_mm7cnsba';
 const EXTERNAL_INSTALLER_DIRECTORY_PHONE_COLUMN = 'phone_mm7cg6d2';
 const EXTERNAL_INSTALLER_DIRECTORY_COMPANY_COLUMN = 'text_mm7c7avc';
 const EXTERNAL_INSTALLER_DIRECTORY_STATUS_COLUMN = 'color_mm7ctgxw';
+const EXTERNAL_INSTALLER_WORK_ORDERS_BOARD_ID = '18431962854';
+const EXTERNAL_INSTALLER_WORK_ORDER_NUMBER_COLUMN = 'text_mm7dpvnf';
+const EXTERNAL_INSTALLER_WORK_ORDER_EMAIL_COLUMN = 'email_mm7dvzpb';
+const EXTERNAL_INSTALLER_WORK_ORDER_INSTALLER_COLUMN = 'text_mm7drc0p';
+const EXTERNAL_INSTALLER_WORK_ORDER_COMPANY_COLUMN = 'text_mm7dhpxn';
+const EXTERNAL_INSTALLER_WORK_ORDER_CUSTOMER_COLUMN = 'text_mm7dcxc3';
+const EXTERNAL_INSTALLER_WORK_ORDER_PROJECT_BOARD_COLUMN = 'text_mm7dnwh';
+const EXTERNAL_INSTALLER_WORK_ORDER_PROJECT_ITEM_COLUMN = 'text_mm7dpq4m';
+const EXTERNAL_INSTALLER_WORK_ORDER_PLAN_COLUMN = 'long_text_mm7dr0pd';
+const EXTERNAL_INSTALLER_WORK_ORDER_STATUS_COLUMN = 'color_mm7dk5jj';
+const EXTERNAL_INSTALLER_WORK_ORDER_ACCESS_COLUMN = 'color_mm7dde1c';
 const EXTERNAL_INSTALLER_OTP_TTL = 600;
 const EXTERNAL_INSTALLER_OTP_MAX_ATTEMPTS = 5;
 const EXTERNAL_INSTALLER_OTP_RESEND_SECONDS = 60;
@@ -634,6 +645,157 @@ function external_work_subtask_definitions(): array
     ];
 }
 
+
+function external_work_order_assignments(?string $installerEmail = null): array
+{
+    $normalizedEmail = $installerEmail === null ? null : external_normalize_email($installerEmail);
+    $ids = [
+        EXTERNAL_INSTALLER_WORK_ORDER_NUMBER_COLUMN,
+        EXTERNAL_INSTALLER_WORK_ORDER_EMAIL_COLUMN,
+        EXTERNAL_INSTALLER_WORK_ORDER_INSTALLER_COLUMN,
+        EXTERNAL_INSTALLER_WORK_ORDER_COMPANY_COLUMN,
+        EXTERNAL_INSTALLER_WORK_ORDER_CUSTOMER_COLUMN,
+        EXTERNAL_INSTALLER_WORK_ORDER_PROJECT_BOARD_COLUMN,
+        EXTERNAL_INSTALLER_WORK_ORDER_PROJECT_ITEM_COLUMN,
+        EXTERNAL_INSTALLER_WORK_ORDER_PLAN_COLUMN,
+        EXTERNAL_INSTALLER_WORK_ORDER_STATUS_COLUMN,
+        EXTERNAL_INSTALLER_WORK_ORDER_ACCESS_COLUMN,
+    ];
+    $quotedIds = implode(',', array_map(static fn(string $id): string => '"' . $id . '"', $ids));
+    $query = 'query ExternalWorkOrders($boardIds: [ID!]) { boards(ids: $boardIds) { items_page(limit: 200) { items { id name column_values(ids: [' . $quotedIds . ']) { id text } } } } }';
+    $response = external_monday_request($query, ['boardIds' => [EXTERNAL_INSTALLER_WORK_ORDERS_BOARD_ID]]);
+    $assignments = [];
+    foreach (($response['data']['boards'][0]['items_page']['items'] ?? []) as $item) {
+        if (!is_array($item)) {
+            continue;
+        }
+        $values = [];
+        foreach (($item['column_values'] ?? []) as $column) {
+            if (is_array($column)) {
+                $values[(string) ($column['id'] ?? '')] = trim((string) ($column['text'] ?? ''));
+            }
+        }
+        $email = external_normalize_email((string) ($values[EXTERNAL_INSTALLER_WORK_ORDER_EMAIL_COLUMN] ?? ''));
+        if ($email === null || ($normalizedEmail !== null && !hash_equals($normalizedEmail, $email))) {
+            continue;
+        }
+        $access = (string) ($values[EXTERNAL_INSTALLER_WORK_ORDER_ACCESS_COLUMN] ?? '');
+        if (!in_array($access, ['מאושר', 'ממתין לאישור', 'חסום'], true)) {
+            continue;
+        }
+        $planRaw = (string) ($values[EXTERNAL_INSTALLER_WORK_ORDER_PLAN_COLUMN] ?? '');
+        $plan = json_decode($planRaw, true);
+        if (!is_array($plan)) {
+            $plan = [];
+        }
+        $assignments[] = [
+            'assignment_id' => (string) ($item['id'] ?? ''),
+            'name' => trim((string) ($item['name'] ?? '')),
+            'work_order_number' => (string) ($values[EXTERNAL_INSTALLER_WORK_ORDER_NUMBER_COLUMN] ?? ''),
+            'installer_email' => $email,
+            'installer_name' => (string) ($values[EXTERNAL_INSTALLER_WORK_ORDER_INSTALLER_COLUMN] ?? ''),
+            'company' => (string) ($values[EXTERNAL_INSTALLER_WORK_ORDER_COMPANY_COLUMN] ?? ''),
+            'customer_name' => (string) ($values[EXTERNAL_INSTALLER_WORK_ORDER_CUSTOMER_COLUMN] ?? ''),
+            'board_id' => (string) ($values[EXTERNAL_INSTALLER_WORK_ORDER_PROJECT_BOARD_COLUMN] ?? ''),
+            'item_id' => (string) ($values[EXTERNAL_INSTALLER_WORK_ORDER_PROJECT_ITEM_COLUMN] ?? ''),
+            'work_status' => (string) ($values[EXTERNAL_INSTALLER_WORK_ORDER_STATUS_COLUMN] ?? ''),
+            'access_status' => $access,
+            'plan' => $plan,
+        ];
+    }
+    usort($assignments, static fn(array $a, array $b): int => strcmp((string) $b['work_order_number'], (string) $a['work_order_number']));
+    return $assignments;
+}
+
+function external_work_order_assignment(string $assignmentId, ?string $installerEmail = null): ?array
+{
+    if (!preg_match('/^\d+$/', $assignmentId)) {
+        return null;
+    }
+    foreach (external_work_order_assignments($installerEmail) as $assignment) {
+        if (hash_equals($assignmentId, (string) ($assignment['assignment_id'] ?? ''))) {
+            return $assignment;
+        }
+    }
+    return null;
+}
+
+function external_assignment_request_id(string $assignmentId): string
+{
+    if (!preg_match('/^\d+$/', $assignmentId)) {
+        throw new RuntimeException('מזהה הזמנת העבודה אינו תקין.');
+    }
+    return 'EA-20000101-000000-' . substr(hash('sha256', 'assignment:' . $assignmentId), 0, 12);
+}
+
+function external_request_from_assignment(array $assignment): array
+{
+    if (($assignment['access_status'] ?? '') !== 'מאושר') {
+        throw new RuntimeException('הזמנת העבודה עדיין אינה מאושרת לצפייה.');
+    }
+    $requestId = external_assignment_request_id((string) $assignment['assignment_id']);
+    $request = [
+        'id' => $requestId,
+        'installer_email' => (string) $assignment['installer_email'],
+        'installer_name' => (string) $assignment['installer_name'],
+        'installer_phone' => (string) ((external_installer_record((string) $assignment['installer_email'])['phone'] ?? '')),
+        'board_id' => (string) $assignment['board_id'],
+        'item_id' => (string) $assignment['item_id'],
+        'customer_name' => (string) $assignment['customer_name'],
+        'source' => 'project',
+        'status' => 'approved',
+        'work_order_assignment_id' => (string) $assignment['assignment_id'],
+        'work_order_number' => (string) $assignment['work_order_number'],
+        'work_order_plan' => is_array($assignment['plan'] ?? null) ? $assignment['plan'] : [],
+        'created_at' => gmdate('c'),
+        'expires_at' => time() + (30 * 24 * 60 * 60),
+    ];
+    external_save_request($request);
+    return $request;
+}
+
+function external_open_assignment(array $installer, string $assignmentId): array
+{
+    $email = external_normalize_email((string) ($installer['email'] ?? ''));
+    if ($email === null) {
+        throw new RuntimeException('המתקין אינו מזוהה.');
+    }
+    $assignment = external_work_order_assignment($assignmentId, $email);
+    if ($assignment === null) {
+        throw new RuntimeException('הזמנת העבודה אינה משויכת למתקין המחובר.');
+    }
+    $request = external_request_from_assignment($assignment);
+    $_SESSION['external_customer_grant'] = [
+        'request_id' => $request['id'],
+        'installer_email' => $email,
+        'board_id' => $request['board_id'],
+        'item_id' => $request['item_id'],
+        'expires_at' => time() + EXTERNAL_INSTALLER_GRANT_TTL,
+    ];
+    portal_audit('external_installer_assignment_opened', [
+        'assignment_id' => $assignmentId,
+        'request_id' => $request['id'],
+        'installer_hash' => external_hash_key($email),
+    ]);
+    return $_SESSION['external_customer_grant'];
+}
+
+function external_post_string_array(string $key, int $maxLength, int $maxItems = 100): array
+{
+    $raw = $_POST[$key] ?? [];
+    if (!is_array($raw)) {
+        return [];
+    }
+    $values = [];
+    foreach (array_slice($raw, 0, $maxItems, true) as $index => $value) {
+        if (!is_scalar($value)) {
+            continue;
+        }
+        $values[(string) $index] = portal_substr(trim((string) $value), 0, $maxLength);
+    }
+    return $values;
+}
+
 function external_work_order_path(string $requestId): string
 {
     if (!preg_match('/^EA-\d{8}-\d{6}-[a-f0-9]{12}$/', $requestId)) {
@@ -648,12 +810,29 @@ function external_work_order_path(string $requestId): string
 function external_default_work_order(array $request): array
 {
     $subtasks = [];
+    $plan = is_array($request['work_order_plan'] ?? null) ? $request['work_order_plan'] : [];
+    $categories = is_array($plan['categories'] ?? null) ? $plan['categories'] : [];
     foreach (external_work_subtask_definitions() as $key => $label) {
+        $lines = [];
+        foreach ((is_array($categories[$key] ?? null) ? $categories[$key] : []) as $line) {
+            if (!is_array($line)) {
+                continue;
+            }
+            $lines[] = [
+                'code' => portal_substr(trim((string) ($line['code'] ?? '')), 0, 100),
+                'description' => portal_substr(trim((string) ($line['description'] ?? '')), 0, 500),
+                'planned_qty' => (string) ($line['planned_qty'] ?? ''),
+                'unit' => portal_substr(trim((string) ($line['unit'] ?? '')), 0, 40),
+                'actual_qty' => '',
+                'note' => '',
+            ];
+        }
         $subtasks[$key] = [
             'label' => $label,
             'status' => 'not_started',
             'actual_quantity' => '',
             'notes' => '',
+            'lines' => $lines,
             'updated_at' => null,
         ];
     }
@@ -695,6 +874,10 @@ function external_work_order(array $request): array
             ];
         }
         $order['subtasks'][$key]['label'] = $label;
+        if (!is_array($order['subtasks'][$key]['lines'] ?? null)) {
+            $fresh = external_default_work_order($request);
+            $order['subtasks'][$key]['lines'] = $fresh['subtasks'][$key]['lines'] ?? [];
+        }
     }
     return $order;
 }
@@ -774,7 +957,7 @@ function external_notify_cabling_completed(array $order, array $request, array $
     return true;
 }
 
-function external_update_subtask(array $installer, array $grant, string $key, string $status, string $quantity, string $notes): array
+function external_update_subtask(array $installer, array $grant, string $key, string $status, string $quantity, string $notes, array $lineActuals = [], array $lineNotes = []): array
 {
     $request = external_load_request((string) ($grant['request_id'] ?? ''));
     if ($request === [] || (string) ($request['status'] ?? '') !== 'approved') {
@@ -797,11 +980,26 @@ function external_update_subtask(array $installer, array $grant, string $key, st
 
     $order = external_work_order($request);
     $previousStatus = (string) ($order['subtasks'][$key]['status'] ?? 'not_started');
+    $lines = is_array($order['subtasks'][$key]['lines'] ?? null) ? $order['subtasks'][$key]['lines'] : [];
+    foreach ($lines as $index => &$line) {
+        if (!is_array($line)) {
+            continue;
+        }
+        $lineKey = (string) $index;
+        if (array_key_exists($lineKey, $lineActuals)) {
+            $line['actual_qty'] = portal_substr(trim((string) $lineActuals[$lineKey]), 0, 80);
+        }
+        if (array_key_exists($lineKey, $lineNotes)) {
+            $line['note'] = portal_substr(trim((string) $lineNotes[$lineKey]), 0, 500);
+        }
+    }
+    unset($line);
     $order['subtasks'][$key] = [
         'label' => external_work_subtask_definitions()[$key],
         'status' => $status,
         'actual_quantity' => portal_substr($quantity, 0, 80),
         'notes' => portal_substr($notes, 0, 1500),
+        'lines' => $lines,
         'updated_at' => gmdate('c'),
         'updated_by' => (string) ($installer['email'] ?? ''),
     ];
@@ -1300,6 +1498,7 @@ function external_render_profile(array $installer, ?string $error = null): void
 function external_render_customer_search(array $installer, ?string $error = null, array $results = []): void
 {
     $profile = external_profile((string) $installer['email']);
+    $assignments = external_work_order_assignments((string) $installer['email']);
     $lastRequest = isset($_SESSION['external_last_request_id']) ? external_load_request((string) $_SESSION['external_last_request_id']) : [];
     external_page_start('בחירת לקוח');
     ?>
@@ -1310,6 +1509,35 @@ function external_render_customer_search(array $installer, ?string $error = null
 <div class="detail-card"><strong><?= portal_h($profile['name']) ?></strong><span dir="ltr"><?= portal_h((string) $installer['email']) ?></span></div>
 <?php if ($error !== null): ?><div class="alert alert--error"><?= portal_h($error) ?></div><?php endif; ?>
 <?php if ($lastRequest !== [] && ($lastRequest['status'] ?? '') === 'pending'): ?><div class="alert alert--info">בקשת הגישה ל-<?= portal_h($lastRequest['customer_name'] ?? '') ?> ממתינה לאישור.</div><?php endif; ?>
+<?php if ($assignments !== []): ?>
+<section class="detail-card">
+    <p class="eyebrow">עבודות שהוקצו לך</p>
+    <h2>הזמנות עבודה</h2>
+    <div class="table-wrap"><table class="records-table">
+        <thead><tr><th>הזמנה</th><th>לקוח / פרויקט</th><th>חברה</th><th>סטטוס</th><th></th></tr></thead>
+        <tbody>
+        <?php foreach ($assignments as $assignment): ?>
+            <tr>
+                <td><strong><?= portal_h($assignment['work_order_number']) ?></strong></td>
+                <td><?= portal_h($assignment['customer_name']) ?></td>
+                <td><?= portal_h($assignment['company']) ?></td>
+                <td><?= portal_h($assignment['access_status'] === 'מאושר' ? $assignment['work_status'] : $assignment['access_status']) ?></td>
+                <td>
+                    <?php if ($assignment['access_status'] === 'מאושר'): ?>
+                    <form method="post">
+                        <input type="hidden" name="csrf" value="<?= portal_h(portal_csrf_token()) ?>">
+                        <input type="hidden" name="action" value="open_external_assignment">
+                        <input type="hidden" name="assignment_id" value="<?= portal_h($assignment['assignment_id']) ?>">
+                        <button class="button button--primary button--small" type="submit">פתיחת העבודה</button>
+                    </form>
+                    <?php else: ?><span class="status status--missing"><?= portal_h($assignment['access_status']) ?></span><?php endif; ?>
+                </td>
+            </tr>
+        <?php endforeach; ?>
+        </tbody>
+    </table></div>
+</section>
+<?php endif; ?>
 <section class="detail-card">
     <form method="post" class="stack-form">
         <input type="hidden" name="csrf" value="<?= portal_h(portal_csrf_token()) ?>">
@@ -1408,9 +1636,27 @@ function external_render_approved_customer(array $installer, array $grant, ?stri
                                 <?php endforeach; ?>
                             </select>
                         </label>
+                        <?php if (is_array($subtask['lines'] ?? null) && $subtask['lines'] !== []): ?>
+                        <div class="field field--full">
+                            <span>תכולת הזמנת העבודה</span>
+                            <div class="table-wrap"><table class="records-table">
+                                <thead><tr><th>פריט</th><th>מתוכנן</th><th>בוצע בפועל</th><th>הערה</th></tr></thead>
+                                <tbody>
+                                <?php foreach ($subtask['lines'] as $lineIndex => $line): ?>
+                                    <tr>
+                                        <td><strong><?= portal_h((string) ($line['description'] ?? '')) ?></strong><?php if (($line['code'] ?? '') !== ''): ?><small dir="ltr"><?= portal_h((string) $line['code']) ?></small><?php endif; ?></td>
+                                        <td><?= portal_h((string) ($line['planned_qty'] ?? '')) ?> <?= portal_h((string) ($line['unit'] ?? '')) ?></td>
+                                        <td><input type="text" name="line_actual[<?= (int) $lineIndex ?>]" maxlength="80" value="<?= portal_h((string) ($line['actual_qty'] ?? '')) ?>"></td>
+                                        <td><input type="text" name="line_note[<?= (int) $lineIndex ?>]" maxlength="500" value="<?= portal_h((string) ($line['note'] ?? '')) ?>"></td>
+                                    </tr>
+                                <?php endforeach; ?>
+                                </tbody>
+                            </table></div>
+                        </div>
+                        <?php endif; ?>
                         <label class="field">
-                            <span>כמות / ביצוע בפועל</span>
-                            <input type="text" name="actual_quantity" maxlength="80" value="<?= portal_h((string) ($subtask['actual_quantity'] ?? '')) ?>" placeholder="לדוגמה: 6 מצלמות / 120 מ׳">
+                            <span>סיכום כמות / ביצוע</span>
+                            <input type="text" name="actual_quantity" maxlength="80" value="<?= portal_h((string) ($subtask['actual_quantity'] ?? '')) ?>" placeholder="סיכום כללי, אם נדרש">
                         </label>
                         <label class="field field--full">
                             <span>הערות</span>
@@ -1440,6 +1686,109 @@ function external_render_approved_customer(array $installer, array $grant, ?stri
     </div>
     <div class="field--full"><button class="button button--primary" type="submit">שמירת סיכום העבודה</button></div>
 </form>
+<?php
+    external_page_end();
+    exit;
+}
+
+function external_render_reviewer_login(?string $error = null): void
+{
+    external_page_start('סקירת פורטל מתקינים');
+    ?>
+<section class="login-card">
+    <img src="/assets/ifeel-logo.png" alt="I Feel" class="login-logo">
+    <p class="eyebrow">סקירה פנימית בלבד</p>
+    <h1>סקירת פורטל מתקינים חיצוניים</h1>
+    <p>גישה לאורן, שיין או מחלקת השירות באמצעות קוד חד פעמי לדוא"ל הארגוני.</p>
+    <?php if ($error !== null): ?><div class="alert alert--error"><?= portal_h($error) ?></div><?php endif; ?>
+    <form method="post" class="stack-form">
+        <input type="hidden" name="csrf" value="<?= portal_h(portal_csrf_token()) ?>">
+        <input type="hidden" name="action" value="request_reviewer_code">
+        <label><span>דוא"ל I Feel מורשה</span><input type="email" name="reviewer_email" required dir="ltr" autocomplete="email"></label>
+        <button class="button button--primary button--wide" type="submit">שליחת קוד סקירה</button>
+    </form>
+</section>
+<?php
+    external_page_end();
+    exit;
+}
+
+function external_render_review_dashboard(array $reviewer, ?string $error = null): void
+{
+    $assignments = external_work_order_assignments(null);
+    external_page_start('סקירת עבודות מתקינים');
+    ?>
+<section class="page-heading page-heading--compact">
+    <div><p class="eyebrow">סקירה פנימית</p><h1>עבודות מתקינים חיצוניים</h1><p>זהו מסך סקירה בלבד. הוא אינו מתחזה למתקין ואינו שולח קוד למתקינים.</p></div>
+    <div class="total-card"><span>עבודות</span><strong><?= count($assignments) ?></strong></div>
+</section>
+<?php if ($error !== null): ?><div class="alert alert--error"><?= portal_h($error) ?></div><?php endif; ?>
+<section class="detail-card">
+    <div class="table-wrap"><table class="records-table">
+        <thead><tr><th>הזמנה</th><th>מתקין</th><th>חברה</th><th>לקוח</th><th>גישה</th><th></th></tr></thead>
+        <tbody>
+        <?php foreach ($assignments as $assignment): ?>
+        <tr>
+            <td><strong><?= portal_h($assignment['work_order_number']) ?></strong></td>
+            <td><?= portal_h($assignment['installer_name']) ?></td>
+            <td><?= portal_h($assignment['company']) ?></td>
+            <td><?= portal_h($assignment['customer_name']) ?></td>
+            <td><?= portal_h($assignment['access_status']) ?></td>
+            <td><a class="button button--secondary button--small" href="<?= portal_h(external_public_url(['review' => '1', 'assignment' => $assignment['assignment_id']])) ?>">תצוגה</a></td>
+        </tr>
+        <?php endforeach; ?>
+        </tbody>
+    </table></div>
+</section>
+<?php
+    external_page_end();
+    exit;
+}
+
+function external_render_assignment_preview(array $reviewer, string $assignmentId): void
+{
+    $assignment = external_work_order_assignment($assignmentId, null);
+    if ($assignment === null) {
+        external_render_review_dashboard($reviewer, 'הזמנת העבודה לא נמצאה.');
+    }
+    $customer = external_fetch_customer((string) $assignment['board_id'], (string) $assignment['item_id']);
+    $request = external_request_from_assignment($assignment);
+    $order = external_work_order($request);
+    external_page_start('תצוגת מתקין');
+    ?>
+<section class="page-heading page-heading--compact">
+    <div><p class="eyebrow">תצוגה פנימית של מסך המתקין</p><h1>הזמנה <?= portal_h($assignment['work_order_number']) ?> · <?= portal_h($customer['name']) ?></h1><p>המסך מציג את המידע שהמתקין יקבל לאחר כניסה מאושרת. אין אפשרות לעדכן נתונים ממצב סקירה.</p></div>
+    <a class="button button--secondary" href="<?= portal_h(external_public_url(['review' => '1'])) ?>">חזרה לרשימה</a>
+</section>
+<section class="detail-card">
+    <h2>פרטי המתקין והלקוח</h2>
+    <div class="detail-grid">
+        <div><span>מתקין</span><strong><?= portal_h($assignment['installer_name']) ?></strong></div>
+        <div><span>חברה</span><strong><?= portal_h($assignment['company']) ?></strong></div>
+        <div><span>לקוח</span><strong><?= portal_h($customer['name']) ?></strong></div>
+        <div><span>טלפון</span><strong dir="ltr"><?= portal_h($customer['phone']) ?></strong></div>
+        <div><span>כתובת</span><strong><?= portal_h($customer['address']) ?></strong></div>
+        <div><span>הזמנת עבודה</span><strong><?= portal_h($assignment['work_order_number']) ?></strong></div>
+    </div>
+</section>
+<?php foreach (external_work_subtask_definitions() as $key => $label): ?>
+    <?php $subtask = $order['subtasks'][$key] ?? []; ?>
+    <section class="detail-card">
+        <h2><?= portal_h($label) ?></h2>
+        <p><strong>סטטוס:</strong> <?= portal_h(external_work_status_label((string) ($subtask['status'] ?? 'not_started'))) ?></p>
+        <?php if (is_array($subtask['lines'] ?? null) && $subtask['lines'] !== []): ?>
+        <div class="table-wrap"><table class="records-table">
+            <thead><tr><th>פריט</th><th>כמות מתוכננת</th><th>כמות בפועל</th><th>הערה</th></tr></thead>
+            <tbody><?php foreach ($subtask['lines'] as $line): ?><tr>
+                <td><strong><?= portal_h((string) ($line['description'] ?? '')) ?></strong><small dir="ltr"><?= portal_h((string) ($line['code'] ?? '')) ?></small></td>
+                <td><?= portal_h((string) ($line['planned_qty'] ?? '')) ?> <?= portal_h((string) ($line['unit'] ?? '')) ?></td>
+                <td><?= portal_h((string) ($line['actual_qty'] ?? '')) ?></td>
+                <td><?= portal_h((string) ($line['note'] ?? '')) ?></td>
+            </tr><?php endforeach; ?></tbody>
+        </table></div>
+        <?php endif; ?>
+    </section>
+<?php endforeach; ?>
 <?php
     external_page_end();
     exit;
