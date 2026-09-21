@@ -1,0 +1,125 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+const canonical = 'https://i-feel.co.il/articles/ashrae-siemens-desigo-building-standards/';
+const title = 'ASHRAE, Siemens Desigo ותקני בקרת מבנה: מה הקשר ביניהם? | i-feel';
+const description = 'מהם תקני ASHRAE, כיצד BACnet מחבר בין מערכות, ואיך Siemens Desigo ו-i-feel מתרגמות דרישות אוורור, אנרגיה ותפעול למערכת בקרת מבנה מעשית.';
+const siemensAshraeUrl = 'https://resources.sw.siemens.com/en-US/brochure-guide-ashrae/';
+const siemensBacnetUrl = 'https://support.industry.siemens.com/cs/document/109996060/desigo-cc-v9-bacnet-protocol-implementation-conformance-statement?dti=0&lc=en-WW';
+const ashraeStandardsUrl = 'https://www.ashrae.org/technical-resources/standards-and-guidelines';
+const bacnetCertificationUrl = 'https://bacnetinternational.org/btl-certification/';
+const jsonLd = JSON.stringify({
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'Article',
+      '@id': `${canonical}#article`,
+      headline: 'ASHRAE, Siemens Desigo ותקני בקרת מבנה: מה הקשר ביניהם?',
+      description,
+      datePublished: '2026-09-21',
+      dateModified: '2026-09-21',
+      inLanguage: 'he-IL',
+      mainEntityOfPage: canonical,
+      author: { '@type': 'Organization', name: 'i-feel', url: 'https://i-feel.co.il/' },
+      publisher: { '@id': 'https://i-feel.co.il/#business' },
+      image: 'https://i-feel.co.il/assets/office-bms.jpeg',
+      about: ['ASHRAE', 'BACnet', 'Siemens Desigo', 'Building Management System', 'BMS'],
+    },
+    {
+      '@type': 'BreadcrumbList',
+      itemListElement: [
+        { '@type': 'ListItem', position: 1, name: 'דף הבית', item: 'https://i-feel.co.il/' },
+        { '@type': 'ListItem', position: 2, name: 'מאמרים', item: 'https://i-feel.co.il/articles/' },
+        { '@type': 'ListItem', position: 3, name: 'ASHRAE ו-Siemens Desigo', item: canonical },
+      ],
+    },
+  ],
+});
+---
+
+<BaseLayout title={title} description={description} canonical={canonical} ogTitle={title} ogDescription={description} ogUrl={canonical} ogImage="https://i-feel.co.il/assets/office-bms.jpeg" jsonLd={jsonLd}>
+  <article class="bg-white" dir="rtl">
+    <header class="bg-brand-900 text-white py-16 md:py-20">
+      <div class="max-w-5xl mx-auto px-4">
+        <a href="/articles/" class="text-accent-400 font-semibold hover:text-accent-300">מאמרים ועדכונים</a>
+        <p class="mt-4 text-sm text-brand-200">בקרת מבנה · תקנים · Siemens Desigo · עודכן 21.09.2026</p>
+        <h1 class="mt-4 text-4xl md:text-5xl font-extrabold leading-tight">ASHRAE, Siemens Desigo ותקני בקרת מבנה: מה הקשר ביניהם?</h1>
+        <p class="mt-5 max-w-4xl text-lg md:text-xl text-brand-100 leading-relaxed">תקן אינו מחליף מערכת בקרה, ומערכת בקרה אינה הופכת מבנה לתקני מעצם התקנתה. הערך האמיתי נוצר כאשר דרישות מקצועיות מתורגמות לנקודות מדידה, לוגיקת הפעלה, אינטגרציה ותפעול יומיומי.</p>
+      </div>
+    </header>
+
+    <div class="max-w-5xl mx-auto px-4 py-12">
+      <section class="rounded-2xl border border-brand-100 bg-brand-50 p-6 md:p-8 mb-10">
+        <p class="text-sm font-extrabold text-accent-700 mb-2">התשובה הקצרה</p>
+        <h2 class="text-2xl md:text-3xl font-extrabold text-brand-900 mb-4">ASHRAE מגדירה את השפה המקצועית. Siemens Desigo מספקת כלים ליישום ולמדידה.</h2>
+        <p class="text-lg leading-8 text-brand-700">ASHRAE אינה יצרנית ציוד ואינה שותפה מסחרית של Siemens. היא גוף מקצועי המפרסם תקנים והנחיות. Siemens מתכננת פתרונות BMS, חיישנים ובקרי DDC שיכולים לסייע למתכנן ולמפעיל לעמוד בדרישות רלוונטיות של אוורור, אנרגיה ואינטגרציה. i-feel מתרגמת את הדרישות האלה לתכנון ולביצוע בפרויקט הספציפי.</p>
+      </section>
+
+      <div class="prose-he max-w-none">
+        <h2>מי היא ASHRAE ולמה היא חשובה למבנה?</h2>
+        <p>ASHRAE הוא ארגון מקצועי בינלאומי בתחום מיזוג האוויר, קירור, אוורור, איכות אוויר, אנרגיה ובקרת מבנים. הוא אינו קובע כיצד ייראה כל לוח או איזה בקר יותקן בכל פרויקט, אלא מפרסם שפה מקצועית: אילו תנאי סביבה צריך לבחון, איך מודדים ביצועים, אילו נתונים נדרשים ואיך מערכות שונות אמורות לתקשר.</p>
+        <p>בפרויקט BMS טוב, התקן אינו נשאר בתוך חוברת. הוא הופך לשאלות מעשיות: האם החיישנים ממוקמים נכון? האם לוח הזמנים מתאים לתפוסה? האם אפשר לזהות ירידה ביעילות? האם הצוות מקבל התראה שאפשר לפעול לפיה? האם ניתן לבדוק את התוצאה לאחר שינוי? זו הסיבה שבקרת מבנה היא שכבת ניהול של המבנה ולא רק מסך עם נקודות צבעוניות.</p>
+
+        <h2>שלושה תקנים שמגיעים כמעט לכל שיחה מקצועית</h2>
+        <ul>
+          <li><strong>ASHRAE 62.1</strong> עוסק באוורור ובאיכות אוויר במבנים מסחריים וציבוריים. הוא רלוונטי לזרימות אוויר חוץ, לתפוסה, לחיישני CO₂ ולדרך שבה מערכת המיזוג מגיבה לשימוש בפועל.</li>
+          <li><strong>ASHRAE 90.1</strong> עוסק ביעילות אנרגטית של מבנים. הוא מחבר בין ציוד יעיל לבין תפעול נכון: שעות פעילות, מדידה, בקרה ואימות שהציוד אינו עובד ללא צורך.</li>
+          <li><strong>ASHRAE 135</strong> הוא התקן שעליו מבוסס BACnet — פרוטוקול תקשורת פתוח לבקרת מבנים. בזכותו מערכת ניהול יכולה, לפי התאימות וההגדרה בפרויקט, לדבר עם בקרים, צ'ילרים, מונים, משאבות ומערכות נוספות של יצרנים שונים.</li>
+        </ul>
+        <p>חשוב לזכור: תקנים אלה אינם מבטיחים חיסכון או הצלחה מעצם אזכורם במפרט. כל מבנה צריך תכנון, בחירת ציוד, תכנות, בדיקות ומסירה מסודרת.</p>
+
+        <h2>איך Siemens מסתכלת על התקינה?</h2>
+        <p>הגישה של Siemens אינה "קונים מערכת והמבנה תקני". לפי החומר המקצועי של החברה, שילוב של חיישנים, אוורור לפי דרישה ומערכת ניהול מבנה כמו Desigo CC או Desigo Optic נועד לסייע לשפר איכות אוויר ויעילות אנרגטית בהתאם לעקרונות של ASHRAE 62.1 ו-90.1.</p>
+        <p>בפועל, זה אומר להפוך יעד תכנוני למנגנון שניתן להפעיל ולבדוק: חיישן מודד תנאי אמת, בקר DDC מפעיל לוגיקה, מערכת Desigo מציגה מגמות והתראות, וצוות האחזקה בודק אם הפעולה השיגה את מטרתה. השילוב בין מדידה, בקרה ותיעוד חשוב יותר מהבטחה כללית של "מערכת חכמה".</p>
+
+        <h2>BACnet: החיבור הישיר בין ASHRAE לבין מערכת הבקרה</h2>
+        <p>BACnet הוא אולי המקום המוחשי ביותר שבו העבודה של ASHRAE פוגשת את חדר המכונות. התקן מגדיר שפה משותפת לתקשורת במערכות בקרת מבנה. Siemens מפרסמת עבור Desigo CC מסמך PICS — הצהרת יישום של פרוטוקול BACnet — שמגדירה אילו יכולות BACnet מיושמות במוצר ובאילו תנאים.</p>
+        <p>אבל BACnet אינו קסם. כדי שאינטגרציה תעבוד צריך לבנות מראש רשימת נקודות, כתובות, יחידות מדידה, הרשאות, סקלות, רשימת Alarmים, מגמות ובדיקות Point-to-Point. כאשר משאבה, צ'ילר או מונה "תומכים BACnet" בלי תיעוד ומיפוי, עדיין עלולה להישאר מערכת שלא נותנת לצוות תפעול תמונה שאפשר לסמוך עליה.</p>
+        <p>בפרויקטים שבהם נדרשת ודאות גבוהה, כדאי לבדוק גם אם דגם המוצר מופיע ברשימות BTL המתאימות. הסמכת BTL היא בדיקת תאימות ויכולת פעולה הדדית של מוצר BACnet; היא אינה מחליפה תכנון נכון או Commissioning באתר.</p>
+
+        <h2>מה Desigo יכולה להביא לפרויקט?</h2>
+        <p>בהתאם לציוד, לרישיונות, לארכיטקטורה ולתכנון, <a href="/siemens-desigo-bms/" class="font-bold text-accent-700 hover:underline">Siemens Desigo</a> יכולה לרכז בקרה ומידע ממערכות HVAC, חשמל, אנרגיה ותאורה. היא מאפשרת לבנות נקודת עבודה מרכזית לצפייה במצבי ציוד, מגמות, Alarmים, לוחות זמנים והרשאות משתמשים, לצד אינטגרציה באמצעות BACnet, Modbus, KNX וממשקים נוספים.</p>
+        <p>הערך איננו במסך עצמו. מסך טוב צריך לענות לצוות האחזקה על ארבע שאלות: מה חריג? מה ההשפעה? מה צריך לבדוק קודם? והאם הפעולה שבוצעה באמת החזירה את המערכת למצב תקין? זו גם הסיבה שאנחנו לא מבטיחים מראש יכולת שאינה מוגדרת במפרט ובציוד של אותו פרויקט.</p>
+
+        <h2>דוגמה מעשית: איכות אוויר, תפוסה ואנרגיה</h2>
+        <p>נניח שבאולם במבנה ציבורי יש תפוסה משתנה. המטרה איננה לפתוח אוויר חוץ "כמה שיותר", אלא לספק אוורור מתאים תוך שליטה בעומסי המיזוג. חיישני איכות אוויר ותפוסה, כאשר הם מתוכננים ומכוילים נכון, יכולים לספק לבקר נתונים. הבקר מפעיל את רצף העבודה שאושר בפרויקט, ו-Desigo מציגה לצוות את המדידות, זמני הפעולה והחריגות.</p>
+        <p>אחרי ההפעלה בודקים מגמות ולא מסתמכים על תחושה בלבד: מה קרה לרמות CO₂, לטמפרטורה, לזמני הפעולה ולצריכת האנרגיה? האם היו התראות שווא? האם שינוי לוח הזמנים השפיע על הנוחות? כך עוברים ממערכת שמגיבה לתלונה למערכת שניתן לשפר לאורך זמן.</p>
+
+        <h2>מה התפקיד של i-feel?</h2>
+        <p>i-feel אינה מציגה את עצמה כגורם שמסמיך מבנה לתקן ASHRAE. התפקיד שלנו הוא להבין את מטרת הפרויקט ואת המפרט, למפות את הציוד והמערכות הקיימות, לבחור ארכיטקטורת בקרה מתאימה וליישם אותה בצורה שאפשר לתחזק. אנחנו מתכננים ומטמיעים מערכות BMS ו-<a href="/structure-control/" class="font-bold text-accent-700 hover:underline">בקרת מבנה</a>, כולל בקרי DDC, Siemens Desigo, BACnet, Modbus, KNX, DALI וניטור אנרגיה.</p>
+        <p>התהליך כולל בדרך כלל סקר, רשימת I/O, הגדרת פרוטוקולים, תכנון לוחות ובקרים, תכנות, בדיקות Point-to-Point, בדיקות פונקציונליות, Commissioning, הדרכה ותיעוד מסירה. במבנה קיים לא תמיד צריך להחליף הכול: אפשר לבחון <a href="/bms-retrofit/" class="font-bold text-accent-700 hover:underline">שדרוג BMS בשלבים</a> ולשמור ציוד תקין כאשר הוא מתאים לארכיטקטורה החדשה.</p>
+
+        <h2>שאלות שכדאי לשאול לפני שמאשרים מערכת</h2>
+        <ol>
+          <li>איזו תוצאה תפעולית רוצים להשיג: איכות אוויר, חיסכון, נוחות, ניהול אנרגיה או קיצור זמן תגובה?</li>
+          <li>אילו חיישנים, מונים ונקודות I/O נחוצים כדי למדוד את התוצאה?</li>
+          <li>אילו מערכות יתחברו ב-BACnet, Modbus או KNX, ומי אחראי על מיפוי הנקודות?</li>
+          <li>אילו Alarmים חשובים לצוות, ואילו מגמות צריך לשמור כדי לבדוק ביצועים?</li>
+          <li>מי מבצע FAT, Point-to-Point, SAT ו-Commissioning, ואיזה תיעוד נמסר בסיום?</li>
+        </ol>
+
+        <h2>לסיכום: התקינה נותנת יעד, המערכת נותנת יכולת, והביצוע קובע</h2>
+        <p>ASHRAE מספקת מסגרת מקצועית לאיכות אוויר, אנרגיה ותקשורת. Siemens Desigo מספקת פלטפורמה וכלים שיכולים לסייע ליישם את העקרונות האלה. ההצלחה תלויה בתרגום שלהם לפרויקט אמיתי: תכנון מדויק, נתונים אמינים, אינטגרציה מתועדת, בדיקות מסירה ותהליך עבודה קבוע של צוות התפעול.</p>
+      </div>
+
+      <section class="mt-12 rounded-2xl border border-brand-100 bg-brand-50 p-6 md:p-8">
+        <h2 class="text-2xl font-extrabold text-brand-900 mb-4">מקורות מקצועיים</h2>
+        <div class="flex flex-wrap gap-3">
+          <a href={ashraeStandardsUrl} target="_blank" rel="noopener noreferrer" class="inline-flex items-center rounded-lg bg-accent-600 px-5 py-3 font-bold text-white hover:bg-accent-700">תקנים והנחיות ASHRAE</a>
+          <a href={siemensAshraeUrl} target="_blank" rel="noopener noreferrer" class="inline-flex items-center rounded-lg bg-white border border-brand-200 px-5 py-3 font-bold text-brand-900 hover:bg-brand-100">Siemens: ASHRAE 62.1 ו-90.1</a>
+          <a href={siemensBacnetUrl} target="_blank" rel="noopener noreferrer" class="inline-flex items-center rounded-lg bg-white border border-brand-200 px-5 py-3 font-bold text-brand-900 hover:bg-brand-100">Siemens Desigo CC: BACnet PICS</a>
+          <a href={bacnetCertificationUrl} target="_blank" rel="noopener noreferrer" class="inline-flex items-center rounded-lg bg-white border border-brand-200 px-5 py-3 font-bold text-brand-900 hover:bg-brand-100">מהי הסמכת BTL</a>
+        </div>
+      </section>
+
+      <section class="mt-10 rounded-2xl bg-brand-900 text-white p-7 md:p-9">
+        <h2 class="text-3xl font-extrabold mb-3">רוצים לבדוק אם מערכת הבקרה שלכם נותנת את המידע שאתם צריכים?</h2>
+        <p class="text-brand-100 text-lg leading-8 mb-5">נבחן את המערכות הקיימות, נקודות המדידה, הבקרים והאינטגרציות ונבנה מסלול מעשי לשדרוג, Commissioning או פרויקט חדש עם Siemens Desigo.</p>
+        <div class="flex flex-wrap gap-3">
+          <a href="tel:+972-3-508-9553" class="inline-flex items-center rounded-lg bg-accent-600 px-5 py-3 font-bold text-white hover:bg-accent-700">03-508-9553</a>
+          <a href="/contactus/" class="inline-flex items-center rounded-lg bg-white px-5 py-3 font-bold text-brand-900 hover:bg-brand-50">פגישה טכנית על בקרת מבנה</a>
+        </div>
+      </section>
+    </div>
+  </article>
+</BaseLayout>
