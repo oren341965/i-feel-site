@@ -204,6 +204,24 @@ try {
             }
         }
 
+        if ($action === 'save_reviewer_requirements') {
+            $reviewer = $_SESSION['external_reviewer_user'] ?? null;
+            if (!is_array($reviewer) || !in_array((string) ($reviewer['email'] ?? ''), external_reviewer_emails(), true)) {
+                external_render_reviewer_login('יש להתחבר מחדש כדי לעדכן את דרישות העבודה.');
+            }
+            $assignment = external_work_order_assignment(portal_post('assignment_id', 30), null);
+            if ($assignment === null) {
+                external_render_review_dashboard($reviewer, 'הזמנת העבודה לא נמצאה.');
+            }
+            try {
+                $required = $_POST['required_subtasks'] ?? [];
+                external_update_requirements($reviewer, $assignment, is_array($required) ? $required : []);
+                external_render_assignment_preview($reviewer, (string) $assignment['assignment_id'], 'דרישות העבודה נשמרו והן יוצגו למתקין.');
+            } catch (Throwable $error) {
+                external_render_assignment_preview($reviewer, (string) $assignment['assignment_id'], $error->getMessage());
+            }
+        }
+
         if ($action === 'save_external_subtask') {
             $installer = external_installer_user();
             if ($installer === null) {
@@ -227,6 +245,7 @@ try {
                     portal_post('missing_work', 2000),
                     portal_post('issues', 2500),
                     portal_post('next_steps', 1500),
+                    portal_post('report_date', 20),
                     portal_post('start_time', 10),
                     portal_post('end_time', 10),
                     $_FILES['subtask_attachments'] ?? []
