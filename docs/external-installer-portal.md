@@ -13,13 +13,14 @@ It is not an employee portal and does not expose employee expenses, vehicles, ha
 1. An external installer enters an allowlisted email address.
 2. The portal sends a six-digit one-time code to that address.
 3. The installer completes name and mobile details in protected server storage.
-4. The installer searches for a customer or project by name. Before approval, search results expose only the customer/project name and whether the source is Service or Projects.
-5. Selecting a customer creates an access request and emails the internal approvers.
-6. The approval link does not approve access by itself. The approver must authenticate using an allowlisted `@i-feel.co.il` address and a separate one-time email code.
-7. Approval creates a single-use grant link bound to the installer email and the exact Monday board/item pair. The link expires after eight hours.
-8. The installer must still be authenticated with the same allowlisted email. Only then are the minimum operational customer details loaded from Monday.
-9. The approved installer can submit the normal installation/service completion fields plus protected uploads.
-10. The customer grant is removed from the session after the report is submitted. A new customer or a new session requires a new approval request.
+4. The installer sees only work-order items whose verified installer-email column exactly matches the signed-in address.
+5. Opening an assigned work order creates a short-lived server-side grant bound to the installer email and exact Monday board/item pair.
+6. The server loads the minimum operational customer details, site contacts and an existing approved Dropbox plan link from Monday.
+7. The installer updates each installation stage, including times, completed work, missing work, faults, next steps, quantities and protected uploads.
+8. The final report requires photos/documents and either a customer signature or a reason why the customer was unavailable.
+9. The customer grant is removed from the session after the final report is submitted.
+
+Legacy request/approval links remain supported for existing records, but new free customer search and ad-hoc access requests are rejected server-side.
 
 ## Initial authorized installers
 
@@ -32,13 +33,24 @@ Their actual email addresses are verified operational data and must be configure
 
 ## Internal approvers
 
-By default the code permits the three I Feel approval mailboxes:
+Legacy approval links permit these I Feel approval mailboxes by default:
 
 - Oren
 - Cheyne
 - Support
 
 The approver list can be overridden in server configuration. An approval link can be forwarded, but it remains unusable until one of the configured internal mailboxes completes its own email-code authentication.
+
+## Internal reviewers
+
+The read-only review dashboard is available from the staff link on the portal login page. By default it permits:
+
+- Oren
+- Cheyne
+- Arik
+- Kiril
+
+Review access is separate from approval authority. Arik and Kiril can inspect assignments but cannot approve an installer's customer-access request unless they are also explicitly added to the server-only approver list.
 
 ## Server-only configuration
 
@@ -64,9 +76,17 @@ define('EXTERNAL_INSTALLER_APPROVERS', [
     'support@i-feel.co.il',
 ]);
 
+define('EXTERNAL_INSTALLER_REVIEWERS', [
+    'oren@i-feel.co.il',
+    'cheyne@i-feel.co.il',
+    'arik@i-feel.co.il',
+    'kiril@i-feel.co.il',
+]);
+
 define('EXTERNAL_INSTALLER_REPORT_RECIPIENTS', [
     'oren@i-feel.co.il',
     'cheyne@i-feel.co.il',
+    'arik@i-feel.co.il',
     'kiril@i-feel.co.il',
 ]);
 
@@ -77,20 +97,17 @@ The Monday token needs `boards:read` only for:
 
 - Service board `3011387201`
 - Projects board `3249720207`
+- Sales board `2732725332`
+- External installer directory board `18431928427`
+- External installer work-order board `18431962854`
 
 Do not grant Monday write scope to this portal.
 
 ## Customer privacy
 
-Before approval the browser receives only:
+There is no customer search for external installers. Before opening an assignment, the installer receives only the assigned work-order summary. Customer operational details are fetched only after the server verifies that the assignment email exactly matches the authenticated installer.
 
-- customer/project display name
-- source kind: service or project
-- opaque board/item identifiers required to request access
-
-Phone, address, fault description, equipment notes, customer email, Dropbox links, financial values, and other Monday columns are not included in pre-approval responses.
-
-After approval the server re-fetches the exact Monday item and returns only the operational fields needed for the visit, such as phone, site address, scheduled date/time, fault subject, and equipment note. Customer email is not displayed.
+The portal does not display financial values. Project contacts are limited to operational roles used at the site. Plan links are accepted only over HTTPS from approved Dropbox or I Feel hosts.
 
 ## Stored data
 
@@ -110,11 +127,11 @@ The initial fixed subtasks are:
 - התקנת אינטרקום
 - התקנת רשת תקשורת
 
-Each subtask stores a status (`not_started`, `in_progress`, `completed`, or `blocked`), actual quantity/execution text, notes and the last update time. The installer can save progress repeatedly during the work and later continue from the stored state after re-authentication and a valid customer grant.
+Each subtask stores a status (`not_started`, `in_progress`, `completed`, or `blocked`), start/end times, planned and actual quantities, completed work, missing work, faults, next steps, notes, protected photos/documents and the last update time. The installer can save progress repeatedly during the work and later continue from the stored state after re-authentication and a valid assignment grant.
 
 When the cabling subtask changes to `completed`, the portal sends a one-time email update to Cheyne and records an idempotent notification marker so repeated saves do not send duplicate completion messages.
 
-The final work report includes the overall work-order status and a snapshot of all subtask statuses, actual quantities and notes.
+The final work report includes the overall work-order status, a snapshot of all stage details, work times, faults, missing items, handover state, protected uploads and customer confirmation. Customer confirmation is either a stored signature plus signer name, or a mandatory unavailable reason.
 
 ## Production acceptance
 
@@ -124,11 +141,12 @@ Before enabling the URL for installers:
 2. Confirm the Monday token is read-only and limited to the required boards.
 3. Confirm one-time codes are delivered to both installers.
 4. Confirm an unlisted external email is rejected.
-5. Confirm pre-approval customer search reveals no phone, address, email, fault, or other PII.
-6. Request access to a synthetic/test customer and verify approval email delivery to Oren, Cheyne, and Support.
-7. Verify a forwarded approval link cannot approve without an authorized I Feel mailbox code.
-8. Approve the request and verify only the selected customer opens.
-9. Attempt to alter board/item IDs and verify the server continues to use the server-side grant.
-10. Submit a report with an upload and confirm the report is stored privately and notifications reach the configured report recipients.
-11. Start a new session and verify the prior customer grant is unavailable.
-12. Verify the employee portal continues to operate normally with its own session cookie.
+5. Confirm each installer sees only work orders assigned to the exact authenticated email.
+6. Open a synthetic/test assignment and verify only its customer, contacts and approved plan link are shown.
+7. Attempt to alter assignment, board or item IDs and verify the server continues to use the server-side grant.
+8. Save every stage with quantities, issues, missing work and photos, then verify the reviewer view.
+9. Verify a completed stage cannot be saved without a description of the completed work.
+10. Submit a final report with uploads and a customer signature, then repeat with the customer-unavailable reason flow.
+11. Confirm reports and files are stored privately and notifications reach Oren, Cheyne, Arik and Kiril.
+12. Start a new session and verify the prior customer grant is unavailable.
+13. Verify the employee portal continues to operate normally with its own session cookie.

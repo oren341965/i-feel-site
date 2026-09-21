@@ -23,10 +23,12 @@ test('external installer identities come only from server-side allowlist', () =>
   assert.match(external, /external_installer_allowlist/);
 });
 
-test('customer names are searchable before approval but details require a grant', () => {
-  assert.match(external, /portal_strlen\(\$term\) < 3/);
-  assert.match(external, /operator: contains_text/);
-  assert.match(external, /לפני אישור מוצג שם בלבד/);
+test('installers can open only work orders assigned to their verified email', () => {
+  assert.match(external, /function external_work_order_assignments/);
+  assert.match(external, /external_email_from_column_text/);
+  assert.match(external, /עבודות שהוקצו לך/);
+  assert.match(index, /חיפוש לקוחות אינו זמין/);
+  assert.match(index, /בקשת גישה חופשית אינה זמינה/);
   assert.match(index, /external_active_grant/);
   assert.match(index, /external_consume_grant/);
   assert.match(external, /external_fetch_customer/);
@@ -118,6 +120,29 @@ test('planned quantities and actual quantities are tracked per work-order line',
   assert.match(index, /external_post_string_array\('line_actual'/);
 });
 
+test('installer workflow captures execution evidence and customer confirmation', () => {
+  assert.match(external, /name="completed_work"/);
+  assert.match(external, /name="missing_work"/);
+  assert.match(external, /name="issues"/);
+  assert.match(external, /name="next_steps"/);
+  assert.match(external, /name="subtask_attachments\[\]"/);
+  assert.match(external, /name="work_faults"/);
+  assert.match(external, /name="work_missing_items"/);
+  assert.match(external, /name="customer_signature"/);
+  assert.match(external, /external_save_signature/);
+  assert.match(external, /external_stream_attachment/);
+  assert.match(index, /external_stream_attachment/);
+});
+
+test('project view loads operational contacts and safe Dropbox plan links', () => {
+  assert.match(external, /EXTERNAL_INSTALLER_SALES_BOARD_ID = '2732725332'/);
+  assert.match(external, /function external_sales_context/);
+  assert.match(external, /function external_safe_project_url/);
+  assert.match(external, /scl\/\(\?:fo\|fi\)/);
+  assert.match(external, /תוכניות והנחיות עבודה/);
+  assert.match(external, /אנשי קשר באתר/);
+});
+
 test('internal reviewer can inspect installer view without impersonating installer', () => {
   assert.match(external, /function external_render_reviewer_login/);
   assert.match(external, /function external_render_review_dashboard/);
@@ -125,6 +150,12 @@ test('internal reviewer can inspect installer view without impersonating install
   assert.match(index, /request_reviewer_code/);
   assert.match(index, /verify_reviewer_code/);
   assert.match(index, /reviewMode === '1'/);
+  assert.match(external, /function external_reviewer_emails/);
+  assert.match(external, /EXTERNAL_INSTALLER_REVIEWERS/);
+  assert.match(external, /arik@/);
+  assert.match(external, /kiril@/);
+  assert.match(index, /external_reviewer_user/);
+  assert.match(external, /כניסת צוות I Feel לסקירת עבודות/);
   assert.match(external, /אינו מתחזה למתקין/);
 });
 
