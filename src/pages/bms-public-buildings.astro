@@ -2,53 +2,141 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import content from '../page-html/bms-public-buildings.html?raw';
 
+const pageUrl = 'https://i-feel.co.il/bms-public-buildings/';
+
+const publicBmsAnswerBlock = `
+<section id="public-bms-answer" class="not-prose my-10 rounded-2xl border border-brand-100 bg-brand-50 p-6 md:p-8">
+  <p class="text-sm font-extrabold tracking-wide text-accent-600 mb-2">תשובה ישירה</p>
+  <h2 class="text-2xl md:text-3xl font-extrabold text-brand-900 mb-4">מה צריכה מערכת BMS במבנה ציבורי לנהל?</h2>
+  <p class="text-lg leading-8 text-brand-700 mb-6">מערכת BMS למבנה ציבורי צריכה לרכז לפחות את המיזוג, התאורה, מדידת האנרגיה וההתראות במקום אחד. בפרויקט רב-מבני היא צריכה גם לאפשר היררכיה לפי מבנה ואזור, לוחות זמנים, מגמות, הרשאות משתמשים ודוחות. שכבת השטח יכולה לשלב DDC, KNX, BACnet ו-Modbus, בעוד Siemens Desigo משמשת בפרויקטים מתאימים כשכבת הניהול המרכזית.</p>
+  <div class="grid gap-4 md:grid-cols-3 mb-6">
+    <div class="rounded-xl border border-brand-100 bg-white p-4">
+      <h3 class="font-extrabold text-brand-900 mb-2">שטח וחיישנים</h3>
+      <p class="text-brand-700 leading-7">טמפרטורה, נוכחות, מונים, משאבות, תאורה וציוד HVAC לפי תכנון המבנה.</p>
+    </div>
+    <div class="rounded-xl border border-brand-100 bg-white p-4">
+      <h3 class="font-extrabold text-brand-900 mb-2">בקרים ופרוטוקולים</h3>
+      <p class="text-brand-700 leading-7">DDC, BACnet, Modbus ו-KNX מחברים בין ציוד השטח לשכבת הניהול.</p>
+    </div>
+    <div class="rounded-xl border border-brand-100 bg-white p-4">
+      <h3 class="font-extrabold text-brand-900 mb-2">ניהול ודוחות</h3>
+      <p class="text-brand-700 leading-7">לוחות זמנים, מגמות, התראות, הרשאות ודוחות שמאפשרים לצוות לתפעל את המבנה באופן מסודר.</p>
+    </div>
+  </div>
+  <div class="flex flex-wrap gap-3">
+    <a href="/siemens-desigo-bms/" class="inline-flex items-center justify-center rounded-lg bg-brand-700 px-5 py-3 font-bold text-white hover:bg-brand-800">Siemens Desigo בישראל</a>
+    <a href="/bms-retrofit/" class="inline-flex items-center justify-center rounded-lg border border-brand-200 bg-white px-5 py-3 font-bold text-brand-800 hover:border-accent-400">שדרוג BMS במבנה קיים</a>
+  </div>
+</section>
+`;
+
+const standardsBlock = `
+<section id="standards-and-open-protocols" class="not-prose my-10 rounded-2xl border border-brand-100 bg-white p-6 md:p-8 shadow-sm">
+  <p class="text-sm font-bold tracking-wide text-accent-600 mb-2">תכנון פתוח ומתועד</p>
+  <h2 class="text-2xl md:text-3xl font-extrabold text-brand-900 mb-4">תקנים, BACnet ודרישות תכנון בפרויקט ציבורי</h2>
+  <p class="text-lg leading-8 text-brand-700 mb-4">בפרויקט ציבורי חשוב להגדיר מראש את נקודות הבקרה, ממשקי התקשורת, הרשאות המשתמשים, מסירת התיעוד ודרישות ה-commissioning. פרוטוקולים פתוחים כמו BACnet, Modbus ו-KNX מאפשרים לתכנן אינטגרציה בין מערכות שונות בלי להסתמך על שכבה אחת בלבד.</p>
+  <p class="text-lg leading-8 text-brand-700">לקריאה נוספת על הקשר בין תקנים, BACnet ומערכות ניהול מבנה, ראו את המדריך החדש: <a href="/articles/ashrae-siemens-desigo-building-standards/" class="font-bold text-accent-600 hover:underline">ASHRAE, Siemens Desigo ותקני בקרת מבנה</a>.</p>
+</section>
+`;
+
+const enhancedContent = content
+  .replace(
+    'בתי ספר, מתנ"סים, אולמות תרבות, רשויות וקמפוסים — מערכת BMS אחת לניהול מרכזי של מיזוג, תאורה ואנרגיה, שחוסכת מנהל אחזקה במשרה מלאה ומפחיתה עלויות תפעול.',
+    'בתי ספר, מתנ"סים, אולמות תרבות, רשויות וקמפוסים - מערכת BMS אחת לניהול מרכזי של מיזוג, תאורה ואנרגיה, עם אוטומציה, ניטור והתראות שנועדו לשפר יעילות תפעולית ואנרגטית.'
+  )
+  .replace(
+    'מערכת בקרת מבנה (BMS) למבני ציבור מאחדת את מערכות המבנה — מיזוג, תאורה, חשמל, אנרגיה והתראות — לניהול מרכזי אחד. במבני ציבור, שבהם לרוב אין צוות אחזקה גדול, ניהול מרחוק ממסך אחד הוא ההבדל בין מבנה שמתופעל ביעילות לבין מבנה שזולל אנרגיה ומייצר תקלות.',
+    'מערכת בקרת מבנה (BMS) למבני ציבור מאחדת את מערכות המבנה - מיזוג, תאורה, חשמל, אנרגיה והתראות - לניהול מרכזי אחד. במבנים ציבוריים היתרון המרכזי הוא היכולת לתזמן מערכות, לראות חריגות, לקבל התראות ולנהל מספר אזורים או מבנים מאותו ממשק.'
+  )
+  .replace(
+    'מבני ציבור נמדדים על יעילות תפעולית וצריכת אנרגיה. BMS מאפשר ניהול מרחוק שחוסך כוח אדם, מפחית עלויות חשמל ומיזוג, ומספק ניטור ודיווח לצורכי תקצוב ועמידה ביעדים. מבנה עם BMS איכותי תורם גם לציון ב',
+    'מבני ציבור נמדדים על יעילות תפעולית וצריכת אנרגיה. BMS מאפשר ניהול מרחוק, תזמון, ניטור צריכה והתראות שמצמצמים פעולות ידניות ומאפשרים לצוות האחזקה לזהות בזבוז וחריגות מוקדם יותר. נתוני המערכת יכולים לתמוך בתהליכי מדידה, תיעוד והתייעלות בפרויקטי בנייה ירוקה, בהתאם לתכנון ולדרישות '
+  )
+  .replace('<section id="for-whom">', `${publicBmsAnswerBlock}<section id="for-whom">`)
+  .replace('<section id="process">', `${standardsBlock}<section id="process">`);
+
 const meta = {
-  title: "בקרת מבנה למבני ציבור | BMS לבתי ספר ורשויות | i-feel",
-  description: "בקרת מבנה למבני ציבור — בתי ספר, מתנ\"סים, אולמות ורשויות: ניהול מיזוג, תאורה ואנרגיה, חיסכון ותרומה לתקן 5281. אפיון והערכת חיסכון — 03-508-9553.",
-  canonical: "https://i-feel.co.il/bms-public-buildings/",
-  ogTitle: "בקרת מבנה למבני ציבור | BMS | i-feel",
-  ogDescription: "ניהול מרכזי של מיזוג, תאורה ואנרגיה לבתי ספר, מתנ\"סים, אולמות ורשויות. חיסכון ותקן 5281.",
-  ogUrl: "https://i-feel.co.il/bms-public-buildings/",
-  ogImage: "https://i-feel.co.il/structure-control/projects/museum-of-illusions/museum-of-illusions-124.jpg",
+  title: 'בקרת מבנה למבני ציבור בישראל | מערכת BMS | i-feel',
+  description: 'מערכת BMS למבני ציבור בישראל: ניהול מיזוג, תאורה, אנרגיה והתראות לבתי ספר, רשויות, אולמות וקמפוסים, עם DDC, BACnet ו-Siemens Desigo.',
+  canonical: pageUrl,
+  ogTitle: 'BMS למבני ציבור בישראל | בקרת מבנה | i-feel',
+  ogDescription: 'בקרת מבנה לבתי ספר, רשויות, אולמות וקמפוסים: DDC, BACnet, KNX, Siemens Desigo, ניטור אנרגיה, התראות וניהול מרכזי.',
+  ogUrl: pageUrl,
+  ogImage: 'https://i-feel.co.il/structure-control/projects/museum-of-illusions/museum-of-illusions-124.jpg',
   jsonLd: JSON.stringify({
-    "@context": "https://schema.org",
-    "@graph": [
+    '@context': 'https://schema.org',
+    '@graph': [
       {
-        "@type": ["LocalBusiness", "HomeAndConstructionBusiness"],
-        "@id": "https://i-feel.co.il/#business",
-        "name": "i-feel",
-        "alternateName": "i-feel מערכות בקרת מבנה ובית חכם",
-        "url": "https://i-feel.co.il/",
-        "logo": "https://i-feel.co.il/assets/ifeel-logo.png",
-        "image": "https://i-feel.co.il/assets/ifeel-logo.png",
-        "telephone": "+972-3-508-9553",
-        "email": "sales@i-feel.co.il",
-        "priceRange": "₪₪₪",
-        "address": { "@type": "PostalAddress", "streetAddress": "אימבר 14", "addressLocality": "פתח תקווה", "addressRegion": "מחוז המרכז", "postalCode": "4951148", "addressCountry": "IL" },
-        "areaServed": { "@type": "Country", "name": "Israel", "sameAs": "https://www.wikidata.org/wiki/Q801" },
-        "sameAs": ["https://www.facebook.com/SmarthomeIsrael", "https://www.instagram.com/ifeelisrael", "https://www.linkedin.com/company/i-feel-smart-home-systems"]
+        '@type': ['LocalBusiness', 'HomeAndConstructionBusiness'],
+        '@id': 'https://i-feel.co.il/#business',
+        name: 'i-feel',
+        alternateName: 'i-feel מערכות בקרת מבנה ובית חכם',
+        url: 'https://i-feel.co.il/',
+        logo: 'https://i-feel.co.il/assets/ifeel-logo.png',
+        image: 'https://i-feel.co.il/assets/ifeel-logo.png',
+        telephone: '+972-3-508-9553',
+        email: 'sales@i-feel.co.il',
+        priceRange: '₪₪₪',
+        address: {
+          '@type': 'PostalAddress',
+          streetAddress: 'אימבר 14',
+          addressLocality: 'פתח תקווה',
+          addressRegion: 'מחוז המרכז',
+          postalCode: '4951148',
+          addressCountry: 'IL',
+        },
+        areaServed: { '@type': 'Country', name: 'Israel', sameAs: 'https://www.wikidata.org/wiki/Q801' },
+        sameAs: [
+          'https://www.facebook.com/SmarthomeIsrael',
+          'https://www.instagram.com/ifeelisrael',
+          'https://www.linkedin.com/company/i-feel-smart-home-systems',
+        ],
       },
       {
-        "@type": "BreadcrumbList",
-        "itemListElement": [
-          { "@type": "ListItem", "position": 1, "name": "דף הבית", "item": "https://i-feel.co.il/" },
-          { "@type": "ListItem", "position": 2, "name": "בקרת מבנה BMS", "item": "https://i-feel.co.il/structure-control/" },
-          { "@type": "ListItem", "position": 3, "name": "בקרת מבנה למבני ציבור", "item": "https://i-feel.co.il/bms-public-buildings/" }
-        ]
+        '@type': 'BreadcrumbList',
+        itemListElement: [
+          { '@type': 'ListItem', position: 1, name: 'דף הבית', item: 'https://i-feel.co.il/' },
+          { '@type': 'ListItem', position: 2, name: 'בקרת מבנה BMS', item: 'https://i-feel.co.il/structure-control/' },
+          { '@type': 'ListItem', position: 3, name: 'בקרת מבנה למבני ציבור', item: pageUrl },
+        ],
       },
       {
-        "@type": "Service",
-        "name": "בקרת מבנה למבני ציבור",
-        "url": "https://i-feel.co.il/bms-public-buildings/",
-        "serviceType": "Building Management System for Public Buildings",
-        "provider": { "@id": "https://i-feel.co.il/#business" },
-        "areaServed": { "@type": "Country", "name": "Israel" },
-        "description": "תכנון, התקנה ושירות למערכות בקרת מבנה לבתי ספר, מתנ\"סים, אולמות תרבות, רשויות וקמפוסים."
-      }
-    ]
-  })
+        '@type': 'Service',
+        '@id': `${pageUrl}#service`,
+        name: 'BMS למבני ציבור בישראל',
+        url: pageUrl,
+        serviceType: 'Building Management System for Public Buildings',
+        provider: { '@id': 'https://i-feel.co.il/#business' },
+        areaServed: { '@type': 'Country', name: 'Israel' },
+        audience: [
+          { '@type': 'BusinessAudience', audienceType: 'רשויות ומנהלי מבני ציבור' },
+          { '@type': 'BusinessAudience', audienceType: 'מוסדות חינוך וקמפוסים' },
+          { '@type': 'BusinessAudience', audienceType: 'אולמות תרבות ומתקנים ציבוריים' },
+        ],
+        description: 'תכנון, אינטגרציה ושירות למערכות בקרת מבנה BMS לבתי ספר, רשויות, אולמות, קמפוסים ומבני ציבור בישראל, כולל DDC, BACnet, Modbus, KNX ו-Siemens Desigo.',
+      },
+      {
+        '@type': 'WebPage',
+        '@id': `${pageUrl}#webpage`,
+        url: pageUrl,
+        name: 'בקרת מבנה למבני ציבור בישראל | מערכת BMS',
+        description: 'מדריך ושירות BMS למבני ציבור בישראל, כולל ניהול מיזוג, תאורה, אנרגיה והתראות עם DDC, BACnet, KNX, Modbus ו-Siemens Desigo.',
+        inLanguage: 'he-IL',
+        dateModified: '2026-09-21',
+        isPartOf: { '@id': 'https://i-feel.co.il/#website' },
+        about: { '@id': `${pageUrl}#service` },
+        mainEntity: { '@id': `${pageUrl}#service` },
+        keywords: ['בקרת מבנה למבני ציבור', 'BMS למבני ציבור', 'מערכת BMS', 'Siemens Desigo', 'BACnet', 'DDC'],
+        relatedLink: [
+          'https://i-feel.co.il/siemens-desigo-bms/',
+          'https://i-feel.co.il/bms-retrofit/',
+          'https://i-feel.co.il/articles/ashrae-siemens-desigo-building-standards/',
+        ],
+      },
+    ],
+  }),
 };
 ---
 <BaseLayout {...meta}>
-  <Fragment set:html={content} />
+  <Fragment set:html={enhancedContent} />
 </BaseLayout>
