@@ -788,6 +788,32 @@ function external_work_subtask_definitions(): array
     ];
 }
 
+function external_format_datetime(string $value): string
+{
+    if ($value === '') {
+        return '';
+    }
+    try {
+        return (new DateTimeImmutable($value))
+            ->setTimezone(new DateTimeZone('Asia/Jerusalem'))
+            ->format('d/m/Y H:i');
+    } catch (Throwable $error) {
+        return $value;
+    }
+}
+
+function external_required_subtask_keys(array $order): array
+{
+    $keys = [];
+    foreach (external_work_subtask_definitions() as $key => $label) {
+        $subtask = is_array($order['subtasks'][$key] ?? null) ? $order['subtasks'][$key] : [];
+        if (($subtask['required'] ?? true) === true) {
+            $keys[] = $key;
+        }
+    }
+    return $keys;
+}
+
 
 function external_work_order_assignments(?string $installerEmail = null): array
 {
@@ -999,6 +1025,9 @@ function external_default_work_order(array $request): array
     $subtasks = [];
     $plan = is_array($request['work_order_plan'] ?? null) ? $request['work_order_plan'] : [];
     $categories = is_array($plan['categories'] ?? null) ? $plan['categories'] : [];
+    $configuredRequired = is_array($plan['required_subtasks'] ?? null)
+        ? array_values(array_filter($plan['required_subtasks'], 'is_string'))
+        : [];
     foreach (external_work_subtask_definitions() as $key => $label) {
         $lines = [];
         foreach ((is_array($categories[$key] ?? null) ? $categories[$key] : []) as $line) {
@@ -1016,16 +1045,19 @@ function external_default_work_order(array $request): array
         }
         $subtasks[$key] = [
             'label' => $label,
+            'required' => $configuredRequired === [] || in_array($key, $configuredRequired, true),
             'status' => 'not_started',
             'actual_quantity' => '',
             'completed_work' => '',
             'missing_work' => '',
             'issues' => '',
             'next_steps' => '',
+            'report_date' => '',
             'start_time' => '',
             'end_time' => '',
             'notes' => '',
             'attachments' => [],
+            'history' => [],
             'lines' => $lines,
             'updated_at' => null,
         ];
@@ -1048,6 +1080,7 @@ function external_work_order(array $request): array
 {
     $path = external_work_order_path((string) ($request['id'] ?? ''));
     $order = portal_json_read($path);
+    $normalized = false;
     if ($order === []) {
         $order = external_default_work_order($request);
         portal_json_write($path, $order);
@@ -1056,25 +1089,33 @@ function external_work_order(array $request): array
     $definitions = external_work_subtask_definitions();
     if (!is_array($order['subtasks'] ?? null)) {
         $order['subtasks'] = [];
+        $normalized = true;
     }
     foreach ($definitions as $key => $label) {
         if (!is_array($order['subtasks'][$key] ?? null)) {
             $order['subtasks'][$key] = [
                 'label' => $label,
+                'required' => true,
                 'status' => 'not_started',
                 'actual_quantity' => '',
                 'completed_work' => '',
                 'missing_work' => '',
                 'issues' => '',
                 'next_steps' => '',
+                'report_date' => '',
                 'start_time' => '',
                 'end_time' => '',
                 'notes' => '',
                 'attachments' => [],
+                'history' => [],
                 'updated_at' => null,
             ];
         }
         $order['subtasks'][$key]['label'] = $label;
+        if (!array_key_exists('required', $order['subtasks'][$key])) {
+            $order['subtasks'][$key]['required'] = true;
+            $normalized = true;
+        }
         if (!is_array($order['subtasks'][$key]['lines'] ?? null)) {
             $fresh = external_default_work_order($request);
             $order['subtasks'][$key]['lines'] = $fresh['subtasks'][$key]['lines'] ?? [];
@@ -1082,6 +1123,32 @@ function external_work_order(array $request): array
         if (!is_array($order['subtasks'][$key]['attachments'] ?? null)) {
             $order['subtasks'][$key]['attachments'] = [];
         }
+        if (!is_array($order['subtasks'][$key]['history'] ?? null)) {
+            $order['subtasks'][$key]['history'] = [];
+            $normalized = true;
+        }
+        if ($order['subtasks'][$key]['history'] === [] && (string) ($order['subtasks'][$key]['updated_at'] ?? '') !== '') {
+            $subtask = $order['subtasks'][$key];
+            $order['subtasks'][$key]['history'][] = [
+                'reported_at' => (string) $subtask['updated_at'],
+                'reported_by' => (string) ($subtask['updated_by'] ?? $order['installer_email'] ?? ''),
+                'status' => (string) ($subtask['status'] ?? 'not_started'),
+                'actual_quantity' => (string) ($subtask['actual_quantity'] ?? ''),
+                'completed_work' => (string) ($subtask['completed_work'] ?? ''),
+                'missing_work' => (string) ($subtask['missing_work'] ?? ''),
+                'issues' => (string) ($subtask['issues'] ?? ''),
+                'next_steps' => (string) ($subtask['next_steps'] ?? ''),
+                'report_date' => (string) ($subtask['report_date'] ?? ''),
+                'start_time' => (string) ($subtask['start_time'] ?? ''),
+                'end_time' => (string) ($subtask['end_time'] ?? ''),
+                'notes' => (string) ($subtask['notes'] ?? ''),
+                'attachments_count' => count($subtask['attachments'] ?? []),
+            ];
+            $normalized = true;
+        }
+    }
+    if ($normalized) {
+        portal_json_write($path, $order);
     }
     return $order;
 }
@@ -1107,7 +1174,7 @@ function external_recalculate_work_order_status(array $order): array
 {
     $statuses = [];
     foreach (($order['subtasks'] ?? []) as $subtask) {
-        if (is_array($subtask)) {
+        if (is_array($subtask) && ($subtask['required'] ?? true) === true) {
             $statuses[] = (string) ($subtask['status'] ?? 'not_started');
         }
     }
@@ -1121,6 +1188,41 @@ function external_recalculate_work_order_status(array $order): array
     } else {
         $order['status'] = 'not_started';
     }
+    return $order;
+}
+
+function external_update_requirements(array $reviewer, array $assignment, array $requiredKeys): array
+{
+    $reviewerEmail = portal_normalize_company_email((string) ($reviewer['email'] ?? ''));
+    if ($reviewerEmail === null || !in_array($reviewerEmail, external_reviewer_emails(), true)) {
+        throw new RuntimeException('אין הרשאה לעדכן את דרישות העבודה.');
+    }
+    $definitions = external_work_subtask_definitions();
+    $required = [];
+    foreach ($requiredKeys as $key) {
+        $key = is_scalar($key) ? trim((string) $key) : '';
+        if (array_key_exists($key, $definitions)) {
+            $required[$key] = true;
+        }
+    }
+    if ($required === []) {
+        throw new RuntimeException('יש לבחור לפחות תחום עבודה אחד למתקין.');
+    }
+
+    $request = external_request_from_assignment($assignment);
+    $order = external_work_order($request);
+    foreach ($definitions as $key => $label) {
+        $order['subtasks'][$key]['required'] = isset($required[$key]);
+    }
+    $order['requirements_updated_at'] = gmdate('c');
+    $order['requirements_updated_by'] = $reviewerEmail;
+    $order = external_recalculate_work_order_status($order);
+    external_save_work_order($order);
+    portal_audit('external_installer_requirements_updated', [
+        'request_id' => (string) ($request['id'] ?? ''),
+        'required_subtasks' => array_keys($required),
+        'reviewer_hash' => external_hash_key($reviewerEmail),
+    ]);
     return $order;
 }
 
@@ -1174,6 +1276,7 @@ function external_update_subtask(
     string $missingWork = '',
     string $issues = '',
     string $nextSteps = '',
+    string $reportDate = '',
     string $startTime = '',
     string $endTime = '',
     array $uploadFiles = []
@@ -1195,12 +1298,16 @@ function external_update_subtask(
     $missingWork = trim($missingWork);
     $issues = trim($issues);
     $nextSteps = trim($nextSteps);
+    $reportDate = trim($reportDate);
     $startTime = trim($startTime);
     $endTime = trim($endTime);
     if (portal_strlen($quantity) > 80 || portal_strlen($notes) > 1500
         || portal_strlen($completedWork) > 2500 || portal_strlen($missingWork) > 2000
         || portal_strlen($issues) > 2500 || portal_strlen($nextSteps) > 1500) {
         throw new RuntimeException('המידע שהוזן ארוך מהמותר.');
+    }
+    if (!portal_valid_date($reportDate)) {
+        throw new RuntimeException('חובה לבחור את תאריך העבודה שעליו מדווחים.');
     }
     foreach ([$startTime, $endTime] as $timeValue) {
         if ($timeValue !== '' && preg_match('/^(?:[01]\d|2[0-3]):[0-5]\d$/', $timeValue) !== 1) {
@@ -1233,6 +1340,9 @@ function external_update_subtask(
     $attachments = is_array($order['subtasks'][$key]['attachments'] ?? null)
         ? $order['subtasks'][$key]['attachments']
         : [];
+    $history = is_array($order['subtasks'][$key]['history'] ?? null)
+        ? $order['subtasks'][$key]['history']
+        : [];
     if ($uploadFiles !== []) {
         $newAttachments = portal_save_uploads(
             external_work_order_media_dir((string) $request['id'], $key),
@@ -1240,20 +1350,40 @@ function external_update_subtask(
         );
         $attachments = array_merge($attachments, $newAttachments);
     }
-    $order['subtasks'][$key] = [
-        'label' => external_work_subtask_definitions()[$key],
+    $reportedAt = gmdate('c');
+    $history[] = [
+        'reported_at' => $reportedAt,
+        'reported_by' => (string) ($installer['email'] ?? ''),
         'status' => $status,
         'actual_quantity' => portal_substr($quantity, 0, 80),
         'completed_work' => portal_substr($completedWork, 0, 2500),
         'missing_work' => portal_substr($missingWork, 0, 2000),
         'issues' => portal_substr($issues, 0, 2500),
         'next_steps' => portal_substr($nextSteps, 0, 1500),
+        'report_date' => $reportDate,
+        'start_time' => $startTime,
+        'end_time' => $endTime,
+        'notes' => portal_substr($notes, 0, 1500),
+        'attachments_count' => count($attachments),
+    ];
+    $history = array_slice($history, -100);
+    $order['subtasks'][$key] = [
+        'label' => external_work_subtask_definitions()[$key],
+        'required' => ($order['subtasks'][$key]['required'] ?? true) === true,
+        'status' => $status,
+        'actual_quantity' => portal_substr($quantity, 0, 80),
+        'completed_work' => portal_substr($completedWork, 0, 2500),
+        'missing_work' => portal_substr($missingWork, 0, 2000),
+        'issues' => portal_substr($issues, 0, 2500),
+        'next_steps' => portal_substr($nextSteps, 0, 1500),
+        'report_date' => $reportDate,
         'start_time' => $startTime,
         'end_time' => $endTime,
         'notes' => portal_substr($notes, 0, 1500),
         'lines' => $lines,
         'attachments' => $attachments,
-        'updated_at' => gmdate('c'),
+        'history' => $history,
+        'updated_at' => $reportedAt,
         'updated_by' => (string) ($installer['email'] ?? ''),
     ];
     $order = external_recalculate_work_order_status($order);
@@ -1995,15 +2125,22 @@ function external_render_approved_customer(array $installer, array $grant, ?stri
     if ((string) ($customer['plans_url'] ?? '') !== '') {
         array_unshift($documents, ['label' => 'תיקיית התוכניות ב-Dropbox', 'url' => (string) $customer['plans_url']]);
     }
+    $requiredKeys = external_required_subtask_keys($workOrder);
     $completedSubtasks = count(array_filter(
         $workOrder['subtasks'] ?? [],
-        static fn(array $subtask): bool => (string) ($subtask['status'] ?? '') === 'completed'
+        static fn(array $subtask): bool => ($subtask['required'] ?? true) === true
+            && (string) ($subtask['status'] ?? '') === 'completed'
     ));
-    $totalSubtasks = count(external_work_subtask_definitions());
+    $totalSubtasks = count($requiredKeys);
     external_page_start('לקוח מאושר');
     ?>
 <section class="page-heading page-heading--compact"><div><p class="eyebrow">גישה שאושרה</p><h1><?= portal_h($customer['name']) ?></h1><p>הגישה מוגבלת ללקוח זה ולמשך חלון האישור בלבד.</p></div></section>
 <?php if ($error !== null): ?><div class="alert alert--error"><?= portal_h($error) ?></div><?php endif; ?>
+<section class="workflow-guide" aria-label="שלבי הדיווח">
+    <div><span>1</span><strong>בחר שלב עבודה</strong><small>פתח רק את התחום שאתה מבצע כעת.</small></div>
+    <div><span>2</span><strong>דווח מהשטח</strong><small>שעות, כמויות, ביצוע, חוסרים, תקלות ותמונות.</small></div>
+    <div><span>3</span><strong>סיים ומסור</strong><small>מלא דוח סיום והחתם את הלקוח.</small></div>
+</section>
 <section class="detail-card">
     <h2>פרטי עבודה</h2>
     <div class="detail-grid">
@@ -2043,15 +2180,18 @@ function external_render_approved_customer(array $installer, array $grant, ?stri
     <?php if (($workOrder['work_order_number'] ?? '') !== ''): ?>
         <p><strong>הזמנת עבודה:</strong> <?= portal_h($workOrder['work_order_number']) ?></p>
     <?php endif; ?>
-    <div class="table-wrap"><table class="records-table">
-        <thead><tr><th>תת משימה</th><th>סטטוס</th><th>כמות/ביצוע בפועל</th><th>הערות</th><th></th></tr></thead>
-        <tbody>
+    <div class="installer-work-steps">
+        <?php $stepNumber = 0; ?>
         <?php foreach (external_work_subtask_definitions() as $subtaskKey => $subtaskLabel): ?>
             <?php $subtask = $workOrder['subtasks'][$subtaskKey] ?? []; ?>
-            <tr>
-                <td><strong><?= portal_h($subtaskLabel) ?></strong></td>
-                <td><?= portal_h(external_work_status_label((string) ($subtask['status'] ?? 'not_started'))) ?></td>
-                <td colspan="3">
+            <?php if (($subtask['required'] ?? true) !== true) { continue; } $stepNumber++; ?>
+            <details class="installer-step-card" <?= $stepNumber === 1 || (string) ($subtask['status'] ?? 'not_started') !== 'not_started' ? 'open' : '' ?>>
+                <summary>
+                    <span class="step"><?= $stepNumber ?></span>
+                    <span class="installer-step-card__title"><strong><?= portal_h($subtaskLabel) ?></strong><small><?= ($subtask['updated_at'] ?? '') !== '' ? 'דווח לאחרונה ' . portal_h(external_format_datetime((string) $subtask['updated_at'])) : 'טרם נשמר דיווח' ?></small></span>
+                    <span class="status <?= (string) ($subtask['status'] ?? 'not_started') === 'completed' ? 'status--approved' : 'status--review' ?>"><?= portal_h(external_work_status_label((string) ($subtask['status'] ?? 'not_started'))) ?></span>
+                </summary>
+                <div class="installer-step-card__body">
                     <form method="post" enctype="multipart/form-data" class="form-grid">
                         <input type="hidden" name="csrf" value="<?= portal_h(portal_csrf_token()) ?>">
                         <input type="hidden" name="action" value="save_external_subtask">
@@ -2086,6 +2226,7 @@ function external_render_approved_customer(array $installer, array $grant, ?stri
                             <span>סיכום כמות / ביצוע</span>
                             <input type="text" name="actual_quantity" maxlength="80" value="<?= portal_h((string) ($subtask['actual_quantity'] ?? '')) ?>" placeholder="סיכום כללי, אם נדרש">
                         </label>
+                        <label class="field"><span>תאריך העבודה המדווחת</span><input type="date" name="report_date" value="<?= portal_h((string) (($subtask['report_date'] ?? '') !== '' ? $subtask['report_date'] : date('Y-m-d'))) ?>" required></label>
                         <label class="field"><span>שעת התחלה</span><input type="time" name="start_time" value="<?= portal_h((string) ($subtask['start_time'] ?? '')) ?>"></label>
                         <label class="field"><span>שעת סיום</span><input type="time" name="end_time" value="<?= portal_h((string) ($subtask['end_time'] ?? '')) ?>"></label>
                         <label class="field field--full"><span>מה בוצע</span><textarea name="completed_work" rows="3" maxlength="2500" placeholder="פירוט העבודה שבוצעה בפועל"><?= portal_h((string) ($subtask['completed_work'] ?? '')) ?></textarea></label>
@@ -2097,13 +2238,12 @@ function external_render_approved_customer(array $installer, array $grant, ?stri
                             <textarea name="subtask_notes" rows="2" maxlength="1500" placeholder="מה בוצע, מה חסר או מה חוסם"><?= portal_h((string) ($subtask['notes'] ?? '')) ?></textarea>
                         </label>
                         <div class="field field--full"><span>תמונות ומסמכים לשלב זה</span><input type="file" name="subtask_attachments[]" multiple accept=".pdf,.jpg,.jpeg,.png,.webp,.heic,.heif,.avif,application/pdf,image/*" capture="environment"><p class="form-note">אפשר לשמור תמונות לפני, במהלך ואחרי הביצוע. קבצים קיימים: <?= count($subtask['attachments'] ?? []) ?></p><?php if (($subtask['attachments'] ?? []) !== []): ?><ul><?php foreach ($subtask['attachments'] as $attachmentIndex => $attachment): ?><li><a href="<?= portal_h(external_public_url(['attachment' => '1', 'scope' => 'subtask', 'request' => $request['id'], 'container' => $subtaskKey, 'file' => $attachmentIndex])) ?>" target="_blank" rel="noopener"><?= portal_h($attachment['original_name'] ?? 'קובץ') ?></a></li><?php endforeach; ?></ul><?php endif; ?></div>
-                        <div class="field--full"><button class="button button--secondary button--small" type="submit">שמירת התקדמות</button></div>
+                        <div class="field--full save-progress-bar"><span>כל שמירה מתועדת ביומן עם תאריך ושעה.</span><button class="button button--primary" type="submit">שמירת דיווח מהשטח</button></div>
                     </form>
-                </td>
-            </tr>
+                </div>
+            </details>
         <?php endforeach; ?>
-        </tbody>
-    </table></div>
+    </div>
     <p class="form-note">סיום התקנת הכבילה שולח לשיין עדכון אוטומטי פעם אחת בלבד.</p>
 </section>
 <form method="post" enctype="multipart/form-data" class="detail-card form-grid">
@@ -2190,7 +2330,7 @@ function external_render_review_dashboard(array $reviewer, ?string $error = null
     exit;
 }
 
-function external_render_assignment_preview(array $reviewer, string $assignmentId): void
+function external_render_assignment_preview(array $reviewer, string $assignmentId, ?string $message = null): void
 {
     $assignment = external_work_order_assignment($assignmentId, null);
     if ($assignment === null) {
@@ -2211,30 +2351,84 @@ function external_render_assignment_preview(array $reviewer, string $assignmentI
     if ((string) ($customer['plans_url'] ?? '') !== '') {
         array_unshift($documents, ['label' => 'תיקיית התוכניות ב-Dropbox', 'url' => (string) $customer['plans_url']]);
     }
+    $requiredKeys = external_required_subtask_keys($order);
+    $activity = [];
+    foreach (external_work_subtask_definitions() as $key => $label) {
+        $subtask = is_array($order['subtasks'][$key] ?? null) ? $order['subtasks'][$key] : [];
+        foreach ((is_array($subtask['history'] ?? null) ? $subtask['history'] : []) as $entry) {
+            if (is_array($entry)) {
+                $entry['kind'] = 'subtask';
+                $entry['label'] = $label;
+                $activity[] = $entry;
+            }
+        }
+    }
+    foreach ($reports as $report) {
+        if (is_array($report)) {
+            $activity[] = [
+                'kind' => 'report',
+                'label' => 'דוח סיום עבודה',
+                'reported_at' => (string) ($report['created_at'] ?? ''),
+                'report_date' => (string) ($report['work_date'] ?? ''),
+                'reported_by' => (string) ($report['employee']['email'] ?? ''),
+                'completed_work' => (string) ($report['summary'] ?? ''),
+                'status' => (string) ($report['outcome'] ?? ''),
+            ];
+        }
+    }
+    usort($activity, static fn(array $a, array $b): int => strcmp((string) ($b['reported_at'] ?? ''), (string) ($a['reported_at'] ?? '')));
     external_page_start('תצוגת מתקין');
     ?>
 <section class="page-heading page-heading--compact">
-    <div><p class="eyebrow">תצוגה פנימית של מסך המתקין</p><h1>הזמנה <?= portal_h($assignment['work_order_number']) ?> · <?= portal_h($customer['name']) ?></h1><p>המסך מציג את המידע שהמתקין יקבל לאחר כניסה מאושרת. אין אפשרות לעדכן נתונים ממצב סקירה.</p></div>
+    <div><p class="eyebrow">תצוגה פנימית של מסך המתקין</p><h1>הזמנה <?= portal_h($assignment['work_order_number']) ?> · <?= portal_h($customer['name']) ?></h1><p>כאן בוחרים מה המתקין נדרש לבצע ורואים כל דיווח עם תאריך ושעה. המתקין ממלא את השדות המפורטים בכל שלב ומגיש דוח סיום עם תמונות ואישור לקוח.</p></div>
     <a class="button button--secondary" href="<?= portal_h(external_public_url(['review' => '1'])) ?>">חזרה לרשימה</a>
 </section>
+<?php if ($message !== null): ?><div class="alert alert--info"><?= portal_h($message) ?></div><?php endif; ?>
+<section class="workflow-guide" aria-label="תהליך עבודת המתקין">
+    <div><span>1</span><strong>מגדירים דרישות</strong><small>בוחרים אילו תחומי עבודה נכללים בהזמנה.</small></div>
+    <div><span>2</span><strong>המתקין מדווח מהשטח</strong><small>סטטוס, שעות, כמויות, ביצוע, חוסרים, תקלות ותמונות.</small></div>
+    <div><span>3</span><strong>סיום ומסירה</strong><small>דוח מסכם, המשך טיפול וחתימת לקוח.</small></div>
+</section>
+<form method="post" class="detail-card requirements-card">
+    <input type="hidden" name="csrf" value="<?= portal_h(portal_csrf_token()) ?>">
+    <input type="hidden" name="action" value="save_reviewer_requirements">
+    <input type="hidden" name="assignment_id" value="<?= portal_h($assignmentId) ?>">
+    <div class="section-heading-row"><div><p class="eyebrow">שלב ניהולי</p><h2>מה נדרש מהמתקין לבצע?</h2><p>סמן את תחומי העבודה שיופיעו למתקין בהזמנה זו.</p></div><button class="button button--primary" type="submit">שמירת דרישות</button></div>
+    <div class="requirement-picker">
+    <?php foreach (external_work_subtask_definitions() as $key => $label): ?>
+        <?php $subtask = $order['subtasks'][$key] ?? []; ?>
+        <label class="requirement-option">
+            <input type="checkbox" name="required_subtasks[]" value="<?= portal_h($key) ?>" <?= in_array($key, $requiredKeys, true) ? 'checked' : '' ?>>
+            <span><strong><?= portal_h($label) ?></strong><small><?= portal_h(external_work_status_label((string) ($subtask['status'] ?? 'not_started'))) ?></small></span>
+        </label>
+    <?php endforeach; ?>
+    </div>
+    <?php if (($order['requirements_updated_at'] ?? '') !== ''): ?><p class="form-note">עודכן לאחרונה: <?= portal_h(external_format_datetime((string) $order['requirements_updated_at'])) ?> על ידי <span dir="ltr"><?= portal_h((string) ($order['requirements_updated_by'] ?? '')) ?></span></p><?php endif; ?>
+</form>
 <section class="detail-card">
     <h2>פרטי המתקין והלקוח</h2>
     <div class="detail-grid">
-        <div><span>מתקין</span><strong><?= portal_h($assignment['installer_name']) ?></strong></div>
-        <div><span>חברה</span><strong><?= portal_h($assignment['company']) ?></strong></div>
-        <div><span>לקוח</span><strong><?= portal_h($customer['name']) ?></strong></div>
-        <div><span>טלפון</span><strong dir="ltr"><?= portal_h($customer['phone']) ?></strong></div>
-        <div><span>כתובת</span><strong><?= portal_h($customer['address']) ?></strong></div>
-        <div><span>הזמנת עבודה</span><strong><?= portal_h($assignment['work_order_number']) ?></strong></div>
+        <div class="detail-item"><span>מתקין</span><strong><?= portal_h($assignment['installer_name']) ?></strong></div>
+        <div class="detail-item"><span>חברה</span><strong><?= portal_h($assignment['company']) ?></strong></div>
+        <div class="detail-item"><span>לקוח</span><strong><?= portal_h($customer['name']) ?></strong></div>
+        <div class="detail-item"><span>טלפון</span><strong dir="ltr"><?= portal_h($customer['phone']) ?></strong></div>
+        <div class="detail-item"><span>כתובת</span><strong><?= portal_h($customer['address']) ?></strong></div>
+        <div class="detail-item"><span>הזמנת עבודה</span><strong><?= portal_h($assignment['work_order_number']) ?></strong></div>
     </div>
 </section>
-<?php if ($contacts !== []): ?><section class="detail-card"><h2>אנשי קשר באתר</h2><div class="detail-grid"><?php foreach ($contacts as $contact): ?><div><span><?= portal_h($contact['role'] ?? 'איש קשר') ?></span><strong><?= portal_h($contact['name'] ?? '') ?></strong><?php if (($contact['phone'] ?? '') !== ''): ?><small dir="ltr"><?= portal_h($contact['phone']) ?></small><?php endif; ?><?php if (($contact['email'] ?? '') !== ''): ?><small dir="ltr"><?= portal_h($contact['email']) ?></small><?php endif; ?></div><?php endforeach; ?></div></section><?php endif; ?>
+<?php if ($contacts !== []): ?><section class="detail-card"><h2>אנשי קשר באתר</h2><div class="detail-grid"><?php foreach ($contacts as $contact): ?><div class="detail-item"><span><?= portal_h($contact['role'] ?? 'איש קשר') ?></span><strong><?= portal_h($contact['name'] ?? '') ?></strong><?php if (($contact['phone'] ?? '') !== ''): ?><small dir="ltr"><?= portal_h($contact['phone']) ?></small><?php endif; ?><?php if (($contact['email'] ?? '') !== ''): ?><small dir="ltr"><?= portal_h($contact['email']) ?></small><?php endif; ?></div><?php endforeach; ?></div></section><?php endif; ?>
 <?php if ($documents !== [] || $planContext['instructions'] !== '' || $planContext['site_notes'] !== []): ?><section class="detail-card"><h2>תוכניות והנחיות</h2><?php if ($documents !== []): ?><ul><?php foreach ($documents as $document): ?><li><a href="<?= portal_h($document['url']) ?>" target="_blank" rel="noopener noreferrer"><?= portal_h($document['label']) ?></a></li><?php endforeach; ?></ul><?php endif; ?><?php if ($planContext['instructions'] !== ''): ?><p><?= nl2br(portal_h($planContext['instructions'])) ?></p><?php endif; ?><?php if ($planContext['site_notes'] !== []): ?><h3>חוסרים והערות מהשטח</h3><ul><?php foreach ($planContext['site_notes'] as $note): ?><li><?= portal_h($note) ?></li><?php endforeach; ?></ul><?php endif; ?></section><?php endif; ?>
+<section class="detail-card">
+    <div class="section-heading-row"><div><p class="eyebrow">יומן אתר</p><h2>כל הדיווחים לפי תאריך</h2><p>כל שמירת התקדמות נשמרת כאירוע נפרד ואינה מוחקת דיווח קודם.</p></div><span class="status status--review"><?= count($activity) ?> דיווחים</span></div>
+    <?php if ($activity === []): ?><div class="empty-state"><strong>עדיין לא התקבל דיווח מהאתר</strong><span>לאחר שהמתקין ישמור עדכון, התאריך, השעה ותוכן הדיווח יופיעו כאן.</span></div><?php else: ?>
+    <ol class="activity-timeline"><?php foreach ($activity as $entry): ?><li><time><?php if (($entry['report_date'] ?? '') !== ''): ?>עבודה: <?= portal_h((string) $entry['report_date']) ?><br><?php endif; ?>נשמר: <?= portal_h(external_format_datetime((string) ($entry['reported_at'] ?? ''))) ?></time><div><strong><?= portal_h((string) ($entry['label'] ?? 'דיווח')) ?></strong><span class="status status--review"><?= portal_h(($entry['kind'] ?? '') === 'report' ? 'דוח סיום' : external_work_status_label((string) ($entry['status'] ?? 'not_started'))) ?></span><p><?= nl2br(portal_h((string) (($entry['completed_work'] ?? '') !== '' ? $entry['completed_work'] : ($entry['notes'] ?? 'עדכון סטטוס')))) ?></p><small dir="ltr"><?= portal_h((string) ($entry['reported_by'] ?? '')) ?></small></div></li><?php endforeach; ?></ol>
+    <?php endif; ?>
+</section>
 <?php foreach (external_work_subtask_definitions() as $key => $label): ?>
     <?php $subtask = $order['subtasks'][$key] ?? []; ?>
-    <section class="detail-card">
-        <h2><?= portal_h($label) ?></h2>
-        <p><strong>סטטוס:</strong> <?= portal_h(external_work_status_label((string) ($subtask['status'] ?? 'not_started'))) ?></p>
+    <?php if (($subtask['required'] ?? true) !== true) { continue; } ?>
+    <section class="detail-card work-review-card">
+        <div class="work-review-card__header"><div><p class="eyebrow">שלב עבודה שנבחר</p><h2><?= portal_h($label) ?></h2></div><div><span class="status <?= (string) ($subtask['status'] ?? 'not_started') === 'completed' ? 'status--approved' : 'status--review' ?>"><?= portal_h(external_work_status_label((string) ($subtask['status'] ?? 'not_started'))) ?></span><small><?= ($subtask['updated_at'] ?? '') !== '' ? 'דווח ' . portal_h(external_format_datetime((string) $subtask['updated_at'])) : 'טרם התקבל דיווח' ?></small></div></div>
         <?php if (is_array($subtask['lines'] ?? null) && $subtask['lines'] !== []): ?>
         <div class="table-wrap"><table class="records-table">
             <thead><tr><th>פריט</th><th>כמות מתוכננת</th><th>כמות בפועל</th><th>הערה</th></tr></thead>
@@ -2246,19 +2440,21 @@ function external_render_assignment_preview(array $reviewer, string $assignmentI
             </tr><?php endforeach; ?></tbody>
         </table></div>
         <?php endif; ?>
-        <div class="detail-grid">
-            <div><span>שעות</span><strong><?= portal_h(trim((string) ($subtask['start_time'] ?? '') . ' - ' . (string) ($subtask['end_time'] ?? ''), ' -')) ?: 'לא דווח' ?></strong></div>
-            <div><span>מה בוצע</span><strong><?= nl2br(portal_h((string) ($subtask['completed_work'] ?? ''))) ?: 'לא דווח' ?></strong></div>
-            <div><span>מה חסר</span><strong><?= nl2br(portal_h((string) ($subtask['missing_work'] ?? ''))) ?: 'לא דווח' ?></strong></div>
-            <div><span>תקלות</span><strong><?= nl2br(portal_h((string) ($subtask['issues'] ?? ''))) ?: 'לא דווח' ?></strong></div>
-            <div><span>המשך נדרש</span><strong><?= nl2br(portal_h((string) ($subtask['next_steps'] ?? ''))) ?: 'לא דווח' ?></strong></div>
+        <h3 class="fields-title">השדות שהמתקין ממלא בשלב זה</h3>
+        <div class="review-field-grid">
+            <?php $hours = trim((string) ($subtask['start_time'] ?? '') . ' - ' . (string) ($subtask['end_time'] ?? ''), ' -'); ?>
+            <?php foreach ([['תאריך העבודה המדווחת', (string) ($subtask['report_date'] ?? '')], ['שעות עבודה', $hours], ['סיכום כמות / ביצוע', (string) ($subtask['actual_quantity'] ?? '')], ['מה בוצע באתר', (string) ($subtask['completed_work'] ?? '')], ['מה חסר לסיום', (string) ($subtask['missing_work'] ?? '')], ['תקלות או חריגות', (string) ($subtask['issues'] ?? '')], ['המשך נדרש ומי מטפל', (string) ($subtask['next_steps'] ?? '')], ['הערות מהאתר', (string) ($subtask['notes'] ?? '')]] as [$fieldLabel, $fieldValue]): ?>
+            <div class="review-field"><span><?= portal_h($fieldLabel) ?></span><?php if (trim($fieldValue) === ''): ?><em>טרם דווח</em><?php else: ?><strong><?= nl2br(portal_h($fieldValue)) ?></strong><?php endif; ?></div>
+            <?php endforeach; ?>
         </div>
-        <?php if (($subtask['attachments'] ?? []) !== []): ?><h3>תמונות ומסמכים</h3><ul><?php foreach ($subtask['attachments'] as $attachmentIndex => $attachment): ?><li><a href="<?= portal_h(external_public_url(['attachment' => '1', 'scope' => 'subtask', 'request' => $request['id'], 'container' => $key, 'file' => $attachmentIndex])) ?>" target="_blank" rel="noopener"><?= portal_h($attachment['original_name'] ?? 'קובץ') ?></a></li><?php endforeach; ?></ul><?php endif; ?>
+        <div class="attachments-summary"><strong>תמונות ומסמכים</strong><span><?= count($subtask['attachments'] ?? []) ?> קבצים</span></div>
+        <?php if (($subtask['attachments'] ?? []) !== []): ?><ul><?php foreach ($subtask['attachments'] as $attachmentIndex => $attachment): ?><li><a href="<?= portal_h(external_public_url(['attachment' => '1', 'scope' => 'subtask', 'request' => $request['id'], 'container' => $key, 'file' => $attachmentIndex])) ?>" target="_blank" rel="noopener"><?= portal_h($attachment['original_name'] ?? 'קובץ') ?></a></li><?php endforeach; ?></ul><?php endif; ?>
     </section>
 <?php endforeach; ?>
-<section class="detail-card"><h2>דוחות סיום</h2>
+<section class="detail-card final-report-preview"><p class="eyebrow">שלב אחרון</p><h2>דוח סיום ומסירת לקוח</h2><p>בסיום העבודה המתקין חייב למלא את כל הפרטים הבאים:</p><div class="report-requirements"><span>סוג ותאריך העבודה</span><span>שעת התחלה וסיום</span><span>סיכום העבודה</span><span>תקלות וחוסרים</span><span>המשך טיפול</span><span>תמונות או מסמכים</span><span>מסירה והדרכה</span><span>שם וחתימת לקוח או סיבה ללא חתימה</span></div></section>
+<section class="detail-card"><h2>דוחות סיום שהוגשו</h2>
 <?php if ($reports === []): ?><div class="alert alert--info">טרם הוגש דוח סיום לעבודה זו.</div><?php else: ?>
-<?php foreach ($reports as $report): ?><article class="detail-card"><h3><?= portal_h($report['id'] ?? 'דוח') ?> · <?= portal_h($report['work_date'] ?? '') ?></h3><div class="detail-grid"><div><span>תוצאה</span><strong><?= portal_h(portal_work_report_outcome_label((string) ($report['outcome'] ?? ''))) ?></strong></div><div><span>שעות</span><strong><?= portal_h(trim((string) ($report['start_time'] ?? '') . ' - ' . (string) ($report['end_time'] ?? ''), ' -')) ?></strong></div><div><span>סיכום</span><strong><?= nl2br(portal_h($report['summary'] ?? '')) ?></strong></div><div><span>המשך טיפול</span><strong><?= nl2br(portal_h($report['follow_up'] ?? '')) ?></strong></div><div><span>תקלות</span><strong><?= nl2br(portal_h($report['faults'] ?? '')) ?></strong></div><div><span>חסר לסיום</span><strong><?= nl2br(portal_h($report['missing_items'] ?? '')) ?></strong></div><div><span>אישור לקוח</span><strong><?= portal_h((string) ($report['customer_confirmation']['mode'] ?? '') === 'signed' ? 'נחתם על ידי ' . (string) ($report['customer_confirmation']['name'] ?? '') : 'לא זמין: ' . (string) ($report['customer_confirmation']['reason'] ?? '')) ?></strong></div></div><?php if (($report['attachments'] ?? []) !== []): ?><h4>תמונות, מסמכים וחתימה</h4><ul><?php foreach ($report['attachments'] as $attachmentIndex => $attachment): ?><li><a href="<?= portal_h(external_public_url(['attachment' => '1', 'scope' => 'report', 'request' => $request['id'], 'container' => $report['id'], 'file' => $attachmentIndex])) ?>" target="_blank" rel="noopener"><?= portal_h($attachment['original_name'] ?? 'קובץ') ?></a></li><?php endforeach; ?></ul><?php endif; ?></article><?php endforeach; ?>
+<?php foreach ($reports as $report): ?><article class="report-history-card"><div class="report-history-card__heading"><div><strong><?= portal_h($report['id'] ?? 'דוח') ?></strong><span>תאריך עבודה: <?= portal_h($report['work_date'] ?? '') ?></span></div><time>הוגש <?= portal_h(external_format_datetime((string) ($report['created_at'] ?? ''))) ?></time></div><div class="detail-grid"><div class="detail-item"><span>תוצאה</span><strong><?= portal_h(portal_work_report_outcome_label((string) ($report['outcome'] ?? ''))) ?></strong></div><div class="detail-item"><span>שעות</span><strong><?= portal_h(trim((string) ($report['start_time'] ?? '') . ' - ' . (string) ($report['end_time'] ?? ''), ' -')) ?></strong></div><div class="detail-item"><span>סיכום</span><strong><?= nl2br(portal_h($report['summary'] ?? '')) ?></strong></div><div class="detail-item"><span>המשך טיפול</span><strong><?= nl2br(portal_h($report['follow_up'] ?? '')) ?></strong></div><div class="detail-item"><span>תקלות</span><strong><?= nl2br(portal_h($report['faults'] ?? '')) ?></strong></div><div class="detail-item"><span>חסר לסיום</span><strong><?= nl2br(portal_h($report['missing_items'] ?? '')) ?></strong></div><div class="detail-item"><span>אישור לקוח</span><strong><?= portal_h((string) ($report['customer_confirmation']['mode'] ?? '') === 'signed' ? 'נחתם על ידי ' . (string) ($report['customer_confirmation']['name'] ?? '') : 'לא זמין: ' . (string) ($report['customer_confirmation']['reason'] ?? '')) ?></strong></div></div><?php if (($report['attachments'] ?? []) !== []): ?><h4>תמונות, מסמכים וחתימה</h4><ul><?php foreach ($report['attachments'] as $attachmentIndex => $attachment): ?><li><a href="<?= portal_h(external_public_url(['attachment' => '1', 'scope' => 'report', 'request' => $request['id'], 'container' => $report['id'], 'file' => $attachmentIndex])) ?>" target="_blank" rel="noopener"><?= portal_h($attachment['original_name'] ?? 'קובץ') ?></a></li><?php endforeach; ?></ul><?php endif; ?></article><?php endforeach; ?>
 <?php endif; ?></section>
 <?php
     external_page_end();

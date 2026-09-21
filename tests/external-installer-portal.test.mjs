@@ -159,6 +159,33 @@ test('internal reviewer can inspect installer view without impersonating install
   assert.match(external, /אינו מתחזה למתקין/);
 });
 
+test('reviewer selects required work areas and installer sees only selected steps', () => {
+  assert.match(external, /function external_update_requirements/);
+  assert.match(external, /required_subtasks/);
+  assert.match(external, /מה נדרש מהמתקין לבצע/);
+  assert.match(index, /save_reviewer_requirements/);
+  assert.match(external, /external_required_subtask_keys/);
+});
+
+test('every field update is retained in a dated site activity history', () => {
+  assert.match(external, /'history' => \[\]/);
+  assert.match(external, /'reported_at' => \$reportedAt/);
+  assert.match(external, /name="report_date"/);
+  assert.match(external, /תאריך העבודה המדווחת/);
+  assert.match(external, /כל הדיווחים לפי תאריך/);
+  assert.match(external, /external_format_datetime/);
+  assert.match(external, /כל שמירה מתועדת ביומן עם תאריך ושעה/);
+});
+
+test('review preview clearly names all installer reporting fields', () => {
+  assert.match(external, /השדות שהמתקין ממלא בשלב זה/);
+  assert.match(external, /מה בוצע באתר/);
+  assert.match(external, /מה חסר לסיום/);
+  assert.match(external, /תקלות או חריגות/);
+  assert.match(external, /דוח סיום ומסירת לקוח/);
+  assert.match(external, /טרם דווח/);
+});
+
 
 test('Monday email display text is normalized before assignment matching', () => {
   assert.match(external, /function external_email_from_column_text/);
