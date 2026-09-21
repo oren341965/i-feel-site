@@ -97,6 +97,19 @@ try {
             }
         }
 
+        if ($action === 'open_external_assignment') {
+            $installer = external_installer_user();
+            if ($installer === null) {
+                external_render_installer_login('יש להתחבר מחדש.');
+            }
+            try {
+                $grant = external_open_assignment($installer, portal_post('assignment_id', 30));
+                external_render_approved_customer($installer, $grant);
+            } catch (Throwable $error) {
+                external_render_customer_search($installer, $error->getMessage());
+            }
+        }
+
         if ($action === 'request_external_access') {
             $installer = external_installer_user();
             if ($installer === null) {
@@ -174,6 +187,29 @@ try {
             }
         }
 
+        if ($action === 'request_reviewer_code') {
+            try {
+                external_request_otp(portal_post('reviewer_email', 160), 'approver', 'review');
+                $_SESSION['pending_external_review'] = true;
+                external_render_code('approver');
+            } catch (Throwable $error) {
+                external_render_reviewer_login($error->getMessage());
+            }
+        }
+
+        if ($action === 'verify_reviewer_code') {
+            try {
+                $reviewer = external_verify_otp(portal_post('code', 20), 'approver');
+                if (($reviewer['request_id'] ?? '') !== 'review') {
+                    throw new RuntimeException('קוד הסקירה אינו תקין.');
+                }
+                unset($_SESSION['pending_external_review']);
+                external_render_review_dashboard($reviewer);
+            } catch (Throwable $error) {
+                external_render_code('approver', $error->getMessage());
+            }
+        }
+
         if ($action === 'save_external_subtask') {
             $installer = external_installer_user();
             if ($installer === null) {
@@ -190,7 +226,9 @@ try {
                     portal_post('subtask_key', 40),
                     portal_post('subtask_status', 40),
                     portal_post('actual_quantity', 80),
-                    portal_post('subtask_notes', 1500)
+                    portal_post('subtask_notes', 1500),
+                    external_post_string_array('line_actual', 80),
+                    external_post_string_array('line_note', 500)
                 );
                 external_render_approved_customer($installer, $grant, 'ההתקדמות נשמרה.');
             } catch (Throwable $error) {
@@ -221,6 +259,19 @@ try {
         }
 
         external_render_message('פעולה לא מוכרת', 'הפעולה המבוקשת אינה מוכרת.', false);
+    }
+
+    $reviewMode = trim((string) ($_GET['review'] ?? ''));
+    if ($reviewMode === '1') {
+        $reviewer = $_SESSION['external_approver_user'] ?? null;
+        if (!is_array($reviewer) || !in_array((string) ($reviewer['email'] ?? ''), external_approver_emails(), true)) {
+            external_render_reviewer_login();
+        }
+        $assignmentId = trim((string) ($_GET['assignment'] ?? ''));
+        if ($assignmentId !== '') {
+            external_render_assignment_preview($reviewer, $assignmentId);
+        }
+        external_render_review_dashboard($reviewer);
     }
 
     $approvalToken = trim((string) ($_GET['approval'] ?? ''));
