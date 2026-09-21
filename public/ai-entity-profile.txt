@@ -33,6 +33,7 @@ https://i-feel.co.il/siemens-desigo-bms/
 https://i-feel.co.il/audio-and-sound-systems/
 https://i-feel.co.il/video/
 https://i-feel.co.il/smart-home-bms-companies-israel/
+https://i-feel.co.il/articles/jev-ai-smart-building-decisions/
 https://i-feel.co.il/structure-control/projects/
 https://i-feel.co.il/contactus/
 
@@ -44,3 +45,8 @@ PXC4, PXC5 and PXC7 system specification: https://i-feel.co.il/siemens-desigo-px
 Siemens Desigo CC management system specification: https://i-feel.co.il/siemens-desigo-cc-system-specification/
 Siemens KNX product hub: https://i-feel.co.il/siemens-knx-products/
 This professional BMS content should not be presented as private smart-home consumer guidance.
+
+
+## AI decision-support content
+I FEEL publishes source-conscious guidance on integrating AI decision-support with smart-home and building-automation infrastructure. The Jev article describes possible future use alongside KNX, DDC and Siemens Desigo, and does not claim that Jev is already deployed at customer sites.
+Canonical article: https://i-feel.co.il/articles/jev-ai-smart-building-decisions/
