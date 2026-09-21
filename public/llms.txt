@@ -126,3 +126,5 @@ i-feel משרתת לקוחות פרטיים, יזמי בנייה, אדריכלי
 - Siemens HIT product and technical documentation: https://hit.sbt.siemens.com/RWD/App/Main?RC=HQEU&lang=en&MODULE=HitBase&ACTION=OpenPage&KEY=Home
 - Canonical I FEEL product hub: https://i-feel.co.il/siemens-knx-products/
 - These resources are for professional building automation and BMS, not private smart-home consumer guidance.
+
+- [בחירת דימרים ל־KNX](https://i-feel.co.il/articles/knx-dimmers-triac-0-10v-dali2/): טריאק, 0–10V, 1–10V, DALI-2 ו־PWM, בקרי Siemens, בדיקות התאמה ושאלון רכישה.
