@@ -34,6 +34,20 @@ function external_normalize_email(string $email): ?string
     return $email;
 }
 
+
+function external_email_from_column_text(string $value): ?string
+{
+    $value = trim($value);
+    $direct = external_normalize_email($value);
+    if ($direct !== null) {
+        return $direct;
+    }
+    if (preg_match('/[A-Z0-9._%+\-]+@[A-Z0-9.\-]+\.[A-Z]{2,}/i', $value, $match) !== 1) {
+        return null;
+    }
+    return external_normalize_email((string) $match[0]);
+}
+
 function external_config_array(string $constantName, string $environmentName): array
 {
     $value = defined($constantName) ? constant($constantName) : null;
@@ -675,7 +689,7 @@ function external_work_order_assignments(?string $installerEmail = null): array
                 $values[(string) ($column['id'] ?? '')] = trim((string) ($column['text'] ?? ''));
             }
         }
-        $email = external_normalize_email((string) ($values[EXTERNAL_INSTALLER_WORK_ORDER_EMAIL_COLUMN] ?? ''));
+        $email = external_email_from_column_text((string) ($values[EXTERNAL_INSTALLER_WORK_ORDER_EMAIL_COLUMN] ?? ''));
         if ($email === null || ($normalizedEmail !== null && !hash_equals($normalizedEmail, $email))) {
             continue;
         }
