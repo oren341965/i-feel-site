@@ -30,6 +30,19 @@ function external_render_message(string $title, string $message, bool $success =
 try {
     $method = strtoupper((string) ($_SERVER['REQUEST_METHOD'] ?? 'GET'));
 
+    if ($method === 'GET' && trim((string) ($_GET['attachment'] ?? '')) === '1') {
+        $index = filter_var($_GET['file'] ?? null, FILTER_VALIDATE_INT, ['options' => ['min_range' => 0]]);
+        if ($index === false) {
+            throw new RuntimeException('מזהה הקובץ אינו תקין.');
+        }
+        external_stream_attachment(
+            trim((string) ($_GET['request'] ?? '')),
+            trim((string) ($_GET['scope'] ?? '')),
+            trim((string) ($_GET['container'] ?? '')),
+            (int) $index
+        );
+    }
+
     if ($method === 'POST') {
         portal_verify_csrf();
         $action = portal_post('action', 80);
@@ -89,12 +102,7 @@ try {
             if ($installer === null) {
                 external_render_installer_login('יש להתחבר מחדש.');
             }
-            try {
-                $results = external_search_customers(portal_post('customer_search', 80));
-                external_render_customer_search($installer, null, $results);
-            } catch (Throwable $error) {
-                external_render_customer_search($installer, $error->getMessage());
-            }
+            external_render_customer_search($installer, 'חיפוש לקוחות אינו זמין. ניתן לפתוח רק עבודות שהוקצו מראש.');
         }
 
         if ($action === 'open_external_assignment') {
@@ -115,19 +123,7 @@ try {
             if ($installer === null) {
                 external_render_installer_login('יש להתחבר מחדש.');
             }
-            try {
-                $request = external_create_access_request(
-                    $installer,
-                    portal_post('board_id', 30),
-                    portal_post('item_id', 30)
-                );
-                external_render_customer_search(
-                    $installer,
-                    'בקשת הגישה ל-' . (string) $request['customer_name'] . ' נשלחה לאישור.'
-                );
-            } catch (Throwable $error) {
-                external_render_customer_search($installer, $error->getMessage());
-            }
+            external_render_customer_search($installer, 'בקשת גישה חופשית אינה זמינה. יש להקצות את העבודה מראש במאנדיי.');
         }
 
         if ($action === 'request_approver_code') {
@@ -189,9 +185,8 @@ try {
 
         if ($action === 'request_reviewer_code') {
             try {
-                external_request_otp(portal_post('reviewer_email', 160), 'approver', 'review');
-                $_SESSION['pending_external_review'] = true;
-                external_render_code('approver');
+                external_request_otp(portal_post('reviewer_email', 160), 'reviewer', 'review');
+                external_render_code('reviewer');
             } catch (Throwable $error) {
                 external_render_reviewer_login($error->getMessage());
             }
@@ -199,14 +194,13 @@ try {
 
         if ($action === 'verify_reviewer_code') {
             try {
-                $reviewer = external_verify_otp(portal_post('code', 20), 'approver');
+                $reviewer = external_verify_otp(portal_post('code', 20), 'reviewer');
                 if (($reviewer['request_id'] ?? '') !== 'review') {
                     throw new RuntimeException('קוד הסקירה אינו תקין.');
                 }
-                unset($_SESSION['pending_external_review']);
                 external_render_review_dashboard($reviewer);
             } catch (Throwable $error) {
-                external_render_code('approver', $error->getMessage());
+                external_render_code('reviewer', $error->getMessage());
             }
         }
 
@@ -228,7 +222,14 @@ try {
                     portal_post('actual_quantity', 80),
                     portal_post('subtask_notes', 1500),
                     external_post_string_array('line_actual', 80),
-                    external_post_string_array('line_note', 500)
+                    external_post_string_array('line_note', 500),
+                    portal_post('completed_work', 2500),
+                    portal_post('missing_work', 2000),
+                    portal_post('issues', 2500),
+                    portal_post('next_steps', 1500),
+                    portal_post('start_time', 10),
+                    portal_post('end_time', 10),
+                    $_FILES['subtask_attachments'] ?? []
                 );
                 external_render_approved_customer($installer, $grant, 'ההתקדמות נשמרה.');
             } catch (Throwable $error) {
@@ -263,8 +264,8 @@ try {
 
     $reviewMode = trim((string) ($_GET['review'] ?? ''));
     if ($reviewMode === '1') {
-        $reviewer = $_SESSION['external_approver_user'] ?? null;
-        if (!is_array($reviewer) || !in_array((string) ($reviewer['email'] ?? ''), external_approver_emails(), true)) {
+        $reviewer = $_SESSION['external_reviewer_user'] ?? null;
+        if (!is_array($reviewer) || !in_array((string) ($reviewer['email'] ?? ''), external_reviewer_emails(), true)) {
             external_render_reviewer_login();
         }
         $assignmentId = trim((string) ($_GET['assignment'] ?? ''));
