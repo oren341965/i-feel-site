@@ -99,3 +99,31 @@ test('installer identities may be resolved from private Monday directory without
   assert.doesNotMatch(external, /Ahmadjayyar@gmail\.com/i);
   assert.doesNotMatch(external, /sentinal2@gmail\.com/i);
 });
+
+
+test('assigned work orders come from a private Monday work-order board', () => {
+  assert.match(external, /EXTERNAL_INSTALLER_WORK_ORDERS_BOARD_ID = '18431962854'/);
+  assert.match(external, /function external_work_order_assignments/);
+  assert.match(external, /function external_open_assignment/);
+  assert.match(external, /עבודות שהוקצו לך/);
+  assert.match(index, /open_external_assignment/);
+  assert.doesNotMatch(external, /5558 \| אבי רבינוביץ/);
+});
+
+test('planned quantities and actual quantities are tracked per work-order line', () => {
+  assert.match(external, /planned_qty/);
+  assert.match(external, /actual_qty/);
+  assert.match(external, /line_actual/);
+  assert.match(external, /line_note/);
+  assert.match(index, /external_post_string_array\('line_actual'/);
+});
+
+test('internal reviewer can inspect installer view without impersonating installer', () => {
+  assert.match(external, /function external_render_reviewer_login/);
+  assert.match(external, /function external_render_review_dashboard/);
+  assert.match(external, /function external_render_assignment_preview/);
+  assert.match(index, /request_reviewer_code/);
+  assert.match(index, /verify_reviewer_code/);
+  assert.match(index, /reviewMode === '1'/);
+  assert.match(external, /אינו מתחזה למתקין/);
+});
