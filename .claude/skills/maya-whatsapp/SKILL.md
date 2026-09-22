@@ -22,6 +22,7 @@ Use the existing Maya WhatsApp session on Maya's workstation. The shared `ai-sal
 - Exit quickly with `COMPLETED_NO_ACTION` when there is no new conversation delta and the daily gate is not due.
 - Use one run lock and a bounded runtime. Never wait for approval inside an unattended run; queue the approval and end with an explicit status.
 - Release the run lock in `finally` on success, timeout, missing access, session-claim failure or any other blocker.
+- Use the installed `scripts/run-lock.mjs` commands and the protected Telemetry wrapper exactly as described in [references/scheduled-runtime.md](references/scheduled-runtime.md). Missing process environment tokens alone do not prove that the approved DPAPI wrapper is unavailable.
 
 ## Manager-assigned Maya sales tasks
 
