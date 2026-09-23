@@ -13,6 +13,7 @@ test('external installers use an isolated session and never enter employee routi
   assert.doesNotMatch(index, /portal_nav\(/);
   assert.match(external, /הכניסה אינה מאפשרת גישה לאזור העובדים/);
   assert.match(bootstrap, /IFEEL_PORTAL_SESSION_COOKIE_PATH/);
+  assert.match(bootstrap, /define\('IFEEL_PORTAL_SESSION_COOKIE_PATH', '\/staff-expenses\/'\)/);
 });
 
 test('external installer identities come only from server-side allowlist', () => {

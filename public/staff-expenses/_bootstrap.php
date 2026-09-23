@@ -29,6 +29,10 @@ if (is_file($serverConfig)) {
     require_once $serverConfig;
 }
 
+if (!defined('IFEEL_PORTAL_SESSION_COOKIE_PATH')) {
+    define('IFEEL_PORTAL_SESSION_COOKIE_PATH', '/staff-expenses/');
+}
+
 function portal_is_https(): bool
 {
     $https = strtolower((string) ($_SERVER['HTTPS'] ?? ''));

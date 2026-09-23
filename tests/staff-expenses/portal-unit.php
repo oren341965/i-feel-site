@@ -40,6 +40,11 @@ require_once $repositoryRoot . '/public/staff-expenses/_mcohome_faults.php';
 require_once $repositoryRoot . '/public/staff-expenses/_supervision.php';
 
 try {
+    portal_test_expect(
+        defined('IFEEL_PORTAL_SESSION_COOKIE_PATH')
+        && constant('IFEEL_PORTAL_SESSION_COOKIE_PATH') === '/staff-expenses/',
+        'The employee portal must define its own default session cookie path.'
+    );
     $portalCss = (string) file_get_contents($repositoryRoot . '/public/staff-expenses/portal.css');
     portal_test_expect(
         str_contains($portalCss, '--bg: #000000;')
