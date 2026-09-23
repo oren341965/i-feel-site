@@ -5,7 +5,7 @@ description: Orchestrate I Feel's sales and marketing system, deterministic read
 
 # I Feel AI Sales Manager
 
-`ai-sales-manager` is the single parent orchestrator for I Feel sales. It coordinates existing workers, preserves the deterministic analyzer for Monday board `2732725332`, and fails closed when evidence, connection, maturity, or approval is missing.
+`ai-sales-manager` is I Feel's single sales orchestrator. It coordinates workers and preserves the deterministic analyzer for Monday board `2732725332`; missing evidence, connection, maturity, or approval blocks.
 
 ## Route the request
 
@@ -48,10 +48,7 @@ description: Orchestrate I Feel's sales and marketing system, deterministic read
 - Full-system dry run: `scripts/orchestrate-sales-system.mjs`
 - Bounded daily Google Ads decision: `../google-ads-manager/scripts/google-ads-decision-loop.mjs`
 - Local morning dry run: `scripts/morning-run.mjs`
-- Capacity evidence preparation: `scripts/prepare-capacity-evidence.mjs` (pure;
-  requires dated assessments, never infers capacity from owner availability alone).
-  Read [capacity evidence preparation](references/capacity-evidence-preparation.md)
-  before supplying its assessments. Missing actual observations remain UNKNOWN.
+- Capacity evidence preparation: `scripts/prepare-capacity-evidence.mjs`. Read [its contract](references/capacity-evidence-preparation.md); dated observations are required and missing evidence remains `UNKNOWN`.
 - No-write source preflight: `scripts/preflight-readonly.mjs`
 - Vault boundaries: `scripts/vault-runtime.mjs`, `scripts/maya-vault-bridge.mjs`, `scripts/maya-task-production-runner.mjs`, and `scripts/claude-vault-bridge.mjs`
 
