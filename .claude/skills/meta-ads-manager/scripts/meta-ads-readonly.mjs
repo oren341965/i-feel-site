@@ -103,6 +103,17 @@ function actionMap(actions) {
     .map((entry) => [entry.action_type, finiteNumber(entry.value)]));
 }
 
+function jerusalemDateWindow(now) {
+  const parts = Object.fromEntries(new Intl.DateTimeFormat('en-CA', {
+    timeZone: 'Asia/Jerusalem', year: 'numeric', month: '2-digit', day: '2-digit',
+  }).formatToParts(now).filter(({ type }) => type !== 'literal').map(({ type, value }) => [type, value]));
+  return {
+    month: `${parts.year}-${parts.month}`,
+    since: `${parts.year}-${parts.month}-01`,
+    until: `${parts.year}-${parts.month}-${parts.day}`,
+  };
+}
+
 export async function loadMetaRuntimeConfig(configPath) {
   const config = JSON.parse(await readFile(resolve(configPath), 'utf8'));
   if (config.maturity !== 0) throw new Error('Meta live read is limited to maturity 0');
@@ -221,6 +232,7 @@ export async function collectMetaAdsReadOnly({ configPath, fetchImpl = fetch, no
   const credential = (await readFile(runtime.accessCredentialFile, 'utf8')).trim();
   if (!META_CREDENTIAL_PATTERN.test(credential)) throw new Error('Invalid Meta access credential');
   const requestBase = { fetchImpl, apiVersion: runtime.apiVersion, credential };
+  const monthWindow = jerusalemDateWindow(now);
   const accessibleAccounts = await metaList({
     ...requestBase,
     path: '/me/adaccounts',
@@ -232,13 +244,23 @@ export async function collectMetaAdsReadOnly({ configPath, fetchImpl = fetch, no
   const account = accessibleAccounts.find(({ id }) => id === runtime.adAccountId);
   if (!account) throw new Error(`Target Meta ad account ${runtime.adAccountId} is not accessible`);
 
-  const [insights, campaigns, adSets, ads] = await Promise.all([
+  const [insights, monthToDateInsights, campaigns, adSets, ads] = await Promise.all([
     metaList({
       ...requestBase,
       path: `/${runtime.adAccountId}/insights`,
       params: {
         fields: 'account_id,account_name,campaign_id,campaign_name,impressions,reach,frequency,clicks,spend,cpc,cpm,ctr,actions,action_values',
         date_preset: 'last_30d',
+        level: 'campaign',
+        limit: 500,
+      },
+    }),
+    metaList({
+      ...requestBase,
+      path: `/${runtime.adAccountId}/insights`,
+      params: {
+        fields: 'account_id,campaign_id,spend',
+        time_range: JSON.stringify({ since: monthWindow.since, until: monthWindow.until }),
         level: 'campaign',
         limit: 500,
       },
@@ -282,6 +304,12 @@ export async function collectMetaAdsReadOnly({ configPath, fetchImpl = fetch, no
       accessible: true,
     },
     period: 'LAST_30_DAYS',
+    monthToDate: {
+      period: 'MONTH_TO_DATE',
+      month: monthWindow.month,
+      spendNis: Math.round(monthToDateInsights.reduce(
+        (sum, row) => sum + finiteNumber(row.spend), 0) * 100) / 100,
+    },
     account: {
       id: account.id,
       accountId: account.account_id ?? null,

@@ -48,6 +48,22 @@
       "NEGATIVE_KEYWORD_CANDIDATES"
     ]
   },
+  "paidMediaBudget": {
+    "enabled": true,
+    "currency": "ILS",
+    "monthlyCapNis": 4000,
+    "googleAverageDailyBudgetCapNis": 50,
+    "maxEvidenceAgeHours": 24,
+    "platforms": ["GOOGLE_ADS", "META_ADS"],
+    "automaticBudgetIncreaseAllowed": false,
+    "temporaryPortfolioUntil": "2026-09-30",
+    "priority": ["KNX_DDC", "BMS", "VILLA"],
+    "ownerApprovedGoogleDailyBudgetsNis": {
+      "KNX_DDC": 40,
+      "BMS": 5,
+      "VILLA": 5
+    }
+  },
   "connections": {
     "monday": {
       "connected": false,

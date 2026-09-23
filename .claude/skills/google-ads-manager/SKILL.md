@@ -21,6 +21,7 @@ budget inference; raw platform conversions cannot substitute for it.
 2. Read the current skill-maturity register when configured.
 3. Read the manager's capacity result and attribution confidence.
 4. If live access is absent or unverified, return `CONNECTION_MISSING` and stop platform analysis.
+5. Read `paidMediaBudgetGuard`. The ILS 4,000 monthly ceiling is shared with Meta; missing or stale month-to-date evidence from either listed platform blocks every budget increase.
 
 The canonical maturity-0 connector is `scripts/google-ads-readonly.mjs`. Its local runtime configuration contains only credential-file paths; the credential values remain outside Git. Verify a configured connection with:
 
@@ -56,6 +57,9 @@ Historical reference only, never current fact: 30 days, NIS 6,553 spend, 955 cli
 - Keep Google Ads conversions visibly separate from verified Monday leads. Do not increase `דירה חכמה ליזמים` without a verified qualified lead, proposal, win or revenue record.
 - Every write requires an immediate live precondition read, live read-back and bounded sanitized state. A budget mismatch triggers one rollback attempt and then stops.
 - Any action outside the maturity-1 allowlist requires a new explicit approval.
+- The owner-approved temporary envelope through 2026-09-30 is ILS 50 in total average daily budgets: `בקרת מבנה KNX DDC` ILS 40, `i-feel | בקרת מבנה | BMS` ILS 5, and `i-feel | בית חכם | פרטי | מרכז` ILS 5. Keep DALI and developer campaigns paused. Do not restore previous budgets automatically after the date; require a fresh review.
+- An average daily budget is not a same-day charge guarantee. Report Google overdelivery separately and rely on fresh month-to-date billed-spend evidence for the cross-platform ILS 4,000 cap. If the cap is reached or evidence is incomplete, block growth and recommend only pause/reduction actions.
+- A live owner-approved emergency reduction is a manual, action-time-confirmed operation outside the autonomous v1 worker. It must match the exact named campaigns and amounts, reduce or preserve total budget, and receive immediate live read-back. It does not widen recurring maturity-1 authority.
 - Use the Claude file bridge only for nuanced search intent, campaign mismatch, sales-quality interpretation or ad-copy judgment.
 
 ## Output and self-check

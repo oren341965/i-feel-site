@@ -1,6 +1,6 @@
 ---
 name: ai-sales-manager
-description: Orchestrate I Feel's sales and marketing system, deterministic read-only Monday audit, and the registered bounded Google Ads decision worker. Use for sales health, attribution, paid media, Maya routing, capacity, website feedback, or the Daily Oren Brief; never expand a child permission to another platform or system.
+description: Orchestrate I Feel sales and marketing, read-only Monday audits, paid-media caps, and bounded Google Ads decisions. Use for sales health, attribution, Maya, capacity, website feedback, or the Daily Oren Brief.
 ---
 
 # I Feel AI Sales Manager
@@ -47,7 +47,7 @@ description: Orchestrate I Feel's sales and marketing system, deterministic read
 - Aggregate marketing ingestion: `scripts/report-marketing-audit.mjs`. It reconciles the canonical Google, Meta, attribution and sales-capacity reads into one PII-free Management System snapshot; use the same registered `ai-sales-manager` run key and keep every protected-action counter at zero.
 - Full-system dry run: `scripts/orchestrate-sales-system.mjs`
 - Bounded daily Google Ads decision: `../google-ads-manager/scripts/google-ads-decision-loop.mjs`
-- Local morning dry run: `scripts/morning-run.mjs`
+- Morning dry run: `scripts/morning-run.mjs`; apply the [paid-media cap](references/paid-media-budget-policy.md).
 - Capacity evidence preparation: `scripts/prepare-capacity-evidence.mjs` (pure;
   requires dated assessments, never infers capacity from owner availability alone).
   Read [capacity evidence preparation](references/capacity-evidence-preparation.md)
