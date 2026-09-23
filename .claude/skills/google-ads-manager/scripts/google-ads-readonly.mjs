@@ -148,6 +148,17 @@ function metricsOf(metrics = {}) {
   };
 }
 
+function jerusalemDateWindow(now) {
+  const parts = Object.fromEntries(new Intl.DateTimeFormat('en-CA', {
+    timeZone: 'Asia/Jerusalem', year: 'numeric', month: '2-digit', day: '2-digit',
+  }).formatToParts(now).filter(({ type }) => type !== 'literal').map(({ type, value }) => [type, value]));
+  return {
+    month: `${parts.year}-${parts.month}`,
+    since: `${parts.year}-${parts.month}-01`,
+    until: `${parts.year}-${parts.month}-${parts.day}`,
+  };
+}
+
 export async function loadGoogleAdsRuntimeConfig(configPath) {
   const config = JSON.parse(await readFile(resolve(configPath), 'utf8'));
   if (config.maturity !== 0) throw new Error('Google Ads live read is limited to maturity 0');
@@ -191,6 +202,7 @@ export async function collectGoogleAdsReadOnly({ configPath, fetchImpl = fetch, 
   if (!accessibleCustomers.includes(`customers/${runtime.customerId}`)) {
     throw new Error(`Target Google Ads customer ${runtime.customerId} is not directly accessible`);
   }
+  const monthWindow = jerusalemDateWindow(now);
 
   const accountRows = await searchStream({ ...requestBase, query: `
     SELECT
@@ -239,6 +251,17 @@ export async function collectGoogleAdsReadOnly({ configPath, fetchImpl = fetch, 
     ORDER BY metrics.cost_micros DESC
     LIMIT 100
   ` });
+  const monthToDateRows = await searchStream({ ...requestBase, query: `
+    SELECT customer.id, metrics.cost_micros
+    FROM customer
+    WHERE segments.date BETWEEN '${monthWindow.since}' AND '${monthWindow.until}'
+  ` });
+  const budgetRows = await searchStream({ ...requestBase, query: `
+    SELECT campaign.id, campaign.name, campaign.status, campaign_budget.resource_name,
+      campaign_budget.amount_micros, campaign_budget.explicitly_shared
+    FROM campaign
+    WHERE campaign.status != 'REMOVED'
+  ` });
 
   const account = accountRows[0] ?? {};
   return {
@@ -254,6 +277,15 @@ export async function collectGoogleAdsReadOnly({ configPath, fetchImpl = fetch, 
       accessible: true,
     },
     period: 'LAST_30_DAYS',
+    monthToDate: {
+      period: 'MONTH_TO_DATE',
+      month: monthWindow.month,
+      spendNis: metricsOf(monthToDateRows[0]?.metrics).spend,
+      enabledAverageDailyBudgetNis: [...new Map(budgetRows
+        .filter((row) => row.campaign?.status === 'ENABLED')
+        .map((row) => [row.campaignBudget?.resourceName, finiteNumber(row.campaignBudget?.amountMicros)]))
+        .values()].reduce((sum, micros) => sum + micros, 0) / 1_000_000,
+    },
     account: {
       id: String(account.customer?.id ?? runtime.customerId),
       descriptiveName: account.customer?.descriptiveName ?? null,

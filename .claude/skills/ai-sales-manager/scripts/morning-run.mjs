@@ -12,6 +12,7 @@ import { collectAttributionReadOnly } from '../../lead-attribution-feedback/scri
 import { refreshAttributionSnapshotReadOnly } from '../../lead-attribution-feedback/scripts/refresh-attribution-snapshot-readonly.mjs';
 import { refreshMondaySalesSnapshotReadOnly } from './monday-sales-live-readonly.mjs';
 import { collectMondaySnapshotReadOnly } from './monday-snapshot-readonly.mjs';
+import { evaluatePaidMediaBudgetGuard } from './paid-media-budget-guard.mjs';
 
 const DEFAULT_CONFIG = fileURLToPath(new URL('../runtime/config.example.json', import.meta.url));
 
@@ -72,6 +73,12 @@ export async function runMorningDryRun({
   if (metaAdsReadOnly && metaAdsReadOnly.connection?.status !== 'CONNECTED_READ_ONLY') {
     throw new Error('Meta Ads live-read verification failed closed');
   }
+  const paidMediaBudgetGuard = evaluatePaidMediaBudgetGuard({
+    policy: config.paidMediaBudget,
+    googleAdsReadOnly,
+    metaAdsReadOnly,
+    now: new Date(now ?? Date.now()),
+  });
   const attributionConfigured = config.connections?.attribution?.connected === true
     && config.connections?.attribution?.sourceVerified === true;
   const attributionLiveRefresh = attributionConfigured && mondayLiveRefreshConfigured
@@ -133,6 +140,7 @@ export async function runMorningDryRun({
     ...runtimeResult,
     googleAdsReadOnly,
     metaAdsReadOnly,
+    paidMediaBudgetGuard,
     attributionReadOnly,
     mayaHandshake,
     mayaConnection,

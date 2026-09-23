@@ -96,6 +96,10 @@ test('Google Ads collector uses only accessible-customer and SearchStream reads'
     }
     const query = JSON.parse(options.body).query;
     assertReadOnlyGaql(query);
+    if (/campaign_budget\.resource_name/i.test(query)) return jsonResponse([{ results: [{
+      campaign: { id: '10', name: 'Synthetic campaign', status: 'ENABLED' },
+      campaignBudget: { resourceName: 'customers/2514971872/campaignBudgets/99', amountMicros: '50000000', explicitlyShared: false },
+    }] }]);
     if (/FROM customer\b/i.test(query)) return jsonResponse([{ results: [{
       customer: { id: '2514971872', descriptiveName: 'Synthetic account', currencyCode: 'ILS', timeZone: 'Asia/Jerusalem' },
       metrics: { impressions: '100', clicks: '10', costMicros: '12500000', conversions: 2, allConversions: 3 },
@@ -122,11 +126,14 @@ test('Google Ads collector uses only accessible-customer and SearchStream reads'
   assert.equal(result.connection.accountId, '2514971872');
   assert.equal(result.account.currencyCode, 'ILS');
   assert.equal(result.account.metrics.spend, 12.5);
+  assert.equal(result.monthToDate.month, '2026-08');
+  assert.equal(result.monthToDate.spendNis, 12.5);
+  assert.equal(result.monthToDate.enabledAverageDailyBudgetNis, 50);
   assert.equal(result.campaigns.length, 1);
   assert.equal(result.searchTerms.length, 1);
   assert.equal(result.safety.mutationMethodsAvailable, false);
   assert.equal(result.safety.platformWrites, 0);
-  assert.equal(calls.filter(({ url }) => url.includes('googleads.googleapis.com')).length, 4);
+  assert.equal(calls.filter(({ url }) => url.includes('googleads.googleapis.com')).length, 6);
   assert.equal(calls.some(({ url }) => /mutate/i.test(url)), false);
   for (const call of calls.filter(({ url }) => url.includes('googleads.googleapis.com'))) {
     assert.equal(call.headers.authorization, 'Bearer synthetic-access-token');

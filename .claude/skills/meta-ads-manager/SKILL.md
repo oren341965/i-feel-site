@@ -38,6 +38,7 @@ Compare Meta with Google using qualified leads, proposal rate, win rate, revenue
 
 - Maturity is 0: report/dry-run only and no Meta writes.
 - No budget increase when capacity is blocked, the threshold is missing or attribution is untrusted.
+- Meta spend participates in the ILS 4,000 shared monthly paid-media cap. Return fresh `MONTH_TO_DATE` spend in ILS to the parent guard; missing or stale Meta evidence blocks budget growth on every paid platform. When the cap is reached or exceeded, keep Meta paused unless Oren gives a new exact, action-specific approval.
 - No new campaign, major pause, audience change, bidding change or material budget action without future maturity permission and explicit approval.
 - Use the Claude file bridge only for creative/message fit, audience intent and qualitative lead-quality judgment.
 

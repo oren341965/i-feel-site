@@ -15,6 +15,14 @@ An exact, date-bound transfer route supplied by Oren may select a named source a
 
 `NO_SAFE_CHANGE` is a valid decision. A daily improvement loop is not a requirement to write when evidence is weak.
 
+## Owner budget ceiling and dated manual reduction
+
+The paid-media owner ceiling is ILS 4,000 per Jerusalem calendar month across every platform listed in `paidMediaBudget.platforms`. Google and Meta month-to-date spend must both be fresh and denominated in ILS. Missing evidence fails closed: do not increase any budget and do not infer remaining headroom from one platform alone.
+
+Through 2026-09-30, Oren's exact Google average-daily allocation is ILS 40 for `בקרת מבנה KNX DDC`, ILS 5 for `i-feel | בקרת מבנה | BMS`, and ILS 5 for `i-feel | בית חכם | פרטי | מרכז`. DALI and developer campaigns remain paused. This is a dated, manual reduction instruction; it is not an autonomous v1 action and does not alter the one-change-per-day worker. A live operator may execute it only with action-time confirmation, exact precondition read, and immediate read-back. On 2026-10-01 require review; never auto-restore the old budgets.
+
+Google's average daily budget may produce daily overdelivery, so ILS 50 is an average-budget envelope rather than a hard same-day debit ceiling. The cross-platform cap is enforced from current-month spend evidence. When month-to-date spend reaches or exceeds ILS 4,000, keep Meta paused and permit only explicit owner-approved Google reductions or pauses; accrued charges cannot be reversed by this policy.
+
 ## Business target and owner-review context
 
 The owner may configure `marketingDecision.businessTarget` with schemaVersion 1
@@ -66,6 +74,7 @@ human-route paths. A verified goal of five or above holds budget reallocation.
 ## Forbidden actions
 
 - increasing the total Google Ads daily budget;
+- any budget increase when the cross-platform month-to-date guard is incomplete, at its ceiling, or above it;
 - creating, pausing, enabling, removing or renaming a campaign;
 - changing bidding strategy, target CPA/ROAS, audience, geography, schedule, match type, ad, asset, landing page or conversion action;
 - broad or phrase negative keywords;

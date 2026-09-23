@@ -82,6 +82,8 @@ test('Meta collector uses only GET allowlisted reporting paths and keeps credent
   });
   assert.equal(result.connection.status, 'CONNECTED_READ_ONLY');
   assert.equal(result.account.currency, 'ILS');
+  assert.equal(result.monthToDate.month, '2026-08');
+  assert.equal(result.monthToDate.spendNis, 25.5);
   assert.equal(result.insights[0].spend, 25.5);
   assert.equal(result.insights[0].actions.lead, 2);
   assert.equal(result.campaigns.length, 1);
@@ -90,7 +92,7 @@ test('Meta collector uses only GET allowlisted reporting paths and keeps credent
   assert.equal(result.leadData.status, 'CONNECTION_MISSING');
   assert.equal(result.leadData.reason, 'LEAD_FORM_READ_NOT_ENABLED');
   assert.equal(result.safety.platformWrites, 0);
-  assert.equal(calls.length, 5);
+  assert.equal(calls.length, 6);
 });
 
 test('Meta lead-form read verifies the page and returns only aggregate lead evidence', async (t) => {
@@ -152,7 +154,7 @@ test('Meta lead-form read verifies the page and returns only aggregate lead evid
   });
   assert.equal(JSON.stringify(result).includes('must_not_escape'), false);
   assert.equal(JSON.stringify(result).includes('synthetic_page_access_credential'), false);
-  assert.equal(calls.length, 9);
+  assert.equal(calls.length, 10);
   const systemAuthorization = 'Bearer synthetic_meta_access_credential_1234567890';
   const pageAuthorization = 'Bearer synthetic_page_access_credential_1234567890';
   assert.equal(calls.find(({ url }) => url.includes('/me/accounts'))?.authorization, systemAuthorization);
