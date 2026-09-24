@@ -164,6 +164,12 @@
     <priority>0.8</priority>
   </url>
   <url>
+    <loc>https://i-feel.co.il/knx-presence-motion-detectors/</loc>
+    <lastmod>2026-09-24</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://i-feel.co.il/knx-switch-advisor/</loc>
     <lastmod>2026-08-11</lastmod>
     <changefreq>monthly</changefreq>

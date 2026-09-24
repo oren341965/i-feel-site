@@ -12,11 +12,11 @@ const faq = [
 ];
 
 const meta = {
-  title: 'גלאי KNX לבית חכם ול-BMS | מדריך לבחירה נכונה',
-  description: 'מדריך מקצועי לבחירת גלאי KNX קווי לבית חכם, מלון, משרד או BMS. השוואת גלאי Siemens, ABB ו-Eelectron, מיקום, טווח ושילוב בתאורה ומיזוג.',
+  title: 'גלאי נוכחות KNX בישראל | Siemens, ABB ו-Eelectron | i-feel',
+  description: 'גלאי נוכחות ותנועה KNX בישראל לבית חכם, משרדים ו-BMS. השוואת Siemens, ABB ו-Eelectron, חיישן Lux, טווח, מיקום ושילוב בתאורה ומיזוג.',
   canonical,
-  ogTitle: 'גלאי KNX קוויים לבית חכם ול-BMS | i-feel',
-  ogDescription: 'השוואת גלאי נוכחות ותנועה של Siemens, ABB ו-Eelectron, כולל מיקום נכון ושילוב עם תאורה, מיזוג ומערכת BMS.',
+  ogTitle: 'גלאי נוכחות ותנועה KNX בישראל | i-feel',
+  ogDescription: 'מדריך לבחירת גלאי נוכחות ותנועה KNX קוויים של Siemens, ABB ו-Eelectron לבית חכם ול-BMS בישראל.',
   ogUrl: canonical,
   ogImage: 'https://i-feel.co.il/assets/knx-detectors/siemens-up-258-knx-presence-detector.jpg',
   robots: 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1',
@@ -37,10 +37,21 @@ const meta = {
         author: { '@type': 'Organization', name: 'i-feel', url: 'https://i-feel.co.il/' },
         publisher: { '@id': 'https://i-feel.co.il/#business' },
         datePublished: '2026-09-12',
-        dateModified: '2026-09-12',
+        dateModified: '2026-09-24',
         mainEntityOfPage: canonical,
         inLanguage: 'he-IL',
-        keywords: ['גלאי KNX', 'גלאי נוכחות KNX', 'גלאי תנועה KNX', 'חיישן KNX', 'KNX BMS', 'Siemens KNX', 'ABB KNX', 'Eelectron KNX']
+        keywords: ['גלאי KNX', 'גלאי נוכחות KNX', 'גלאי תנועה KNX', 'חיישן KNX', 'KNX PIR', 'KNX BMS', 'Siemens KNX', 'ABB KNX', 'Eelectron KNX'],
+        about: ['גלאי נוכחות KNX', 'גלאי תנועה KNX', 'KNX TP', 'חיישן Lux', 'בקרת תאורה', 'HVAC', 'BMS']
+      },
+      {
+        '@type': 'Service',
+        '@id': `${canonical}#service`,
+        name: 'תכנון והתקנת גלאי נוכחות KNX בישראל',
+        serviceType: 'KNX Presence and Motion Sensor Integration',
+        url: canonical,
+        provider: { '@id': 'https://i-feel.co.il/#business' },
+        areaServed: { '@type': 'Country', name: 'Israel' },
+        description: 'תכנון, בחירה, מיקום ותכנות של גלאי נוכחות ותנועה KNX לתאורה, מיזוג ובקרת מבנה בישראל.'
       },
       {
         '@type': 'BreadcrumbList',
@@ -68,6 +79,12 @@ const meta = {
       <nav class="breadcrumbs" aria-label="פירורי לחם">
         <a href="/">דף הבית</a><span>/</span><a href="/knx-smart-home/">בית חכם KNX</a><span>/</span><span>גלאי KNX</span>
       </nav>
+      <section class="answer-card" aria-labelledby="knx-presence-direct-answer">
+        <p class="answer-kicker">תשובה ישירה</p>
+        <h2 id="knx-presence-direct-answer">מהו גלאי נוכחות KNX ואיך בוחרים אותו?</h2>
+        <p><strong>גלאי נוכחות KNX</strong> מתחבר ל-BUS ויכול להפעיל תאורה, עמעום ומיזוג לפי נוכחות ורמת Lux, ללא תלות בענן לפעולה הבסיסית. גלאי תנועה מתאים בעיקר למעברים, וגלאי נוכחות מתאים לחללים שבהם אנשים נשארים ועושים תנועות קטנות. הבחירה תלויה בגובה התקרה, שטח הכיסוי, דפוס השימוש והמערכות שאותן רוצים לנהל.</p>
+        <p>I Feel מתכננת ומשלבת בישראל גלאי KNX קוויים של Siemens, ABB ו-Eelectron כחלק מ<a href="/knx-smart-home/">מערכות בית חכם KNX</a> ומ<a href="/structure-control/">מערכות BMS</a>. אפשר לראות גם <a href="/projects/knx-smart-home-central-moshav/">פרויקט KNX שבוצע בבית פרטי</a>.</p>
+      </section>
       <div class="article-content" set:html={content} />
       <aside class="article-cta">
         <h2>צריכים לבחור גלאי KNX לפרויקט?</h2>
@@ -93,6 +110,11 @@ const meta = {
   .article-shell{max-width:1040px;margin:0 auto}
   .breadcrumbs{display:flex;gap:.5rem;flex-wrap:wrap;color:#52637a;font-size:.92rem;margin-bottom:1.5rem}
   .breadcrumbs a{color:#075ea8;text-decoration:none}
+  .answer-card{background:#eaf4fb;border:1px solid #c9deed;border-radius:20px;padding:clamp(1.15rem,3vw,2rem);margin-bottom:1.4rem}
+  .answer-card h2{font-size:clamp(1.4rem,3vw,2rem);line-height:1.25;margin:.2rem 0 .8rem;color:#0d2e52}
+  .answer-card p{font-size:1.05rem;line-height:1.8;margin:.55rem 0}
+  .answer-card a{color:#075ea8;font-weight:700}
+  .answer-kicker{font-size:.82rem!important;font-weight:800;letter-spacing:.04em;color:#0a5f94;margin:0!important}
   .article-content{background:#fff;border:1px solid #dce6ef;border-radius:24px;padding:clamp(1.3rem,4vw,3.5rem);box-shadow:0 18px 45px rgba(20,35,59,.08)}
   .article-content :global(h1){font-size:clamp(2rem,5vw,3.4rem);line-height:1.12;margin:0 0 1.4rem;color:#0d2e52}
   .article-content :global(h2){font-size:clamp(1.45rem,3vw,2rem);line-height:1.25;margin:3rem 0 1rem;color:#0a4f86;border-bottom:2px solid #e4edf5;padding-bottom:.55rem}
