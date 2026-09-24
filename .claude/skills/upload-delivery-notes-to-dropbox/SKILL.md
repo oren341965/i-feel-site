@@ -83,12 +83,23 @@ When Oren provides a start date or asks to go over all delivery notes again, run
 - When two images are clearly alternative photographs of the same physical page, retain the clearest supported source for filing and classify the other as a source duplicate. Do not create two Dropbox files merely because their hashes differ.
 - When it is uncertain whether two images are separate pages or repeat photographs, keep the document in review rather than guessing.
 
+## Persistent resolution state and anti-loop rule
+
+- Before producing any daily or historical report, load the private unresolved/resolution register and reconcile it with the current run. The register is state, not yesterday's prose report.
+- Give every exception a stable `resolutionKey` built from delivery-note number + normalized account/project key when known + issue type. Customer display-name changes must not create a new exception.
+- Persist terminal closure with `status=resolved`, `resolvedAt`, `resolutionEvidence`, and `resolvedBy`. A resolved record must be excluded from all open, needs-review, reminder, and sequence-gap sections on later runs.
+- An explicit correction or closure instruction from Oren about the correct project, folder, alias, whether an item is already handled, or whether a candidate is not actionable is authoritative operational evidence for this workflow. Persist it immediately instead of leaving the old blocker active.
+- Do not recreate an exception from a previous email/report, an old unresolved snapshot, or a numerical gap if the same `resolutionKey` is already terminally resolved.
+- Reopen a resolved record only when fresh current-run evidence independently proves that the exact problem has returned. On reopen, persist `status=reopened`, `reopenedAt`, and the new contrary evidence. Never reopen merely because a source search is temporarily unavailable or because an old report still contains the item.
+- `not-found-now` or an unavailable source is an observation/coverage limitation, not proof that a resolved routing/folder problem has returned.
+- Build completion emails only from NEW, OPEN, or genuinely REOPENED records after this state reconciliation. Resolved records may be counted in an aggregate closed count but must not be listed again as problems.
+
 ## Unresolved-note follow-up
 
 - Keep every approved but not yet fully filed delivery note in a private unresolved register with its source reference, document number, project key when known, blocking reason, intended destination when known, expected/received part counts when relevant, notification recipients, and last-check date. Never commit this register or customer data to Git.
 - Keep `TRANSPORT_BLOCKED` and `OPEN_FILE_REQUEST_CLEANUP` states in the same private carry-over until transport succeeds or the temporary request is closed. A request URL or request ID must never be written to Git or broad operational logs. `TRANSPORT_BLOCKED` is the required state when a ready note cannot be byte-transported to Dropbox; do not create an email staging queue instead.
 - Prepare an exception email to Ora for every unresolved note that requires human correction. State the document number, the blocking reason, and the action needed to make filing possible; include the verified organizational sender when the intake contract requires it. Sending exception messages with source attachments remains outside the routine filing authorization and requires the applicable explicit approval.
-- Recheck unresolved notes every two days. Verify Dropbox first and, when relevant, the other system named in the exception. If the exact approved document and all expected parts are now present in the correct destination, mark it resolved and stop all reminders immediately.
+- Recheck unresolved notes every two days. Verify Dropbox first and, when relevant, the other system named in the exception. If the exact approved document and all expected parts are now present in the correct destination, or Oren has explicitly supplied a verified routing/closure correction that resolves the blocker, persist the terminal resolution state and stop all reminders and report recurrence immediately.
 - If the blocker was only a missing delivery-note child folder and the project is now uniquely identified by exact `מפתח`, create `תעודת משלוח`, upload the file automatically under the routine rules, verify it, and resolve the exception.
 - If the note is still blocked, prepare a concise reminder to Ora with the current reason and the date of the previous notice. Do not send duplicate reminders more frequently than once every two days, and do not continue after resolution.
 
