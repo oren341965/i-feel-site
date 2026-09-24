@@ -1,0 +1,4 @@
+interface:
+  display_name: "הכנת הצעת מחיר ZWAVE"
+  short_description: "יצירת הצעת Z-Wave מעוצבת עם תמונות"
+  default_prompt: "Use $prepare-zwave-quote to create a polished Hebrew Z-Wave quotation with product images."
