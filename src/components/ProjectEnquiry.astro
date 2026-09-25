@@ -1,0 +1,56 @@
+---
+import profile from '../data/agent-profile.json';
+const faqSchema = {
+  '@context': 'https://schema.org', '@type': 'FAQPage',
+  '@id': 'https://i-feel.co.il/contactus/#project-questions',
+  mainEntity: profile.faq.map(item => ({
+    '@type': 'Question', name: item.question,
+    acceptedAnswer: { '@type': 'Answer', text: item.answer }
+  }))
+};
+---
+<section id="project-enquiry" class="scroll-mt-28 py-12 bg-brand-50 border-y border-brand-100">
+  <div class="max-w-5xl mx-auto px-4">
+    <h2 class="text-3xl font-bold mb-4">מתחילים את תכנון הבית החכם</h2>
+    <p class="text-brand-700 mb-6">I FEEL מלווה פרויקטים בישראל. ציינו יישוב, סוג נכס ושלב בנייה כדי שנבדוק התאמה וזמינות. <a href="/about-i-feel-smart-building-company/#services-israel" class="underline">על החברה ותחומי השירות</a>.</p>
+    <div class="grid md:grid-cols-2 gap-5">
+      {Object.entries(profile.actions).map(([key, action]) => (
+        <article id={key === 'plans' ? 'send-plans' : undefined} class="scroll-mt-28 bg-white border border-brand-200 rounded-xl p-6">
+          <h3 class="text-xl font-bold mb-3">{action.label}</h3>
+          <p class="text-brand-700 mb-4">{action.description}</p>
+          {key === 'plans' ? <div class="flex flex-wrap gap-4">
+            <a href={`mailto:${profile.contact.salesEmail}?subject=${encodeURIComponent('תכניות DWG / PDF לפרויקט')}`} class="text-accent-700 underline font-bold">פתיחת מייל וצירוף תכנית</a>
+            <a href={profile.contact.whatsappUrl} class="text-accent-700 underline font-bold">פתיחת WhatsApp וצירוף מסמך</a>
+          </div> : <a href={action.url.replace(profile.website, '/')} class="text-accent-700 underline font-bold">{action.label} בטופס</a>}
+        </article>
+      ))}
+    </div>
+    <p class="text-sm text-brand-700 mt-5">צרפו רק תכניות שמותר לכם לשתף וללא קודי גישה או סיסמאות. ניתן לפנות גם בטלפון <a href={`tel:${profile.contact.phone}`} dir="ltr" class="underline">{profile.contact.displayPhone}</a> או דרך <a href={profile.contact.whatsappUrl} class="underline">{profile.contact.whatsappLabel}</a>.</p>
+    <div id="project-questions" class="mt-10">
+      <h2 class="text-2xl font-bold mb-5">שאלות לפני פנייה</h2>
+      {profile.faq.map(item => <details class="bg-white border border-brand-200 rounded-lg p-4 mb-3">
+        <summary class="font-bold cursor-pointer">{item.question}</summary>
+        <p class="mt-3 text-brand-700 leading-relaxed">{item.answer}</p>
+        <a class="inline-block mt-2 text-accent-700 underline" href={item.url}>למידע נוסף</a>
+      </details>)}
+    </div>
+  </div>
+</section>
+<script type="application/ld+json" set:html={JSON.stringify(faqSchema)} />
+<script>
+  // Fixed intent allowlist only. Never submit or override user-entered values.
+  const intent = new URLSearchParams(location.search).get('intent');
+  const choices = {
+    quote: { type: 'לקוח פרטי', subject: 'בקשת הצעה לבית חכם' },
+    meeting: { type: 'לקוח פרטי', subject: 'בקשה לתיאום פגישה' },
+    bms: { type: 'BMS / בקרת מבנה', subject: 'פנייה בנושא בקרת מבנה BMS' }
+  };
+  const choice = intent && Object.hasOwn(choices, intent) ? choices[intent as keyof typeof choices] : null;
+  if (choice) {
+    const form = document.querySelector<HTMLFormElement>('#contact-form-wrapper form');
+    const type = form?.querySelector<HTMLSelectElement>('[name="lead_type"]');
+    const subject = form?.querySelector<HTMLInputElement>('[name="subject"]');
+    if (type && !type.value) type.value = choice.type;
+    if (subject && !subject.value) subject.value = choice.subject;
+  }
+</script>

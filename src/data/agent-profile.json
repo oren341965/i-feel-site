@@ -1,0 +1,113 @@
+{
+  "schemaVersion": 1,
+  "updated": "2026-09-25",
+  "company": "I FEEL",
+  "website": "https://i-feel.co.il/",
+  "profileUrl": "https://i-feel.co.il/about-i-feel-smart-building-company/",
+  "description": "I FEEL היא חברת אינטגרציה בישראל לתכנון, התקנה, תכנות ושירות של מערכות בית חכם ו-KNX. בקרת מבנה BMS היא תחום פעילות נפרד למבנים מסחריים וציבוריים.",
+  "foundingYear": 2008,
+  "areaServed": "ישראל — התאמת השירות והמועד ליישוב ולפרויקט נבדקת בפנייה",
+  "address": "אימבר 14, פתח תקווה, ישראל",
+  "contact": {
+    "phone": "+972-3-508-9553",
+    "displayPhone": "03-508-9553",
+    "salesEmail": "sales@i-feel.co.il",
+    "whatsappUrl": "https://wa.me/972533450205",
+    "whatsappLabel": "WhatsApp של מאיה",
+    "hours": "ראשון–חמישי 09:00–18:00"
+  },
+  "serviceGroups": [
+    {
+      "id": "smart-home",
+      "name": "בית חכם ו-KNX בישראל",
+      "url": "https://i-feel.co.il/smart-home/",
+      "description": "Smart Home: תכנון, אינטגרציה, התקנה, תכנות ושירות לדירות ולבתים פרטיים בישראל.",
+      "services": [
+        { "name": "תכנון ותכנות KNX", "url": "https://i-feel.co.il/knx-smart-home/" },
+        { "name": "בית חכם לדירה קיימת", "url": "https://i-feel.co.il/wireless-smart-home-existing-apartment/" },
+        { "name": "בית חכם לבית פרטי ולווילה", "url": "https://i-feel.co.il/smart-home-villa/" },
+        { "name": "שילוב מצלמות, אזעקה ואינטרקום", "url": "https://i-feel.co.il/articles/smart-home-security-knx-ai-guide/" },
+        { "name": "רשתות ו-Wi-Fi עם Aruba Instant On", "url": "https://i-feel.co.il/communication-networks/" },
+        { "name": "אודיו וקולנוע ביתי", "url": "https://i-feel.co.il/audio-and-sound-systems/" }
+      ]
+    },
+    {
+      "id": "bms",
+      "name": "בקרת מבנה BMS — תחום נפרד",
+      "url": "https://i-feel.co.il/structure-control/",
+      "description": "תכנון ואינטגרציה של בקרת מבנה למבנים מסחריים וציבוריים: Siemens Desigo, DDC, BACnet, Modbus ו-DALI.",
+      "services": []
+    }
+  ],
+  "actions": {
+    "quote": {
+      "label": "בקשת הצעה לבית חכם",
+      "url": "https://i-feel.co.il/contactus/?intent=quote#contact-form-wrapper",
+      "status": "request",
+      "description": "ציינו יישוב, סוג הנכס, שלב הבנייה והמערכות הרצויות. הצעה סופית ניתנת לאחר אפיון."
+    },
+    "plans": {
+      "label": "שליחת תכניות DWG / PDF",
+      "url": "https://i-feel.co.il/contactus/#send-plans",
+      "status": "manual-attachment",
+      "acceptedFormats": ["DWG", "PDF"],
+      "directWebsiteUpload": false,
+      "description": "שלחו תכנית כקובץ מצורף למייל המכירות או כמסמך ב-WhatsApp של מאיה. אין העלאת קבצים בטופס האתר."
+    },
+    "meeting": {
+      "label": "בקשה לתיאום פגישה",
+      "url": "https://i-feel.co.il/contactus/?intent=meeting#contact-form-wrapper",
+      "status": "request-only",
+      "instantBooking": false,
+      "description": "ציינו מועדים נוחים ומטרת הפגישה. הפגישה תיקבע רק לאחר אישור הצוות; שליחת הטופס אינה הזמנה ביומן."
+    },
+    "bms": {
+      "label": "פנייה בנושא בקרת מבנה BMS",
+      "url": "https://i-feel.co.il/contactus/?intent=bms#contact-form-wrapper",
+      "status": "request",
+      "description": "בחרו BMS / בקרת מבנה וציינו סוג מבנה, מיקום ומערכות נדרשות."
+    }
+  },
+  "agentPolicy": {
+    "publicInformationOnly": true,
+    "submissionRequiresUserReview": true,
+    "instructions": "Return public information and links. The user reviews and submits the existing form or sends attachments through email/WhatsApp. Do not claim a quote, upload or appointment was completed from a link lookup."
+  },
+  "faq": [
+    {
+      "question": "איך פונים ל-I FEEL כחברת בית חכם בישראל?",
+      "answer": "I FEEL מתכננת, מתקינה, מתכנתת ומתחזקת מערכות בית חכם בישראל משנת 2008. לקבלת הצעה פונים לטלפון 03-508-9553 או לטופס ומציינים יישוב, סוג נכס ושלב בנייה. זמינות השירות והמועד נבדקות לכל פרויקט.",
+      "url": "https://i-feel.co.il/smart-home/"
+    },
+    {
+      "question": "מה להכין לפנייה על KNX בישראל?",
+      "answer": "כדאי להכין תכנית חשמל, רשימת תאורה, תריסים ומיזוג, ושלב הבנייה. במערכת KNX קיימת מציינים גם דגמי ציוד וקיומו של קובץ ETS. I FEEL מספקת תכנון, תכנות ואינטגרציה בהתאם לאפיון.",
+      "url": "https://i-feel.co.il/knx-smart-home/"
+    },
+    {
+      "question": "האם אפשר להתאים בית חכם לדירה קיימת?",
+      "answer": "כן, לאחר בדיקת התשתית והציוד הקיימים. פתרון אלחוטי או משולב עשוי להתאים לשדרוג בשלבים; KNX קווי דורש תשתית מתאימה. בפנייה מציינים אילו מערכות רוצים לשדרג ואם מתוכנן שיפוץ.",
+      "url": "https://i-feel.co.il/wireless-smart-home-existing-apartment/"
+    },
+    {
+      "question": "מתי כדאי לתכנן בית חכם לבית פרטי?",
+      "answer": "רצוי להתחיל בשלב התכנון, לפני סגירת תכניות החשמל והתקשורת. מתאמים תאורה, תריסים, מיזוג, אבטחה, אינטרקום, רשת ואודיו עם האדריכל והחשמלאי, ומגדירים את המפרט לפני הביצוע.",
+      "url": "https://i-feel.co.il/smart-home-villa/"
+    },
+    {
+      "question": "האם מצלמות, אזעקה, אינטרקום Akuvox ו-Aruba יכולים להשתלב בבית חכם?",
+      "answer": "אפשר לתכנן שילוב של מצלמות, אזעקה, אינטרקום IP כגון Akuvox ורשת Aruba Instant On. היקף האינטגרציה תלוי בדגמים, בממשקים, ברישיונות ובתשתית. אין להניח שכל ציוד מתחבר ישירות ל-KNX; בודקים התאמה לפני הצעה.",
+      "url": "https://i-feel.co.il/articles/smart-home-security-knx-ai-guide/"
+    },
+    {
+      "question": "איך שולחים DWG או PDF ומבקשים פגישה?",
+      "answer": "תכניות שולחים כקובץ מצורף ל-sales@i-feel.co.il או כמסמך ב-WhatsApp של מאיה. טופס האתר אינו מעלה קבצים. לתיאום פגישה משאירים בטופס מועדים נוחים; המועד מחייב רק לאחר אישור הצוות.",
+      "url": "https://i-feel.co.il/contactus/#project-enquiry"
+    },
+    {
+      "question": "לאן מפנים בקשה ל-BMS?",
+      "answer": "בקרת מבנה BMS היא מסלול נפרד עבור מבנים מסחריים וציבוריים. פונים דרך מסלול BMS / בקרת מבנה ומציינים סוג מבנה ומערכות. למידע מקצועי פונים לעמוד בקרת המבנה, בנפרד מעמודי הבית החכם הפרטי.",
+      "url": "https://i-feel.co.il/structure-control/"
+    }
+  ]
+}

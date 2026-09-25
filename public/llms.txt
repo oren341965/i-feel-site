@@ -4,7 +4,7 @@
 
 i-feel משרתת לקוחות פרטיים, יזמי בנייה, אדריכלים וארגונים בישראל. באתר מתועדים מעל 9,000 לקוחות ומעל 4,000 פרויקטים, לצד פרויקטי BMS, KNX, מלונאות, משרדים ומבני ציבור.
 
-עודכן לאחרונה: 2026-09-24
+עודכן לאחרונה: 2026-09-25
 
 ## תחומי פעילות עיקריים
 
@@ -129,3 +129,15 @@ i-feel משרתת לקוחות פרטיים, יזמי בנייה, אדריכלי
 - These resources are for professional building automation and BMS, not private smart-home consumer guidance.
 
 - [בחירת דימרים ל־KNX](https://i-feel.co.il/articles/knx-dimmers-triac-0-10v-dali2/): טריאק, 0–10V, 1–10V, DALI-2 ו־PWM, בקרי Siemens, בדיקות התאמה ושאלון רכישה.
+
+## Public information and contact routes for AI agents
+
+- Machine-readable public profile: https://i-feel.co.il/agent-info.json (site-specific JSON, not a registration with Meta or a universal agent protocol).
+- Human-readable services and Israel coverage: https://i-feel.co.il/about-i-feel-smart-building-company/#services-israel
+- Smart Home and KNX: https://i-feel.co.il/smart-home/ ; BMS is a separate commercial/public-building service: https://i-feel.co.il/structure-control/
+- Quote request: https://i-feel.co.il/contactus/?intent=quote#contact-form-wrapper
+- DWG/PDF plans: https://i-feel.co.il/contactus/#send-plans — attach manually to sales@i-feel.co.il or send as a document to Maya on WhatsApp: https://wa.me/972533450205 . The website form does not upload files.
+- Meeting request: https://i-feel.co.il/contactus/?intent=meeting#contact-form-wrapper — no live calendar or instant booking. A team confirmation is required.
+- BMS enquiry: https://i-feel.co.il/contactus/?intent=bms#contact-form-wrapper
+- Public WebMCP uses document.modelContext when available. get_ifeel_contact_path returns links only. Existing get_ifeel_company_capabilities and find_ifeel_page remain available.
+- A route lookup does not submit a lead, send a message, upload plans, confirm a price or book a meeting. The user reviews and submits through the human interface.

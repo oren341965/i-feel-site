@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import ProjectEnquiry from '../components/ProjectEnquiry.astro';
 import content from '../page-html/page-07.html?raw';
 
 const meta = {
@@ -15,6 +16,7 @@ const meta = {
 ---
 <BaseLayout {...meta}>
   <Fragment set:html={content} />
+  <ProjectEnquiry />
   <script is:inline>
     document.querySelectorAll('a[href*="63cd83d84533621571484d9b"]').forEach(function (link) {
       link.setAttribute('href', '/service-request/');

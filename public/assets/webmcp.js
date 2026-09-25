@@ -10,6 +10,35 @@
     const register = (definition) =>
       modelContext.registerTool(definition, { signal: controller.signal });
 
+    // Add public navigation guidance without giving agents submission authority.
+    // Existing tool names and customer portal behavior remain compatible.
+    await register({
+      name: 'get_ifeel_contact_path',
+      description: 'Get a public contact route for a smart-home quote, DWG/PDF plans, a meeting request or separate BMS enquiry. Returns links only; does not send data, upload files or book appointments.',
+      inputSchema: {
+        type: 'object',
+        properties: { intent: { type: 'string', enum: ['quote', 'plans', 'meeting', 'bms'] } },
+        required: ['intent'],
+        additionalProperties: false
+      },
+      async execute({ intent } = {}, { signal } = {}) {
+        if (!['quote', 'plans', 'meeting', 'bms'].includes(intent)) {
+          return { found: false, reason: 'Choose quote, plans, meeting or bms.' };
+        }
+        const response = await fetch('/agent-info.json', {
+          method: 'GET', credentials: 'omit',
+          headers: { Accept: 'application/json' }, signal
+        });
+        if (!response.ok) throw new Error('I Feel contact information is temporarily unavailable');
+        const profile = await response.json();
+        return {
+          ...profile.actions[intent], contact: profile.contact,
+          completed: false, userReviewRequired: true
+        };
+      },
+      annotations: { readOnlyHint: true, consequentialHint: false, untrustedContentHint: false }
+    });
+
     await register({
       name: 'get_ifeel_company_capabilities',
       description: 'Return the main I Feel smart-home and building-control solution areas available in Israel.',
@@ -22,6 +51,14 @@
         return {
           company: 'I Feel Smart Home & BMS',
           website: 'https://i-feel.co.il/',
+          profileUrl: 'https://i-feel.co.il/agent-info.json',
+          serviceArea: 'Israel; location and availability confirmed per enquiry',
+          smartHomeUrl: 'https://i-feel.co.il/smart-home/',
+          bms: {
+            separateService: true,
+            url: 'https://i-feel.co.il/structure-control/',
+            audience: 'Commercial and public buildings'
+          },
           solutionAreas: [
             'KNX smart home',
             'Siemens Desigo building management systems',
@@ -33,7 +70,9 @@
           ],
           contact: {
             phone: '+972-3-508-9553',
-            salesEmail: 'sales@i-feel.co.il'
+            salesEmail: 'sales@i-feel.co.il',
+            enquiryUrl: 'https://i-feel.co.il/contactus/#project-enquiry',
+            whatsappUrl: 'https://wa.me/972533450205'
           }
         };
       },
