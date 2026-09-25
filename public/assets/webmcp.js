@@ -2,7 +2,7 @@
   const controller = new AbortController();
 
   async function registerIfeelWebMcp() {
-    const modelContext = document.modelContext || navigator.modelContext;
+    const modelContext = document.modelContext;
     if (!modelContext || typeof modelContext.registerTool !== 'function') {
       return;
     }
@@ -86,7 +86,7 @@
       execute() {
         return {
           status: 'foundation',
-          portalUrl: 'https://i-feel.co.il/customer-portal/',
+          portalUrl: 'https://i-feel.co.il/customer-portal/index.php',
           currentCapabilities: [
             'Public portal information',
             'WebMCP discovery'
@@ -116,8 +116,8 @@
         additionalProperties: false
       },
       execute() {
-        window.location.assign('/customer-portal/');
-        return { opened: true, url: 'https://i-feel.co.il/customer-portal/' };
+        window.location.assign('/customer-portal/index.php');
+        return { opened: true, url: 'https://i-feel.co.il/customer-portal/index.php' };
       },
       annotations: {
         readOnlyHint: false,
