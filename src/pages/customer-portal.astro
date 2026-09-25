@@ -1,0 +1,40 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+const title = 'אזור לקוחות I Feel | שירות ורכישות לפי הסכם';
+const description = 'תשתית אזור הלקוחות של I Feel לרכישת מוצרים ושירותים בהתאם להסכם השירות ולמערכות המותקנות אצל הלקוח.';
+---
+<BaseLayout
+  title={title}
+  description={description}
+  canonical="https://i-feel.co.il/customer-portal/"
+  robots="noindex, nofollow"
+>
+  <section class="bg-brand-950 text-white py-16 md:py-24">
+    <div class="max-w-5xl mx-auto px-4">
+      <p class="text-accent-300 font-bold mb-3">I Feel Customer Portal</p>
+      <h1 class="text-4xl md:text-6xl font-extrabold leading-tight mb-6">אזור לקוחות חכם, לפי המערכת והסכם השירות שלך</h1>
+      <p class="text-lg md:text-xl text-brand-100 max-w-3xl leading-relaxed">
+        אנו מקימים אזור לקוח מאובטח שיזהה את מערכות I Feel המותקנות אצלך ואת הסכם השירות הפעיל,
+        ויציג רק מוצרים ושירותים שמתאימים וזמינים עבורך.
+      </p>
+    </div>
+  </section>
+
+  <section class="py-14 md:py-20">
+    <div class="max-w-5xl mx-auto px-4 grid md:grid-cols-3 gap-6">
+      <article class="border border-brand-100 rounded-2xl p-6 bg-white shadow-sm">
+        <h2 class="text-xl font-extrabold mb-3">זיהוי מאובטח</h2>
+        <p class="text-brand-700 leading-relaxed">גישה לחשבון תתאפשר לאחר אימות לקוח. מידע אישי והסכמים לא יישלחו ל-WebMCP ולא ייחשפו בדפדפן.</p>
+      </article>
+      <article class="border border-brand-100 rounded-2xl p-6 bg-white shadow-sm">
+        <h2 class="text-xl font-extrabold mb-3">קטלוג אישי</h2>
+        <p class="text-brand-700 leading-relaxed">לאחר החיבור ל-Monday, יוצגו רק מוצרים, שירותים ומחירים שהלקוח זכאי להם לפי ההסכם והמערכות המותקנות.</p>
+      </article>
+      <article class="border border-brand-100 rounded-2xl p-6 bg-white shadow-sm">
+        <h2 class="text-xl font-extrabold mb-3">אישור לפני רכישה</h2>
+        <p class="text-brand-700 leading-relaxed">הזמנה ותשלום ידרשו אישור מפורש של הלקוח בממשק, גם כאשר סוכן AI מסייע בתהליך.</p>
+      </article>
+    </div>
+  </section>
+</BaseLayout>

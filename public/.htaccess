@@ -6,6 +6,9 @@
   RewriteCond %{HTTP_HOST} ^www\.i-feel\.co\.il$ [NC]
   RewriteRule ^ https://i-feel.co.il%{REQUEST_URI} [R=301,L,NE]
 
+  # Secure I Feel customer portal: force the dynamic PHP entry point.
+  RewriteRule ^customer-portal/?$ /customer-portal/index.php [L]
+
   # Service / customer-area legacy routes.
   RewriteRule ^qr/?$ /service-and-maintenance/ [R=301,L]
   RewriteRule ^service-2/?$ /service-and-maintenance/ [R=301,L]
