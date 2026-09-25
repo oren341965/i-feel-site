@@ -116,19 +116,21 @@ $products = $user ? cp_eligible_products($user) : [];
       <section class="card">
         <h2>מוצרים ושירותים זמינים</h2>
         <?php if ($products === []): ?>
-          <p>כרגע לא מסומן במערכת הסכם שירות פעיל. בשלב הבא נוסיף גם מסלול רכישה ללקוחות ללא הסכם במחיר רגיל.</p>
+          <p>כרגע לא מסומן במערכת הסכם שירות פעיל. ניתן לעיין ב<a href="/service-agreement-private/">תנאי הסכם השירות ללקוח פרטי</a>.</p>
         <?php else: ?>
           <div class="grid">
             <?php foreach ($products as $product): ?>
               <article class="product">
                 <strong><?= cp_h($product['name']) ?></strong>
                 <p class="muted"><?= cp_h($product['category']) ?></p>
-                <span class="pill"><?= $product['status'] === 'eligible' ? 'זכאי' : 'דורש בדיקה' ?></span>
+                <p><strong><?= cp_h($product['priceLabel'] ?? '') ?></strong></p>
+                <p class="muted"><?= cp_h($product['notes'] ?? '') ?></p>
+                <span class="pill"><?= $product['status'] === 'included' ? 'כלול' : 'זכאי' ?></span>
               </article>
             <?php endforeach; ?>
           </div>
         <?php endif; ?>
-        <p class="muted" style="margin-top:18px">רכישה ותשלום עדיין אינם פעילים בגרסה זו. הם יופעלו רק לאחר חיבור קטלוג, מחירון ואישור תהליך התשלום.</p>
+        <p class="muted" style="margin-top:18px">הזכאות והמחירים לשירות מבוססים על הסכם השירות הקיים. מחיר מוצר יחושב רק לאחר חיבור המחירון הרשמי. רכישה ותשלום עדיין אינם פעילים בגרסה זו.</p>
       </section>
     <?php endif; ?>
   </div>
