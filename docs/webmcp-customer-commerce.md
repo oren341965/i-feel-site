@@ -21,14 +21,19 @@ WebMCP runs in the browser and must never contain Monday credentials, customer i
 
 Private customer data will be resolved through an authenticated server-side API only.
 
-## Phase 2
+## Phase 2 in this branch
 
-1. Customer authentication.
-2. Server-side identity lookup.
-3. Monday customer lookup by an internal immutable customer key.
-4. Service-agreement status and installed-system entitlements.
-5. Product eligibility and customer price tier.
-6. Read-only WebMCP tools such as `get_customer_entitlements` and `get_eligible_products`.
+1. Passwordless customer authentication by a short-lived email OTP.
+2. Exact server-side lookup against the Monday email column; the Monday token never reaches the browser.
+3. Service-agreement status and installed-system entitlements.
+4. Product eligibility derived from the authenticated profile.
+5. Read-only WebMCP tools: `get_ifeel_customer_entitlements` and `get_ifeel_eligible_products`.
+
+The portal does not read the legacy password column and does not write to Monday.
+
+## Chrome availability
+
+WebMCP currently requires Chrome's WebMCP origin trial (or the local testing flag). The production activation step is to register `https://i-feel.co.il` for the trial and add the generated public origin-trial token to the relevant HTML entry points. Until then, the feature detection keeps the site working normally and the WebMCP tools remain inactive in browsers where the API is unavailable.
 
 ## Phase 3
 

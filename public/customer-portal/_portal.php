@@ -213,37 +213,24 @@ function cp_customer_profile(string $email): ?array
     if (!filter_var($email, FILTER_VALIDATE_EMAIL)) return null;
 
     $query = <<<'GRAPHQL'
-query CustomerPortalCustomers($boardIds: [ID!]) {
-  boards(ids: $boardIds) {
-    items_page(limit: 500) {
-      cursor
-      items {
-        id
-        name
-        column_values(ids: ["_____3", "phone", "location7", "color_mm5271fc", "dropdown5", "long_text9", "______9"]) { id text value }
-      }
+query CustomerPortalCustomerByEmail($boardId: ID!, $email: String!) {
+  items_page_by_column_values(
+    board_id: $boardId
+    limit: 10
+    columns: [{column_id: "_____3", column_values: [$email]}]
+  ) {
+    items {
+      id
+      name
+      column_values(ids: ["_____3", "phone", "location7", "color_mm5271fc", "dropdown5", "long_text9", "______9"]) { id text value }
     }
   }
 }
 GRAPHQL;
-    $response = cp_monday_request($query, ['boardIds' => [cp_monday_board_id()]]);
-    $page = $response['data']['boards'][0]['items_page'] ?? null;
+    $response = cp_monday_request($query, ['boardId' => cp_monday_board_id(), 'email' => $email]);
+    $page = $response['data']['items_page_by_column_values'] ?? null;
     if (!is_array($page)) return null;
     $items = is_array($page['items'] ?? null) ? $page['items'] : [];
-    $cursor = is_string($page['cursor'] ?? null) ? $page['cursor'] : null;
-    $pages = 1;
-
-    while ($cursor !== null && $cursor !== '' && $pages < 12) {
-        $next = cp_monday_request(
-            'query CustomerPortalCustomersNext($cursor: String!) { next_items_page(limit: 500, cursor: $cursor) { cursor items { id name column_values(ids: ["_____3", "phone", "location7", "color_mm5271fc", "dropdown5", "long_text9", "______9"]) { id text value } } } }',
-            ['cursor' => $cursor]
-        );
-        $nextPage = $next['data']['next_items_page'] ?? null;
-        if (!is_array($nextPage)) break;
-        $items = array_merge($items, is_array($nextPage['items'] ?? null) ? $nextPage['items'] : []);
-        $cursor = is_string($nextPage['cursor'] ?? null) ? $nextPage['cursor'] : null;
-        $pages++;
-    }
 
     foreach ($items as $item) {
         if (!is_array($item)) continue;

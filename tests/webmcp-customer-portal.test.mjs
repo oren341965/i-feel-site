@@ -32,6 +32,10 @@ test('customer portal keeps Monday token and OTP validation server-side', async 
   assert.match(source, /HttpOnly/);
   assert.doesNotMatch(source, /text_mm72mqmv/);
   assert.match(source, /cp_issue_decoy_code/);
+  assert.match(source, /items_page_by_column_values/);
+  assert.match(source, /column_id:\s*"_____3"/);
+  assert.doesNotMatch(source, /next_items_page/);
+  assert.doesNotMatch(source, /items_page\(limit:\s*500\)/);
 });
 
 test('customer portal root is routed to PHP entry point', async () => {
