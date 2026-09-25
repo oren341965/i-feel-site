@@ -19,7 +19,8 @@
     "youtube:verify": "node --use-system-ca scripts/youtube-uploader.mjs --verify-channel",
     "youtube:upload": "node --use-system-ca scripts/youtube-uploader.mjs --upload",
     "build": "node scripts/check-content-freshness.mjs && astro build && node scripts/generate-og-images.mjs && node scripts/validate-build.mjs",
-    "preview": "astro preview"
+    "preview": "astro preview",
+    "test:webmcp": "node --test tests/webmcp-customer-portal.test.mjs"
   },
   "dependencies": {
     "@astrojs/tailwind": "^6.0.2",
