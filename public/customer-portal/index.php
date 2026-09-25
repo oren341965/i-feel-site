@@ -13,12 +13,13 @@ try {
             $email = strtolower(cp_post('email', 180));
             $profile = cp_customer_profile($email);
             if ($profile === null) {
-                throw new RuntimeException('לא נמצא לקוח פעיל עם כתובת הדוא"ל הזו במערכת I Feel.');
+                if (!cp_issue_decoy_code($email)) {
+                    throw new RuntimeException('לא ניתן לטפל בבקשת הכניסה כרגע. נסו שוב בעוד דקה.');
+                }
+            } elseif (!cp_send_code($profile)) {
+                throw new RuntimeException('לא ניתן לטפל בבקשת הכניסה כרגע. נסו שוב בעוד דקה.');
             }
-            if (!cp_send_code($profile)) {
-                throw new RuntimeException('לא ניתן לשלוח קוד כרגע. נסו שוב בעוד דקה.');
-            }
-            $notice = 'קוד כניסה נשלח לכתובת הדוא"ל הרשומה.';
+            $notice = 'אם כתובת הדוא"ל רשומה ב-I Feel, קוד כניסה נשלח אליה.';
         } elseif ($action === 'verify_code') {
             if (!cp_verify_code(cp_post('code', 20))) {
                 throw new RuntimeException('קוד הכניסה שגוי או שפג תוקפו.');
