@@ -1,0 +1,28 @@
+name: Validate Shviro resident portal
+on:
+  pull_request:
+    paths:
+      - 'public/shviro-ganei-tikva/**'
+      - 'scripts/preview-shviro-portal.php'
+      - 'tests/shviro-portal*'
+      - '.github/workflows/validate-shviro-pr.yml'
+permissions:
+  contents: read
+jobs:
+  validate:
+    name: Validate Shviro portal on PHP 7.4
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '7.4'
+          coverage: none
+      - name: Check authentication, pricing and preview isolation
+        run: |
+          find public/shviro-ganei-tikva -maxdepth 1 -type f -name '*.php' -print0 | xargs -0 -n1 php -l
+          php tests/shviro-portal-unit.php
+          node --test tests/shviro-portal.test.mjs
