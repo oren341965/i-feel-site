@@ -12,6 +12,8 @@ test('global WebMCP uses current document.modelContext API', async () => {
   assert.match(source, /document\.modelContext/);
   assert.doesNotMatch(source, /navigator\.modelContext/);
   assert.match(source, /get_ifeel_customer_portal_status/);
+  assert.match(source, /fetch\('\/search-index\.json'/);
+  assert.doesNotMatch(source, /\?s=/);
 });
 
 test('authenticated portal WebMCP exposes read-only entitlement tools', async () => {
@@ -29,6 +31,7 @@ test('customer portal keeps Monday token and OTP validation server-side', async 
   assert.match(source, /hash_equals/);
   assert.match(source, /HttpOnly/);
   assert.doesNotMatch(source, /text_mm72mqmv/);
+  assert.match(source, /cp_issue_decoy_code/);
 });
 
 test('customer portal root is routed to PHP entry point', async () => {
