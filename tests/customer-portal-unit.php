@@ -28,7 +28,13 @@ $profile = cp_profile_from_item([
 assert_true($profile['service_agreement'] === true, 'service agreement should be active');
 assert_true($profile['accounting_key'] === '43640', 'accounting key should be read');
 assert_true($profile['basic_system'] === 'KNX', 'basic system should be read');
-assert_true(count(cp_eligible_products($profile)) >= 2, 'service customer should receive eligible items');
+$eligible = cp_eligible_products($profile);
+assert_true(count($eligible) >= 3, 'service customer should receive agreement benefits');
+assert_true(($eligible[1]['price'] ?? null) === 250, 'technician visit should be 250 ILS per hour');
+assert_true(($eligible[2]['discountPercent'] ?? null) === 50, 'product discount should be 50 percent');
+$terms = cp_service_agreement_terms($profile);
+assert_true(($terms['monthlyPrice'] ?? null) === 50, 'monthly agreement price should be 50 ILS');
+assert_true(($terms['commitmentMonths'] ?? null) === 36, 'agreement commitment should be 36 months');
 
 $profile['service_agreement'] = false;
 assert_true(cp_eligible_products($profile) === [], 'customer without service agreement should not receive agreement-only items');
