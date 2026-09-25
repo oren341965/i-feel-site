@@ -28,5 +28,6 @@ echo json_encode([
         'category' => (string) ($user['category'] ?? ''),
         'basicSystem' => (string) ($user['basic_system'] ?? ''),
     ],
+    'serviceAgreementTerms' => cp_service_agreement_terms($user),
     'eligibleProducts' => cp_eligible_products($user),
 ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
