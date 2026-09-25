@@ -2,6 +2,37 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Customer-facing opening: real project photography, readable copy, equal routes. */
+.home-intro { display:grid; grid-template-columns:1.05fr 1fr; background:#f7f5f0; color:#0f1f36; }
+.home-intro-copy { padding:clamp(2rem,5vw,5rem); align-self:center; }
+.home-intro-eyebrow { font-size:.85rem; margin-bottom:1.5rem; color:#1e3e66; }
+.home-intro h1 { font-size:clamp(2rem,3.2vw,3.4rem); line-height:1.2; font-weight:800; letter-spacing:-.035em; }
+.home-intro h1 span { color:#285183; }
+.home-intro-description { font-size:1.15rem; line-height:1.85; margin:1.5rem 0 2rem; max-width:34rem; }
+.home-intro-routes { display:grid; grid-template-columns:1fr 1fr; gap:.8rem; }
+.home-intro-routes a { display:flex; flex-direction:column; justify-content:space-between; gap:.8rem; padding:1.25rem; border-radius:.7rem; background:#1e3e66; color:white; }
+.home-intro-routes a:nth-child(2) { background:#0f1f36; }
+.home-intro-routes a:hover { background:#285183; }
+.home-intro-routes strong { font-size:1.05rem; }
+.home-intro-routes span { font-size:.8rem; color:#dae6f2; }
+.home-intro-note { font-size:.8rem; color:#1e3e66; margin-top:1.5rem; }
+.home-intro-photo { position:relative; min-height:34rem; margin:0; }
+.home-intro-photo img { width:100%; height:100%; object-fit:cover; position:absolute; inset:0; }
+.home-intro-photo figcaption { position:absolute; bottom:0; left:0; right:0; padding:2.5rem 1.5rem 1.25rem; color:white; font-size:.85rem; background:linear-gradient(transparent,rgba(8,17,31,.92)); }
+.home-intro-photo figcaption a { display:block; text-decoration:underline; margin-top:.3rem; }
+.header-resources { position:relative; z-index:70; }
+.header-resources summary { cursor:pointer; padding:.5rem; }
+.header-resources-panel { position:absolute; inset-inline-end:0; top:100%; width:15rem; padding:1rem; display:grid; gap:.4rem; background:#0f1f36; border:1px solid #3868a0; border-radius:.5rem; box-shadow:0 12px 24px #08111f33; }
+.header-resources-panel a { padding:.5rem; }
+:where(a,button,summary,input,select,textarea):focus-visible { outline:3px solid #3868a0; outline-offset:4px; }
+@media(max-width:900px) {
+  .home-intro { grid-template-columns:1fr; }
+  .home-intro-copy { padding:2rem 1.25rem; }
+  .home-intro-photo { min-height:19rem; }
+}
+@media(max-width:380px) { .home-intro-routes { grid-template-columns:1fr; } }
+@media(prefers-reduced-motion:reduce) { html { scroll-behavior:auto !important; } }
+
 html { scroll-behavior: smooth; }
   body { font-family: 'Heebo', system-ui, sans-serif; }
   .hero-gradient {
