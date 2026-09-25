@@ -499,9 +499,67 @@ function cp_eligible_products(array $profile): array
     if (empty($profile['service_agreement'])) {
         return [];
     }
+
     return [
-        ['id' => 'service-remote', 'name' => 'תמיכה מרחוק', 'category' => 'שירות', 'status' => 'eligible'],
-        ['id' => 'service-visit', 'name' => 'ביקור טכנאי', 'category' => 'שירות', 'status' => 'eligible'],
-        ['id' => 'smart-home-upgrade', 'name' => 'שדרוג מערכת בית חכם', 'category' => 'שדרוג', 'status' => 'review_required'],
+        [
+            'id' => 'initial-phone-support',
+            'name' => 'תמיכה טלפונית ראשונית',
+            'category' => 'שירות',
+            'status' => 'included',
+            'price' => 0,
+            'currency' => 'ILS',
+            'priceLabel' => 'כלול בהסכם',
+            'notes' => 'כולל פתיחת קריאת שירות והכוונה ראשונית. אינו כולל עבודות תכנות, שינויי מערכת, שדרוגים או הדרכה מלאה.',
+        ],
+        [
+            'id' => 'technician-hour',
+            'name' => 'ביקור טכנאי',
+            'category' => 'שירות',
+            'status' => 'eligible',
+            'price' => 250,
+            'currency' => 'ILS',
+            'unit' => 'hour',
+            'priceLabel' => '250 ₪ לשעה',
+            'notes' => 'הגעה לאחר ניסיון אבחון ראשוני מרחוק, ובהתאם לזמינות ולתנאי ההסכם.',
+        ],
+        [
+            'id' => 'agreement-product-discount',
+            'name' => 'רכישת מוצרים בהנחת הסכם',
+            'category' => 'מוצרים',
+            'status' => 'eligible',
+            'discountPercent' => 50,
+            'priceLabel' => '50% הנחה מהמחירון הרשמי',
+            'notes' => 'ההנחה חלה על מוצרים מול המחירון הרשמי של החברה. שירותי ענן, מנויים, רישיונות ושירותי צד שלישי אינם כלולים.',
+        ],
+    ];
+}
+
+function cp_service_agreement_terms(array $profile): array
+{
+    if (empty($profile['service_agreement'])) {
+        return [
+            'active' => false,
+            'agreementUrl' => 'https://i-feel.co.il/service-agreement-private/',
+        ];
+    }
+
+    return [
+        'active' => true,
+        'monthlyPrice' => 50,
+        'monthlyPriceCurrency' => 'ILS',
+        'technicianHourlyPrice' => 250,
+        'technicianHourlyPriceCurrency' => 'ILS',
+        'productDiscountPercent' => 50,
+        'commitmentMonths' => 36,
+        'agreementUrl' => 'https://i-feel.co.il/service-agreement-private/',
+        'exclusions' => [
+            'cloud services',
+            'subscriptions',
+            'software licenses',
+            'third-party services',
+            'programming changes',
+            'system upgrades',
+            'items not supplied or connected by I Feel',
+        ],
     ];
 }
