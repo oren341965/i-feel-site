@@ -45,7 +45,7 @@
 
     await register({
       name: 'find_ifeel_page',
-      description: 'Find the best I Feel website page for a smart-home, BMS, KNX, DALI, security, networking, intercom, audio or service topic.',
+      description: 'Search the I Feel website index and return the most relevant pages for a smart-home, BMS, KNX, DALI, security, networking, intercom, audio or service topic.',
       inputSchema: {
         type: 'object',
         properties: {
@@ -57,16 +57,63 @@
         required: ['topic'],
         additionalProperties: false
       },
-      execute({ topic }) {
+      async execute({ topic }, { signal } = {}) {
         const q = String(topic || '').trim();
         if (!q) {
-          return { found: false, reason: 'topic is required' };
+          return { found: false, reason: 'topic is required', results: [] };
         }
+
+        const normalize = (value) => String(value || '')
+          .normalize('NFKD')
+          .toLocaleLowerCase('he')
+          .replace(/[\u0591-\u05c7]/g, '')
+          .replace(/[^\p{L}\p{N}]+/gu, ' ')
+          .trim();
+
+        const query = normalize(q);
+        const terms = query.split(/\s+/).filter(Boolean);
+        const response = await fetch('/search-index.json', {
+          method: 'GET',
+          credentials: 'same-origin',
+          headers: { Accept: 'application/json' },
+          signal
+        });
+        if (!response.ok) {
+          throw new Error('I Feel search index is temporarily unavailable');
+        }
+
+        const records = await response.json();
+        const scored = (Array.isArray(records) ? records : [])
+          .map((record) => {
+            const title = normalize(record.title);
+            const description = normalize(record.description);
+            const headings = normalize(record.headings);
+            const body = normalize(record.body);
+            const all = title + ' ' + description + ' ' + headings + ' ' + body;
+            const matchedTerms = terms.filter((term) => all.includes(term)).length;
+            if (!matchedTerms) return null;
+            let score = matchedTerms * 10;
+            if (title.includes(query)) score += 60;
+            if (headings.includes(query)) score += 30;
+            if (description.includes(query)) score += 20;
+            if (body.includes(query)) score += 5;
+            return {
+              score,
+              title: String(record.title || ''),
+              description: String(record.description || ''),
+              url: new URL(String(record.url || '/'), window.location.origin).href
+            };
+          })
+          .filter(Boolean)
+          .sort((a, b) => b.score - a.score)
+          .slice(0, 5)
+          .map(({ score, ...record }) => record);
+
         return {
-          found: true,
-          searchUrl: 'https://i-feel.co.il/?s=' + encodeURIComponent(q),
-          contactUrl: 'https://i-feel.co.il/contactus/',
-          note: 'Use the website search first. If no exact match is available, continue to the contact page.'
+          found: scored.length > 0,
+          query: q,
+          results: scored,
+          contactUrl: 'https://i-feel.co.il/contactus/'
         };
       },
       annotations: {
@@ -88,13 +135,12 @@
           status: 'foundation',
           portalUrl: 'https://i-feel.co.il/customer-portal/index.php',
           currentCapabilities: [
-            'Public portal information',
-            'WebMCP discovery'
-          ],
-          plannedCapabilities: [
-            'Secure customer login',
+            'Secure email OTP customer login',
             'Server-side customer matching to Monday',
             'Service-agreement eligibility',
+            'Authenticated WebMCP entitlement lookup'
+          ],
+          plannedCapabilities: [
             'Customer-specific product catalog and pricing',
             'Confirmed cart and checkout'
           ],
