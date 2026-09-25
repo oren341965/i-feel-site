@@ -404,6 +404,29 @@ function cp_send_code(array $profile): bool
     return $sent;
 }
 
+
+function cp_issue_decoy_code(string $email): bool
+{
+    $email = strtolower(trim($email));
+    if (!filter_var($email, FILTER_VALIDATE_EMAIL) || !cp_allow_code_send($email)) return false;
+
+    $ticketId = bin2hex(random_bytes(24));
+    $now = time();
+    $state = [
+        'email' => $email,
+        'profile' => [],
+        'hash' => hash('sha256', bin2hex(random_bytes(32)) . '|' . $ticketId),
+        'attempts' => 0,
+        'sent_at' => $now,
+        'expires' => $now + CP_OTP_TTL,
+        'decoy' => true,
+    ];
+    if (!cp_write_ticket('otp', $ticketId, $state)) return false;
+    cp_set_cookie(CP_OTP_COOKIE, $ticketId, $state['expires']);
+    $_SESSION['cp_otp_sent_at'] = $now;
+    return true;
+}
+
 function cp_pending_email(): string
 {
     $ticket = cp_ticket_from_cookie('otp', CP_OTP_COOKIE);
