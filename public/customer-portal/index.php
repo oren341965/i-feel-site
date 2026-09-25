@@ -46,6 +46,7 @@ $products = $user ? cp_eligible_products($user) : [];
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta http-equiv="origin-trial" content="Ah+4b0aP/hQJnF215qC+sRdcwmNp2ZlkRLld2YTDlnzGITuBdYEDsqlw9POmquiVw2rKMD52HObo3GUk+o6BcgMAAABMeyJvcmlnaW4iOiJodHRwczovL2ktZmVlbC5jby5pbDo0NDMiLCJmZWF0dXJlIjoiV2ViTUNQIiwiZXhwaXJ5IjoxNzk0ODczNjAwfQ==">
   <title>אזור לקוחות I Feel</title>
   <meta name="robots" content="noindex,nofollow">
   <link rel="icon" type="image/png" href="/assets/favicon.png">

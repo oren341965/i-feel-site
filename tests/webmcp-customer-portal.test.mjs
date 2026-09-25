@@ -5,7 +5,14 @@ import { readFile } from 'node:fs/promises';
 const webmcpPath = new URL('../public/assets/webmcp.js', import.meta.url);
 const portalWebmcpPath = new URL('../public/customer-portal/portal-webmcp.js', import.meta.url);
 const portalBootstrapPath = new URL('../public/customer-portal/_portal.php', import.meta.url);
+const portalIndexPath = new URL('../public/customer-portal/index.php', import.meta.url);
+const baseLayoutPath = new URL('../src/layouts/BaseLayout.astro', import.meta.url);
+const landingLayoutPath = new URL('../src/layouts/LandingLayout.astro', import.meta.url);
 const htaccessPath = new URL('../public/.htaccess', import.meta.url);
+
+function originTrialToken(source) {
+  return source.match(/<meta\s+http-equiv=["']origin-trial["']\s+content=["']([^"']+)["']/i)?.[1] ?? '';
+}
 
 test('global WebMCP uses current document.modelContext API', async () => {
   const source = await readFile(webmcpPath, 'utf8');
@@ -41,4 +48,16 @@ test('customer portal keeps Monday token and OTP validation server-side', async 
 test('customer portal root is routed to PHP entry point', async () => {
   const source = await readFile(htaccessPath, 'utf8');
   assert.match(source, /RewriteRule \^customer-portal\/\?\$ \/customer-portal\/index\.php \[L\]/);
+});
+
+test('Google WebMCP origin-trial token is installed on public and portal entry points', async () => {
+  const [baseLayout, landingLayout, portalIndex] = await Promise.all([
+    readFile(baseLayoutPath, 'utf8'),
+    readFile(landingLayoutPath, 'utf8'),
+    readFile(portalIndexPath, 'utf8')
+  ]);
+  const tokens = [baseLayout, landingLayout, portalIndex].map(originTrialToken);
+  assert.ok(tokens.every(Boolean));
+  assert.equal(new Set(tokens).size, 1);
+  assert.match(tokens[0], /^[A-Za-z0-9+/]+={0,2}$/);
 });

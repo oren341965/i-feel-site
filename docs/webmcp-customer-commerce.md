@@ -33,7 +33,7 @@ The portal does not read the legacy password column and does not write to Monday
 
 ## Chrome availability
 
-WebMCP currently requires Chrome's WebMCP origin trial (or the local testing flag). The production activation step is to register `https://i-feel.co.il` for the trial and add the generated public origin-trial token to the relevant HTML entry points. Until then, the feature detection keeps the site working normally and the WebMCP tools remain inactive in browsers where the API is unavailable.
+WebMCP currently requires Chrome's WebMCP origin trial (or the local testing flag). `https://i-feel.co.il` is registered for the trial and the generated public token is present in both Astro layouts and the PHP customer portal. The registration is valid through Chrome 156, no later than 2026-11-17. Feature detection and graceful degradation remain required because the API is experimental and can be unavailable.
 
 ## Phase 3
 
