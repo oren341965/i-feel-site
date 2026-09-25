@@ -3,40 +3,26 @@
      docs/homepage-redesign-decisions.md · docs/homepage-screen-spec.md
      ============================================================ -->
 
-<!-- 1. HERO — static, two equal doors -->
-<section class="relative text-white overflow-hidden" aria-label="פתיח">
-  <img src="/assets/smart-home-ramat-hasharon.jpg" alt="" fetchpriority="high"
-       class="absolute inset-0 w-full h-full object-cover" aria-hidden="true" />
-  <div class="absolute inset-0 bg-brand-900/75" aria-hidden="true"></div>
-  <div class="relative max-w-5xl mx-auto px-4 py-16 lg:py-24 text-center">
-    <h1 class="text-4xl md:text-5xl lg:text-6xl font-extrabold leading-tight mb-4 mx-auto max-w-3xl">
-      מערכות חכמות לבית ולמבנה, <span class="text-accent-500">תחת אחריות אחת</span>
-    </h1>
-    <p class="text-xl md:text-2xl text-brand-100 mb-10 max-w-2xl mx-auto">
-      תכנון, אינטגרציה, תכנות ושירות לאורך שנים — משלב התכנון ועד התחזוקה והשדרוג. בית חכם, בקרת מבנה BMS ו-KNX, משנת 2008.
-    </p>
-
-    <div class="grid sm:grid-cols-2 gap-4 max-w-3xl mx-auto text-right">
-      <a href="/start/"
-         data-ga-event="homepage_new_project_click"
-         data-ga-params='{"source_page":"homepage_hero"}'
-         class="block bg-brand-600 hover:bg-brand-500 rounded-2xl p-6 transition shadow-lg group"
-         aria-label="אני מתכנן פרויקט חדש — בית פרטי, פרויקט יזמי או מבנה">
-        <span class="block text-xl md:text-2xl font-extrabold mb-1 group-hover:translate-x-[-2px] transition">אני מתכנן פרויקט חדש</span>
-        <span class="block text-brand-100 text-sm md:text-base">בית פרטי, פרויקט יזמי או מבנה — נתכנן יחד</span>
+<!-- 1. HERO — real project photo and two equally visible routes -->
+<section class="home-intro" aria-label="פתיח">
+  <div class="home-intro-copy">
+    <p class="home-intro-eyebrow">I FEEL · תכנון, התקנה ושירות משנת 2008</p>
+    <h1>מערכות חכמות לבית ולמבנה,<br><span>תחת אחריות אחת</span></h1>
+    <p class="home-intro-description">תאורה, מיזוג, הצללה ואבטחה שמתוכננים לעבוד יחד. צוות אחד מלווה אתכם מהתוכניות ועד השימוש ביום־יום.</p>
+    <div class="home-intro-routes">
+      <a href="/start/" data-ga-event="homepage_new_project_click" data-ga-params='{"source_page":"homepage_hero"}'>
+        <strong>אני מתכנן פרויקט חדש</strong><span>בית פרטי, פרויקט יזמי או מבנה ←</span>
       </a>
-      <a href="/help/"
-         data-ga-event="homepage_existing_system_click"
-         data-ga-params='{"source_page":"homepage_hero"}'
-         class="block bg-brand-800 hover:bg-brand-700 rounded-2xl p-6 transition shadow-lg group"
-         aria-label="כבר יש לי מערכת ואני צריך עזרה — מרכז השירות">
-        <span class="block text-xl md:text-2xl font-extrabold mb-1"><span class="text-accent-500" aria-hidden="true">⚙</span> כבר יש לי מערכת ואני צריך עזרה</span>
-        <span class="block text-brand-100 text-sm md:text-base">תקלה, שאלה או שדרוג — מרכז השירות זמין</span>
+      <a href="/help/" data-ga-event="homepage_existing_system_click" data-ga-params='{"source_page":"homepage_hero"}'>
+        <strong>כבר יש לי מערכת ואני צריך עזרה</strong><span>תמיכה, תחזוקה ושדרוגים ←</span>
       </a>
     </div>
-
-    <p class="text-sm text-brand-200 mt-8">משנת 2008 · מעל 9,000 לקוחות · צוות שירות קבוע</p>
+    <p class="home-intro-note">בית חכם ו־KNX · מסלול נפרד לבקרת מבנה BMS</p>
   </div>
+  <figure class="home-intro-photo">
+    <img src="/assets/smart-home-ramat-hasharon.jpg" alt="חלל מגורים בפרויקט בית חכם של I FEEL ברמת השרון" fetchpriority="high" />
+    <figcaption>מהפרויקטים שלנו · בית חכם ברמת השרון <a href="/projects/">לצפייה בפרויקטים ←</a></figcaption>
+  </figure>
 </section>
 
 <!-- 2. VERIFIED PROOF BAR (no logos until written approval — decision 4) -->
@@ -69,12 +55,12 @@
   <div class="max-w-6xl mx-auto px-4">
     <div class="max-w-3xl mb-10">
       <h2 class="text-3xl md:text-4xl font-extrabold text-brand-900 mb-3">מסלולי הפתרון שלנו</h2>
-      <p class="text-lg text-brand-700">שלושה מסלולים, מתודולוגיה אחת: תכנון נכון מההתחלה, אינטגרציה מלאה, ושירות שנשאר איתכם.</p>
+      <p class="text-lg text-brand-700">בונים בית, מתכננים פרויקט מגורים או מנהלים מבנה? כאן מתחיל המסלול שמתאים לכם.</p>
     </div>
     <div class="grid md:grid-cols-3 gap-6">
 
       <article class="border border-brand-100 rounded-2xl overflow-hidden hover:shadow-lg transition flex flex-col">
-        <img src="/assets/projects/villa-raanana.jpg" alt="בית חכם בווילה פרטית ברעננה — פרויקט של i-feel" class="h-44 w-full object-cover" loading="lazy" />
+        <img src="/assets/smart-home-ramat-hasharon.jpg" alt="בית חכם ברמת השרון — פרויקט של i-feel" class="h-44 w-full object-cover" loading="lazy" />
         <div class="p-6 flex flex-col flex-1">
           <h3 class="text-xl font-extrabold text-brand-900 mb-2">בית חכם ללקוחות פרטיים</h3>
           <p class="text-brand-700 mb-4">תאורה, מיזוג, מוזיקה ואבטחה — בשליטה אחת, מתוכננת סביב איך שאתם חיים.</p>
@@ -440,6 +426,9 @@
       מכירות <a href="tel:+972-3-508-9553" class="text-accent-600 hover:underline">03-508-9553</a>
       <span class="mx-2 text-brand-300">·</span>
       שירות <a href="tel:+972-53-300-6239" class="text-accent-600 hover:underline">053-300-6239</a>
+      <span class="mx-2">·</span>
+      <span class="inline-block">אדמיניסטרציה וכספים <a href="tel:+972533481342" dir="ltr" class="text-accent-600 hover:underline">053-348-1342</a></span>
+      <a href="https://wa.me/972533481342" class="inline-block text-accent-600 hover:underline" aria-label="WhatsApp לאדמיניסטרציה וכספים">WhatsApp</a>
     </p>
     <p class="text-sm text-brand-500 mb-8">שעות פעילות: ראשון–חמישי 09:00–18:00 · אימבר 14, פתח תקווה</p>
     <p class="text-sm text-brand-600">
