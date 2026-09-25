@@ -63,6 +63,14 @@ header('Referrer-Policy: no-referrer');
       </div>
       <a class="button button--primary" href="/even-shaprut/">כניסה לאזור הדיירים</a>
     </section>
+    <section class="active-group" aria-labelledby="shviro-title">
+      <div>
+        <p class="eyebrow" style="color:#8d672e">אזור דיירים</p>
+        <h3 id="shviro-title">שבירו — המשי 19, גני תקווה</h3>
+        <p>אזור ייעודי לדיירי הפרויקט: מחירון שדרוגים, רשימת בחירה והדרכה לשימוש באפליקציה. הכניסה באמצעות כתובת הדואר הרשומה בפרויקט וקוד חד־פעמי.</p>
+      </div>
+      <a class="button button--primary" href="/shviro-ganei-tikva/">כניסה לאזור הדיירים</a>
+    </section>
     <section class="active-group" aria-labelledby="mt-law-title">
       <div><p class="eyebrow" style="color:#8d672e">קבוצה פעילה</p><h3 id="mt-law-title">עובדי מרקמן טומשין ושות׳</h3><p>הטבה בלעדית לעובדי המשרד. הכניסה באמצעות כתובת המסתיימת ב-@mt-law.co.il וקוד חד פעמי שנשלח אליה.</p></div>
       <a class="button button--primary" href="/customer-benefits/mt-law/">כניסה לעמוד הקבוצה</a>
