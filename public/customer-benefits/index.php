@@ -55,6 +55,34 @@ header('Referrer-Policy: no-referrer');
       </div>
       <a class="button button--primary" href="/developer-projects/">כניסה לפי כתובת דוא״ל</a>
     </section>
+    <section class="intro">
+      <h2>כל הקבוצות והפרויקטים</h2>
+      <p>בחרו את הקבוצה או הפרויקט. בכל אתר הכניסה מתבצעת באמצעות כתובת הדוא״ל הרשומה ב-Monday וקוד חד פעמי שנשלח אליה.</p>
+    </section>
+    <div class="grid">
+      <article class="card"><h3>מנדלבלט / אבן עזרא</h3><p>אזור ייעודי לקבוצה זו.</p><a class="button button--primary" href="/developer-projects/mandelblat-even-ezra/">כניסה לאתר הקבוצה</a></article>
+      <article class="card"><h3>זכרון יעקב 13</h3><p>אזור ייעודי לקבוצה זו.</p><a class="button button--primary" href="/developer-projects/zikhron-yaakov-13/">כניסה לאתר הקבוצה</a></article>
+      <article class="card"><h3>בני דן 8</h3><p>אזור ייעודי לקבוצה זו.</p><a class="button button--primary" href="/developer-projects/bnei-dan-8/">כניסה לאתר הקבוצה</a></article>
+      <article class="card"><h3>הראשונים 15</h3><p>אזור ייעודי לקבוצה זו.</p><a class="button button--primary" href="/developer-projects/harishonim-15/">כניסה לאתר הקבוצה</a></article>
+      <article class="card"><h3>רידינג 22-24</h3><p>אזור ייעודי לקבוצה זו.</p><a class="button button--primary" href="/developer-projects/reading-22-24/">כניסה לאתר הקבוצה</a></article>
+      <article class="card"><h3>אלתרמן 10-12</h3><p>אזור ייעודי לקבוצה זו.</p><a class="button button--primary" href="/developer-projects/alterman-10-12/">כניסה לאתר הקבוצה</a></article>
+      <article class="card"><h3>אמוראים</h3><p>אזור ייעודי לקבוצה זו.</p><a class="button button--primary" href="/developer-projects/amoraim/">כניסה לאתר הקבוצה</a></article>
+      <article class="card"><h3>ששת הימים</h3><p>אזור ייעודי לקבוצה זו.</p><a class="button button--primary" href="/developer-projects/sheshet-hayamim/">כניסה לאתר הקבוצה</a></article>
+      <article class="card"><h3>לואי מרשל</h3><p>אזור ייעודי לקבוצה זו.</p><a class="button button--primary" href="/developer-projects/louis-marshall/">כניסה לאתר הקבוצה</a></article>
+      <article class="card"><h3>טופ גן - הזיתים</h3><p>אזור ייעודי לקבוצה זו.</p><a class="button button--primary" href="/developer-projects/top-gan-hazetim/">כניסה לאתר הקבוצה</a></article>
+      <article class="card"><h3>אלתרמן 6-8</h3><p>אזור ייעודי לקבוצה זו.</p><a class="button button--primary" href="/developer-projects/alterman-6-8/">כניסה לאתר הקבוצה</a></article>
+      <article class="card"><h3>שדה בוקר + הכנסת 30, גבעתיים</h3><p>אזור ייעודי לקבוצה זו.</p><a class="button button--primary" href="/developer-projects/sde-boker-hachnasat-30/">כניסה לאתר הקבוצה</a></article>
+      <article class="card"><h3>וייצמן 11-13</h3><p>אזור ייעודי לקבוצה זו.</p><a class="button button--primary" href="/developer-projects/weizmann-11-13/">כניסה לאתר הקבוצה</a></article>
+      <article class="card"><h3>אנטוקולסקי 15-17</h3><p>אזור ייעודי לקבוצה זו.</p><a class="button button--primary" href="/developer-projects/antokolsky-15-17/">כניסה לאתר הקבוצה</a></article>
+      <article class="card"><h3>נופי שמש</h3><p>אזור ייעודי לקבוצה זו.</p><a class="button button--primary" href="/developer-projects/nofei-shemesh/">כניסה לאתר הקבוצה</a></article>
+      <article class="card"><h3>אביטל 13</h3><p>אזור ייעודי לקבוצה זו.</p><a class="button button--primary" href="/developer-projects/avital-13/">כניסה לאתר הקבוצה</a></article>
+      <article class="card"><h3>פנקס 11-13</h3><p>אזור ייעודי לקבוצה זו.</p><a class="button button--primary" href="/developer-projects/pinkas-11-13/">כניסה לאתר הקבוצה</a></article>
+      <article class="card"><h3>New Group</h3><p>אזור ייעודי לקבוצה זו.</p><a class="button button--primary" href="/developer-projects/new-group/">כניסה לאתר הקבוצה</a></article>
+      <article class="card"><h3>שם הלקוח</h3><p>אזור ייעודי לקבוצה זו.</p><a class="button button--primary" href="/developer-projects/customer-name-group/">כניסה לאתר הקבוצה</a></article>
+      <article class="card"><h3>תהליך מכירה הסתיים</h3><p>אזור ייעודי לקבוצה זו.</p><a class="button button--primary" href="/developer-projects/sales-process-completed/">כניסה לאתר הקבוצה</a></article>
+      <article class="card"><h3>Facebook</h3><p>אזור ייעודי לקבוצה זו.</p><a class="button button--primary" href="/developer-projects/facebook-group/">כניסה לאתר הקבוצה</a></article>
+      <article class="card"><h3>פניות מאתר החברה</h3><p>אזור ייעודי לקבוצה זו.</p><a class="button button--primary" href="/developer-projects/website-inquiries/">כניסה לאתר הקבוצה</a></article>
+    </div>
     <section class="active-group" aria-labelledby="neve-shuster-title">
       <div>
         <p class="eyebrow" style="color:#8d672e">פרויקט דיירים פעיל</p>
