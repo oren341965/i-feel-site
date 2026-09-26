@@ -348,7 +348,15 @@ function esp_resident_profile(string $email): ?array
     $email = strtolower(trim($email));
     if (!filter_var($email, FILTER_VALIDATE_EMAIL)) return null;
     if (esp_is_staff($email)) {
-        return ['email'=>$email,'role'=>'staff','name'=>'','building'=>'','apartment'=>'','location'=>'','monday_item_id'=>'','projects'=>[['id'=>'staff','title'=>'כל פרויקטי היזמים']]];
+        $projects = [];
+        $seen = [];
+        foreach (esp_project_groups() as $id => $title) {
+            $slug = esp_project_slug((string)$id);
+            if ($slug === '' || isset($seen[$slug])) continue;
+            $seen[$slug] = true;
+            $projects[] = ['id'=>(string)$id,'title'=>(string)$title,'slug'=>$slug];
+        }
+        return ['email'=>$email,'role'=>'staff','name'=>'','building'=>'','apartment'=>'','location'=>'','monday_item_id'=>'','projects'=>$projects];
     }
     if (array_key_exists($email, $cache)) return $cache[$email];
 
