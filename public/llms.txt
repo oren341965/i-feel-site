@@ -4,7 +4,7 @@
 
 i-feel משרתת לקוחות פרטיים, יזמי בנייה, אדריכלים וארגונים בישראל. באתר מתועדים מעל 9,000 לקוחות ומעל 4,000 פרויקטים, לצד פרויקטי BMS, KNX, מלונאות, משרדים ומבני ציבור.
 
-עודכן לאחרונה: 2026-09-25
+עודכן לאחרונה: 2026-09-26
 
 ## תחומי פעילות עיקריים
 
@@ -18,6 +18,7 @@ i-feel משרתת לקוחות פרטיים, יזמי בנייה, אדריכלי
 - [שדרוג מערכת BMS קיימת](https://i-feel.co.il/bms-retrofit/): מסלול Retrofit למבנים פעילים, כולל סקר בקרים, DDC, BACnet, Modbus, Desigo ותכנית שדרוג בשלבים.
 - [EPBD ו-BACS בבקרת מבנה](https://i-feel.co.il/articles/epbd-bacs-building-automation-desigo/): הדרישות האירופיות למערכות אוטומציה ובקרה, והמעבר למדידה, זיהוי חריגות ואופטימיזציה באמצעות Siemens Desigo.
 - [Jev ו-AI לקבלת החלטות בבית חכם ובבקרת מבנה](https://i-feel.co.il/articles/jev-ai-smart-building-decisions/): סקירה של מודל החלטה מובנה, שימושים אפשריים לצד KNX, DDC ו-Siemens Desigo, ומגבלות השילוב האחראי.
+- [ASHRAE, BACnet ו-Siemens Desigo](https://i-feel.co.il/articles/ashrae-siemens-desigo-building-standards/): סקירה מקצועית של הקשר בין תקני ASHRAE, פרוטוקול BACnet ומערכות Siemens Desigo, תוך הבחנה בין גוף תקינה ליצרן.
 - [בקרי DDC לבקרת מבנה](https://i-feel.co.il/ddc-controllers-bms/): תכנון, חיווט, תכנות והפעלה של בקרי DDC שמחברים ציוד שטח לשרת BMS מרכזי.
 - [BMS לתעשייה ומפעלים](https://i-feel.co.il/bms-industry/): בקרת HVAC, חדרי מכונות, משאבות, אנרגיה, תאורה והתראות למפעלים ואתרים לוגיסטיים.
 - [פתרונות ליזמי בנייה](https://i-feel.co.il/contractor-customer-care/): תשתיות דירה חכמה, תכנון סטנדרט ושדרוגים לדיירים בפרויקטים של בנייה רוויה.
