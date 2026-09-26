@@ -422,14 +422,20 @@ try {
     // to analytics. Reuse the existing update request; no new board columns.
     $conversionEventId = 'ifeel_' . bin2hex(random_bytes(16));
     $updateBody .= '<br>Measurement reference: ' . $conversionEventId;
-    monday_request(
-        'mutation ($itemId: ID!, $body: String!) { create_update(item_id: $itemId, body: $body) { id } }',
-        [
-            'itemId' => $itemId,
-            'body' => $updateBody,
-        ],
-        $token
-    );
+    // The Monday item is already the durable lead. If its descriptive update
+    // fails, keep the successful submission and its conversion proof.
+    try {
+        monday_request(
+            'mutation ($itemId: ID!, $body: String!) { create_update(item_id: $itemId, body: $body) { id } }',
+            [
+                'itemId' => $itemId,
+                'body' => $updateBody,
+            ],
+            $token
+        );
+    } catch (Throwable $updateError) {
+        error_log('[i-feel lead form] update failed after Monday item creation; item_id=' . $itemId);
+    }
 
     $conversionProof = bin2hex(random_bytes(32));
     $_SESSION['ads_conversion_proof'] = [
