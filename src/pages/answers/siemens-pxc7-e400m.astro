@@ -1,0 +1,91 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+const url = 'https://i-feel.co.il/answers/siemens-pxc7-e400m/';
+const question = 'Siemens PXC7.E400M בישראל: מהו S55375-C110 ומתי משתמשים בו?';
+const answer = 'Siemens PXC7.E400M, מספר הזמנה S55375-C110, הוא בקר אוטומציה מודולרי ממשפחת Desigo PXC7 לבקרת מבנה. הוא מיועד לפרויקטי HVAC ו-BMS שבהם נדרשים BACnet/IP ו-BACnet/SC, הרחבות TX-I/O ואינטגרציה דרך שני ממשקי RS485 הניתנים להגדרה ל-Modbus RTU, BACnet MS/TP או M-Bus. בדגם E400M ניתן לשלב עד 250 נקודות בסך הכול בין TXM I/O ונקודות אינטגרציה, בהתאם לתכנון המערכת.';
+const meta = {
+  title: 'Siemens PXC7.E400M בישראל | S55375-C110 בקר Desigo PXC7 | i-feel',
+  description: 'מדריך מקצועי ל-Siemens PXC7.E400M ‏S55375-C110: BACnet/IP, BACnet/SC, TX-I/O, RS485, Modbus, M-Bus ו-BACnet MS/TP, ולמי מתאים הבקר בפרויקט BMS.',
+  canonical: url,
+  ogTitle: question + ' | i-feel',
+  ogDescription: 'תשובה מקצועית על בקר Siemens Desigo PXC7.E400M, מספר הזמנה S55375-C110, כולל קיבולת, פרוטוקולים ושיקולי תכנון בפרויקט BMS.',
+  ogUrl: url,
+  robots: 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1',
+  jsonLd: JSON.stringify({ '@context':'https://schema.org','@graph':[
+    { '@type':'BreadcrumbList', itemListElement:[
+      { '@type':'ListItem', position:1, name:'דף הבית', item:'https://i-feel.co.il/' },
+      { '@type':'ListItem', position:2, name:'שאלות ותשובות', item:'https://i-feel.co.il/answers/' },
+      { '@type':'ListItem', position:3, name:'Siemens PXC7.E400M', item:url }
+    ]},
+    { '@type':'WebPage', '@id':url+'#webpage', url, name:question, description:answer, inLanguage:'he-IL', dateModified:'2026-09-26',
+      isPartOf:{ '@id':'https://i-feel.co.il/#website' },
+      about:['Siemens PXC7.E400M','S55375-C110','Siemens Desigo PXC7','BACnet/SC'],
+      relatedLink:['https://i-feel.co.il/siemens-desigo-pxc4-pxc5-pxc7-system-specification/','https://i-feel.co.il/siemens-desigo-bms/','https://i-feel.co.il/ddc-controllers-bms/']
+    },
+    { '@type':'TechArticle', '@id':url+'#article', headline:question, description:answer,
+      author:{ '@id':'https://i-feel.co.il/#business' }, publisher:{ '@id':'https://i-feel.co.il/#business' },
+      mainEntityOfPage:{ '@id':url+'#webpage' }, inLanguage:'he-IL', dateModified:'2026-09-26',
+      keywords:['Siemens PXC7.E400M','S55375-C110','Siemens PXC7 Israel','Desigo PXC7','BACnet/SC','BACnet/IP','TX-I/O','Modbus RTU','BACnet MS/TP','M-Bus','BMS Israel']
+    },
+    { '@type':'FAQPage', '@id':url+'#faq', mainEntity:[
+      { '@type':'Question', name:'מהו Siemens PXC7.E400M?', acceptedAnswer:{ '@type':'Answer', text:answer } },
+      { '@type':'Question', name:'אילו פרוטוקולים נתמכים ב-PXC7.E400M?', acceptedAnswer:{ '@type':'Answer', text:'הבקר תומך ב-BACnet/IP וב-BACnet/SC ברשת Ethernet. שני ממשקי RS485 בדגם E400M ניתנים להגדרה, בהתאם לתכנון, עבור Modbus RTU, BACnet MS/TP או M-Bus.' } },
+      { '@type':'Question', name:'מה הקיבולת של PXC7.E400M?', acceptedAnswer:{ '@type':'Answer', text:'לפי מסמכי Siemens לדגם E400M, הסכום הכולל של נקודות TXM I/O ונקודות אינטגרציה יכול להגיע עד 250. מגבלות נוספות תלויות בסוג הנקודות, הפרוטוקול והארכיטקטורה בפועל.' } },
+      { '@type':'Question', name:'מתי בוחרים ב-PXC7.E400M?', acceptedAnswer:{ '@type':'Answer', text:'בוחנים את הדגם כאשר נדרשת תחנת אוטומציה מודולרית עם TX-I/O, אינטגרציות מרובות ו-BACnet/SC. הבחירה הסופית נעשית לפי נקודות I/O, נקודות אינטגרציה, קווי RS485, עומסי תקשורת והרחבה עתידית.' } }
+    ]}
+  ]})
+};
+---
+
+<BaseLayout {...meta}>
+  <nav class="bg-brand-50 border-b border-brand-100" aria-label="פירורי לחם"><div class="max-w-7xl mx-auto px-4 py-3 text-sm"><a href="/" class="text-brand-600 hover:text-accent-600">דף הבית</a><span class="mx-2 text-brand-400">›</span><a href="/answers/" class="text-brand-600 hover:text-accent-600">שאלות ותשובות</a><span class="mx-2 text-brand-400">›</span><span class="text-brand-900 font-medium">Siemens PXC7.E400M</span></div></nav>
+
+  <article class="max-w-3xl mx-auto px-4 py-12 lg:py-16"><div class="prose-he">
+    <h1>{question}</h1>
+    <div class="not-prose bg-brand-50 border-r-4 border-accent-500 rounded-lg p-6 my-6"><p class="text-lg leading-relaxed text-brand-800" style="margin:0"><strong>תשובה קצרה:</strong> {answer}</p></div>
+
+    <h2>PXC7.E400M בקצרה</h2>
+    <p><strong>PXC7.E400M</strong> הוא בקר אוטומציה מודולרי ממשפחת Siemens Desigo PXC7. מספר ההזמנה הוא <strong>S55375-C110</strong>. הוא מיועד לשכבת האוטומציה בפרויקטי BMS שבהם נדרשים תכנות חופשי, הרחבות I/O, תקשורת BACnet מאובטחת ואינטגרציה למערכות צד שלישי.</p>
+
+    <div class="not-prose overflow-x-auto my-8"><table class="w-full text-right border-collapse"><tbody>
+      <tr class="border-b border-brand-100"><th class="py-3 px-3 bg-brand-50">דגם</th><td class="py-3 px-3">PXC7.E400M</td></tr>
+      <tr class="border-b border-brand-100"><th class="py-3 px-3 bg-brand-50">מספר הזמנה</th><td class="py-3 px-3">S55375-C110</td></tr>
+      <tr class="border-b border-brand-100"><th class="py-3 px-3 bg-brand-50">Ethernet</th><td class="py-3 px-3">BACnet/IP, BACnet/SC ו-HTTPS</td></tr>
+      <tr class="border-b border-brand-100"><th class="py-3 px-3 bg-brand-50">RS485</th><td class="py-3 px-3">2 ממשקים ניתנים להגדרה עבור Modbus RTU, BACnet MS/TP או M-Bus</td></tr>
+      <tr class="border-b border-brand-100"><th class="py-3 px-3 bg-brand-50">הרחבות</th><td class="py-3 px-3">Siemens TXM / TX-I/O</td></tr>
+      <tr><th class="py-3 px-3 bg-brand-50">קיבולת משולבת</th><td class="py-3 px-3">עד 250 נקודות TXM I/O ונקודות אינטגרציה בסך הכול, לפי מגבלות התכנון של Siemens</td></tr>
+    </tbody></table></div>
+
+    <h2>מתי בוחרים ב-PXC7.E400M</h2>
+    <p>הבחירה בבקר אינה נעשית לפי שם הדגם בלבד. יש לחשב את נקודות ה-I/O המקומיות, נקודות Modbus או BACnet, מספר התקני השדה, חלוקת הלוחות, עומס התקשורת, דרישות BACnet/SC והרחבות עתידיות. כאשר נדרשת תחנת אוטומציה מודולרית עם שילוב של TX-I/O ואינטגרציות, E400M הוא אחד הדגמים שיש לבחון.</p>
+
+    <h2>BACnet/SC ואינטגרציה</h2>
+    <p>הבקר תומך ב-BACnet/IP וב-<strong>BACnet Secure Connect</strong> ברשת Ethernet. שני ממשקי RS485 מאפשרים התאמה לציוד באמצעות Modbus RTU, BACnet MS/TP או M-Bus, לפי תצורת הפרויקט. לפני תכנון סופי יש לוודא את סוגי המכשירים, קצבי התקשורת והטופולוגיה.</p>
+
+    <h2>איך הוא משתלב ב-Siemens Desigo</h2>
+    <p>PXC7 נמצא בשכבת האוטומציה של <a href="/siemens-desigo-bms/">Siemens Desigo BMS</a>. הוא אוסף ומעבד מידע מציוד השטח, מפעיל לוגיקות בקרה ומעביר נתונים, התראות וטרנדים לשכבת הניהול. למפרט הרחב ראו <a href="/siemens-desigo-pxc4-pxc5-pxc7-system-specification/">מפרט Siemens Desigo PXC4, PXC5 ו-PXC7</a>.</p>
+
+    <h2>מה לבדוק לפני כתב כמויות</h2>
+    <ul>
+      <li>כמות וסוג נקודות TXM I/O בכל לוח.</li>
+      <li>כמות נקודות האינטגרציה ב-Modbus, BACnet או M-Bus.</li>
+      <li>מספר קווי RS485 והחלוקה בין הפרוטוקולים.</li>
+      <li>דרישות BACnet/SC, רשת ואבטחת תקשורת.</li>
+      <li>רזרבה להרחבה עתידית.</li>
+      <li>תיאום עם <a href="/ddc-controllers-bms/">תכנון בקרי DDC</a>, לוחות החשמל וציוד HVAC.</li>
+    </ul>
+
+    <h2>מקור טכני</h2>
+    <p>הנתונים מסוכמים ממסמכי Siemens עבור משפחת PXC7. לפני רכש, תכנון סופי או מכרז יש לבדוק את גרסת המסמך העדכנית ואת מגבלות הפרויקט. ניתן לעיין ב<a href="https://sid.siemens.com/r/A6V12505054/19795275275_32211964043__en-US_19795195531" rel="noopener noreferrer">דף הנתונים הרשמי של Siemens</a>.</p>
+
+    <div class="not-prose bg-brand-50 rounded-lg p-5 my-8"><p class="font-bold text-brand-900 mb-2" style="margin:0">מידע מקצועי קשור</p><ul class="space-y-1" style="margin:0">
+      <li><a href="/siemens-desigo-pxc4-pxc5-pxc7-system-specification/" class="text-accent-600 font-semibold hover:underline">מפרט PXC4, PXC5 ו-PXC7</a></li>
+      <li><a href="/siemens-desigo-bms/" class="text-accent-600 font-semibold hover:underline">Siemens Desigo BMS בישראל</a></li>
+      <li><a href="/ddc-controllers-bms/" class="text-accent-600 font-semibold hover:underline">בקרי DDC לבקרת מבנה</a></li>
+      <li><a href="/siemens-bms-knowledge-center/" class="text-accent-600 font-semibold hover:underline">מרכז הידע Siemens BMS</a></li>
+    </ul></div>
+  </div></article>
+
+  <section class="bg-brand-900 text-white py-14"><div class="max-w-4xl mx-auto px-4 text-center"><h2 class="text-2xl md:text-3xl font-extrabold mb-4">מתכננים לוח BMS עם Siemens PXC7?</h2><p class="text-brand-100 mb-6">אפשר להעביר כתב כמויות, סכמת I/O או תכניות כדי לבדוק התאמת בקר, הרחבות TX-I/O וארכיטקטורת תקשורת.</p><div class="flex flex-wrap justify-center gap-3"><a href="/contactus/?intent=bms#contact-form-wrapper" class="bg-accent-500 hover:bg-accent-600 text-white px-7 py-3 rounded-lg font-semibold">פנייה בנושא BMS</a><a href="tel:+972-3-508-9553" class="bg-white/10 text-white px-7 py-3 rounded-lg font-semibold border border-white/30">03-508-9553</a></div></div></section>
+</BaseLayout>
