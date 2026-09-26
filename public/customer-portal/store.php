@@ -40,7 +40,7 @@ $cart = cp_cart_summary($user);
 <meta http-equiv="origin-trial" content="Ah+4b0aP/hQJnF215qC+sRdcwmNp2ZlkRLld2YTDlnzGITuBdYEDsqlw9POmquiVw2rKMD52HObo3GUk+o6BcgMAAABMeyJvcmlnaW4iOiJodHRwczovL2ktZmVlbC5jby5pbDo0NDMiLCJmZWF0dXJlIjoiV2ViTUNQIiwiZXhwaXJ5IjoxNzk0ODczNjAwfQ==">
 <title>חנות לקוחות I Feel</title><meta name="robots" content="noindex,nofollow">
 <style>
-body{margin:0;font-family:Arial,sans-serif;background:#f4f7fb;color:#102038}.wrap{max-width:1180px;margin:auto;padding:24px}.top{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px}.card{background:#fff;border:1px solid #dfe7f0;border-radius:16px;padding:18px}.price{font-size:24px;font-weight:800}.old{text-decoration:line-through;color:#718096}.pill{display:inline-block;padding:6px 10px;border-radius:999px;background:#edf6ff;color:#145a94;font-weight:700}.ok{background:#ecfdf3;padding:12px;border-radius:10px}.err{background:#fff1f2;padding:12px;border-radius:10px}button{padding:10px 14px;border:0;border-radius:9px;background:#124d85;color:white;font-weight:700}input{width:70px;padding:8px}.cart{margin-top:24px}.muted{color:#62748a}a{color:#124d85}
+body{margin:0;font-family:Arial,sans-serif;background:#f4f7fb;color:#102038}.wrap{max-width:1180px;margin:auto;padding:24px}.top{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px}.card{background:#fff;border:1px solid #dfe7f0;border-radius:16px;padding:18px}.product-image{display:block;width:100%;height:220px;object-fit:contain;margin:0 0 14px;border-radius:12px;background:#f8fafc}.price{font-size:24px;font-weight:800}.old{text-decoration:line-through;color:#718096}.pill{display:inline-block;padding:6px 10px;border-radius:999px;background:#edf6ff;color:#145a94;font-weight:700}.ok{background:#ecfdf3;padding:12px;border-radius:10px}.err{background:#fff1f2;padding:12px;border-radius:10px}button{padding:10px 14px;border:0;border-radius:9px;background:#124d85;color:white;font-weight:700}input{width:70px;padding:8px}.cart{margin-top:24px}.muted{color:#62748a}a{color:#124d85}
 </style>
 <script src="/customer-portal/commerce-webmcp.js" defer></script>
 </head>
@@ -51,6 +51,7 @@ body{margin:0;font-family:Arial,sans-serif;background:#f4f7fb;color:#102038}.wra
 <?php if ($catalog === []): ?><div class="card"><h2>הקטלוג ממתין לסנכרון חשבשבת</h2><p>יש לייבא את קובץ המחירון/מלאי הרשמי. מוצרים לא יוצגו עד שיאושרו לרכישה אונליין.</p></div><?php else: ?>
 <div class="grid">
 <?php foreach ($catalog as $p): ?><article class="card">
+<?php if ($p['imageUrl'] !== ''): ?><img class="product-image" src="<?= cp_h($p['imageUrl']) ?>" alt="<?= cp_h($p['name']) ?>" loading="lazy" decoding="async"><?php endif; ?>
 <h2><?= cp_h($p['name']) ?></h2><div class="muted"><?= cp_h($p['brand']) ?> · <?= cp_h($p['sku']) ?></div>
 <p><?= cp_h($p['description']) ?></p>
 <?php if ($p['discountPercent'] > 0): ?><div class="old"><?= number_format($p['listPriceIlsVat'],2) ?> ₪</div><?php endif; ?>
