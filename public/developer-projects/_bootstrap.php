@@ -23,6 +23,35 @@ const ESP_OTP_COOKIE = 'ifeel_dev_otp';
 const ESP_ACCESS_COOKIE = 'ifeel_dev_verified';
 const ESP_BASE_PATH = '/developer-projects/';
 const ESP_DEFAULT_BOARD_ID = '2732725332';
+function esp_project_slug(string $groupId): string
+{
+    $slugs = {'group_mm1hqj4x':'mandelblat-even-ezra','group_mm08ysw7':'zikhron-yaakov-13','group_mm1883d7':'bnei-dan-8','group_mm15570j':'even-shaprut','group_mm159pb3':'harishonim-15','group_mm1427xh':'reading-22-24','group_mm13pm3m':'alterman-10-12','group_mm074xmd':'amoraim','group_mm13gr21':'sheshet-hayamim','group_mm13ry3r':'louis-marshall','group_mm12r532':'top-gan-hazetim','group_mkxjpx0e':'alterman-6-8','group_mky0w0qd':'sde-boker-hachnasat-30','group_mky0hwdd':'weizmann-11-13','group_mkxjwm7s':'antokolsky-15-17','group_mm12hmj3':'nofei-shemesh','group_mm4ha81m':'avital-13','group_mky8he02':'pinkas-11-13','group_mm4djwwb':'hamashi-19-ganei-tikva'};
+    return $slugs[$groupId] ?? '';
+}
+
+function esp_project_title(string $groupId): string
+{
+    $groups = esp_project_groups();
+    return $groups[$groupId] ?? '';
+}
+
+function esp_project_by_slug(string $slug): ?array
+{
+    foreach (esp_project_groups() as $id => $title) {
+        if (esp_project_slug((string)$id) === $slug) return ['id'=>(string)$id,'title'=>(string)$title,'slug'=>$slug];
+    }
+    return null;
+}
+
+function esp_user_has_project(array $user, string $groupId): bool
+{
+    if (($user['role'] ?? '') === 'staff') return true;
+    foreach (($user['projects'] ?? []) as $project) {
+        if ((string)($project['id'] ?? '') === $groupId) return true;
+    }
+    return false;
+}
+
 function esp_project_groups(): array
 {
     return [
