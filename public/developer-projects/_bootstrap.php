@@ -347,7 +347,7 @@ GRAPHQL;
             $columns = esp_item_columns($item);
             if (esp_column_email(is_array($columns['_____3'] ?? null) ? $columns['_____3'] : []) !== $email) continue;
             $profile = esp_profile_from_item($item, $email);
-            $project = ['id'=>$gid,'title'=>$groups[$gid]];
+            $project = ['id'=>$gid,'title'=>$groups[$gid],'slug'=>esp_project_slug($gid)];
             $foundProjects[$gid] = $project;
             if ($best === null) $best = $profile;
         }
