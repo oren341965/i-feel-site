@@ -90,7 +90,21 @@ const jsonLd = JSON.stringify({
   description,
   url: canonical,
   inLanguage: 'he-IL',
-  hasPart: allItems.map((item) => ({ '@type': 'Product', name: item.title, sku: item.partNumber, url: `https://i-feel.co.il${item.href}`, brand: { '@type': 'Brand', name: 'Siemens' } })),
+  mainEntity: {
+    '@type': 'ItemList',
+    name: title,
+    numberOfItems: allItems.length,
+    itemListElement: allItems.map((item, index) => ({
+      '@type': 'ListItem',
+      position: index + 1,
+      item: {
+        '@type': 'WebPage',
+        name: item.title,
+        description: `${item.subtitle} · ${item.partNumber}`,
+        url: `https://i-feel.co.il${item.href}`,
+      },
+    })),
+  },
 });
 ---
 
