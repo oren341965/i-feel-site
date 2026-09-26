@@ -172,7 +172,16 @@ const siteIdentityJsonLd = JSON.stringify({
     <link rel="alternate" type="application/json" href="/agent-info.json" title="I FEEL public services and contact paths" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+    <!-- Load typography without blocking the first render; retain a no-JS fallback. -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800&display=swap"
+      rel="stylesheet"
+      media="print"
+      onload="this.media='all'"
+    />
+    <noscript>
+      <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+    </noscript>
     <script type="application/ld+json" set:html={siteIdentityJsonLd} />
     {effectiveJsonLd && <script type="application/ld+json" set:html={effectiveJsonLd} />}
 
