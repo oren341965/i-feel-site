@@ -45,6 +45,9 @@ function esp_project_slug(string $groupId): string
         'group_mm4ha81m' => 'avital-13',
         'group_mky8he02' => 'pinkas-11-13',
         'group_mm4djwwb' => 'hamashi-19-ganei-tikva',
+        'group_mm68hnn3' => 'hamashi-19-hashavshevet-import',
+        'group_mm4dpf3j' => 'avital-13-monday-import',
+        'group_mm12pjaw' => 'harishonim-15-legacy',
     ];
     return $slugs[$groupId] ?? '';
 }
@@ -58,10 +61,13 @@ function esp_project_title(string $groupId): string
 function esp_project_by_slug(string $slug): ?array
 {
     foreach (esp_project_groups() as $id => $title) {
-        if (esp_project_slug((string)$id) === $slug) return ['id'=>(string)$id,'title'=>(string)$title,'slug'=>$slug];
+        if (esp_project_slug((string)$id) === $slug) {
+            return ['id'=>(string)$id,'title'=>(string)$title,'slug'=>$slug];
+        }
     }
     return null;
 }
+
 
 function esp_user_has_project(array $user, string $groupId): bool
 {
@@ -71,6 +77,7 @@ function esp_user_has_project(array $user, string $groupId): bool
     }
     return false;
 }
+
 
 function esp_project_groups(): array
 {
@@ -94,6 +101,9 @@ function esp_project_groups(): array
         'group_mm4ha81m' => 'אביטל 13',
         'group_mky8he02' => 'פנקס 11-13',
         'group_mm4djwwb' => 'המשי 19 גני תקוה',
+        'group_mm68hnn3' => 'משי 19 חשבשבת.xls',
+        'group_mm4dpf3j' => 'אביטל 13 מאנדיי.xlsx',
+        'group_mm12pjaw' => 'הראשונים 15 (קבוצה נוספת)',
     ];
 }
 const ESP_MONDAY_API_VERSION = '2026-07';
@@ -332,7 +342,15 @@ function esp_resident_profile(string $email): ?array
     $email = strtolower(trim($email));
     if (!filter_var($email, FILTER_VALIDATE_EMAIL)) return null;
     if (esp_is_staff($email)) {
-        return ['email'=>$email,'role'=>'staff','name'=>'','building'=>'','apartment'=>'','location'=>'','monday_item_id'=>'','projects'=>[['id'=>'staff','title'=>'כל פרויקטי היזמים']]];
+        $projects = [];
+        $seen = [];
+        foreach (esp_project_groups() as $id => $title) {
+            $slug = esp_project_slug((string)$id);
+            if ($slug === '' || isset($seen[$slug])) continue;
+            $seen[$slug] = true;
+            $projects[] = ['id'=>(string)$id,'title'=>(string)$title,'slug'=>$slug];
+        }
+        return ['email'=>$email,'role'=>'staff','name'=>'','building'=>'','apartment'=>'','location'=>'','monday_item_id'=>'','projects'=>$projects];
     }
     if (array_key_exists($email, $cache)) return $cache[$email];
 
