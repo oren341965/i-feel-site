@@ -232,13 +232,22 @@ GRAPHQL;
     if (!is_array($page)) return null;
     $items = is_array($page['items'] ?? null) ? $page['items'] : [];
 
+    $matches = [];
     foreach ($items as $item) {
         if (!is_array($item)) continue;
         $columns = cp_columns($item);
         $itemEmail = cp_email_from_column(is_array($columns['_____3'] ?? null) ? $columns['_____3'] : []);
-        if ($itemEmail === $email) return cp_profile_from_item($item, $email);
+        if ($itemEmail === $email) $matches[] = $item;
     }
-    return null;
+
+    if (count($matches) !== 1) {
+        if (count($matches) > 1) {
+            error_log('[i-feel customer portal] ambiguous_customer_email matches=' . count($matches));
+        }
+        return null;
+    }
+
+    return cp_profile_from_item($matches[0], $email);
 }
 
 function cp_valid_token(string $token): bool
