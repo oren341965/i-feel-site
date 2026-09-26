@@ -45,6 +45,9 @@ function esp_project_slug(string $groupId): string
         'group_mm4ha81m' => 'avital-13',
         'group_mky8he02' => 'pinkas-11-13',
         'group_mm4djwwb' => 'hamashi-19-ganei-tikva',
+        'group_mm68hnn3' => 'hamashi-19-ganei-tikva',
+        'group_mm4dpf3j' => 'avital-13',
+        'group_mm12pjaw' => 'harishonim-15',
     ];
     return $slugs[$groupId] ?? '';
 }
@@ -57,20 +60,30 @@ function esp_project_title(string $groupId): string
 
 function esp_project_by_slug(string $slug): ?array
 {
-    foreach (esp_project_groups() as $id => $title) {
-        if (esp_project_slug((string)$id) === $slug) return ['id'=>(string)$id,'title'=>(string)$title,'slug'=>$slug];
+    $ids = [];
+    $title = '';
+    foreach (esp_project_groups() as $id => $candidateTitle) {
+        if (esp_project_slug((string)$id) !== $slug) continue;
+        $ids[] = (string)$id;
+        if ($title === '') $title = (string)$candidateTitle;
     }
-    return null;
+    return $ids === [] ? null : ['id'=>$ids[0], 'ids'=>$ids, 'title'=>$title, 'slug'=>$slug];
 }
+
 
 function esp_user_has_project(array $user, string $groupId): bool
 {
     if (($user['role'] ?? '') === 'staff') return true;
+    $wantedSlug = esp_project_slug($groupId);
+    if ($wantedSlug === '') return false;
     foreach (($user['projects'] ?? []) as $project) {
-        if ((string)($project['id'] ?? '') === $groupId) return true;
+        $projectId = (string)($project['id'] ?? '');
+        if ($projectId !== '' && esp_project_slug($projectId) === $wantedSlug) return true;
+        if ((string)($project['slug'] ?? '') === $wantedSlug) return true;
     }
     return false;
 }
+
 
 function esp_project_groups(): array
 {
@@ -94,6 +107,9 @@ function esp_project_groups(): array
         'group_mm4ha81m' => 'אביטל 13',
         'group_mky8he02' => 'פנקס 11-13',
         'group_mm4djwwb' => 'המשי 19 גני תקוה',
+        'group_mm68hnn3' => 'המשי 19 גני תקוה',
+        'group_mm4dpf3j' => 'אביטל 13',
+        'group_mm12pjaw' => 'הראשונים 15',
     ];
 }
 const ESP_MONDAY_API_VERSION = '2026-07';
@@ -368,7 +384,8 @@ GRAPHQL;
             if (esp_column_email(is_array($columns['_____3'] ?? null) ? $columns['_____3'] : []) !== $email) continue;
             $profile = esp_profile_from_item($item, $email);
             $project = ['id'=>$gid,'title'=>$groups[$gid],'slug'=>esp_project_slug($gid)];
-            $foundProjects[$gid] = $project;
+            $projectSlug = esp_project_slug($gid);
+            $foundProjects[$projectSlug !== '' ? $projectSlug : $gid] = $project;
             if ($best === null) $best = $profile;
         }
     }
