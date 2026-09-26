@@ -21,6 +21,7 @@ const paramsJson = JSON.stringify(params);
   rel={external ? 'noopener' : undefined}
   class="fixed bottom-5 left-5 z-40 bg-accent-500 hover:bg-accent-600 text-white font-bold px-6 py-3.5 rounded-full shadow-xl transition duration-300 opacity-0 pointer-events-none translate-y-3"
   aria-hidden="true"
+  tabindex="-1"
 >{label}</a>
 
 <script is:inline>
@@ -40,6 +41,7 @@ const paramsJson = JSON.stringify(params);
     btn.classList.toggle('pointer-events-none', !s);
     btn.classList.toggle('translate-y-3', !s);
     btn.setAttribute('aria-hidden', s ? 'false' : 'true');
+    btn.tabIndex = s ? 0 : -1;
   }
   // capture:true also catches scrolls of inner scroll containers (some
   // embeds/preview panes scroll a wrapper element instead of the window)
