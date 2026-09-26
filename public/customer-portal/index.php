@@ -112,6 +112,7 @@ $products = $user ? cp_eligible_products($user) : [];
           <div><strong>כתובת</strong><br><?= cp_h($user['address'] ?: 'לא הוגדרה') ?></div>
           <div><strong>מפתח חשבשבת</strong><br><?= cp_h($user['accounting_key'] ?: 'לא הוגדר') ?></div>
         </div>
+        <p style="margin-top:18px"><a href="/customer-portal/store.php"><strong>מעבר לחנות האונליין של I Feel</strong></a></p>
       </section>
 
       <section class="card">
