@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "astro dev",
     "check:content-freshness": "node scripts/check-content-freshness.mjs",
-    "check:build": "node scripts/validate-build.mjs",
+    "check:build": "node scripts/validate-build.mjs && node scripts/validate-seo.mjs",
     "test:youtube": "node --test tests/youtube-uploader.test.mjs",
     "test:lead-conversion": "node --test tests/lead-conversion-proof.test.mjs tests/lead-attribution-capture.test.mjs",
     "test:lead-growth": "node --test tests/lead-attribution-capture.test.mjs tests/lead-growth-foundation.test.mjs",
@@ -18,7 +18,7 @@
     "audit:management-sync": "node .claude/skills/management-system-telemetry/scripts/audit-source-sync.mjs",
     "youtube:verify": "node --use-system-ca scripts/youtube-uploader.mjs --verify-channel",
     "youtube:upload": "node --use-system-ca scripts/youtube-uploader.mjs --upload",
-    "build": "node scripts/check-content-freshness.mjs && astro build && node scripts/generate-og-images.mjs && node scripts/validate-build.mjs",
+    "build": "node scripts/check-content-freshness.mjs && astro build && node scripts/generate-og-images.mjs && node scripts/validate-build.mjs && node scripts/validate-seo.mjs",
     "preview": "astro preview",
     "test:webmcp": "node --test tests/customer-commerce.test.mjs tests/webmcp-customer-portal.test.mjs tests/webmcp-agent-contact.test.mjs"
   },

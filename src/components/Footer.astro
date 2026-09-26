@@ -25,7 +25,7 @@
           <li><a href="/smart-solutions-business/" class="hover:text-white">עסקים</a></li>
           <li><a href="/projects/" class="hover:text-white">פרויקטים</a></li>
           <li><a href="/structure-control/projects/" class="hover:text-white">גלריית פרויקטי BMS</a></li>
-          <li><a href="/answers/" class="hover:text-white">שאלות נפוצות</a></li>
+          <li><a href="/smart-home-support/" class="hover:text-white">מדריך לדייר בדירה חכמה</a></li>
         </ul>
       </div>
       <div>
@@ -70,7 +70,7 @@
 </footer>
 
 <!-- MOBILE MENU OVERLAY (Phase 10D) -->
-<div id="mobile-menu" class="hidden lg:hidden fixed inset-0 z-[60] bg-brand-900 text-white overflow-y-auto" aria-hidden="true">
+<dialog id="mobile-menu" class="lg:hidden fixed inset-0 z-[60] m-0 h-dvh max-h-none w-full max-w-none bg-brand-900 text-white overflow-y-auto" aria-label="תפריט ראשי">
   <div class="max-w-7xl mx-auto px-4 py-6">
     <div class="flex justify-between items-center mb-8">
       <a href="/" class="inline-flex items-center" aria-label="i-feel, דף הבית"><img src="/assets/ifeel-logo.png" alt="i-feel" width="140" height="145" class="h-10 w-auto" /></a>
@@ -108,32 +108,32 @@
       <p class="text-xs text-brand-400 pt-3 border-t border-white/10 mt-3"><a href="/accessibility/" class="hover:text-white">הצהרת נגישות</a></p>
     </div>
   </div>
-</div>
+</dialog>
 <script>
 (function(){
   var toggle = document.getElementById('mobile-menu-toggle');
-  var menu = document.getElementById('mobile-menu');
+  var menu = document.getElementById('mobile-menu') as HTMLDialogElement | null;
   var closeBtn = document.getElementById('mobile-menu-close');
   if (!toggle || !menu) return;
   function openMenu(){
-    menu.classList.remove('hidden');
-    menu.setAttribute('aria-hidden','false');
+    menu.showModal();
     toggle.setAttribute('aria-expanded','true');
     document.body.style.overflow='hidden';
     var firstLink = menu.querySelector('a');
     if (firstLink) firstLink.focus();
   }
   function closeMenu(){
-    menu.classList.add('hidden');
-    menu.setAttribute('aria-hidden','true');
+    menu.close();
+  }
+  menu.addEventListener('close', function(){
     toggle.setAttribute('aria-expanded','false');
     document.body.style.overflow='';
     toggle.focus();
-  }
+  });
   toggle.addEventListener('click', openMenu);
   if (closeBtn) closeBtn.addEventListener('click', closeMenu);
-  document.addEventListener('keydown', function(e){
-    if (e.key === 'Escape' && !menu.classList.contains('hidden')) closeMenu();
+  window.matchMedia('(min-width: 1024px)').addEventListener('change', function(e){
+    if (e.matches && menu.open) closeMenu();
   });
   menu.querySelectorAll('a').forEach(function(a){
     a.addEventListener('click', function(){ setTimeout(closeMenu, 50); });

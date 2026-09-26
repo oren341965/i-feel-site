@@ -1,0 +1,292 @@
+{
+  "capturedAt": "2026-09-26T04:45:32.562Z",
+  "live": {
+    "sourceMode": "live_read_only",
+    "analysisComplete": true,
+    "checkMode": "full",
+    "infrastructureChecked": 5,
+    "infrastructureOk": 5,
+    "keyPagesChecked": 5,
+    "keyPagesOk": 5,
+    "pagesChecked": 166,
+    "pagesOk": 166,
+    "sitemapCount": 161,
+    "sitemapSampleChecked": 161,
+    "sitemapSampleOk": 161,
+    "sitemapMatchesOrigin": true,
+    "productionMatchesOriginMain": false,
+    "originMainSha": "1b60dabc295a0c6201d00ca18b29a7b8f4c10ff7",
+    "productionSha": "4abdbf8eeebcd5fde8a915c9d18a2e3426ca676b",
+    "homepage": {
+      "phone": true,
+      "ga4": true,
+      "ads": true,
+      "jsonLd": true
+    },
+    "gscVerificationOk": true,
+    "staffPortalOk": true,
+    "forbiddenContentFindings": 1,
+    "deployPerformed": false,
+    "repositoryWrites": 0,
+    "serverWrites": 0,
+    "externalSends": 0,
+    "deploymentsTriggered": 0,
+    "sourceUpdatedAt": "2026-09-26T04:19:20.5921772Z",
+    "capturedAt": "2026-09-26T04:19:20.6082854Z"
+  },
+  "probes": [
+    {
+      "agent": "Googlebot",
+      "path": "/",
+      "status": 200,
+      "xRobots": null
+    },
+    {
+      "agent": "Googlebot",
+      "path": "/smart-home/",
+      "status": 200,
+      "xRobots": null
+    },
+    {
+      "agent": "Googlebot",
+      "path": "/structure-control/",
+      "status": 200,
+      "xRobots": null
+    },
+    {
+      "agent": "OAI-SearchBot",
+      "path": "/",
+      "status": 200,
+      "xRobots": null
+    },
+    {
+      "agent": "OAI-SearchBot",
+      "path": "/smart-home/",
+      "status": 200,
+      "xRobots": null
+    },
+    {
+      "agent": "OAI-SearchBot",
+      "path": "/structure-control/",
+      "status": 200,
+      "xRobots": null
+    },
+    {
+      "agent": "GPTBot",
+      "path": "/",
+      "status": 200,
+      "xRobots": null
+    },
+    {
+      "agent": "GPTBot",
+      "path": "/smart-home/",
+      "status": 200,
+      "xRobots": null
+    },
+    {
+      "agent": "GPTBot",
+      "path": "/structure-control/",
+      "status": 200,
+      "xRobots": null
+    },
+    {
+      "agent": "ChatGPT-User",
+      "path": "/",
+      "status": 200,
+      "xRobots": null
+    },
+    {
+      "agent": "ChatGPT-User",
+      "path": "/smart-home/",
+      "status": 200,
+      "xRobots": null
+    },
+    {
+      "agent": "ChatGPT-User",
+      "path": "/structure-control/",
+      "status": 200,
+      "xRobots": null
+    },
+    {
+      "path": "/articles/siemens-n14121-knx-dali-gateway-twin-plus/",
+      "status": 200
+    },
+    {
+      "path": "/articles/siemens-n263d51-knx-8-binary-input/",
+      "status": 200
+    },
+    {
+      "url": "http://i-feel.co.il/",
+      "status": 301,
+      "location": "https://i-feel.co.il/"
+    },
+    {
+      "url": "https://www.i-feel.co.il/",
+      "status": 301,
+      "location": "https://i-feel.co.il/"
+    },
+    {
+      "url": "https://i-feel.co.il/audit-missing-page-20260926/",
+      "status": 404,
+      "location": null
+    }
+  ],
+  "browser": [
+    {
+      "route": "/",
+      "violations": [],
+      "overflow": false
+    },
+    {
+      "menuFocusInside": true
+    },
+    {
+      "menuEscapeRestoresFocus": true
+    },
+    {
+      "searchResults": 10
+    },
+    {
+      "route": "/smart-home/",
+      "violations": [
+        {
+          "id": "aria-allowed-attr",
+          "impact": "critical",
+          "count": 1,
+          "examples": [
+            {
+              "target": [
+                "iframe[frameborder=\"0\"]",
+                ".ytmVideoInfoVideoTitle"
+              ],
+              "html": "<a class=\"ytmVideoInfoVideoTitle\" aria-level=\"2\" href=\"https://www.youtube.com/watch?v=uXkdI8obHMY\"><span class=\"ytAttributedStringHost ytmVideoInfoLink ytAttributedStringWhiteSpaceNoWrap\" style=\"\">פאנל מגע חכם i-feel — תאורה, תריסים, מיזוג ומוזיקה ממסך אחד</span></a>"
+            }
+          ]
+        },
+        {
+          "id": "aria-prohibited-attr",
+          "impact": "serious",
+          "count": 1,
+          "examples": [
+            {
+              "target": [
+                "iframe[frameborder=\"0\"]",
+                "#movie_player"
+              ],
+              "html": "<div class=\"html5-video-player ytp-hide-controls ytp-exp-bottom-control-flexbox ytp-modern-caption ytp-livebadge-color unstarted-mode ytp-small-mode\" tabindex=\"\" id=\"movie_player\" data-version=\"/s/player/7460dd14/player_embed.vflset/iw_IL/base.js\" aria-label=\"נגן הסרטונים של YouTube\">"
+            }
+          ]
+        },
+        {
+          "id": "button-name",
+          "impact": "critical",
+          "count": 1,
+          "examples": [
+            {
+              "target": [
+                "iframe[frameborder=\"0\"]",
+                ".ytmVideoInfoChannelAvatar"
+              ],
+              "html": "<button class=\"ytmVideoInfoLink ytmVideoInfoChannelAvatar\"><img class=\"ytCoreImageHost ytmVideoInfoChannelLogo ytCoreImageFillParentHeight ytCoreImageFillParentWidth ytCoreImageContentModeScaleAspectFill\" alt=\"thumbnail-image\" style=\"background-color: transparent;\"></button>"
+            }
+          ]
+        }
+      ],
+      "overflow": false
+    },
+    {
+      "route": "/structure-control/",
+      "violations": [
+        {
+          "id": "aria-allowed-attr",
+          "impact": "critical",
+          "count": 2,
+          "examples": [
+            {
+              "target": [
+                ".max-w-\\[300px\\] > iframe",
+                ".ytmVideoInfoVideoTitle"
+              ],
+              "html": "<a class=\"ytmVideoInfoVideoTitle\" aria-level=\"2\" href=\"https://www.youtube.com/shorts/WOoyIxIuF2M\"><span class=\"ytAttributedStringHost ytmVideoInfoLink ytAttributedStringWhiteSpaceNoWrap\" style=\"\">בקרת מבנה חכמה (BMS) בבניין מסחרי — סיור בפרויקט | i-feel</span></a>"
+            },
+            {
+              "target": [
+                "#cgym-video > .bg-black.overflow-hidden.shadow-lg > iframe",
+                ".ytmVideoInfoVideoTitle"
+              ],
+              "html": "<a class=\"ytmVideoInfoVideoTitle\" aria-level=\"2\" href=\"https://www.youtube.com/watch?v=n8tXISZ63gI\"><span class=\"ytAttributedStringHost ytmVideoInfoLink ytAttributedStringWhiteSpaceNoWrap\" style=\"\">C-Gym תל אביב | בקרת מבנה חכמה לתאורה, תריסים ומיזוג | i-feel</span></a>"
+            }
+          ]
+        },
+        {
+          "id": "aria-prohibited-attr",
+          "impact": "serious",
+          "count": 2,
+          "examples": [
+            {
+              "target": [
+                ".max-w-\\[300px\\] > iframe",
+                "#movie_player"
+              ],
+              "html": "<div class=\"html5-video-player ytp-hide-controls ytp-exp-bottom-control-flexbox ytp-modern-caption ytp-livebadge-color unstarted-mode ytp-small-mode ytp-shorts-mode\" tabindex=\"\" id=\"movie_player\" data-version=\"/s/player/7460dd14/player_embed.vflset/en_US/base.js\" ...>"
+            },
+            {
+              "target": [
+                "#cgym-video > .bg-black.overflow-hidden.shadow-lg > iframe",
+                "#movie_player"
+              ],
+              "html": "<div class=\"html5-video-player ytp-hide-controls ytp-exp-bottom-control-flexbox ytp-modern-caption ytp-livebadge-color unstarted-mode ytp-small-mode\" tabindex=\"\" id=\"movie_player\" data-version=\"/s/player/7460dd14/player_embed.vflset/en_US/base.js\" aria-label=\"YouTube Video Player\">"
+            }
+          ]
+        },
+        {
+          "id": "button-name",
+          "impact": "critical",
+          "count": 2,
+          "examples": [
+            {
+              "target": [
+                ".max-w-\\[300px\\] > iframe",
+                ".ytmVideoInfoChannelAvatar"
+              ],
+              "html": "<button class=\"ytmVideoInfoLink ytmVideoInfoChannelAvatar\"><img class=\"ytCoreImageHost ytmVideoInfoChannelLogo ytCoreImageFillParentHeight ytCoreImageFillParentWidth ytCoreImageContentModeScaleAspectFill\" alt=\"thumbnail-image\" style=\"background-color: transparent;\"></button>"
+            },
+            {
+              "target": [
+                "#cgym-video > .bg-black.overflow-hidden.shadow-lg > iframe",
+                ".ytmVideoInfoChannelAvatar"
+              ],
+              "html": "<button class=\"ytmVideoInfoLink ytmVideoInfoChannelAvatar\"><img class=\"ytCoreImageHost ytmVideoInfoChannelLogo ytCoreImageFillParentHeight ytCoreImageFillParentWidth ytCoreImageContentModeScaleAspectFill\" alt=\"thumbnail-image\" style=\"background-color: transparent;\"></button>"
+            }
+          ]
+        }
+      ],
+      "overflow": false
+    },
+    {
+      "route": "/contactus/",
+      "violations": [],
+      "overflow": false
+    },
+    {
+      "route": "/siemens-desigo-cc-system-specification/",
+      "violations": [],
+      "overflow": false
+    }
+  ],
+  "build": {
+    "html": 200,
+    "indexable": 175,
+    "jsonLdBlocks": 359,
+    "sitemapUnique": 176
+  },
+  "lighthouse": {
+    "performance": 66,
+    "accessibility": 91,
+    "seo": 100,
+    "lcpMs": 8100,
+    "cls": 0.001,
+    "tbtMs": 210,
+    "kind": "single pre-change live mobile lab run"
+  }
+}

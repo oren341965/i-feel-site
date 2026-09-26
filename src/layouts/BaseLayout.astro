@@ -24,7 +24,7 @@ export interface Props {
 const {
   title,
   description = '',
-  canonical = 'https://i-feel.co.il/',
+  canonical = new URL(Astro.url.pathname, 'https://i-feel.co.il').href,
   ogTitle = title,
   ogDescription = description,
   ogUrl = canonical,
@@ -102,6 +102,9 @@ const siteIdentityJsonLd = JSON.stringify({
   '@type': ['Organization', 'LocalBusiness', 'HomeAndConstructionBusiness', 'ProfessionalService'],
   '@id': 'https://i-feel.co.il/#business',
   name: 'i-feel',
+  legalName: 'איי פיל מערכות בע״מ',
+  logo: 'https://i-feel.co.il/assets/ifeel-logo.png',
+  image: 'https://i-feel.co.il/assets/ifeel-logo.png',
   alternateName: ['I FEEL', 'i-feel', 'איי פיל', 'i-feel מערכות בקרת מבנה ובית חכם'],
   url: 'https://i-feel.co.il/',
   description: 'Israeli smart home and building management systems integrator specializing in KNX, Siemens Desigo, DALI and related building-control technologies.',
@@ -162,7 +165,7 @@ const siteIdentityJsonLd = JSON.stringify({
     <meta property="og:image" content={ogImage} />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
-    <meta property="og:locale" content="he_IL" />
+    <meta property="og:locale" content={lang === 'en' ? 'en_US' : 'he_IL'} />
     <meta name="twitter:card" content="summary_large_image" />
     <link rel="icon" type="image/png" href="/assets/favicon.png" />
     <link rel="alternate" type="text/plain" href="/llms.txt" title="llms.txt" />
@@ -208,7 +211,7 @@ const siteIdentityJsonLd = JSON.stringify({
   <body class="bg-white text-brand-900 antialiased">
     <Header />
     <SiteSearch />
-    <main id="main-content">
+    <main id="main-content" tabindex="-1">
       <slot />
       <SiemensDwgDownload />
     </main>

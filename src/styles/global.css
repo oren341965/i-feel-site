@@ -53,8 +53,8 @@ html { scroll-behavior: smooth; }
   .prose-he ul { list-style: disc; }
   .prose-he ol { list-style: decimal; }
   .prose-he li { margin-bottom: 0.5rem; }
-  .prose-he a { color: #b8892e; font-weight: 600; text-decoration: underline; }
-  .prose-he a:hover { color: #d4a544; }
+  .prose-he a { color: #714f14; font-weight: 600; text-decoration: underline; }
+  .prose-he a:hover { color: #634311; }
   .prose-he strong { font-weight: 700; color: #0f1f36; }
   .prose-he details { background: #f0f5fb; border: 1px solid #dae6f2; border-radius: 0.5rem; padding: 1rem 1.25rem; margin-bottom: 0.75rem; }
   .prose-he summary { font-weight: 700; color: #0f1f36; cursor: pointer; font-size: 1.125rem; }
@@ -63,3 +63,15 @@ html { scroll-behavior: smooth; }
   .prose-he .not-prose h1, .prose-he .not-prose h2, .prose-he .not-prose h3,
   .prose-he .not-prose h4, .prose-he .not-prose p, .prose-he .not-prose li,
   .prose-he .not-prose strong, .prose-he .not-prose span { color: inherit; }
+
+/* Readable labels on gold actions and clearly identifiable breadcrumb links. */
+.bg-accent-500.text-white { color: #0f1f36; }
+.bg-accent-500.text-white:hover { color: white; background-color: #805b18; }
+.bg-green-600.text-white { background-color: #15803d; }
+nav[aria-label="פירורי לחם"] a { text-decoration: underline; text-underline-offset: 0.2em; }
+a:focus-visible, button:focus-visible, summary:focus-visible { outline: 3px solid #285183; outline-offset: 4px; }
+.bg-green-500.text-white { background-color: #15803d; }
+.prose-he a.text-white { color: white; }
+.prose-he a.bg-accent-500.text-white { color: #0f1f36; }
+.prose-he a.bg-accent-500.text-white:hover { color: white; }
+.bg-accent-500 .text-white\/80 { color: #0f1f36; }
