@@ -413,6 +413,17 @@ GRAPHQL;
     return $best;
 }
 
+function esp_resident_profile_for_group(string $email, string $groupId): ?array
+{
+    $profile = esp_resident_profile($email);
+    if ($profile === null) return null;
+    if (($profile['role'] ?? '') === 'staff') return $profile;
+    foreach (($profile['projects'] ?? []) as $project) {
+        if ((string)($project['id'] ?? '') === $groupId) return $profile;
+    }
+    return null;
+}
+
 function esp_valid_token(string $token): bool
 {
     return preg_match('/\A[a-f0-9]{48}\z/D', $token) === 1;
