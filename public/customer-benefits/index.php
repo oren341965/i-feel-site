@@ -47,6 +47,14 @@ header('Referrer-Policy: no-referrer');
         <ul><li>מבצע ייחודי לכל קבוצה</li><li>אימות באמצעות דואר ארגוני</li><li>תוכן שאינו פתוח לציבור הרחב</li></ul>
       </article>
     </div>
+    <section class="active-group" aria-labelledby="developer-projects-title">
+      <div>
+        <p class="eyebrow" style="color:#8d672e">כניסה מרכזית לפרויקטים</p>
+        <h3 id="developer-projects-title">לקוחות פרויקטי יזמי בנייה</h3>
+        <p>כניסה אחת לפי כתובת הדואר הרשומה ב-Monday. לאחר אימות בקוד חד פעמי המערכת מזהה את הפרויקט המשויך ללקוח ומציגה את אזור המידע שלו.</p>
+      </div>
+      <a class="button button--primary" href="/developer-projects/">כניסה לפי כתובת דוא״ל</a>
+    </section>
     <section class="active-group" aria-labelledby="neve-shuster-title">
       <div>
         <p class="eyebrow" style="color:#8d672e">פרויקט דיירים פעיל</p>

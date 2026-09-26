@@ -169,6 +169,12 @@ $priceGroups = [
     <div class="notice"><strong>תיאום תשתיות</strong>התאמת נקודות האפס, הקופסאות והמגעים היבשים צריכה להתבצע מול קבלן החשמל וקבלן המיזוג לפני הביצוע.</div>
   </section>
 
+  <section class="card" id="video">
+    <h2>רואים את מפסקי הזכוכית בפעולה</h2>
+    <p class="lead">סרטון המוצר של TouchWand/Z-Wave מציג שליטה בתאורה, בתריסים ומהטלפון, כדי לראות את המוצר בפועל לפני בחירת שדרוג.</p>
+    <div class="tile"><strong>סרטון המוצר של I Feel</strong><span>מפסק זכוכית חכם ושליטה מהטלפון.</span><a href="https://youtu.be/SmXbKAGoADw" rel="noopener" target="_blank">צפייה בסרטון ביוטיוב</a></div>
+  </section>
+
   <section class="card split" id="flyer">
     <div><p class="eyebrow" style="color:#8d672e">אשטרום · בית חכם</p><h2>פלייר הפרויקט</h2><p class="lead">הפלייר המלא מפרט את יכולות המערכת בדירה ואת אפשרויות השדרוג בתאורה, תריסים, אודיו, אזעקה ומיזוג.</p><a class="button" href="/even-shaprut/assets/ifeel-even-shaprut-flyer.pdf" download>הורדת הפלייר כ-PDF</a></div>
     <img src="/even-shaprut/assets/project-flyer-cover.png" alt="שער פלייר אבן שפרוט 5-7, הרצליה של אשטרום ו-I Feel" loading="lazy">
