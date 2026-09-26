@@ -48,6 +48,11 @@ function esp_project_slug(string $groupId): string
         'group_mm68hnn3' => 'hamashi-19-ganei-tikva',
         'group_mm4dpf3j' => 'avital-13',
         'group_mm12pjaw' => 'harishonim-15',
+        'group_mm718t3s' => 'new-group',
+        'topics' => 'customer-name-group',
+        'new_group95964' => 'sales-process-completed',
+        'new_group28833' => 'facebook-group',
+        'new_group30242' => 'website-inquiries',
     ];
     return $slugs[$groupId] ?? '';
 }
@@ -110,6 +115,11 @@ function esp_project_groups(): array
         'group_mm68hnn3' => 'המשי 19 גני תקוה',
         'group_mm4dpf3j' => 'אביטל 13',
         'group_mm12pjaw' => 'הראשונים 15',
+        'group_mm718t3s' => 'New Group',
+        'topics' => 'שם הלקוח',
+        'new_group95964' => 'תהליך מכירה הסתיים',
+        'new_group28833' => 'Facebook',
+        'new_group30242' => 'פניות מאתר החברה',
     ];
 }
 const ESP_MONDAY_API_VERSION = '2026-07';
@@ -401,6 +411,17 @@ GRAPHQL;
     $best['projects'] = array_values($foundProjects);
     $cache[$email] = $best;
     return $best;
+}
+
+function esp_resident_profile_for_group(string $email, string $groupId): ?array
+{
+    $profile = esp_resident_profile($email);
+    if ($profile === null) return null;
+    if (($profile['role'] ?? '') === 'staff') return $profile;
+    foreach (($profile['projects'] ?? []) as $project) {
+        if ((string)($project['id'] ?? '') === $groupId) return $profile;
+    }
+    return null;
 }
 
 function esp_valid_token(string $token): bool
