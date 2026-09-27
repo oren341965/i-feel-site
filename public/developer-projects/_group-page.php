@@ -68,7 +68,7 @@ $csrf = esp_csrf_token();
 <form method="post" action=""><input type="hidden" name="csrf" value="<?= esp_h($csrf) ?>"><input type="hidden" name="action" value="logout"><button type="submit">יציאה</button></form></div></div>
 <?php endif; ?>
 <header class="top"><div class="shell top__bar"><a class="brand" href="/" aria-label="I Feel"><img src="/assets/ifeel-logo.png" alt="I Feel" width="140" height="145"><span>מערכות בית חכם ובקרת מבנה</span></a><a class="button button--ghost" href="/customer-benefits/">אזור הלקוחות</a></div>
-<div class="shell hero"><p class="eyebrow">אזור מאובטח</p><h1><?= esp_h($project['title']) ?></h1><p>מידע ושירות ללקוחות הקבוצה. הכניסה באמצעות הדוא״ל הרשום ב-Monday וקוד חד פעמי שנשלח אליו.</p></div></header>
+<div class="shell hero"><p class="eyebrow">אזור מאובטח</p><h1><?= esp_h($project['title']) ?></h1><p>מידע ושירות ללקוחות הפרויקט. הכניסה באמצעות כתובת הדוא״ל שנמסרה ל־I Feel על ידי מחלקת שינויי הדיירים של הפרויקט. עובדי I Feel יכולים להיכנס באמצעות כתובת הדוא״ל הארגונית שלהם. קוד חד פעמי יישלח לכתובת הדוא״ל.</p></div></header>
 <main class="main"><div class="shell">
 <?php if ($user === null): ?>
 <section class="entry"><div class="access-card">
