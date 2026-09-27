@@ -154,7 +154,7 @@ $projectPriceGroups = [
 
 <section class="card" id="smartsphere">
 <h2>SmartSphere, אפליקציית הבית החכם שלכם</h2>
-<p class="lead">לקוחות הפרויקטים האלה קיבלו את SmartSphere כממשק השליטה בבית החכם. אין צורך באפליקציית TouchWand.</p>
+<p class="lead">לקוחות הפרויקטים האלה קיבלו את SmartSphere כממשק השליטה בבית החכם.</p>
 <div class="grid">
 <article class="tile"><strong>שליטה מהטלפון</strong><span>תאורה, תריסים, מיזוג ותרחישים מממשק SmartSphere בהתאם למערכות שהוגדרו בדירה.</span></article>
 <article class="tile"><strong>תרחישים ותזמונים</strong><span>יצירת פעולות אוטומטיות ושילוב בין מערכות הבית בהתאם להגדרות הפרויקט.</span></article>
