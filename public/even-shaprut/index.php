@@ -150,7 +150,7 @@ $priceGroups = [
     </div>
   </section>
 <?php else: ?>
-  <ul class="toc" aria-label="ניווט בעמוד"><li><a href="#standard">המפרט בדירה</a></li><li><a href="#flyer">פלייר הפרויקט</a></li><li><a href="#pricelist">מחירון שדרוגים</a></li><li><a href="#contact">יצירת קשר</a></li></ul>
+  <ul class="toc" aria-label="ניווט בעמוד"><li><a href="#standard">המפרט בדירה</a></li><li><a href="#smartsphere">SmartSphere</a></li><li><a href="#flyer">פלייר הפרויקט</a></li><li><a href="#pricelist">מחירון שדרוגים</a></li><li><a href="#contact">יצירת קשר</a></li></ul>
 
   <?php if (($user['role'] ?? '') === 'resident' && (($user['building'] ?? '') !== '' || ($user['apartment'] ?? '') !== '')): ?>
     <section class="card"><h2>שלום<?= ($user['name'] ?? '') !== '' ? ' ' . esp_h($user['name']) : '' ?></h2><p class="lead">זוהיתם כדיירי אבן שפרוט<?php if (($user['building'] ?? '') !== ''): ?> · בניין <?= esp_h($user['building']) ?><?php endif; ?><?php if (($user['apartment'] ?? '') !== ''): ?> · דירה <?= esp_h($user['apartment']) ?><?php endif; ?>.</p></section>
@@ -178,6 +178,16 @@ $priceGroups = [
   <section class="card split" id="flyer">
     <div><p class="eyebrow" style="color:#8d672e">אשטרום · בית חכם</p><h2>פלייר הפרויקט</h2><p class="lead">הפלייר המלא מפרט את יכולות המערכת בדירה ואת אפשרויות השדרוג בתאורה, תריסים, אודיו, אזעקה ומיזוג.</p><a class="button" href="/even-shaprut/assets/ifeel-even-shaprut-flyer.pdf" download>הורדת הפלייר כ-PDF</a></div>
     <img src="/even-shaprut/assets/project-flyer-cover.png" alt="שער פלייר אבן שפרוט 5-7, הרצליה של אשטרום ו-I Feel" loading="lazy">
+  </section>
+
+  <section class="card" id="smartsphere">
+    <h2>SmartSphere, אפליקציית הבית החכם</h2>
+    <p class="lead">השליטה מהטלפון בפרויקט מתבצעת באמצעות SmartSphere, בהתאם למערכות שהוגדרו בדירה.</p>
+    <div class="grid">
+      <article class="tile"><strong>שליטה מהטלפון</strong><span>תאורה, תריסים, מיזוג ותרחישים מממשק SmartSphere.</span></article>
+      <article class="tile"><strong>תרחישים ותזמונים</strong><span>הפעלת תרחישים ותזמונים בהתאם להגדרות הדירה והפרויקט.</span></article>
+      <article class="tile"><strong>הדרכות SmartSphere</strong><span>סרטוני שימוש והדרכה למערכת.</span><a href="/video/#smart-ac-connection">לסרטוני SmartSphere</a></article>
+    </div>
   </section>
 
   <section class="card" id="pricelist">
