@@ -13,8 +13,8 @@ const jsonLd = JSON.stringify({
   description,
   url: canonical,
   inLanguage: ['he-IL', 'en'],
-  dateModified: '2026-09-18',
-  about: ['PXC4', 'PXC5', 'PXC7', 'DDC', 'BACnet/SC', 'Modbus', 'KNX PL-Link', 'TX-I/O', 'Building Automation'],
+  dateModified: '2026-09-26',
+  about: ['PXC4', 'PXC5', 'PXC7', 'PXC7.E400M', 'S55375-C110', 'DDC', 'BACnet/SC', 'Modbus', 'KNX PL-Link', 'TX-I/O', 'Building Automation'],
   publisher: { '@id': 'https://i-feel.co.il/#business' },
 });
 ---
@@ -32,9 +32,17 @@ const jsonLd = JSON.stringify({
       'אבטחת רשת, הצפנה, תעודות TLS ותהליך פיתוח לפי IEC 62443-4-1.',
       'ניהול אנרגיה, מדידה, אופטימיזציה, התראות, שרידות ושחזור לאחר הפסקת חשמל.',
     ]}
-    keywords={['Siemens PXC4', 'Siemens PXC5', 'Siemens PXC7', 'בקרי DDC', 'BACnet/SC', 'TX-I/O', 'Modbus RTU', 'KNX PL-Link', 'ניהול אנרגיה', 'מפרט מכרז BMS']}
+    keywords={['Siemens PXC4', 'Siemens PXC5', 'Siemens PXC7', 'PXC7.E400M', 'S55375-C110', 'בקרי DDC', 'BACnet/SC', 'TX-I/O', 'Modbus RTU', 'KNX PL-Link', 'ניהול אנרגיה', 'מפרט מכרז BMS']}
     documentHtml={documentHtml}
     docxUrl="/assets/siemens-bms/documents/siemens-desigo-pxc4-pxc5-pxc7-system-specification.docx"
     pdfUrl="/assets/siemens-bms/documents/siemens-desigo-pxc4-pxc5-pxc7-system-specification.pdf"
   />
+
+  <section class="max-w-4xl mx-auto px-4 pb-12">
+    <div class="bg-brand-50 border border-brand-100 rounded-xl p-6">
+      <h2 class="text-xl font-bold text-brand-900 mb-2">מחפשים מידע על PXC7.E400M ‏(S55375-C110)?</h2>
+      <p class="text-brand-700 mb-3">הוספנו תשובה טכנית ממוקדת לדגם PXC7.E400M עם קיבולת, BACnet/SC, ממשקי RS485, TX-I/O ושיקולי בחירה לכתב כמויות.</p>
+      <a href="/answers/siemens-pxc7-e400m/" class="text-accent-600 font-semibold hover:underline">מדריך Siemens PXC7.E400M בישראל →</a>
+    </div>
+  </section>
 </BaseLayout>
