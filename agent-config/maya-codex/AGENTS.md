@@ -63,3 +63,7 @@ Oren recorded standing authorization on 2026-09-04 and gave the direct Start ins
 ## Evidence
 
 Every run returns a bounded status and uses Telemetry when the registered local identity is available. A Telemetry failure never authorizes repeating a business send or write. For the professional-content cycle, a send is complete only after sent-mail verification and the required Monday post-send state are both verified.
+
+## Shared visit synchronization — Oren instruction, 2026-09-27
+
+For any authorized visit change in Monday or the shared technician schedule, read the installed maya-email-maintenance/references/visit-calendar-sync.md (canonical source: .claude/skills/maya-email-maintenance/references/visit-calendar-sync.md). Complete and verify the exact visit across Monday, the Sheet and one matching Calendar event inviting the verified customer, technician and SUPPORT. Preserve existing events, handle conflicts explicitly, and distinguish invitations from actual recipient-calendar evidence. The existing Maya email worker is the sole periodic repair owner every two hours within its approved workday; other agents complete their interactive visit and do not create competing schedulers. This narrow standing authorization does not commission other channels, enable customer-action Bus execution or authorize unrelated writes. Record per-host installation evidence; shared documentation alone is not deployment.

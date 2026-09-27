@@ -199,7 +199,10 @@ test('source reconciliation accepts Dropbox-style symlink entries and leading bl
   const directory = await sourceSyncFixture(t);
   const entry = resolve(directory, 'vault/02 Skills/Entries/example-skill.md');
   const target = resolve(directory, 'vault/example-skill-target.md');
-  await writeFile(target, '\n---\ntype: skill-registry-entry\nstatus: Active\nversion: test-revision\n---\n\nPrivate body.\n', 'utf8');
+  // Preserve the fixture's verified source_hash: this tests symlink/blank-line
+  // handling, while stale or missing source metadata has separate coverage.
+  const entryContent = await readFile(entry, 'utf8');
+  await writeFile(target, '\n' + entryContent, 'utf8');
   await rm(entry);
   try {
     await symlink(target, entry, 'file');

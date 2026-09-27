@@ -1,9 +1,14 @@
 ---
 name: maya-email-maintenance
-description: Maintain Maya's authenticated I Feel Gmail inbox on a recurring three-hour cadence. Triage new mail, label and archive low-risk messages, identify plans, bounces, sales, service, supplier and finance work, and prepare reply drafts. Use only for Maya's verified mailbox, never for another connected Gmail profile.
+description: Maintain Maya's authenticated I Feel Gmail inbox and reconcile verified technician visits across Monday, the shared schedule and calendar invitations every two hours. Use only for Maya's verified mailbox and the bounded standing scheduling scope.
 ---
 
 # Maya Email Maintenance
+
+## Shared visit synchronization — Oren instruction, 2026-09-27
+
+Before scheduling, changing or reconciling a customer/technician visit, read the complete [shared visit synchronization contract](references/visit-calendar-sync.md). The operator changing a visit owns matching updates and verified read-back in Monday, the shared schedule and the customer/technician calendar invitations. Oren's standing 2026-09-27 authorization supersedes older read-only or per-visit approval wording only for the bounded verified synchronization defined there. Audit modes remain read-only and route execution to the existing scheduling owner. The existing Maya email worker owns the two-hour repair pass; no other worker starts a duplicate loop. Preserve source conflicts, identity, connector permissions, existing sender rules and unrelated safety boundaries. A sent invitation is not evidence of acceptance or appearance in a private calendar.
+
 
 Keep Maya's work inbox small, classified and actionable without losing customer correspondence. Oren granted standing approval on `2026-08-24` for the bounded inbox organization and routine customer communication defined below. Oren additionally granted standing approval on `2026-09-05` for the verified bounce-correction workflow defined below: when a sent message bounces because a recipient address is invalid, Maya may locate one strongly verified replacement address from authoritative I Feel records or direct correspondence, update only that contact's email field in Monday, and resend the same business message once to the corrected address. Everything outside these bounded scopes remains draft-only.
 
@@ -12,7 +17,7 @@ Keep Maya's work inbox small, classified and actionable without losing customer 
 - An explicit channel-specific instruction from Oren may authorize an operational email run, including a scheduled run, beyond the default REPORT_ONLY mode below. Apply only the named permissions; do not infer production commissioning, credential changes, Monday writes or WhatsApp activation. Use [approved email operations](references/approved-email-operations.md) for this mode. For proactive sends, use the canonical protected ledger and transaction in [proactive send ledger](references/proactive-send-ledger.md). A running scheduler is not evidence of completed mailbox work.
 
 - Before every run, read the authenticated Gmail profile and compare it with the Maya mailbox configured by the automation. Stop with `WRONG_MAILBOX` when the address is absent, belongs to Oren or does not exactly match the configured Maya address.
-- A separate automation invokes this skill every three hours. The skill performs one bounded pass and never creates another scheduler or overlapping run.
+- The existing automation invokes this skill every two hours in its approved workday. The skill performs one bounded pass and never creates another scheduler or overlapping run.
 - At maturity 0, every scheduled invocation is `REPORT_ONLY` and the staged scheduler prompt is stricter than the interactive workflow below. It may read and aggregate only: no Gmail label/read/archive mutation, no draft, no send, no attachment download, and no Monday, Calendar, WhatsApp, Vault, Bus, contact, configuration, or connection-state write. The pre-existing Windows Task and the WhatsApp/integrated schedulers must remain disabled.
 - Continue from the last successful checkpoint with a small overlap, deduplicate by Gmail message ID, and do not backfill more than 24 hours in one unattended pass. A manual run may process a larger range when the user requests it.
 
