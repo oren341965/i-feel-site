@@ -62,7 +62,7 @@ $pendingEmail = $preview ? '' : sgt_pending_email();
 <?php if ($error): ?><p class="alert error" role="alert"><?= sgt_h($error) ?></p><?php endif; ?>
 <?php if ($notice): ?><p class="alert" role="status"><?= sgt_h($notice) ?></p><?php endif; ?>
 <?php if ($user === null): ?>
-<section class="login"><h2>כניסה לדיירי הפרויקט</h2><p>הזינו את כתובת הדואר הרשומה אצלנו בפרויקט שבירו, המשי 19 בגני תקווה. נשלח אליה קוד חד־פעמי לכניסה למחירון ולהדרכה.</p>
+<section class="login"><h2>כניסה לדיירי הפרויקט</h2><p>הזינו את כתובת הדוא״ל שנמסרה ל־I Feel על ידי מחלקת שינויי הדיירים של הפרויקט. עובדי I Feel יכולים להיכנס באמצעות כתובת הדוא״ל הארגונית שלהם. נשלח קוד חד־פעמי לכניסה.</p>
 <?php if ($pendingEmail !== ''): ?><p class="alert">קוד כניסה נשלח ל־<?= sgt_h($pendingEmail) ?>.</p><form method="post"><input type="hidden" name="csrf" value="<?= sgt_h($csrf) ?>"><input type="hidden" name="action" value="verify_code"><label for="code">קוד בן 6 ספרות</label><input id="code" name="code" inputmode="numeric" autocomplete="one-time-code" pattern="[0-9]{6}" maxlength="6" required><button type="submit">כניסה לאזור הדיירים</button></form>
 <?php else: ?><form method="post"><input type="hidden" name="csrf" value="<?= sgt_h($csrf) ?>"><input type="hidden" name="action" value="request_code"><label for="email">כתובת דואר אלקטרוני</label><input id="email" type="email" name="email" autocomplete="email" maxlength="180" required><button type="submit">שלחו לי קוד כניסה</button></form><?php endif; ?>
 <p class="small">לא מצליחים להיכנס? <a href="tel:035089553">03-508-9553</a> · <a href="mailto:myhome@i-feel.co.il">myhome@i-feel.co.il</a></p></section>
