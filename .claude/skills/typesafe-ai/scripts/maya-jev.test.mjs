@@ -1,5 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import {spawnSync} from 'node:child_process';
+import {fileURLToPath} from 'node:url';
 import {makeRequest,parseResult,callApi,routes,MODEL} from './maya-jev.mjs';
 const input = {channel:'email',items:[{ref:'one',text:'לקוח מבקש הצעת מחיר.'}]};
 const fixture = () => ({model:MODEL,answers:{m0_route:{type:'choice',choice:'sales',confidence:0.9,probabilities:Object.fromEntries(Object.keys(routes).map(k=>[k,k==='sales'?1:0]))},m0_attention:{type:'noul',noul:0.9}}});
@@ -36,4 +38,11 @@ test('one bounded call with fixed HTTPS endpoint, no redirect or retries',async(
 test('failure diagnostics never echo vendor errors or secret material',async()=>{
   await assert.rejects(callApi('systemone',{},'fake-unit-test-key',async()=>new Response('private data',{status:401})),/^Error: JEV_HTTP_401$/);
   await assert.rejects(callApi('systemone',{},'fake-unit-test-key',async()=>{throw Error('fake-unit-test-key')}),/^Error: JEV_NETWORK_OR_TIMEOUT$/);
+});
+test('PowerShell wrapper passes pipeline JSON to child without parameter binding failure',{skip:process.platform!=='win32'},()=>{
+  const wrapper=fileURLToPath(new URL('./invoke-maya-jev.ps1',import.meta.url)).replaceAll("'","''");
+  const script=`function node { $payload=($input | Out-String); Write-Output $payload; $global:LASTEXITCODE=0 }; $env:TYPESAFE_API_KEY='synthetic-test-only'; '{"channel":"email","items":[{"ref":"test","text":"synthetic"}]}' | & '${wrapper}' -Command classify`;
+  const run=spawnSync('pwsh',['-NoProfile','-Command',script],{encoding:'utf8'});
+  assert.equal(run.status,0,run.stderr); assert.deepEqual(JSON.parse(run.stdout),{channel:'email',items:[{ref:'test',text:'synthetic'}]});
+  assert.ok(!run.stdout.includes('synthetic-test-only'));
 });

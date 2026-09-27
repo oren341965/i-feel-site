@@ -1,4 +1,4 @@
-[CmdletBinding()]
+# Keep this a simple script so $input accepts JSON through the pipeline.
 param([ValidateSet('status','models','test','activate','classify','help')][string]$Command = 'status')
 $ErrorActionPreference = 'Stop'
 $secretPath = Join-Path ([Environment]::GetFolderPath('LocalApplicationData')) 'I Feel\Management System\typesafe-api-key.dpapi'
