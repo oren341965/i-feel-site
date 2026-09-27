@@ -77,11 +77,6 @@ header('Referrer-Policy: no-referrer');
       <article class="card"><h3>נופי שמש</h3><p>אזור ייעודי לקבוצה זו.</p><a class="button button--primary" href="/developer-projects/nofei-shemesh/">כניסה לאתר הקבוצה</a></article>
       <article class="card"><h3>אביטל 13</h3><p>אזור ייעודי לקבוצה זו.</p><a class="button button--primary" href="/developer-projects/avital-13/">כניסה לאתר הקבוצה</a></article>
       <article class="card"><h3>פנקס 11-13</h3><p>אזור ייעודי לקבוצה זו.</p><a class="button button--primary" href="/developer-projects/pinkas-11-13/">כניסה לאתר הקבוצה</a></article>
-      <article class="card"><h3>New Group</h3><p>אזור ייעודי לקבוצה זו.</p><a class="button button--primary" href="/developer-projects/new-group/">כניסה לאתר הקבוצה</a></article>
-      <article class="card"><h3>שם הלקוח</h3><p>אזור ייעודי לקבוצה זו.</p><a class="button button--primary" href="/developer-projects/customer-name-group/">כניסה לאתר הקבוצה</a></article>
-      <article class="card"><h3>תהליך מכירה הסתיים</h3><p>אזור ייעודי לקבוצה זו.</p><a class="button button--primary" href="/developer-projects/sales-process-completed/">כניסה לאתר הקבוצה</a></article>
-      <article class="card"><h3>Facebook</h3><p>אזור ייעודי לקבוצה זו.</p><a class="button button--primary" href="/developer-projects/facebook-group/">כניסה לאתר הקבוצה</a></article>
-      <article class="card"><h3>פניות מאתר החברה</h3><p>אזור ייעודי לקבוצה זו.</p><a class="button button--primary" href="/developer-projects/website-inquiries/">כניסה לאתר הקבוצה</a></article>
     </div>
     <section class="active-group" aria-labelledby="neve-shuster-title">
       <div>
