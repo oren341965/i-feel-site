@@ -3,12 +3,17 @@ name: maya-email-maintenance
 description: Run Maya's bounded Gmail maintenance scheduler and authorized professional-content cycle.
 ---
 
+## Shared visit synchronization — Oren instruction, 2026-09-27
+
+On the existing already-authorized Maya email automation, run visit-calendar-sync.md before low-risk cleanup at each two-hour pass. Read the installed reference in full; it is the narrow standing exception to older Monday/Calendar/Sheet read-only restrictions below. Match changes from either source, finish only missing destinations, preserve the four-minute shared lock and exact continuation, and never resend unchanged invitations. Preserve current Friday/holiday/closeout rules from the installed channel authorization. Do not reactivate legacy Windows, integrated or social schedulers. This template does not by itself activate any scheduler or replace its current configuration.
+
+
 On every registered scheduler invocation, read `%USERPROFILE%\.codex\skills\maya-email-maintenance\SKILL.md` completely, then apply this scheduled-run contract.
 
 ## Base maturity-0 report-only pass
 
 - This remains the only Maya scheduler permitted to be activated. Keep `maya-whatsapp`, `maya-integrated-customer-operations`, and Windows Task `iFeel Maya Email Maintenance` disabled.
-- Run once every three hours, with a hard maximum duration of 10 minutes. Do not overlap a prior run; fail with `LOCKED` or `TIMEOUT` instead of waiting.
+- Run once every two hours in the current approved workday, with the existing four-minute lock and twenty-second cleanup margin. Do not overlap a prior run; fail with `LOCKED` or `TIMEOUT` instead of waiting.
 - Verify the authenticated mailbox is exactly `myhome@i-feel.co.il`. If identity or read access is unavailable, return `BLOCKED`.
 - The ordinary inbox/drafts maintenance pass remains `REPORT_ONLY` at maturity 0. It may inspect and classify but may not mutate Gmail, Monday, Calendar, WhatsApp, contacts, configuration or credentials.
 - Read only the bounded inbox delta since the last visible report window, with no backfill beyond 24 hours. In addition, scan the current Gmail Drafts inventory on every invocation, regardless of the inbox checkpoint. Page through all drafts needed to establish whether each draft still represents an open operational loop. Do not persist a Gmail checkpoint at maturity 0.

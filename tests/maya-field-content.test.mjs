@@ -73,9 +73,9 @@ test('skill keeps customer service images separate and routes publishable media 
   const scheduledTask = await readFile(new URL('../agent-config/maya-scheduled-tasks/maya-whatsapp/SKILL.md', import.meta.url), 'utf8');
   assert.match(skill, /ifeel-project-video/);
   assert.match(skill, /video-add/);
-  assert.match(skill, /five-minute/);
+  assert.match(skill, /two-hour/);
   assert.match(reference, /1–2 שורות/);
-  assert.match(scheduledTask, /once every five minutes/);
+  assert.match(scheduledTask, /once every two hours/);
   assert.match(scheduledTask, /at most one consolidated photo-and-field-note request/);
   assert.match(scheduledTask, /must not invoke `Edit`/);
   assert.match(scheduledTask, /verified recent direct WhatsApp conversation as the duplicate ledger/);
@@ -103,9 +103,9 @@ test('Maya standing communication scope is bounded and scheduled Gmail maintenan
     assert.match(skill, /calendar/);
   }
   assert.match(email, /must not permanently delete or trash mail/);
-  assert.match(emailTask, /once every three hours/);
+  assert.match(emailTask, /once every two hours/);
   assert.match(emailTask, /REPORT_ONLY/);
-  assert.match(emailTask, /hard maximum duration of 10 minutes/);
+  assert.match(emailTask, /four-minute lock and twenty-second cleanup margin/);
   assert.match(emailTask, /do not create drafts/i);
   assert.match(emailTask, /EXTERNAL_ACTIONS=0/);
   assert.match(emailTask, /must not request local-file `Edit` access/);

@@ -5,6 +5,11 @@ description: Operate Maya's approved I Feel WhatsApp workflow for inbound triage
 
 # Maya WhatsApp
 
+## Shared visit synchronization — Oren instruction, 2026-09-27
+
+Before scheduling, changing or reconciling a customer/technician visit, read the complete [shared visit synchronization contract](../maya-email-maintenance/references/visit-calendar-sync.md). The operator changing a visit owns matching updates and verified read-back in Monday, the shared schedule and the customer/technician calendar invitations. Oren's standing 2026-09-27 authorization supersedes older read-only or per-visit approval wording only for the bounded verified synchronization defined there. Audit modes remain read-only and route execution to the existing scheduling owner. The existing Maya email worker owns the two-hour repair pass; no other worker starts a duplicate loop. Preserve source conflicts, identity, connector permissions, existing sender rules and unrelated safety boundaries. A sent invitation is not evidence of acceptance or appearance in a private calendar.
+
+
 Use the existing Maya WhatsApp session on Maya's workstation. The shared `ai-sales-manager` remains the parent orchestrator; this skill is a front-office worker and never becomes a second manager.
 
 ## Every invocation
@@ -68,7 +73,7 @@ Oren granted a narrow standing permission to relay two specific customer signals
 
 ## Daily field-content gate
 
-At `15:00` in `Asia/Jerusalem`, once per local date, inspect the live technician schedule and request photos plus a short field note from every technician who had field assignments that day. The existing five-minute `maya-whatsapp` scheduled task owns the clock. Use the verified recent direct WhatsApp conversation as the duplicate ledger and touch only unresolved recipients. If that conversation cannot be read, fail closed and do not send. The five-minute cadence must never become a five-minute message cadence.
+At `15:00` in `Asia/Jerusalem`, once per local date, inspect the live technician schedule and request photos plus a short field note from every technician who had field assignments that day. The existing two-hour `maya-whatsapp` scheduled task owns the clock, ten minutes after the email worker during the approved workday. Use the verified recent direct WhatsApp conversation as the duplicate ledger and touch only unresolved recipients. If that conversation cannot be read, fail closed and do not send. The two-hour cadence is a check cadence, never permission to repeat a verified message.
 
 Read [references/field-content-daily.md](references/field-content-daily.md) before this mode. Use `scripts/field-content-daily.mjs` for month-tab resolution, date-block extraction, technician-column discovery, phone redaction and deterministic request keys.
 
