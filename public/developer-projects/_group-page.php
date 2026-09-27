@@ -73,7 +73,7 @@ $csrf = esp_csrf_token();
 <?php if ($user === null): ?>
 <section class="entry"><div class="access-card">
 <h2>כניסה לקבוצת <?= esp_h($project['title']) ?></h2>
-<p class="lead">הזינו את כתובת הדוא״ל שנמסרה ל־I Feel על ידי מחלקת שינויי הדיירים של הפרויקט.</p>
+<p class="lead">הזינו את כתובת הדוא״ל שנמסרה ל־I Feel על ידי מחלקת שינויי הדיירים של הפרויקט. עובדי I Feel יכולים להיכנס באמצעות כתובת הדוא״ל הארגונית שלהם.</p>
 <?php if ($error !== ''): ?><div class="alert alert--error"><?= esp_h($error) ?></div><?php endif; ?>
 <?php if ($accessStatus === 'code-sent' && esp_pending_email() !== ''): ?>
 <div class="alert alert--ok">קוד בן 6 ספרות נשלח ל-<?= esp_h(esp_pending_email()) ?>.</div>
