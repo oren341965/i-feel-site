@@ -125,7 +125,7 @@ $priceGroups = [
     <div class="access-card">
       <p class="eyebrow" style="color:#8d672e">כניסה לדיירי הפרויקט</p>
       <h2>קוד חד-פעמי לדואר הרשום ב-Monday</h2>
-      <p class="lead">הזינו את כתובת הדוא״ל שנמסרה ל־I Feel על ידי מחלקת שינויי הדיירים של הפרויקט. עובדי I Feel יכולים להיכנס באמצעות כתובת הדוא״ל הארגונית שלהם.</p>
+      <p class="lead">הזינו את כתובת הדוא״ל שנמסרה ל־I Feel על ידי מחלקת שינויי הדיירים של הפרויקט.</p>
       <?php if ($error !== ''): ?><div class="alert alert--error" role="alert"><?= esp_h($error) ?></div><?php endif; ?>
       <?php if ($accessStatus === 'code-sent' && esp_pending_email() !== ''): ?>
         <div class="alert alert--ok">קוד בן 6 ספרות נשלח ל-<?= esp_h(esp_pending_email()) ?>.</div>
