@@ -115,6 +115,8 @@ For a monthly schedule review or any batch of several visits:
 
 ## Jev / TypeSafe fast path
 
+For an explicitly requested manual synthetic API smoke test, read [Jev read-only test](references/jev-readonly.md). This source-only test does not activate or connect workers.
+
 Jev may be used to reduce large-model token use and speed up repetitive semantic checks. It is an advisory typed-judgment layer, never an authorization or source of truth.
 
 Keep exact lookups, recipient verification, dates, writes, sends, permissions, idempotency, and read-back in deterministic code and connector calls. Use Jev only after code has supplied bounded candidate state.
