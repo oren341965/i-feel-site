@@ -2,7 +2,7 @@
 <section class="guide" id="app-guide" aria-labelledby="app-title">
 <p class="eyebrow">הבית החכם, גם מהטלפון</p>
 <h2 id="app-title">איך משתמשים ב-SmartSphere?</h2>
-<p>בדירות הפרויקט השליטה מהטלפון מתבצעת באמצעות SmartSphere. אין צורך באפליקציית TouchWand.</p>
+<p>בדירות הפרויקט השליטה מהטלפון מתבצעת באמצעות SmartSphere.</p>
 <p class="notice">הכניסה לאזור הדיירים באתר נעשית בקוד למייל. הכניסה ל-SmartSphere נעשית באמצעות פרטי הגישה שנמסרו לדייר עבור מערכת הבית החכם.</p>
 <div class="guide-grid">
 <article>
