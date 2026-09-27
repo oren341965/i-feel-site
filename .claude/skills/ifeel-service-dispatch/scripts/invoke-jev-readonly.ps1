@@ -8,7 +8,14 @@ try {
     if ([string]::IsNullOrWhiteSpace($previousKey)) {
         $env:TYPESAFE_API_KEY = [Environment]::GetEnvironmentVariable('TYPESAFE_API_KEY', 'User')
     }
-    if ([string]::IsNullOrWhiteSpace($env:TYPESAFE_API_KEY)) { throw 'KEY_MISSING' }
+    if ([string]::IsNullOrWhiteSpace($env:TYPESAFE_API_KEY)) {
+        Write-Output '{"status":"TYPESAFE_API_KEY_REQUIRED","advisoryOnly":true,"actionAuthorized":false,"businessActions":0}'
+        exit 2
+    }
+    if ($env:TYPESAFE_API_KEY -cnotmatch '^[\x21-\x7E]+$') {
+        Write-Output '{"status":"TYPESAFE_API_KEY_INVALID_FORMAT","advisoryOnly":true,"actionAuthorized":false,"businessActions":0}'
+        exit 2
+    }
     & node (Join-Path $PSScriptRoot 'jev-readonly.mjs') smoke
     $resultCode = $LASTEXITCODE
 } catch {
