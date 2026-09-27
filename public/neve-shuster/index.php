@@ -292,7 +292,7 @@ nsh_head('אזור דיירי שכונת הפרדס, רעננה | I Feel');
     <!-- ============ סטנדרט ============ -->
     <section class="card" id="standard">
       <h2>מה כלול בסטנדרט בכל דירה</h2>
-      <p class="lead">בכל דירה מותקנת מערכת TouchWand אלחוטית בתקן Z-Wave, עם שליטה גם באמצעות SmartSphere.</p>
+      <p class="lead">בכל דירה מותקנת מערכת בית חכם אלחוטית בתקן Z-Wave, והשליטה מהטלפון מתבצעת באמצעות SmartSphere.</p>
       <div class="split" style="margin:20px 0 6px">
         <img src="/neve-shuster/assets/touchwand-panel-9-rectangular.webp" alt="מפסק זכוכית טאץ מלבני TouchWand בעל 9 לחצנים, המפסק המותקן בדירות הפרויקט" loading="lazy" width="1200" height="770">
         <div>
@@ -303,8 +303,8 @@ nsh_head('אזור דיירי שכונת הפרדס, רעננה | I Feel');
       </div>
       <div class="grid">
         <div class="tile"><strong>מפסק מעוצב ליד הכניסה</strong><span>שליטה בתאורה ובתריס הוויטרינה.</span></div>
-        <div class="tile"><strong>שליטה מהטלפון</strong><span>שליטה במערכת החכמה באמצעות אפליקציית TouchWand.</span></div>
-        <div class="tile"><strong>TouchWand + Z-Wave + SmartSphere</strong><span>מערכת אחת לתפעול, לתרחישים ולהרחבות שתבחרו להוסיף לדירה.</span></div>
+        <div class="tile"><strong>שליטה מהטלפון</strong><span>שליטה במערכת החכמה באמצעות SmartSphere.</span></div>
+        <div class="tile"><strong>Z-Wave + SmartSphere</strong><span>מערכת אחת לתפעול, לתרחישים ולהרחבות שתבחרו להוסיף לדירה.</span></div>
       </div>
     </section>
 
@@ -504,7 +504,7 @@ nsh_head('אזור דיירי שכונת הפרדס, רעננה | I Feel');
     <!-- ============ הפעלת TouchWand / SmartSphere ============ -->
     <section class="card" id="first-run">
       <h2>איך מפעילים את הבית החכם?</h2>
-      <p class="lead">המערכת בדירה מבוססת TouchWand ומאפשרת שליטה נוחה מהטלפון על הבית החכם. כאן תוכלו למצוא את מדריך ההפעלה והחיבור לאפליקציה.</p>
+      <p class="lead">המערכת בדירה נשלטת מהטלפון באמצעות SmartSphere. כאן תוכלו למצוא הדרכות שימוש וסרטונים למערכת.</p>
       <p><a class="button button--quiet" href="https://i-feel.co.il/touchwand-app/" rel="noopener" target="_blank">למדריך SmartSphere</a></p>
       <div class="notice">
         <strong>שימו לב: ההדרכה שלכם היא העמוד הזה</strong>
@@ -528,10 +528,9 @@ nsh_head('אזור דיירי שכונת הפרדס, רעננה | I Feel');
       <h3>שלב אחר שלב</h3>
       <ol class="steps-num">
         <li>
-          <strong>מתקינים את האפליקציה</strong>
-          <p><u>אנדרואיד:</u> מחפשים <em>TouchWand</em> ב-Google Play ומתקינים.<br>
-          <u>אייפון:</u> אפליקציית TouchWand כבר לא זמינה בחנות של Apple, ולכן נכנסים מ-Safari לכתובת <a href="https://cloud.touchwand.com" rel="noopener" target="_blank">cloud.touchwand.com</a>, מתחברים, ואז לוחצים על כפתור השיתוף ובוחרים <em>הוספה למסך הבית</em>. מקבלים אייקון שנראה ומתנהג בדיוק כמו אפליקציה.</p>
-          <a class="row-link" href="https://i-feel.co.il/touchwand-app/" rel="noopener" target="_blank">המדריך המלא לאייפון ולאנדרואיד, עם צילומי מסך ←</a>
+          <strong>פותחים את SmartSphere</strong>
+          <p>ממשק השליטה בדירה הוא SmartSphere. פרטי הגישה והקישור למערכת נמסרים לדייר בהתאם לפרויקט ולהגדרות הדירה.</p>
+          <a class="row-link" href="/video/#smart-ac-connection">לסרטוני ההדרכה של SmartSphere ←</a>
         </li>
         <li>
           <strong>מתחברים בפעם הראשונה</strong>
