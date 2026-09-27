@@ -4,22 +4,82 @@ import SiemensTechnicalDocument from '../components/SiemensTechnicalDocument.ast
 import documentHtml from '../page-html/siemens-desigo-cc-system-specification.html?raw';
 
 const canonical = 'https://i-feel.co.il/siemens-desigo-cc-system-specification/';
-const title = 'מפרט מערכת הניהול Siemens Desigo CC';
-const description = 'מפרט מקצועי מלא של Siemens Desigo CC למערכות BMS: SCADA, BIM, ניהול אנרגיה, BACnet, KNX, Modbus, OPC, SNMP, אבטחה, אירועים ודוחות.';
+const title = 'Siemens Desigo CC בישראל | מערכת ניהול BMS ו-SCADA';
+const description = 'Siemens Desigo CC בישראל: מערכת ניהול BMS ו-SCADA למבנים מורכבים, עם HVAC, אנרגיה, BACnet, KNX, Modbus, OPC, SNMP, אירועים, דוחות ואינטגרציה.';
+const directAnswer = 'Siemens Desigo CC היא פלטפורמת ניהול מבנים מרכזית שמאחדת ניטור, שליטה, התראות, מגמות, אנרגיה ואינטגרציה למערכות HVAC, תאורה, חשמל ומערכות צד שלישי. בפרויקט BMS היא יושבת מעל בקרי השטח וה-DDC ומרכזת את המידע והתפעול בממשק אחד.';
+
 const jsonLd = JSON.stringify({
   '@context': 'https://schema.org',
-  '@type': 'TechArticle',
-  headline: title,
-  description,
-  url: canonical,
-  inLanguage: ['he-IL', 'en'],
-  dateModified: '2026-09-18',
-  about: ['Siemens Desigo CC', 'SCADA', 'BIM', 'Energy Management', 'BACnet', 'KNX', 'Modbus', 'OPC', 'SNMP'],
-  publisher: { '@id': 'https://i-feel.co.il/#business' },
+  '@graph': [
+    {
+      '@type': 'TechArticle',
+      headline: title,
+      description,
+      url: canonical,
+      inLanguage: ['he-IL', 'en'],
+      dateModified: '2026-09-27',
+      about: ['Siemens Desigo CC', 'SCADA', 'BMS', 'Energy Management', 'BACnet', 'KNX', 'Modbus', 'OPC', 'SNMP'],
+      publisher: { '@id': 'https://i-feel.co.il/#business' },
+      mainEntityOfPage: { '@id': canonical + '#webpage' },
+    },
+    {
+      '@type': 'WebPage',
+      '@id': canonical + '#webpage',
+      url: canonical,
+      name: title,
+      description,
+      inLanguage: 'he-IL',
+      dateModified: '2026-09-27',
+      isPartOf: { '@id': 'https://i-feel.co.il/#website' },
+      about: ['Siemens Desigo CC', 'Building Management System', 'SCADA', 'BACnet', 'KNX', 'Modbus'],
+    },
+    {
+      '@type': 'FAQPage',
+      '@id': canonical + '#faq',
+      mainEntity: [
+        {
+          '@type': 'Question',
+          name: 'מה זה Siemens Desigo CC?',
+          acceptedAnswer: { '@type': 'Answer', text: directAnswer },
+        },
+        {
+          '@type': 'Question',
+          name: 'מה ההבדל בין Desigo CC לבקרי PXC?',
+          acceptedAnswer: { '@type': 'Answer', text: 'בקרי PXC מבצעים את לוגיקת הבקרה בשטח ומחוברים לציוד ולחיישנים. Desigo CC היא שכבת הניהול שמרכזת תצוגה, התראות, מגמות, דוחות ותפעול של המערכת כולה.' },
+        },
+        {
+          '@type': 'Question',
+          name: 'האם Desigo CC מתחבר למערכות צד שלישי?',
+          acceptedAnswer: { '@type': 'Answer', text: 'כן. הארכיטקטורה מיועדת לאינטגרציה רב תחומית ויכולה לשלב מערכות ופרוטוקולים כמו BACnet, KNX, Modbus, OPC ו-SNMP בהתאם לרישיונות, דרייברים ותכנון הפרויקט.' },
+        },
+      ],
+    },
+  ],
 });
 ---
 
 <BaseLayout title={`${title} | i-feel`} description={description} canonical={canonical} ogTitle={title} ogDescription={description} ogUrl={canonical} jsonLd={jsonLd}>
+  <section class="max-w-6xl mx-auto px-4 pt-10" dir="rtl">
+    <div class="grid gap-6 lg:grid-cols-[1.25fr_0.75fr]">
+      <div class="rounded-2xl border border-brand-100 bg-brand-50 p-6 md:p-8">
+        <p class="text-accent-700 font-bold mb-2">תשובה ישירה</p>
+        <h2 class="text-2xl md:text-3xl font-extrabold text-brand-900 mb-3">מה זה Siemens Desigo CC?</h2>
+        <p class="text-lg leading-8 text-brand-700">{directAnswer}</p>
+        <p class="mt-4 text-brand-700 leading-7">המערכת מתאימה במיוחד למשרדים, מלונות, בתי חולים, מבני ציבור, קמפוסים ומפעלי תעשייה שבהם יש צורך בחדר בקרה מרכזי ובאינטגרציה בין כמה מערכות טכניות.</p>
+      </div>
+
+      <aside class="rounded-2xl border border-brand-100 bg-white p-6 md:p-8">
+        <h2 class="text-xl font-extrabold text-brand-900 mb-3">Desigo CC מול PXC</h2>
+        <p class="text-brand-700 leading-7 mb-4"><strong>PXC</strong> הוא בקר אוטומציה שמבצע את הבקרה בשטח. <strong>Desigo CC</strong> היא שכבת הניהול שמציגה ומרכזת את הנתונים, ההתראות, המגמות והפקודות.</p>
+        <div class="space-y-2 text-sm font-semibold">
+          <a href="/siemens-desigo-pxc4-pxc5-pxc7-system-specification/" class="block text-accent-700 hover:underline">מפרט בקרי PXC4, PXC5 ו-PXC7</a>
+          <a href="/siemens-desigo-bms/" class="block text-accent-700 hover:underline">Siemens Desigo BMS בישראל</a>
+          <a href="/structure-control/" class="block text-accent-700 hover:underline">בקרת מבנה BMS בישראל</a>
+        </div>
+      </aside>
+    </div>
+  </section>
+
   <SiemensTechnicalDocument
     title={title}
     intro="מסמך דרישות למערכת הניהול Siemens Desigo CC, כולל תפעול BMS רב תחומי, ניהול אנרגיה, BIM, אירועים, משתמשים, דוחות, אבטחה ואינטגרציה למערכות צד שלישי."
@@ -32,7 +92,7 @@ const jsonLd = JSON.stringify({
       'תצוגת BIM דו ממדית ותלת ממדית, ניווט לציוד והצגת נתוני זמן אמת.',
       'ממשקי REST, חיבור ענן, תפעול מרחוק, הרשאות משתמשים ודרישות אבטחת מידע.',
     ]}
-    keywords={['Siemens Desigo CC', 'מערכת ניהול BMS', 'SCADA לבקרת מבנה', 'BIM', 'ניהול אנרגיה', 'BACnet', 'KNX Secure', 'OPC UA', 'SNMP', 'Building X']}
+    keywords={['Siemens Desigo CC', 'Siemens Desigo CC Israel', 'מערכת ניהול BMS', 'SCADA לבקרת מבנה', 'BIM', 'ניהול אנרגיה', 'BACnet', 'KNX Secure', 'OPC UA', 'SNMP', 'Building X']}
     documentHtml={documentHtml}
     docxUrl="/assets/siemens-bms/documents/siemens-desigo-cc-system-specification.docx"
     pdfUrl="/assets/siemens-bms/documents/siemens-desigo-cc-system-specification.pdf"
