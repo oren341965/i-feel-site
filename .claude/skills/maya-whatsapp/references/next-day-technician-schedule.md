@@ -1,0 +1,21 @@
+# Daily next-day technician schedule
+
+Oren explicitly authorized on 2026-09-22 sending every technician their next-day schedule daily by 16:00 Asia/Jerusalem, to prepare for work. Use the existing Maya WhatsApp automation; no additional scheduler is needed. This is a narrow standing employee-message authorization, not customer outreach or permission to edit schedules.
+
+## Timing and priority
+
+At the first existing authorized run at or after 15:00, prioritize this dispatch before routine triage and field-photo requests. The original target is completion by 16:00. Current cadence is defined in the shared sales-email-whatsapp.md reference; when its next run is 16:10, report DISPATCH_WINDOW_CONFLICT rather than claiming the 16:00 deadline is covered or creating another run. If access, identity, time or contact resolution prevents completion, notify Oren with the actual gap; never claim all sent without verification. After a missed deadline, report it and complete the still-relevant next-day dispatch during the existing business-hours window, without duplicate sends. Do not send on Shabbat or Israeli holidays; use the preceding permitted working day to send schedules for working dates before the next permitted dispatch. Read the actual schedule; never infer that a holiday has work. If needed to establish holiday dates, use authoritative holiday/calendar evidence.
+
+## Source and recipients
+
+Read-only source: Google spreadsheet `1_r2WSYvpUWlBRz_6yX5Yqr5KKUAOVNpte6CoZYttdII`. Resolve the target date in Asia/Jerusalem (tomorrow; at month/year boundaries read that target month's tab) from fresh metadata and the exact date block in column B. Technician columns are contiguous non-empty headers starting at C and ending at the first empty header; administrative columns are excluded. Check every technician column, not only those with service visits. Include field, remote, office, leave and equipment-pickup entries as actually recorded. A verified empty column means 'no assignment currently recorded for [date]', not permission to promise a day off. A missing/incomplete date block is a blocker, not an empty schedule.
+
+Verify each technician's direct WhatsApp number through an employee directory or previously verified exact-number chat. Never guess from the header's name alone and never broadcast a combined roster. Each employee receives only their own assignments and the customer details necessary for their work; exclude security codes, passwords, irrelevant personal information and other technicians' customer schedules.
+
+## Message and verification
+
+Apply the installed Maya identity checks and run lock before browser work. Work in bounded batches within the lock's four-minute lifetime, release owned locks on exit, and resume unresolved recipients on the next run if needed. Read the recent direct conversation before every send. A verified schedule message for the same recipient, target date and unchanged contents means skip; if substantive changes were made, send one clearly labeled update specifying the changes, not a duplicate full announcement. The direct conversation is the send ledger; no customer-content file is needed.
+
+Send one consolidated Hebrew message per technician headed 'הלו״ז שלך למחר — [weekday, date]'. Include scheduled start/arrival windows, customer/project, verified address/apartment and necessary customer contact details, work scope, expected duration, required equipment/preparation and operational notes exactly as available. Do not invent absent times, duration or equipment. Distinguish tentative bookings and owner approvals from customer confirmations. End with a request to review and report conflicts or missing equipment promptly. Empty verified columns receive a brief no-assignment-currently-recorded message for that exact date.
+
+Verify the message appears in the intended direct chat; distinguish sent, delivered and read states. Skip already verified sends on retries. Report completion counts and blockers without private data in telemetry. Do not change Monday, the spreadsheet, calendars, account settings, skill files, runtime flags or schedulers from an unattended pass. A telemetry failure must not cause a business-message resend.

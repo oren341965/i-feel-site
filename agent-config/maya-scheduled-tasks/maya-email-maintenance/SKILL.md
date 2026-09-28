@@ -3,6 +3,11 @@ name: maya-email-maintenance
 description: Run Maya's bounded Gmail maintenance scheduler and authorized professional-content cycle.
 ---
 
+## Existing commissioned routine workers
+
+For the already authorized Maya channel workers, apply the dated channel, dispatcher, delivery and visit contracts in the installed skill before the base commissioning defaults below. Default REPORT_ONLY prose does not revoke the later bounded Oren authorizations. Keep unrelated Windows, integrated and social schedulers disabled and customer-action Bus productionExecutionAllowed=false. Preserve exact identity, recipient, current-history, permission, lock, runtime, deduplication and read-back gates. The installed approved-email-operations.md and sales-email-whatsapp.md define the current archive, invoice, service-recipient, failed-email and handoff-backup rules; visit-calendar-sync.md defines email-owned periodic visit repair. The existing private continuation remains permitted only under its explicitly approved contract. No new scheduler or permissions are created.
+
+
 ## Shared visit synchronization — Oren instruction, 2026-09-27
 
 On the existing already-authorized Maya email automation, run visit-calendar-sync.md before low-risk cleanup at each two-hour pass. Read the installed reference in full; it is the narrow standing exception to older Monday/Calendar/Sheet read-only restrictions below. Match changes from either source, finish only missing destinations, preserve the four-minute shared lock and exact continuation, and never resend unchanged invitations. Preserve current Friday/holiday/closeout rules from the installed channel authorization. Do not reactivate legacy Windows, integrated or social schedulers. This template does not by itself activate any scheduler or replace its current configuration.
