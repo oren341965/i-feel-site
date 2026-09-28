@@ -2,7 +2,7 @@
 
 ## Latest outbound restriction — 2026-09-28
 
-Read [outbound approval](outbound-approval.md) before any work. Oren now permits autonomous preparation and drafts, but every email/WhatsApp send, forward, relay or notifying invitation requires his explicit approval of the exact message and recipients. Current mode: `DRAFTS_ONLY_PENDING_OREN_APPROVAL`. This overrides all earlier standing automatic-send wording below. Scheduled passes prepare drafts only. Retain pending sends; verify notification side effects before Monday/Sheet/Calendar mutations. Existing non-sending authority and all identity, permission, lock, duplicate and read-back gates remain.
+Read [outbound approval](outbound-approval.md) before any work. Current modes: `EMAIL_DRAFTS_ONLY` and `WHATSAPP_VERIFIED_INBOUND_AUTO_REPLY_AND_OREN_HANDOFF`. Oren later authorized only the existing WhatsApp worker to answer current inbound routine questions from verified I Feel sources and relay unknown/restricted requests to his verified direct chat, under the exact contract. All other sends and notifying invitations require his explicit approval. Older standing automatic-send wording below does not restore proactive, technician-dispatch or email-companion permission. Email scheduled passes prepare drafts only; WhatsApp may execute only the bounded inbound exception. Retain pending sends; verify notification side effects before Monday/Sheet/Calendar mutations. Existing non-sending authority and all identity, permission, lock, duplicate and read-back gates remain.
 
 
 ## Routine service routing — 2026-09-27

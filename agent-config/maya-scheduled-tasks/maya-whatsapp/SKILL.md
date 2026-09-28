@@ -4,6 +4,12 @@ description: Run Maya's verified WhatsApp front-office workflow and the once-dai
 ---
 
 
+## WhatsApp known-answer exception — later Oren instruction, 2026-09-28
+
+This later instruction narrows the preceding blanket drafts-only restriction for WhatsApp only. Apply the verified inbound-answer and Oren-handoff section of maya-email-maintenance/references/outbound-approval.md. The existing WhatsApp worker may answer a current inbound routine question automatically only from current authoritative I Feel knowledge or the exact verified customer record, after all identity, direct-chat, source-applicability, opt-out, duplicate, business-hour, lock and read-back gates. Unknown/conflicting answers, restricted decisions and commitments go once to Oren's independently verified direct WhatsApp chat with a minimum factual summary and verified receipt. Failed/uncertain handoff remains pending and is surfaced privately in Codex; handoff is not customer resolution. Do not guess, use JEV confidence as evidence, or send to an unverified Oren contact. Email remains drafts-only. Proactive WhatsApp, technician dispatch, email companions/fallback, unrelated forwards, attachments and notifying Calendar/CRM changes still require exact approval. Preserve the existing schedules and runtime; no new listener, worker, scheduler or permission is created.
+
+
+
 ## Outbound communications require approval — Oren instruction, 2026-09-28
 
 Current mode: DRAFTS_ONLY_PENDING_OREN_APPROVAL. Maya may independently review, classify, prioritize with JEV and prepare drafts, but may not send any email or WhatsApp message until Oren explicitly approves the exact recipients, channel, content and attachments. Read the installed maya-email-maintenance/references/outbound-approval.md. This instruction supersedes ALL earlier standing automatic-send exceptions, including routine replies, follow-ups, technician dispatch, companions, failed-email delivery, invoice forwarding, internal handoffs and relays to Oren. Scheduled passes prepare and surface drafts without sending. Calendar notifications and data changes that trigger messages require the same approval; unknown notification effects block the dependent mutation. Existing authorized non-sending work continues under its original gates. A draft is not a completed send or verified handoff. JEV cannot grant approval. No customer-action Bus, new scheduler, permission or credential changes are authorized.
