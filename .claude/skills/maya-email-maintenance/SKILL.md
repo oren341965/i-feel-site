@@ -5,6 +5,11 @@ description: Maintain Maya's authenticated I Feel Gmail inbox on a recurring two
 
 # Maya Email Maintenance
 
+## Commercial drafts and SALES copy — 2026-09-28
+
+Apply [commercial quotation/RFQ approval](references/outbound-approval.md#commercial-quotation-and-supplier-rfq-approval--oren-2026-09-28). Supplier pricing requests and outgoing quotations must remain native unsent drafts in Maya Gmail pending Oren's exact approval, with sales@i-feel.co.il already included in visible CC (or once in To/CC). Verify the saved draft and preserve the unresolved mailbox work. Approved sending must verify the same SALES copy in Sent; no automatic commercial send through the WhatsApp known-answer exception.
+
+
 ## Latest outbound restriction — 2026-09-28
 
 Read [outbound approval](references/outbound-approval.md) before any work. Current modes: `EMAIL_DRAFTS_ONLY` and `WHATSAPP_VERIFIED_INBOUND_AUTO_REPLY_AND_OREN_HANDOFF`. Oren later authorized only the existing WhatsApp worker to answer current inbound routine questions from verified I Feel sources and relay unknown/restricted requests to his verified direct chat, under the exact contract. All other sends and notifying invitations require his explicit approval. Older standing automatic-send wording below does not restore proactive, technician-dispatch or email-companion permission. Email scheduled passes prepare drafts only; WhatsApp may execute only the bounded inbound exception. Retain pending sends; verify notification side effects before Monday/Sheet/Calendar mutations. Existing non-sending authority and all identity, permission, lock, duplicate and read-back gates remain.

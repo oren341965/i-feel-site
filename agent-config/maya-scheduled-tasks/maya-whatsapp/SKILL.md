@@ -4,6 +4,12 @@ description: Run Maya's verified WhatsApp front-office workflow and the once-dai
 ---
 
 
+## Commercial mail drafts and mandatory SALES copy — Oren, 2026-09-28
+
+Supplier RFQ/pricing requests and outgoing quotations must wait as verified native unsent drafts in Maya's myhome@i-feel.co.il mailbox for Oren's exact approval. Apply the commercial section of maya-email-maintenance/references/outbound-approval.md. Include sales@i-feel.co.il in visible CC before review, or only once if already in To/CC; preserve verified third-party recipients and approved attachments. Verify the native draft, keep the source commercial matter pending in the mailbox, and verify the required SALES recipient in the actual Sent message after an approved send. A private preview or internal relay is not a saved Gmail draft or completed handoff. No invented prices, terms, automatic quotation/RFQ send, or standalone unapproved copy to SALES. This restriction also applies when the request arrives through WhatsApp; the non-commercial known-answer/Oren-handoff exception remains otherwise unchanged.
+
+
+
 ## WhatsApp known-answer exception — later Oren instruction, 2026-09-28
 
 This later instruction narrows the preceding blanket drafts-only restriction for WhatsApp only. Apply the verified inbound-answer and Oren-handoff section of maya-email-maintenance/references/outbound-approval.md. The existing WhatsApp worker may answer a current inbound routine question automatically only from current authoritative I Feel knowledge or the exact verified customer record, after all identity, direct-chat, source-applicability, opt-out, duplicate, business-hour, lock and read-back gates. Unknown/conflicting answers, restricted decisions and commitments go once to Oren's independently verified direct WhatsApp chat with a minimum factual summary and verified receipt. Failed/uncertain handoff remains pending and is surfaced privately in Codex; handoff is not customer resolution. Do not guess, use JEV confidence as evidence, or send to an unverified Oren contact. Email remains drafts-only. Proactive WhatsApp, technician dispatch, email companions/fallback, unrelated forwards, attachments and notifying Calendar/CRM changes still require exact approval. Preserve the existing schedules and runtime; no new listener, worker, scheduler or permission is created.
