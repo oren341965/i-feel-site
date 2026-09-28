@@ -1,5 +1,10 @@
 # Approved email operations
 
+## Latest outbound restriction — 2026-09-28
+
+Read [outbound approval](outbound-approval.md) before any work. Oren now permits autonomous preparation and drafts, but every email/WhatsApp send, forward, relay or notifying invitation requires his explicit approval of the exact message and recipients. Current mode: `DRAFTS_ONLY_PENDING_OREN_APPROVAL`. This overrides all earlier standing automatic-send wording below. Scheduled passes prepare drafts only. Retain pending sends; verify notification side effects before Monday/Sheet/Calendar mutations. Existing non-sending authority and all identity, permission, lock, duplicate and read-back gates remain.
+
+
 For routine runs, first read [sales email and WhatsApp coordination](sales-email-whatsapp.md). Its 2026-09-24 two-hour coverage, 08:00 start and verified companion-notice rules supersede older conflicting wording; all other permissions remain bounded.
 
 This route applies only when Oren explicitly authorizes mailbox maintenance or routine email sending. Installation and default REPORT_ONLY scheduling do not grant that authority. Resolve the current instruction before each run; a narrower prohibition such as no Monday writes overrides the bounce-correction exception.

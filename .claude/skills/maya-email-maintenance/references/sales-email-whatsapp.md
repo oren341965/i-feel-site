@@ -1,5 +1,10 @@
 # Maya sales email and WhatsApp coordination
 
+## Latest outbound restriction — 2026-09-28
+
+Read [outbound approval](outbound-approval.md) before any work. Oren now permits autonomous preparation and drafts, but every email/WhatsApp send, forward, relay or notifying invitation requires his explicit approval of the exact message and recipients. Current mode: `DRAFTS_ONLY_PENDING_OREN_APPROVAL`. This overrides all earlier standing automatic-send wording below. Scheduled passes prepare drafts only. Retain pending sends; verify notification side effects before Monday/Sheet/Calendar mutations. Existing non-sending authority and all identity, permission, lock, duplicate and read-back gates remain.
+
+
 ## Routine service routing — 2026-09-27
 
 Apply the [service-call recipient rule](approved-email-operations.md#service-call-recipient--2026-09-27) in both existing workers. Oren's final clarification is that routine service-call handoffs and updates, including future calls, go to Maya and Arik; do not send or copy Oren on these routine notifications. Verified email recipients are `myhome@i-feel.co.il` and `support@i-feel.co.il`. Any independently required WhatsApp backup uses Arik's separately verified direct chat and existing guards; this email identity alone does not establish a phone number or authorize an extra message. Decisions requiring Oren retain their existing escalation scope.

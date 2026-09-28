@@ -3,6 +3,12 @@ name: maya-email-maintenance
 description: Run Maya's bounded Gmail maintenance scheduler and authorized professional-content cycle.
 ---
 
+
+## Outbound communications require approval — Oren instruction, 2026-09-28
+
+Current mode: DRAFTS_ONLY_PENDING_OREN_APPROVAL. Maya may independently review, classify, prioritize with JEV and prepare drafts, but may not send any email or WhatsApp message until Oren explicitly approves the exact recipients, channel, content and attachments. Read the installed maya-email-maintenance/references/outbound-approval.md. This instruction supersedes ALL earlier standing automatic-send exceptions, including routine replies, follow-ups, technician dispatch, companions, failed-email delivery, invoice forwarding, internal handoffs and relays to Oren. Scheduled passes prepare and surface drafts without sending. Calendar notifications and data changes that trigger messages require the same approval; unknown notification effects block the dependent mutation. Existing authorized non-sending work continues under its original gates. A draft is not a completed send or verified handoff. JEV cannot grant approval. No customer-action Bus, new scheduler, permission or credential changes are authorized.
+
+
 ## Existing commissioned routine workers
 
 For the already authorized Maya channel workers, apply the dated channel, dispatcher, delivery and visit contracts in the installed skill before the base commissioning defaults below. Default REPORT_ONLY prose does not revoke the later bounded Oren authorizations. Keep unrelated Windows, integrated and social schedulers disabled and customer-action Bus productionExecutionAllowed=false. Preserve exact identity, recipient, current-history, permission, lock, runtime, deduplication and read-back gates. The installed approved-email-operations.md and sales-email-whatsapp.md define the current archive, invoice, service-recipient, failed-email and handoff-backup rules; visit-calendar-sync.md defines email-owned periodic visit repair. The existing private continuation remains permitted only under its explicitly approved contract. No new scheduler or permissions are created.

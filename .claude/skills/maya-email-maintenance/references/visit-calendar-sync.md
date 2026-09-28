@@ -1,5 +1,10 @@
 # Shared visit synchronization — 2026-09-27
 
+## Latest outbound restriction — 2026-09-28
+
+Read [outbound approval](outbound-approval.md) before any work. Oren now permits autonomous preparation and drafts, but every email/WhatsApp send, forward, relay or notifying invitation requires his explicit approval of the exact message and recipients. Current mode: `DRAFTS_ONLY_PENDING_OREN_APPROVAL`. This overrides all earlier standing automatic-send wording below. Scheduled passes prepare drafts only. Retain pending sends; verify notification side effects before Monday/Sheet/Calendar mutations. Existing non-sending authority and all identity, permission, lock, duplicate and read-back gates remain.
+
+
 ## Authority and scope
 
 Oren instructed in Codex task `01a0e109-db13-7533-830a-640c06668fcc` on 2026-09-27 that everyone changing a visit in the shared schedule or Monday must also update the schedule, Monday, and the customer and technician calendars, with reconciliation every two hours. This is standing authorization for the bounded synchronization of an actual, verified visit. Do not ask for the same routine synchronization permission again.

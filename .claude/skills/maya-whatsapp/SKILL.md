@@ -5,6 +5,11 @@ description: Operate Maya's approved I Feel WhatsApp workflow for inbound triage
 
 # Maya WhatsApp
 
+## Latest outbound restriction — 2026-09-28
+
+Read [outbound approval](../maya-email-maintenance/references/outbound-approval.md) before any work. Oren now permits autonomous preparation and drafts, but every email/WhatsApp send, forward, relay or notifying invitation requires his explicit approval of the exact message and recipients. Current mode: `DRAFTS_ONLY_PENDING_OREN_APPROVAL`. This overrides all earlier standing automatic-send wording below. Scheduled passes prepare drafts only. Retain pending sends; verify notification side effects before Monday/Sheet/Calendar mutations. Existing non-sending authority and all identity, permission, lock, duplicate and read-back gates remain.
+
+
 ## Dispatcher handoff backup — Oren instruction, 2026-09-27
 
 For urgent or deadline-dependent employee/supplier tasks, or when the recorded follow-up date arrives without acknowledgement, apply [dispatcher WhatsApp backup](../maya-email-maintenance/references/sales-email-whatsapp.md#dispatcher-whatsapp-backup--2026-09-27). This worker owns one verified backup message after current identity, exact-recipient, response and duplicate checks. Keep its completion separate from the underlying task. Oren's default review date for an ordinary handoff without a stated date is the next Israeli working day; review timing does not override WhatsApp sending windows. This explicitly authorized narrow scope supersedes older blanket internal/supplier companion exclusions, without granting new commercial decisions or general CRM writes.

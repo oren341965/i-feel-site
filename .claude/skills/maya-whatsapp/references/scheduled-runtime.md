@@ -1,5 +1,10 @@
 # Verified scheduled runtime
 
+## Latest outbound restriction — 2026-09-28
+
+Read [outbound approval](../../maya-email-maintenance/references/outbound-approval.md) before any work. Oren now permits autonomous preparation and drafts, but every email/WhatsApp send, forward, relay or notifying invitation requires his explicit approval of the exact message and recipients. Current mode: `DRAFTS_ONLY_PENDING_OREN_APPROVAL`. This overrides all earlier standing automatic-send wording below. Scheduled passes prepare drafts only. Retain pending sends; verify notification side effects before Monday/Sheet/Calendar mutations. Existing non-sending authority and all identity, permission, lock, duplicate and read-back gates remain.
+
+
 The later 2026-09-24 [sales email and WhatsApp coordination](../../maya-email-maintenance/references/sales-email-whatsapp.md) governs current cadence, the 08:00 start and email companion notices. Older cadence statements below are historical. Keep the existing 120-second total unattended limit and stop new work at 100 seconds; the four-minute lock is an outer safety limit, not permission to run longer.
 
 Oren authorized the existing `maya-whatsapp` Codex automation on 2026-09-22 and set its cadence to once every 30 minutes. This does not activate the customer-action Bus, other schedulers, marketing, or new permissions. Install this package through the canonical commissioning release; do not copy helpers over a managed installation or toggle Production flags to make a check pass.

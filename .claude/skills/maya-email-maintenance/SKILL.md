@@ -5,6 +5,11 @@ description: Maintain Maya's authenticated I Feel Gmail inbox on a recurring two
 
 # Maya Email Maintenance
 
+## Latest outbound restriction — 2026-09-28
+
+Read [outbound approval](references/outbound-approval.md) before any work. Oren now permits autonomous preparation and drafts, but every email/WhatsApp send, forward, relay or notifying invitation requires his explicit approval of the exact message and recipients. Current mode: `DRAFTS_ONLY_PENDING_OREN_APPROVAL`. This overrides all earlier standing automatic-send wording below. Scheduled passes prepare drafts only. Retain pending sends; verify notification side effects before Monday/Sheet/Calendar mutations. Existing non-sending authority and all identity, permission, lock, duplicate and read-back gates remain.
+
+
 ## Every incoming invoice to Accounting — Oren instruction, 2026-09-27
 
 Oren explicitly directed that every incoming invoice must reach Eli in Accounting. Apply [invoice delivery to Accounting](references/approved-email-operations.md#invoice-delivery-to-accounting--2026-09-27). The verified email destination is `account@i-feel.co.il`. Forward the exact original invoice-bearing correspondence and preserve attachments once, verify Sent and recipients, and retain unresolved delivery or invoice-retrieval gaps. This is a bounded invoice handoff exception to older supplier/finance forwarding restrictions, not authority to pay, issue accounting documents or decide disputed charges.
