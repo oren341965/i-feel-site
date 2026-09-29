@@ -12,14 +12,22 @@ const integratorSection = `
   <details><summary>האם i-feel מספקת תכנון ותכנות KNX בישראל?</summary><p>כן. i-feel מרכזת תכנון, תכנות ETS, אינטגרציה וליווי למערכות KNX בישראל, עם תיעוד ושירות לאורך חיי המערכת.</p></details>
 </section>`;
 
-const pageContent = content.replace('<section id="faq">', `${integratorSection}\n<section id="faq">`);
+const wiredKnxSection = `
+<section id="wired-knx-smart-home">
+  <h2>בית חכם קווי KNX: מה זה ולמי זה מתאים</h2>
+  <p><strong>התשובה הקצרה:</strong> בית חכם קווי KNX הוא מערכת שבה מפסקים, חיישנים, אקטואטורים ובקרי מיזוג מתקשרים על גבי BUS ייעודי. הוא מתאים בעיקר לבנייה חדשה או לשיפוץ יסודי, משום שהתשתית מתוכננת מראש בלוחות ובקירות. הלוגיקה המקומית ממשיכה לעבוד גם ללא אינטרנט, וניתן לשלב מוצרים של יצרני KNX שונים ולתחזק את המערכת לאורך זמן באמצעות ETS.</p>
+  <p>בפרויקט חדש כדאי לסגור את ארכיטקטורת ה-KNX לפני תוכניות החשמל: מספר מעגלי התאורה והעמעום, תריסים ווילונות, אזורי מיזוג, גלאי נוכחות, מסכי שליטה, אינטרקום, רשת ותרחישים. תכנון מוקדם מצמצם שינויים מאוחרים ומאפשר ללוחות החשמל ולתשתית ה-BUS להיבנות נכון מההתחלה.</p>
+  <p>להשוואה מול פתרון אלחוטי ראו <a href="/knx-vs-wireless/">בית חכם קווי מול אלחוטי</a>. לשלב התכנון ראו <a href="/smart-home-planning/">תכנון בית חכם</a>, ולהסבר על התקן עצמו ראו <a href="/articles/what-is-knx/">מה זה KNX</a>.</p>
+</section>`;
+
+const pageContent = content.replace('<section id="faq">', `${wiredKnxSection}\n${integratorSection}\n<section id="faq">`);
 
 const meta = {
-  title: "בית חכם ואינטגרטור KNX בישראל | תכנון ותכנות | i-feel",
-  description: "מחפשים אינטגרטור KNX בישראל? i-feel מתכננת, מתכנתת ומלווה מערכות KNX, כולל ETS, אינטגרציה, תיעוד ושירות לפרויקטים חדשים ולווילות.",
+  title: "בית חכם קווי KNX בישראל | תכנון ותכנות | i-feel",
+  description: "בית חכם קווי KNX בישראל לבנייה חדשה ולווילות: תכנון BUS, תכנות ETS, תאורה, תריסים, מיזוג, אינטגרציה, תיעוד ושירות לאורך חיי המערכת.",
   canonical: "https://i-feel.co.il/knx-smart-home/",
-  ogTitle: "בית חכם ואינטגרטור KNX בישראל | i-feel",
-  ogDescription: "תכנון, תכנות ETS ואינטגרציה למערכות KNX בישראל, עם תיעוד ושירות לאורך חיי המערכת.",
+  ogTitle: "בית חכם קווי KNX בישראל | i-feel",
+  ogDescription: "תכנון בית חכם קווי KNX לבנייה חדשה: BUS, ETS, תאורה, תריסים, מיזוג, אינטגרציה ושירות בישראל.",
   ogUrl: "https://i-feel.co.il/knx-smart-home/",
   ogImage: "https://i-feel.co.il/assets/projects/villa-knx-electrical.jpg",
   jsonLd: JSON.stringify({
@@ -49,17 +57,41 @@ const meta = {
         ]
       },
       {
-        "@type": "Service",
-        "name": "אינטגרטור KNX בישראל - תכנון, תכנות והתקנה",
+        "@type": "WebPage",
+        "@id": "https://i-feel.co.il/knx-smart-home/#webpage",
         "url": "https://i-feel.co.il/knx-smart-home/",
-        "serviceType": "KNX Smart Home Integration",
+        "name": "בית חכם קווי KNX בישראל",
+        "description": "מדריך ושירות לתכנון בית חכם קווי KNX בישראל, כולל BUS, ETS, תאורה, תריסים, מיזוג, אינטגרציה ותיעוד.",
+        "inLanguage": "he-IL",
+        "dateModified": "2026-09-29",
+        "about": [
+          { "@type": "Thing", "name": "KNX" },
+          { "@type": "Thing", "name": "בית חכם קווי" },
+          { "@type": "Thing", "name": "ETS" }
+        ]
+      },
+      {
+        "@type": "Service",
+        "name": "בית חכם קווי KNX בישראל - תכנון, תכנות והתקנה",
+        "url": "https://i-feel.co.il/knx-smart-home/",
+        "serviceType": "Wired KNX Smart Home Integration",
         "provider": { "@id": "https://i-feel.co.il/#business" },
         "areaServed": { "@type": "Country", "name": "Israel" },
-        "description": "תכנון תשתית KNX, תכנות ETS, אינטגרציה, תיעוד ושירות למערכות KNX בישראל."
+        "description": "תכנון בית חכם קווי KNX לבנייה חדשה ולווילות, כולל תשתית BUS, תכנות ETS, אינטגרציה, תיעוד ושירות בישראל."
       },
       {
         "@type": "FAQPage",
         "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "מהו בית חכם קווי KNX?",
+            "acceptedAnswer": { "@type": "Answer", "text": "בית חכם קווי KNX הוא מערכת בקרה שבה מפסקים, חיישנים, אקטואטורים ובקרי מיזוג מתקשרים על גבי BUS ייעודי. הוא מתאים בעיקר לבנייה חדשה או לשיפוץ יסודי, מתוכנת באמצעות ETS ויכול להמשיך לבצע את פעולות הבית הבסיסיות גם ללא אינטרנט." }
+          },
+          {
+            "@type": "Question",
+            "name": "מתי כדאי לבחור בית חכם קווי KNX?",
+            "acceptedAnswer": { "@type": "Answer", "text": "KNX קווי מתאים במיוחד כאשר ניתן לתכנן תשתית מראש, למשל בווילה חדשה, בית פרטי, דירה חדשה או שיפוץ עמוק. בדירה קיימת ללא פתיחת קירות כדאי להשוות גם פתרון אלחוטי." }
+          },
           {
             "@type": "Question",
             "name": "איך לבחור אינטגרטור KNX בישראל?",
