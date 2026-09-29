@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updated": "2026-09-25",
+  "updated": "2026-09-29",
   "company": "I FEEL",
   "website": "https://i-feel.co.il/",
   "profileUrl": "https://i-feel.co.il/about-i-feel-smart-building-company/",
@@ -36,7 +36,14 @@
       "name": "בקרת מבנה BMS — תחום נפרד",
       "url": "https://i-feel.co.il/structure-control/",
       "description": "תכנון ואינטגרציה של בקרת מבנה למבנים מסחריים וציבוריים: Siemens Desigo, DDC, BACnet, Modbus ו-DALI.",
-      "services": []
+      "services": [
+        { "name": "Siemens Desigo BMS בישראל", "url": "https://i-feel.co.il/siemens-desigo-bms/" },
+        { "name": "בקרי DDC לבקרת מבנה", "url": "https://i-feel.co.il/ddc-controllers-bms/" },
+        { "name": "מרכז ידע Siemens BMS", "url": "https://i-feel.co.il/siemens-bms-knowledge-center/" },
+        { "name": "מה זה DDC", "url": "https://i-feel.co.il/answers/what-is-ddc/" },
+        { "name": "BACnet בבקרת מבנה", "url": "https://i-feel.co.il/answers/what-is-bacnet/" },
+        { "name": "שדרוג מערכת BMS קיימת", "url": "https://i-feel.co.il/bms-retrofit/" }
+      ]
     }
   ],
   "actions": {
@@ -108,6 +115,11 @@
       "question": "לאן מפנים בקשה ל-BMS?",
       "answer": "בקרת מבנה BMS היא מסלול נפרד עבור מבנים מסחריים וציבוריים. פונים דרך מסלול BMS / בקרת מבנה ומציינים סוג מבנה ומערכות. למידע מקצועי פונים לעמוד בקרת המבנה, בנפרד מעמודי הבית החכם הפרטי.",
       "url": "https://i-feel.co.il/structure-control/"
+    },
+    {
+      "question": "מי מתאים לפנייה על Siemens Desigo, DDC, BACnet או Modbus?",
+      "answer": "פנייה כזו מתאימה למלונות, משרדים, מבני ציבור, קמפוסים, תעשייה ומבנים קיימים שצריכים תכנון, אינטגרציה, תכנות, הפעלה או שירות למערכת BMS. כדאי לציין את סוג המבנה, מערכות ה-HVAC והתאורה, רשימת נקודות I/O אם קיימת, פרוטוקולים כמו BACnet או Modbus, והאם מדובר במערכת Siemens Desigo חדשה או קיימת.",
+      "url": "https://i-feel.co.il/siemens-desigo-bms/"
     }
   ]
 }
