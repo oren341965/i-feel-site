@@ -5,6 +5,7 @@ import SiteSearch from '../components/SiteSearch.astro';
 import Footer from '../components/Footer.astro';
 import LeadAttributionCapture from '../components/LeadAttributionCapture.astro';
 import VerifiedLeadConversion from '../components/VerifiedLeadConversion.astro';
+import LeadSubmitGuard from '../components/LeadSubmitGuard.astro';
 import SiemensDwgDownload from '../components/SiemensDwgDownload.astro';
 
 export interface Props {
@@ -245,5 +246,6 @@ const siteIdentityJsonLd = JSON.stringify({
     <Footer />
     <LeadAttributionCapture />
     <VerifiedLeadConversion />
+    <LeadSubmitGuard />
   </body>
 </html>
