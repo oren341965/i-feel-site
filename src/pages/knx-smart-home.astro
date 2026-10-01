@@ -81,6 +81,24 @@ const meta = {
     ]
   })
 };
+
+const eilatVideoGraph = JSON.parse(meta.jsonLd);
+eilatVideoGraph["@graph"].push({
+  "@id": "https://i-feel.co.il/knx-smart-home/#eilat-bms-video",
+  "@type": "VideoObject",
+  "name": "מרכז הספורט אילת — מערכת BMS מבוססת KNX ו-DDC",
+  "description": "הצצה לפרויקט בקרת המבנה של I FEEL במרכז הספורט אילת: מערכת BMS רחבת היקף המשלבת KNX ובקרי DDC.",
+  "uploadDate": "2026-10-01",
+  "duration": "PT1M57S",
+  "thumbnailUrl": "https://i.ytimg.com/vi/UFCrIfiJC-w/hqdefault.jpg",
+  "contentUrl": "https://www.youtube.com/watch?v=UFCrIfiJC-w",
+  "embedUrl": "https://www.youtube-nocookie.com/embed/UFCrIfiJC-w",
+  "inLanguage": "he-IL",
+  "publisher": {
+    "@id": "https://i-feel.co.il/#business"
+  }
+});
+meta.jsonLd = JSON.stringify(eilatVideoGraph);
 ---
 <BaseLayout {...meta}>
   <Fragment set:html={pageContent} />
