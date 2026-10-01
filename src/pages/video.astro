@@ -84,6 +84,24 @@ const cgymVideoObject = `,
     }`;
 
 meta.jsonLd = meta.jsonLd.replace("\n  ]\n}", `${iscarVideoObject}${smartLockVideoObject}${dualZoneReceiverVideoObject}${tenInchSmartHomeScreenVideoObject}${cgymVideoObject}\n  ]\n}`);
+const officeVideoGraph = JSON.parse(meta.jsonLd);
+officeVideoGraph["@graph"].push({
+  "@type": "VideoObject",
+  "@id": "https://i-feel.co.il/video/#law-office-tel-aviv",
+  "name": "משרד עורכי דין חכם בתל אביב | Siemens KNX, מצלמות IP ורשת HP Aruba | i-feel",
+  "description": "פרויקט משרד חכם בתל אביב: Siemens KNX לתאורה, וילונות ומיזוג, מצלמות IP, בקרת כניסה, חדרי ישיבות ורשת HP Aruba.",
+  "uploadDate": "2026-10-01",
+  "duration": "PT38S",
+  "thumbnailUrl": "https://i.ytimg.com/vi/Nv1y7cjCAr8/hqdefault.jpg",
+  "contentUrl": "https://www.youtube.com/watch?v=Nv1y7cjCAr8",
+  "embedUrl": "https://www.youtube-nocookie.com/embed/Nv1y7cjCAr8",
+  "inLanguage": "he-IL",
+  "publisher": {
+    "@id": "https://i-feel.co.il/#business"
+  }
+});
+meta.jsonLd = JSON.stringify(officeVideoGraph);
+
 ---
 <BaseLayout {...meta}>
   <Fragment set:html={content} />
