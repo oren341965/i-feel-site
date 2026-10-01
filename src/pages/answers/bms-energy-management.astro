@@ -1,0 +1,29 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+const url='https://i-feel.co.il/answers/bms-energy-management/';
+const answer='מערכת ניהול אנרגיה כחלק מ-BMS אוספת נתוני צריכה ותפעול מהמונים ומהמערכות הטכניות של המבנה, מציגה מגמות וחריגות, ומאפשרת לבקר מיזוג, תאורה ומשאבות לפי שעות פעילות, תפוסה ויעדים תפעוליים. אין אחוז חיסכון קבוע שאפשר להבטיח מראש.';
+const faq=[
+{q:'מה ההבדל בין BMS ל-EMS?',a:'BMS מנטרת וגם שולטת במערכות המבנה. EMS מתמקדת בעיקר במדידה, ניתוח ודיווח של אנרגיה. בפרויקטים רבים שתי השכבות משולבות.'},
+{q:'אילו נתונים כדאי למדוד?',a:'מונים ותתי-מונים, זמני עבודה של HVAC, טמפרטורות ו-setpoints, תאורה, תפוסה ועומסי שיא, לפי מטרות הפרויקט.'},
+{q:'איך Siemens Desigo משתלבת?',a:'Siemens Desigo מרכזת מגמות, התראות ולוחות זמנים ומשלבת בקרי DDC וציוד צד שלישי דרך BACnet ו-Modbus בהתאם לציוד הקיים.'}
+];
+const meta={title:'מערכת ניהול אנרגיה BMS | Siemens Desigo | i-feel',description:'מערכת ניהול אנרגיה BMS למבנים: מדידה, קו בסיס, מונים, HVAC, התראות ו-Siemens Desigo.',canonical:url,ogTitle:'מערכת ניהול אנרגיה BMS | i-feel',ogDescription:'מדידה ובקרה על צריכת אנרגיה כחלק ממערכת BMS.',ogUrl:url,jsonLd:JSON.stringify({'@context':'https://schema.org','@graph':[
+{'@type':'WebPage',url,name:'מערכת ניהול אנרגיה BMS',description:'ניהול אנרגיה במבנים באמצעות BMS',inLanguage:'he-IL',dateModified:'2026-10-01'},
+{'@type':'Service',name:'מערכת ניהול אנרגיה BMS',serviceType:'BMS Energy Management',provider:{'@id':'https://i-feel.co.il/#business'},areaServed:{'@type':'Country',name:'Israel'}},
+{'@type':'FAQPage',mainEntity:[{'@type':'Question',name:'מהי מערכת ניהול אנרגיה BMS?',acceptedAnswer:{'@type':'Answer',text:answer}},...faq.map(x=>({'@type':'Question',name:x.q,acceptedAnswer:{'@type':'Answer',text:x.a}}))]}
+]})};
+---
+<BaseLayout {...meta}>
+<article class="max-w-4xl mx-auto px-4 py-12 lg:py-16"><div class="prose-he">
+<p class="text-sm font-bold text-accent-600">BMS · ניהול אנרגיה · Siemens Desigo</p>
+<h1>מערכת ניהול אנרגיה BMS: מה מודדים ואיך עוברים מנתונים לבקרה</h1>
+<div class="not-prose bg-brand-50 border-r-4 border-accent-500 rounded-xl p-6 my-7"><p class="text-lg leading-relaxed text-brand-800" style="margin:0"><strong>תשובה קצרה:</strong> {answer}</p></div>
+<h2>מה צריך למדוד</h2><p>מתחילים במונים ראשיים ותתי-מונים, זמני עבודה של HVAC, טמפרטורות ו-setpoints, תאורה, תפוסה ועומסי שיא. רמת הפירוט נקבעת לפי גודל המבנה ומטרות התפעול.</p>
+<h2>איך BMS מצמצם בזבוז</h2><p><a href="/structure-control/">מערכת BMS</a> מחברת בין מדידה לפעולה: לוחות זמנים, התאמת מיזוג ותאורה לשימוש בפועל, התראות על חריגות ושמירת מגמות שמאפשרת לצוות האחזקה לזהות הידרדרות בביצועים.</p>
+<h2>BMS לעומת EMS</h2><p>BMS מנטרת וגם שולטת במערכות המבנה. EMS מתמקדת בעיקר במדידה, ניתוח ודיווח. בפרויקטים רבים שתי השכבות משולבות כך שהמדידה מובילה גם לפעולת בקרה.</p>
+<h2>Siemens Desigo לניהול אנרגיה</h2><p><a href="/siemens-desigo-bms/">Siemens Desigo</a> יכולה לרכז נתוני בקרה, מגמות, התראות ולוחות זמנים. בקרי <a href="/ddc-controllers-bms/">DDC</a> מבצעים את הבקרה המקומית, וציוד צד שלישי יכול להשתלב דרך <a href="/answers/what-is-bacnet/">BACnet</a> ו-Modbus.</p>
+<h2>מה לבדוק לפני הצעה</h2><ul><li>מונים קיימים וחסרים.</li><li>מערכות לניטור בלבד מול מערכות לשליטה.</li><li>פרוטוקולים זמינים בציוד.</li><li>דרישות מגמות, דוחות והתראות.</li><li>תוכנית Commissioning לאימות המדידה והבקרה.</li></ul>
+<h2>שאלות נפוצות</h2>{faq.map(x=><section><h3>{x.q}</h3><p>{x.a}</p></section>)}
+<p><a href="/articles/bms-retrofit-existing-building/">שדרוג BMS במבנה קיים</a> · <a href="/structure-control/caesarea-rail-campus/">מקרה בוחן קמפוס רכבת קיסריה</a> · <a href="/green-building/">בנייה ירוקה</a></p>
+</div></article>
+</BaseLayout>
