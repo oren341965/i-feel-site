@@ -9,7 +9,8 @@ Use a private JSON envelope under `.ai-manager-data/operations/`:
   "sourceWindow": { "from": "2026-09-01", "to": "2026-09-08" },
   "sourceSystems": {
     "dropbox": { "status": "live", "observedAt": "2026-09-08T07:48:00.000Z" },
-    "gmail": { "status": "live", "observedAt": "2026-09-08T07:49:00.000Z" }
+    "gmail": { "status": "live", "observedAt": "2026-09-08T07:49:00.000Z" },
+    "monday": { "status": "live", "observedAt": "2026-09-08T07:50:00.000Z" }
   },
   "sourceCoverage": {
     "requirements": { "status": "live", "observedAt": "2026-09-08T07:50:00.000Z" },
@@ -22,7 +23,9 @@ Use a private JSON envelope under `.ai-manager-data/operations/`:
 }
 ```
 
-Dropbox and Gmail are the two mandatory source-of-truth systems for this control. Both `sourceSystems` entries are required. Dropbox is the durable project filing record; Gmail is the durable procurement and supplier correspondence record, including original attachments. WhatsApp may be an intake channel, but it is not source of truth after the document is filed. If either Dropbox or Gmail is not live, the result must fail closed as `SOURCE_GAP`.
+Dropbox, Gmail, and Monday are the three mandatory source-of-truth systems for this control. All three `sourceSystems` entries are required. Dropbox is the durable project filing record; Gmail is the durable procurement and supplier correspondence record, including original attachments; Monday is the authoritative project workflow record for stable project identity, operational status, owner, next action, and explicitly recorded closing controls. WhatsApp may be an intake channel, but it is not source of truth after the document is filed. If Dropbox, Gmail, or Monday is not live, the result must fail closed as `SOURCE_GAP`.
+
+Monday authority does not convert a general status label into equipment quantity evidence. Required, ordered, received, issued, installed, and returned quantities still need the line-level evidence defined below. When a structured numeric quantity is recorded in a verified Monday column, retain the exact board, item, column, and observation timestamp as its evidence reference.
 
 Allowed system and coverage statuses are `live`, `stale`, `blocked`, and `missing`. `capturedAt` and live `observedAt` values must be valid timestamps. The five evidence-coverage categories are required even when blocked so the report cannot silently shrink its scope.
 
@@ -87,3 +90,4 @@ The main and tenant boards contain closing controls, but the contractor board cu
 4. A delivery-note file located by `upload-delivery-notes-to-dropbox` may supply a receipt only after its line item and quantity are extracted and tied to the project.
 5. Supplier order/invoice evidence from `procurement-po-tracker` is useful context but payment or invoice matching is not proof of project receipt, warehouse issue, or installation.
 6. Preserve both records when the same document exists in Gmail and Dropbox: Gmail proves the received correspondence and original attachment; Dropbox proves the controlled project filing. Reconcile them by a stable document number or content hash, never by filename alone.
+7. Join Monday by exact board ID and item ID. Treat Monday as authoritative for project identity and workflow state, while preserving the document or ledger evidence that proves each equipment quantity.
