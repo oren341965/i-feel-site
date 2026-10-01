@@ -70,3 +70,7 @@
 | משרד עורכי דין חכם בתל אביב | סרטוני שיווק למשרדים | `Nv1y7cjCAr8` | /smart-office/, /bms-offices/, /smart-solutions-business/, /communication-networks/, /control4-meeting-rooms/ |
 
 הסרטון פורסם ביוטיוב ב-2026-10-01. ההטמעה באתר מוכנה בענף העבודה; אינה מסומנת כחיה לפני פריסה.
+
+| מרכז הספורט אילת — מערכת BMS רחבת היקף מבוססת KNX ו-DDC | BMS | `UFCrIfiJC-w` | /video/#eilat-bms-video, /structure-control/#eilat-bms-video, /bms-public-buildings/#eilat-bms-video, /ddc-controllers-bms/#eilat-bms-video, /knx-smart-home/#eilat-bms-video |
+
+סרטון אילת פורסם בערוץ I FEEL ב-2026-10-01. חמש ההטמעות מוכנות בענף העבודה וממתינות למיזוג ולפריסה. סיווג שיווקי: `BMS`; מקור לתכנית העדכון השבועי של מנהל המכירות: https://www.youtube.com/watch?v=UFCrIfiJC-w.
