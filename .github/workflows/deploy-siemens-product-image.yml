@@ -54,7 +54,7 @@ jobs:
 
       - name: Install deployment dependencies
         shell: cmd
-        run: npm ci --legacy-peer-deps --ignore-scripts
+        run: npm ci --ignore-scripts
 
       - name: Upload product image through explicit FTPS
         shell: cmd

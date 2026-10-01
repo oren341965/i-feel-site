@@ -17,13 +17,14 @@ test('shared lead capture requires city and self-reported source on every websit
   assert.match(capture, /form\.checkValidity\(\)/);
 });
 
-test('shared capture preserves first referrer and first entry page for attribution', async () => {
+test('shared capture preserves first referrer and a query-free first entry path for attribution', async () => {
   const capture = await read('src/components/LeadAttributionCapture.astro');
 
   assert.match(capture, /ifeel_first_referrer/);
   assert.match(capture, /ifeel_entry_page/);
   assert.match(capture, /document\.referrer/);
-  assert.match(capture, /window\.location\.pathname \+ window\.location\.search/);
+  assert.match(capture, /window\.location\.pathname,/);
+  assert.doesNotMatch(capture, /window\.location\.pathname \+ window\.location\.search/);
   assert.match(capture, /setHiddenValue\(form, 'first_referrer'/);
   assert.match(capture, /setHiddenValue\(form, 'entry_page'/);
 });
