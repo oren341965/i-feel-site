@@ -1,4 +1,4 @@
-import { readFile, readdir } from 'node:fs/promises';
+import { readFile, readdir, stat } from 'node:fs/promises';
 import path from 'node:path';
 
 // Validate the rendered artifact, including public/ legacy pages, not just Astro sources.
@@ -29,6 +29,36 @@ for (const name of ['sitemap.xml', 'sitemap-siemens-knx.xml']) {
 }
 let pages = 0;
 let indexable = 0;
+// PHP entry points are copied to dist without being rendered by Astro. Check
+// their declared indexing policy too, rather than assuming every sitemap URL
+// is an indexable HTML page. Never execute PHP or follow its private includes.
+for (const route of sitemapPaths) {
+  const resolved = path.resolve(root, '.' + route);
+  const relative = path.relative(root, resolved);
+  if (relative.startsWith('..') || path.isAbsolute(relative)) {
+    errors.push(`${route}: sitemap target outside build`);
+    continue;
+  }
+  const candidates = route.endsWith('/')
+    ? [path.join(resolved, 'index.html'), path.join(resolved, 'index.php')]
+    : [resolved];
+  let target;
+  for (const candidate of candidates) {
+    if (await stat(candidate).then(s => s.isFile()).catch(() => false)) {
+      target = candidate;
+      break;
+    }
+  }
+  if (!target) {
+    errors.push(`${route}: sitemap target missing from build`);
+    continue;
+  }
+  if (!target.endsWith('.php')) continue;
+  const source = (await readFile(target, 'utf8')).replace(/<!--[\s\S]*?-->/g, '');
+  const noindex = metadata(source, 'robots').some(t => /\bnoindex\b/i.test(attr(t, 'content')))
+    || /header\s*\(\s*['"]X-Robots-Tag:[^'"\r\n]*\bnoindex\b/i.test(source);
+  if (noindex) errors.push(`${route}: noindex PHP URL in sitemap`);
+}
 for (const file of (await walk(root)).filter(f => f.endsWith('.html'))) {
   pages++;
   const html = (await readFile(file, 'utf8')).replace(/<!--[\s\S]*?-->/g, '');
