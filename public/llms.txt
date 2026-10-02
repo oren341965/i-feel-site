@@ -4,7 +4,7 @@
 
 i-feel משרתת לקוחות פרטיים, יזמי בנייה, אדריכלים וארגונים בישראל. באתר מתועדים מעל 9,000 לקוחות ומעל 4,000 פרויקטים, לצד פרויקטי BMS, KNX, מלונאות, משרדים ומבני ציבור.
 
-עודכן לאחרונה: 2026-09-25
+עודכן לאחרונה: 2026-10-02
 
 ## תחומי פעילות עיקריים
 
@@ -14,6 +14,7 @@ i-feel משרתת לקוחות פרטיים, יזמי בנייה, אדריכלי
 - [הארכת השהיית יציאה באזעקת RISCO](https://i-feel.co.il/risco-exit-delay/): מה בודקים לפני שינוי זמן היציאה וכיצד מתאמים שינוי בהתאם לדגם.
 - [בית חכם KNX](https://i-feel.co.il/knx-smart-home/): תכנון, תכנות והטמעת מערכות KNX לבנייה חדשה, שיפוצים ופרויקטים מורכבים.
 - [בקרת מבנה BMS](https://i-feel.co.il/structure-control/): תכנון ואינטגרציה של מערכות ניהול מבנה למלונות, משרדים, בתי חולים ומבני ציבור, כולל Siemens Desigo, DDC, BACnet, Modbus, KNX ו-DALI.
+- [בקרת מבנה BMS למשרדים](https://i-feel.co.il/bms-offices/): ניהול מיזוג, תאורה, אנרגיה והתראות במשרדים ומגדלים, עם DDC, BACnet, Modbus, KNX, DALI, Siemens Desigo ואפשרות Retrofit למבנים קיימים.
 - [BMS לאוניברסיטאות וקמפוסים](https://i-feel.co.il/bms-universities-campuses/): ניהול מרכזי לקמפוסים מרובי מבנים עם Siemens Desigo, DDC, BACnet, Modbus, KNX, HVAC, אנרגיה והתראות.
 - [שדרוג מערכת BMS קיימת](https://i-feel.co.il/bms-retrofit/): מסלול Retrofit למבנים פעילים, כולל סקר בקרים, DDC, BACnet, Modbus, Desigo ותכנית שדרוג בשלבים.
 - [EPBD ו-BACS בבקרת מבנה](https://i-feel.co.il/articles/epbd-bacs-building-automation-desigo/): הדרישות האירופיות למערכות אוטומציה ובקרה, והמעבר למדידה, זיהוי חריגות ואופטימיזציה באמצעות Siemens Desigo.
