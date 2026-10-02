@@ -1,0 +1,194 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+const title = 'KNX Secure 2026: אבטחת KNX/IP וגישה מרחוק | i-feel';
+const description = 'מדריך מקצועי לאבטחת KNX ב-2026: KNX IP Secure, Data Secure, גישה מרחוק, ETS6.4, תיעוד ושדרוג מערכות קיימות.';
+const canonical = 'https://i-feel.co.il/articles/knx-secure-ip-security-2026/';
+const ogImage = 'https://i-feel.co.il/projects/knx-smart-home-central-moshav/09-smart-living-room-knx.jpg';
+
+const faq = [
+  ['מהו KNX Secure?', 'KNX Secure הוא שם למנגנוני אבטחה תקניים בעולם KNX. KNX IP Secure מגן על תקשורת KNX בתווך IP, ו-KNX Data Secure מגן על נתונים ותקשורת בין רכיבים נתמכים.'],
+  ['האם כל מערכת KNX ישנה חייבת החלפה?', 'לא. במקרים רבים אפשר להתחיל מסקר של שכבת ה-IP, הגישה מרחוק, קובץ ETS והרשאות, ולשדרג בהדרגה רק את החלקים שבהם קיים פער.'],
+  ['האם KNX IP Secure מחליף Firewall או תכנון רשת?', 'לא. הוא מגן על תקשורת KNX בתווך IP, אבל עדיין נדרש תכנון רשת נכון, ניהול הרשאות, הפרדה לוגית וגישה מרחוק מבוקרת.'],
+  ['מה הקשר בין ETS6.4 לאבטחה?', 'ETS6.4 מוסיף כלים שמסייעים לעבודת תחזוקה מסודרת, כולל גיבוי אוטומטי לארכיון, שיפורי ניהול פרויקטים והורדה לפי מספר סידורי.'],
+  ['האם אפשר גישה מרחוק בלי VPN?', 'KNX Standard v3.0.5 כולל מסגרת תקנית חדשה לגישה מרחוק מאובטחת מבוססת Cloud Interface. התמיכה בפועל תלויה במוצר, בגרסה ובמימוש של היצרן.'],
+  ['איך KNX משתלב עם BMS?', 'במבנים מסחריים KNX משמש לעיתים קרובות ברמת החדרים, בעוד BMS מרכז HVAC, אנרגיה, התראות ומערכות טכניות. חשוב לתכנן גם את אבטחת נקודת החיבור ביניהן.']
+];
+
+const jsonLd = JSON.stringify({
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': ['Article','TechArticle'],
+      headline: 'KNX Secure 2026: איך מאבטחים KNX/IP וגישה מרחוק',
+      description,
+      datePublished: '2026-10-02',
+      dateModified: '2026-10-02',
+      inLanguage: 'he-IL',
+      mainEntityOfPage: canonical,
+      image: ogImage,
+      author: { '@type': 'Organization', name: 'i-feel', url: 'https://i-feel.co.il/' },
+      publisher: { '@id': 'https://i-feel.co.il/#business' }
+    },
+    {
+      '@type': 'BreadcrumbList',
+      itemListElement: [
+        { '@type': 'ListItem', position: 1, name: 'דף הבית', item: 'https://i-feel.co.il/' },
+        { '@type': 'ListItem', position: 2, name: 'מאמרים', item: 'https://i-feel.co.il/articles/' },
+        { '@type': 'ListItem', position: 3, name: 'KNX Secure 2026', item: canonical }
+      ]
+    },
+    {
+      '@type': 'FAQPage',
+      mainEntity: faq.map(([q,a]) => ({
+        '@type': 'Question',
+        name: q,
+        acceptedAnswer: { '@type': 'Answer', text: a }
+      }))
+    }
+  ]
+});
+---
+<BaseLayout title={title} description={description} canonical={canonical} ogTitle={title} ogDescription={description} ogUrl={canonical} ogImage={ogImage} jsonLd={jsonLd}>
+  <article class="bg-white" dir="rtl">
+    <header class="bg-brand-900 text-white py-14 md:py-20">
+      <div class="max-w-5xl mx-auto px-4">
+        <a href="/articles/" class="text-accent-400 font-semibold hover:text-accent-300">מאמרים ועדכונים</a>
+        <p class="mt-4 text-sm text-brand-200">KNX · אבטחת מידע · KNX/IP · עודכן 02.10.2026</p>
+        <h1 class="mt-4 text-4xl md:text-5xl font-extrabold leading-tight">KNX Secure 2026: איך מאבטחים KNX/IP וגישה מרחוק בלי לפגוע בשירות</h1>
+        <p class="mt-5 max-w-4xl text-lg md:text-xl text-brand-100 leading-relaxed">
+          מערכות KNX מחוברות היום יותר מאי פעם לרשתות IP, ל-ETS, ל-BMS ולשירות מרחוק. החיבור הזה מקצר זמני שירות ומאפשר אינטגרציה רחבה יותר, אבל הוא מחייב תכנון אבטחה מסודר. העדכונים של KNX Association מספטמבר 2026 מציבים את שכבת ה-IP, ניהול הגישה והתחזוקה המאובטחת במרכז סדר היום המקצועי.
+        </p>
+      </div>
+    </header>
+
+    <div class="max-w-5xl mx-auto px-4 py-10 md:py-14">
+      <figure class="mb-10">
+        <img src="/projects/knx-smart-home-central-moshav/09-smart-living-room-knx.jpg" alt="מערכת בית חכם KNX בפרויקט i-feel" class="w-full h-72 md:h-[420px] object-cover rounded-2xl border border-brand-100 shadow-sm" loading="eager" />
+        <figcaption class="mt-2 text-sm text-brand-500 text-center">מערכת KNX מקצועית צריכה להיות מתוכננת לא רק לנוחות, אלא גם לתחזוקה, גיבוי וגישה מרחוק מבוקרת.</figcaption>
+      </figure>
+
+      <section class="rounded-2xl border border-brand-100 bg-brand-50 p-6 md:p-8 mb-10">
+        <h2 class="text-2xl md:text-3xl font-extrabold text-brand-900 mb-4">התשובה הקצרה</h2>
+        <p class="text-lg leading-8 text-brand-700">
+          כאשר מערכת KNX מחוברת לרשת IP או מאפשרת שירות מרחוק, צריך לבדוק ארבע שכבות יחד: תכנון הרשת, אופן הגישה מרחוק, תמיכת הציוד ב-KNX Secure, וניהול קובץ ה-ETS והמפתחות. KNX IP Secure ו-KNX Data Secure הם חלק מהפתרון, אבל הם אינם מחליפים תכנון רשת, הרשאות, גיבויים ותיעוד.
+        </p>
+      </section>
+
+      <div class="prose-he max-w-none">
+        <h2>למה אבטחת KNX היא נושא מרכזי ב-2026?</h2>
+        <p>
+          במשך שנים רבות מערכות KNX נתפסו בעיקר כמערכת Bus אמינה לשליטה בתאורה, תריסים, מיזוג וחיישנים. ככל שהמערכות התחברו לרשתות IP, לשרתים, לאפליקציות, ל-Home Assistant, ל-BMS ולגישה מרחוק, נקודת המבט השתנתה. היום אי אפשר להסתכל רק על הקו הירוק של KNX ועל כתובות הקבוצה. צריך להבין גם מי מחובר לרשת, מי רשאי לבצע Commissioning, איפה נשמר קובץ הפרויקט, איך מתחברים מרחוק ומה קורה כאשר מחליפים נתב, שרת או מחשב של מתקין.
+        </p>
+        <p>
+          KNX Association פרסמה בספטמבר 2026 חומר מקצועי חדש שמדגיש בדיוק את הנקודה הזאת. המסר אינו שמערכות KNX הן "לא בטוחות", אלא שהחיבור לרשת צריך להיות מתוכנן ברמת IT ולא להישען על פתרונות ישנים שנשארו מהתקנה קודמת. זו הבחנה חשובה: מערכת Bus יכולה להיות יציבה מאוד במשך שנים, אבל שכבת IP שנוספה בשלב מאוחר יותר עלולה להיות החלק שדורש בדיקה.
+        </p>
+
+        <h2>KNX IP Secure: אבטחת תקשורת KNX בתווך IP</h2>
+        <p>
+          KNX IP Secure מיועד להגן על תקשורת KNX שעוברת דרך רשת IP. הוא מוסיף מנגנוני אימות, שלמות מידע, Freshness והצפנה, כך שרכיבים מורשים משתתפים בתקשורת בצורה מבוקרת יותר. מבחינה מעשית, זה רלוונטי במיוחד כאשר יש נתבי KNX/IP, ממשקי IP, Backbone מבוסס Ethernet או חיבור של ETS דרך רשת המבנה.
+        </p>
+        <p>
+          עם זאת, חשוב לא לטעות ולחשוב שאפשר להפעיל KNX IP Secure ואז להתעלם מכל שאר שכבות האבטחה. עדיין צריך לנהל משתמשים והרשאות, להגדיר את ציוד הרשת, להפריד בין רשתות לפי מדיניות הארגון ולתכנן את הגישה מרחוק. במבנה מסחרי או ציבורי, שכבת ה-KNX היא רק חלק מארכיטקטורה רחבה יותר שכוללת שרתי BMS, מערכות HVAC, בקרי DDC, מצלמות, בקרת כניסה, Wi-Fi ורשת ארגונית.
+        </p>
+
+        <h2>KNX Data Secure: הגנה על הנתונים עצמם</h2>
+        <p>
+          KNX Data Secure פועל ברמת התקשורת בין התקנים וכתובות הקבוצה הנתמכות. הוא מאפשר להגן על מידע מפני שינוי או שימוש לא מורשה גם כאשר התקשורת אינה מתבצעת רק בתווך IP. בפרויקטים חדשים ניתן לשלב בין IP Secure ל-Data Secure לפי סוג הציוד והטופולוגיה. בפרויקטים ותיקים חשוב יותר להבין קודם אילו רכיבים קיימים, מה הם תומכים ומהו מסלול השדרוג ההגיוני.
+        </p>
+        <p>
+          זו גם הסיבה שלא נכון להחליף באופן אוטומטי מערכת שלמה רק משום שהיא בת כמה שנים. מערכת KNX בנויה בדרך כלל כך שניתן לשדרג אותה בהדרגה. אפשר להתחיל משכבת IP, מממשק תקשורת או מנתב, לעבור לתיעוד ולגיבוי, ורק אחר כך להחליט אילו אזורים דורשים Secure ברמת המכשיר.
+        </p>
+
+        <h2>השלב הראשון במערכת קיימת: להבין את הארכיטקטורה</h2>
+        <p>
+          לפני כל שינוי אנחנו ממליצים לבנות תמונת מצב. איזה נתב מותקן? אילו ממשקי KNX/IP קיימים? האם יש שרת Visualization? האם יש Home Assistant, Control4, BMS או Gateway ל-BACnet ו-Modbus? איפה נמצא קובץ ETS? האם קיימת גרסה עדכנית שלו? מי מחזיק בסיסמאות ובמפתחות? האם קיימת גישה מרחוק ואם כן מי רשאי להשתמש בה?
+        </p>
+        <p>
+          השאלות האלה נשמעות ניהוליות, אבל הן משפיעות ישירות על איכות השירות. כאשר אין תיעוד, כל תקלה הופכת לחקירה. כאשר יש תיעוד, אפשר להחליף ציוד, לבצע עדכון או להזמין איש מקצוע נוסף בלי להתחיל את הפרויקט מחדש. בפרויקט BMS גדול תיעוד מסודר חשוב אפילו יותר, משום שמערכת אחת יכולה לשרת מאות או אלפי נקודות בקרה.
+        </p>
+
+        <h2>גישה מרחוק: שירות טוב בלי חשיפה מיותרת</h2>
+        <p>
+          שירות מרחוק הוא יתרון משמעותי. במקום לשלוח טכנאי לכל שינוי קטן או בדיקת תקשורת, אפשר לבצע אבחון, בדיקת ETS, בדיקת שרת או שינוי הגדרה מתוך סביבת שירות מבוקרת. הבעיה מתחילה כאשר הגישה מרחוק נבנתה לאורך השנים בדרך מאולתרת ולא תועדה. לעיתים ספק אינטרנט התחלף, נתב הוחלף, משתמשים נשארו פעילים או חיבור נוצר לצורך ביקור אחד ונשאר קבוע.
+        </p>
+        <p>
+          לכן אנחנו ממליצים להגדיר גישה מרחוק כחלק מהמפרט של הפרויקט: מי מורשה להתחבר, באיזו שיטה, מהו אמצעי האימות, אילו מערכות נגישות, מי מנהל את החשבונות וכיצד מבטלים הרשאה. המטרה אינה למנוע שירות מרחוק, אלא להפוך אותו לשירות שניתן להסביר, לתעד ולבקר.
+        </p>
+
+        <h2>מה חדש ב-KNX Standard v3.0.5?</h2>
+        <p>
+          ב-15 בספטמבר 2026 פרסמה KNX Association את KNX Standard v3.0.5. לצד שיפורים בתאורה, KNX IoT ועדכוני Firmware, הגרסה כוללת גם Cloud Interface תקני לגישה מרחוק מאובטחת. זו התפתחות משמעותית משום שהיא מכוונת לעולם שבו יצרנים יוכלו להציע שירות מרחוק בצורה אחידה יותר, בלי להישען על פתרונות קנייניים שונים לכל מערכת.
+        </p>
+        <p>
+          חשוב להדגיש שהתקן מגדיר יכולות ליצרנים ולמוצרים תואמים; הוא אינו משנה רטרואקטיבית כל מערכת שכבר מותקנת. לכן בפרויקט פעיל צריך לבדוק את הדגמים והגרסאות שבשטח. בפרויקט חדש כדאי כבר בשלב התכנון לבחון ציוד שתומך במנגנוני Secure ובתחזוקה מודרנית, במיוחד כאשר המערכת מיועדת לפעול עשר, חמש-עשרה או עשרים שנה.
+        </p>
+
+        <h2>ETS6.4: אבטחה מתחילה גם בגיבוי ובסדר</h2>
+        <p>
+          ETS6.4 כולל יכולות שמקלות על עבודה בפרויקטים גדולים: Multi Linking, גיבוי אוטומטי לארכיון, הורדה לפי מספר סידורי, מבנה משופר של Room & Function ושיפורים בניהול פרויקטים. חלק מהשינויים האלה נראים כמו שיפור Workflow בלבד, אבל יש להם קשר ישיר לתחזוקה בטוחה. כאשר גרסאות הפרויקט נשמרות באופן מסודר, קל יותר לדעת מה שונה, לשחזר גרסה קודמת ולמנוע תלות במחשב אחד.
+        </p>
+        <p>
+          בפרויקט KNX Secure חשוב במיוחד לנהל את קובץ ETS ואת המפתחות כמו נכס תפעולי. אסור להגיע למצב שבו לאחר כמה שנים אין ללקוח קובץ עדכני או שהגישה תלויה באדם אחד. מערכת פתוחה אמורה להיות ניתנת לשירות לאורך זמן, והדרך להשיג זאת היא שילוב בין תקן פתוח לבין תיעוד, גיבוי ונוהל עבודה.
+        </p>
+
+        <h2>KNX ו-BMS: נקודת החיבור דורשת תכנון</h2>
+        <p>
+          במבני ציבור, משרדים, מלונות וקמפוסים, KNX משמש לעיתים קרובות בשכבת החדר: תאורה, הצללה, חיישני נוכחות, טמפרטורה ופקודות מקומיות. מעליו נמצאת שכבת <a href="/structure-control/">בקרת מבנה BMS</a> שמנהלת HVAC, אנרגיה, ציוד מכני, התראות ומגמות. בפרויקטים של i-feel אנחנו משלבים לפי הצורך <a href="/siemens-desigo-bms/">Siemens Desigo</a>, בקרי DDC, BACnet, Modbus, KNX ו-DALI.
+        </p>
+        <p>
+          כאשר KNX מתחבר ל-BMS, צריך להחליט מי מנהל איזו פקודה, אילו נתונים הם Read Only, אילו פקודות עוברות לשכבת החדר ואיך נראית התנהגות המערכת במקרה של ניתוק שרת או תקשורת. אבטחה טובה אינה רק "מי יכול להתחבר"; היא גם הגדרה ברורה של סמכויות בין מערכות.
+        </p>
+
+        <h2>שדרוג מערכת ישנה: לא מחליפים לפני שמודדים</h2>
+        <p>
+          במערכת ותיקה אנחנו מעדיפים להתחיל מסקר מצב ולא מרשימת קניות. לעיתים מגלים שרוב רכיבי ה-KNX תקינים והבעיה היא סביבם: נתב ישן, שרת לא מתועד, קובץ ETS חלקי, הרשאות לא מסודרות או חיבורי רשת שנבנו לאורך השנים. במצב כזה אפשר לשפר משמעותית את המערכת בלי להחליף את כל האקטואטורים, המפסקים והחיישנים.
+        </p>
+        <p>
+          מסלול שדרוג טוב מחלק את העבודה לשלבים. בשלב הראשון משיגים תיעוד וגיבוי. בשלב השני מסדרים רשת וגישה מרחוק. בשלב השלישי משדרגים ממשקי IP או ציוד מרכזי לפי הצורך. ורק בשלב הרביעי מחליטים אם יש הצדקה להחליף רכיבי שטח. כך העלות נשלטת יותר והלקוח מקבל תוצאה תפעולית בכל שלב.
+        </p>
+
+        <h2>Checklist ליועץ, מתקין או מנהל אחזקה</h2>
+        <ul>
+          <li>קיימת מפת מערכת עדכנית: KNX, IP, שרתים, Gateways וחיבורי BMS.</li>
+          <li>ידוע מי רשאי לגשת מרחוק ומהו תהליך ביטול ההרשאה.</li>
+          <li>קובץ ETS עדכני נשמר בגיבוי ארגוני ולא רק במחשב אישי.</li>
+          <li>מפתחות ופרטי Secure נשמרים ומועברים לפי נוהל ברור.</li>
+          <li>ידוע אילו רכיבים תומכים KNX IP Secure ואילו KNX Data Secure.</li>
+          <li>רשת הבקרה מתוכננת בהתאם למדיניות הארגון ואינה תלויה ב-Wi-Fi אורחים או בהרשאות מיותרות.</li>
+          <li>חיבורי Home Assistant, Visualization, BMS ושירות ענן נכללים בבדיקת המערכת.</li>
+          <li>קיים תהליך התאוששות לאחר החלפת נתב, שרת או מחשב ETS.</li>
+        </ul>
+
+        <h2>שאלות נפוצות</h2>
+        {faq.map(([q,a]) => (
+          <details class="border-b border-brand-100 py-4">
+            <summary class="font-bold text-brand-900 cursor-pointer">{q}</summary>
+            <p class="mt-3 text-brand-700 leading-8">{a}</p>
+          </details>
+        ))}
+
+        <h2>מקורות רשמיים</h2>
+        <p>
+          המאמר מבוסס על חומר מקצועי רשמי של KNX Association שפורסם או עודכן בספטמבר 2026. מומלץ תמיד לבדוק את הוראות היצרן והגרסה של המוצר הספציפי לפני שינוי מערכת פעילה.
+        </p>
+        <ul>
+          <li><a href="https://knx.org/news/your-knx-installation-exposed-securing-ip-side" target="_blank" rel="noopener noreferrer">KNX — Securing the IP Side, 21.09.2026</a></li>
+          <li><a href="https://support.knx.org/hc/en-us/articles/14774118731538-KNX-Security-Check" target="_blank" rel="noopener noreferrer">KNX Security Check</a></li>
+          <li><a href="https://knx.org/news/knx-releases-standard-v305" target="_blank" rel="noopener noreferrer">KNX Standard v3.0.5, 15.09.2026</a></li>
+          <li><a href="https://support.knx.org/hc/en-us/articles/31061986226450-ETS-v6-4-0" target="_blank" rel="noopener noreferrer">ETS 6.4.0 Release Notes</a></li>
+        </ul>
+      </div>
+
+      <section class="mt-12 rounded-2xl bg-brand-900 text-white p-7 md:p-9">
+        <h2 class="text-3xl font-extrabold mb-3">יש לכם KNX עם גישה מרחוק או מערכת ותיקה?</h2>
+        <p class="text-brand-100 text-lg leading-8 mb-5">i-feel יכולה לבצע בדיקת ארכיטקטורה ממוקדת של KNX/IP, ETS, גישה מרחוק, שילוב BMS והרשאות, ולהציע מסלול שדרוג מדורג בלי להחליף ציוד תקין שלא לצורך.</p>
+        <div class="flex flex-wrap gap-3">
+          <a href="tel:+972-3-508-9553" class="inline-flex items-center rounded-lg bg-accent-600 px-5 py-3 font-bold text-white hover:bg-accent-700">03-508-9553</a>
+          <a href="/contactus/" class="inline-flex items-center rounded-lg bg-white px-5 py-3 font-bold text-brand-900 hover:bg-brand-50">בקשת בדיקת KNX/BMS</a>
+          <a href="/knx-smart-home/" class="inline-flex items-center rounded-lg border border-white/30 px-5 py-3 font-bold text-white hover:bg-white/10">מערכות KNX של i-feel</a>
+        </div>
+      </section>
+    </div>
+  </article>
+</BaseLayout>
