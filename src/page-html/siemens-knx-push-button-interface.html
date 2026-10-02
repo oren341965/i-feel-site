@@ -1,0 +1,75 @@
+<article dir="rtl" class="bg-white">
+  <header class="bg-brand-900 text-white py-16 md:py-20">
+    <div class="max-w-5xl mx-auto px-4">
+      <a href="/articles/" class="text-accent-400 font-semibold">מאמרים ומדריכים</a>
+      <p class="mt-4 text-sm text-brand-200">Siemens · KNX · תכנון מפסקי חוץ | 02.10.2026</p>
+      <h1 class="mt-4 text-4xl md:text-5xl font-extrabold leading-tight">ממשק לחצנים KNX של Siemens: איך מחברים מפסק חוץ מוגן מים?</h1>
+      <p class="mt-5 text-lg md:text-xl text-brand-100 leading-relaxed">מפסק רגיל בחצר או ליד השער, ממשק לחצנים בתוך המבנה וחיבור למערכת הבית החכם: כך מתכננים את השילוב, מה בודקים במפרט ואיך שומרים על ההפרדה בין החוץ לקו ה־KNX.</p>
+    </div>
+  </header>
+  <div class="max-w-5xl mx-auto px-4 py-12">
+    <div class="prose-he max-w-none">
+      <p>ממשק לחצנים KNX, המכונה גם Push Button Interface או PBI, מאפשר לחבר לחצן, מפסק או מגע יבש רגיל למערכת <a href="/knx-smart-home/">בית חכם KNX</a>. הממשק מזהה שינוי במצב המגע ומשדר את הפקודה למערכת דרך קו ה־KNX BUS.</p>
+      <p>ל־Siemens קיימים ממשקי לחצנים מסדרת UP 220 עם שניים או ארבעה ערוצי כניסה/יציאה הניתנים להגדרה. מספר הערוצים אינו קובע בהכרח את מספר הלחצנים הפיזיים: אופן החיבור והתפקוד נקבעים לפי הרכיב והתכנון בתוכנת ETS.</p>
+      <h2>דגמי Siemens והמק״טים המלאים</h2>
+      <p><strong>Siemens UP 220/21, מק״ט <bdi>5WG1220-2AB21</bdi>, כולל שני ערוצים. Siemens UP 220D31, מק״ט <bdi>5WG1220-2DB31</bdi>, כולל ארבעה ערוצים.</strong> בכל אחד מהדגמים ניתן להגדיר כל ערוץ ככניסה למגע פוטנציאל־חופשי, כגון מפסק או לחצן רגיל, או כיציאה להפעלת נורית LED, בהתאם למפרט ולתכנון ב־ETS.</p>
+    </div>
+    <div class="grid md:grid-cols-2 gap-6 my-8">
+      <figure class="rounded-2xl border border-brand-100 p-6 bg-white">
+        <img src="/assets/siemens-knx-interface/5wg1220-2ab21.webp" alt="ממשק לחצנים KNX Siemens UP 220/21 מקט 5WG1220-2AB21" width="581" height="900" loading="lazy" class="w-full h-72 object-contain" />
+        <figcaption class="mt-5 text-center"><strong class="text-xl block" dir="ltr">Siemens UP 220/21</strong><span class="block mt-2">2 ערוצי כניסה/יציאה · מק״ט <bdi>5WG1220-2AB21</bdi></span><a class="block mt-3 text-accent-700 underline" href="https://sid.siemens.com/v/u/A6V10327687-JPG" target="_blank" rel="noopener noreferrer">תמונת מוצר רשמית: Siemens</a></figcaption>
+      </figure>
+      <figure class="rounded-2xl border border-brand-100 p-6 bg-white">
+        <img src="/assets/siemens-knx-interface/5wg1220-2db31.webp" alt="ממשק לחצנים KNX Siemens UP 220D31 מקט 5WG1220-2DB31" width="458" height="709" loading="lazy" class="w-full h-72 object-contain" />
+        <figcaption class="mt-5 text-center"><strong class="text-xl block" dir="ltr">Siemens UP 220D31</strong><span class="block mt-2">4 ערוצי כניסה/יציאה · מק״ט <bdi>5WG1220-2DB31</bdi></span><a class="block mt-3 text-accent-700 underline" href="https://sid.siemens.com/v/u/A6V12131668" target="_blank" rel="noopener noreferrer">תמונת מוצר רשמית: Siemens</a></figcaption>
+      </figure>
+    </div>
+    <aside class="my-10 rounded-2xl border-r-4 border-accent-600 bg-brand-50 p-6 md:p-8">
+      <h2 class="text-2xl font-extrabold text-brand-900 mb-3">הממשק הוא IP20 — אינו מוגן מים</h2>
+      <p class="text-lg leading-relaxed">שני הדגמים מוגדרים בדרגת הגנה <strong>IP20</strong>. Siemens מייעדת אותם להתקנה קבועה בתוך המבנה, במקום יבש ובקופסה מתאימה. מפסק חוץ מוגן מים אינו הופך את הממשק שמאחוריו לרכיב חוץ. כאשר מפסק החוץ נגיש, עדיף להשאיר את הממשק ואת קו ה־BUS בתוך המבנה ולהעביר החוצה רק את חוטי המגע היבש, בכפוף למפרט ולמגבלת האורך.</p>
+    </aside>
+    <div class="prose-he max-w-none">
+      <h2>למה להשתמש בממשק לחצנים?</h2>
+      <p>ממשק לחצנים מאפשר לשלב במערכת KNX מפסקים ולחצנים רגילים, במקום להשתמש בכל נקודה במפסק KNX ייעודי. כך ניתן להתאים את סוג המפסק למיקום, לעיצוב ולתנאי הסביבה, תוך חיבור הפעולה למערכת החכמה. פתרון כזה שימושי בחצר, במרפסת או ליד שער.</p>
+      <h2>מפסק חוץ חייב להתאים לתנאי החשיפה</h2>
+      <p>כאשר נקודת ההפעלה מותקנת מחוץ למבנה, המפסק עצמו צריך להיות מיועד להתקנה חיצונית ובעל דירוג IP מתאים לחשיפה הצפויה למים ולאבק. יש לבדוק גם התאמה ללחות ולשמש, לפי תנאי המקום והוראות היצרן.</p>
+      <p>הקופסה, המכסה, האטמים וכניסות הכבלים צריכים לשמור על ההגנה לאחר ההתקנה. יש להשתמש באטמים ובמחברי כבלים מתאימים ולוודא שהעברת הכבל אינה פוגעת באטימות. בסביבה החשופה לשמש יש לבדוק התאמה לקרינת UV.</p>
+      <p>דירוגים כגון IP55 או IP66 עשויים להתאים בתנאים מסוימים, אך אין לבחור אותם באופן אוטומטי. דירוג המפסק לבדו אינו מבטיח שההתקנה כולה מוגנת.</p>
+      <h2>איפה להתקין את ממשק הלחצנים?</h2>
+      <p>בדגמי UP 220/21 ו־UP 220D31 יש לפעול לפי הוראות Siemens להתקנה פנימית ויבשה. המיקום המועדף הוא בקופסה מתאימה בתוך המבנה; אל המפסק החיצוני מעבירים חיווט מגע יבש בלבד. כך הרכיב האלקטרוני מוגן יותר, וקו ה־BUS אינו מגיע לקופסה חיצונית נגישה.</p>
+      <p>אין להתקין את הממשק בקופסת חוץ רק משום שהמפסק מוגן מים. גם קופסה אטומה אינה מבטלת את דרישות היצרן בנוגע לסביבת ההתקנה, ללחות ולעיבוי.</p>
+    </div>
+    <section class="my-10 rounded-2xl bg-brand-900 text-white p-6 md:p-8" aria-labelledby="connection-title">
+      <h2 id="connection-title" class="text-2xl font-bold mb-6">תרשים חיבור עקרוני: מהחוץ אל הבית החכם</h2>
+      <ol class="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <li class="rounded-xl bg-white/10 p-4"><strong class="block text-accent-400 mb-2">1 · בחוץ</strong>מפסק עם מגע יבש ודירוג IP מתאים לתנאי המקום</li>
+        <li class="rounded-xl bg-white/10 p-4"><strong class="block text-accent-400 mb-2">2 · חיווט המגע</strong>זוג שזור, לא מסוכך, עד 10 מטר לכל ערוץ לפי מפרט Siemens</li>
+        <li class="rounded-xl bg-white/10 p-4"><strong class="block text-accent-400 mb-2">3 · בתוך המבנה</strong>UP 220/21 או UP 220D31 בקופסה פנימית ובמקום יבש</li>
+        <li class="rounded-xl bg-white/10 p-4"><strong class="block text-accent-400 mb-2">4 · מערכת KNX</strong>חיבור ל־BUS והגדרת הפעולה ב־ETS</li>
+      </ol>
+      <p class="mt-5 text-sm text-brand-100">התרשים מציג את עקרון התכנון. חיבור המסופים, בחירת הכבל וההפרדה החשמלית נעשים לפי מפרט הדגם בידי חשמלאי מוסמך.</p>
+    </section>
+    <div class="prose-he max-w-none">
+      <h2>אבטחת קו ה־KNX</h2>
+      <p>אם קו ה־BUS מגיע לקופסת מפסק חיצונית נגישה, פירוק המפסק עלול לאפשר גישה פיזית לתשתית התקשורת. משמעות הסיכון תלויה בתכנון ובהגדרות המערכת, אך יש להביא אותו בחשבון כבר בשלב התכנון.</p>
+      <p>השארת ה־BUS בתוך המבנה מצמצמת חשיפה ישירה שלו בנקודה זו. חוטי המגע החיצוניים עדיין נגישים, ולכן נדרש תכנון מתאים במיוחד כשמדובר בפקודה רגישה כגון פתיחת שער. אין להניח שהדגמים הללו תומכים ב־KNX Secure; יש לבדוק תמיכה ואפשרויות אבטחה לפי הדגם והמערכת.</p>
+      <h2>אורך הכבל למגעים</h2>
+      <p>במפרטים של שני הדגמים מצוין אורך חיווט כניסה מרבי של <strong>10 מטרים לכל ערוץ</strong>, בכבל שזור ולא מסוכך. נתון זה מתייחס לחיבור בין המפסק לממשק, ולא לאורך קו ה־KNX BUS. אין להחיל אותו על דגמים אחרים ללא בדיקת המפרט שלהם.</p>
+      <p>הממשק מיועד למגעים פוטנציאל־חופשיים: אין להזין לכניסות מתח חיצוני או לחבר את הממשק ל־230V. לפי הוראות Siemens, אין להתקינו באותה קופסה עם רכיבי או כבלי 230V, ויש לשמור על הפרדת SELV מתאימה לאורך חיווט האותות.</p>
+      <h2>הגנה מפני לחות וקורוזיה</h2>
+      <p>גם במפסק מוגן מים, התקנה לא נכונה, אטם פגום או כניסת כבל שאינה אטומה עלולים לאפשר חדירת לחות. יש להתאים את כל מכלול ההתקנה לתנאי החוץ ולפעול לפי הוראות יצרן המפסק. הממשק האלקטרוני נשאר במקום פנימי ויבש בהתאם לדרישות Siemens.</p>
+      <h2>לפני ביצוע העבודה</h2>
+      <p>בדקו את הדגם והמק״ט, את מספר הערוצים ותפקידם, את אורך הכבל ואת תנאי ההתקנה. החיבור והתכנות יבוצעו בהתאם למפרט המוצר ולתכנון מערכת ה־KNX. לבחירת סוגי מפסקים ותכנון נקודות ההפעלה ניתן להיעזר גם ב<a href="/knx-switch-advisor/">יועץ מפסקי KNX</a>.</p>
+      <h2>מקורות טכניים רשמיים של Siemens</h2>
+      <ul>
+        <li><a href="https://hit.sbt.siemens.com/RWD/AssetsByProduct.aspx?RC=WW&amp;asset_type=Data+Sheet+for+Product&amp;lang=en&amp;prodId=5WG1220-2AB21" target="_blank" rel="noopener noreferrer">מפרט UP 220/21 — שני ערוצים, IP20, חיווט והוראות התקנה</a></li>
+        <li><a href="https://hit.sbt.siemens.com/RWD/AssetsByProduct.aspx?RC=WW&amp;asset_type=Data+Sheet+for+Product&amp;lang=en&amp;prodId=5WG1220-2DB31" target="_blank" rel="noopener noreferrer">מפרט UP 220D31 — ארבעה ערוצים, IP20, חיווט והוראות התקנה</a></li>
+      </ul>
+    </div>
+    <section class="mt-12 rounded-2xl bg-brand-50 border border-brand-100 p-6 md:p-8">
+      <h2 class="text-2xl font-bold mb-3">מתכננים מפסק חוץ למערכת KNX?</h2>
+      <p class="text-lg mb-5">I Feel מסייעת בבחירת הממשק, מיקום הרכיבים והתאמת המפסק למערכת הבית החכם.</p>
+      <div class="flex flex-wrap gap-3"><a href="/contactus/" class="rounded-lg bg-accent-600 text-white font-bold px-6 py-3">לתכנון עם I Feel</a><a href="tel:035089553" class="rounded-lg border border-brand-200 font-bold px-6 py-3" dir="ltr">03-508-9553</a></div>
+    </section>
+  </div>
+</article>
