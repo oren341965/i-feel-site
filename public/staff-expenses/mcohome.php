@@ -100,7 +100,12 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
             'media_count' => count($createdRecord['media']),
             'recurring' => (bool) ($createdRecord['recurring'] ?? false),
         ]);
-        $success = 'הדיווח נשמר. מספר אירוע: ' . $createdRecord['eventId'] . '. נשלח לצוות ול-MCOHome.';
+        $success = 'הדיווח נשמר. מספר אירוע: ' . $createdRecord['eventId'] . '. '
+            . (($createdRecord['sentToMcohome'] ?? false)
+                ? 'המדיה סונכרנה ל-Google Drive והדיווח נשלח ל-MCOHome.'
+                : ((count($createdRecord['media'] ?? []) > 0)
+                    ? 'המדיה נשמרה בפורטל וממתינה לסנכרון ל-Google Drive לפני שליחה ל-MCOHome.'
+                    : 'הדיווח נשמר ונשלח לצוות; סטטוס שליחת היצרן מופיע למטה.'));
         $_POST = [];
     } catch (Throwable $submitError) {
         $error = $submitError->getMessage();
@@ -135,7 +140,7 @@ portal_nav('mcohome', $user);
             <span>חומרה: <?= portal_h($createdRecord['severity'] ?? 'NORMAL') ?></span>
             <span>תקלה חוזרת: <?= ($createdRecord['recurring'] ?? false) ? 'כן, מופע ' . (int) ($createdRecord['repeatCount'] ?? 2) : 'לא' ?></span>
             <span>נשלח ל-MCOHome: <?= ($createdRecord['sentToMcohome'] ?? false) ? 'כן' : 'לא' ?></span>
-            <span>Dropbox: <?= portal_h($createdRecord['dropboxSync']['status'] ?? 'לא הוגדר') ?></span>
+            <span>Google Drive: <?= portal_h($createdRecord['googleDriveSync']['status'] ?? 'לא הוגדר') ?></span>
         </div>
     <?php endif; ?>
 

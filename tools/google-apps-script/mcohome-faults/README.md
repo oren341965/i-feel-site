@@ -16,7 +16,7 @@ Each client report creates its event ID before upload. Retries reuse the same ev
 
 The Apps Script writes to spreadsheet `1fYMehkRix3HTkz6EMvnrDx6eyyQJWwOVcGQYDThRthg`, tab `מעקב תקלות`.
 
-The endpoint is idempotent by Event ID: an existing row is updated instead of appended again. The script expands the sheet schema when required and stores recurrence, severity, last update, Dropbox evidence, Root Cause, resolution and owner.
+The endpoint is idempotent by Event ID: an existing row is updated instead of appended again. The script expands the sheet schema when required and stores recurrence, severity, last update, Google Drive evidence, Root Cause, resolution and owner.
 
 ### Apps Script deployment
 
@@ -37,22 +37,32 @@ define('MCOHOME_FAULT_APPS_SCRIPT_URL', 'https://script.google.com/macros/s/DEPL
 define('MCOHOME_FAULT_APPS_SCRIPT_SECRET', 'THE_SAME_LONG_RANDOM_SECRET');
 ```
 
-## Dropbox evidence archive
+## Google Drive evidence archive
 
-The server can upload the original photos and videos to a dedicated Dropbox tree. Secrets stay server-side.
+The server uploads the original photos and videos to Oren's Google Drive folder:
+
+`MCOHome Service Calls`
+
+Current root folder ID:
+
+`1xEElpkLxeCgXrYBJ-920IAPuqiN-tWxw`
+
+The production server uses a Google OAuth refresh token with Drive file/folder access. Keep all OAuth values server-side only:
 
 ```php
-define('MCOHOME_DROPBOX_ACCESS_TOKEN', 'DROPBOX_OAUTH_ACCESS_TOKEN');
-define('MCOHOME_DROPBOX_ROOT_PATH', '/Apps/MCOHome Service Calls');
+define('MCOHOME_GDRIVE_CLIENT_ID', 'GOOGLE_OAUTH_CLIENT_ID');
+define('MCOHOME_GDRIVE_CLIENT_SECRET', 'GOOGLE_OAUTH_CLIENT_SECRET');
+define('MCOHOME_GDRIVE_REFRESH_TOKEN', 'GOOGLE_OAUTH_REFRESH_TOKEN');
+define('MCOHOME_GDRIVE_ROOT_FOLDER_ID', '1xEElpkLxeCgXrYBJ-920IAPuqiN-tWxw');
 ```
 
-Environment variables with the same names are also supported. Never commit the Dropbox token to Git.
+Environment variables with the same names are also supported. Never commit OAuth secrets or refresh tokens to Git.
 
 The archive structure is:
 
-`/Apps/MCOHome Service Calls/YYYY/MM/MCO-EVENT-ID/`
+`MCOHome Service Calls/YYYY/MM/MCO-EVENT-ID/`
 
-When Dropbox is configured, media is uploaded after the fault is saved and the Dropbox link/path is written into the incident record and Google Sheet. If Dropbox is temporarily unavailable, the original media remains in the private I Feel server record and the incident still proceeds.
+After a technician uploads media in the staff portal, the server uploads each original file to Google Drive, grants Reader access to Kristin and Mr. Dong, stores the Drive URL in the incident metadata and Sheet, and only then sends the manufacturer notification. If media exists but Google Drive sync or sharing is not complete, the manufacturer email is held and the incident status becomes `ממתין לסנכרון מדיה ל-Google Drive`.
 
 ## Manufacturer workflow
 
@@ -64,5 +74,5 @@ A repeated fault for the same model and fault type is marked `HIGH`. Three or mo
 
 - `ממסר נדבק` automatically sets `חשד ל-Inrush Current` to `כן`.
 - `מפסק 9` requires an exact configuration.
-- One Event ID is retained from the app through email, Dropbox, Google Sheet, RMA and final closure.
+- One Event ID is retained from the app through email, Google Drive, Google Sheet, RMA and final closure.
 - The incident is not considered closed until Root Cause and permanent resolution are documented.
