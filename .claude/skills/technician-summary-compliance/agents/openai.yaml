@@ -1,0 +1,4 @@
+interface:
+  display_name: "Technician Summary Compliance"
+  short_description: "Audit summaries and publish weekly/monthly completion rewards"
+  default_prompt: "Use $technician-summary-compliance to audit the latest completed weekly period and send the authorized internal reports and winner notices."
