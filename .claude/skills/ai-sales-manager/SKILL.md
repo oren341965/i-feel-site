@@ -14,6 +14,7 @@ description: Orchestrate I Feel sales and marketing, read-only Monday audits, pa
 - For ownership, migration, or duplication, read [component lifecycle](references/component-lifecycle.md).
 - For a live Monday audit, read [board contract](references/board-contract.md), then [classification and scoring](references/classification-and-scoring.md). Use the [report contract](references/report-contract.md) for results.
 - For authorized Hashavshevet-to-Monday intake, read [references/hashavshevet-customer-intake.md](references/hashavshevet-customer-intake.md).
+- For an authorized customer handoff from sales to projects, including Dropbox folder creation and the Monday transfer status, read [references/project-handoff-dropbox.md](references/project-handoff-dropbox.md).
 - For a full-system dry run, plans queue, quote reconciliation, paid-media coordination, website feedback, project video, or Claude judgment request, read [references/orchestration-contract.md](references/orchestration-contract.md).
 - For Vault/Bus work, read [Vault layout](references/vault-layout.md); for runtime/installers, read [local runtime](references/local-runtime.md).
 - Before acting beyond local read-only analysis, read [safety and approvals](references/safety-and-approvals.md).
