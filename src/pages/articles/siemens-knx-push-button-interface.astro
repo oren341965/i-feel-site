@@ -1,0 +1,27 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import content from '../../page-html/siemens-knx-push-button-interface.html?raw';
+
+const title = 'ממשק לחצנים KNX של Siemens: חיבור מפסק חוץ מוגן מים';
+const description = 'איך מחברים מפסק חוץ רגיל למערכת KNX באמצעות ממשק לחצנים? הסבר על ממשקי Siemens עם 2 או 4 ערוצים, איטום, אבטחה ואורך הכבל.';
+const canonical = 'https://i-feel.co.il/articles/siemens-knx-push-button-interface/';
+const jsonLd = JSON.stringify({
+  '@context': 'https://schema.org',
+  '@graph': [
+    { '@type': 'LocalBusiness', '@id': 'https://i-feel.co.il/#business', name: 'i-feel', url: 'https://i-feel.co.il/', telephone: '+972-3-508-9553', address: { '@type': 'PostalAddress', streetAddress: 'אימבר 14', addressLocality: 'פתח תקווה', addressCountry: 'IL' } },
+    { '@type': 'BreadcrumbList', itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'דף הבית', item: 'https://i-feel.co.il/' },
+      { '@type': 'ListItem', position: 2, name: 'מאמרים ומדריכים', item: 'https://i-feel.co.il/articles/' },
+      { '@type': 'ListItem', position: 3, name: title, item: canonical },
+    ] },
+    { '@type': 'Article', headline: 'ממשק לחצנים KNX של Siemens: איך מחברים מפסק חוץ מוגן מים?', description, url: canonical,
+      mainEntityOfPage: canonical, inLanguage: 'he-IL', datePublished: '2026-10-02', dateModified: '2026-10-02',
+      author: { '@type': 'Organization', name: 'i-feel', url: 'https://i-feel.co.il/' }, publisher: { '@id': 'https://i-feel.co.il/#business' },
+      image: ['https://i-feel.co.il/assets/siemens-knx-interface/5wg1220-2ab21.webp', 'https://i-feel.co.il/assets/siemens-knx-interface/5wg1220-2db31.webp'],
+    },
+  ],
+});
+---
+<BaseLayout title={title} description={description} canonical={canonical} ogTitle={title} ogDescription={description} ogUrl={canonical} jsonLd={jsonLd}>
+  <Fragment set:html={content} />
+</BaseLayout>
