@@ -21,6 +21,8 @@ const aliases = {
   stock:['stock','qty','quantity','מלאי','יתרה'],
   category:['category','קבוצה','קטגוריה'],
   brand:['brand','יצרן','מותג'],
+  description:['description','details','תיאור מורחב','פרטים'],
+  image:['imageurl','image url','image','תמונה','קישור תמונה'],
   online:['online','web','אונליין','למכירה באתר']
 };
 const col = (key) => { for (const a of aliases[key]) { const i=header.indexOf(a.toLowerCase()); if(i>=0)return i; } return -1; };
@@ -31,11 +33,11 @@ const products = rows.map(parse).map(r=>({
   sku:r[idx.sku]||'', name:r[idx.name]||'',
   category:idx.category>=0?r[idx.category]||'':'מוצרים',
   brand:idx.brand>=0?r[idx.brand]||'':'',
-  description:'',
+  description:idx.description>=0?r[idx.description]||'':'',
   priceIlsVat:Number(String(r[idx.price]||'0').replace(/[^0-9.\-]/g,''))||0,
   stock:idx.stock>=0?(Number(String(r[idx.stock]||'0').replace(/[^0-9.\-]/g,''))||0):0,
   online:idx.online>=0?truthy.has(String(r[idx.online]||'').toLowerCase()):false,
-  imageUrl:''
+  imageUrl:idx.image>=0?r[idx.image]||'':''
 })).filter(p=>p.sku&&p.name&&p.priceIlsVat>0);
 const output={schemaVersion:1,source:'Hashavshevet CSV export',updatedAt:new Date().toISOString(),products};
 await writeFile('public/customer-portal/catalog/hashavshevet-products.json',JSON.stringify(output,null,2)+'\n','utf8');
