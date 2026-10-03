@@ -25,7 +25,7 @@ Use `scripts/report-host-checkin.mjs` after a bounded local workstation audit or
 
 ## Service identity readiness gate
 
-Before provisioning a service identity or sending an authenticated Host check-in, run `scripts/audit-host-readiness.mjs`. The preflight is read-only and separates local workstation readiness from credential readiness. It verifies the safe work branch, `origin/main` ancestry, clean worktree, GitHub/Vault/installed Skill registration and local installation metadata without creating credentials or changing permissions.
+Before provisioning a service identity or sending a general authenticated Host check-in, run `scripts/audit-host-readiness.mjs`. The preflight is read-only and separates local workstation readiness from credential readiness. It verifies the safe work branch, `origin/main` ancestry, clean worktree, GitHub/Vault/installed Skill registration and local installation metadata without creating credentials or changing permissions.
 
 When the approved credential is stored behind the local DPAPI wrapper, pass that wrapper with `--credential-wrapper`. The audit uses its network-free `--dry-run` path to verify credential availability and Host binding without reading or printing the secret payload itself.
 
@@ -34,6 +34,10 @@ node .claude/skills/management-system-telemetry/scripts/audit-host-readiness.mjs
 ```
 
 Use `--expected-host` only with an exact Host slug already registered in the I Feel Management System. Never invent a Host slug and never provision a token as part of the audit. Read [references/host-readiness.md](references/host-readiness.md) for the gates and approval boundary.
+
+### Maya Windows logon check-in
+
+For the user-requested Maya startup synchronization check, use the narrower `scripts/invoke-maya-startup-checkin.ps1` adapter, not the full developer-workstation preflight. Read [references/maya-startup-checkin.md](references/maya-startup-checkin.md) before installation, registration or interpreting its result. Its role-scoped audit verifies the four-skill release, preserves local supplements, compares Git versions and validates the existing DPAPI wrapper/reporter and host binding before sending only `startup_read_only` metadata. It cannot provision identities or promote Maya to READY; it never claims full cloud synchronization or starts business workflows.
 
 ## Safety boundaries
 
