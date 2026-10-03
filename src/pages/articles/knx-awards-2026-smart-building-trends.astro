@@ -1,0 +1,187 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+const title = 'KNX Awards 2026: 6 מגמות שמשנות את KNX ובקרת המבנה | i-feel';
+const description = 'לקראת KNX Awards 2026: אבטחת KNX/IP, ETS6.4, אנרגיה, איכות אוויר, BMS ואינטגרציה. המגמות שכדאי ליועצים, מתקינים ומנהלי מבנים בישראל להכיר.';
+const canonical = 'https://i-feel.co.il/articles/knx-awards-2026-smart-building-trends/';
+const faq = [
+  {
+    q: 'מתי מתקיים KNX Awards 2026?',
+    a: 'טקס KNX Awards 2026 מתקיים אונליין ב-6 באוקטובר 2026 בשעה 17:30 CEST, במהדורה ה-16 של האירוע.'
+  },
+  {
+    q: 'כמה פרויקטים ומוצרים מועמדים השנה?',
+    a: 'KNX Association דיווחה על 55 פרויקטים מועמדים ועל 33 מוצרים במסגרת KNX Product Award.'
+  },
+  {
+    q: 'מה הקשר בין KNX ל-BMS?',
+    a: 'KNX מתאים במיוחד לבקרת חדרים, תאורה, חיישנים, הצללה ופקודות משתמש. במבנים מורכבים משלבים אותו עם DDC ומערכת BMS מרכזית לניהול HVAC, אנרגיה, התראות ומערכות טכניות.'
+  },
+  {
+    q: 'מה חדש ב-ETS6.4?',
+    a: 'בין השינויים המרכזיים ב-ETS6.4: Multi Linking, גיבוי אוטומטי לארכיון ו-Download via Serial Number, שמטרתם לקצר עבודה ולשפר ניהול פרויקטים.'
+  },
+  {
+    q: 'האם KNX Secure מחליף תכנון רשת?',
+    a: 'לא. KNX Secure מוסיף שכבות הגנה חשובות, אך עדיין נדרש תכנון רשת נכון, הרשאות, גישה מרחוק מבוקרת וגיבוי מסודר של פרויקט ETS.'
+  }
+];
+
+const jsonLd = JSON.stringify({
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': ['Article', 'TechArticle'],
+      headline: 'KNX Awards 2026: 6 מגמות שמשנות את KNX ובקרת המבנה',
+      description,
+      datePublished: '2026-10-03',
+      dateModified: '2026-10-03',
+      inLanguage: 'he-IL',
+      mainEntityOfPage: canonical,
+      author: { '@type': 'Organization', name: 'i-feel', url: 'https://i-feel.co.il/' },
+      publisher: { '@id': 'https://i-feel.co.il/#business' },
+      about: ['KNX', 'BMS', 'ETS6.4', 'KNX Secure', 'Building Automation']
+    },
+    {
+      '@type': 'BreadcrumbList',
+      itemListElement: [
+        { '@type': 'ListItem', position: 1, name: 'דף הבית', item: 'https://i-feel.co.il/' },
+        { '@type': 'ListItem', position: 2, name: 'מאמרים', item: 'https://i-feel.co.il/articles/' },
+        { '@type': 'ListItem', position: 3, name: 'KNX Awards 2026', item: canonical }
+      ]
+    },
+    {
+      '@type': 'FAQPage',
+      mainEntity: faq.map((item) => ({
+        '@type': 'Question',
+        name: item.q,
+        acceptedAnswer: { '@type': 'Answer', text: item.a }
+      }))
+    }
+  ]
+});
+---
+<BaseLayout title={title} description={description} canonical={canonical} ogTitle={title} ogDescription={description} ogUrl={canonical} jsonLd={jsonLd}>
+  <article class="bg-white" dir="rtl">
+    <header class="bg-brand-900 text-white py-14 md:py-20">
+      <div class="max-w-4xl mx-auto px-4">
+        <a href="/articles/" class="text-accent-400 font-semibold hover:text-accent-300">מאמרים ומדריכים</a>
+        <p class="mt-4 text-sm text-brand-200">KNX · BMS · ETS6.4 · אבטחה · עודכן 03.10.2026</p>
+        <h1 class="mt-4 text-4xl md:text-5xl font-extrabold leading-tight">KNX Awards 2026: 6 מגמות שמשנות את KNX ובקרת המבנה</h1>
+        <p class="mt-5 text-lg md:text-xl leading-8 text-brand-100">לקראת טקס KNX Awards 2026, בחנו את הכיוונים המקצועיים שחוזרים שוב ושוב בעולם ה-KNX: אבטחת IP, אנרגיה, ETS6.4, איכות אוויר, אינטגרציה עם BMS ותחזוקה ארוכת טווח.</p>
+      </div>
+    </header>
+
+    <div class="max-w-4xl mx-auto px-4 py-12">
+      <section class="rounded-2xl border border-accent-100 bg-accent-50 p-6 md:p-8 mb-10">
+        <h2 class="text-2xl font-extrabold text-brand-900 mb-3">התשובה הקצרה</h2>
+        <p class="text-lg leading-8 text-brand-700">KNX ב-2026 הוא כבר לא רק תקן לשליטה בתאורה ותריסים. הכיוון הוא מערכת פתוחה ומאובטחת שמשתלבת עם BMS, DDC, DALI, BACnet ומערכות אנרגיה, ונדרשת להיות מתועדת ותחזוקתית לשנים. KNX Awards הוא חלון טוב לראות לאן התחום הולך ומה כדאי ליישם כבר היום בפרויקטים בישראל.</p>
+      </section>
+
+      <p class="text-lg leading-8 text-brand-700 mb-5">ב-6 באוקטובר 2026 תקיים KNX Association את המהדורה ה-16 של KNX Awards. לפי KNX, השנה יש 13 קטגוריות, ובהן Energy Efficiency, Innovation, Education, People’s Choice ו-Best Product. הארגון דיווח גם על 55 פרויקטים מועמדים ועל 33 מוצרים שהתמודדו בקטגוריית המוצר.</p>
+      <p class="text-lg leading-8 text-brand-700 mb-8">מעבר לשאלה מי יזכה, יש כאן הזדמנות להבין אילו יכולות הופכות לסטנדרט בפרויקט חכם: אבטחת תקשורת, אינטגרציה בין מערכות, מדידה אמיתית של ביצועי מבנה, תחזוקה מסודרת ואפשרות לשדרג את המערכת בעתיד בלי להתחיל מחדש.</p>
+
+      <section class="space-y-5 mb-12">
+        <h2 class="text-3xl font-bold text-brand-900">1. KNX הופך משכבת חדר לחלק מארכיטקטורת Smart Building</h2>
+        <p class="text-lg leading-8 text-brand-700">במשך שנים רבים זיהו KNX בעיקר עם מתגים, תאורה, תריסים ותרחישים בבית חכם. בפועל, בפרויקטים גדולים הוא משמש יותר ויותר כשכבת שטח יציבה בתוך ארכיטקטורה רחבה של בקרת מבנה. בחדרים ובאזורים המקומיים KNX יכול לטפל בחיישנים, לחצנים, הצללה, תאורה ופקודות משתמש; מעליו מערכת BMS יכולה לאסוף נתונים, לנהל מיזוג ואנרגיה ולרכז התראות.</p>
+        <p class="text-lg leading-8 text-brand-700">לכן השאלה המקצועית בפרויקט חדש אינה בהכרח "KNX או BMS?". במקרים רבים השאלה הנכונה היא איך לחלק את האחריות בין KNX, DDC, DALI, BACnet, Modbus ומערכת ניהול מרכזית כמו Siemens Desigo.</p>
+        <p class="text-lg leading-8 text-brand-700">ב-I Feel אנחנו מתייחסים לזה כאל מערכת אחת רב-שכבתית: ציוד הקצה והחדרים צריכים להמשיך לעבוד בצורה אמינה, בעוד שכבת ה-BMS מרכזת ניהול, אנרגיה, תפעול ותחזוקה.</p>
+      </section>
+
+      <section class="space-y-5 mb-12">
+        <h2 class="text-3xl font-bold text-brand-900">2. ניהול אנרגיה עובר ממסך תצוגה למערכת שמגיבה</h2>
+        <p class="text-lg leading-8 text-brand-700">אחת המגמות החשובות בעולם הבקרה היא המעבר מניטור פסיבי לאופטימיזציה. לא מספיק לדעת כמה חשמל המבנה צרך אתמול. מערכת בקרה טובה אמורה להבין תפוסה, שעות פעילות, תאורה, מיזוג, תנאי חוץ וצריכה בפועל — ולהשתמש בנתונים כדי לשפר את התפעול.</p>
+        <p class="text-lg leading-8 text-brand-700">בשטח זה יכול להתבטא בכיבוי מערכות באזורים ריקים, שינוי Setpoint לפי עומס, התאמת תאורה לאור טבעי, זיהוי חריגות או ניהול עומסים. ב-KNX ניתן לקבל את נתוני החדר והשטח, וב-BMS לנתח אותם ברמת הקומה או המבנה כולו.</p>
+        <p class="text-lg leading-8 text-brand-700">לפרויקטים מסחריים וציבוריים זו כבר לא רק שאלה של נוחות. אנרגיה, תחזוקה ותפעול הפכו למדדי ביצוע אמיתיים של המבנה.</p>
+      </section>
+
+      <section class="space-y-5 mb-12">
+        <h2 class="text-3xl font-bold text-brand-900">3. אבטחת KNX/IP הופכת לחלק מתכנון הפרויקט</h2>
+        <p class="text-lg leading-8 text-brand-700">בספטמבר 2026 פרסמה KNX Association עדכון מקצועי שמזהיר מפני חשיפה מיותרת של התקנות KNX דרך צד ה-IP. אחת הדוגמאות היא Port Forwarding ישיר לפורט 3671, פתרון שבעבר שימש לגישה מרחוק אך עלול ליצור נקודת חשיפה.</p>
+        <p class="text-lg leading-8 text-brand-700">KNX מפעילה כיום גם KNX Security Check לבדיקת חשיפה של התקנות לאינטרנט. במקביל חשוב להבין את ההבדל בין KNX IP Secure, שמגן על תקשורת בצד ה-IP, לבין KNX Data Secure, שמגן על תקשורת KNX לפי מנגנוני האבטחה של המערכת גם במדיות נוספות.</p>
+        <p class="text-lg leading-8 text-brand-700">בפרויקט אמיתי אבטחה אינה מסתכמת בהפעלת אפשרות אחת ב-ETS. צריך לתכנן רשת, הרשאות, גישה מרחוק, גיבויים, סיסמאות, שמירת מפתחות ותיעוד. מערכת מאובטחת צריכה להיות גם מערכת שניתן לתחזק.</p>
+        <div class="rounded-xl bg-brand-50 border border-brand-100 p-5">
+          <strong class="text-brand-900">לקריאה נוספת:</strong>
+          <a class="text-accent-700 font-bold underline mr-2" href="https://www.knx.org/news/your-knx-installation-exposed-securing-ip-side" target="_blank" rel="noopener">KNX Association — Securing the IP Side</a>
+        </div>
+      </section>
+
+      <section class="space-y-5 mb-12">
+        <h2 class="text-3xl font-bold text-brand-900">4. איכות אוויר הופכת ממדידה לבקרה אוטומטית</h2>
+        <p class="text-lg leading-8 text-brand-700">חיישן CO2 שמציג מספר על הקיר הוא רק השלב הראשון. מערכת חכמה באמת משתמשת בנתון כדי לבצע פעולה. כאשר חדר ישיבות מתמלא, המערכת יכולה להגדיל אוורור; כאשר החדר ריק, היא יכולה להחזיר את המערכת למצב חסכוני. באופן דומה אפשר לשלב טמפרטורה, לחות, VOC ותפוסה.</p>
+        <p class="text-lg leading-8 text-brand-700">במבנה עם BMS ניתן גם לשמור היסטוריה, לזהות אזורים שחוזרים על חריגות, להשוות בין שעות פעילות ולהפיק התראות לצוות האחזקה. זה המקום שבו החיבור בין KNX לבין מערכת ניהול מרכזית נותן ערך משמעותי.</p>
+        <p class="text-lg leading-8 text-brand-700">המשמעות למתכנן היא שצריך להגדיר מראש לא רק אילו חיישנים מתקינים, אלא מה המבנה אמור לעשות כאשר הערכים משתנים.</p>
+      </section>
+
+      <section class="space-y-5 mb-12">
+        <h2 class="text-3xl font-bold text-brand-900">5. ETS6.4 מקצר את עבודת התכנון וה-Commissioning</h2>
+        <p class="text-lg leading-8 text-brand-700">ETS6.4 כולל מספר שיפורים שמכוונים לעבודה בפרויקטים גדולים ומורכבים. KNX מציינת בין היתר Multi Linking, שמאפשר לקשר קבוצות ואובייקטים רבים בפעולה אחת, Auto Backup to Archive, שיוצר גרסה חדשה בארכיון בעת סגירת הפרויקט כאשר האפשרות מוגדרת, ו-Download via Serial Number כברירת מחדל.</p>
+        <p class="text-lg leading-8 text-brand-700">למתכנת זה יכול לחסוך זמן ולהפחית פעולות ידניות. לבעל המבנה יש כאן יתרון חשוב יותר: תיעוד וגיבוי טובים יותר. קובץ ETS מסודר הוא חלק מהנכס. בפרויקט שנדרש לתחזק בעוד חמש או עשר שנים, איכות התיעוד יכולה להיות ההבדל בין שינוי פשוט לבין עבודת איתור ארוכה ויקרה.</p>
+        <div class="rounded-xl bg-brand-50 border border-brand-100 p-5">
+          <strong class="text-brand-900">מקור רשמי:</strong>
+          <a class="text-accent-700 font-bold underline mr-2" href="https://support.knx.org/hc/en-us/articles/31061986226450-ETS-v6-4-0" target="_blank" rel="noopener">ETS v6.4.0 — KNX Association</a>
+        </div>
+      </section>
+
+      <section class="space-y-5 mb-12">
+        <h2 class="text-3xl font-bold text-brand-900">6. העתיד הוא Open Building — לא אוסף של מערכות סגורות</h2>
+        <p class="text-lg leading-8 text-brand-700">מבנה מודרני כולל עשרות מערכות: תאורה, מיזוג, הצללה, בקרת כניסה, מדידות אנרגיה, חיישנים, מעליות, מערכות בטיחות ולעיתים גם ייצור ואגירה. הערך הגדול של מערכת בקרה הוא היכולת לגרום למערכות האלה לעבוד יחד בלי ליצור תלות מיותרת ביצרן יחיד.</p>
+        <p class="text-lg leading-8 text-brand-700">זו אחת הסיבות לכך שתקנים פתוחים ופרוטוקולים מוכרים חשובים כל כך. KNX, BACnet, Modbus ו-DALI מאפשרים לבנות שכבות שונות של המערכת ולבחור את הטכנולוגיה המתאימה לכל משימה.</p>
+        <p class="text-lg leading-8 text-brand-700">גם כאשר נכנסים כלי AI ואוטומציה מתקדמים, הבסיס נשאר הנדסי: שמות עקביים, נקודות נתונים מסודרות, תיעוד, הרשאות וארכיטקטורה ברורה. AI יכול לעזור לנתח ולייעל, אבל הוא אינו תחליף לתכנון נכון של התשתית.</p>
+      </section>
+
+      <section class="rounded-2xl bg-brand-900 text-white p-7 md:p-9 mb-12">
+        <h2 class="text-3xl font-extrabold mb-4">מה כדאי לבדוק בפרויקטים שיוצגו ב-KNX Awards?</h2>
+        <ul class="space-y-3 text-lg leading-8 list-disc pr-6 text-brand-100">
+          <li>האם מערכת החדרים ממשיכה לעבוד גם כאשר שרת מרכזי אינו זמין?</li>
+          <li>איך חולקה האחריות בין KNX, DDC ומערכת BMS?</li>
+          <li>איך מטופלים גיבוי ETS, הרשאות וגישה מרחוק?</li>
+          <li>האם ניהול אנרגיה מבצע פעולות או רק מציג נתונים?</li>
+          <li>כיצד שולבו DALI, BACnet, Modbus ומערכות צד שלישי?</li>
+          <li>כמה פשוט יהיה להרחיב או לשדרג את המבנה בעוד כמה שנים?</li>
+        </ul>
+      </section>
+
+      <section class="space-y-5 mb-12">
+        <h2 class="text-3xl font-bold text-brand-900">מה המשמעות עבור פרויקטים בישראל?</h2>
+        <p class="text-lg leading-8 text-brand-700">הערך של KNX Awards אינו בהעתקה של פרויקט ממדינה אחרת, אלא בלימוד שיטות העבודה. יועץ חשמל, מתכנן, קבלן או מנהל אחזקה יכול להשתמש בדוגמאות כדי לשאול שאלות טובות יותר כבר בשלב התכנון.</p>
+        <p class="text-lg leading-8 text-brand-700">ב-I Feel אנחנו משלבים בפרויקטים לפי הצורך KNX, DALI, DDC, BACnet, Modbus ו-Siemens Desigo. המטרה היא לא להכניס כמה שיותר טכנולוגיות, אלא לבחור לכל שכבה את הכלי המתאים ולהשאיר את המערכת ברורה, מתועדת וניתנת לשירות.</p>
+        <div class="flex flex-wrap gap-3 mt-6">
+          <a href="/knx-smart-home/" class="rounded-lg bg-accent-600 px-5 py-3 font-bold text-white hover:bg-accent-700">בית חכם ו-KNX</a>
+          <a href="/structure-control/" class="rounded-lg bg-accent-600 px-5 py-3 font-bold text-white hover:bg-accent-700">בקרת מבנה BMS</a>
+          <a href="/siemens-desigo-bms/" class="rounded-lg bg-accent-600 px-5 py-3 font-bold text-white hover:bg-accent-700">Siemens Desigo</a>
+          <a href="/articles/knx-dimmers-triac-0-10v-dali2/" class="rounded-lg border border-brand-200 px-5 py-3 font-bold text-brand-900 hover:border-accent-500">KNX + DALI ודימרים</a>
+        </div>
+      </section>
+
+      <section class="mb-12">
+        <h2 class="text-3xl font-bold text-brand-900 mb-6">שאלות נפוצות</h2>
+        <div class="space-y-4">
+          {faq.map((item) => (
+            <details class="rounded-xl border border-brand-100 bg-brand-50 p-5">
+              <summary class="cursor-pointer font-bold text-lg text-brand-900">{item.q}</summary>
+              <p class="mt-3 text-brand-700 leading-7">{item.a}</p>
+            </details>
+          ))}
+        </div>
+      </section>
+
+      <section class="rounded-2xl border border-accent-200 bg-accent-50 p-7 md:p-9 mb-10">
+        <h2 class="text-3xl font-extrabold text-brand-900 mb-3">מתכננים פרויקט KNX או BMS?</h2>
+        <p class="text-lg leading-8 text-brand-700 mb-5">שלחו אלינו תוכנית חשמל, מיזוג או מפרט בקרה. נבדוק כיצד נכון לחלק את המערכת בין KNX, DALI, DDC, BACnet ו-Siemens Desigo — כולל תכנון שירות, גיבוי ושדרוג עתידי.</p>
+        <a href="/contactus/#project-enquiry" class="inline-flex rounded-lg bg-accent-600 px-6 py-3 font-bold text-white hover:bg-accent-700">שליחת תוכניות ובקשת בדיקה</a>
+      </section>
+
+      <section class="border-t border-brand-100 pt-8">
+        <h2 class="text-2xl font-bold text-brand-900 mb-4">מקורות רשמיים להמשך קריאה</h2>
+        <ul class="space-y-3 text-brand-700 leading-7">
+          <li><a class="text-accent-700 underline" href="https://www.knx.org/knx-awards" target="_blank" rel="noopener">KNX Awards 2026 — KNX Association</a></li>
+          <li><a class="text-accent-700 underline" href="https://www.knx.org/news/meet-knx-awards-2026-nominees-and-cast-your-vote" target="_blank" rel="noopener">55 הפרויקטים ו-33 המוצרים המועמדים</a></li>
+          <li><a class="text-accent-700 underline" href="https://support.knx.org/hc/en-us/articles/31061986226450-ETS-v6-4-0" target="_blank" rel="noopener">ETS6.4 — תכונות ושיפורים</a></li>
+          <li><a class="text-accent-700 underline" href="https://www.knx.org/news/your-knx-installation-exposed-securing-ip-side" target="_blank" rel="noopener">Securing the IP Side</a></li>
+          <li><a class="text-accent-700 underline" href="https://support.knx.org/hc/en-us/articles/14774118731538-KNX-Security-Check" target="_blank" rel="noopener">KNX Security Check</a></li>
+        </ul>
+      </section>
+    </div>
+  </article>
+</BaseLayout>
