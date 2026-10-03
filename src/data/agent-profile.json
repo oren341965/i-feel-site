@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updated": "2026-09-25",
+  "updated": "2026-09-30",
   "company": "I FEEL",
   "website": "https://i-feel.co.il/",
   "profileUrl": "https://i-feel.co.il/about-i-feel-smart-building-company/",
@@ -36,7 +36,17 @@
       "name": "בקרת מבנה BMS — תחום נפרד",
       "url": "https://i-feel.co.il/structure-control/",
       "description": "תכנון ואינטגרציה של בקרת מבנה למבנים מסחריים וציבוריים: Siemens Desigo, DDC, BACnet, Modbus ו-DALI.",
-      "services": []
+      "services": [
+        { "name": "Siemens Desigo BMS בישראל", "url": "https://i-feel.co.il/siemens-desigo-bms/" },
+        { "name": "בקרי DDC במערכת BMS", "url": "https://i-feel.co.il/ddc-controllers-bms/" },
+        { "name": "BMS למלונות ו-GRMS", "url": "https://i-feel.co.il/bms-hotels/" },
+        { "name": "BMS למשרדים", "url": "https://i-feel.co.il/bms-offices/" },
+        { "name": "BMS למבני ציבור", "url": "https://i-feel.co.il/bms-public-buildings/" },
+        { "name": "שדרוג BMS במבנה קיים", "url": "https://i-feel.co.il/bms-retrofit/" },
+        { "name": "מה זה DDC", "url": "https://i-feel.co.il/answers/what-is-ddc/" },
+        { "name": "מה זה BACnet", "url": "https://i-feel.co.il/answers/what-is-bacnet/" },
+        { "name": "שילוב BMS עם VRF", "url": "https://i-feel.co.il/answers/bms-vrf-integration/" }
+      ]
     }
   ],
   "actions": {
@@ -108,6 +118,16 @@
       "question": "לאן מפנים בקשה ל-BMS?",
       "answer": "בקרת מבנה BMS היא מסלול נפרד עבור מבנים מסחריים וציבוריים. פונים דרך מסלול BMS / בקרת מבנה ומציינים סוג מבנה ומערכות. למידע מקצועי פונים לעמוד בקרת המבנה, בנפרד מעמודי הבית החכם הפרטי.",
       "url": "https://i-feel.co.il/structure-control/"
+    },
+    {
+      "question": "איזה עמוד מתאים לשאלה על Siemens Desigo או DDC?",
+      "answer": "לשאלות על Siemens Desigo פונים לעמוד Siemens Desigo BMS בישראל. לשאלות על בקרי DDC, BACnet, Modbus ושכבת הבקרה המקומית פונים לעמוד בקרי DDC ולתשובת מה זה DDC. בקשה מסחרית צריכה לכלול סוג מבנה, מערכות קיימות ומטרה תפעולית.",
+      "url": "https://i-feel.co.il/siemens-desigo-bms/"
+    },
+    {
+      "question": "איזה עמוד מתאים לשאלה על BMS למלון או למשרדים?",
+      "answer": "למלון מתאים עמוד BMS למלונות, שמסביר את ההפרדה בין BMS לניהול מערכות המבנה לבין GRMS לבקרת חדרים וחיבור ל-PMS. למשרדים מתאים עמוד BMS למשרדים. בשני המקרים האפיון תלוי במערכות המיזוג, התאורה, האנרגיה והניהול הקיימות.",
+      "url": "https://i-feel.co.il/bms-hotels/"
     }
   ]
 }
