@@ -297,4 +297,22 @@ meta.jsonLd = JSON.stringify(eilatVideoGraph);
 ---
 <BaseLayout {...meta}>
   <Fragment set:html={enhancedContent} />
+  <section class="bg-brand-50 border-y border-brand-100 py-10" dir="rtl" aria-labelledby="bms-integration-paths">
+    <div class="max-w-4xl mx-auto px-4">
+      <h2 id="bms-integration-paths" class="text-2xl font-bold text-brand-900 mb-5">מה צריך לחבר למערכת בקרת המבנה שלכם?</h2>
+      <div class="grid gap-6 md:grid-cols-2">
+        <div>
+          <h3 class="text-xl font-bold text-brand-900 mb-2">מיזוג VRF ומערכת ניהול מרכזית</h3>
+          <p class="text-brand-700 leading-relaxed mb-3">החיבור תלוי ביצרן המיזוג, בשער התקשורת ובנקודות שהוא חושף. המדריך מסביר את תפקיד BACnet, Modbus ו-DDC, ומה צריך לבדוק לפני שמגדירים שליטה והתראות.</p>
+          <a href="/answers/bms-vrf-integration/" class="text-accent-700 font-bold underline">איך מחברים BMS למיזוג VRF?</a>
+        </div>
+        <div>
+          <h3 class="text-xl font-bold text-brand-900 mb-2">מלון: מהחדר ועד צוות האחזקה</h3>
+          <p class="text-brand-700 leading-relaxed mb-3">במלון חשוב להפריד בין ניהול מערכות המבנה, בקרת חדר האורח ומערכת ניהול המלון. המדריך מחבר בין BMS, GRMS ו-PMS וכולל מקרה בוחן של D-CITY ו-ROXON.</p>
+          <a href="/answers/bms-for-hotels/" class="text-accent-700 font-bold underline">מתי מלון צריך BMS ואיך משלבים בקרת חדרים?</a>
+        </div>
+      </div>
+      <p class="text-brand-700 leading-relaxed mt-6">לא בטוחים מה מותקן או איזה ממשק נדרש? אפשר להתחיל בשיחה קצרה על המבנה והקושי התפעולי, גם בלי תוכניות זמינות. <a href="/contactus/#project-enquiry" class="text-accent-700 font-bold underline">דברו איתנו על שילוב המערכות במבנה</a>.</p>
+    </div>
+  </section>
 </BaseLayout>
