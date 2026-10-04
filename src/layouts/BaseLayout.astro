@@ -54,6 +54,12 @@ const siemensKnxProducts: Record<string, string> = {
 
 const productSku = siemensKnxProducts[canonicalPath] || '';
 const isSiemensKnxProduct = Boolean(productSku);
+// These technical articles have no published offer or reviews. Keep their Article schema.
+const usesArticleSchema = [
+  '/articles/siemens-n532d31-knx-4-switch-output/',
+  '/articles/siemens-n543d31-knx-4-blind-actuator/',
+  '/articles/siemens-n56722-knx-16-output/',
+].includes(canonicalPath);
 const localProductImage = productSku === '5WG1532-1DB51'
   ? 'https://i-feel.co.il/assets/siemens-knx/images/5WG1532-1DB51.jpg'
   : '';
@@ -81,9 +87,9 @@ function generatedOgImageUrl(pathname: string) {
 
 const usesLegacyGenericImage = !requestedOgImage || /\/assets\/og-cover\.jpg(?:$|\?)/.test(requestedOgImage);
 const ogImage = localProductImage || (usesLegacyGenericImage ? generatedOgImageUrl(canonicalPath) : requestedOgImage);
-const ogType = canonicalPath.startsWith('/articles/') && canonicalPath !== '/articles/' && !isSiemensKnxProduct ? 'article' : 'website';
+const ogType = canonicalPath.startsWith('/articles/') && canonicalPath !== '/articles/' && (!isSiemensKnxProduct || usesArticleSchema) ? 'article' : 'website';
 
-const effectiveJsonLd = isSiemensKnxProduct
+const effectiveJsonLd = isSiemensKnxProduct && !usesArticleSchema
   ? JSON.stringify({
       '@context': 'https://schema.org',
       '@type': 'Product',
