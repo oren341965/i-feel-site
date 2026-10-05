@@ -40,6 +40,8 @@ description: Orchestrate I Feel sales and marketing, read-only Monday audits, pa
 - Manager-assigned Maya work uses only the existing Vault bridge. An enqueued task is only `ASSIGNED_TO_MAYA`; only `RESPONSE_RECEIVED_AND_MONDAY_UPDATED` after a real Maya ACK, a real Maya Result, and live Monday read-back is fully completed. Duplicate task IDs reuse the existing immutable result, and isolated tests never count as production completion.
 - Report `read_only_review` findings separately under `maya-task-protocol.md`; a verified inspection needs no send authority and never completes customer-action work.
 
+- The authoritative Monday status `הוקם ע"י השירות` / `הוקם על ידי השירות` denotes an existing customer missing from the CRM, never a new acquisition. Apply the existing-customer rule in `references/classification-and-scoring.md` before new-lead and paid-acquisition reporting.
+
 ## Deterministic entrypoints
 
 - Pipeline analysis: `scripts/analyze-sales.mjs`

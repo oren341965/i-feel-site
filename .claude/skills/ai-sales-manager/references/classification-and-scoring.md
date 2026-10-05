@@ -31,6 +31,16 @@ Use `evidenceStage` only when it was derived from newer verified Gmail, Calendar
 
 The sales review reads board `2732725332` only. Do not query a Projects board to enrich, confirm, or expand the sales treatment queue.
 
+## Existing customers created by Service
+
+Owner clarification, 2026-10-05: the authoritative Monday status `הוקם ע"י השירות` (also written `הוקם על ידי השירות`) means an existing customer whose record was missing from Monday. Creating that record is administrative intake, not a new acquisition.
+
+- Classify these records as `EXISTING_CUSTOMER`, even if their creation date is recent or a secondary field says `ליד חדש`.
+- Exclude them from new-customer, net-new lead, paid-acquisition and qualified-new-lead counts. Do not count them as marketing conversions based on record creation.
+- Preserve them in customer history and service workload. Keep operational status and source evidence intact; this rule does not authorize Monday writes.
+- A Google/Meta click ID may describe a touchpoint; it does not override the existing-customer classification. Do not infer `NET_NEW` or fabricate a specific add-on/upgrade origin.
+- Report newly created CRM records separately from genuinely new leads. Apply this rule before acquisition totals, attribution reports and Google Ads budget decisions.
+
 ## Open-lead classifications
 
 - `overdue`: next-action due timestamp is earlier than calculation time.

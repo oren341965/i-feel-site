@@ -20,6 +20,8 @@ The decision loader reads it from `marketingDecision.evidenceFiles.qualifiedLead
 under the existing private runtime `data` or `state` directory. Missing evidence
 is UNKNOWN, not zero. A test fixture is never acceptable operational evidence.
 
+Owner clarification (2026-10-05): Monday records with authoritative status `הוקם ע"י השירות` / `הוקם על ידי השירות` represent existing customers previously absent from Monday. Producers must classify them as `EXISTING_CUSTOMER` and exclude them from net-new acquisitions regardless of creation date, click IDs or a secondary new-lead label. Preserve source touchpoints and history; do not infer `NET_NEW` or a specific add-on/upgrade origin. Newly created CRM records are not equivalent to new leads.
+
 ## Producer requirements
 
 1. Read the complete Monday board, reconcile total count, pagination and unique
