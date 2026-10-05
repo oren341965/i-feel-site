@@ -1,0 +1,30 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { equipmentProducts, equipmentCategories } from '../../data/equipment-products';
+const canonical = 'https://i-feel.co.il/equipment/';
+const title = 'מאגר מוצרים ומפרטים | KNX, בקרת מבנה ו-Desigo | i-feel';
+const description = 'מאגר מפרטים למוצרים המופיעים בפרויקטי I Feel: בקרי Siemens KNX ו-Desigo, מפסקי KNX, ספקי כוח, מודולי I/O וחיישנים.';
+const jsonLd = JSON.stringify({ '@context': 'https://schema.org', '@type': 'CollectionPage', name: title, description, url: canonical, inLanguage: 'he-IL', hasPart: equipmentProducts.map((product) => ({ '@type': 'Product', name: product.title, sku: product.sku, url: `https://i-feel.co.il/equipment/${product.slug}/`, brand: { '@type': 'Brand', name: product.brand } })) });
+---
+<BaseLayout title={title} description={description} canonical={canonical} ogTitle={title} ogDescription={description} ogUrl={canonical} jsonLd={jsonLd}>
+  <main dir="rtl" class="bg-white">
+    <header class="bg-brand-900 py-12 text-white md:py-16"><div class="mx-auto max-w-7xl px-4">
+      <p class="mb-3 font-bold text-accent-300">KNX · בקרת מבנה · Desigo</p><h1 class="text-3xl font-extrabold md:text-5xl">מאגר מוצרים ומפרטים</h1>
+      <p class="mt-5 max-w-4xl text-lg leading-8 text-brand-100">דפי מוצר לפי דגמים ומק״טים שמופיעים בפרויקטים שלנו. בכל דף תמצאו את תפקיד המוצר, נתוני המפרט שאומתו וקישורים למידע של היצרן.</p>
+    </div></header>
+    <div class="mx-auto max-w-7xl px-4 py-10">
+      {equipmentCategories.map((category) => <section class="mb-12" aria-labelledby={`cat-${category}`}>
+        <h2 id={`cat-${category}`} class="mb-5 border-r-4 border-accent-500 pr-3 text-2xl font-extrabold text-brand-900">{category}</h2>
+        <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {equipmentProducts.filter((product) => product.category === category).map((product) => <article class="rounded-xl border border-brand-200 p-5 transition hover:border-accent-400 hover:shadow-md">
+            <p class="font-mono text-sm text-brand-600" dir="ltr">{product.sku}</p>
+            <h3 class="mt-2 text-xl font-bold leading-snug text-brand-900"><a href={`/equipment/${product.slug}/`} class="hover:text-accent-700">{product.title}</a></h3>
+            <p class="mt-3 leading-7 text-brand-700">{product.summary}</p>
+            <a href={`/equipment/${product.slug}/`} class="mt-4 inline-block font-bold text-accent-700 underline underline-offset-4">למפרט המלא</a>
+          </article>)}
+        </div>
+      </section>)}
+      <p class="rounded-xl border-r-4 border-amber-500 bg-amber-50 p-5 leading-7 text-amber-950">נתוני פרויקט מסוימים דורשים אימות מול היצרן או ספק הציוד לפני הזמנה, במיוחד כאשר קיים פער בין רשימת הציוד לבין דף הנתונים.</p>
+    </div>
+  </main>
+</BaseLayout>

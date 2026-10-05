@@ -1,0 +1,77 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { equipmentProducts } from '../../data/equipment-products';
+
+export function getStaticPaths() {
+  return equipmentProducts.map((product) => ({ params: { slug: product.slug }, props: { product } }));
+}
+
+const { product } = Astro.props;
+const canonical = `https://i-feel.co.il/equipment/${product.slug}/`;
+const title = `${product.title} | מפרט מוצר | i-feel`;
+const description = product.summary;
+const jsonLd = JSON.stringify({
+  '@context': 'https://schema.org',
+  '@type': 'Product',
+  name: product.title,
+  description: product.summary,
+  sku: product.sku,
+  category: product.category,
+  ...(product.brand !== 'לא צוין ברשימת הציוד' ? {
+    brand: { '@type': 'Brand', name: product.brand },
+    manufacturer: { '@type': 'Organization', name: product.brand },
+  } : {}),
+  url: canonical,
+});
+---
+<BaseLayout title={title} description={description} canonical={canonical} ogTitle={product.title} ogDescription={description} ogUrl={canonical} jsonLd={jsonLd}>
+  <main dir="rtl" class="bg-white">
+    <section class="bg-brand-900 py-12 text-white md:py-16">
+      <div class="mx-auto max-w-5xl px-4">
+        <nav aria-label="פירורי לחם" class="mb-5 text-sm text-brand-200"><a href="/equipment/" class="underline decoration-brand-400 underline-offset-4 hover:text-white">מאגר ציוד</a><span class="mx-2" aria-hidden="true">/</span>{product.category}</nav>
+        <p class="mb-3 text-sm font-bold text-accent-300">{product.brand} · {product.category}</p>
+        <h1 class="text-3xl font-extrabold leading-tight md:text-5xl">{product.title}</h1>
+        <p class="mt-5 max-w-4xl text-lg leading-8 text-brand-100">{product.summary}</p>
+        <p class="mt-5 inline-flex rounded-lg border border-white/20 bg-white/10 px-4 py-2 font-mono text-base" dir="ltr">{product.sku}</p>
+      </div>
+    </section>
+
+    <div class="mx-auto grid max-w-5xl gap-10 px-4 py-10 lg:grid-cols-[minmax(0,1fr)_18rem]">
+      <article class="min-w-0">
+        <section aria-labelledby="role-heading" class="mb-9">
+          <h2 id="role-heading" class="mb-3 text-2xl font-bold text-brand-900">מה המוצר עושה</h2>
+          <p class="text-lg leading-8 text-brand-700">{product.purpose}</p>
+        </section>
+        <section aria-labelledby="spec-heading" class="mb-9">
+          <h2 id="spec-heading" class="mb-4 text-2xl font-bold text-brand-900">מפרט טכני</h2>
+          <div class="overflow-hidden rounded-xl border border-brand-200">
+            <table class="w-full border-collapse text-right">
+              <tbody class="divide-y divide-brand-100">
+                {product.specifications.map(([label, value]) => <tr class="align-top"><th scope="row" class="w-2/5 bg-brand-50 px-4 py-3 font-bold text-brand-900">{label}</th><td class="px-4 py-3 leading-7 text-brand-700">{value}</td></tr>)}
+              </tbody>
+            </table>
+          </div>
+        </section>
+        <section aria-labelledby="installation-heading" class="mb-9">
+          <h2 id="installation-heading" class="mb-3 text-2xl font-bold text-brand-900">התאמה ותכנון</h2>
+          <ul class="list-disc space-y-2 pr-6 text-lg leading-8 text-brand-700">
+            {product.notes.map((note) => <li>{note}</li>)}
+          </ul>
+        </section>
+        <section aria-labelledby="source-heading" class="border-t border-brand-100 pt-7">
+          <h2 id="source-heading" class="mb-3 text-xl font-bold text-brand-900">מידע טכני וקישורים</h2>
+          <div class="flex flex-wrap gap-3">
+            {product.officialUrl && <a href={product.officialUrl} target="_blank" rel="noopener noreferrer" class="rounded-lg bg-brand-700 px-4 py-3 font-bold text-white hover:bg-brand-800">מסמך / דף יצרן</a>}
+            {product.related.map((item) => <a href={item.href} class="rounded-lg border border-brand-300 px-4 py-3 font-bold text-brand-800 hover:bg-brand-50">{item.label}</a>)}
+          </div>
+        </section>
+        <p class="mt-8 rounded-xl border-r-4 border-amber-500 bg-amber-50 p-4 leading-7 text-amber-950">המפרט מסייע בזיהוי ובתכנון ראשוני. התאמה סופית, חיווט והגדרות ייבדקו מול דף היצרן, התוכניות ורשימת הנקודות של הפרויקט.</p>
+      </article>
+      <aside class="h-fit rounded-xl border border-brand-200 bg-brand-50 p-5">
+        <p class="text-sm font-bold text-accent-700">מק״ט יצרן</p><p class="mt-1 break-all font-mono text-lg font-bold text-brand-900" dir="ltr">{product.sku}</p>
+        <p class="mt-5 text-sm font-bold text-accent-700">קטגוריה</p><p class="mt-1 font-semibold text-brand-900">{product.category}</p>
+        <a href="/equipment/" class="mt-6 inline-block font-bold text-accent-700 underline underline-offset-4">לכל המוצרים במאגר</a>
+      </aside>
+    </div>
+  </main>
+</BaseLayout>
