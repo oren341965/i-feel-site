@@ -7,7 +7,7 @@ const canonical = 'https://i-feel.co.il/articles/knx-awards-2026-smart-building-
 const faq = [
   {
     q: 'מתי מתקיים KNX Awards 2026?',
-    a: 'טקס KNX Awards 2026 מתקיים אונליין ב-6 באוקטובר 2026 בשעה 17:30 CEST, במהדורה ה-16 של האירוע.'
+    a: 'טקס KNX Awards 2026 מתקיים אונליין ב-6 באוקטובר 2026 בשעה 17:30 CEST, כלומר 18:30 שעון ישראל, במהדורה ה-16 של האירוע.'
   },
   {
     q: 'כמה פרויקטים ומוצרים מועמדים השנה?',
@@ -39,12 +39,24 @@ const jsonLd = JSON.stringify({
       headline: 'KNX Awards 2026: 6 מגמות שמשנות את KNX ובקרת המבנה',
       description,
       datePublished: '2026-10-03',
-      dateModified: '2026-10-05',
+      dateModified: '2026-10-06',
       inLanguage: 'he-IL',
       mainEntityOfPage: canonical,
       author: { '@type': 'Organization', name: 'i-feel', url: 'https://i-feel.co.il/' },
       publisher: { '@id': 'https://i-feel.co.il/#business' },
       about: ['KNX', 'BMS', 'ETS6.4', 'KNX Secure', 'Building Automation']
+    },
+,
+    {
+      '@type': 'Event',
+      name: 'KNX Awards 2026',
+      startDate: '2026-10-06T17:30:00+02:00',
+      eventAttendanceMode: 'https://schema.org/OnlineEventAttendanceMode',
+      eventStatus: 'https://schema.org/EventScheduled',
+      location: { '@type': 'VirtualLocation', url: 'https://www.knx.org/knx-awards' },
+      organizer: { '@type': 'Organization', name: 'KNX Association', url: 'https://www.knx.org/' },
+      url: 'https://www.knx.org/knx-awards',
+      inLanguage: 'en'
     },
     {
       '@type': 'BreadcrumbList',
@@ -70,13 +82,24 @@ const jsonLd = JSON.stringify({
     <header class="bg-brand-900 text-white py-14 md:py-20">
       <div class="max-w-4xl mx-auto px-4">
         <a href="/articles/" class="text-accent-400 font-semibold hover:text-accent-300">מאמרים ומדריכים</a>
-        <p class="mt-4 text-sm text-brand-200">KNX · BMS · ETS6.4 · אבטחה · עודכן 05.10.2026</p>
+        <p class="mt-4 text-sm text-brand-200">KNX · BMS · ETS6.4 · אבטחה · עודכן 06.10.2026</p>
         <h1 class="mt-4 text-4xl md:text-5xl font-extrabold leading-tight">KNX Awards 2026: 6 מגמות שמשנות את KNX ובקרת המבנה</h1>
         <p class="mt-5 text-lg md:text-xl leading-8 text-brand-100">לקראת טקס KNX Awards 2026, בחנו את הכיוונים המקצועיים שחוזרים שוב ושוב בעולם ה-KNX: אבטחת IP, אנרגיה, ETS6.4, איכות אוויר, אינטגרציה עם BMS ותחזוקה ארוכת טווח.</p>
       </div>
     </header>
 
     <div class="max-w-4xl mx-auto px-4 py-12">
+      <section class="rounded-2xl border border-amber-200 bg-amber-50 p-6 md:p-8 mb-8">
+        <p class="text-sm font-bold text-amber-800 mb-2">עדכון 6.10.2026</p>
+        <h2 class="text-2xl md:text-3xl font-extrabold text-brand-900 mb-3">הערב: KNX Awards 2026 בשידור חי — 18:30 שעון ישראל</h2>
+        <p class="text-lg leading-8 text-brand-700 mb-4">KNX Association תקיים היום, 6 באוקטובר 2026, את טקס KNX Awards בשעה 17:30 CEST, כלומר 18:30 בישראל. הטקס מתקיים אונליין וכולל 13 קטגוריות. KNX מציינת שניתן לעקוב אחר האירוע דרך YouTube, ובמסלול האינטראקטיבי להשתתף בהצבעת People’s Choice בזמן השידור.</p>
+        <p class="text-lg leading-8 text-brand-700 mb-4"><strong>מה כדאי לאנשי מקצוע בישראל לחפש בזמן הטקס?</strong> פרויקטים שמדגימים חיסכון אנרגטי מדיד, שילוב KNX עם BMS ו-HVAC, אבטחת IP, אינטגרציה פתוחה ויכולת תחזוקה לאורך שנים. אלה בדיוק הנושאים שמבדילים בין אוטומציה מרשימה בהדגמה לבין מערכת שאפשר לתפעל ולשדרג לאורך חיי המבנה.</p>
+        <div class="flex flex-wrap gap-3">
+          <a href="https://www.knx.org/knx-awards" target="_blank" rel="noopener" class="rounded-lg bg-amber-600 px-5 py-3 font-bold text-white hover:bg-amber-700">לעמוד הרשמי של KNX Awards</a>
+          <a href="https://www.knx.org/news/knx-awards-2026-experience-reveal-winners-live" target="_blank" rel="noopener" class="rounded-lg border border-amber-300 bg-white px-5 py-3 font-bold text-brand-900 hover:border-amber-500">פרטי השידור והאירוע</a>
+        </div>
+      </section>
+
       <section class="rounded-2xl border border-accent-100 bg-accent-50 p-6 md:p-8 mb-10">
         <h2 class="text-2xl font-extrabold text-brand-900 mb-3">התשובה הקצרה</h2>
         <p class="text-lg leading-8 text-brand-700">KNX ב-2026 הוא כבר לא רק תקן לשליטה בתאורה ותריסים. הכיוון הוא מערכת פתוחה ומאובטחת שמשתלבת עם BMS, DDC, DALI, BACnet ומערכות אנרגיה, ונדרשת להיות מתועדת ותחזוקתית לשנים. KNX Awards הוא חלון טוב לראות לאן התחום הולך ומה כדאי ליישם כבר היום בפרויקטים בישראל.</p>
