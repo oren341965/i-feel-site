@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import EquipmentEnquiry from '../../components/EquipmentEnquiry.astro';
 import { equipmentProducts, equipmentCategories } from '../../data/equipment-products';
 const canonical = 'https://i-feel.co.il/equipment/';
 const title = 'מאגר מוצרים ומפרטים | KNX, בקרת מבנה ו-Desigo | i-feel';
@@ -25,6 +26,7 @@ const jsonLd = JSON.stringify({ '@context': 'https://schema.org', '@type': 'Coll
         </div>
       </section>)}
       <p class="rounded-xl border-r-4 border-amber-500 bg-amber-50 p-5 leading-7 text-amber-950">נתוני פרויקט מסוימים דורשים אימות מול היצרן או ספק הציוד לפני הזמנה, במיוחד כאשר קיים פער בין רשימת הציוד לבין דף הנתונים.</p>
+      <EquipmentEnquiry />
     </div>
   </main>
 </BaseLayout>
