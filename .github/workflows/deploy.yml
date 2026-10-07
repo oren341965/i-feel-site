@@ -114,6 +114,9 @@ jobs:
       - name: Test bounded marketing decisions with synthetic inputs only
         run: node --test tests/google-ads-decision-loop.test.mjs
 
+      - name: Validate deployment script syntax
+        run: node --check scripts/deploy/ftps-upload.mjs
+
       - name: Build and validate Astro site
         run: npm run build
 
