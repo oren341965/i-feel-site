@@ -120,7 +120,7 @@ i-feel משרתת לקוחות פרטיים, יזמי בנייה, אדריכלי
 - [צור קשר](https://i-feel.co.il/contactus/)
 - [מי אנחנו](https://i-feel.co.il/about-i-feel-smart-building-company/)
 - YouTube: https://www.youtube.com/@ifeelsmarthome
-- LinkedIn: https://www.linkedin.com/company/200156
+- LinkedIn: https://www.linkedin.com/company/i-feel-smart-home-systems
 
 ## Siemens professional knowledge resources
 - I FEEL maintains a professional Building Automation knowledge center for electrical consultants, panel builders, electrical contractors and BMS professionals.
