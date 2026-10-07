@@ -208,6 +208,7 @@ $priceGroups = [
   </section>
 
   <section class="cta-band" id="contact"><h2>רוצים להתאים שדרוג לדירה?</h2><p>שלחו לנו את מספר הבניין והדירה ואת המערכות שמעניינות אתכם, ונחזור עם התאמה מסודרת.</p><a class="button button--accent" href="mailto:myhome@i-feel.co.il?subject=אבן%20שפרוט%205-7%20הרצליה%20-%20בקשת%20שדרוג">פנייה ל-myhome@i-feel.co.il</a></section>
+<section class="card" aria-label="קטלוג מסכי Samsung 2027" dir="rtl"><h2>קטלוג מסכי Samsung 2027</h2><p>לצפייה בקטלוג המסכים המקוון.</p><a href="https://anyflip.com/nxsjf/nmmx/" target="_blank" rel="noopener noreferrer">פתיחת קטלוג Samsung 2027 (בחלון חדש)</a></section>
 <?php endif; ?>
 </div></main>
 <footer class="footer"><div class="shell footer__inner"><span>I Feel Smart Home</span><span>אבן שפרוט 5-7, הרצליה · 03-508-9553</span></div></footer>

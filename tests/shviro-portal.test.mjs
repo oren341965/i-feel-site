@@ -30,7 +30,7 @@ test('preview calculates installed prices and hours; CSRF and project boundaries
   let html=await get();const csrf=html.match(/name="csrf" value="([^"]+)"/)[1];
   async function post(data,expected=303,suffix='') { const r=await fetch(base+'/shviro-ganei-tikva/'+suffix,{method:'POST',redirect:'manual',headers:{Cookie:cookie},body:new URLSearchParams({csrf,...data})});assert.equal(r.status,expected);return r.text(); }
   assert.match(html,/450\.00 ₪ לשעה/);assert.match(html,/ההתקנה אינה כוללת הכנת תשתית/);
-  assert.match(html,/cloud\.touchwand\.com/);assert.match(html,/href="https:\/\/i-feel\.co\.il\/touchwand-app\/"/);
+  assert.match(html,/איך משתמשים ב-SmartSphere/);assert.match(html,/href="\/video\/#smart-ac-connection"/);
   assert.doesNotMatch(html,/4\.10\.2026|אשטרום|אבן שפרוט/);
   await post({action:'add',product:'glass-1',quantity:'2',price:'1'});
   await post({action:'add',product:'programming',quantity:'3'});
