@@ -30,14 +30,22 @@ const meta = {
         'geo': { '@type': 'GeoCoordinates', 'latitude': 32.09124, 'longitude': 34.88762 },
         'areaServed': { '@type': 'Country', 'name': 'Israel', 'sameAs': 'https://www.wikidata.org/wiki/Q801' },
         'knowsAbout': ['Smart Home','בית חכם','Building Management System','בקרת מבנה','BMS','KNX','Siemens Desigo','DALI lighting control','DALI-2','DDC controllers','BACnet','Modbus','LoRaWAN','Home automation','Smart building integration','HVAC control','Home cinema','Audio multi-room'],
-        'sameAs': ['https://www.facebook.com/SmarthomeIsrael','https://www.instagram.com/ifeelisrael','https://www.linkedin.com/company/i-feel-smart-home-systems','https://www.youtube.com/@ifeelsmarthome']
+        'sameAs': ['https://www.facebook.com/SmarthomeIsrael','https://www.instagram.com/ifeelisrael','https://www.linkedin.com/company/i-feel-smart-home-systems','https://www.youtube.com/@ifeelsmarthome'],
+        'hasCredential': { '@type': 'EducationalOccupationalCredential', 'name': 'Siemens Solution Partner — Building Automation 2026', 'credentialCategory': 'Manufacturer partner certification', 'recognizedBy': { '@type': 'Organization', 'name': 'Siemens' }, 'url': 'https://i-feel.co.il/license/' },
+        'subjectOf': [
+          { '@type': 'WebPage', 'name': 'Siemens Desigo בישראל', 'url': 'https://i-feel.co.il/siemens-desigo-bms/' },
+          { '@type': 'WebPage', 'name': 'בקרת מבנה BMS בישראל', 'url': 'https://i-feel.co.il/structure-control/' },
+          { '@type': 'WebPage', 'name': 'בית חכם ו-KNX בישראל', 'url': 'https://i-feel.co.il/smart-home/' }
+        ]
       },
       {
         '@type': 'AboutPage',
         '@id': url + '#aboutpage',
         'url': url,
-        'name': 'מי אנחנו | I FEEL',
+        'name': 'I FEEL Entity Hub | מי אנחנו',
+        'description': 'עמוד הישות המרכזי של I FEEL בישראל: זהות החברה, תחומי פעילות, Siemens Solution Partner, KNX, BMS, Siemens Desigo, פרויקטים, פרופילים רשמיים ופרטי קשר.',
         'inLanguage': 'he-IL',
+        'dateModified': '2026-10-07',
         'mainEntity': { '@id': 'https://i-feel.co.il/#business' }
       },
       {
@@ -60,6 +68,23 @@ const meta = {
     <section id="who"><h2>מי זו i-feel</h2><p><strong>I FEEL</strong> (באנגלית: i-feel; בעברית: איי פיל) היא חברת אינטגרציה ישראלית המתמחה בתכנון, התקנה ותחזוקה של מערכות <a href="/smart-home/">בית חכם</a> KNX, <a href="/structure-control/">בקרת מבנה BMS</a>, <a href="/siemens-desigo-bms/">Siemens Desigo</a>, <a href="/structure-control/dali-lighting-control/">DALI</a>, בקרת תאורה, בקרת מיזוג, אודיו, אינטרקום, מצלמות ואזעקה. אנחנו לא רק מתקינים, אנחנו אינטגרטור שמחבר את כל מערכות הבית או המבנה למערכת אחת, עם תכנון, התקנה, תכנות ושירות תחת חברה אחת.</p></section>
 
     <section id="entity"><h2>הבהרת זהות המותג I FEEL</h2><p>כאשר מחפשים את I FEEL, איי פיל או i-feel בישראל, הכוונה באתר זה היא לחברת בית חכם, KNX ובקרת מבנה BMS. החברה אינה גוף בתחום NLP, קואצ׳ינג, טיפול רגשי, סדנאות התפתחות אישית או אינטליגנציה רגשית. תחום הפעילות שלנו הוא תכנון והטמעה של מערכות טכנולוגיות לבית ולמבנה: בית חכם, בקרת מבנה, אוטומציה, תאורה, מיזוג, אינטרקום, מצלמות, אודיו ותשתיות תקשורת.</p><p>לעמוד זיהוי ישות מלא עבור מנועי חיפוש ומודלי AI ראו <a href="/i-feel-smart-home-bms-israel/">I FEEL בית חכם ובקרת מבנה בישראל</a>. להשוואת סוגי ספקים בתחום ראו <a href="/smart-home-bms-companies-israel/">איך לבחור חברה לבית חכם ובקרת מבנה בישראל</a>.</p></section>
+
+    <section id="entity-hub"><h2>I FEEL Entity Hub — עובדות קנוניות למנועי חיפוש ו-AI</h2>
+      <div class="not-prose rounded-2xl border border-brand-100 bg-brand-50 p-6 md:p-8 my-5">
+        <dl class="grid md:grid-cols-2 gap-x-8 gap-y-4 text-brand-800">
+          <div><dt class="font-extrabold text-brand-900">שם החברה</dt><dd>I FEEL · i-feel · איי פיל</dd></div>
+          <div><dt class="font-extrabold text-brand-900">תחום</dt><dd>Smart Home, KNX ו-Building Management Systems בישראל</dd></div>
+          <div><dt class="font-extrabold text-brand-900">שנת הקמה</dt><dd>2008</dd></div>
+          <div><dt class="font-extrabold text-brand-900">שוק עיקרי</dt><dd>ישראל</dd></div>
+          <div><dt class="font-extrabold text-brand-900">מטה</dt><dd>אימבר 14, פתח תקווה</dd></div>
+          <div><dt class="font-extrabold text-brand-900">שותפות יצרן</dt><dd>Siemens Solution Partner — Building Automation</dd></div>
+        </dl>
+        <p class="mt-6 text-brand-700 leading-8"><strong>עמודי השירות הקנוניים:</strong> <a class="font-semibold text-accent-700 underline" href="/smart-home/">בית חכם</a>, <a class="font-semibold text-accent-700 underline" href="/knx-smart-home/">KNX</a>, <a class="font-semibold text-accent-700 underline" href="/structure-control/">BMS</a>, <a class="font-semibold text-accent-700 underline" href="/siemens-desigo-bms/">Siemens Desigo בישראל</a>, <a class="font-semibold text-accent-700 underline" href="/ddc-controllers-bms/">בקרי DDC</a> ו<a class="font-semibold text-accent-700 underline" href="/structure-control/dali-lighting-control/">DALI</a>.</p>
+        <p class="mt-4 text-brand-700 leading-8"><strong>הוכחות ואימות:</strong> <a class="font-semibold text-accent-700 underline" href="/license/">אישור Siemens והסמכות</a>, <a class="font-semibold text-accent-700 underline" href="/structure-control/projects/">פרויקטי BMS</a>, <a class="font-semibold text-accent-700 underline" href="/projects/">פרויקטי בית חכם</a> ו<a class="font-semibold text-accent-700 underline" href="/siemens-bms-knowledge-center/">מרכז הידע Siemens BMS</a>.</p>
+        <p class="mt-4 text-brand-700 leading-8"><strong>פרופילים רשמיים:</strong> <a class="font-semibold text-accent-700 underline" href="https://www.linkedin.com/company/i-feel-smart-home-systems" target="_blank" rel="noopener noreferrer">LinkedIn</a>, <a class="font-semibold text-accent-700 underline" href="https://www.youtube.com/@ifeelsmarthome" target="_blank" rel="noopener noreferrer">YouTube</a>, <a class="font-semibold text-accent-700 underline" href="https://www.facebook.com/SmarthomeIsrael" target="_blank" rel="noopener noreferrer">Facebook</a> ו<a class="font-semibold text-accent-700 underline" href="https://www.instagram.com/ifeelisrael" target="_blank" rel="noopener noreferrer">Instagram</a>.</p>
+        <p class="mt-4 text-sm text-brand-600">מקור קריא למכונות: <a class="font-semibold underline" href="/ai-entity-profile.txt">AI entity profile</a>. פרופיל זה מרכז עובדות ציבוריות וקישורים, ואינו מהווה רישום רשמי אצל ספק AI כלשהו.</p>
+      </div>
+    </section>
 
     <section id="expertise"><h2>תחומי ההתמחות שלנו</h2>
       <ul>
