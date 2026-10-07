@@ -1,0 +1,25 @@
+---
+interface Props {
+  sku?: string;
+}
+
+const { sku } = Astro.props;
+const eventParams = JSON.stringify({
+  cta_name: 'equipment_enquiry',
+  ...(sku ? { product_sku: sku } : {}),
+});
+---
+<section id="equipment-enquiry" aria-labelledby="equipment-enquiry-heading" class="mt-10 rounded-xl border border-brand-200 bg-brand-50 p-6 md:p-8">
+  <h2 id="equipment-enquiry-heading" class="text-2xl font-extrabold leading-snug text-brand-900">צריכים עזרה בבחירת הציוד או בשדרוג המערכת?</h2>
+  <p class="mt-4 leading-8 text-brand-700">ספרו לנו מה אתם מתכננים או מה הייתם רוצים לשפר. אפשר להתחיל בשיחה גם בלי תוכניות או רשימת דגמים, וגם אם חברה אחרת התקינה את המערכת. נבדוק יחד מה קיים ומה מתאים לצורך שלכם. לפי הצורך אפשר להיפגש במשרד או באתר, או להגיע אלינו לקפה ולהכיר את הציוד.</p>
+  {sku && <p class="mt-3 text-sm text-brand-700">אם השאלה נוגעת למוצר בעמוד הזה, המק״ט הוא <span class="font-mono font-bold" dir="ltr">{sku}</span>.</p>}
+  <div class="mt-5 flex flex-wrap gap-3">
+    <a href="/contactus/#contact-form-wrapper" data-ga-event="cta_click" data-ga-params={eventParams} class="rounded-lg bg-brand-700 px-5 py-3 font-bold text-white hover:bg-brand-800">בואו נדבר על הציוד והמערכת</a>
+    <a href="tel:+97235089553" class="rounded-lg border border-brand-300 bg-white px-5 py-3 font-bold text-brand-800 hover:bg-brand-100">אפשר גם בטלפון: <span dir="ltr">03-508-9553</span></a>
+  </div>
+  <div class="mt-6 grid gap-4 border-t border-brand-200 pt-5 md:grid-cols-2">
+    <p class="leading-7 text-brand-700">לבית פרטי: <a href="/smart-home-villa/" class="font-bold text-accent-700 underline underline-offset-4">תכנון בית חכם לווילה</a> או <a href="/smart-home-system-upgrade/" class="font-bold text-accent-700 underline underline-offset-4">שדרוג מערכת קיימת</a>.</p>
+    <p class="leading-7 text-brand-700">למבנה ציבורי או מסחרי: <a href="/structure-control/" class="font-bold text-accent-700 underline underline-offset-4">תכנון ואינטגרציה של BMS</a> או <a href="/bms-retrofit/" class="font-bold text-accent-700 underline underline-offset-4">שדרוג בקרת מבנה קיימת</a>.</p>
+  </div>
+  <p class="mt-5 text-sm leading-6 text-brand-600">התאמת ציוד, אפשרות לשימור רכיבים והיקף העבודה נקבעים לאחר בדיקה. אין צורך לשלוח סיסמאות או קודי גישה בפנייה.</p>
+</section>

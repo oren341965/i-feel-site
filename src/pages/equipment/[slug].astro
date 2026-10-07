@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import EquipmentEnquiry from '../../components/EquipmentEnquiry.astro';
 import { equipmentProducts } from '../../data/equipment-products';
 
 export function getStaticPaths() {
@@ -66,6 +67,7 @@ const jsonLd = JSON.stringify({
           </div>
         </section>
         <p class="mt-8 rounded-xl border-r-4 border-amber-500 bg-amber-50 p-4 leading-7 text-amber-950">המפרט מסייע בזיהוי ובתכנון ראשוני. התאמה סופית, חיווט והגדרות ייבדקו מול דף היצרן, התוכניות ורשימת הנקודות של הפרויקט.</p>
+        <EquipmentEnquiry sku={product.sku} />
       </article>
       <aside class="h-fit rounded-xl border border-brand-200 bg-brand-50 p-5">
         <p class="text-sm font-bold text-accent-700">מק״ט יצרן</p><p class="mt-1 break-all font-mono text-lg font-bold text-brand-900" dir="ltr">{product.sku}</p>
