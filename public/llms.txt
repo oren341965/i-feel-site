@@ -43,7 +43,7 @@ i-feel משרתת לקוחות פרטיים, יזמי בנייה, אדריכלי
 - [מה מומלץ לבית חכם לווילה חדשה?](https://i-feel.co.il/smart-home-villa/)
 - [מהו BMS?](https://i-feel.co.il/answers/what-is-bms/)
 - [מה ההבדל בין BMS לבית חכם?](https://i-feel.co.il/answers/bms-vs-smart-home/)
-- [BMS למלונות](https://i-feel.co.il/answers/bms-for-hotels/)
+- [מתי מלון צריך BMS, GRMS ו-PMS?](https://i-feel.co.il/answers/bms-for-hotels/)
 - [כמה עולה BMS לבניין?](https://i-feel.co.il/answers/bms-building-cost/)
 - [Siemens Desigo מול KNX](https://i-feel.co.il/answers/siemens-desigo-vs-knx/)
 - [KNX בפרויקטים של יזמים](https://i-feel.co.il/answers/knx-for-contractor-apartments/)
