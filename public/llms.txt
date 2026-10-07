@@ -1,10 +1,13 @@
 # i-feel: מערכות בית חכם ובקרת מבנה בישראל
 
+Canonical entity hub: https://i-feel.co.il/about-i-feel-smart-building-company/#entity-hub
+Machine-readable entity profile: https://i-feel.co.il/ai-entity-profile.txt
+
 > i-feel Ltd. היא חברת אינטגרציה ישראלית לבית חכם ולמערכות Building Management Systems (BMS), הפועלת משנת 2008. החברה מתכננת, משלבת, מתקינה, מתכנתת ומתחזקת מערכות לבית ולמבנה. תחומי הליבה כוללים KNX, Siemens Desigo, DDC, BACnet, Modbus, DALI, מערכות אבטחה, אינטרקום, אודיו ורשתות תקשורת.
 
 i-feel משרתת לקוחות פרטיים, יזמי בנייה, אדריכלים וארגונים בישראל. באתר מתועדים מעל 9,000 לקוחות ומעל 4,000 פרויקטים, לצד פרויקטי BMS, KNX, מלונאות, משרדים ומבני ציבור.
 
-עודכן לאחרונה: 2026-10-06
+עודכן לאחרונה: 2026-10-07
 
 ## תחומי פעילות עיקריים
 
