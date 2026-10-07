@@ -255,7 +255,7 @@
   <url><loc>https://i-feel.co.il/answers/what-is-dali/</loc><lastmod>2026-06-24</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
   <url><loc>https://i-feel.co.il/answers/what-is-ddc/</loc><lastmod>2026-06-24</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
   <url><loc>https://i-feel.co.il/answers/what-is-bacnet/</loc><lastmod>2026-06-24</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://i-feel.co.il/answers/bms-for-hotels/</loc><lastmod>2026-06-24</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://i-feel.co.il/answers/bms-for-hotels/</loc><lastmod>2026-10-07</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
   <url><loc>https://i-feel.co.il/answers/developer-smart-home/</loc><lastmod>2026-06-24</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
   <url><loc>https://i-feel.co.il/answers/knx-for-contractor-apartments/</loc><lastmod>2026-06-24</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
   <url><loc>https://i-feel.co.il/answers/bms-vrf-integration/</loc><lastmod>2026-06-24</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
@@ -573,7 +573,7 @@
     <priority>0.7</priority>
   </url>  <url>
     <loc>https://i-feel.co.il/articles/bms-guide/</loc>
-    <lastmod>2026-06-07</lastmod>
+    <lastmod>2026-10-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>  <url>
@@ -583,17 +583,17 @@
     <priority>0.7</priority>
   </url>  <url>
     <loc>https://i-feel.co.il/articles/existing-home-smart-upgrade/</loc>
-    <lastmod>2026-07-08</lastmod>
+    <lastmod>2026-10-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>  <url>
     <loc>https://i-feel.co.il/articles/smart-home-for-architects/</loc>
-    <lastmod>2026-06-07</lastmod>
+    <lastmod>2026-10-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>  <url>
     <loc>https://i-feel.co.il/articles/smart-home-for-contractors/</loc>
-    <lastmod>2026-06-07</lastmod>
+    <lastmod>2026-10-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>  <url>
@@ -608,7 +608,7 @@
     <priority>0.7</priority>
   </url>  <url>
     <loc>https://i-feel.co.il/articles/office-building-bms-guide/</loc>
-    <lastmod>2026-06-07</lastmod>
+    <lastmod>2026-10-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>  <url>
@@ -796,7 +796,7 @@
   </url>
   <url>
     <loc>https://i-feel.co.il/articles/ddc-in-bms/</loc>
-    <lastmod>2026-06-27</lastmod>
+    <lastmod>2026-10-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -922,7 +922,7 @@
   </url>
   <url>
     <loc>https://i-feel.co.il/articles/bms-retrofit-existing-building/</loc>
-    <lastmod>2026-07-22</lastmod>
+    <lastmod>2026-10-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
