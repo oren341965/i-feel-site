@@ -1,10 +1,10 @@
 {
   "schemaVersion": 1,
-  "updated": "2026-09-25",
+  "updated": "2026-10-07",
   "company": "I FEEL",
   "website": "https://i-feel.co.il/",
   "profileUrl": "https://i-feel.co.il/about-i-feel-smart-building-company/",
-  "description": "I FEEL היא חברת אינטגרציה בישראל לתכנון, התקנה, תכנות ושירות של מערכות בית חכם ו-KNX. בקרת מבנה BMS היא תחום פעילות נפרד למבנים מסחריים וציבוריים.",
+  "description": "I FEEL היא חברת אינטגרציה ישראלית לבית חכם, KNX ובקרת מבנה BMS. החברה מספקת תכנון, אינטגרציה, התקנה, תכנות, commissioning ושירות, כולל Siemens Desigo, DDC, BACnet, Modbus ו-DALI.",
   "foundingYear": 2008,
   "areaServed": "ישראל — התאמת השירות והמועד ליישוב ולפרויקט נבדקת בפנייה",
   "address": "אימבר 14, פתח תקווה, ישראל",
@@ -36,7 +36,14 @@
       "name": "בקרת מבנה BMS — תחום נפרד",
       "url": "https://i-feel.co.il/structure-control/",
       "description": "תכנון ואינטגרציה של בקרת מבנה למבנים מסחריים וציבוריים: Siemens Desigo, DDC, BACnet, Modbus ו-DALI.",
-      "services": []
+      "services": [
+        { "name": "Siemens Desigo בישראל", "url": "https://i-feel.co.il/siemens-desigo-bms/" },
+        { "name": "בקרי DDC ל-BMS", "url": "https://i-feel.co.il/ddc-controllers-bms/" },
+        { "name": "BMS למשרדים", "url": "https://i-feel.co.il/bms-offices/" },
+        { "name": "BMS למלונות", "url": "https://i-feel.co.il/bms-hotels/" },
+        { "name": "BMS למפעל ולתעשייה", "url": "https://i-feel.co.il/bms-industry/" },
+        { "name": "שדרוג BMS קיים", "url": "https://i-feel.co.il/bms-retrofit/" }
+      ]
     }
   ],
   "actions": {
