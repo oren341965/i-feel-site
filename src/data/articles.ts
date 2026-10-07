@@ -1097,10 +1097,10 @@ export const articles: Article[] = [
   },
   {
     slug: 'smart-home-for-architects',
-    title: 'בית חכם לאדריכלים: מה צריך להכניס לתוכנית',
-    description: 'רשימת תכנון לאדריכלים: תשתיות, לוחות, מסכים, מפסקים, הכנות אודיו וקולנוע ביתי.',
+    title: 'צ׳קליסט תכנון לבית חכם: מה צריך להופיע בתוכניות האדריכל',
+    description: 'צ׳קליסט מקצועי לתכנון בית חכם: מיקומי מפסקים, מסכים, חיישנים, רמקולים, נקודות רשת, לוחות והכנות לתיאום מול החשמל והמיזוג.',
     category: 'אדריכלים',
-    updated: '2026-06-07',
+    updated: '2026-10-07',
     related: [
       { label: 'ליווי אדריכלים', href: '/architects-smart-home-planning/' },
       { label: 'קטלוג מבנים ציבוריים', href: '/assets/catalogs/public-buildings-catalog.pdf' },
@@ -1124,10 +1124,10 @@ export const articles: Article[] = [
   },
   {
     slug: 'smart-home-for-contractors',
-    title: 'בית חכם ליזמים וקבלנים',
-    description: 'איך לשלב מערכות בית חכם בפרויקט בנייה רוויה: מפרט דיירים, תמיכה, שדרוגים ותפעול לאחר מסירה.',
+    title: 'איך בונים מפרט בית חכם לפרויקט בנייה רוויה',
+    description: 'מדריך ליזם ולקבלן: איך להגדיר חבילת בסיס, שינויי דיירים, תיאום חשמל, מסירה, שדרוגים ושירות בפרויקט מגורים.',
     category: 'יזמים',
-    updated: '2026-06-07',
+    updated: '2026-10-07',
     related: [
       { label: 'פתרונות ליזמים', href: '/contractor-customer-care/' },
       { label: 'קטלוג בנייה רוויה', href: '/assets/catalogs/dense-residential-catalog.pdf' },
