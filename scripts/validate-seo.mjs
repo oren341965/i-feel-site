@@ -14,6 +14,15 @@ function metadata(html, name, tag = 'meta') {
   return [...html.matchAll(new RegExp(`<${tag}\\b[^>]*>`, 'gi'))]
     .map(m => m[0]).filter(t => attr(t, tag === 'link' ? 'rel' : 'name') === name);
 }
+function countJsonLdType(value, targetType) {
+  if (Array.isArray(value)) return value.reduce((sum, item) => sum + countJsonLdType(item, targetType), 0);
+  if (!value || typeof value !== 'object') return 0;
+  const types = Array.isArray(value['@type']) ? value['@type'] : [value['@type']].filter(Boolean);
+  let count = types.includes(targetType) ? 1 : 0;
+  for (const child of Object.values(value)) count += countJsonLdType(child, targetType);
+  return count;
+}
+
 function validateOfferExpiry(value, route, errors) {
   if (Array.isArray(value)) {
     for (const item of value) validateOfferExpiry(item, route, errors);
@@ -140,9 +149,15 @@ for (const file of (await walk(root)).filter(f => f.endsWith('.html'))) {
   if ((html.match(/<h1\b/gi) || []).length !== 1) errors.push(`${route}: expected one main heading`);
   const descriptions = metadata(html, 'description');
   if (descriptions.length !== 1 || !attr(descriptions[0], 'content').trim()) errors.push(`${route}: missing/duplicate description`);
+  let faqPageCount = 0;
   for (const script of html.matchAll(/<script\b[^>]*type=["']application\/ld\+json["'][^>]*>([\s\S]*?)<\/script>/gi)) {
-    try { validateOfferExpiry(JSON.parse(script[1]), route, errors); } catch { /* Existing JSON-LD validity is handled by page generation/tests. */ }
+    try {
+      const parsed = JSON.parse(script[1]);
+      validateOfferExpiry(parsed, route, errors);
+      faqPageCount += countJsonLdType(parsed, 'FAQPage');
+    } catch { /* Existing JSON-LD validity is handled by page generation/tests. */ }
   }
+  if (faqPageCount > 1) errors.push(`${route}: duplicate FAQPage structured data (${faqPageCount})`);
   for (const forbidden of ['[לאישור', 'היי פיל סיסטמס', 'פאל וינטק', 'בית חולים הדסה', 'מגדל אשפוז', '053-348', 'G-XXXXXXXXXX']) {
     if (html.includes(forbidden)) errors.push(`${route}: prohibited or unfinished copy (${forbidden})`);
   }
