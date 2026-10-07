@@ -34,6 +34,52 @@ function validateOfferExpiry(value, route, errors) {
   for (const child of Object.values(value)) validateOfferExpiry(child, route, errors);
 }
 const errors = [];
+
+// A small set of public resources are intentionally maintained outside the Git build.
+// Keep this list explicit and narrow so any new missing internal target fails the build.
+const externalDeploymentAllowlist = new Set([
+  '/contractor-customer-care/residential-buildings-smart-home/',
+  '/contractor-customer-care/tenant-changes-smart-home/',
+  '/structure-control/residential-building-bms/',
+  '/projects/luxury-villa-petah-tikva/',
+  '/assets/siemens-knx/dwg/5WG1125-1AB22.dwg',
+  '/assets/siemens-knx/dwg/5WG1567-1AB22.dwg',
+  '/assets/siemens-knx/dwg/5WG1532-1DB51.dwg',
+  '/assets/siemens-knx/dwg/5WG1532-1DB31.dwg',
+  '/assets/siemens-knx/dwg/5WG1262-1DB51.dwg',
+  '/assets/siemens-knx/dwg/5WG1543-1DB51.dwg',
+  '/assets/siemens-knx/dwg/5WG1543-1DB31.dwg',
+  '/assets/siemens-knx/dwg/5WG1554-1DB31.dwg',
+  '/assets/siemens-knx/dwg/5WG1141-1AB03.dwg',
+]);
+
+async function internalTargetExists(pathname) {
+  let decoded;
+  try { decoded = decodeURI(pathname); } catch { decoded = pathname; }
+  if (!decoded.startsWith('/')) return true;
+  if (externalDeploymentAllowlist.has(decoded)) return true;
+  const resolved = path.resolve(root, '.' + decoded);
+  const relative = path.relative(root, resolved);
+  if (relative.startsWith('..') || path.isAbsolute(relative)) return false;
+  const candidates = decoded.endsWith('/')
+    ? [path.join(resolved, 'index.html'), path.join(resolved, 'index.php')]
+    : [resolved, path.join(resolved, 'index.html'), path.join(resolved, 'index.php')];
+  for (const candidate of candidates) {
+    if (await stat(candidate).then(s => s.isFile()).catch(() => false)) return true;
+  }
+  return false;
+}
+
+async function validateInternalReferences(html, route) {
+  const refs = [...html.matchAll(/\b(?:href|src)=["']([^"'#]+)["']/gi)].map(m => m[1].trim());
+  for (const ref of refs) {
+    if (!ref || /^(?:mailto:|tel:|javascript:|data:)/i.test(ref)) continue;
+    let url;
+    try { url = new URL(ref, `https://i-feel.co.il${route}`); } catch { continue; }
+    if (url.origin !== 'https://i-feel.co.il') continue;
+    if (!(await internalTargetExists(url.pathname))) errors.push(`${route}: broken internal reference ${ref}`);
+  }
+}
 const sitemapPaths = new Set();
 for (const name of ['sitemap.xml', 'sitemap-siemens-knx.xml']) {
   const xml = await readFile(path.join(root, name), 'utf8');
