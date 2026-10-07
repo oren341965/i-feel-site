@@ -23,7 +23,9 @@ permissions:
 
 concurrency:
   group: site-${{ github.ref }}
-  cancel-in-progress: true
+  # Keep production pushes queued so a newer merge cannot cancel an upload in progress.
+  # Pull-request previews can still be superseded safely.
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
   validate:
@@ -111,6 +113,9 @@ jobs:
 
       - name: Test bounded marketing decisions with synthetic inputs only
         run: node --test tests/google-ads-decision-loop.test.mjs
+
+      - name: Validate deployment script syntax
+        run: node --check scripts/deploy/ftps-upload.mjs
 
       - name: Build and validate Astro site
         run: npm run build

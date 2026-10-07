@@ -83,6 +83,9 @@ files.sort((left, right) => {
 console.log(`Uploading ${files.length} validated files to JetServer through explicit FTPS.`);
 console.log("A persistent control connection is used; server-side deletion is disabled.");
 
+const maxUploadAttempts = 5;
+const reconnectEveryFiles = 40;
+
 let client = new Client(120_000);
 client.ftp.verbose = false;
 let currentRemoteDirectory;
@@ -113,12 +116,23 @@ try {
 
   let uploaded = 0;
   for (const file of files) {
+    // JetServer has occasionally reset long-lived FTPS control sockets during
+    // full-site uploads. Refresh the control connection periodically so a
+    // production deploy does not depend on one connection surviving ~1,000 files.
+    if (uploaded > 0 && uploaded % reconnectEveryFiles === 0) {
+      client.close();
+      currentRemoteDirectory = undefined;
+      await delay(1_000);
+      await connect();
+      console.log(`Refreshed FTPS control connection after ${uploaded} files.`);
+    }
+
     const remotePath = path.posix.join(remoteRoot, file.relativePath);
     const remoteDirectory = path.posix.dirname(remotePath);
     const remoteName = path.posix.basename(remotePath);
 
     let completed = false;
-    for (let attempt = 1; attempt <= 3 && !completed; attempt += 1) {
+    for (let attempt = 1; attempt <= maxUploadAttempts && !completed; attempt += 1) {
       try {
         if (client.closed) {
           await connect();
@@ -132,13 +146,18 @@ try {
       } catch (error) {
         client.close();
         currentRemoteDirectory = undefined;
-        if (attempt === 3) {
-          const reason = sanitizedErrorMessage(error, username, password);
+        const reason = sanitizedErrorMessage(error, username, password);
+        if (attempt === maxUploadAttempts) {
           throw new Error(
             `FTPS upload failed for '${file.relativePath}' after ${attempt} attempts: ${reason}`,
           );
         }
-        await delay(attempt * 2_000);
+
+        const retryDelayMs = 5_000 * (2 ** (attempt - 1));
+        console.warn(
+          `FTPS retry ${attempt + 1}/${maxUploadAttempts} for '${file.relativePath}' after: ${reason}. Waiting ${retryDelayMs / 1000}s.`,
+        );
+        await delay(retryDelayMs);
       }
     }
 
