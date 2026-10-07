@@ -144,7 +144,13 @@
   };
 
   const isProductUrl = (url: string) =>
-    url === '/siemens-knx-products/' || url.startsWith('/articles/siemens-');
+    url === '/siemens-knx-products/' ||
+    url === '/equipment/' ||
+    url.startsWith('/equipment/') ||
+    url.startsWith('/articles/siemens-');
+
+  const isProductHubUrl = (url: string) =>
+    url === '/siemens-knx-products/' || url === '/equipment/';
 
   const containsTerm = (text: string, term: string) => {
     if (/^\d+$/.test(term)) {
@@ -245,7 +251,7 @@
     if (matchedTerms < requiredMatches) return 0;
 
     if (isProductUrl(record.url)) score += 75;
-    if (record.url === '/siemens-knx-products/') score += 15;
+    if (isProductHubUrl(record.url)) score += 15;
     return score + matchedTerms * 5;
   };
 
@@ -268,7 +274,7 @@
       if (isProductUrl(record.url)) {
         const type = document.createElement('span');
         type.className = 'mb-1.5 inline-flex rounded-full bg-accent-50 px-2.5 py-1 text-xs font-bold text-accent-800';
-        type.textContent = record.url === '/siemens-knx-products/' ? 'מרכז מוצרים ומפרטים' : 'מוצר / מפרט טכני';
+        type.textContent = isProductHubUrl(record.url) ? 'מרכז מוצרים ומפרטים' : 'מוצר / מפרט טכני';
         link.append(type);
       }
 
