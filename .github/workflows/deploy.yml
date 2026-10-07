@@ -143,6 +143,9 @@ jobs:
 
   deploy:
     name: Deploy production
+    permissions:
+      contents: read
+      actions: read
     needs: validate
     if: github.event_name != 'pull_request'
     runs-on:
@@ -176,12 +179,13 @@ jobs:
         run: npm ci --legacy-peer-deps --ignore-scripts
 
       - name: Download validated site artifact
-        uses: actions/download-artifact@v4
+        shell: cmd
+        timeout-minutes: 10
         env:
-          NODE_OPTIONS: --use-system-ca
-        with:
-          name: site-dist-${{ github.sha }}
-          path: dist
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh run download "${{ github.run_id }}" --repo "${{ github.repository }}" --name "site-dist-${{ github.sha }}" --dir dist
+          if errorlevel 1 exit /b 1
 
       - name: Restore and confirm protected deployment files
         shell: cmd
