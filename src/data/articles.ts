@@ -981,8 +981,9 @@ export const articles: Article[] = [
     title: 'מה זה BMS ולמי זה מתאים',
     description: 'מדריך לבקרת מבנה: DDC, ניטור, אנרגיה, מיזוג, תאורה וחיבור מערכות במבנים מסחריים.',
     category: 'BMS',
-    updated: '2026-06-07',
+    updated: '2026-10-07',
     related: [
+      { label: 'BMS למשרדים בישראל', href: '/bms-offices/' },
       { label: 'בקרת מבנה BMS', href: '/structure-control/' },
       { label: 'קטלוג Siemens BMS', href: '/assets/catalogs/siemens-bms-catalog.pdf' },
     ],
@@ -1205,7 +1206,7 @@ export const articles: Article[] = [
   },
   {
     slug: 'office-building-bms-guide',
-    title: 'BMS למשרדים: מדריך למגדלי משרדים ומתחמי עבודה',
+    title: 'איך מתכננים BMS למשרד? מדריך למגדלי משרדים ומתחמי עבודה',
     description: 'איך מתכננים בקרת מבנה למשרד: מיזוג לפי תפוסה, תאורה, חדרי ישיבות, דוחות אנרגיה ותחזוקה.',
     category: 'BMS',
     updated: '2026-06-07',
