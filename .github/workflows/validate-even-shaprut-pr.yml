@@ -4,6 +4,9 @@ on:
   pull_request:
     paths:
       - 'public/even-shaprut/**'
+      - 'public/developer-projects/**'
+      - 'tests/developer-even-shaprut-access.test.mjs'
+      - 'tests/fixtures/developer-access-router.php'
       - 'public/customer-benefits/index.php'
       - 'tests/even-shaprut-portal-unit.php'
       - 'tests/even-shaprut-portal.test.mjs'
@@ -36,4 +39,7 @@ jobs:
         run: |
           find public/even-shaprut -maxdepth 1 -type f -name '*.php' -print0 | xargs -0 -n1 php -l
           php tests/even-shaprut-portal-unit.php
+          php -l public/developer-projects/even-shaprut/index.php
+          php -l tests/fixtures/developer-access-router.php
+          node --test tests/developer-even-shaprut-access.test.mjs
           node --test tests/even-shaprut-portal.test.mjs
