@@ -14,6 +14,25 @@ function metadata(html, name, tag = 'meta') {
   return [...html.matchAll(new RegExp(`<${tag}\\b[^>]*>`, 'gi'))]
     .map(m => m[0]).filter(t => attr(t, tag === 'link' ? 'rel' : 'name') === name);
 }
+function validateOfferExpiry(value, route, errors) {
+  if (Array.isArray(value)) {
+    for (const item of value) validateOfferExpiry(item, route, errors);
+    return;
+  }
+  if (!value || typeof value !== 'object') return;
+  const types = Array.isArray(value['@type']) ? value['@type'] : [value['@type']].filter(Boolean);
+  if (types.includes('Offer')) {
+    const today = new Date().toISOString().slice(0, 10);
+    if (typeof value.priceValidUntil === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(value.priceValidUntil) && value.priceValidUntil < today) {
+      errors.push(`${route}: expired Offer priceValidUntil ${value.priceValidUntil}`);
+    }
+    if (typeof value.validThrough === 'string') {
+      const expiry = Date.parse(value.validThrough);
+      if (Number.isFinite(expiry) && expiry < Date.now()) errors.push(`${route}: expired Offer validThrough ${value.validThrough}`);
+    }
+  }
+  for (const child of Object.values(value)) validateOfferExpiry(child, route, errors);
+}
 const errors = [];
 const sitemapPaths = new Set();
 for (const name of ['sitemap.xml', 'sitemap-siemens-knx.xml']) {
@@ -75,6 +94,9 @@ for (const file of (await walk(root)).filter(f => f.endsWith('.html'))) {
   if ((html.match(/<h1\b/gi) || []).length !== 1) errors.push(`${route}: expected one main heading`);
   const descriptions = metadata(html, 'description');
   if (descriptions.length !== 1 || !attr(descriptions[0], 'content').trim()) errors.push(`${route}: missing/duplicate description`);
+  for (const script of html.matchAll(/<script\b[^>]*type=["']application\/ld\+json["'][^>]*>([\s\S]*?)<\/script>/gi)) {
+    try { validateOfferExpiry(JSON.parse(script[1]), route, errors); } catch { /* Existing JSON-LD validity is handled by page generation/tests. */ }
+  }
   for (const forbidden of ['[לאישור', 'היי פיל סיסטמס', 'פאל וינטק', 'בית חולים הדסה', 'מגדל אשפוז', '053-348', 'G-XXXXXXXXXX']) {
     if (html.includes(forbidden)) errors.push(`${route}: prohibited or unfinished copy (${forbidden})`);
   }
