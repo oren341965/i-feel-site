@@ -323,15 +323,16 @@ export const articles: Article[] = [
   },
   {
     slug: 'bms-retrofit-existing-building',
-    title: 'שדרוג BMS במבנה קיים: מדריך Retrofit בלי להחליף הכול',
-    description: 'איך משדרגים בקרת מבנה במבנה קיים: סקר ציוד, DDC, חיבור BACnet ו-Modbus, עבודה בשלבים, שמירת מערכות תקינות והכנת תשתית לניטור וחיסכון.',
+    title: 'איך מתכננים Retrofit למערכת BMS פעילה בלי להשבית את המבנה',
+    description: 'מדריך מעמיק לתכנון Retrofit במערכת BMS פעילה: סקר ציוד, DDC, BACnet, Modbus, עבודה בשלבים, שימור ציוד תקין ותכנית מעבר בטוחה.',
     category: 'BMS · מבנים קיימים',
-    updated: '2026-07-22',
+    updated: '2026-10-07',
     image: '/assets/og/backdrops/bms.png',
     imageAlt: 'חדר מערכות במבנה מסחרי עם לוחות בקרה, ציוד HVAC ומסך ניהול BMS מרכזי',
     imageWidth: 1823,
     imageHeight: 863,
     related: [
+      { label: 'שדרוג מערכת BMS קיימת', href: '/bms-retrofit/' },
       { label: 'בקרת מבנה BMS', href: '/structure-control/' },
       { label: 'שירות ותחזוקת מערכות', href: '/service-and-maintenance/' },
       { label: 'קמפוס רכבת קיסריה', href: '/structure-control/caesarea-rail-campus/' },
@@ -978,11 +979,12 @@ export const articles: Article[] = [
   },
   {
     slug: 'bms-guide',
-    title: 'מה זה BMS ולמי זה מתאים',
-    description: 'מדריך לבקרת מבנה: DDC, ניטור, אנרגיה, מיזוג, תאורה וחיבור מערכות במבנים מסחריים.',
+    title: 'מדריך BMS למנהלי אחזקה ומתכננים: DDC, פרוטוקולים וניהול אנרגיה',
+    description: 'מדריך מעמיק לתכנון ותפעול BMS: שכבת DDC, BACnet, Modbus, KNX, ניטור, אנרגיה, התראות ותחזוקה במבנים מסחריים.',
     category: 'BMS',
-    updated: '2026-06-07',
+    updated: '2026-10-07',
     related: [
+      { label: 'מה זה BMS? תשובה קצרה', href: '/answers/what-is-bms/' },
       { label: 'בקרת מבנה BMS', href: '/structure-control/' },
       { label: 'קטלוג Siemens BMS', href: '/assets/catalogs/siemens-bms-catalog.pdf' },
     ],
@@ -1328,13 +1330,15 @@ export const articles: Article[] = [
   },
   {
     slug: 'ddc-in-bms',
-    title: 'DDC בבקרת מבנה: מה תפקיד הבקר?',
-    description: 'מה זה בקר DDC, איך הוא מהווה את שכבת הבקרה של מערכת BMS, ולמה האפיון שלו קובע את אמינות המבנה.',
+    title: 'איך מתכננים שכבת DDC ב-BMS? נקודות I/O, לוגיקה ו-Commissioning',
+    description: 'מדריך מעמיק לתכנון שכבת DDC במערכת BMS: רשימות I/O, לוגיקה, BACnet, Modbus, תיעוד, בדיקות ו-commissioning.',
     category: 'BMS',
-    updated: '2026-06-27',
+    updated: '2026-10-07',
     related: [
+      { label: 'בקרי DDC בישראל', href: '/ddc-controllers-bms/' },
+      { label: 'מה זה DDC? תשובה קצרה', href: '/answers/what-is-ddc/' },
       { label: 'בקרת מבנה BMS', href: '/structure-control/' },
-      { label: 'מה זה BMS', href: '/articles/bms-guide/' },
+      { label: 'מדריך BMS למנהלי אחזקה ומתכננים', href: '/articles/bms-guide/' },
     ],
     sections: [
       {
