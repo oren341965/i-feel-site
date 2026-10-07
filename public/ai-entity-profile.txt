@@ -39,7 +39,6 @@ Smart home projects: https://i-feel.co.il/projects/
 
 ## Main pages
 https://i-feel.co.il/about-i-feel-smart-building-company/
-https://i-feel.co.il/i-feel-smart-home-bms-israel/
 https://i-feel.co.il/smart-home/
 https://i-feel.co.il/structure-control/
 https://i-feel.co.il/siemens-desigo-bms/
