@@ -79,6 +79,7 @@ $pendingEmail = $preview ? '' : sgt_pending_email();
 <div class="total"><span>ציוד והתקנה לפני מע״מ</span><strong><?= sgt_shop_money($quote['netCents']) ?></strong></div><div class="total"><span>מע״מ</span><strong><?= sgt_shop_money($quote['vatCents']) ?></strong></div><div class="total"><span><?= $quote['requiresQuote'] ? 'סה״כ התחלתי כולל מע״מ' : 'סה״כ כולל מע״מ' ?></span><strong><?= sgt_shop_money($quote['totalCents']) ?></strong></div><?php endif; ?>
 <p class="small">הרשימה מיועדת לחישוב ולתיאום. הוספת פריט אינה שולחת הזמנה ואינה מחייבת בתשלום. התאמת הציוד, עבודות תשתית ותוספות שאינן כלולות ייבדקו לפני אישור ההזמנה.</p><a class="wide" href="tel:035089553">לתיאום השדרוג · 03-508-9553</a></aside></div>
 <?php require __DIR__ . '/_guide.php'; ?>
+<section class="card" aria-label="קטלוג מסכי Samsung 2027" dir="rtl"><h2>קטלוג מסכי Samsung 2027</h2><p>לצפייה בקטלוג המסכים המקוון.</p><a href="https://anyflip.com/nxsjf/nmmx/" target="_blank" rel="noopener noreferrer">פתיחת קטלוג Samsung 2027 (בחלון חדש)</a></section>
 <?php endif; ?>
 </main><footer class="shell footer">I FEEL · שבירו, המשי 19, גני תקווה · <a href="tel:035089553">03-508-9553</a></footer>
 </body></html>
