@@ -41,6 +41,7 @@
   RewriteRule ^home-automation/?$ /smart-home/ [R=301,L]
   # /about-us/ pointed at the homepage (soft 404). The About page is an E-E-A-T asset (2026-07-22).
   RewriteRule ^about-us/?$ /about-i-feel-smart-building-company/ [R=301,L]
+  RewriteRule ^i-feel-smart-home-bms-israel/?$ /about-i-feel-smart-building-company/#entity-hub [R=301,L,NE]
   RewriteRule ^hadassah-knx-system/ifeel-blog/?$ /hadassah-knx-system/ [R=301,L]
   # Old BMS article still ranking ~#6 for "בקרת מבנה BMS" — recover it to the hub (was 404).
   RewriteRule ^בקרת-מבנה-לבניינים-ומשרדים-מה-זה-bms-ולמה/?$ /structure-control/ [R=301,L,NE]
