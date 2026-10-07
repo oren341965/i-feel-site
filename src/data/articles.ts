@@ -1032,15 +1032,15 @@ export const articles: Article[] = [
   },
   {
     slug: 'existing-home-smart-upgrade',
-    title: 'שדרוג דירה קיימת לבית חכם: איך עושים את זה בלי שיפוץ גדול',
-    description: 'גם דירה קיימת יכולה להפוך לבית חכם פתוח. כך משלבים KNX, Zigbee, WiFi, מצלמות, אזעקה, אינטרקום, אודיו ו-SmartSphere בלי שיפוץ גדול.',
+    title: '7 בדיקות לפני שדרוג דירה קיימת לבית חכם',
+    description: 'מדריך בדיקות לפני שדרוג דירה קיימת: תשתית חשמל ותקשורת, קווי מול אלחוטי, תאורה, תריסים, מיזוג, אבטחה, אינטגרציה והרחבה בשלבים.',
     category: 'שדרוגים',
-    updated: '2026-07-08',
+    updated: '2026-10-07',
     image: '/assets/articles/existing-home-smart-upgrade.jpg',
     imageAlt: 'מטבח ופינת אוכל בדירה מעוצבת עם בית חכם של i-feel — תאורה ותריסים חשמליים',
     related: [
-      { label: 'שדרוג בית קיים', href: '/smart-home-system-upgrade/' },
       { label: 'בית חכם אלחוטי לדירה קיימת', href: '/wireless-smart-home-existing-apartment/' },
+      { label: 'שדרוג מערכת בית חכם שכבר קיימת', href: '/smart-home-system-upgrade/' },
       { label: 'קווי או אלחוטי', href: '/articles/wired-vs-wireless-smart-home/' },
     ],
     sections: [
