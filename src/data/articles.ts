@@ -323,15 +323,16 @@ export const articles: Article[] = [
   },
   {
     slug: 'bms-retrofit-existing-building',
-    title: 'שדרוג BMS במבנה קיים: מדריך Retrofit בלי להחליף הכול',
-    description: 'איך משדרגים בקרת מבנה במבנה קיים: סקר ציוד, DDC, חיבור BACnet ו-Modbus, עבודה בשלבים, שמירת מערכות תקינות והכנת תשתית לניטור וחיסכון.',
+    title: 'איך מתכננים Retrofit למערכת BMS פעילה בלי להשבית את המבנה',
+    description: 'מדריך מעמיק לתכנון Retrofit במערכת BMS פעילה: סקר ציוד, DDC, BACnet, Modbus, עבודה בשלבים, שימור ציוד תקין ותכנית מעבר בטוחה.',
     category: 'BMS · מבנים קיימים',
-    updated: '2026-07-22',
+    updated: '2026-10-07',
     image: '/assets/og/backdrops/bms.png',
     imageAlt: 'חדר מערכות במבנה מסחרי עם לוחות בקרה, ציוד HVAC ומסך ניהול BMS מרכזי',
     imageWidth: 1823,
     imageHeight: 863,
     related: [
+      { label: 'שדרוג מערכת BMS קיימת', href: '/bms-retrofit/' },
       { label: 'בקרת מבנה BMS', href: '/structure-control/' },
       { label: 'שירות ותחזוקת מערכות', href: '/service-and-maintenance/' },
       { label: 'קמפוס רכבת קיסריה', href: '/structure-control/caesarea-rail-campus/' },
@@ -981,8 +982,9 @@ export const articles: Article[] = [
     title: 'מה זה BMS ולמי זה מתאים',
     description: 'מדריך לבקרת מבנה: DDC, ניטור, אנרגיה, מיזוג, תאורה וחיבור מערכות במבנים מסחריים.',
     category: 'BMS',
-    updated: '2026-06-07',
+    updated: '2026-10-07',
     related: [
+      { label: 'BMS למשרדים בישראל', href: '/bms-offices/' },
       { label: 'בקרת מבנה BMS', href: '/structure-control/' },
       { label: 'קטלוג Siemens BMS', href: '/assets/catalogs/siemens-bms-catalog.pdf' },
     ],
@@ -1032,15 +1034,15 @@ export const articles: Article[] = [
   },
   {
     slug: 'existing-home-smart-upgrade',
-    title: 'שדרוג דירה קיימת לבית חכם: איך עושים את זה בלי שיפוץ גדול',
-    description: 'גם דירה קיימת יכולה להפוך לבית חכם פתוח. כך משלבים KNX, Zigbee, WiFi, מצלמות, אזעקה, אינטרקום, אודיו ו-SmartSphere בלי שיפוץ גדול.',
+    title: '7 בדיקות לפני שדרוג דירה קיימת לבית חכם',
+    description: 'מדריך בדיקות לפני שדרוג דירה קיימת: תשתית חשמל ותקשורת, קווי מול אלחוטי, תאורה, תריסים, מיזוג, אבטחה, אינטגרציה והרחבה בשלבים.',
     category: 'שדרוגים',
-    updated: '2026-07-08',
+    updated: '2026-10-07',
     image: '/assets/articles/existing-home-smart-upgrade.jpg',
     imageAlt: 'מטבח ופינת אוכל בדירה מעוצבת עם בית חכם של i-feel — תאורה ותריסים חשמליים',
     related: [
-      { label: 'שדרוג בית קיים', href: '/smart-home-system-upgrade/' },
       { label: 'בית חכם אלחוטי לדירה קיימת', href: '/wireless-smart-home-existing-apartment/' },
+      { label: 'שדרוג מערכת בית חכם שכבר קיימת', href: '/smart-home-system-upgrade/' },
       { label: 'קווי או אלחוטי', href: '/articles/wired-vs-wireless-smart-home/' },
     ],
     sections: [
@@ -1097,10 +1099,10 @@ export const articles: Article[] = [
   },
   {
     slug: 'smart-home-for-architects',
-    title: 'בית חכם לאדריכלים: מה צריך להכניס לתוכנית',
-    description: 'רשימת תכנון לאדריכלים: תשתיות, לוחות, מסכים, מפסקים, הכנות אודיו וקולנוע ביתי.',
+    title: 'צ׳קליסט תכנון לבית חכם: מה צריך להופיע בתוכניות האדריכל',
+    description: 'צ׳קליסט מקצועי לתכנון בית חכם: מיקומי מפסקים, מסכים, חיישנים, רמקולים, נקודות רשת, לוחות והכנות לתיאום מול החשמל והמיזוג.',
     category: 'אדריכלים',
-    updated: '2026-06-07',
+    updated: '2026-10-07',
     related: [
       { label: 'ליווי אדריכלים', href: '/architects-smart-home-planning/' },
       { label: 'קטלוג מבנים ציבוריים', href: '/assets/catalogs/public-buildings-catalog.pdf' },
@@ -1124,10 +1126,10 @@ export const articles: Article[] = [
   },
   {
     slug: 'smart-home-for-contractors',
-    title: 'בית חכם ליזמים וקבלנים',
-    description: 'איך לשלב מערכות בית חכם בפרויקט בנייה רוויה: מפרט דיירים, תמיכה, שדרוגים ותפעול לאחר מסירה.',
+    title: 'איך בונים מפרט בית חכם לפרויקט בנייה רוויה',
+    description: 'מדריך ליזם ולקבלן: איך להגדיר חבילת בסיס, שינויי דיירים, תיאום חשמל, מסירה, שדרוגים ושירות בפרויקט מגורים.',
     category: 'יזמים',
-    updated: '2026-06-07',
+    updated: '2026-10-07',
     related: [
       { label: 'פתרונות ליזמים', href: '/contractor-customer-care/' },
       { label: 'קטלוג בנייה רוויה', href: '/assets/catalogs/dense-residential-catalog.pdf' },
@@ -1205,7 +1207,7 @@ export const articles: Article[] = [
   },
   {
     slug: 'office-building-bms-guide',
-    title: 'BMS למשרדים: מדריך למגדלי משרדים ומתחמי עבודה',
+    title: 'איך מתכננים BMS למשרד? מדריך למגדלי משרדים ומתחמי עבודה',
     description: 'איך מתכננים בקרת מבנה למשרד: מיזוג לפי תפוסה, תאורה, חדרי ישיבות, דוחות אנרגיה ותחזוקה.',
     category: 'BMS',
     updated: '2026-06-07',
@@ -1328,13 +1330,15 @@ export const articles: Article[] = [
   },
   {
     slug: 'ddc-in-bms',
-    title: 'DDC בבקרת מבנה: מה תפקיד הבקר?',
-    description: 'מה זה בקר DDC, איך הוא מהווה את שכבת הבקרה של מערכת BMS, ולמה האפיון שלו קובע את אמינות המבנה.',
+    title: 'איך מתכננים שכבת DDC ב-BMS? נקודות I/O, לוגיקה ו-Commissioning',
+    description: 'מדריך מעמיק לתכנון שכבת DDC במערכת BMS: רשימות I/O, לוגיקה, BACnet, Modbus, תיעוד, בדיקות ו-commissioning.',
     category: 'BMS',
-    updated: '2026-06-27',
+    updated: '2026-10-07',
     related: [
+      { label: 'בקרי DDC בישראל', href: '/ddc-controllers-bms/' },
+      { label: 'מה זה DDC? תשובה קצרה', href: '/answers/what-is-ddc/' },
       { label: 'בקרת מבנה BMS', href: '/structure-control/' },
-      { label: 'מה זה BMS', href: '/articles/bms-guide/' },
+      { label: 'מדריך BMS למנהלי אחזקה ומתכננים', href: '/articles/bms-guide/' },
     ],
     sections: [
       {
