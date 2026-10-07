@@ -120,6 +120,23 @@ eilatVideoGraph["@graph"].push({
   }
 });
 meta.jsonLd = JSON.stringify(eilatVideoGraph);
+const movingTvVideoGraph = JSON.parse(meta.jsonLd);
+movingTvVideoGraph["@graph"].push({
+  "@type": "VideoObject",
+  "@id": "https://i-feel.co.il/video/#v-moving-tv-tel-aviv",
+  "name": "טלוויזיה שנעה בין הסלון למטבח לפי מיקום הצופה",
+  "description": "בדירת יוקרה במרכז תל אביב, מבנה הדירה לא אפשר התקנת שתי טלוויזיות. במקום מתקנים רצפתיים או תקרתיים מהפתרונות הקיימים שלנו, תכננו ובנינו קיר זכוכית עם טלוויזיה מובנית, התלוי על מסילות מיוחדות מהתקרה ונע באמצעות מנוע. כך מזיזים את המסך לפי מיקום הצופה, מהסלון למטבח ובחזרה, כשהטלוויזיה ממשיכה לפעול גם בזמן התנועה.",
+  "uploadDate": "2026-10-07",
+  "duration": "PT1M43S",
+  "thumbnailUrl": "https://i.ytimg.com/vi/8_sU_w2IIiw/hqdefault.jpg",
+  "contentUrl": "https://www.youtube.com/watch?v=8_sU_w2IIiw",
+  "embedUrl": "https://www.youtube-nocookie.com/embed/8_sU_w2IIiw",
+  "inLanguage": "he-IL",
+  "publisher": {
+    "@id": "https://i-feel.co.il/#business"
+  }
+});
+meta.jsonLd = JSON.stringify(movingTvVideoGraph);
 ---
 <BaseLayout {...meta}>
   <Fragment set:html={content} />
