@@ -11,7 +11,8 @@ $scenario = $_GET['scenario'] ?? 'resident';
 $ticketId = bin2hex(random_bytes(24));
 $profile = ['email' => 'resident@example.invalid', 'role' => 'resident', 'name' => 'Synthetic resident',
     'building' => '1', 'apartment' => '22', 'location' => '', 'monday_item_id' => '123456',
-    'projects' => [['id' => $scenario === 'other' ? 'group_mm1hqj4x' : 'group_mm15570j', 'slug' => 'even-shaprut']]];
+    'projects' => [['id' => $scenario === 'other' ? 'group_mm1hqj4x' : 'group_mm15570j',
+        'slug' => $scenario === 'other' ? 'mandelblat-even-ezra' : 'even-shaprut']]];
 $expires = time() + 600;
 if ($scenario !== 'forged') esp_write_ticket('access', $ticketId, [
     'profile' => $profile, 'expires' => $scenario === 'expired' ? time() - 1 : $expires,
