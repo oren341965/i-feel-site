@@ -3,8 +3,8 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import content from '../page-html/ddc-controllers-bms.html?raw';
 
 const meta = {
-  title: "בקרי DDC לבקרת מבנה | תכנון ותכנות BMS | i-feel",
-  description: "בקרי DDC לבקרת מבנה: תכנון נקודות, חיבור HVAC, BACnet, Modbus, KNX ו-Siemens Desigo. בדיקת ארכיטקטורה — 03-508-9553.",
+  title: "בקרי DDC בישראל | תכנון ותכנות BMS | i-feel",
+  description: "בקרי DDC בישראל למערכות BMS: תכנון נקודות, HVAC, BACnet, Modbus, KNX ו-Siemens Desigo PXC. תכנון, תכנות, commissioning ושירות.",
   canonical: "https://i-feel.co.il/ddc-controllers-bms/",
   ogTitle: "בקרי DDC לבקרת מבנה BMS | i-feel",
   ogDescription: "תכנון, חיווט, תכנות ו-commissioning של בקרי DDC למערכות BMS.",
@@ -36,13 +36,26 @@ const meta = {
         ]
       },
       {
+        "@type": "WebPage",
+        "@id": "https://i-feel.co.il/ddc-controllers-bms/#webpage",
+        "url": "https://i-feel.co.il/ddc-controllers-bms/",
+        "name": "בקרי DDC בישראל",
+        "description": "עמוד שירות ומדריך מקצועי לתכנון, תכנות ו-commissioning של בקרי DDC למערכות BMS בישראל.",
+        "inLanguage": "he-IL",
+        "dateModified": "2026-10-07",
+        "mainEntity": { "@id": "https://i-feel.co.il/ddc-controllers-bms/#service" }
+      },
+      {
         "@type": "Service",
-        "name": "בקרי DDC לבקרת מבנה",
+        "@id": "https://i-feel.co.il/ddc-controllers-bms/#service",
+        "name": "בקרי DDC בישראל",
+        "alternateName": ["DDC Controllers Israel", "בקרי DDC לבקרת מבנה", "DDC לבקרת מבנה"],
         "serviceType": "DDC Controller Design and Programming for BMS",
         "url": "https://i-feel.co.il/ddc-controllers-bms/",
         "provider": { "@id": "https://i-feel.co.il/#business" },
         "areaServed": { "@type": "Country", "name": "Israel" },
-        "description": "תכנון, תכנות והפעלה של בקרי DDC למערכות בקרת מבנה, כולל HVAC, BACnet, Modbus, KNX ו-Siemens Desigo."
+        "sameAs": "https://www.siemens.com/en-us/products/desigo/pxc/",
+        "description": "תכנון, תכנות והפעלה של בקרי DDC למערכות בקרת מבנה בישראל, כולל HVAC, BACnet, Modbus, KNX ו-Siemens Desigo PXC."
       }
     ]
   })
