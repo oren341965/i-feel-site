@@ -110,6 +110,7 @@ jobs:
           php -l public/api/consume-conversion.php
           php tests/enhanced-conversion-data.test.php
           php tests/consume-conversion-runtime.test.php
+          php tests/lead-delivery-runtime.test.php
           node --test tests/lead-conversion-proof.test.mjs tests/lead-measurement.test.mjs tests/lead-attribution-capture.test.mjs
 
       - name: Test bounded marketing decisions with synthetic inputs only
