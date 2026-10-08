@@ -111,7 +111,9 @@ function attribution_source(array $marketing, string $referrer): string
     $utmSource = strtolower(trim((string) ($marketing['utm_source'] ?? '')));
     $utmMedium = strtolower(trim((string) ($marketing['utm_medium'] ?? '')));
 
-    if (($marketing['gclid'] ?? '') !== '') {
+    if (($marketing['gclid'] ?? '') !== ''
+        || ($marketing['wbraid'] ?? '') !== ''
+        || ($marketing['gbraid'] ?? '') !== '') {
         return 'Google Ads';
     }
     if (($marketing['fbclid'] ?? '') !== '') {
@@ -203,7 +205,9 @@ function fallback_mail(array $lead, string $reason, array $marketing = []): bool
     $to = getenv('LEAD_FALLBACK_EMAIL') ?: DEFAULT_FALLBACK_EMAIL;
     $subject = 'Lead from i-feel website - ' . ($lead['name'] ?: 'unknown');
     $body = implode("\n", [
-        'A lead could not be sent to Monday, so it was routed by email.',
+        !empty($lead['delivered_monday_item_id'])
+            ? 'The lead was created in Monday; this email preserves details after an annotation failure. Do not create a duplicate item.'
+            : 'A lead could not be sent to Monday, so it was routed by email.',
         'Reason: ' . $reason,
         '',
         'Name: ' . $lead['name'],
@@ -298,6 +302,8 @@ $marketing = [
     'utm_term' => field('utm_term', 200),
     'utm_content' => field('utm_content', 200),
     'gclid' => field('gclid', 200),
+    'wbraid' => field('wbraid', 200),
+    'gbraid' => field('gbraid', 200),
     'fbclid' => field('fbclid', 200),
     'ttclid' => field('ttclid', 200),
 ];
@@ -422,14 +428,28 @@ try {
     // to analytics. Reuse the existing update request; no new board columns.
     $conversionEventId = 'ifeel_' . bin2hex(random_bytes(16));
     $updateBody .= '<br>Measurement reference: ' . $conversionEventId;
-    monday_request(
-        'mutation ($itemId: ID!, $body: String!) { create_update(item_id: $itemId, body: $body) { id } }',
-        [
-            'itemId' => $itemId,
-            'body' => $updateBody,
-        ],
-        $token
-    );
+    try {
+        monday_request(
+            'mutation ($itemId: ID!, $body: String!) { create_update(item_id: $itemId, body: $body) { id } }',
+            [
+                'itemId' => $itemId,
+                'body' => $updateBody,
+            ],
+            $token
+        );
+    } catch (Throwable $updateError) {
+        // A confirmed create_item is a delivered lead even if its annotation
+        // fails. Keep conversion eligibility and notify through the existing
+        // fallback channel, without attempting a second item creation.
+        error_log('[i-feel lead form] item created; annotation failed');
+        try {
+            $notificationLead = $lead;
+            $notificationLead['delivered_monday_item_id'] = (string) $itemId;
+            fallback_mail($notificationLead, 'Monday item ' . (string) $itemId . ' was created, but its annotation failed.', $marketing);
+        } catch (Throwable $notificationError) {
+            error_log('[i-feel lead form] annotation fallback notification failed');
+        }
+    }
 
     $conversionProof = bin2hex(random_bytes(32));
     $_SESSION['ads_conversion_proof'] = [

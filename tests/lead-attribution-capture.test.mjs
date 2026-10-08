@@ -10,6 +10,8 @@ const attributionKeys = [
   'utm_term',
   'utm_content',
   'gclid',
+  'wbraid',
+  'gbraid',
   'fbclid',
   'ttclid',
 ];
@@ -99,4 +101,15 @@ test('legacy partial attribution is not mixed with new touch evidence', async ()
   const paid = await visit(storage, '?utm_campaign=new&gclid=new-click');
   assert.equal(paid.utm_campaign, 'new');
   assert.equal(paid.gclid, 'new-click');
+});
+
+
+test('privacy-preserving Google click IDs stay on the same captured touch', async () => {
+  const storage = new Map();
+  const first = await visit(storage, '?utm_source=google&utm_campaign=bms&wbraid=web-click&gbraid=app-click');
+  assert.equal(first.wbraid, 'web-click');
+  assert.equal(first.gbraid, 'app-click');
+  const later = await visit(storage, '?utm_campaign=other&gclid=other-click');
+  assert.equal(later.wbraid, 'web-click');
+  assert.equal(later.gclid, undefined);
 });
