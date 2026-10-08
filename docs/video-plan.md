@@ -13,6 +13,7 @@
 
 | נושא | קטגוריה ב-/video/ | YouTube ID | דף-נושא ייעודי |
 |------|-------------------|------------|----------------|
+| תאורת DMX לבית: צבע ועמעום, DALI-2 ו־Siemens KNX | בית חכם ו-KNX | `IfWiNCE3fWY` | `/dmx-home-lighting/#video` |
 | Touchwand LCD — מסך מגע | הדרכות שימוש | `_94Ph8MSXS0` | — |
 | החלפת אייקונים במפסק זכוכית GlassWand | הדרכות שימוש | `AkwVp-VQ3r8` | `/switch-configurator/` |
 | כיצד לעשות תזמונים בבית חכם | הדרכות שימוש | `fIu6RUgQd6U` | `/smart-home-scheduling/` |

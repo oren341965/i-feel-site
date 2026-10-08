@@ -120,6 +120,24 @@ eilatVideoGraph["@graph"].push({
   }
 });
 meta.jsonLd = JSON.stringify(eilatVideoGraph);
+const dmxVideoGraph = JSON.parse(meta.jsonLd);
+dmxVideoGraph["@graph"].push({
+  "@type": "VideoObject",
+  "@id": "https://i-feel.co.il/dmx-home-lighting/#video",
+  "name": "תאורת DMX לבית: צבע, עמעום ושילוב DALI-2 ו־KNX של סימנס",
+  "description": "הדגמת שינוי צבעים ועוצמת תאורה באמצעות מפסקים, מסכי שליטה ואפליקציה, לצד הסבר על DALI ו־KNX של Siemens.",
+  "uploadDate": "2026-10-08",
+  "duration": "PT3M9S",
+  "thumbnailUrl": "https://i.ytimg.com/vi/IfWiNCE3fWY/hqdefault.jpg",
+  "contentUrl": "https://www.youtube.com/watch?v=IfWiNCE3fWY",
+  "embedUrl": "https://www.youtube-nocookie.com/embed/IfWiNCE3fWY",
+  "inLanguage": "he-IL",
+  "publisher": {
+    "@id": "https://i-feel.co.il/#business"
+  }
+});
+meta.jsonLd = JSON.stringify(dmxVideoGraph);
+
 ---
 <BaseLayout {...meta}>
   <Fragment set:html={content} />
