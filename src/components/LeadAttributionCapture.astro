@@ -11,25 +11,26 @@
       'ttclid'
     ];
     var params = new URLSearchParams(window.location.search);
+    // Capture one coherent first tagged touch, never campaign and click IDs
+    // from different visits. Legacy per-key values are intentionally not merged.
     var values = {};
-
-    attributionKeys.forEach(function (key) {
-      var storageKey = 'ifeel_' + key;
-      var stored = '';
-      try { stored = sessionStorage.getItem(storageKey) || ''; } catch (error) {}
-
-      // Keep the first known touch for the browser session. A later visit must
-      // not silently replace the campaign that originally generated the lead.
-      if (!stored) {
-        var current = (params.get(key) || '').trim().slice(0, 200);
-        if (current) {
-          stored = current;
-          try { sessionStorage.setItem(storageKey, current); } catch (error) {}
-        }
+    var touchKey = 'ifeel_first_tagged_touch_v1';
+    try {
+      var saved = JSON.parse(sessionStorage.getItem(touchKey) || 'null');
+      if (saved && saved.version === 1 && saved.values && typeof saved.values === 'object') {
+        attributionKeys.forEach(function (key) {
+          values[key] = typeof saved.values[key] === 'string' ? saved.values[key].slice(0, 200) : '';
+        });
       }
-
-      values[key] = stored;
-    });
+    } catch (error) {}
+    if (Object.keys(values).length === 0) {
+      attributionKeys.forEach(function (key) {
+        values[key] = (params.get(key) || '').trim().slice(0, 200);
+      });
+      if (attributionKeys.some(function (key) { return values[key]; })) {
+        try { sessionStorage.setItem(touchKey, JSON.stringify({ version: 1, values: values })); } catch (error) {}
+      }
+    }
 
     function firstSessionValue(storageKey, current, maxLength) {
       var stored = '';
