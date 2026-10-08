@@ -1,0 +1,35 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import LeadForm from '../../components/LeadForm.astro';
+const page = '/lp/smart-home-developers/';
+---
+<BaseLayout title="דירות חכמות ליזמי בנייה | i-feel" description="תכנון והתקנת מערכות בית חכם בפרויקטי מגורים, בתיאום עם היזם, החשמלאי והדיירים. השאירו פרטי פרויקט לשיחת אפיון." canonical={`https://i-feel.co.il${page}`}>
+  <section class="hero-gradient text-white">
+    <div class="max-w-6xl mx-auto px-4 py-10 lg:py-16 grid lg:grid-cols-2 gap-10 items-start">
+      <div>
+        <p class="font-bold text-accent-300 mb-4">ליזמי בנייה, קבלנים ומנהלי פרויקטים</p>
+        <h1 class="text-3xl md:text-5xl font-extrabold leading-tight mb-5">דירות חכמות בפרויקט שלכם, משלב התכנון עד למסירה</h1>
+        <p class="text-lg leading-relaxed mb-6">i-feel מתכננת ומתקינה מערכות בית חכם לפרויקטי מגורים. מגדירים מפרט בסיס ושדרוגי דיירים, מתאמים את התשתיות עם צוות הפרויקט ומלווים את ההתקנה והמסירה.</p>
+        <ul class="space-y-3 mb-6">
+          <li>תכנון תאורה, תריסים ומיזוג לפי מפרט הדירות</li>
+          <li>התאמת פתרונות KNX או מערכות אלחוטיות לצורכי הפרויקט</li>
+          <li>תיאום עם החשמלאי, היועצים ומערך שינויי הדיירים</li>
+          <li>התקנה, תכנות והדרכת שימוש לקראת המסירה</li>
+        </ul>
+        <a href="tel:+972-3-508-9553" class="inline-flex rounded-lg border border-white/30 px-6 py-3 font-bold">דברו איתנו: 03-508-9553</a>
+      </div>
+      <LeadForm leadType="בית חכם" subject="פרויקט מגורים ליזם או קבלן" sourcePage={page} heading="ספרו לנו על פרויקט המגורים" buttonText="בקשו שיחת אפיון לפרויקט" />
+    </div>
+  </section>
+  <section class="bg-white py-12">
+    <div class="max-w-5xl mx-auto px-4">
+      <h2 class="text-2xl font-extrabold text-brand-900 mb-6">מה כדאי להביא לשיחת האפיון?</h2>
+      <div class="grid md:grid-cols-3 gap-6 text-brand-700">
+        <div><h3 class="font-bold mb-2">היקף ושלב הבנייה</h3><p>מיקום הפרויקט, מספר הדירות ומועד המסירה המתוכנן.</p></div>
+        <div><h3 class="font-bold mb-2">מפרט ותוכניות</h3><p>תוכניות חשמל ודרישות לתאורה, תריסים ומיזוג, ככל שקיימות.</p></div>
+        <div><h3 class="font-bold mb-2">בסיס ושדרוגי דיירים</h3><p>מגדירים יחד מה נכלל במפרט ומה מוצע לבחירת הדיירים.</p></div>
+      </div>
+      <a href="#lead-form" class="inline-flex mt-8 bg-accent-500 text-white px-6 py-3 rounded-lg font-bold">השאירו פרטי פרויקט</a>
+    </div>
+  </section>
+</BaseLayout>

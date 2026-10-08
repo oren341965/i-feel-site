@@ -30,8 +30,8 @@ test('the shared browser capture keeps first-touch attribution and covers every 
   const capture = await read('src/components/LeadAttributionCapture.astro');
 
   for (const key of attributionKeys) assert.match(capture, new RegExp(`['\"]${key}['\"]`));
-  assert.match(capture, /if \(!stored\)/);
-  assert.match(capture, /sessionStorage\.setItem\(storageKey, current\)/);
+  assert.match(capture, /ifeel_first_tagged_touch_v1/);
+  assert.match(capture, /sessionStorage\.setItem\(touchKey, JSON\.stringify/);
   assert.match(capture, /form\[action="\/api\/lead\.php"\]/);
   assert.match(capture, /document\.addEventListener\('submit'/);
 });
@@ -49,4 +49,54 @@ test('lead.php accepts and maps every paid-platform click id to Monday', async (
     assert.match(leadPhp, new RegExp(`['\"]${key}['\"]\\s*=>\\s*field\\(['\"]${key}['\"]`));
     assert.match(leadPhp, new RegExp(`['\"]${key}['\"]\\s*=>\\s*['\"]${columnId}['\"]`));
   }
+});
+
+// Execute the real inline script with inert forms: no request or CRM side effect.
+import vm from 'node:vm';
+async function visit(storage, search) {
+  const source = (await read('src/components/LeadAttributionCapture.astro')).replace(/^<script is:inline>\s*/, '').replace(/<\/script>\s*$/, '');
+  const inputs = {};
+  const form = {
+    querySelector(selector) {
+      const name = selector.match(/name="([^"\]]+)"/);
+      if (name && ['city', 'heard_from'].includes(name[1])) return { required: false };
+      if (name) return inputs[name[1]] || null;
+      return { required: false };
+    },
+    appendChild(input) { inputs[input.name] = input; },
+  };
+  const context = {
+    URL, URLSearchParams,
+    window: { location: { search, origin: 'https://i-feel.co.il', pathname: '/contactus/' } },
+    sessionStorage: { getItem: key => storage.get(key), setItem: (key, value) => storage.set(key, value) },
+    document: { referrer: '', readyState: 'complete', addEventListener() {}, createElement: () => ({}),
+      querySelectorAll: selector => selector.includes('newsletter') ? [] : [form] },
+  };
+  vm.runInNewContext(source, context);
+  return Object.fromEntries(Object.entries(inputs).map(([name, input]) => [name, input.value]));
+}
+
+test('a later click ID never attaches to an earlier campaign', async () => {
+  const storage = new Map();
+  await visit(storage, '?utm_source=google&utm_campaign=first');
+  const later = await visit(storage, '?utm_campaign=second&gclid=later-click');
+  assert.equal(later.utm_campaign, 'first');
+  assert.equal(later.gclid, undefined);
+});
+
+test('an untagged entry does not prevent the first tagged touch', async () => {
+  const storage = new Map();
+  await visit(storage, '');
+  const paid = await visit(storage, '?utm_campaign=bms&gclid=first-click');
+  assert.equal(paid.utm_campaign, 'bms');
+  assert.equal(paid.gclid, 'first-click');
+  const direct = await visit(storage, '');
+  assert.equal(direct.gclid, 'first-click');
+});
+
+test('legacy partial attribution is not mixed with new touch evidence', async () => {
+  const storage = new Map([['ifeel_utm_campaign', 'old-campaign']]);
+  const paid = await visit(storage, '?utm_campaign=new&gclid=new-click');
+  assert.equal(paid.utm_campaign, 'new');
+  assert.equal(paid.gclid, 'new-click');
 });
