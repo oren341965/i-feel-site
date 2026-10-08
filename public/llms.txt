@@ -151,3 +151,7 @@ i-feel משרתת לקוחות פרטיים, יזמי בנייה, אדריכלי
 - A route lookup does not submit a lead, send a message, upload plans, confirm a price or book a meeting. The user reviews and submits through the human interface.
 
 - [ממשק לחצנים Siemens וחיבור מפסק חוץ ל־KNX](https://i-feel.co.il/articles/siemens-knx-push-button-interface/): UP 220/21 ו־UP 220D31, מק״טים, IP20, התקנה פנימית וחיווט מגע יבש עד 10 מטר.
+
+- DS-2CD1347G2-LUF: https://i-feel.co.il/equipment/hikvision-ds-2cd1347g2-luf/
+- DS-2CD2347G2H-LISU/SL: https://i-feel.co.il/equipment/hikvision-ds-2cd2347g2h-lisu-sl/
+- DS-2CD2047G2H-LIU: https://i-feel.co.il/equipment/hikvision-ds-2cd2047g2h-liu/
