@@ -176,6 +176,148 @@ export const equipmentProducts = [
     notes: ['יש לוודא שהבקר תומך בעקומת NTC10K של החיישן ולמקם אותו בהתאם להנחיות מדידת טמפרטורת חוץ.'],
     officialUrl: 'https://new.abb.com/products/2CQG505101R2021/1s9sw100', related: [{ label: 'פתרונות חיישנים ובקרת מבנה באתר i-feel', href: '/structure-control/' }],
   },
+{
+  "slug": "hikvision-ds-2cd1347g2-luf",
+  "category": "מצלמות אבטחה",
+  "brand": "Hikvision",
+  "sku": "DS-2CD1347G2-LUF",
+  "title": "מצלמת כיפה ColorVu ‏4MP — Hikvision DS-2CD1347G2-LUF",
+  "summary": "מצלמת רשת צבעונית עם מיקרופון מובנה והגנת IP67.",
+  "purpose": "המצלמה מעבירה תמונת וידאו ברשת למערכת הקלטה ולצפייה. בחירת העדשה, מיקום ההתקנה והתאמה לתאורת הסביבה נקבעים לפי השטח.",
+  "specifications": [
+    [
+      "רזולוציה",
+      "4MP"
+    ],
+    [
+      "עדשה",
+      "2.8 מ״מ; יש להתאים את גרסת העדשה להזמנה"
+    ],
+    [
+      "תאורה",
+      "ColorVu ותאורה לבנה משלימה"
+    ],
+    [
+      "אודיו",
+      "מיקרופון מובנה"
+    ],
+    [
+      "הגנה",
+      "IP67"
+    ]
+  ],
+  "notes": [
+    "אין להסיק זיהוי זהות פנים מנתוני הרזולוציה; פונקציות האנליטיקה נבדקות מול מפרט הדגם ומערכת ההקלטה.",
+    "יש לבחור NVR בעל מספר ערוצים מספיק לכל המצלמות ולוודא תאימות, נפח אחסון ותקציב הזנה לפני התקנה."
+  ],
+  "officialUrl": "https://assets.hikvision.com/prd/public/all/doc/sm000041033/DS-2CD1347G2-LUF_Datasheet_20240828.pdf",
+  "related": [
+    {
+      "label": "קטלוגים באתר",
+      "href": "/catalogs/"
+    },
+    {
+      "label": "בית חכם",
+      "href": "/smart-home/"
+    }
+  ]
+},
+{
+  "slug": "hikvision-ds-2cd2347g2h-lisu-sl",
+  "category": "מצלמות אבטחה",
+  "brand": "Hikvision",
+  "sku": "DS-2CD2347G2H-LISU/SL",
+  "title": "מצלמת Turret ‏ColorVu ‏4MP — Hikvision DS-2CD2347G2H-LISU/SL",
+  "summary": "מצלמת רשת עם תאורה היברידית חכמה, סיווג אדם ורכב ואודיו דו־כיווני.",
+  "purpose": "המצלמה מעבירה תמונת וידאו ברשת למערכת הקלטה ולצפייה. בחירת העדשה, מיקום ההתקנה והתאמה לתאורת הסביבה נקבעים לפי השטח.",
+  "specifications": [
+    [
+      "רזולוציה",
+      "4MP"
+    ],
+    [
+      "עדשה",
+      "2.8 או 4 מ״מ, לפי הגרסה"
+    ],
+    [
+      "תאורה",
+      "Smart Hybrid Light / ColorVu"
+    ],
+    [
+      "WDR",
+      "130dB"
+    ],
+    [
+      "אודיו",
+      "אודיו דו־כיווני מובנה"
+    ],
+    [
+      "הגנה",
+      "IP67"
+    ]
+  ],
+  "notes": [
+    "סיווג אדם ורכב אינו זיהוי זהות פנים. יש לתאם את אירועי האנליטיקה הנתמכים עם ה-NVR.",
+    "יש לבחור NVR בעל מספר ערוצים מספיק לכל המצלמות ולוודא תאימות, נפח אחסון ותקציב הזנה לפני התקנה."
+  ],
+  "officialUrl": "https://assets.hikvision.com/prd/public/all/doc/sm000062548/DS-2CD2347G2H-LISU_SL_Datasheet_20230907.pdf",
+  "related": [
+    {
+      "label": "קטלוגים באתר",
+      "href": "/catalogs/"
+    },
+    {
+      "label": "בית חכם",
+      "href": "/smart-home/"
+    }
+  ]
+},
+{
+  "slug": "hikvision-ds-2cd2047g2h-liu",
+  "category": "מצלמות אבטחה",
+  "brand": "Hikvision",
+  "sku": "DS-2CD2047G2H-LIU",
+  "title": "מצלמת צינור ColorVu ‏4MP — Hikvision DS-2CD2047G2H-LIU",
+  "summary": "מצלמת Bullet עם תאורה היברידית חכמה ומיקרופון מובנה.",
+  "purpose": "המצלמה מעבירה תמונת וידאו ברשת למערכת הקלטה ולצפייה. בחירת העדשה, מיקום ההתקנה והתאמה לתאורת הסביבה נקבעים לפי השטח.",
+  "specifications": [
+    [
+      "רזולוציה",
+      "4MP"
+    ],
+    [
+      "מבנה",
+      "Bullet — מצלמת צינור"
+    ],
+    [
+      "תאורה",
+      "Smart Hybrid Light / ColorVu"
+    ],
+    [
+      "אודיו",
+      "מיקרופון מובנה בגרסת U"
+    ],
+    [
+      "הגנה",
+      "IP67"
+    ]
+  ],
+  "notes": [
+    "אין להחליף בין LIU לבין LIU/SL: יש לוודא את הסיומת המלאה ואת תכונות האודיו וההתראה לפני הזמנה.",
+    "יש לבחור NVR בעל מספר ערוצים מספיק לכל המצלמות ולוודא תאימות, נפח אחסון ותקציב הזנה לפני התקנה."
+  ],
+  "officialUrl": "https://www.hikvision.com/vn/products/IP-Products/Network-Cameras/Pro-Series-EasyIP-/ds-2cd2047g2h-liu/?subName=DS-2CD2047G2H-LIU",
+  "related": [
+    {
+      "label": "קטלוגים באתר",
+      "href": "/catalogs/"
+    },
+    {
+      "label": "בית חכם",
+      "href": "/smart-home/"
+    }
+  ]
+},
 ] as const;
 
 export const equipmentCategories = [...new Set(equipmentProducts.map((product) => product.category))];
