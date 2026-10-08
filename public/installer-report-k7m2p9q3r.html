@@ -1,0 +1,1012 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow, noarchive">
+  <meta name="googlebot" content="noindex, nofollow">
+  <title>טופס סיום עבודה למתקין | I Feel</title>
+  <style>
+    :root {
+      --bg: #f5f7fb;
+      --card: #ffffff;
+      --text: #172033;
+      --muted: #667085;
+      --border: #d9e1ec;
+      --primary: #1f4fd8;
+      --primary-dark: #173aa0;
+      --warning-bg: #fff4e5;
+      --warning-border: #ffb547;
+      --danger: #d92d20;
+      --green: #25d366;
+      --success-bg: #e7f6ec;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Arial, "Noto Sans Hebrew", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    .page {
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 28px 16px 60px;
+    }
+
+    .header {
+      background: linear-gradient(135deg, #102b77, #1f4fd8);
+      color: white;
+      border-radius: 22px;
+      padding: 28px;
+      margin-bottom: 20px;
+      box-shadow: 0 10px 30px rgba(16, 43, 119, 0.18);
+    }
+
+    .header h1 { margin: 0 0 8px; font-size: 30px; line-height: 1.25; }
+    .header p { margin: 0; font-size: 17px; opacity: 0.95; }
+
+    .notice {
+      background: var(--warning-bg);
+      border: 1px solid var(--warning-border);
+      border-radius: 16px;
+      padding: 16px 18px;
+      margin: 18px 0;
+      font-weight: 700;
+    }
+
+    .autosave-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: var(--success-bg);
+      border: 1px solid #b6e0c2;
+      border-radius: 10px;
+      padding: 8px 14px;
+      font-size: 13px;
+      color: #1b6c33;
+      margin-bottom: 16px;
+    }
+
+    .autosave-bar button {
+      background: transparent;
+      border: 1px solid #b6e0c2;
+      color: #1b6c33;
+      border-radius: 8px;
+      padding: 4px 10px;
+      font-size: 12px;
+      cursor: pointer;
+    }
+
+    form {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 22px;
+      padding: 22px;
+      box-shadow: 0 10px 25px rgba(15, 23, 42, 0.06);
+    }
+
+    section {
+      border-top: 1px solid var(--border);
+      padding-top: 22px;
+      margin-top: 24px;
+    }
+
+    section:first-of-type { border-top: 0; padding-top: 0; margin-top: 0; }
+
+    h2 { font-size: 22px; margin: 0 0 14px; color: #102b77; }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-bottom: 14px;
+    }
+
+    label { font-weight: 700; font-size: 15px; }
+
+    .required-mark { color: var(--danger); margin-inline-start: 4px; }
+
+    input, textarea, select {
+      width: 100%;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 11px 12px;
+      font-size: 16px;
+      background: white;
+      color: var(--text);
+      font-family: inherit;
+    }
+
+    input:invalid:not(:placeholder-shown),
+    textarea:invalid:not(:placeholder-shown),
+    select.touched:invalid {
+      border-color: var(--danger);
+      background: #fef3f2;
+    }
+
+    textarea { min-height: 88px; resize: vertical; }
+
+    .checklist { display: grid; gap: 10px; margin: 12px 0 18px; }
+
+    .check {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 10px 12px;
+      background: #f8fafc;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+    }
+
+    .check input { width: auto; margin-top: 5px; transform: scale(1.15); }
+    .check label { font-weight: 600; }
+
+    .row-4 {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .small-note {
+      color: var(--muted);
+      font-size: 14px;
+      margin-top: -4px;
+      margin-bottom: 12px;
+    }
+
+    .photo-area {
+      border: 2px dashed var(--border);
+      border-radius: 16px;
+      padding: 16px;
+      background: #fafbfc;
+      text-align: center;
+    }
+
+    .photo-area input[type="file"] { display: none; }
+
+    .photo-btn {
+      display: inline-block;
+      background: var(--primary);
+      color: white;
+      padding: 12px 22px;
+      border-radius: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      font-size: 16px;
+    }
+
+    .photo-counter {
+      margin-top: 10px;
+      font-weight: 700;
+      color: var(--primary-dark);
+    }
+
+    .photo-warning {
+      background: var(--warning-bg);
+      border: 1px solid var(--warning-border);
+      border-radius: 10px;
+      padding: 10px 12px;
+      font-size: 14px;
+      margin-top: 12px;
+      text-align: right;
+    }
+
+    .preview-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .preview-grid img {
+      width: 100%;
+      height: 110px;
+      object-fit: cover;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 26px;
+      position: sticky;
+      bottom: 0;
+      background: rgba(245, 247, 251, 0.92);
+      backdrop-filter: blur(8px);
+      padding: 14px 0 0;
+    }
+
+    button {
+      border: 0;
+      border-radius: 14px;
+      padding: 12px 18px;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      font-family: inherit;
+    }
+
+    .primary { background: var(--primary); color: white; }
+    .primary:hover { background: var(--primary-dark); }
+    .secondary { background: #e9eef8; color: #102b77; }
+    .whatsapp { background: var(--green); color: #082b16; }
+    .danger { background: #fef3f2; color: var(--danger); border: 1px solid #fda29b; }
+
+    .footer-note { color: var(--muted); font-size: 14px; margin-top: 16px; }
+
+    @media (max-width: 760px) {
+      .grid, .row-4 { grid-template-columns: 1fr; }
+      .header h1 { font-size: 24px; }
+      form { padding: 16px; }
+      .actions { position: static; }
+      button { width: 100%; }
+    }
+
+    @media print {
+      body { background: white; }
+      .page { max-width: none; padding: 0; }
+      .header { box-shadow: none; }
+      form { box-shadow: none; border: 0; }
+      .actions, .autosave-bar, .photo-area { display: none; }
+      input, textarea, select { border: 1px solid #999; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <div class="header">
+      <h1>טופס סיום עבודה למתקין חיצוני</h1>
+      <p>דיווח ביצוע, כבילה, תמונות והמשך טיפול</p>
+    </div>
+
+    <div class="notice">
+      מלא את פרטי העבודה ואת הסעיפים הרלוונטיים. בסיום לחץ על שליחה בוואטסאפ או במייל וצרף ידנית את התמונות ואת תעודת המשלוח החתומה.
+      <a href="#cablingSection">מעבר לסעיף הכבילה</a>
+    </div>
+
+
+    <div class="autosave-bar">
+      <span id="saveStatus">⏳ הטופס נשמר אוטומטית בדפדפן שלך</span>
+      <button type="button" onclick="resetForm()">איפוס מלא</button>
+    </div>
+
+    <form id="workReportForm" novalidate>
+      <section>
+        <h2>פרטי עבודה</h2>
+        <div class="grid">
+          <div class="field">
+            <label for="installer">שם המתקין<span class="required-mark">*</span></label>
+            <input id="installer" data-label="שם המתקין" type="text" required>
+          </div>
+          <div class="field">
+            <label for="installer_phone">טלפון המתקין<span class="required-mark">*</span></label>
+            <input id="installer_phone" data-label="טלפון המתקין" type="tel" required placeholder="05X-XXXXXXX">
+          </div>
+          <div class="field">
+            <label for="date">תאריך<span class="required-mark">*</span></label>
+            <input id="date" data-label="תאריך" type="date" required>
+          </div>
+          <div class="field">
+            <label for="project_id">מספר פרויקט / לקוח Monday<span class="required-mark">*</span></label>
+            <input id="project_id" data-label="מספר פרויקט / לקוח Monday" type="text" required placeholder="לדוגמה: 7456">
+          </div>
+          <div class="field">
+            <label for="client">שם הלקוח<span class="required-mark">*</span></label>
+            <input id="client" data-label="שם הלקוח" type="text" required>
+          </div>
+          <div class="field">
+            <label for="address">כתובת</label>
+            <input id="address" data-label="כתובת" type="text">
+          </div>
+          <div class="field">
+            <label for="contact">איש קשר באתר</label>
+            <input id="contact" data-label="איש קשר באתר" type="text">
+          </div>
+          <div class="field">
+            <label for="contact_phone">טלפון איש קשר</label>
+            <input id="contact_phone" data-label="טלפון איש קשר" type="tel">
+          </div>
+          <div class="field">
+            <label for="start">שעת התחלה</label>
+            <input id="start" data-label="שעת התחלה" type="time">
+          </div>
+          <div class="field">
+            <label for="end">שעת סיום</label>
+            <input id="end" data-label="שעת סיום" type="time">
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2>1. עבודות אזעקה שבוצעו</h2>
+
+        <div class="checklist">
+          <div class="check"><input type="checkbox" id="volumetric" data-label="התקנת גלאי נפח"><label for="volumetric">התקנת גלאי נפח</label></div>
+        </div>
+        <div class="field">
+          <label for="volumetric_qty">כמות גלאי נפח</label>
+          <input id="volumetric_qty" data-label="כמות גלאי נפח" type="number" min="0">
+        </div>
+        <div class="field">
+          <label>מיקומים מדויקים לגלאי נפח</label>
+          <div class="row-4">
+            <input data-label="מיקום גלאי נפח 1" type="text" placeholder="1">
+            <input data-label="מיקום גלאי נפח 2" type="text" placeholder="2">
+            <input data-label="מיקום גלאי נפח 3" type="text" placeholder="3">
+            <input data-label="מיקום גלאי נפח 4" type="text" placeholder="4">
+          </div>
+        </div>
+
+        <div class="checklist">
+          <div class="check"><input type="checkbox" id="curtain" data-label="התקנת גלאי וילון"><label for="curtain">התקנת גלאי וילון</label></div>
+        </div>
+        <div class="field">
+          <label for="curtain_qty">כמות גלאי וילון</label>
+          <input id="curtain_qty" data-label="כמות גלאי וילון" type="number" min="0">
+        </div>
+        <div class="field">
+          <label>מיקומים מדויקים לגלאי וילון</label>
+          <div class="row-4">
+            <input data-label="מיקום גלאי וילון 1" type="text" placeholder="1">
+            <input data-label="מיקום גלאי וילון 2" type="text" placeholder="2">
+            <input data-label="מיקום גלאי וילון 3" type="text" placeholder="3">
+            <input data-label="מיקום גלאי וילון 4" type="text" placeholder="4">
+          </div>
+        </div>
+        <div class="field">
+          <label for="curtain_direction">כיוון / אזור כיסוי של גלאי הווילון</label>
+          <textarea id="curtain_direction" data-label="כיוון / אזור כיסוי של גלאי הווילון"></textarea>
+        </div>
+        <div class="field">
+          <label for="curtain_height">האם גלאי הווילון הותקנו בגובה ובכיוון המתאים?</label>
+          <select id="curtain_height" data-label="גלאי וילון בגובה ובכיוון מתאים">
+            <option value="">בחר</option>
+            <option>כן</option>
+            <option>לא</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="curtain_height_notes">אם לא, לפרט</label>
+          <textarea id="curtain_height_notes" data-label="פירוט בעיית גובה / כיוון גלאי וילון"></textarea>
+        </div>
+
+        <div class="checklist">
+          <div class="check"><input type="checkbox" id="magnet" data-label="התקנת גלאי מגנט לדלת / חלון"><label for="magnet">התקנת גלאי מגנט לדלת / חלון</label></div>
+        </div>
+        <div class="field">
+          <label for="magnet_qty">כמות מגנטים</label>
+          <input id="magnet_qty" data-label="כמות מגנטים" type="number" min="0">
+        </div>
+        <div class="field">
+          <label>מיקומים מדויקים למגנטים</label>
+          <div class="row-4">
+            <input data-label="מיקום מגנט 1" type="text" placeholder="1">
+            <input data-label="מיקום מגנט 2" type="text" placeholder="2">
+            <input data-label="מיקום מגנט 3" type="text" placeholder="3">
+            <input data-label="מיקום מגנט 4" type="text" placeholder="4">
+          </div>
+        </div>
+
+        <div class="checklist">
+          <div class="check"><input type="checkbox" id="smoke" data-label="התקנת גלאי עשן / חום / אחר"><label for="smoke">התקנת גלאי עשן / חום / אחר</label></div>
+          <div class="check"><input type="checkbox" id="alarm_cables" data-label="חיבור קווי גלאים בקופסאות / הכנות"><label for="alarm_cables">חיבור קווי גלאים בקופסאות / הכנות</label></div>
+          <div class="check"><input type="checkbox" id="alarm_marking" data-label="סימון כבלים של אזעקה"><label for="alarm_marking">סימון כבלים של אזעקה</label></div>
+          <div class="check"><input type="checkbox" id="alarm_test" data-label="בדיקת רציפות / תקינות כבלי אזעקה"><label for="alarm_test">בדיקת רציפות / תקינות כבלי אזעקה</label></div>
+        </div>
+
+        <div class="field">
+          <label for="alarm_notes">הערות בנושא אזעקה</label>
+          <textarea id="alarm_notes" data-label="הערות בנושא אזעקה"></textarea>
+        </div>
+      </section>
+
+      <section>
+        <h2>2. עבודות תקשורת שבוצעו</h2>
+
+        <div class="checklist">
+          <div class="check"><input type="checkbox" id="keystones" data-label="התקנת קיסטונים"><label for="keystones">התקנת קיסטונים</label></div>
+        </div>
+        <div class="field">
+          <label for="keystone_qty">כמות קיסטונים</label>
+          <input id="keystone_qty" data-label="כמות קיסטונים" type="number" min="0">
+        </div>
+        <div class="field">
+          <label>מיקומים מדויקים לקיסטונים</label>
+          <div class="row-4">
+            <input data-label="מיקום קיסטון 1" type="text" placeholder="1">
+            <input data-label="מיקום קיסטון 2" type="text" placeholder="2">
+            <input data-label="מיקום קיסטון 3" type="text" placeholder="3">
+            <input data-label="מיקום קיסטון 4" type="text" placeholder="4">
+          </div>
+        </div>
+
+        <div class="checklist">
+          <div class="check"><input type="checkbox" id="panels" data-label="חיבור שקעים / פנלים / נקודות תקשורת"><label for="panels">חיבור שקעים / פנלים / נקודות תקשורת</label></div>
+          <div class="check"><input type="checkbox" id="comm_marking" data-label="סימון כבלי תקשורת בארון / בקצה הנקודה"><label for="comm_marking">סימון כבלי תקשורת בארון / בקצה הנקודה</label></div>
+          <div class="check"><input type="checkbox" id="comm_test" data-label="בדיקת כבלי תקשורת עם טסטר"><label for="comm_test">בדיקת כבלי תקשורת עם טסטר</label></div>
+        </div>
+
+        <div class="field">
+          <label for="comm_result">תוצאת בדיקת תקשורת</label>
+          <select id="comm_result" data-label="תוצאת בדיקת תקשורת">
+            <option value="">בחר</option>
+            <option>תקין</option>
+            <option>לא תקין</option>
+            <option>חלקי</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="bad_points">נקודות לא תקינות או בעייתיות</label>
+          <textarea id="bad_points" data-label="נקודות לא תקינות או בעייתיות"></textarea>
+        </div>
+
+        <div class="field">
+          <label for="comm_notes">הערות בנושא תקשורת</label>
+          <textarea id="comm_notes" data-label="הערות בנושא תקשורת"></textarea>
+        </div>
+      </section>
+
+
+      <section id="cablingSection">
+        <h2>העברת כבילה והשחלת כבלים</h2>
+        <div class="field"><label for="cablingMode">האם בוצעה כבילה? *</label><select id="cablingMode"><option value="">בחר</option><option value="yes">בוצעה כבילה</option><option value="no">לא בוצעה כבילה</option></select></div>
+        <div id="cablingDetails">
+          <p class="small-note">האורך הוא לכל כבל בשורה. סך המטרים מחושב ככמות × אורך. בשורה חלקית כל הכבלים נחשבים כנותרים להשלמה; פצל שורות כדי לדווח כמות שהושלמה.</p>
+          <div id="cableRows"></div>
+          <button type="button" class="secondary" id="addCable">+ הוסף כבל</button>
+          <div class="notice" id="cablingTotals" role="status" aria-live="polite"></div>
+          <h3>צילום ותיעוד כבילה</h3>
+          <p class="photo-warning">חובה לצלם תשתית פתוחה לפני סגירה. התמונות ותעודת המשלוח אינן נשלחות אוטומטית: יש לצרף אותן ידנית לוואטסאפ או למייל. התמונות אינן נשמרות בטיוטה בדפדפן; לאחר טעינה מחדש יש לבחור אותן שוב.</p>
+          <div id="cablingPhotos"></div>
+          <div class="check"><input id="cablingBeforeClosure" type="checkbox"><label for="cablingBeforeClosure">צילמתי את הכבילה והתשתית הפתוחה לפני סגירה *</label></div>
+        </div>
+      </section>
+
+      <section>
+        <h2>3. דברים שלא בוצעו / חסרים להמשך</h2>
+        <div class="checklist">
+          <div class="check"><input type="checkbox" id="missing_equipment" data-label="חסר ציוד"><label for="missing_equipment">חסר ציוד</label></div>
+          <div class="check"><input type="checkbox" id="missing_access" data-label="חסרה גישה לנקודה / ארון / חדר"><label for="missing_access">חסרה גישה לנקודה / ארון / חדר</label></div>
+          <div class="check"><input type="checkbox" id="needs_trade" data-label="נדרש חשמלאי / איש גבס / קבלן / לקוח"><label for="needs_trade">נדרש חשמלאי / איש גבס / קבלן / לקוח</label></div>
+          <div class="check"><input type="checkbox" id="needs_visit" data-label="נדרש ביקור נוסף"><label for="needs_visit">נדרש ביקור נוסף</label></div>
+          <div class="check"><input type="checkbox" id="infra_issues" data-label="נמצאו תקלות בתשתית קיימת"><label for="infra_issues">נמצאו תקלות בתשתית קיימת</label></div>
+        </div>
+        <div class="field">
+          <label for="missing_notes">פירוט חסרים / תקלות / המשך טיפול</label>
+          <textarea id="missing_notes" data-label="פירוט חסרים / תקלות / המשך טיפול"></textarea>
+        </div>
+      </section>
+
+      <section>
+        <h2>4. מצב השטח בסיום העבודה</h2>
+        <div class="checklist">
+          <div class="check"><input type="checkbox" id="fixed" data-label="כל האביזרים שהותקנו מחוזקים ומסודרים"><label for="fixed">כל האביזרים שהותקנו מחוזקים ומסודרים</label></div>
+          <div class="check"><input type="checkbox" id="marked" data-label="הכבלים סומנו בצורה ברורה"><label for="marked">הכבלים סומנו בצורה ברורה</label></div>
+          <div class="check"><input type="checkbox" id="closed" data-label="לא נשאר ציוד פתוח או מפורק"><label for="closed">לא נשאר ציוד פתוח או מפורק</label></div>
+          <div class="check"><input type="checkbox" id="clean" data-label="האתר נמסר מסודר ונקי"><label for="clean">האתר נמסר מסודר ונקי</label></div>
+          <div class="check"><input type="checkbox" id="client_updated" data-label="הלקוח / נציג האתר עודכן במה שבוצע"><label for="client_updated">הלקוח / נציג האתר עודכן במה שבוצע</label></div>
+          <div class="check"><input type="checkbox" id="client_pending" data-label="הלקוח / נציג האתר עודכן במה שלא בוצע ומה נשאר להמשך"><label for="client_pending">הלקוח / נציג האתר עודכן במה שלא בוצע ומה נשאר להמשך</label></div>
+        </div>
+      </section>
+
+      <section style="background: #fff5f5; border-radius: 16px; padding: 18px; border: 2px solid #fda29b;">
+        <h2 style="color: #b42318;">5. תעודת משלוח חתומה <span class="required-mark">*</span></h2>
+        <p class="small-note" style="color: #b42318; font-weight: 700;">חובה: תעודת משלוח חתומה על ידי הלקוח / נציג האתר. <strong>ללא תעודת משלוח חתומה - הדוח לא מתקבל והעבודה לא נסגרת.</strong></p>
+
+        <div class="grid">
+          <div class="field">
+            <label for="delivery_number">מספר תעודת משלוח<span class="required-mark">*</span></label>
+            <input id="delivery_number" data-label="מספר תעודת משלוח" type="text" required placeholder="לדוגמה: 7456321">
+          </div>
+          <div class="field">
+            <label for="delivery_recipient">שם החותם (לקוח / נציג)<span class="required-mark">*</span></label>
+            <input id="delivery_recipient" data-label="שם החותם על התעודה" type="text" required>
+          </div>
+        </div>
+
+        <div class="photo-area" id="deliveryArea" style="border-color: #fda29b; background: #fef3f2;">
+          <label for="deliveryUpload" class="photo-btn" style="background: #b42318;">📄 צלם / העלה תעודת משלוח חתומה</label>
+          <input type="file" id="deliveryUpload" accept="image/*,application/pdf">
+          <div class="photo-counter" id="deliveryCounter" style="color: #b42318;">⚠️ לא הועלתה תעודת משלוח</div>
+          <div class="preview-grid" id="deliveryPreview"></div>
+          <div class="photo-warning" style="background: #fef3f2; border-color: #fda29b;">
+            ⚠️ <strong>חובה לצרף:</strong> צילום של תעודת משלוח חתומה ביד מהלקוח / נציג האתר. ניתן להעלות JPG / PNG / PDF. הקובץ יישלח בנפרד עם הוואטסאפ או המייל.
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2>6. תמונות מהשטח</h2>
+        <p class="small-note">צלם / בחר את כל התמונות הנדרשות. תוכל לראות אותן כאן לפני שליחה.</p>
+
+        <div class="photo-area">
+          <label for="photoUpload" class="photo-btn">📷 צלם / בחר תמונות</label>
+          <input type="file" id="photoUpload" accept="image/*" multiple>
+          <div class="photo-counter" id="photoCounter">לא נבחרו תמונות</div>
+          <div class="preview-grid" id="previewGrid"></div>
+          <div class="photo-warning">
+            ⚠️ <strong>חשוב:</strong> התמונות לא נשלחות אוטומטית עם הטופס. לאחר שליחה - יש לצרף את אותן תמונות בהודעת המייל או הוואטסאפ שתיפתח.
+          </div>
+        </div>
+
+        <div class="checklist" style="margin-top:18px;">
+          <div class="check"><input type="checkbox" id="photo_volume" data-label="תמונות גלאי נפח צורפו"><label for="photo_volume">כל גלאי נפח שהותקן</label></div>
+          <div class="check"><input type="checkbox" id="photo_curtain" data-label="תמונות גלאי וילון צורפו"><label for="photo_curtain">כל גלאי וילון - כולל כיוון התקנה ואזור כיסוי</label></div>
+          <div class="check"><input type="checkbox" id="photo_magnet" data-label="תמונות מגנטים צורפו"><label for="photo_magnet">כל מגנט שהותקן</label></div>
+          <div class="check"><input type="checkbox" id="photo_smoke" data-label="תמונות גלאי עשן / חום / אחר צורפו"><label for="photo_smoke">כל גלאי עשן / חום / אחר שהותקן</label></div>
+          <div class="check"><input type="checkbox" id="photo_keystone" data-label="תמונות קיסטונים צורפו"><label for="photo_keystone">כל נקודת תקשורת / קיסטון שהותקן</label></div>
+          <div class="check"><input type="checkbox" id="photo_cabinet" data-label="תמונת ארון תקשורת / ריכוז כבלים צורפה"><label for="photo_cabinet">ארון תקשורת / ריכוז כבלים עם סימונים</label></div>
+          <div class="check"><input type="checkbox" id="photo_issue" data-label="תמונות תקלות / מקומות שלא הושלמו צורפו"><label for="photo_issue">כל תקלה או מקום שלא ניתן היה להשלים</label></div>
+        </div>
+      </section>
+
+      <section>
+        <h2>7. סיכום קצר של המתקין</h2>
+        <div class="field">
+          <label for="summary_done">מה בוצע היום בפועל</label>
+          <textarea id="summary_done" data-label="מה בוצע היום בפועל"></textarea>
+        </div>
+        <div class="field">
+          <label for="summary_pending">מה נשאר להמשך טיפול</label>
+          <textarea id="summary_pending" data-label="מה נשאר להמשך טיפול"></textarea>
+        </div>
+        <div class="field">
+          <label for="urgent">האם יש משהו דחוף לעדכן את המשרד?</label>
+          <select id="urgent" data-label="משהו דחוף לעדכון המשרד">
+            <option value="">בחר</option>
+            <option>כן</option>
+            <option>לא</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="urgent_notes">אם כן, לפרט</label>
+          <textarea id="urgent_notes" data-label="פירוט דחוף למשרד"></textarea>
+        </div>
+        <div class="grid">
+          <div class="field">
+            <label for="signature">שם המתקין / חתימה<span class="required-mark">*</span></label>
+            <input id="signature" data-label="שם המתקין / חתימה" type="text" required>
+          </div>
+          <div class="field">
+            <label for="sent_time">שעת שליחת הדוח</label>
+            <input id="sent_time" data-label="שעת שליחת הדוח" type="time">
+          </div>
+        </div>
+      </section>
+
+      <div class="actions">
+        <button type="button" class="whatsapp" onclick="sendWhatsApp()">📱 שלח בוואטסאפ (מומלץ)</button>
+        <button type="button" class="primary" onclick="sendEmail()">✉️ שלח במייל</button>
+        <button type="button" class="secondary" onclick="copyReport()">העתק סיכום</button>
+        <button type="button" class="secondary" onclick="window.print()">הדפס / PDF</button>
+      </div>
+
+      <p class="footer-note">
+        <strong>חשוב:</strong> דוח שמכיל הרבה פרטים עלול להיחתך בשליחת מייל מהמובייל. עדיף לשלוח בוואטסאפ. אחרי השליחה - <strong style="color:#b42318;">חובה לצרף את צילום תעודת המשלוח החתומה</strong> ואת התמונות מהשטח באותה ההודעה. הדוח נשלח ל-oren@i-feel.co.il, support@i-feel.co.il ולוואטסאפ של מחלקת השירות.
+      </p>
+    </form>
+  </div>
+
+  <script>
+    // ===== הגדרות =====
+    const emailRecipients = "oren@i-feel.co.il,support@i-feel.co.il";
+    const whatsappPhone = "972533006239"; // 053-300-6239 - מחלקת שירות i-feel
+    const storageKey = "ifeel_installer_report_v2";
+    const requiredIds = ["installer", "installer_phone", "date", "project_id", "client", "delivery_number", "delivery_recipient", "signature"];
+
+    // ===== utility =====
+    function todayIfEmpty() {
+      const d = document.getElementById("date");
+      if (!d.value) d.value = new Date().toISOString().slice(0, 10);
+    }
+
+    function getValue(el) {
+      if (el.type === "checkbox") return el.checked ? "כן" : "לא";
+      return el.value || "";
+    }
+
+    // ===== ולידציה של שדות חובה =====
+    function validateRequired() {
+      let firstMissing = null;
+      const missing = [];
+      requiredIds.forEach(function(id) {
+        const el = document.getElementById(id);
+        if (!el) return;
+        if (!el.value || el.value.trim() === "") {
+          missing.push(el.previousElementSibling ? el.previousElementSibling.textContent.replace("*","").trim() : id);
+          el.style.borderColor = "#d92d20";
+          el.style.background = "#fef3f2";
+          if (!firstMissing) firstMissing = el;
+        } else {
+          el.style.borderColor = "";
+          el.style.background = "";
+        }
+      });
+
+      // בדיקה קריטית: תעודת משלוח חתומה חייבת להיות מצורפת
+      const deliveryFile = document.getElementById("deliveryUpload");
+      const deliveryArea = document.getElementById("deliveryArea");
+      if (!deliveryFile.files || deliveryFile.files.length === 0) {
+        missing.push("צילום של תעודת משלוח חתומה (חובה!)");
+        deliveryArea.style.borderColor = "#d92d20";
+        deliveryArea.style.borderWidth = "3px";
+        if (!firstMissing) firstMissing = deliveryFile;
+      } else {
+        deliveryArea.style.borderColor = "#fda29b";
+        deliveryArea.style.borderWidth = "2px";
+      }
+
+      if (missing.length > 0) {
+        alert("⛔ לא ניתן לשלוח - חסרים שדות חובה:\n\n• " + missing.join("\n• ") + "\n\nתעודת משלוח חתומה היא חובה לסגירת העבודה.");
+        if (firstMissing) firstMissing.focus();
+        return false;
+      }
+      return true;
+    }
+
+    // ===== בניית הדוח =====
+    function buildReport() {
+      todayIfEmpty();
+      const client = document.getElementById("client").value || "ללא שם לקוח";
+      const date = document.getElementById("date").value || "";
+      const projectId = document.getElementById("project_id").value || "";
+      const installer = document.getElementById("installer").value || "";
+      const installerPhone = document.getElementById("installer_phone").value || "";
+
+      const photoCount = document.getElementById("photoUpload").files.length;
+      const deliveryCount = document.getElementById("deliveryUpload").files.length;
+      const deliveryNumber = document.getElementById("delivery_number").value || "";
+      const deliveryRecipient = document.getElementById("delivery_recipient").value || "";
+
+      const elements = Array.from(document.querySelectorAll("[data-label]"));
+
+      let lines = [];
+      lines.push("דוח סיום עבודה - מתקין חיצוני i-feel");
+      lines.push("=================================");
+      lines.push("לקוח: " + client);
+      lines.push("מספר פרויקט: " + projectId);
+      lines.push("תאריך: " + date);
+      lines.push("מתקין: " + installer + " | " + installerPhone);
+      lines.push("");
+      lines.push("*** תעודת משלוח חתומה ***");
+      lines.push("מספר תעודה: " + deliveryNumber);
+      lines.push("שם החותם: " + deliveryRecipient);
+      lines.push("תעודה צורפה: " + (deliveryCount > 0 ? "כן ✓" : "❌ לא צורף!"));
+      lines.push("");
+      lines.push("");
+
+      elements.forEach(function(el) {
+        const label = el.getAttribute("data-label");
+        const value = getValue(el);
+        if (value !== "" && value !== "לא") {
+          lines.push(label + ": " + value);
+        }
+      });
+
+      lines.push("");
+      lines.push("--- תמונות ---");
+      lines.push("מספר תמונות שצולמו: " + photoCount);
+      lines.push("יש לצרף את התמונות לאותה ההודעה (וואטסאפ/מייל) לפני שליחה.");
+      return lines.join("\n");
+    }
+
+    function buildSubject() {
+      const client = document.getElementById("client").value || "לקוח";
+      const date = document.getElementById("date").value || new Date().toISOString().slice(0, 10);
+      const projectId = document.getElementById("project_id").value || "";
+      return "דוח מתקין - " + client + (projectId ? " (#" + projectId + ")" : "") + " - " + date;
+    }
+
+    // ===== שליחה =====
+    function sendEmail() {
+      if (!validateRequired()) return;
+      const subject = encodeURIComponent(buildSubject());
+      const body = buildReport();
+      const encodedBody = encodeURIComponent(body);
+
+      // mailto יש לו מגבלה של ~2000 תווים בחלק מהדפדפנים
+      if (encodedBody.length > 1800) {
+        if (confirm("הדוח ארוך מדי לשליחת מייל ישירה - עלול להיחתך באייפון.\n\nלעבור לוואטסאפ במקום? (מומלץ)")) {
+          sendWhatsApp();
+          return;
+        }
+      }
+      window.location.href = "mailto:" + emailRecipients + "?subject=" + subject + "&body=" + encodedBody;
+      setTimeout(clearSaved, 2000);
+    }
+
+    async function copyReport() {
+      if (!validateRequired()) return;
+      const report = buildReport();
+      try {
+        await navigator.clipboard.writeText(report);
+        alert("הסיכום הועתק. אפשר להדביק בוואטסאפ / מייל.");
+      } catch (e) {
+        alert("העתקה אוטומטית נכשלה. סמן את הטקסט ידנית.");
+      }
+    }
+
+    function sendWhatsApp() {
+      if (!validateRequired()) return;
+      const text = encodeURIComponent(buildReport());
+      window.open("https://wa.me/" + whatsappPhone + "?text=" + text, "_blank");
+      setTimeout(clearSaved, 2000);
+    }
+
+    // ===== שמירה אוטומטית ב-localStorage =====
+    function saveForm() {
+      const data = {};
+      document.querySelectorAll("[data-label]").forEach(function(el) {
+        const key = el.id || el.getAttribute("data-label");
+        if (el.type === "checkbox") {
+          data[key] = el.checked;
+        } else {
+          data[key] = el.value;
+        }
+      });
+      try {
+        localStorage.setItem(storageKey, JSON.stringify(data));
+        const status = document.getElementById("saveStatus");
+        status.textContent = "✓ נשמר אוטומטית - " + new Date().toLocaleTimeString("he-IL");
+      } catch (e) {}
+    }
+
+    function loadForm() {
+      try {
+        const raw = localStorage.getItem(storageKey);
+        if (!raw) return;
+        const data = JSON.parse(raw);
+        document.querySelectorAll("[data-label]").forEach(function(el) {
+          const key = el.id || el.getAttribute("data-label");
+          if (data[key] === undefined) return;
+          if (el.type === "checkbox") {
+            el.checked = !!data[key];
+          } else {
+            el.value = data[key];
+          }
+        });
+        const status = document.getElementById("saveStatus");
+        status.textContent = "✓ נטענו נתונים שנשמרו קודם בדפדפן";
+      } catch (e) {}
+    }
+
+    function clearSaved() {
+      try { localStorage.removeItem(storageKey); } catch (e) {}
+    }
+
+    function resetForm() {
+      if (!confirm("לאפס את כל הטופס? כל המידע יימחק.")) return;
+      clearSaved();
+      location.reload();
+    }
+
+    // ===== preview של תעודת משלוח =====
+    function handleDelivery(input) {
+      const grid = document.getElementById("deliveryPreview");
+      const counter = document.getElementById("deliveryCounter");
+      const area = document.getElementById("deliveryArea");
+      grid.innerHTML = "";
+      const files = input.files;
+      if (files.length === 0) {
+        counter.textContent = "⚠️ לא הועלתה תעודת משלוח";
+        counter.style.color = "#b42318";
+        return;
+      }
+      counter.textContent = "✓ תעודת משלוח הועלתה (" + files.length + " קובץ)";
+      counter.style.color = "#1b6c33";
+      area.style.borderColor = "#25d366";
+      area.style.background = "#e7f6ec";
+      for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        if (file.type === "application/pdf") {
+          const div = document.createElement("div");
+          div.style.cssText = "background:#fff; border:1px solid #d9e1ec; border-radius:10px; padding:14px; text-align:center; font-weight:700;";
+          div.innerHTML = "📄 " + file.name;
+          grid.appendChild(div);
+        } else {
+          const reader = new FileReader();
+          reader.onload = function(e) {
+            const img = document.createElement("img");
+            img.src = e.target.result;
+            grid.appendChild(img);
+          };
+          reader.readAsDataURL(file);
+        }
+      }
+    }
+
+    // ===== preview תמונות =====
+    function handlePhotos(input) {
+      const grid = document.getElementById("previewGrid");
+      const counter = document.getElementById("photoCounter");
+      grid.innerHTML = "";
+      const files = input.files;
+      counter.textContent = files.length > 0 ? "נבחרו " + files.length + " תמונות" : "לא נבחרו תמונות";
+      for (let i = 0; i < files.length; i++) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          const img = document.createElement("img");
+          img.src = e.target.result;
+          grid.appendChild(img);
+        };
+        reader.readAsDataURL(files[i]);
+      }
+    }
+
+    // ===== init =====
+    document.addEventListener("DOMContentLoaded", function() {
+      todayIfEmpty();
+      loadForm();
+      document.querySelectorAll("[data-label]").forEach(function(el) {
+        el.addEventListener("input", saveForm);
+        el.addEventListener("change", saveForm);
+      });
+      document.getElementById("photoUpload").addEventListener("change", function() {
+        handlePhotos(this);
+      });
+      document.getElementById("deliveryUpload").addEventListener("change", function() {
+        handleDelivery(this);
+      });
+    });
+  </script>
+
+<script>
+(function () {
+  "use strict";
+  const cableKey = storageKey + "_cabling_v1";
+  const mode = document.getElementById("cablingMode");
+  const rows = document.getElementById("cableRows");
+  const photoKinds = [
+    ["cables", "הכבלים שהועברו"], ["endpoints", "נקודת המוצא ונקודת היעד"],
+    ["cabinet", "הכבלים בארון התקשורת"], ["labels", "סימון הכבלים"],
+    ["open", "תשתית פתוחה לפני סגירה"], ["faults", "חסימות ותקלות"]
+  ];
+  const fields = [
+    ["type", "סוג הכבל", ["CAT6", "CAT6A", "CAT7", "אזעקה", "KNX", "חשמל", "אחר"], true],
+    ["description", "תיאור הכבל או ייעודו", "text", true],
+    ["from", "נקודת מוצא", "text", true], ["to", "נקודת יעד", "text", true],
+    ["quantity", "מספר הכבלים", "number", true], ["length", "אורך במטרים לכל כבל", "number", true],
+    ["route", "דרך ההעברה", ["צנרת קיימת", "צנרת חדשה", "תעלה", "מעבר פתוח", "אחר"], true],
+    ["marked", "סימון בשני הקצוות", ["כן", "לא"], true],
+    ["tested", "בדיקת רציפות או תקינות", ["כן", "לא"], true],
+    ["status", "סטטוס", ["הושלם", "חלקי", "לא הושלם"], true],
+    ["notes", "הערות ותקלות", "textarea", false]
+  ];
+  let nextId = 0;
+  function addRow(data) {
+    const row = document.createElement("div");
+    row.className = "cable-row";
+    row.style.cssText = "border:1px solid var(--border);border-radius:16px;padding:14px;margin:14px 0";
+    const grid = document.createElement("div"); grid.className = "grid";
+    fields.forEach(function (field) {
+      const box = document.createElement("div"); box.className = "field";
+      const input = document.createElement(Array.isArray(field[2]) ? "select" : field[2] === "textarea" ? "textarea" : "input");
+      if (Array.isArray(field[2])) {
+        ["בחר"].concat(field[2]).forEach(function (value, i) {
+          const option = document.createElement("option"); option.textContent = value; option.value = i ? value : ""; input.appendChild(option);
+        });
+      } else if (field[2] !== "textarea") input.type = field[2];
+      input.id = "cable_" + nextId + "_" + field[0];
+      input.dataset.cableField = field[0]; input.dataset.required = String(field[3]);
+      if (field[2] === "number") { input.min = field[0] === "quantity" ? "1" : "0.01"; input.step = field[0] === "quantity" ? "1" : "0.01"; }
+      input.value = data && data[field[0]] != null ? data[field[0]] : "";
+      const label = document.createElement("label"); label.htmlFor = input.id; label.textContent = field[1] + (field[3] ? " *" : "");
+      box.append(label, input); grid.appendChild(box);
+    });
+    nextId++;
+    const remove = document.createElement("button"); remove.type = "button"; remove.className = "danger"; remove.textContent = "מחק שורת כבל";
+    remove.addEventListener("click", function () { if (confirm("למחוק את שורת הכבל?")) { row.remove(); update(); saveForm(); } });
+    row.append(grid, remove); rows.appendChild(row); update();
+  }
+  function cableData() {
+    return Array.from(rows.children).map(function (row) {
+      const data = {}; row.querySelectorAll("[data-cable-field]").forEach(function (el) { data[el.dataset.cableField] = el.value; }); return data;
+    });
+  }
+  function totals() {
+    return cableData().reduce(function (t, r) {
+      const q = Number(r.quantity) > 0 ? Number(r.quantity) : 0;
+      const length = Number(r.length) > 0 ? Number(r.length) : 0;
+      t.quantity += q; t.meters += q * length;
+      if (r.status === "הושלם") t.completed += q; else t.pending += q;
+      return t;
+    }, { quantity: 0, meters: 0, completed: 0, pending: 0 });
+  }
+  function update() {
+    const enabled = mode.value === "yes";
+    document.getElementById("cablingDetails").hidden = mode.value === "no";
+    rows.querySelectorAll("[data-cable-field]").forEach(function (el) { el.required = enabled && el.dataset.required === "true"; });
+    const t = totals();
+    document.getElementById("cablingTotals").textContent = "סך כל הכבלים: " + t.quantity + " | סך מטרי כבילה: " + Number(t.meters.toFixed(2)) + " | כבלים שהושלמו: " + t.completed + " | כבלים שנותרו להשלמה: " + t.pending;
+  }
+  photoKinds.forEach(function (kind) {
+    const area = document.createElement("div"); area.className = "photo-area"; area.style.marginBottom = "12px";
+    const label = document.createElement("label"); label.className = "photo-btn"; label.htmlFor = "cablingPhoto_" + kind[0]; label.textContent = "צרף תמונות: " + kind[1];
+    const input = document.createElement("input"); input.type = "file"; input.accept = "image/*"; input.multiple = true; input.id = label.htmlFor;
+    const camera = document.createElement("input"); camera.type = "file"; camera.accept = "image/*"; camera.setAttribute("capture", "environment"); camera.id = input.id + "_camera";
+    const cameraLabel = document.createElement("label"); cameraLabel.className = "photo-btn"; cameraLabel.htmlFor = camera.id; cameraLabel.textContent = "צלם עכשיו"; cameraLabel.style.margin = "8px";
+    const preview = document.createElement("div"); preview.className = "preview-grid";
+    const counter = document.createElement("div"); counter.className = "photo-counter";
+    let urls = [];
+    function show() {
+      urls.forEach(URL.revokeObjectURL); urls = []; preview.replaceChildren();
+      const files = Array.from(input.files).concat(Array.from(camera.files));
+      counter.textContent = "נבחרו " + files.length + " תמונות — יש לצרף ידנית";
+      files.forEach(function (file) { const image = document.createElement("img"); const url = URL.createObjectURL(file); urls.push(url); image.src = url; image.alt = kind[1]; preview.appendChild(image); });
+    }
+    input.addEventListener("change", show); camera.addEventListener("change", show);
+    area.append(label, input, cameraLabel, camera, counter, preview); document.getElementById("cablingPhotos").appendChild(area);
+  });
+  function photoCount(kind) {
+    return document.getElementById("cablingPhoto_" + kind).files.length + document.getElementById("cablingPhoto_" + kind + "_camera").files.length;
+  }
+  const oldSave = saveForm, oldLoad = loadForm, oldClear = clearSaved, oldValidate = validateRequired, oldReport = buildReport;
+  saveForm = function () {
+    oldSave();
+    try { localStorage.setItem(cableKey, JSON.stringify({mode: mode.value, rows: cableData(), beforeClosure: document.getElementById("cablingBeforeClosure").checked})); }
+    catch (e) { document.getElementById("saveStatus").textContent = "שמירת הכבילה נכשלה — אין לסגור את הטופס לפני העתקת הדוח"; }
+  };
+  loadForm = function () {
+    oldLoad();
+    try {
+      const raw = localStorage.getItem(cableKey);
+      if (raw) { const data = JSON.parse(raw); mode.value = data.mode || ""; (Array.isArray(data.rows) ? data.rows : []).forEach(addRow); }
+    } catch (e) {}
+    // קבצים אינם נשמרים: יש לאשר מחדש לאחר בחירת התמונות.
+    document.getElementById("cablingBeforeClosure").checked = false;
+    if (mode.value !== "no" && !rows.children.length) addRow();
+    update();
+  };
+  clearSaved = function () { oldClear(); try { localStorage.removeItem(cableKey); } catch (e) {} };
+  validateRequired = function () {
+    update();
+    if (!mode.value) { alert("יש לבחור אם בוצעה כבילה או לא בוצעה כבילה."); mode.focus(); return false; }
+    if (mode.value === "yes") {
+      if (!rows.children.length) { alert("יש להוסיף לפחות שורת כבל אחת."); document.getElementById("addCable").focus(); return false; }
+      const invalid = Array.from(rows.querySelectorAll("[data-cable-field]")).find(function (el) { return !el.checkValidity() || (el.required && !el.value.trim()); });
+      if (invalid) { alert("יש להשלים את נתוני החובה בשורות הכבילה ולהזין כמויות ואורכים תקינים."); invalid.focus(); return false; }
+      if (!photoCount("cables") || !photoCount("endpoints") || !photoCount("open") || !document.getElementById("cablingBeforeClosure").checked) {
+        alert("חובה לצרף תמונות כבלים, מוצא ויעד ותשתית פתוחה לפני סגירה, ולאשר שהצילום בוצע לפני הסגירה."); return false;
+      }
+    }
+    return oldValidate();
+  };
+  buildReport = function () {
+    const base = oldReport().replace("תעודה צורפה: כן ✓", "תעודה נבחרה בטופס בלבד — חובה לצרף ידנית להודעה");
+    const lines = [base, "", "--- העברת כבילה והשחלת כבלים ---"];
+    if (mode.value === "no") lines.push("לא בוצעה כבילה");
+    else if (mode.value !== "yes") lines.push("טרם דווח אם בוצעה כבילה");
+    else {
+      cableData().forEach(function (row, index) { lines.push("", "כבל / שורה " + (index + 1)); fields.forEach(function (field) { lines.push(field[1] + ": " + (row[field[0]] || "לא צוין")); }); });
+      const t = totals();
+      lines.push("", "סך כל הכבלים: " + t.quantity, "סך כל מטרי הכבילה (כמות × אורך): " + Number(t.meters.toFixed(2)), "כבלים שהושלמו: " + t.completed, "כבלים שנותרו להשלמה: " + t.pending);
+      photoKinds.forEach(function (kind) { lines.push(kind[1] + ": " + photoCount(kind[0]) + " תמונות שנבחרו בטופס בלבד"); });
+      lines.push("תועד לפני סגירה: " + (document.getElementById("cablingBeforeClosure").checked ? "כן" : "לא"));
+    }
+    lines.push("התמונות ותעודת המשלוח אינן נשלחות אוטומטית. חובה לצרף את כולן ידנית להודעת הוואטסאפ או המייל לפני שליחה.");
+    return lines.join("\n");
+  };
+  document.getElementById("addCable").addEventListener("click", function () { mode.value = "yes"; addRow(); saveForm(); });
+  document.getElementById("cablingSection").addEventListener("input", function () { update(); saveForm(); });
+  mode.addEventListener("change", function () { if (mode.value === "yes" && !rows.children.length) addRow(); update(); saveForm(); });
+})();
+</script>
+
+</body>
+</html>
+
