@@ -36,3 +36,29 @@ test('PHP robots noindex page cannot be submitted in sitemap', async () => asser
 test('PHP X-Robots-Tag noindex page cannot be submitted in sitemap', async () => assert.match((await run(good, ['https://i-feel.co.il/', 'https://i-feel.co.il/residents/'], undefined, { 'residents/index.php': '<?php header("X-Robots-Tag: noindex, nofollow"); ?>' })).stderr, /noindex PHP URL in sitemap/));
 test('PHP with noindex remains valid outside sitemap', async () => assert.equal((await run(good, undefined, undefined, { 'residents/index.php': '<meta name="robots" content="noindex,nofollow">' })).status, 0));
 test('public PHP sitemap target without noindex remains valid', async () => assert.equal((await run(good, ['https://i-feel.co.il/', 'https://i-feel.co.il/public/'], undefined, { 'public/index.php': '<h1>Public resource</h1>' })).status, 0));
+test('missing internal page link fails the rendered build gate', async () => {
+  const result = await run(good + '<a href="/missing-page/">Read more</a>');
+  assert.notEqual(result.status, 0);
+  assert.match(result.stderr, /broken internal reference \/missing-page\//);
+});
+test('missing internal image fails the rendered build gate', async () => {
+  const result = await run(good + '<img src="/assets/missing.png" alt="Example">');
+  assert.notEqual(result.status, 0);
+  assert.match(result.stderr, /broken internal reference \/assets\/missing.png/);
+});
+test('client-side template strings are not mistaken for rendered asset URLs', async () => {
+  const result = await run(good + '<script>const template = `<img src="${IMG}${item.image}">`;</script>');
+  assert.equal(result.status, 0, result.stderr);
+});
+test('missing script src still fails the rendered build gate', async () => {
+  const result = await run(good + '<script src="/assets/missing.js"></script>');
+  assert.notEqual(result.status, 0);
+  assert.match(result.stderr, /broken internal reference \/assets\/missing.js/);
+});
+test('existing assets and public PHP targets pass with query and fragment links', async () => {
+  const result = await run(good + '<img src="/assets/example.svg" alt="Example"><a href="/public/?intent=bms#form">Contact</a><a href="#section">Section</a><a href="https://example.com/external/">External</a>', undefined, undefined, {
+    'assets/example.svg': '<svg xmlns="http://www.w3.org/2000/svg"></svg>',
+    'public/index.php': '<h1>Public resource</h1>',
+  });
+  assert.equal(result.status, 0, result.stderr);
+});

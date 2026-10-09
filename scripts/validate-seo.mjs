@@ -42,6 +42,7 @@ const externalDeploymentAllowlist = new Set([
   '/contractor-customer-care/tenant-changes-smart-home/',
   '/structure-control/residential-building-bms/',
   '/projects/luxury-villa-petah-tikva/',
+  '/projects/luxury-villa-petah-tikva/luxury-villa-petah-tikva-03.jpg',
   '/assets/siemens-knx/dwg/5WG1125-1AB22.dwg',
   '/assets/siemens-knx/dwg/5WG1567-1AB22.dwg',
   '/assets/siemens-knx/dwg/5WG1532-1DB51.dwg',
@@ -71,7 +72,10 @@ async function internalTargetExists(pathname) {
 }
 
 async function validateInternalReferences(html, route) {
-  const refs = [...html.matchAll(/\b(?:href|src)=["']([^"'#]+)["']/gi)].map(m => m[1].trim());
+  // Script bodies may contain client-side templates rather than rendered URLs.
+  // Keep script src attributes, but validate only actual rendered markup here.
+  const markup = html.replace(/(<script\b[^>]*>)[\s\S]*?(<\/script\s*>)/gi, '$1$2');
+  const refs = [...markup.matchAll(/\b(?:href|src)=["']([^"'#]+)["']/gi)].map(m => m[1].trim());
   for (const ref of refs) {
     if (!ref || /^(?:mailto:|tel:|javascript:|data:)/i.test(ref)) continue;
     let url;
@@ -133,6 +137,7 @@ for (const file of (await walk(root)).filter(f => f.endsWith('.html'))) {
     if (sitemapPaths.has(route)) errors.push(`${route}: noindex URL in sitemap`);
     continue;
   }
+  await validateInternalReferences(html, route);
   indexable++;
   const canonicalTags = metadata(html, 'canonical', 'link');
   if (canonicalTags.length !== 1 || attr(canonicalTags[0], 'href') !== `https://i-feel.co.il${route}`) errors.push(`${route}: canonical must identify this HTTPS non-www page`);
