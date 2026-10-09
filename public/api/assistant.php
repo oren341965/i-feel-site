@@ -72,10 +72,15 @@ function assistant_query_terms($query)
         'אינטרקום' => ['intercom', 'וידאו אינטרקום'],
         'בית' => ['בית חכם', 'smart home'],
     ];
+    $normalizedAliases = [];
+    foreach ($aliases as $aliasKey => $variants) {
+        $normalizedAliases[assistant_normalize($aliasKey)] = $variants;
+    }
 
     $terms = [];
     foreach ($phraseAliases as $phrase => $variants) {
-        if (strpos(' ' . $normalizedQuery . ' ', ' ' . $phrase . ' ') !== false) {
+        $normalizedPhrase = assistant_normalize($phrase);
+        if (strpos(' ' . $normalizedQuery . ' ', ' ' . $normalizedPhrase . ' ') !== false) {
             foreach ($variants as $variant) {
                 foreach (explode(' ', assistant_normalize($variant)) as $variantTerm) {
                     if (strlen($variantTerm) > 1) $terms[$variantTerm] = true;
@@ -92,7 +97,7 @@ function assistant_query_terms($query)
         if (preg_match('/^[ובכלמשה][\p{Hebrew}]{3,}$/u', $term)) {
             $terms[substr($term, 2)] = true;
         }
-        foreach ($aliases[$term] ?? [] as $alias) {
+        foreach ($normalizedAliases[$term] ?? [] as $alias) {
             foreach (explode(' ', assistant_normalize($alias)) as $aliasTerm) {
                 if (strlen($aliasTerm) > 1) {
                     $terms[$aliasTerm] = true;
