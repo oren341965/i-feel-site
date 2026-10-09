@@ -249,6 +249,7 @@ function assistant_call_openai($query, $sources, $apiKey, $model)
     return assistant_text_slice($answer, 0, 5000);
 }
 
+if (realpath($_SERVER['SCRIPT_FILENAME'] ?? '') === __FILE__) {
 if (($_SERVER['REQUEST_METHOD'] ?? 'GET') !== 'POST') {
     assistant_json(405, ['error' => 'method_not_allowed']);
 }
@@ -287,4 +288,5 @@ try {
     assistant_json(200, ['answer' => $answer, 'sources' => $publicSources]);
 } catch (Throwable $error) {
     assistant_json(502, ['error' => 'assistant_temporarily_unavailable']);
+}
 }
