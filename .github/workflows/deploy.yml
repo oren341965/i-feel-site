@@ -106,6 +106,7 @@ jobs:
       - name: Test lead conversion measurement
         run: |
           php -l public/api/lead.php
+          php -l public/api/assistant.php
           php -l public/api/enhanced-conversion-data.php
           php -l public/api/consume-conversion.php
           php tests/enhanced-conversion-data.test.php
