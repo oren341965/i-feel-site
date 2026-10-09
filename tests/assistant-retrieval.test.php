@@ -8,7 +8,7 @@ function assistant_test_assert($condition, $message)
 }
 
 $blindTerms = assistant_query_terms('לתריסים');
-assistant_test_assert(in_array('תריסים', $blindTerms, true), 'Hebrew ל prefix should be removed for תריסים');
+assistant_test_assert(in_array(assistant_normalize('תריסים'), $blindTerms, true), 'Hebrew ל prefix should be removed for תריסים');
 
 $bmsTerms = assistant_query_terms('לבקרת מבנה');
 assistant_test_assert(in_array('bms', $bmsTerms, true), 'Hebrew building-control phrase should add BMS');
