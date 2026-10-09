@@ -104,7 +104,7 @@
     if (!dialog || !form || !input || !status || !results || !noResults || !whatsapp) return;
 
     const synonyms = {
-      'בית חכם': ['מערכת בית חכם', 'בקרה לבית'],
+      'בית חכם': ['בקרה', 'מערכת בית חכם'],
       'בקרה': ['בית חכם', 'בקרת מבנה'],
       'bms': ['בקרת מבנה'],
       'בקרת מבנה': ['bms', 'מערכת בקרת מבנה'],
@@ -231,7 +231,7 @@
         const items = [...found.values()].slice(0, 10);
         renderResults(items, query);
         window.clearTimeout(analyticsTimer);
-        analyticsTimer = window.setTimeout(() => trackSearch(normalizedQuery, items.length), 700);
+        analyticsTimer = window.setTimeout(() => trackSearch(query, items.length), 700);
       } catch (error) {
         if (sequence !== searchSequence) return;
         console.error('Pagefind search failed', error);
