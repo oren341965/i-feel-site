@@ -48,7 +48,16 @@ function assistant_text_position($value, $needle)
 
 function assistant_query_terms($query)
 {
+    $normalizedQuery = assistant_normalize($query);
     $stopWords = ['איזה', 'איזו', 'איזהו', 'כדאי', 'אני', 'לי', 'שלי', 'מה', 'איך', 'האם', 'אפשר', 'צריך', 'צריכה', 'רוצה', 'מחפש', 'מחפשת', 'את', 'על', 'עם', 'של', 'ו'];
+    $phraseAliases = [
+        'בקרת מבנה' => ['bms', 'building management', 'ddc', 'desigo'],
+        'בית חכם' => ['smart home', 'knx'],
+        'קיי אן אקס' => ['knx'],
+        'קיין אקס' => ['knx'],
+        'building management' => ['bms', 'בקרת מבנה', 'ddc', 'desigo'],
+        'smart home' => ['בית חכם', 'knx'],
+    ];
     $aliases = [
         'מפסק' => ['מפסקים', 'מתג', 'לחצן', 'switch'],
         'מפסקים' => ['מפסק', 'מתג', 'לחצן', 'switch'],
@@ -57,13 +66,24 @@ function assistant_query_terms($query)
         'בקרה' => ['בקרת', 'בקר', 'שליטה'],
         'בקר' => ['בקרה', 'בקרת', 'controller'],
         'knx' => ['קיי אן אקס', 'קיין אקס'],
-        'bms' => ['בקרת מבנה', 'ניהול מבנה', 'ddc', 'desigo'],
+        'bms' => ['בקרת מבנה', 'ניהול מבנה', 'building management', 'ddc', 'desigo'],
+        'בקרת' => ['bms', 'building', 'ddc', 'desigo'],
+        'מבנה' => ['bms', 'building', 'desigo'],
         'אינטרקום' => ['intercom', 'וידאו אינטרקום'],
         'בית' => ['בית חכם', 'smart home'],
     ];
 
     $terms = [];
-    foreach (explode(' ', assistant_normalize($query)) as $term) {
+    foreach ($phraseAliases as $phrase => $variants) {
+        if (strpos(' ' . $normalizedQuery . ' ', ' ' . $phrase . ' ') !== false) {
+            foreach ($variants as $variant) {
+                foreach (explode(' ', assistant_normalize($variant)) as $variantTerm) {
+                    if (strlen($variantTerm) > 1) $terms[$variantTerm] = true;
+                }
+            }
+        }
+    }
+    foreach (explode(' ', $normalizedQuery) as $term) {
         if ($term === '' || in_array($term, $stopWords, true)) {
             continue;
         }
