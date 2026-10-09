@@ -79,6 +79,11 @@ const structureSchemas = [...structure.matchAll(/<script[^>]+type=["']applicatio
 const faqNode = structureSchemas.flatMap((schema) => schema['@graph'] ?? [schema]).find((node) => node['@type'] === 'FAQPage');
 if (!faqNode || faqNode.mainEntity?.length !== 7) errors.push(`structure-control: expected 7 FAQ schema questions, found ${faqNode?.mainEntity?.length ?? 0}`);
 
+const contractorPage = await readFile(path.join(distRoot, 'contractor-customer-care/index.html'), 'utf8');
+if (!contractorPage.includes('href="/lp/smart-home-developers/"')) {
+  errors.push('contractor-customer-care: missing internal link to the developer lead page');
+}
+
 const article = await readFile(path.join(distRoot, 'articles/bms-retrofit-existing-building/index.html'), 'utf8');
 if (/name=["']robots["'][^>]+noindex/i.test(article)) errors.push('new article: unexpectedly marked noindex');
 const articleWords = stripHtml(article).split(/\s+/).filter(Boolean).length;
