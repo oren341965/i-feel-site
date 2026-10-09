@@ -112,6 +112,15 @@
       'אינטרקום': ['אינטרפון', 'מערכת אינטרקום'],
     };
 
+    const isProductUrl = (url) =>
+      url === '/siemens-knx-products/' ||
+      url === '/equipment/' ||
+      url.startsWith('/equipment/') ||
+      url.startsWith('/articles/siemens-');
+
+    const isProductHubUrl = (url) =>
+      url === '/siemens-knx-products/' || url === '/equipment/';
+
     const normalize = (value) => value
       .normalize('NFKD')
       .toLocaleLowerCase('he')
@@ -159,10 +168,18 @@
 
       status.textContent = 'נמצאו ' + items.length + ' תוצאות עבור „' + query + '”.';
       for (const result of items) {
+        const record = result;
         const item = document.createElement('li');
         const link = document.createElement('a');
         link.href = result.url;
         link.className = 'group block rounded-xl border border-brand-100 p-4 transition hover:border-accent-400 hover:bg-brand-50 hover:shadow-sm focus:outline-none focus:ring-2 focus:ring-accent-500';
+
+        if (isProductUrl(record.url)) {
+          const type = document.createElement('span');
+          type.className = 'mb-1.5 inline-flex rounded-full bg-accent-50 px-2.5 py-1 text-xs font-bold text-accent-800';
+          type.textContent = isProductHubUrl(record.url) ? 'מרכז מוצרים ומפרטים' : 'מוצר / מפרט טכני';
+          link.append(type);
+        }
 
         const title = document.createElement('h3');
         title.className = 'text-lg font-bold text-brand-900 transition group-hover:text-accent-700';
