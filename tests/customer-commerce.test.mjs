@@ -4,6 +4,7 @@ import {readFile} from 'node:fs/promises';
 
 const commerce = new URL('../public/customer-portal/_commerce.php', import.meta.url);
 const store = new URL('../public/customer-portal/store.php', import.meta.url);
+const productImage = new URL('../public/customer-portal/product-image.php', import.meta.url);
 const webmcp = new URL('../public/customer-portal/commerce-webmcp.js', import.meta.url);
 const importer = new URL('../scripts/import-hashavshevet-catalog.mjs', import.meta.url);
 
@@ -23,6 +24,17 @@ test('store requires authenticated customer', async()=>{
   assert.match(s,/cp_verify_csrf\(\)/);
 });
 
+test('product images are rendered through an authenticated path', async()=>{
+  const storeSource=await readFile(store,'utf8');
+  const imageSource=await readFile(productImage,'utf8');
+  assert.match(storeSource,/class="product-image"/);
+  assert.match(storeSource,/cp_h\(\$p\['imageUrl'\]\)/);
+  assert.match(imageSource,/cp_current_user\(\)/);
+  assert.match(imageSource,/http_response_code\(401\)/);
+  assert.match(imageSource,/realpath\(\$imageDir/);
+  assert.match(imageSource,/X-Content-Type-Options: nosniff/);
+});
+
 test('commerce WebMCP is read only', async()=>{
   const s=await readFile(webmcp,'utf8');
   assert.match(s,/get_ifeel_online_catalog/);
@@ -35,4 +47,5 @@ test('Hashavshevet importer defaults online=false without explicit flag', async(
   const s=await readFile(importer,'utf8');
   assert.match(s,/idx\.online>=0/);
   assert.match(s,/:false/);
+  assert.match(s,/imageUrl:idx\.image>=0/);
 });
