@@ -53,19 +53,19 @@ const wa = waMode === "service"
 
 ---
 
-## 3 + 4. ניסוח אחיד "משנת 2006" — `src/data/site.ts`
+## 3 + 4. ניסוח אחיד "משנת 2008" — `src/data/site.ts`
 
-**הכלל:** בכל האתר — "משנת 2006". **לא** "15 שנות ניסיון", לא "קרוב ל-20 שנות ניסיון".
+**הכלל העדכני:** בכל האתר — "משנת 2008". **לא** "15 שנות ניסיון", לא "קרוב ל-20 שנות ניסיון".
 
 הוסף/עדכן ב-`site.ts`:
 ```ts
 export const company = {
-  foundedYear: 2006,
+  foundedYear: 2008,
   // משפט סטנדרטי (עמודי ליבה / מטא):
-  blurb: "I Feel פועלת משנת 2006 ומתמחה בתכנון, התקנה ושירות למערכות בית חכם, KNX ובקרת מבנה BMS בישראל.",
+  blurb: "I Feel פועלת משנת 2008 ומתמחה בתכנון, התקנה ושירות למערכות בית חכם, KNX ובקרת מבנה BMS בישראל.",
   // משפט שיווקי (דפי נחיתה / הירו):
-  blurbMarketing: "משנת 2006, עם מעל 9,000 לקוחות ואלפי פרויקטים בישראל.",
-  stats: { customers: "9,000+", projects: "4,000+", since: "2006" },
+  blurbMarketing: "משנת 2008, עם מעל 9,000 לקוחות ואלפי פרויקטים בישראל.",
+  stats: { customers: "9,000+", projects: "4,000+", since: "2008" },
 };
 ```
 **חיפוש גורף והחלפה:** `15 שנות ניסיון`, `קרוב ל-20 שנות`, `20 שנות ניסיון` → להחליף בניסוח האחיד או למחוק.
@@ -89,7 +89,7 @@ export const company = {
 ## 6. עמוד הבית — בלוק "מי אנחנו" + קוביות מספרים — `src/pages/index.astro` (section `#about`)
 
 **פסקת "מי אנחנו":**
-> I Feel פועלת משנת 2006 ומתמחה בתכנון, התקנה ותחזוקה של מערכות בית חכם, KNX ובקרת מבנה BMS בישראל. החברה משרתת מעל 9,000 לקוחות וביצעה אלפי פרויקטים בבתים פרטיים, דירות, פרויקטי יזמים, משרדים, מלונות ומבני ציבור.
+> I Feel פועלת משנת 2008 ומתמחה בתכנון, התקנה ותחזוקה של מערכות בית חכם, KNX ובקרת מבנה BMS בישראל. החברה משרתת מעל 9,000 לקוחות וביצעה אלפי פרויקטים בבתים פרטיים, דירות, פרויקטי יזמים, משרדים, מלונות ומבני ציבור.
 
 **קוביות מספרים (Astro/HTML מוכן):**
 ```astro
@@ -97,14 +97,14 @@ export const company = {
   <div class="max-w-6xl mx-auto px-4">
     <h2 class="text-3xl font-bold mb-6">מי אנחנו</h2>
     <p class="text-lg leading-relaxed mb-10 max-w-3xl">
-      I Feel פועלת משנת 2006 ומתמחה בתכנון, התקנה ותחזוקה של מערכות בית חכם,
+      I Feel פועלת משנת 2008 ומתמחה בתכנון, התקנה ותחזוקה של מערכות בית חכם,
       KNX ובקרת מבנה BMS בישראל. החברה משרתת מעל 9,000 לקוחות וביצעה אלפי פרויקטים
       בבתים פרטיים, דירות, פרויקטי יזמים, משרדים, מלונות ומבני ציבור.
     </p>
     <div class="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
       <div><div class="text-4xl font-extrabold">9,000+</div><div class="mt-2 text-neutral-600">לקוחות</div></div>
       <div><div class="text-4xl font-extrabold">4,000+</div><div class="mt-2 text-neutral-600">פרויקטים</div></div>
-      <div><div class="text-4xl font-extrabold">2006</div><div class="mt-2 text-neutral-600">שנת הקמה</div></div>
+      <div><div class="text-4xl font-extrabold">2008</div><div class="mt-2 text-neutral-600">שנת הקמה</div></div>
       <div><div class="text-4xl font-extrabold">מחלקת שירות</div><div class="mt-2 text-neutral-600">פנימית, תמיכה אחרי התקנה</div></div>
     </div>
   </div>
@@ -215,7 +215,7 @@ H1: <שם הפרויקט> — בקרת מבנה / בית חכם | I Feel
 |---|---|
 | 1 honeypot | `src/components/ContactForm.astro` (+ חיפוש גורף) |
 | 2 WhatsApp מאיה | `src/components/Header.astro`, `Footer.astro` (+ עמודי שירות) |
-| 3+4 משנת 2006 | `src/data/site.ts` (+ חיפוש גורף "שנות ניסיון") |
+| 3+4 משנת 2008 | `src/data/site.ts` (+ חיפוש גורף "שנות ניסיון") |
 | 5 ניקוי | `public/_redirects`, מטא noindex בדפים דלים |
 | 6 מספרים | `src/pages/index.astro` (#about) |
 | 7 בית חכם | `src/pages/smart-home.astro` |
