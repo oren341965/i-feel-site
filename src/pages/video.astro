@@ -1,6 +1,10 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import content from '../page-html/page-20.html?raw';
+import KnxSwitchesVideo from '../components/KnxSwitchesVideo.astro';
+import { knxSwitchesVideoSchema } from '../data/knx-switches-video-schema.mjs';
+const [beforeSwitchesVideo, afterSwitchesVideo] = content.split('<!-- KNX_SWITCHES_VIDEO -->');
+if (afterSwitchesVideo === undefined) throw new Error('Missing KNX video placement in explanations category.');
 
 const meta = {
   title: "הדרכות וידאו | בית חכם, KNX, BMS ופרויקטים | i-feel",
@@ -137,10 +141,17 @@ dmxVideoGraph["@graph"].push({
   }
 });
 meta.jsonLd = JSON.stringify(dmxVideoGraph);
+const switchesVideoSchema = knxSwitchesVideoSchema(meta.canonical);
+if (switchesVideoSchema) {
+  dmxVideoGraph['@graph'].push(switchesVideoSchema);
+  meta.jsonLd = JSON.stringify(dmxVideoGraph);
+}
 
 ---
 <BaseLayout {...meta}>
-  <Fragment set:html={content} />
+  <Fragment set:html={beforeSwitchesVideo} />
+  <KnxSwitchesVideo card />
+  <Fragment set:html={afterSwitchesVideo} />
   <nav class="max-w-7xl mx-auto px-4 py-8" aria-label="מדריכי תאורה">
     <a href="/video/lighting-dimmer/" class="text-brand-700 underline">מדריך וידאו: תאורה ודימר בבית החכם</a>
   </nav>
