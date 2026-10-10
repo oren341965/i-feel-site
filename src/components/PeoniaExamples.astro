@@ -1,0 +1,48 @@
+---
+const catalogue = 'https://library.e.abb.com/public/cef15824d4084a01bf6c742e42267c48/ABB%20i%20bus%20KNX%20sensor%20PEONIA%20brochure_EN_9AKK107492A6543.PDF_ABB.pdf.pdf';
+const models = [
+  { image: '2-4-black', width: 186, height: 188, title: '2/4 לחצנים — חזית ריבועית', model: 'PEB/U2.0.1', size: '86 × 86 מ״מ', copy: 'לנקודה עם מעט פעולות: למשל תאורה ותריס, או הפעלה וכיבוי של תרחיש. תפקידי הלחצנים נקבעים בתכנות.', fits: 'מתאים למגבלת חזית של 10 × 10 ס״מ.' },
+  { image: '3-6-black', width: 189, height: 191, title: '3/6 לחצנים — יותר פעולות באותו שטח', model: 'PEB/U3.0.1', size: '86 × 86 מ״מ', copy: 'שלוש שורות לחצנים, למשל לתאורה, הצללה ותרחישים באזור אחד. אפשר לבחור תפקיד לכל צד בהתאם לתכנון.', fits: 'מתאים למגבלת חזית של 10 × 10 ס״מ.' },
+  { image: '5-10-black', width: 186, height: 299, title: '5/10 לחצנים — חזית מוארכת', model: 'PEB/U5.0.1', size: 'כ־86 × 144 מ״מ', copy: 'חמש שורות לחצנים לנקודת שליטה עם יותר פעולות. כדאי כאשר יש מקום לגובה נוסף בקיר.', fits: 'חורג מגובה 10 ס״מ.' },
+  { image: 'rtc-2-4-black', width: 184, height: 179, title: '2/4 לחצנים עם תצוגה ובקר טמפרטורה', model: 'PEBR/U2.0.1', size: '86 × 86 מ״מ', copy: 'משלב תצוגת טמפרטורה ובקר חדר עם לחצני KNX. החיבור למערכת המיזוג נבדק לפי הציוד, ממשק הבקרה והתכנות.', fits: 'מתאים למגבלת חזית של 10 × 10 ס״מ.' },
+];
+const finishes = [
+  { image: '3-6-gloss-white', width: 352, height: 361, name: 'לבן מבריק', suffix: '002' },
+  { image: '3-6-champagne', width: 358, height: 361, name: 'זהב שמפניה מט', suffix: '411' },
+  { image: '3-6-platinum', width: 363, height: 361, name: 'פלטינה מט', suffix: '151' },
+];
+---
+<section id="abb-peonia-examples" aria-labelledby="peonia-examples-title" dir="rtl" class="peonia-examples">
+  <h2 id="peonia-examples-title">איך נראה ABB PEONIA? דוגמאות לפני פתיחת הקטלוג</h2>
+  <p>כאן אפשר להשוות את צורת המפסק, מספר הלחצנים והגימור. אלה תמונות מוצר מקוריות מתוך קטלוג ABB; דוגמאות השימוש מתארות אפשרויות לתכנון ותכנות, ולא הגדרה קבועה של המפסק.</p>
+  <div class="peonia-grid">
+    {models.map(item => <article class="peonia-card">
+      <div class="peonia-image"><img src={`/assets/abb-peonia/${item.image}.webp`} width={item.width} height={item.height} alt={`ABB PEONIA — ${item.title}, שחור מט`} loading="lazy" /></div>
+      <h3>{item.title}</h3>
+      <p><bdi dir="ltr">{item.model}</bdi></p>
+      <p><strong>רוחב × גובה:</strong> <bdi dir="ltr">{item.size}</bdi></p>
+      <p>{item.copy}</p><p class="peonia-fit">{item.fits}</p>
+    </article>)}
+  </div>
+  <h3 class="peonia-finishes-title">אותה משפחה, מראה אחר: שלוש דוגמאות גימור</h3>
+  <p>בדוגמאות הבאות מוצגת חזית 3/6 לחצנים. השחור המט מופיע למעלה; בקטלוג מוצגים גם לבן מט וכסף מט.</p>
+  <div class="peonia-grid peonia-finishes">
+    {finishes.map(item => <figure class="peonia-card">
+      <div class="peonia-image"><img src={`/assets/abb-peonia/${item.image}.webp`} width={item.width} height={item.height} alt={`ABB PEONIA עם 3/6 לחצנים בגימור ${item.name}`} loading="lazy" /></div>
+      <figcaption><strong>{item.name}</strong><br /><bdi dir="ltr">PEB/U3.0.1-{item.suffix}</bdi></figcaption>
+    </figure>)}
+  </div>
+  <p class="peonia-source">מקור התמונות והנתונים: ABB i-bus KNX sensor PEONIA, עמודים 14–19 בקטלוג. צבע במסך אינו תחליף לדוגמת גימור. המידות הן מידות חזית; התאמת הקופסה, הדגם, יכולות המיזוג וזמינות הציוד נבדקות לפני הזמנה. דגמי PEB ו־PEBR אינם זהים ביכולות או במידות.</p>
+  <div class="peonia-links">
+    <a href="/contactus/#contact-form-wrapper" data-ga-event="cta_click" data-ga-params='{"cta_name":"peonia_selection"}'>רוצים לבחור מפסק לחדר שלכם? נשמח לעזור</a>
+    <a href={catalogue} target="_blank" rel="noopener noreferrer">לכל הדגמים והמפרטים — קטלוג ABB (PDF באנגלית) ↗</a>
+  </div>
+</section>
+<style>
+  .peonia-examples{max-width:1200px;margin:2rem auto;padding:1.5rem;scroll-margin-top:8rem;color:#17334d;background:#f6f8fa;border:1px solid #dbe3ea;border-radius:1rem}
+  .peonia-examples h2{font-size:1.6rem;font-weight:800;line-height:1.4;margin:0 0 1rem}.peonia-examples p{line-height:1.8;margin:.6rem 0}
+  .peonia-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1rem;margin:1.3rem 0}.peonia-card{min-width:0;padding:1.25rem;background:white;border:1px solid #dbe3ea;border-radius:.8rem;margin:0}
+  .peonia-image{height:220px;display:flex;align-items:center;justify-content:center;background:#f1f4f6;border-radius:.5rem;margin-bottom:1rem}.peonia-image img{max-width:180px;max-height:200px;width:auto;height:auto;object-fit:contain}
+  .peonia-card h3{font-size:1.1rem;font-weight:800;line-height:1.5}.peonia-fit{font-weight:700}.peonia-finishes-title{font-size:1.25rem;font-weight:800;margin-top:2rem}.peonia-finishes{grid-template-columns:repeat(3,minmax(0,1fr))}.peonia-source{font-size:.85rem;color:#526476}.peonia-links{display:flex;flex-wrap:wrap;gap:1rem;margin-top:1.2rem}.peonia-links a{color:#174b79;font-weight:800;text-decoration:underline;text-underline-offset:3px}
+  @media(max-width:600px){.peonia-grid,.peonia-finishes{grid-template-columns:1fr}.peonia-examples{padding:1rem}.peonia-image{height:205px}}
+</style>
