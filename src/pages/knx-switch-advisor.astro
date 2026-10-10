@@ -1,5 +1,7 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import KnxSwitchesVideo from '../components/KnxSwitchesVideo.astro';
+import { knxSwitchesVideoSchema } from '../data/knx-switches-video-schema.mjs';
 import PeoniaExamples from '../components/PeoniaExamples.astro';
 import DesignerSwitchExamples from '../components/DesignerSwitchExamples.astro';
 import '../styles/knx-advisor.css';
@@ -7,6 +9,7 @@ import '../styles/knx-advisor.css';
 const title = 'איזה מפסק KNX מתאים לבית? יועץ חשמל חכם | I Feel';
 const description = 'כלי אינטראקטיבי לבחירת מפסקי KNX: Siemens TC4/TC5, תאורה, תריסים, מיזוג והתקנה אסתטית בקו אפס עם קופסאות TAV TC4/TAV TC5.';
 const canonical = 'https://i-feel.co.il/knx-switch-advisor/';
+const switchesVideoSchema = knxSwitchesVideoSchema(canonical);
 
 const faqs = [
   ['מה ההבדל בין מפסק KNX מסוג מסך Siemens TC4 ל-TC5?', 'TC4 הוא מפסק KNX מסוג מסך בגודל 4 אינץ׳ ובמידות 86×86 מ״מ. TC5 הוא מפסק KNX מסוג מסך בגודל 5 אינץ׳ ובמידות 86×148.8 מ״מ, ולכן הוא גבוה יותר ומציג יותר מידע ופעולות. ההתאמה הסופית תלויה בכמות הפעולות, במערכות ובתכנון.'],
@@ -29,6 +32,7 @@ const faqs = [
 const jsonLd = JSON.stringify({
   '@context': 'https://schema.org',
   '@graph': [
+    ...(switchesVideoSchema ? [switchesVideoSchema] : []),
     {
       '@type': 'WebApplication',
       '@id': `${canonical}#application`,
@@ -94,6 +98,7 @@ const jsonLd = JSON.stringify({
       </div>
     </nav>
 
+    <KnxSwitchesVideo />
     <section class="advisor-products" id="product-guide" aria-labelledby="product-guide-title">
       <div class="advisor-shell">
         <div class="advisor-section-head advisor-section-head-wide">

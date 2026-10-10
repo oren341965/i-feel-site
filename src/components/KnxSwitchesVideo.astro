@@ -1,0 +1,24 @@
+---
+import video from '../data/knx-switches-video.json';
+const { card = false } = Astro.props;
+const ready = Boolean(video.youtubeId && video.uploadDate);
+---
+{ready && (
+  <section id="knx-switches-video" class:list={['knx-video', { 'knx-video-card': card }]} aria-labelledby="knx-video-title">
+    <h2 id="knx-video-title"><a href={video.advisorUrl}>מפסקי KNX — כל המבחר במקום אחד</a></h2>
+    <p>{video.description}</p>
+    <div class="knx-video-frame">
+      <iframe loading="lazy" src={`https://www.youtube-nocookie.com/embed/${video.youtubeId}`} title={video.title} allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+    </div>
+    <a href={video.advisorUrl}>לייעוץ ולבחירת מפסקי KNX</a>
+  </section>
+)}
+<style>
+  .knx-video { max-width: 72rem; margin: 2rem auto; padding: 1.5rem; border: 1px solid #dae6f2; border-radius: 1rem; background: white; color: #17395b; }
+  .knx-video h2 { font-size: 1.5rem; font-weight: 700; margin-bottom: .75rem; }
+  .knx-video p { margin-bottom: 1rem; }
+  .knx-video-frame { aspect-ratio: 16 / 9; margin-bottom: 1rem; }
+  .knx-video iframe { width: 100%; height: 100%; border: 0; border-radius: .75rem; }
+  .knx-video a { text-decoration: underline; }
+  .knx-video-card { margin: 0; height: 100%; }
+</style>
