@@ -1,0 +1,72 @@
+---
+const brands = [
+  {
+    id: 'lithoss-examples', name: 'Lithoss', website: 'https://www.lithoss.com/en',
+    intro: 'מפסקים בעיצוב בלגי: לחצנים נקיים, ידיות בולטות ומגוון טקסטורות. כך אפשר להתרשם מהחזית לפני שבוחרים דגם וגימור.',
+    products: [
+      { slug: 'lithoss-select', name: 'Select', description: 'לחצנים שטוחים בקווים נקיים. אפשר לבדוק סימון או חריטה כדי להבהיר מה מפעיל כל לחצן.', href: 'https://www.lithoss.com/en/product-overview/switches' },
+      { slug: 'lithoss-cockpit', name: 'Cockpit', description: 'ידית בולטת ומרקם מתכתי, למי שמעדיף מגע פיזי מובחן ושפה עיצובית של מפסק מכני.', href: 'https://www.lithoss.com/en/product-overview/switches' },
+      { slug: 'lithoss-pixel', name: 'Pixel', description: 'דוגמת ארבעה לחצנים בגימור Bronze Antique. אפשר לבחון חלוקת פעולות לצד הגוון והמרקם.', href: 'https://www.lithoss.com/en/product-overview/switches' },
+    ],
+  },
+  {
+    id: 'meljac-examples', name: 'MELJAC', website: 'https://www.meljac.com/en/',
+    intro: 'מפסקים בעיצוב צרפתי, עם חזיתות פליז או זכוכית וסגנונות שונים של ידיות ולחצנים. הנה שלוש סדרות להיכרות ראשונית.',
+    products: [
+      { slug: 'meljac-classique', name: 'Classique', description: 'חזית פליז עם ידיות בסגנון קלאסי. הסדרה כוללת תצורות שונות ואפשרות לסימון לפי ההזמנה.', href: 'https://www.meljac.com/en/products/classique-controls/' },
+      { slug: 'meljac-damier', name: 'Damier', description: 'לחצנים מרובעים בחזית פליז, בגמרים ובפריסות שונות. מתאים למי שמחפש חזית מתכתית עם פעולות ברורות.', href: 'https://www.meljac.com/en/products/damier/' },
+      { slug: 'meljac-pierrot', name: 'Pierrot', description: 'חזית זכוכית מחוסמת עם צבע וידיות בולטות. אפשר לשלב את בחירת הגוון בתכנון החדר.', href: 'https://www.meljac.com/en/products/pierrot-2/' },
+    ],
+  },
+];
+---
+
+<section class="designer-switches" dir="rtl" aria-labelledby="designer-switches-title">
+  <h2 id="designer-switches-title">מפסקים מעוצבים: דוגמאות של Lithoss ו־MELJAC</h2>
+  <p>איך המפסק ייראה על הקיר? התחילו בתמונות, ובחרו איתנו את מספר הפעולות, הגימור והחיבור למערכת הבית החכם.</p>
+  <nav aria-label="מעבר לדוגמאות המותגים"><a href="#lithoss-examples">דוגמאות Lithoss</a><a href="#meljac-examples">דוגמאות MELJAC</a></nav>
+  {brands.map((brand) => (
+    <section id={brand.id} class="designer-brand" aria-labelledby={`${brand.id}-title`}>
+      <div class="designer-heading">
+        <div><h3 id={`${brand.id}-title`}>{brand.name}</h3><p>{brand.intro}</p></div>
+        <a href={brand.website} target="_blank" rel="noopener noreferrer">לאתר הרשמי של {brand.name} ↗</a>
+      </div>
+      <div class="designer-grid">
+        {brand.products.map((product) => (
+          <article>
+            <a href={product.href} target="_blank" rel="noopener noreferrer" aria-label={`תמונת ${brand.name} ${product.name} ומידע באתר היצרן`}>
+              <img src={`/assets/designer-switches/${product.slug}.webp`} alt={`מפסק ${brand.name} ${product.name} — תמונה רשמית של היצרן`} width="640" height="800" loading="lazy" decoding="async" />
+            </a>
+            <div class="designer-copy"><h4>{brand.name} {product.name}</h4><p>{product.description}</p><a href={product.href} target="_blank" rel="noopener noreferrer">לפרטי הסדרה באתר היצרן ↗</a></div>
+          </article>
+        ))}
+      </div>
+      <p class="designer-credit">תמונות: {brand.name}, מתוך אתר היצרן הרשמי. התמונות להמחשת הסדרות; הגימור וההרכב הסופיים נבחרים לפי דגם והזמנה.</p>
+    </section>
+  ))}
+  <div class="designer-planning">
+    <h3>אהבתם את העיצוב? נתאים גם את אופן ההפעלה</h3>
+    <p>לא כל מפסק מעוצב הוא מפסק KNX מובנה. לפי הדגם נבדוק חיבור KNX ישיר או שילוב לחצן מתאים דרך ממשק כניסות. לפני הזמנה מאמתים מנגנון חשמלי, מספר פעולות, קופסה, עומק התקנה והתאמה לתאורה, לתריסים ולתרחישים. אין להסיק תאימות מהתמונה בלבד.</p>
+    <a href="/contactus/">בואו נדבר על המפסקים בבית שלכם ←</a>
+  </div>
+</section>
+
+<style>
+  .designer-switches {max-width:1200px;margin:2.5rem auto;padding:1.5rem;color:#173750;line-height:1.8;background:#f7fafc;border:1px solid #dbe5ed;border-radius:20px}
+  h2 {font-size:clamp(1.5rem,3vw,2rem);font-weight:800;margin-bottom:.6rem}
+  h3 {font-size:1.6rem;font-weight:800} h4 {font-size:1.15rem;font-weight:800}
+  nav {display:flex;flex-wrap:wrap;gap:1rem;margin:1rem 0}
+  a {color:#155b82;text-decoration:underline;text-underline-offset:4px;font-weight:700}
+  a:focus-visible {outline:3px solid #d77723;outline-offset:4px}
+  .designer-brand {margin-top:2rem;scroll-margin-top:8rem}
+  .designer-heading {display:flex;justify-content:space-between;align-items:center;gap:1.5rem;margin-bottom:1rem}
+  .designer-heading p {max-width:700px}.designer-heading>a {flex-shrink:0}
+  .designer-grid {display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1.2rem}
+  article {background:white;border:1px solid #dbe5ed;border-radius:14px;overflow:hidden}
+  img {width:100%;height:auto;aspect-ratio:4/5;object-fit:contain;background:#fff;display:block}
+  .designer-copy {padding:1rem}.designer-copy p {margin:.5rem 0 1rem}
+  .designer-credit {font-size:.85rem;color:#4d6373;margin-top:.6rem}
+  .designer-planning {background:#eaf1f6;padding:1.2rem;border-radius:12px;margin-top:1.5rem}
+  .designer-planning p {margin:.5rem 0 1rem}
+  @media(max-width:760px) {.designer-grid {grid-template-columns:1fr}.designer-heading {display:block}.designer-switches {padding:1rem}.designer-heading>a {display:inline-block;margin-top:.5rem}}
+</style>
