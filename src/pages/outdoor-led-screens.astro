@@ -1,7 +1,11 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import OutdoorLedQuoteForm from '../components/OutdoorLedQuoteForm.astro';
+import OutdoorLedVideo from '../components/OutdoorLedVideo.astro';
+import { outdoorLedVideoSchema } from '../data/outdoor-led-video.mjs';
 import content from '../page-html/outdoor-led-screens.html?raw';
+const [beforeVideo, afterVideo] = content.split('<!-- OUTDOOR_LED_VIDEO -->');
+if (afterVideo === undefined) throw new Error('Missing outdoor LED video placement.');
 
 const meta = {
   title: "מסכי LED חוץ לגינה ולווילה | P2.976 ו-DICOLOR | i-feel",
@@ -14,6 +18,7 @@ const meta = {
   jsonLd: JSON.stringify({
     '@context': 'https://schema.org',
     '@graph': [
+      outdoorLedVideoSchema('https://i-feel.co.il/outdoor-led-screens/'),
       {
         '@type': ['LocalBusiness', 'HomeAndConstructionBusiness'],
         '@id': 'https://i-feel.co.il/#business',
@@ -66,6 +71,8 @@ const meta = {
 };
 ---
 <BaseLayout {...meta}>
-  <Fragment set:html={content} />
+  <Fragment set:html={beforeVideo} />
+  <OutdoorLedVideo />
+  <Fragment set:html={afterVideo} />
   <OutdoorLedQuoteForm />
 </BaseLayout>

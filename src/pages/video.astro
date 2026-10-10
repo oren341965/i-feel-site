@@ -2,9 +2,13 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import content from '../page-html/page-20.html?raw';
 import KnxSwitchesVideo from '../components/KnxSwitchesVideo.astro';
+import OutdoorLedVideo from '../components/OutdoorLedVideo.astro';
+import { outdoorLedVideoSchema } from '../data/outdoor-led-video.mjs';
 import { knxSwitchesVideoSchema } from '../data/knx-switches-video-schema.mjs';
 const [beforeSwitchesVideo, afterSwitchesVideo] = content.split('<!-- KNX_SWITCHES_VIDEO -->');
 if (afterSwitchesVideo === undefined) throw new Error('Missing KNX video placement in explanations category.');
+const [beforeOutdoorVideo, afterOutdoorVideo] = afterSwitchesVideo.split('<!-- OUTDOOR_LED_VIDEO -->');
+if (afterOutdoorVideo === undefined) throw new Error('Missing outdoor LED video placement in audio category.');
 
 const meta = {
   title: "הדרכות וידאו | בית חכם, KNX, BMS ופרויקטים | i-feel",
@@ -142,16 +146,19 @@ dmxVideoGraph["@graph"].push({
 });
 meta.jsonLd = JSON.stringify(dmxVideoGraph);
 const switchesVideoSchema = knxSwitchesVideoSchema(meta.canonical);
+dmxVideoGraph['@graph'].push(outdoorLedVideoSchema(meta.canonical));
 if (switchesVideoSchema) {
   dmxVideoGraph['@graph'].push(switchesVideoSchema);
-  meta.jsonLd = JSON.stringify(dmxVideoGraph);
 }
+meta.jsonLd = JSON.stringify(dmxVideoGraph);
 
 ---
 <BaseLayout {...meta}>
   <Fragment set:html={beforeSwitchesVideo} />
   <KnxSwitchesVideo card />
-  <Fragment set:html={afterSwitchesVideo} />
+  <Fragment set:html={beforeOutdoorVideo} />
+  <OutdoorLedVideo card />
+  <Fragment set:html={afterOutdoorVideo} />
   <nav class="max-w-7xl mx-auto px-4 py-8" aria-label="מדריכי תאורה">
     <a href="/video/lighting-dimmer/" class="text-brand-700 underline">מדריך וידאו: תאורה ודימר בבית החכם</a>
   </nav>
