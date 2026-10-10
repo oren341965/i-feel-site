@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import PeoniaExamples from '../components/PeoniaExamples.astro';
 import '../styles/knx-advisor.css';
 
 const title = 'איזה מפסק KNX מתאים לבית? יועץ חשמל חכם | I Feel';
@@ -295,17 +296,19 @@ const jsonLd = JSON.stringify({
             </article>
 
             <article class="advisor-family-card advisor-family-card-marked">
-              <div class="advisor-family-mark advisor-family-mark-abb" aria-hidden="true"><small>ABB i-bus KNX</small><strong>PEONIA</strong><span>Design range</span></div>
+              <img src="/assets/abb-peonia/3-6-black.webp" alt="מפסק ABB PEONIA עם 3/6 לחצנים בשחור מט" width="189" height="191" loading="lazy" />
               <div><span>לחצן KNX בעיצוב ABB</span><h4>ABB PEONIA</h4>
                 <p><b>מה מקבלים:</b> חיישן KNX עם לחצנים הניתנים להחלפה. ניתן לתכנת פעולות כמו תאורה, עמעום, תריסים ותרחישים; בחלק מהדגמים יש חיישן טמפרטורה, חיישן קרבה ותצוגת מידע.</p>
                 <p><b>מידות החזית (רוחב × גובה):</b> דגמי 2/4 ו־3/6 לחצנים: <bdi dir="ltr">86 × 86 מ״מ</bdi> (8.6 × 8.6 ס״מ). דגם 5/10 לחצנים: <bdi dir="ltr">85.7 × 143.55 מ״מ</bdi> (8.57 × 14.36 ס״מ).</p>
                 <p><b>משפחות דגם:</b> 2/4 לחצנים — <bdi dir="ltr">PEB/U2.0.1</bdi>; 3/6 לחצנים — <bdi dir="ltr">PEB/U3.0.1</bdi>; 5/10 לחצנים — <bdi dir="ltr">PEB/U5.0.1</bdi>. סיומת המק״ט משתנה לפי צבע וגימור.</p>
                 <p><b>התאמה למקום עד 10 × 10 ס״מ:</b> דגמי 2/4 ו־3/6 מתאימים למגבלת המידה. דגם 5/10 צר מ־10 ס״מ, אך גבוה מ־10 ס״מ.</p>
                 <p><b>לפני הזמנה:</b> יש לאמת דגם, מספר לחצנים, מסגרת, צבע, סימון וקופסת התקנה מול התוכנית והחשמלאי.</p>
+                <a href="#abb-peonia-examples">לצפייה בדוגמאות PEONIA ובגימורים ↓</a><br />
                 <a href="https://library.e.abb.com/public/cef15824d4084a01bf6c742e42267c48/ABB%20i%20bus%20KNX%20sensor%20PEONIA%20brochure_EN_9AKK107492A6543.PDF_ABB.pdf.pdf" target="_blank" rel="noopener">קטלוג היצרן ABB (PDF, באנגלית) ←</a>
               </div>
             </article>
           </div>
+          <PeoniaExamples />
           <p class="advisor-family-note">שמות המשפחות כאן אינם מק״ט להזמנה. אחרי בניית התוכן בוחרים דגם מדויק ומאמתים קופסה, הזנה, צבע, סימון ויכולות ETS.</p>
         </div>
 

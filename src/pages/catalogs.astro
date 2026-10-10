@@ -2,6 +2,7 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import content from '../page-html/page-05.html?raw';
 import KnxAdvisorCta from '../components/KnxAdvisorCta.astro';
+import PeoniaExamples from '../components/PeoniaExamples.astro';
 
 const siemensActuators = [
   {
@@ -215,6 +216,7 @@ const meta = {
   </section>
 
   <Fragment set:html={content} />
+  <PeoniaExamples />
 
   <section id="siemens-knx-actuators" class="bg-brand-50 py-12 lg:py-16 border-y border-brand-100 scroll-mt-32" dir="rtl">
     <div class="max-w-7xl mx-auto px-4">
