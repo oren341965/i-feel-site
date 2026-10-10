@@ -1,0 +1,50 @@
+<script is:inline>
+  (function () {
+    var selector = 'form[action="/api/lead.php"]';
+
+    function resetForm(form) {
+      form.removeAttribute('aria-busy');
+      delete form.dataset.leadSubmitting;
+      form.querySelectorAll('[data-lead-submit-guard]').forEach(function (button) {
+        button.disabled = false;
+        button.removeAttribute('aria-disabled');
+        if (button.dataset.leadOriginalText && button instanceof HTMLButtonElement) {
+          button.textContent = button.dataset.leadOriginalText;
+        } else if (button.dataset.leadOriginalText && button instanceof HTMLInputElement) {
+          button.value = button.dataset.leadOriginalText;
+        }
+        button.removeAttribute('data-lead-submit-guard');
+        button.removeAttribute('data-lead-original-text');
+      });
+    }
+
+    document.addEventListener('submit', function (event) {
+      var form = event.target;
+      if (!(form instanceof HTMLFormElement) || !form.matches(selector)) return;
+
+      if (form.dataset.leadSubmitting === 'true') {
+        event.preventDefault();
+        return;
+      }
+
+      form.dataset.leadSubmitting = 'true';
+      form.setAttribute('aria-busy', 'true');
+
+      form.querySelectorAll('button[type="submit"], input[type="submit"]').forEach(function (button) {
+        button.dataset.leadSubmitGuard = 'true';
+        button.dataset.leadOriginalText = button.textContent || button.value || '';
+        button.disabled = true;
+        button.setAttribute('aria-disabled', 'true');
+        if (button instanceof HTMLButtonElement) {
+          button.textContent = 'שולח…';
+        } else {
+          button.value = 'שולח…';
+        }
+      });
+    });
+
+    window.addEventListener('pageshow', function () {
+      document.querySelectorAll(selector).forEach(resetForm);
+    });
+  })();
+</script>
