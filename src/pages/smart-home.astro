@@ -42,55 +42,7 @@ const tenInchScreenVideoObject = `,
       "publisher": { "@id": "https://i-feel.co.il/#business" }
     }`;
 
-const smartHomeFaqObject = `,
-    {
-      "@type": "FAQPage",
-      "@id": "https://i-feel.co.il/smart-home/#faq",
-      "mainEntity": [
-        {
-          "@type": "Question",
-          "name": "כמה עולה בית חכם?",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "המחיר תלוי בגודל הנכס, מספר נקודות הבקרה ורמת האינטגרציה. לפירוט נוסף יש באתר מדריך מחיר בית חכם."
-          }
-        },
-        {
-          "@type": "Question",
-          "name": "קווי או אלחוטי?",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "בבנייה חדשה נעדיף לרוב KNX קווי. בדירה קיימת נבחן פתרון אלחוטי."
-          }
-        },
-        {
-          "@type": "Question",
-          "name": "האם המערכת עובדת בלי אינטרנט?",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "כן. ליבת KNX המקומית עובדת גם בלי אינטרנט."
-          }
-        },
-        {
-          "@type": "Question",
-          "name": "אפשר להרחיב בעתיד?",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "כן. מערכת שתוכננה נכון מאפשרת הרחבה של חיישנים, תרחישים ואזורים."
-          }
-        },
-        {
-          "@type": "Question",
-          "name": "מה ההבדל בין בית חכם מקצועי למוצרים מהחנות?",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "מוצרי מדף הם גאדג'טים נפרדים שתלויים בענן ובאפליקציה של היצרן. מערכת מקצועית מתוכננת, אמינה, עובדת גם בלי אינטרנט, מחברת את מערכות הבית יחד ומגובה במחלקת שירות בישראל."
-          }
-        }
-      ]
-    }`;
-
-meta.jsonLd = meta.jsonLd.replace("\n  ]\n}", `${tenInchScreenVideoObject}${smartHomeFaqObject}\n  ]\n}`);
+meta.jsonLd = meta.jsonLd.replace("\n  ]\n}", `${tenInchScreenVideoObject}\n  ]\n}`);
 ---
 <BaseLayout {...meta}>
   <Fragment set:html={smartHomeContent} />
