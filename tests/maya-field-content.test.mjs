@@ -75,7 +75,7 @@ test('skill keeps customer service images separate and routes publishable media 
   assert.match(skill, /video-add/);
   assert.match(skill, /five-minute/);
   assert.match(reference, /1–2 שורות/);
-  assert.match(scheduledTask, /once every five minutes/);
+  assert.match(scheduledTask, /once every 30 minutes/);
   assert.match(scheduledTask, /at most one consolidated photo-and-field-note request/);
   assert.match(scheduledTask, /must not invoke `Edit`/);
   assert.match(scheduledTask, /verified recent direct WhatsApp conversation as the duplicate ledger/);

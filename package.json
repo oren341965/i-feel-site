@@ -15,6 +15,7 @@
     "test:ai-finance-manager": "node --test tests/ai-finance-manager.test.mjs",
     "test:procurement-po-tracker": "node --test tests/procurement-po-tracker.test.mjs",
     "test:office-scheduled-readiness": "node --test tests/office-scheduled-readiness.test.mjs",
+    "test:maya-startup": "node --test tests/maya-startup-checkin.test.mjs tests/maya-startup-registration.test.mjs tests/maya-startup-installation.test.mjs",
     "audit:management-sync": "node .claude/skills/management-system-telemetry/scripts/audit-source-sync.mjs",
     "youtube:verify": "node --use-system-ca scripts/youtube-uploader.mjs --verify-channel",
     "youtube:upload": "node --use-system-ca scripts/youtube-uploader.mjs --upload",
