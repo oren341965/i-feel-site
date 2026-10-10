@@ -2,7 +2,7 @@
 const brands = [
   {
     id: 'lithoss-examples', name: 'Lithoss', website: 'https://www.lithoss.com/en',
-    intro: 'מפסקים בעיצוב בלגי: לחצנים נקיים, ידיות בולטות ומגוון טקסטורות. כך אפשר להתרשם מהחזית לפני שבוחרים דגם וגימור.',
+    intro: 'מפסקים בעיצוב בלגי עם מגוון לחצנים וגימורים. סדרות נבחרות זמינות עם KNX מובנה לשליטה בתאורה, עמעום, תריסים ותרחישים; קיימות גם גרסאות לשילוב דרך ממשק כניסות, בהתאם לדגם.',
     products: [
       { slug: 'lithoss-select', name: 'Select', description: 'לחצנים שטוחים בקווים נקיים. אפשר לבדוק סימון או חריטה כדי להבהיר מה מפעיל כל לחצן.', href: 'https://www.lithoss.com/en/product-overview/switches' },
       { slug: 'lithoss-cockpit', name: 'Cockpit', description: 'ידית בולטת ומרקם מתכתי, למי שמעדיף מגע פיזי מובחן ושפה עיצובית של מפסק מכני.', href: 'https://www.lithoss.com/en/product-overview/switches' },
@@ -11,7 +11,7 @@ const brands = [
   },
   {
     id: 'meljac-examples', name: 'MELJAC', website: 'https://www.meljac.com/en/',
-    intro: 'מפסקים בעיצוב צרפתי, עם חזיתות פליז או זכוכית וסגנונות שונים של ידיות ולחצנים. הנה שלוש סדרות להיכרות ראשונית.',
+    intro: 'מפסקים בעיצוב צרפתי, עם חזיתות פליז או זכוכית וסגנונות שונים של ידיות ולחצנים. ניתן לתכנן שילוב במערכת KNX באמצעות מנגנון וממשק מתאימים, לפי הדגם וההזמנה. הנה שלוש סדרות להיכרות ראשונית.',
     products: [
       { slug: 'meljac-classique', name: 'Classique', description: 'חזית פליז עם ידיות בסגנון קלאסי. הסדרה כוללת תצורות שונות ואפשרות לסימון לפי ההזמנה.', href: 'https://www.meljac.com/en/products/classique-controls/' },
       { slug: 'meljac-damier', name: 'Damier', description: 'לחצנים מרובעים בחזית פליז, בגמרים ובפריסות שונות. מתאים למי שמחפש חזית מתכתית עם פעולות ברורות.', href: 'https://www.meljac.com/en/products/damier/' },
@@ -19,10 +19,18 @@ const brands = [
     ],
   },
 ];
+const lithossPhotos = [
+  { slug: 'lithoss-green-copper-single', caption: 'לחצן מלבני יחיד, חזית ירוקה ומסגרת בגוון נחושת', width: 1440, height: 961 },
+  { slug: 'lithoss-six-button-detail', caption: 'תקריב של שישה לחצנים עגולים בחזית מתכת מוברשת', width: 1440, height: 1440 },
+  { slug: 'lithoss-six-button-wall', caption: 'שישה לחצנים עגולים על קיר בהיר', width: 1440, height: 960 },
+  { slug: 'lithoss-four-button-dark', caption: 'ארבעה לחצנים עגולים בחזית כהה', width: 1080, height: 720 },
+  { slug: 'lithoss-two-button-light', caption: 'שני לחצנים עגולים בחזית בהירה', width: 1080, height: 720 },
+  { slug: 'lithoss-round-single-detail', caption: 'חזית עגולה ולחצן יחיד בגימור מתכת מוברשת', width: 1080, height: 607 },
+];
 ---
 
 <section class="designer-switches" dir="rtl" aria-labelledby="designer-switches-title">
-  <h2 id="designer-switches-title">מפסקים מעוצבים: דוגמאות של Lithoss ו־MELJAC</h2>
+  <h2 id="designer-switches-title">מפסקים מעוצבים לבית KNX: LITHOSS ו־MELJAC</h2>
   <p>איך המפסק ייראה על הקיר? התחילו בתמונות, ובחרו איתנו את מספר הפעולות, הגימור והחיבור למערכת הבית החכם.</p>
   <nav aria-label="מעבר לדוגמאות המותגים"><a href="#lithoss-examples">דוגמאות Lithoss</a><a href="#meljac-examples">דוגמאות MELJAC</a></nav>
   {brands.map((brand) => (
@@ -42,6 +50,23 @@ const brands = [
         ))}
       </div>
       <p class="designer-credit">תמונות: {brand.name}, מתוך אתר היצרן הרשמי. התמונות להמחשת הסדרות; הגימור וההרכב הסופיים נבחרים לפי דגם והזמנה.</p>
+      {brand.id === 'lithoss-examples' && (
+        <section class="lithoss-gallery" aria-labelledby="lithoss-gallery-title">
+          <h4 id="lithoss-gallery-title">LITHOSS — לחצנים, גימורים ופריסות</h4>
+          <div class="designer-grid">
+            {lithossPhotos.map((photo) => (
+              <figure>
+                <a href={`/assets/designer-switches/${photo.slug}.webp`} aria-label={`הצגת תמונת LITHOSS: ${photo.caption}`}>
+                  <img src={`/assets/designer-switches/${photo.slug}.webp`} alt={`מפסק LITHOSS — ${photo.caption}`} width={photo.width} height={photo.height} loading="lazy" decoding="async" />
+                </a>
+                <figcaption>{photo.caption}</figcaption>
+              </figure>
+            ))}
+          </div>
+          <p class="designer-credit">תמונות LITHOSS שסופקו ל־I Feel. התמונות מציגות את העיצוב; התאמת גרסת KNX נבדקת לפי הדגם שנבחר.</p>
+          <a href="https://www.lithoss.com/en/technologies/knx" target="_blank" rel="noopener noreferrer">לסדרות KNX באתר LITHOSS ↗</a>
+        </section>
+      )}
     </section>
   ))}
   <div class="designer-planning">
@@ -66,6 +91,10 @@ const brands = [
   img {width:100%;height:auto;aspect-ratio:4/5;object-fit:contain;background:#fff;display:block}
   .designer-copy {padding:1rem}.designer-copy p {margin:.5rem 0 1rem}
   .designer-credit {font-size:.85rem;color:#4d6373;margin-top:.6rem}
+  .lithoss-gallery {margin-top:1.5rem}.lithoss-gallery h4 {margin-bottom:1rem}
+  figure {margin:0;background:white;border:1px solid #dbe5ed;border-radius:14px;overflow:hidden}
+  figure img {aspect-ratio:3/2;object-fit:contain;background:#f1f0ee}
+  figcaption {padding:.8rem 1rem;color:#173750;font-size:.95rem}
   .designer-planning {background:#eaf1f6;padding:1.2rem;border-radius:12px;margin-top:1.5rem}
   .designer-planning p {margin:.5rem 0 1rem}
   @media(max-width:760px) {.designer-grid {grid-template-columns:1fr}.designer-heading {display:block}.designer-switches {padding:1rem}.designer-heading>a {display:inline-block;margin-top:.5rem}}
