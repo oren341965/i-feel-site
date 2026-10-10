@@ -1,11 +1,15 @@
 ---
 name: ai-sales-manager
-description: Orchestrate I Feel sales and marketing, read-only Monday audits, paid-media caps, and bounded Google Ads decisions. Use for sales health, attribution, Maya, capacity, website feedback, or the Daily Oren Brief.
+description: Manage I Feel sales, marketing, read-only Monday audits, Maya and paid-media decisions.
 ---
 
 # I Feel AI Sales Manager
 
-`ai-sales-manager` is the single parent orchestrator for I Feel sales. It coordinates existing workers, preserves the deterministic analyzer for Monday board `2732725332`, and fails closed when evidence, connection, maturity, or approval is missing.
+## Visit synchronization
+
+For visit work, apply [shared synchronization](../maya-email-maintenance/references/visit-calendar-sync.md). Maya email owns two-hour repair.
+
+Single parent for I Feel sales and existing workers. Preserve the board `2732725332` analyzer. Missing evidence, connection, maturity or approval blocks execution.
 
 ## Route the request
 
@@ -14,7 +18,7 @@ description: Orchestrate I Feel sales and marketing, read-only Monday audits, pa
 - For ownership, migration, or duplication, read [component lifecycle](references/component-lifecycle.md).
 - For a live Monday audit, read [board contract](references/board-contract.md), then [classification and scoring](references/classification-and-scoring.md). Use the [report contract](references/report-contract.md) for results.
 - For authorized Hashavshevet-to-Monday intake, read [references/hashavshevet-customer-intake.md](references/hashavshevet-customer-intake.md).
-- For a full-system dry run, plans queue, quote reconciliation, paid-media coordination, website feedback, project video, or Claude judgment request, read [references/orchestration-contract.md](references/orchestration-contract.md).
+- For dry runs, plans, quotes, paid media, website, video or Claude review, read [references/orchestration-contract.md](references/orchestration-contract.md).
 - For Vault/Bus work, read [Vault layout](references/vault-layout.md); for runtime/installers, read [local runtime](references/local-runtime.md).
 - Before acting beyond local read-only analysis, read [safety and approvals](references/safety-and-approvals.md).
 - For maintenance or handoff, read [phase-1 audit](references/phase-1-audit.md) and [validation and handoff](references/validation-and-handoff.md).
@@ -57,6 +61,6 @@ description: Orchestrate I Feel sales and marketing, read-only Monday audits, pa
 - No-write source preflight: `scripts/preflight-readonly.mjs`
 - Vault boundaries: `scripts/vault-runtime.mjs`, `scripts/maya-vault-bridge.mjs`, `scripts/maya-task-production-runner.mjs`, and `scripts/claude-vault-bridge.mjs`
 
-Missing evidence or authority is a blocker, not permission to simulate success.
+Missing evidence or authority blocks execution.
 
 When this manager runs under the I Feel control plane, use `management-system-telemetry` with capability slug `ai-sales-manager`. Telemetry records execution evidence only and never expands the sales approval boundary.

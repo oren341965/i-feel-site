@@ -5,13 +5,40 @@ description: Operate Maya's approved I Feel WhatsApp workflow for inbound triage
 
 # Maya WhatsApp
 
+## Commercial drafts and SALES copy — 2026-09-28
+
+Apply [commercial quotation/RFQ approval](../maya-email-maintenance/references/outbound-approval.md#commercial-quotation-and-supplier-rfq-approval--oren-2026-09-28). Supplier pricing requests and outgoing quotations must remain native unsent drafts in Maya Gmail pending Oren's exact approval, with sales@i-feel.co.il already included in visible CC (or once in To/CC). Verify the saved draft and preserve the unresolved mailbox work. Approved sending must verify the same SALES copy in Sent; no automatic commercial send through the WhatsApp known-answer exception.
+
+
+## Latest outbound restriction — 2026-09-28
+
+Read [outbound approval](../maya-email-maintenance/references/outbound-approval.md) before any work. Current modes: `EMAIL_DRAFTS_ONLY` and `WHATSAPP_VERIFIED_INBOUND_AUTO_REPLY_AND_OREN_HANDOFF`. Oren later authorized only the existing WhatsApp worker to answer current inbound routine questions from verified I Feel sources and relay unknown/restricted requests to his verified direct chat, under the exact contract. All other sends and notifying invitations require his explicit approval. Older standing automatic-send wording below does not restore proactive, technician-dispatch or email-companion permission. Email scheduled passes prepare drafts only; WhatsApp may execute only the bounded inbound exception. Retain pending sends; verify notification side effects before Monday/Sheet/Calendar mutations. Existing non-sending authority and all identity, permission, lock, duplicate and read-back gates remain.
+
+
+## Dispatcher handoff backup — Oren instruction, 2026-09-27
+
+For urgent or deadline-dependent employee/supplier tasks, or when the recorded follow-up date arrives without acknowledgement, apply [dispatcher WhatsApp backup](../maya-email-maintenance/references/sales-email-whatsapp.md#dispatcher-whatsapp-backup--2026-09-27). This worker owns one verified backup message after current identity, exact-recipient, response and duplicate checks. Keep its completion separate from the underlying task. Oren's default review date for an ordinary handoff without a stated date is the next Israeli working day; review timing does not override WhatsApp sending windows. This explicitly authorized narrow scope supersedes older blanket internal/supplier companion exclusions, without granting new commercial decisions or general CRM writes.
+
+After customer self-service guidance, Oren requires follow-up and explicit confirmation that the customer succeeded before service closure. Use [verified customer-guidance service closure](../maya-email-maintenance/references/approved-email-operations.md#verified-customer-guidance-service-closure) when that confirmation arrives. The narrow authorization permits a factual update and the completed status on the exact verified service call, superseding older Monday-read-only wording only for those actions. Check current updates/status and coordinate through the shared lock so the two workers never duplicate closure. Preserve channel, response, opt-out and reminder guards.
+
+## Mandatory WhatsApp delivery after an email failure — 2026-09-27
+
+Oren explicitly requires this worker to deliver the original customer message through WhatsApp, together with an explanation of the email failure, when the recipient mailbox is full or the address is invalid/nonexistent. Read [mandatory failed-email delivery](../maya-email-maintenance/references/sales-email-whatsapp.md#mandatory-whatsapp-delivery-after-an-email-failure--2026-09-27) when inspecting a delivery failure or pending fallback, including on recurring passes. This is required work after the existing identity, recipient, duplicate and send-window gates pass; do not ask again for routine per-message approval. A short notice alone does not replace the original message. This narrow fallback supersedes the older successful-email companion exclusion and full-body prohibition only as specified in that reference. It does not expand the source message's business authorization or permit new decisions.
+
+## Shared visit synchronization — Oren instruction, 2026-09-27
+
+Before scheduling, changing or reconciling a customer/technician visit, read the complete [shared visit synchronization contract](../maya-email-maintenance/references/visit-calendar-sync.md). The operator changing a visit owns matching updates and verified read-back in Monday, the shared schedule and the customer/technician calendar invitations. Oren's standing 2026-09-27 authorization supersedes older read-only or per-visit approval wording only for the bounded verified synchronization defined there. Audit modes remain read-only and route execution to the existing scheduling owner. The existing Maya email worker owns the two-hour repair pass; no other worker starts a duplicate loop. Preserve source conflicts, identity, connector permissions, existing sender rules and unrelated safety boundaries. A sent invitation is not evidence of acceptance or appearance in a private calendar.
+
+
+Read [sales email and WhatsApp coordination](../maya-email-maintenance/references/sales-email-whatsapp.md) before every routine pass. Oren's 2026-09-24 instruction sets the 08:00 send window and assigns this worker one verified companion notice for eligible Maya email outreach. It supersedes conflicting older start-time/duplicate wording only within that scope. Preserve the two-minute unattended runtime and all remaining gates.
+
 Use the existing Maya WhatsApp session on Maya's workstation. The shared `ai-sales-manager` remains the parent orchestrator; this skill is a front-office worker and never becomes a second manager.
 
 ## Every invocation
 
 1. Verify that the active WhatsApp account and browser session are the approved I Feel/Maya session. Compare the visible business name, contact email, website host and a SHA-256 fingerprint of the normalized E.164 service number against `runtime/business-identity-allowlist.json` with `scripts/verify-business-identity.mjs`. Pass observed identity through stdin and never print or persist the raw number. Stop with `WHATSAPP_CONNECTION_MISSING` when identity or access cannot be proved, or `WHATSAPP_ALLOWLIST_MISMATCH` when the verified profile does not match the canonical allowlist.
 2. Triage unread conversations and prepare or send only actions that are already within an explicit approval scope. Never delete, block, change account settings, or scrape through an unsupported interface.
-3. Match a customer by a strong identifier before using Monday. A name alone is not enough. Keep Monday structure unchanged and do not claim a write succeeded without read-back.
+3. For every incoming customer message handled and before every outgoing customer message, match the exact normalized phone to the current Monday record read-only and verify/save the full customer name in the actual WhatsApp contact. Follow [customer contact-name maintenance](references/scheduled-runtime.md#standing-customer-contact-name-maintenance), including pending-name reconciliation and native contact read-back. A name alone is not an identity match. Never write Monday or claim a saved name without verification.
 4. Before sending, read the recent direct conversation and the relevant operational record. Reject a duplicate request or an opt-out.
 5. During the daily execution window, run the field-content gate described below.
 
@@ -19,7 +46,7 @@ Use the existing Maya WhatsApp session on Maya's workstation. The shared `ai-sal
 
 - Use one already-open, verified WhatsApp Business tab. Never open a new WhatsApp tab from an unattended invocation.
 - If the existing tab is owned by another live browser session, return `WHATSAPP_SESSION_CLAIM_BLOCKED`. A session-claim failure is a blocker, never a reason to create a duplicate tab.
-- Exit quickly with `COMPLETED_NO_ACTION` when there is no new conversation delta and the daily gate is not due.
+- Exit quickly with `COMPLETED_NO_ACTION` only when there is no new conversation delta, no pending contact-name action, no pending failed-email delivery, the bounded delivery-failure check found no new candidate, and the daily gate is not due.
 - Use one run lock and a bounded runtime. Never wait for approval inside an unattended run; queue the approval and end with an explicit status.
 - Release the run lock in `finally` on success, timeout, missing access, session-claim failure or any other blocker.
 - Use the installed `scripts/run-lock.mjs` commands and the protected Telemetry wrapper exactly as described in [references/scheduled-runtime.md](references/scheduled-runtime.md). Missing process environment tokens alone do not prove that the approved DPAPI wrapper is unavailable.
@@ -50,7 +77,7 @@ For `test_task=true`, use an isolated test Vault and `execution_origin=ISOLATED_
 - Do not delete chats or media, block contacts, change WhatsApp settings, or use unsupported scraping.
 - Identify the Monday item by a strong customer identifier, normally the verified phone number. A similar name is not sufficient.
 - Treat Monday as a trigger and operational record only, never as a message recipient. Never send or draft a reply to a Monday notification thread or address. Validate the direct customer or employee recipient independently; `WRONG_RECIPIENT` blocks the action.
-- Ordinary customer communication is limited to `09:00-18:00` Sunday through Thursday in `Asia/Jerusalem`; never send on Shabbat or an Israeli holiday.
+- Ordinary customer communication is limited to `08:00-18:00` Sunday through Thursday in `Asia/Jerusalem`; never send on Shabbat or an Israeli holiday.
 - Route cross-domain work to `ai-sales-manager`: service and complaints go to Support, received plans go to the plans/project handoff, and financial work remains deferred. Do not invent a generic Maya-admin authority.
 
 ## Voice-note and phone-complaint forwarding to Oren (standing permission)
@@ -68,7 +95,7 @@ Oren granted a narrow standing permission to relay two specific customer signals
 
 ## Daily field-content gate
 
-At `15:00` in `Asia/Jerusalem`, once per local date, inspect the live technician schedule and request photos plus a short field note from every technician who had field assignments that day. The existing five-minute `maya-whatsapp` scheduled task owns the clock. Use the verified recent direct WhatsApp conversation as the duplicate ledger and touch only unresolved recipients. If that conversation cannot be read, fail closed and do not send. The five-minute cadence must never become a five-minute message cadence.
+At `15:00` in `Asia/Jerusalem`, once per local date, inspect the live technician schedule and request photos plus a short field note from every technician who had field assignments that day. The existing two-hour `maya-whatsapp` scheduled task owns the clock, ten minutes after the email worker during the approved workday. Use the verified recent direct WhatsApp conversation as the duplicate ledger and touch only unresolved recipients. If that conversation cannot be read, fail closed and do not send. The two-hour cadence is a check cadence, never permission to repeat a verified message.
 
 Read [references/field-content-daily.md](references/field-content-daily.md) before this mode. Use `scripts/field-content-daily.mjs` for month-tab resolution, date-block extraction, technician-column discovery, phone redaction and deterministic request keys.
 
@@ -93,3 +120,7 @@ The standing authorization is narrow:
 - Send within the permitted Israeli business-hours window and never on Shabbat or a holiday.
 - After a send, verify that the message appears in the intended chat and keep only a bounded in-memory result for that invocation. The unattended scheduler must not invoke `Edit`, write local state, write to the Vault or Bus, download media, or mutate Monday.
 - A failed or ambiguous send is a blocker, not a success. Do not retry a verified delivery.
+
+## Unified technician schedule workflow
+
+For schedule review, cancellations, delays, visit updates, next-day dispatch and installation closeout, read the complete [single shared workflow](../maya-email-maintenance/references/technician-schedule-unified.md). This is the sole shared source for scheduling authority, ownership, cadence and cross-channel deduplication; linked references retain mode-specific mechanics. The 2026-09-23 standing channel authorization supersedes older blanket channel-disabled/report-only prose only within its approved scope. Both workers use the same existing lock. Email owns read-only reconciliation and authorized direct-thread replies; WhatsApp alone owns daily schedule/photo dispatch. Preserve all remaining restrictions and do not create another scheduler.

@@ -1,9 +1,51 @@
 ---
 name: maya-email-maintenance
-description: Maintain Maya's authenticated I Feel Gmail inbox on a recurring three-hour cadence. Triage new mail, label and archive low-risk messages, identify plans, bounces, sales, service, supplier and finance work, and prepare reply drafts. Use only for Maya's verified mailbox, never for another connected Gmail profile.
+description: Maintain Maya's authenticated I Feel Gmail inbox on a recurring two-hour cadence. Triage mail, follow verified dispatcher handoffs, archive eligible correspondence, and reconcile verified visits across Monday, the shared schedule and calendar invitations. Use only for Maya's verified mailbox, never for another connected Gmail profile.
 ---
 
 # Maya Email Maintenance
+
+## Commercial drafts and SALES copy — 2026-09-28
+
+Apply [commercial quotation/RFQ approval](references/outbound-approval.md#commercial-quotation-and-supplier-rfq-approval--oren-2026-09-28). Supplier pricing requests and outgoing quotations must remain native unsent drafts in Maya Gmail pending Oren's exact approval, with sales@i-feel.co.il already included in visible CC (or once in To/CC). Verify the saved draft and preserve the unresolved mailbox work. Approved sending must verify the same SALES copy in Sent; no automatic commercial send through the WhatsApp known-answer exception.
+
+
+## Latest outbound restriction — 2026-09-28
+
+Read [outbound approval](references/outbound-approval.md) before any work. Current modes: `EMAIL_DRAFTS_ONLY` and `WHATSAPP_VERIFIED_INBOUND_AUTO_REPLY_AND_OREN_HANDOFF`. Oren later authorized only the existing WhatsApp worker to answer current inbound routine questions from verified I Feel sources and relay unknown/restricted requests to his verified direct chat, under the exact contract. All other sends and notifying invitations require his explicit approval. Older standing automatic-send wording below does not restore proactive, technician-dispatch or email-companion permission. Email scheduled passes prepare drafts only; WhatsApp may execute only the bounded inbound exception. Retain pending sends; verify notification side effects before Monday/Sheet/Calendar mutations. Existing non-sending authority and all identity, permission, lock, duplicate and read-back gates remain.
+
+
+## Every incoming invoice to Accounting — Oren instruction, 2026-09-27
+
+Oren explicitly directed that every incoming invoice must reach Eli in Accounting. Apply [invoice delivery to Accounting](references/approved-email-operations.md#invoice-delivery-to-accounting--2026-09-27). The verified email destination is `account@i-feel.co.il`. Forward the exact original invoice-bearing correspondence and preserve attachments once, verify Sent and recipients, and retain unresolved delivery or invoice-retrieval gaps. This is a bounded invoice handoff exception to older supplier/finance forwarding restrictions, not authority to pay, issue accounting documents or decide disputed charges.
+
+## Service-call recipient — Oren instruction, 2026-09-27
+
+For all routine internal service-call handoffs and updates, including closure notices, the recipients are Maya and Arik, without Oren in To, CC or BCC. This is Oren's final clarification and applies to future service calls. Apply the [service recipient rule](references/approved-email-operations.md#service-call-recipient--2026-09-27): Maya is `myhome@i-feel.co.il` and Arik is `support@i-feel.co.il`. Keep decisions requiring Oren separate from routine notifications and preserve all sender, recipient, deduplication and action-authority gates. This instruction change alone does not prove that Monday's native automation recipes were changed.
+
+## Dispatcher inbox policy — Oren instruction, 2026-09-27
+
+Oren requires INBOX to hold subjects needing Maya's action. Maya is the dispatcher: identify what is required, resolve the responsible person from authoritative context, perform or verify the authorized handoff, and follow the task through to verified completion. Apply the [dispatcher and closure rules](references/approved-email-operations.md#dispatcher-and-closure--2026-09-27). Archive closed correspondence regardless of category. Oren additionally authorizes archiving a still-open task after a verified documented handoff with a named owner and follow-up date, provided the task remains reliably tracked as open and is checked when due. This later authorization supersedes older low-risk-only archive and keep-all-open-work-in-INBOX restrictions. An archived tracked handoff is not completed business work. Preserve mail and attachments, exact-message read-back, channel identity, recipient and action-authority gates.
+
+During Oren's interactive inbox review, ask concise questions about concrete unresolved decisions and reusable routing rules while continuing independent work. Record only his actual answers in this existing skill; do not invent standing rules from silence. Do not ask again about rules already decided. Keep exact private continuation so reviewed backlog is not repeatedly restarted.
+
+After customer self-service guidance, follow up and verify the customer succeeded. Oren explicitly authorized adding a factual Monday update and closing the exact service call only after current customer resolution confirmation and no remaining dependent action, following [verified service closure](references/approved-email-operations.md#verified-customer-guidance-service-closure). This narrow exception supersedes older Monday-read-only wording only for the exact update and completed status, with live read-back and duplicate checks.
+
+## Mandatory WhatsApp delivery after an email failure — 2026-09-27
+
+Oren explicitly requires the original customer message to be delivered through WhatsApp, together with an explanation of the email failure, when the recipient mailbox is full or the address is invalid/nonexistent. Read [mandatory failed-email delivery](references/sales-email-whatsapp.md#mandatory-whatsapp-delivery-after-an-email-failure--2026-09-27). Email owns failure classification; the existing WhatsApp worker owns the verified direct-chat delivery. This is required work, not an optional recommendation or a new per-message approval request. Keep the case pending until delivery is verified or a concrete blocker is reported. This later rule takes precedence over older bounce-only handling and the successful-email companion exclusion for these cases; it does not authorize a Monday email-field write or an automatic email resend.
+
+## Shared visit synchronization — Oren instruction, 2026-09-27
+
+Before scheduling, changing or reconciling a customer/technician visit, read the complete [shared visit synchronization contract](references/visit-calendar-sync.md). The operator changing a visit owns matching updates and verified read-back in Monday, the shared schedule and the customer/technician calendar invitations. Oren's standing 2026-09-27 authorization supersedes older read-only or per-visit approval wording only for the bounded verified synchronization defined there. Audit modes remain read-only and route execution to the existing scheduling owner. The existing Maya email worker owns the two-hour repair pass; no other worker starts a duplicate loop. Preserve source conflicts, identity, connector permissions, existing sender rules and unrelated safety boundaries. A sent invitation is not evidence of acceptance or appearance in a private calendar.
+
+
+## Friday email maintenance authorization — 2026-09-25
+
+Oren explicitly authorized the existing email worker on Fridays until 14:00 and requested this addition to the skill. Run bounded email maintenance every two hours at 08:00, 10:00, 12:00 and 14:00 Asia/Jerusalem on Friday, excluding Israeli holidays. Friday mutations are allowed only before 14:00; the 14:00 pass is read-only closeout, consistent with the existing 18:00 closeout on Sunday–Thursday. After 14:00 Friday, skip the email pass. This supersedes the older Sunday–Thursday-only restriction for the email worker only. Preserve the existing Sunday–Thursday schedule, identity, lock, archive/read-back, protected-mail and send guards. No additional scheduler and no Friday WhatsApp authorization are created by this update.
+
+
+Read [sales email and WhatsApp coordination](references/sales-email-whatsapp.md) before every routine pass. Oren's 2026-09-24 instruction sets the 08:00 start, two-hour email checks and one verified WhatsApp companion notice per eligible email outreach. It supersedes conflicting older cadence/start-time/duplicate wording only within that scope. Preserve all remaining gates.
 
 Keep Maya's work inbox small, classified and actionable without losing customer correspondence. Oren granted standing approval on `2026-08-24` for the bounded inbox organization and routine customer communication defined below. Oren additionally granted standing approval on `2026-09-05` for the verified bounce-correction workflow defined below: when a sent message bounces because a recipient address is invalid, Maya may locate one strongly verified replacement address from authoritative I Feel records or direct correspondence, update only that contact's email field in Monday, and resend the same business message once to the corrected address. Everything outside these bounded scopes remains draft-only.
 
@@ -12,7 +54,7 @@ Keep Maya's work inbox small, classified and actionable without losing customer 
 - An explicit channel-specific instruction from Oren may authorize an operational email run, including a scheduled run, beyond the default REPORT_ONLY mode below. Apply only the named permissions; do not infer production commissioning, credential changes, Monday writes or WhatsApp activation. Use [approved email operations](references/approved-email-operations.md) for this mode. For proactive sends, use the canonical protected ledger and transaction in [proactive send ledger](references/proactive-send-ledger.md). A running scheduler is not evidence of completed mailbox work.
 
 - Before every run, read the authenticated Gmail profile and compare it with the Maya mailbox configured by the automation. Stop with `WRONG_MAILBOX` when the address is absent, belongs to Oren or does not exactly match the configured Maya address.
-- A separate automation invokes this skill every three hours. The skill performs one bounded pass and never creates another scheduler or overlapping run.
+- The existing automation invokes this skill every two hours in its approved workday. The skill performs one bounded pass and never creates another scheduler or overlapping run.
 - At maturity 0, every scheduled invocation is `REPORT_ONLY` and the staged scheduler prompt is stricter than the interactive workflow below. It may read and aggregate only: no Gmail label/read/archive mutation, no draft, no send, no attachment download, and no Monday, Calendar, WhatsApp, Vault, Bus, contact, configuration, or connection-state write. The pre-existing Windows Task and the WhatsApp/integrated schedulers must remain disabled.
 - Continue from the last successful checkpoint with a small overlap, deduplicate by Gmail message ID, and do not backfill more than 24 hours in one unattended pass. A manual run may process a larger range when the user requests it.
 
@@ -38,7 +80,7 @@ Every human-facing digest shown to Oren must begin with the exact heading `טי�
 - If no actionable draft remains, still render the heading followed by `אין טיוטות ממתינות`.
 - Full draft text is allowed only in the private owner-facing Codex result. Never copy it into Telemetry, the Management System audit, Vault, Bus, shared logs, email notifications or WhatsApp.
 
-## Three-hour pass
+## Two-hour pass
 
 1. Scan `INBOX` from the checkpoint through the current time and scan the current `DRAFT` inventory on every run regardless of checkpoint. Page through all matching inbox results and all drafts needed to establish current open-loop state. Read the full thread when its context affects classification, loop state or the proposed response.
 2. Classify each new message into one primary route:
@@ -53,8 +95,8 @@ Every human-facing digest shown to Oren must begin with the exact heading `טי�
 4. For plans, confirm that the attachment is actually present and report the project/customer match to `ai-sales-manager` for the explicit plans/project handoff. Do not claim the plans were filed or transferred when that handoff is unavailable.
 5. For bounces, identify the failed recipient, the original sent message and the exact address failure. Then run the verified bounce-correction workflow below. If one strongly verified replacement address is found, update only the matched Monday contact's email field, resend the original business message once to the corrected address, verify the sent copy, and record the correction outcome. If the replacement is ambiguous, unverified, belongs to a different person, requires changing more than the email field, or no authoritative match exists, do not change Monday and do not resend; return `NEEDS_OREN` with the bounded reason.
 6. For a message that requires a response, read the full thread and preserve its recipients, subject, dates and quoted facts. Send only when it fits the standing routine-customer scope below; otherwise keep it in the inbox and prepare a reply draft.
-7. Mark a message read and add `processed` only after its classification and required draft or escalation are complete.
-8. Archive only messages that are clearly low-risk and fully handled: newsletters, routine automated notifications, obvious marketing clutter and completed administrative traffic. Leave uncertain messages in the inbox and report them.
+7. After the exact message has been read and its required handling or verified handoff completed, mark it read as a mandatory completion step and verify that Gmail UNREAD is absent. Follow [mandatory read-state completion](references/approved-email-operations.md#mandatory-read-state-completion--2026-09-24). A draft alone does not complete a required send. Preserve pending business work and new unread messages; use the existing `processed` label only when its completion conditions pass.
+8. Complete mandatory verified archiving of eligible low-risk closed notifications and administrative mail, including older read/processed items still in INBOX, following [archive completion and backlog](references/approved-email-operations.md#mandatory-archive-completion-and-backlog--2026-09-24). Read/processed is not inbox cleanup. Keep protected and unresolved correspondence visible.
 9. Use the verified Gmail message/thread state and the existing `processed` label as the unattended checkpoint. A retry must be idempotent and must not create duplicate drafts, repeat a send or repeat label/archive actions. Do not require local-file `Edit` access for the scheduled pass.
 
 ## Verified bounce correction and resend
@@ -103,7 +145,7 @@ For `test_task=true`, use `execution_origin=ISOLATED_TEST`, create ACK and Resul
 
 ## Unattended-run controls
 
-- Exit quickly with `COMPLETED_NO_ACTION` when the checkpoint window has no delta and the current draft scan contains no open draft exception.
+- Exit with `COMPLETED_NO_ACTION` only when the checked scope has no delta, actionable draft, pending read/archive action or remaining backlog continuation. A processed label must never exclude an INBOX item from archive reconciliation. Incomplete coverage is PARTIAL, not a completed cleanup.
 - Use one run lock and a bounded runtime. A timeout is a normal blocker result, not permission to continue indefinitely.
 - Never wait for human approval inside an unattended run. Put the approval in the approved local queue and finish with an explicit status.
 - Release the run lock in `finally` for every outcome, including timeout, connector failure, `WRONG_RECIPIENT` and `NEEDS_OREN`.
@@ -168,3 +210,7 @@ node .\.claude\skills\maya-email-maintenance\scripts\report-email-audit.mjs `
 ```
 
 The reporter requires the two Management System credentials from the local protected process environment. `--dry-run` validates the exact envelope without network transmission.
+
+## Unified technician schedule workflow
+
+For schedule review, cancellations, delays, visit updates, next-day dispatch and installation closeout, read the complete [single shared workflow](references/technician-schedule-unified.md). This is the sole shared source for scheduling authority, ownership, cadence and cross-channel deduplication; linked references retain mode-specific mechanics. The 2026-09-23 standing channel authorization supersedes older blanket channel-disabled/report-only prose only within its approved scope. Both workers use the same existing lock. Email owns read-only reconciliation and authorized direct-thread replies; WhatsApp alone owns daily schedule/photo dispatch. Preserve all remaining restrictions and do not create another scheduler.
