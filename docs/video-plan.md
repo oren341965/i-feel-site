@@ -78,3 +78,12 @@
 | מרכז הספורט אילת — מערכת BMS רחבת היקף מבוססת KNX ו-DDC | BMS | `UFCrIfiJC-w` | /video/#eilat-bms-video, /structure-control/#eilat-bms-video, /bms-public-buildings/#eilat-bms-video, /ddc-controllers-bms/#eilat-bms-video, /knx-smart-home/#eilat-bms-video |
 
 סרטון אילת פורסם בערוץ I FEEL ב-2026-10-01. חמש ההטמעות מוכנות בענף העבודה וממתינות למיזוג ולפריסה. סיווג שיווקי: `BMS`; מקור לתכנית העדכון השבועי של מנהל המכירות: https://www.youtube.com/watch?v=UFCrIfiJC-w.
+
+
+## הוכן לפרסום — מסכי LED חוץ (2026-10-10)
+
+- סרטון מסכי LED חוץ לבריכה ולווילה — הדמיית יום ולילה, עמעום, מפרט וגדלים ללא מחירים.
+- מיתוג רשמי בפתיח ובסיום; ללא אנשים; מוזיקה מקורית רגועה.
+- נגן מקומי WebM ב־`/outdoor-led-screens/#outdoor-led-video` ובקטגוריית האודיו ב־`/video/#outdoor-led-video`, עם VideoObject בשני הדפים.
+- המקור הממותג ב־`content-inbox/2026-10-outdoor-led-video/` (Git LFS). חיבור YouTube חסר; לא פורסם ביוטיוב.
+- מצב ההטמעה באתר: ממתינה למיזוג ולפריסה, ולא מסומנת כחיה.

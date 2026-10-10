@@ -1,0 +1,35 @@
+---
+import { outdoorLedVideo as video } from '../data/outdoor-led-video.mjs';
+const { card = false } = Astro.props;
+const videoSource = new URL(video.contentUrl).pathname;
+const videoPoster = new URL(video.posterUrl).pathname;
+---
+<section id="outdoor-led-video" class:list={['outdoor-video', { 'outdoor-video-card': card }]} aria-labelledby="outdoor-led-video-title">
+  <div>
+    <p class="outdoor-video-label">הקולנוע יוצא לגינה</p>
+    <h2 id="outdoor-led-video-title"><a href={video.pageUrl}>מסכי LED חוץ — ביום ובלילה</a></h2>
+    <p>{video.description}</p>
+    <p>בסרטון: פרימיום PixelPro Outdoor P2.976 בגודל 3×1.5 מטר וברזולוציה של 1008×504 פיקסלים. בסדרה הרגילה המפרט והרזולוציה נקבעים לפי הדגם שנבחר ומאושרים לפני הזמנה.</p>
+    <p class="outdoor-video-note">הדמיה להמחשה, הכוללת בריכה ותאורה שנערכו באמצעות AI. הבהירות והתוצאה בפועל תלויות במפרט, בשמש ובתנאי ההתקנה. הרמקולים ממחישים שילוב אודיו לפי הפרויקט.</p>
+    <a class="outdoor-video-cta" href="/outdoor-led-screens/#quote">לתכנון מסך LED חוץ בהתאמה לגינה שלכם</a>
+    <p><a class="outdoor-video-cta" href={video.tiktokUrl} target="_blank" rel="noopener noreferrer">לצפייה בסרטון בטיקטוק</a></p>
+  </div>
+  <div class="outdoor-video-player">
+    <video controls playsinline preload="none" poster={videoPoster} width="720" height="1280" aria-label={video.title}>
+      <source src={videoSource} type="video/webm" />
+      <a href={videoSource}>לצפייה בסרטון מסכי LED חוץ</a>
+    </video>
+  </div>
+</section>
+<style>
+  .outdoor-video { max-width: 72rem; margin: 2.5rem auto; padding: 1.5rem; display: grid; gap: 1.5rem; border: 1px solid #dae6f2; border-radius: 1.25rem; background: #f7fafc; color: #17395b; scroll-margin-top: 6rem; }
+  .outdoor-video h2 { font-size: 1.75rem; line-height: 1.4; font-weight: 800; margin-bottom: 1rem; }
+  .outdoor-video p { line-height: 1.8; margin-bottom: 1rem; }
+  .outdoor-video-label { color: #087f9c; font-weight: 800; }
+  .outdoor-video-note { font-size: .875rem; }
+  .outdoor-video-cta { display: inline-block; color: #087f9c; font-weight: 700; text-decoration: underline; }
+  .outdoor-video-player { width: 100%; max-width: 360px; margin: auto; }
+  .outdoor-video video { display: block; width: 100%; height: auto; aspect-ratio: 9 / 16; background: #07111c; border-radius: .75rem; }
+  .outdoor-video-card { margin: 0; height: 100%; }
+  @media (min-width: 768px) { .outdoor-video:not(.outdoor-video-card) { grid-template-columns: 1.25fr 1fr; align-items: center; padding: 2rem; } }
+</style>
