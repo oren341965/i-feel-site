@@ -14,13 +14,28 @@ function metadata(html, name, tag = 'meta') {
   return [...html.matchAll(new RegExp(`<${tag}\\b[^>]*>`, 'gi'))]
     .map(m => m[0]).filter(t => attr(t, tag === 'link' ? 'rel' : 'name') === name);
 }
-function validateOfferExpiry(value, route, errors) {
+function validateStructuredData(value, route, errors) {
   if (Array.isArray(value)) {
-    for (const item of value) validateOfferExpiry(item, route, errors);
+    for (const item of value) validateStructuredData(item, route, errors);
     return;
   }
   if (!value || typeof value !== 'object') return;
   const types = Array.isArray(value['@type']) ? value['@type'] : [value['@type']].filter(Boolean);
+  // Our generated lists represent complete, unpaginated collections.
+  // Check their declared counts and positions without depending on array order.
+  if ((types.includes('ItemList') || types.includes('BreadcrumbList')) && Array.isArray(value.itemListElement)) {
+    const items = value.itemListElement;
+    if (items.every(item => item?.['@type'] === 'ListItem')) {
+      const positions = items.map(item => item.position).sort((a, b) => a - b);
+      if (positions.some((position, index) => position !== index + 1)) errors.push(`${route}: structured list positions must be unique and consecutive from 1`);
+      if (value.numberOfItems !== undefined && value.numberOfItems !== items.length) errors.push(`${route}: structured list numberOfItems does not match its complete collection`);
+      if (types.includes('BreadcrumbList')) {
+        const first = items.find(item => item.position === 1);
+        const firstUrl = typeof first?.item === 'string' ? first.item : first?.item?.['@id'];
+        if (firstUrl && new URL(firstUrl, 'https://i-feel.co.il/').origin !== 'https://i-feel.co.il') errors.push(`${route}: breadcrumb root must belong to i-feel, not an external resource`);
+      }
+    }
+  }
   if (types.includes('Offer')) {
     const today = new Date().toISOString().slice(0, 10);
     if (typeof value.priceValidUntil === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(value.priceValidUntil) && value.priceValidUntil < today) {
@@ -31,7 +46,7 @@ function validateOfferExpiry(value, route, errors) {
       if (Number.isFinite(expiry) && expiry < Date.now()) errors.push(`${route}: expired Offer validThrough ${value.validThrough}`);
     }
   }
-  for (const child of Object.values(value)) validateOfferExpiry(child, route, errors);
+  for (const child of Object.values(value)) validateStructuredData(child, route, errors);
 }
 const errors = [];
 
@@ -146,7 +161,7 @@ for (const file of (await walk(root)).filter(f => f.endsWith('.html'))) {
   const descriptions = metadata(html, 'description');
   if (descriptions.length !== 1 || !attr(descriptions[0], 'content').trim()) errors.push(`${route}: missing/duplicate description`);
   for (const script of html.matchAll(/<script\b[^>]*type=["']application\/ld\+json["'][^>]*>([\s\S]*?)<\/script>/gi)) {
-    try { validateOfferExpiry(JSON.parse(script[1]), route, errors); } catch { /* Existing JSON-LD validity is handled by page generation/tests. */ }
+    try { validateStructuredData(JSON.parse(script[1]), route, errors); } catch { /* Existing JSON-LD validity is handled by page generation/tests. */ }
   }
   for (const forbidden of ['[לאישור', 'היי פיל סיסטמס', 'פאל וינטק', 'בית חולים הדסה', 'מגדל אשפוז', '053-348', 'G-XXXXXXXXXX']) {
     if (html.includes(forbidden)) errors.push(`${route}: prohibited or unfinished copy (${forbidden})`);

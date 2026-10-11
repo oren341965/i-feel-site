@@ -62,3 +62,24 @@ test('existing assets and public PHP targets pass with query and fragment links'
   });
   assert.equal(result.status, 0, result.stderr);
 });
+
+const structured = node => `${good}<script type="application/ld+json">${JSON.stringify({'@context': 'https://schema.org', '@graph': [node]})}</script>`;
+test('complete structured collection rejects an inflated item count', async () => {
+  const result = await run(structured({'@type': 'ItemList', numberOfItems: 2, itemListElement: [{'@type': 'ListItem', position: 1, name: 'Catalog'}]}));
+  assert.notEqual(result.status, 0);
+  assert.match(result.stderr, /numberOfItems does not match/);
+});
+test('structured list rejects a missing first position', async () => {
+  const result = await run(structured({'@type': 'ItemList', numberOfItems: 1, itemListElement: [{'@type': 'ListItem', position: 2, name: 'Catalog'}]}));
+  assert.notEqual(result.status, 0);
+  assert.match(result.stderr, /positions must be unique and consecutive/);
+});
+test('manufacturer URL cannot become the website breadcrumb parent', async () => {
+  const result = await run(structured({'@type': 'BreadcrumbList', itemListElement: [{'@type': 'ListItem', position: 1, name: 'Manufacturer', item: 'https://example.com/catalog/'}, {'@type': 'ListItem', position: 2, name: 'Home', item: 'https://i-feel.co.il/'}]}));
+  assert.notEqual(result.status, 0);
+  assert.match(result.stderr, /breadcrumb root must belong to i-feel/);
+});
+test('complete collection allows external catalog URLs and array order independent of positions', async () => {
+  const result = await run(structured({'@type': 'ItemList', numberOfItems: 2, itemListElement: [{'@type': 'ListItem', position: 2, name: 'Local', url: 'https://i-feel.co.il/'}, {'@type': 'ListItem', position: 1, name: 'Manufacturer', url: 'https://example.com/catalog/'}]}));
+  assert.equal(result.status, 0, result.stderr);
+});
