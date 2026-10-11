@@ -1,7 +1,7 @@
 export const outdoorLedVideo = {
   title: 'מסכי LED חוץ לבריכה ולווילה — יום ולילה | i-feel',
   description: 'הדמיה של מסך LED חוץ ליד בריכה: הדלקה הדרגתית, עמעום, צפייה ביום ובלילה, גדלים ומפרט PixelPro Outdoor P2.976. ללא מחירים. התצורה הסופית מותאמת לפרויקט.',
-  contentUrl: 'https://i-feel.co.il/assets/videos/outdoor-led-day-night.webm',
+  contentUrl: 'https://i-feel.co.il/assets/videos/outdoor-led-day-night-music-v2.webm',
   posterUrl: 'https://i-feel.co.il/assets/videos/outdoor-led-day-night.jpg',
   duration: 'PT53.5S',
   uploadDate: '2026-10-10',
