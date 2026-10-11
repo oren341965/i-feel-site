@@ -1,0 +1,128 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+const title = 'עוזר מידע לבית חכם ולבקרת מבנה | i-feel';
+const description = 'שאלו שאלה בשפה חופשית על בית חכם, KNX, בקרת מבנה ומוצרים. התשובה תכלול קישורים למידע באתר.';
+const canonical = 'https://i-feel.co.il/assistant/';
+---
+
+<BaseLayout title={title} description={description} canonical={canonical} ogTitle={title} ogDescription={description} ogUrl={canonical}>
+  <main dir="rtl" class="bg-brand-50">
+    <section class="bg-brand-900 py-12 text-white md:py-16">
+      <div class="mx-auto max-w-4xl px-4">
+        <p class="mb-3 text-sm font-bold text-accent-300">עוזר מידע של i-feel</p>
+        <h1 class="text-3xl font-extrabold leading-tight md:text-5xl">מה תרצו לדעת על בית חכם או בקרת מבנה?</h1>
+        <p class="mt-5 max-w-3xl text-lg leading-8 text-brand-100">אפשר לכתוב בשפה חופשית. העוזר מחפש קודם במידע שפורסם באתר ומצרף קישורים למקורות.</p>
+      </div>
+    </section>
+
+    <section class="mx-auto max-w-4xl px-4 py-10">
+      <div class="rounded-2xl border border-brand-200 bg-white p-5 shadow-sm sm:p-8">
+        <form id="assistant-form" class="space-y-4">
+          <label for="assistant-query" class="block text-lg font-bold text-brand-900">השאלה שלכם</label>
+          <textarea id="assistant-query" name="query" rows="3" maxlength="800" required class="w-full rounded-xl border border-brand-300 p-4 text-base leading-7 outline-none focus:border-accent-500 focus:ring-2 focus:ring-accent-500/20" placeholder="לדוגמה: איזה מפסק כדאי לי לתאורה ולתריסים?"></textarea>
+          <div class="flex flex-col justify-between gap-3 sm:flex-row sm:items-center">
+            <p class="text-sm leading-6 text-brand-600">אין להזין פרטים אישיים. השאלה נשלחת לעיבוד באמצעות שירות AI חיצוני.</p>
+            <button id="assistant-submit" type="submit" class="rounded-xl bg-accent-500 px-6 py-3 font-bold text-white transition hover:bg-accent-600 disabled:cursor-wait disabled:opacity-60">קבלו תשובה</button>
+          </div>
+        </form>
+
+        <div class="mt-5 flex flex-wrap gap-2" aria-label="שאלות לדוגמה">
+          <button type="button" class="assistant-suggestion rounded-full border border-brand-200 px-4 py-2 text-sm font-semibold text-brand-700 hover:border-accent-400" data-question="איזה מפסק KNX מתאים לתאורה ולתריסים?">מפסק לתאורה ולתריסים</button>
+          <button type="button" class="assistant-suggestion rounded-full border border-brand-200 px-4 py-2 text-sm font-semibold text-brand-700 hover:border-accent-400" data-question="מה ההבדל בין בית חכם ל-BMS?">בית חכם או BMS?</button>
+          <button type="button" class="assistant-suggestion rounded-full border border-brand-200 px-4 py-2 text-sm font-semibold text-brand-700 hover:border-accent-400" data-question="איך בוחרים בקר KNX לפרויקט?">בחירת בקר KNX</button>
+        </div>
+
+        <p id="assistant-status" class="mt-6 text-sm text-brand-600" role="status" aria-live="polite">המידע המוצג הוא נקודת פתיחה. לתכנון או להתאמה סופית יש לבדוק את המפרט המלא ואת תנאי הפרויקט.</p>
+        <section id="assistant-answer" class="mt-4 hidden rounded-xl bg-brand-50 p-5" aria-label="תשובת העוזר"></section>
+      </div>
+      <p class="mt-5 text-center text-sm text-brand-600">לא מצאתם תשובה? <a class="font-bold text-accent-700 underline underline-offset-4" href="https://wa.me/972533450205">אפשר לדבר עם צוות i-feel בוואטסאפ</a>.</p>
+    </section>
+  </main>
+</BaseLayout>
+
+<script>
+  const form = document.querySelector<HTMLFormElement>('#assistant-form');
+  const input = document.querySelector<HTMLTextAreaElement>('#assistant-query');
+  const button = document.querySelector<HTMLButtonElement>('#assistant-submit');
+  const status = document.querySelector<HTMLElement>('#assistant-status');
+  const answer = document.querySelector<HTMLElement>('#assistant-answer');
+
+  document.querySelectorAll<HTMLButtonElement>('.assistant-suggestion').forEach((suggestion) => {
+    suggestion.addEventListener('click', () => {
+      if (input) {
+        input.value = suggestion.dataset.question || '';
+        input.focus();
+      }
+    });
+  });
+
+  const renderAnswer = (payload: { answer?: string; sources?: Array<{ title?: string; url?: string }>; contactUrl?: string }) => {
+    if (!answer) return;
+    answer.replaceChildren();
+    const paragraph = document.createElement('p');
+    paragraph.className = 'whitespace-pre-wrap text-base leading-8 text-brand-900';
+    paragraph.textContent = payload.answer || 'לא התקבלה תשובה.';
+    answer.append(paragraph);
+
+    const sources = Array.isArray(payload.sources) ? payload.sources : [];
+    if (sources.length) {
+      const heading = document.createElement('h2');
+      heading.className = 'mt-5 text-sm font-extrabold text-brand-800';
+      heading.textContent = 'מקורות באתר';
+      const list = document.createElement('ul');
+      list.className = 'mt-2 list-inside list-disc space-y-1 text-sm';
+      for (const source of sources) {
+        try {
+          const url = new URL(source.url || '', location.origin);
+          if (url.origin !== location.origin) continue;
+          const item = document.createElement('li');
+          const link = document.createElement('a');
+          link.href = url.href;
+          link.className = 'font-semibold text-accent-700 underline underline-offset-4';
+          link.textContent = source.title || url.pathname;
+          item.append(link);
+          list.append(item);
+        } catch (_) {}
+      }
+      if (list.childElementCount) answer.append(heading, list);
+    }
+    if (payload.contactUrl) {
+      const contact = document.createElement('a');
+      contact.href = 'https://wa.me/972533450205';
+      contact.rel = 'noopener noreferrer';
+      contact.target = '_blank';
+      contact.className = 'mt-5 inline-block rounded-lg bg-accent-500 px-4 py-2 font-bold text-white';
+      contact.textContent = 'שיחה עם צוות השירות בוואטסאפ';
+      answer.append(contact);
+    }
+    answer.classList.remove('hidden');
+  };
+
+  form?.addEventListener('submit', async (event) => {
+    event.preventDefault();
+    const query = input?.value.trim() || '';
+    if (!query || !status || !button) return;
+    button.disabled = true;
+    status.textContent = 'מחפשים במידע באתר ומכינים תשובה…';
+    if (answer) answer.classList.add('hidden');
+    try {
+      const response = await fetch('/api/assistant.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        body: JSON.stringify({ query }),
+      });
+      const payload = await response.json();
+      if (!response.ok) throw new Error(payload.error || 'assistant_error');
+      renderAnswer(payload);
+      status.textContent = 'התשובה מבוססת על מקורות המידע שמופיעים באתר.';
+      if (typeof window.gtag === 'function') {
+        window.gtag('event', 'assistant_question_answered', { source_count: Array.isArray(payload.sources) ? payload.sources.length : 0 });
+      }
+    } catch (_) {
+      status.textContent = 'העוזר לא זמין כרגע. אפשר לנסות שוב או לפנות אלינו בוואטסאפ.';
+    } finally {
+      button.disabled = false;
+    }
+  });
+</script>
