@@ -6,6 +6,7 @@ import KnxSwitchesVideo from '../components/KnxSwitchesVideo.astro';
 import OutdoorLedVideo from '../components/OutdoorLedVideo.astro';
 import { outdoorLedVideoSchema } from '../data/outdoor-led-video.mjs';
 import { knxSwitchesVideoSchema } from '../data/knx-switches-video-schema.mjs';
+import { desigoVideoSchema } from '../data/desigo-video-schema.mjs';
 const [beforeSwitchesVideo, afterSwitchesVideo] = content.split('<!-- KNX_SWITCHES_VIDEO -->');
 if (afterSwitchesVideo === undefined) throw new Error('Missing KNX video placement in explanations category.');
 const [beforeOutdoorVideo, afterOutdoorVideo] = afterSwitchesVideo.split('<!-- OUTDOOR_LED_VIDEO -->');
@@ -151,6 +152,7 @@ dmxVideoGraph['@graph'].push(outdoorLedVideoSchema(meta.canonical));
 if (switchesVideoSchema) {
   dmxVideoGraph['@graph'].push(switchesVideoSchema);
 }
+dmxVideoGraph['@graph'].push(desigoVideoSchema(meta.canonical));
 meta.jsonLd = JSON.stringify(dmxVideoGraph);
 
 ---

@@ -76,6 +76,7 @@
 הסרטון פורסם ביוטיוב ב-2026-10-01. ההטמעה באתר מוכנה בענף העבודה; אינה מסומנת כחיה לפני פריסה.
 
 | מרכז הספורט אילת — מערכת BMS רחבת היקף מבוססת KNX ו-DDC | BMS | `UFCrIfiJC-w` | /video/#eilat-bms-video, /structure-control/#eilat-bms-video, /bms-public-buildings/#eilat-bms-video, /ddc-controllers-bms/#eilat-bms-video, /knx-smart-home/#eilat-bms-video |
+| Siemens Desigo — מערכת אחת לניהול כל המבנה (הסבר, 4:51, קריינות ElevenLabs) | BMS | `MxDYkey1cII` | /video/#desigo-video, /structure-control/#desigo-video, /lp/structure-control/#desigo-video, /siemens-desigo-bms/#desigo-video, /ddc-controllers-bms/#desigo-video |
 
 סרטון אילת פורסם בערוץ I FEEL ב-2026-10-01. חמש ההטמעות מוכנות בענף העבודה וממתינות למיזוג ולפריסה. סיווג שיווקי: `BMS`; מקור לתכנית העדכון השבועי של מנהל המכירות: https://www.youtube.com/watch?v=UFCrIfiJC-w.
 

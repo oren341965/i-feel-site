@@ -1,0 +1,20 @@
+---
+import video from '../data/desigo-video.json';
+const { heading = 'Siemens Desigo — מערכת אחת לניהול כל המבנה', tone = 'light' } = Astro.props;
+---
+<section id="desigo-video" class:list={['py-12 scroll-mt-32', tone === 'tint' ? 'bg-brand-50 border-y border-brand-100' : 'bg-white']} dir="rtl" aria-labelledby="desigo-video-title">
+  <div class="max-w-4xl mx-auto px-4">
+    <h2 id="desigo-video-title" class="text-2xl md:text-3xl font-extrabold text-brand-900 mb-3">{heading}</h2>
+    <p class="text-brand-700 leading-relaxed mb-5">סרטון הסבר של כחמש דקות: איך תוכנת הניהול Desigo CC, בקרי DDC מסדרת Desigo PXC וציוד הקצה בשטח מתחברים למערכת אחת — כולל שילוב KNX, חיבור גנרטורים, מוני חשמל, צ'ילרים ומשאבות, מערך התראות והסלמה, חיסכון באנרגיה לפי EN 15232 ומעבר לתחזוקה מתוכננת.</p>
+    <div class="rounded-2xl overflow-hidden bg-brand-900 shadow-lg" style="aspect-ratio:16/9;">
+      <iframe class="w-full h-full" loading="lazy" src={`https://www.youtube-nocookie.com/embed/${video.youtubeId}`} title={video.title} allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+    </div>
+    <p class="text-brand-700 mt-4">
+      <a href="/siemens-desigo-bms/" class="text-accent-700 font-bold underline">Siemens Desigo בישראל</a>
+      ·
+      <a href="/ddc-controllers-bms/" class="text-accent-700 font-bold underline">בקרי DDC</a>
+      ·
+      <a href="/contactus/#project-enquiry" class="text-accent-700 font-bold underline">שיחה על המבנה שלכם</a>
+    </p>
+  </div>
+</section>
