@@ -5,22 +5,24 @@ description: Orchestrate I Feel sales and marketing, read-only Monday audits, pa
 
 # I Feel AI Sales Manager
 
-`ai-sales-manager` is the single parent orchestrator for I Feel sales. It coordinates existing workers, preserves the deterministic analyzer for Monday board `2732725332`, and fails closed when evidence, connection, maturity, or approval is missing.
+`ai-sales-manager` coordinates existing I Feel workers and the deterministic analyzer for Monday `2732725332`. Missing evidence, connection, maturity or approval blocks execution.
 
 ## Route the request
+
+- For daily creative work, execution evidence and morning failures, read [execution and recovery](references/daily-execution-and-recovery.md).
 
 - For system boundaries and data flow, read [architecture](references/architecture.md).
 - Before assigning work or interpreting approval, read [roles and authority](references/roles-and-authority.md).
 - For ownership, migration, or duplication, read [component lifecycle](references/component-lifecycle.md).
 - For a live Monday audit, read [board contract](references/board-contract.md), then [classification and scoring](references/classification-and-scoring.md). Use the [report contract](references/report-contract.md) for results.
 - For authorized Hashavshevet-to-Monday intake, read [references/hashavshevet-customer-intake.md](references/hashavshevet-customer-intake.md).
-- For a full-system dry run, plans queue, quote reconciliation, paid-media coordination, website feedback, project video, or Claude judgment request, read [references/orchestration-contract.md](references/orchestration-contract.md).
+- For orchestration, plans, quotes, paid media, website or judgment, read [orchestration](references/orchestration-contract.md).
 - For Vault/Bus work, read [Vault layout](references/vault-layout.md); for runtime/installers, read [local runtime](references/local-runtime.md).
 - Before acting beyond local read-only analysis, read [safety and approvals](references/safety-and-approvals.md).
 - For maintenance or handoff, read [phase-1 audit](references/phase-1-audit.md) and [validation and handoff](references/validation-and-handoff.md).
 - For Oren commissioning, read [phase-2 local core](references/phase-2-local-core.md).
-- For Maya, read [commissioning](references/maya-commissioning.md), [Codex cutover](references/maya-codex-cutover.md), [Skill scope](references/maya-codex-skill-review.md), and [task protocol](references/maya-task-protocol.md) as applicable.
-- The AI Sales Manager owns the program as I Feel's AI Marketing Manager; for the Maya-executed professional relations workflow, read [references/instagram-relations-program.md](references/instagram-relations-program.md).
+- For Maya: [commissioning](references/maya-commissioning.md), [cutover](references/maya-codex-cutover.md), [scope](references/maya-codex-skill-review.md), [tasks](references/maya-task-protocol.md).
+- For Maya professional relations owned by this manager, read [Instagram relations](references/instagram-relations-program.md).
 
 ## Non-negotiable invariants
 
@@ -36,7 +38,7 @@ description: Orchestrate I Feel sales and marketing, read-only Monday audits, pa
 - Resolve the Vault through `VAULT_ROOT`; keep active SQLite state local under `C:\ifeel-sales`.
 - `customer-payment-collection` is `DEFER`. Do not install, invoke, merge, or substitute it in Phase 1.
 - Maya business routines and WhatsApp remain paused. The existing Windows Email Task is outside this refactor and remains unchanged.
-- Maya commissioning installs the three canonical Maya workers plus the telemetry adapter into Codex only. It never installs the parent manager on Maya, never activates a scheduler, never requires Claude, and never treats the Vault as executable source truth.
+- Maya commissioning installs three workers and telemetry into Codex only; never the parent manager, a scheduler or Claude. The Vault is not executable source truth.
 - Manager-assigned Maya work uses only the existing Vault bridge. An enqueued task is only `ASSIGNED_TO_MAYA`; only `RESPONSE_RECEIVED_AND_MONDAY_UPDATED` after a real Maya ACK, a real Maya Result, and live Monday read-back is fully completed. Duplicate task IDs reuse the existing immutable result, and isolated tests never count as production completion.
 - Report `read_only_review` findings separately under `maya-task-protocol.md`; a verified inspection needs no send authority and never completes customer-action work.
 
@@ -46,7 +48,7 @@ description: Orchestrate I Feel sales and marketing, read-only Monday audits, pa
 
 - Pipeline analysis: `scripts/analyze-sales.mjs`
 - Aggregate audit ingestion: `scripts/report-sales-audit.mjs`. Use it only after a complete `live_read_only` analysis; pass the same stable telemetry run key and never send operational lead details.
-- Aggregate marketing ingestion: `scripts/report-marketing-audit.mjs`. It reconciles the canonical Google, Meta, attribution and sales-capacity reads into one PII-free Management System snapshot; use the same registered `ai-sales-manager` run key and keep every protected-action counter at zero.
+- Marketing ingestion: `scripts/report-marketing-audit.mjs`; reconcile Google, Meta, attribution and capacity into a PII-free snapshot with the same registered run key and zero protected actions.
 - Full-system dry run: `scripts/orchestrate-sales-system.mjs`
 - Bounded daily Google Ads decision: `../google-ads-manager/scripts/google-ads-decision-loop.mjs`
 - Morning dry run: `scripts/morning-run.mjs`; apply the [paid-media cap](references/paid-media-budget-policy.md).

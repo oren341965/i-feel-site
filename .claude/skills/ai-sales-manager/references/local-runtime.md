@@ -45,3 +45,7 @@ C:\ifeel-sales\
 - The installed launcher uses `run-morning-managed.mjs` and the host-local I FEEL MANAGEMENT DPAPI wrapper. It reports one stable `morning-sales-YYYYMMDD` run as `running` and then exactly one terminal `succeeded` or `failed` state. Only aggregate counters and a sanitized evidence reference leave the host; customer data, prompts, tokens and absolute paths never enter telemetry.
 - The telemetry subprocess has a hard 75-second timeout. A hung control-plane call is terminated and reported as a visible failure; it never leaves the local morning run stuck indefinitely.
 - Telemetry is evidence, not authority. It does not enable Maya, external sends, Monday writes, advertising changes, publication or deployment. Missing host telemetry fails the launcher visibly and must not be bypassed by searching for or copying credentials.
+- A failed managed run appends a fixed stage and failure code to its evidence reference, for example
+  `sales-manager:morning-failed:20261011:monday-snapshot:MONDAY_SNAPSHOT_STALE`.
+  These enums identify the recovery step without exporting raw error messages. Unknown errors remain
+  `MORNING_RUN_FAILED`; inspect local evidence and run the no-write preflight on the failing host.
