@@ -6,6 +6,7 @@ import { resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import { runMorningDryRun } from './morning-run.mjs';
+import { classifyMorningFailure } from './morning-failure.mjs';
 
 const CAPABILITY_SLUG = 'ai-sales-manager';
 const DEFAULT_CONFIG = fileURLToPath(new URL('../runtime/config.example.json', import.meta.url));
@@ -130,6 +131,7 @@ export async function runManagedMorning({
     result = await manager({ configPath, now: new Date(now) });
   } catch (error) {
     const finishedAt = new Date().toISOString();
+    const failure = classifyMorningFailure(error);
     try {
       await reporter({
         runKey,
@@ -138,7 +140,7 @@ export async function runManagedMorning({
         finishedAt,
         reads: 0,
         errors: 1,
-        evidenceRef: `sales-manager:morning-failed:${dateKey}`,
+        evidenceRef: `sales-manager:morning-failed:${dateKey}:${failure.stage}:${failure.code}`,
       }, reporterOptions);
     } catch (telemetryError) {
       throw new AggregateError([error, telemetryError], 'AI Sales Manager and terminal telemetry both failed.');

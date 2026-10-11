@@ -13,6 +13,7 @@ import { refreshAttributionSnapshotReadOnly } from '../../lead-attribution-feedb
 import { refreshMondaySalesSnapshotReadOnly } from './monday-sales-live-readonly.mjs';
 import { collectMondaySnapshotReadOnly } from './monday-snapshot-readonly.mjs';
 import { evaluatePaidMediaBudgetGuard } from './paid-media-budget-guard.mjs';
+import { morningStage } from './morning-failure.mjs';
 
 const DEFAULT_CONFIG = fileURLToPath(new URL('../runtime/config.example.json', import.meta.url));
 
@@ -36,42 +37,45 @@ export async function runMorningDryRun({
   mondaySnapshotCollector = collectMondaySnapshotReadOnly,
   claudeResponseInspector = inspectClaudeJudgmentResponses,
 } = {}) {
-  const config = JSON.parse(await readFile(configPath, 'utf8'));
-  const vault = await prepareVault(config, { createMissing: true });
-  if (vault.status !== 'READY') throw new Error(`Vault validation failed: ${vault.status} (${vault.reason})`);
+  const config = await morningStage('config', async () => JSON.parse(await readFile(configPath, 'utf8')));
+  const vault = await morningStage('vault', async () => {
+    const value = await prepareVault(config, { createMissing: true });
+    if (value.status !== 'READY') throw new Error(`Vault validation failed: ${value.status} (${value.reason})`);
+    return value;
+  });
   const mondayLiveRefreshConfigured = config.connections?.monday?.connected === true
     && config.connections?.monday?.liveVerified === true
     && config.connections?.monday?.localBridge?.enabled === true;
   const mondayLiveRefresh = mondayLiveRefreshConfigured
-    ? await mondaySnapshotRefresher({ configPath, now: new Date(now ?? Date.now()) })
+    ? await morningStage('monday-refresh', () => mondaySnapshotRefresher({ configPath, now: new Date(now ?? Date.now()) }))
     : null;
   if (mondayLiveRefresh && mondayLiveRefresh.mode !== 'LIVE_READ_ONLY_LOCAL_REFRESH') {
-    throw new Error('Monday live refresh failed closed');
+    await morningStage('monday-refresh', () => { throw new Error('Monday live refresh failed closed'); });
   }
   const mondaySnapshotConfigured = typeof config.connections?.monday?.snapshotFile === 'string'
     && config.connections.monday.snapshotFile.trim() !== '';
   const mondaySnapshotReadOnly = mondaySnapshotConfigured
-    ? await mondaySnapshotCollector({ configPath, now: new Date(now ?? Date.now()) })
+    ? await morningStage('monday-snapshot', () => mondaySnapshotCollector({ configPath, now: new Date(now ?? Date.now()) }))
     : null;
   if (mondaySnapshotReadOnly
     && mondaySnapshotReadOnly.connection?.status !== 'LOCAL_SNAPSHOT_READ_ONLY') {
-    throw new Error('Monday aggregate snapshot verification failed closed');
+    await morningStage('monday-snapshot', () => { throw new Error('Monday aggregate snapshot verification failed closed'); });
   }
   const googleAdsConfigured = config.connections?.googleAds?.connected === true
     && config.connections?.googleAds?.liveVerified === true;
   const googleAdsReadOnly = googleAdsConfigured
-    ? await googleAdsCollector({ configPath, now: new Date(now ?? Date.now()) })
+    ? await morningStage('google-ads', () => googleAdsCollector({ configPath, now: new Date(now ?? Date.now()) }))
     : null;
   if (googleAdsReadOnly && googleAdsReadOnly.connection?.status !== 'CONNECTED_READ_ONLY') {
-    throw new Error('Google Ads live-read verification failed closed');
+    await morningStage('google-ads', () => { throw new Error('Google Ads live-read verification failed closed'); });
   }
   const metaAdsConfigured = config.connections?.metaAds?.connected === true
     && config.connections?.metaAds?.liveVerified === true;
   const metaAdsReadOnly = metaAdsConfigured
-    ? await metaAdsCollector({ configPath, now: new Date(now ?? Date.now()) })
+    ? await morningStage('meta-ads', () => metaAdsCollector({ configPath, now: new Date(now ?? Date.now()) }))
     : null;
   if (metaAdsReadOnly && metaAdsReadOnly.connection?.status !== 'CONNECTED_READ_ONLY') {
-    throw new Error('Meta Ads live-read verification failed closed');
+    await morningStage('meta-ads', () => { throw new Error('Meta Ads live-read verification failed closed'); });
   }
   const paidMediaBudgetGuard = evaluatePaidMediaBudgetGuard({
     policy: config.paidMediaBudget,
@@ -82,21 +86,21 @@ export async function runMorningDryRun({
   const attributionConfigured = config.connections?.attribution?.connected === true
     && config.connections?.attribution?.sourceVerified === true;
   const attributionLiveRefresh = attributionConfigured && mondayLiveRefreshConfigured
-    ? await attributionSnapshotRefresher({ configPath, now: new Date(now ?? Date.now()) })
+    ? await morningStage('attribution-refresh', () => attributionSnapshotRefresher({ configPath, now: new Date(now ?? Date.now()) }))
     : null;
   if (attributionLiveRefresh && attributionLiveRefresh.mode !== 'LIVE_READ_ONLY_LOCAL_EXPORT') {
-    throw new Error('Attribution live refresh failed closed');
+    await morningStage('attribution-refresh', () => { throw new Error('Attribution live refresh failed closed'); });
   }
   const attributionReadOnly = attributionConfigured
-    ? await attributionCollector({ configPath, now: new Date(now ?? Date.now()) })
+    ? await morningStage('attribution', () => attributionCollector({ configPath, now: new Date(now ?? Date.now()) }))
     : null;
   if (attributionReadOnly && attributionReadOnly.connection?.status !== 'LOCAL_SNAPSHOT_READ_ONLY') {
-    throw new Error('Attribution read-only verification failed closed');
+    await morningStage('attribution', () => { throw new Error('Attribution read-only verification failed closed'); });
   }
-  const mayaHandshake = await respondToMayaSystemTests({
+  const mayaHandshake = await morningStage('maya-handshake', () => respondToMayaSystemTests({
     configPath,
     now: new Date(now ?? Date.now()),
-  });
+  }));
   const mayaConnection = mayaHandshake.connection;
   const result = orchestrateSalesSystem({
     mondayBoardId: config.mondayBoardId,
@@ -126,12 +130,12 @@ export async function runMorningDryRun({
   });
   const runtimeResult = { ...result, mondayLiveRefresh, mondaySnapshotReadOnly, attributionLiveRefresh };
 
-  const artifacts = await persistMorningArtifacts(config, runtimeResult, vault, { now });
-  const claudeJudgment = await claudeResponseInspector({
+  const artifacts = await morningStage('persist-artifacts', () => persistMorningArtifacts(config, runtimeResult, vault, { now }));
+  const claudeJudgment = await morningStage('claude-response', () => claudeResponseInspector({
     configPath,
     expectedCorrelationId: artifacts.requestId,
     now: new Date(now ?? Date.now()),
-  });
+  }));
 
   return {
     job: 'morning-run',
