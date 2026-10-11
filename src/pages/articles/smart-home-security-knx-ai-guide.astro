@@ -1,4 +1,5 @@
 ---
+import SmartSphereScenarios from "../../components/SmartSphereScenarios.astro";
 import BaseLayout from '../../layouts/BaseLayout.astro';
 
 const canonical = 'https://i-feel.co.il/articles/smart-home-security-knx-ai-guide/';
@@ -173,6 +174,7 @@ const jsonLd = JSON.stringify({ '@context': 'https://schema.org', '@graph': [art
     </section>
     </div>
   </article>
+  <SmartSphereScenarios kinds={["pool", "night", "abroad"]} />
 </BaseLayout>
 <style>
 .article-content { color: #243746; line-height: 1.95; font-size: 1.12rem; }

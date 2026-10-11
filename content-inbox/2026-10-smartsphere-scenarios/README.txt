@@ -1,0 +1,1 @@
+Approved SmartSphere scenario videos, Hebrew narration by Oren. Each video is under 45 seconds. AI scene illustrations and anonymized Home Assistant UI. TC4 switch scale: 8.5 x 8.5 cm. Hikvision DS-2CD2347 camera reference. Final MP4 masters; optimized WebM copies are served from public/assets/smartsphere/.

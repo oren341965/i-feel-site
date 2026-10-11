@@ -88,3 +88,15 @@
 - נגן מקומי WebM ב־`/outdoor-led-screens/#outdoor-led-video` ובקטגוריית האודיו ב־`/video/#outdoor-led-video`, עם VideoObject בשני הדפים.
 - המקור הממותג ב־`content-inbox/2026-10-outdoor-led-video/` (Git LFS). חיבור YouTube חסר; לא פורסם ביוטיוב.
 - מצב ההטמעה באתר: ממתינה למיזוג ולפריסה, ולא מסומנת כחיה.
+
+## SmartSphere בפעולה — הוכן לפרסום 11.10.2026
+
+חמש המחשות עם קריינות אורן, כתוביות עברית ועד 45 שניות לסרטון. נגנים ישירים באתר; חיבור YouTube המקומי אינו מוגדר במחשב הבית. סטטוס חי יעודכן לאחר פריסה מאושרת.
+
+| תרחיש | דף נושא | קובץ באתר |
+|---|---|---|
+| בריכה | /articles/smart-home-security-knx-ai-guide/ | /assets/smartsphere/pool.webm |
+| הגנה בלילה | /articles/smart-home-security-knx-ai-guide/ | /assets/smartsphere/night.webm |
+| בחו״ל | /articles/smart-home-vacation-scenario/ | /assets/smartsphere/abroad.webm |
+| מצב חופשה | /articles/smart-home-vacation-scenario/ | /assets/smartsphere/vacation.webm |
+| לילה טוב | /smart-home/ | /assets/smartsphere/goodnight.webm |

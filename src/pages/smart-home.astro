@@ -1,4 +1,5 @@
 ---
+import SmartSphereScenarios from "../components/SmartSphereScenarios.astro";
 import BaseLayout from '../layouts/BaseLayout.astro';
 import content from '../page-html/page-16.html?raw';
 import KnxAdvisorCta from '../components/KnxAdvisorCta.astro';
@@ -107,4 +108,5 @@ meta.jsonLd = meta.jsonLd.replace("\n  ]\n}", `${tenInchScreenVideoObject}${smar
   <KnxFieldGallery />
   <KnxAdvisorCta />
   <section class="bg-brand-50 border-y border-brand-100 py-8"><div class="max-w-4xl mx-auto px-4"><h2 class="text-2xl font-bold mb-3">רוצים לבדוק התאמה לפרויקט שלכם?</h2><p class="text-brand-700">ציינו יישוב, שלב בנייה והמערכות הרצויות. <a class="text-accent-700 underline font-bold" href="/contactus/#project-enquiry">בקשת הצעה, שליחת תכניות DWG / PDF ובקשה לתיאום פגישה</a>.</p></div></section>
+  <SmartSphereScenarios kinds={["goodnight"]} />
 </BaseLayout>
