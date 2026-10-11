@@ -1,4 +1,5 @@
 ---
+import SmartSphereScenarios from "../../components/SmartSphereScenarios.astro";
 import BaseLayout from '../../layouts/BaseLayout.astro';
 
 const canonical = 'https://i-feel.co.il/articles/smart-home-vacation-scenario/';
@@ -40,4 +41,5 @@ const jsonLd = JSON.stringify({
       <section><h2>מערכת אחת במקום כמה אפליקציות</h2><p>היתרון של תרחיש חופשה הוא בחיבור בין כל המערכות. במקום לעבור בין כמה אפליקציות ולנסות לזכור מה לכבות, הדייר מפעיל פעולה אחת. התאורה, המיזוג, התריסים, האזעקה, המצלמות, האינטרקום וגלאי ההצפה עובדים יחד בהתאם לתכנון.</p><p>i-feel מתכננת ומבצעת מערכות בית חכם לדירות פרטיות, לבנייני מגורים ולפרויקטים של קבלנים. כל מערכת מותאמת לתשתיות הפרויקט ולצורכי הדיירים, כדי לאפשר שליטה פשוטה, אבטחה גבוהה וניהול חכם גם כאשר הבית נשאר ריק.</p></section>
     </div>
   </article>
+  <SmartSphereScenarios kinds={["vacation", "abroad"]} />
 </BaseLayout>
