@@ -1,5 +1,7 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import DesigoVideo from '../components/DesigoVideo.astro';
+import { desigoVideoSchema } from '../data/desigo-video-schema.mjs';
 import content from '../page-html/ddc-controllers-bms.html?raw';
 
 const meta = {
@@ -77,8 +79,10 @@ eilatVideoGraph["@graph"].push({
     "@id": "https://i-feel.co.il/#business"
   }
 });
+eilatVideoGraph["@graph"].push(desigoVideoSchema("https://i-feel.co.il/ddc-controllers-bms/"));
 meta.jsonLd = JSON.stringify(eilatVideoGraph);
 ---
 <BaseLayout {...meta}>
   <Fragment set:html={content} />
+  <DesigoVideo heading="בקרי DDC בתוך מערכת אחת — סרטון הסבר על Siemens Desigo" tone="tint" />
 </BaseLayout>
