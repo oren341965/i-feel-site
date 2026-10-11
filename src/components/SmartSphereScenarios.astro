@@ -19,8 +19,8 @@ const schema = JSON.stringify({ '@context': 'https://schema.org', '@graph': vide
         <p><a href={`${video.page}#smartsphere-${video.id}`}>להסבר בדף הנושא</a></p>
       </div>
       <video controls playsinline preload="none" poster={`/assets/smartsphere/${video.id}.jpg`} width="720" height="1280" aria-label={video.title}>
-        <source src={`/assets/smartsphere/${video.id}.webm`} type="video/webm" />
-        <a href={`/assets/smartsphere/${video.id}.webm`}>לצפייה: {video.title}</a>
+        <source src={`/assets/smartsphere/${video.id}.webm?v=20261011-2`} type="video/webm" />
+        <a href={`/assets/smartsphere/${video.id}.webm?v=20261011-2`}>לצפייה: {video.title}</a>
       </video>
     </article>
   ))}

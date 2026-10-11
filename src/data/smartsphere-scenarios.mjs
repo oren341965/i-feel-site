@@ -7,5 +7,5 @@ export const smartSphereScenarios = [
 ];
 
 export function scenarioSchema(video, pageUrl) {
-  return { '@context': 'https://schema.org', '@type': 'VideoObject', '@id': `${pageUrl}#smartsphere-${video.id}`, name: `${video.title} | SmartSphere של I FEEL`, description: video.description, inLanguage: 'he-IL', uploadDate: '2026-10-11', duration: `PT${video.seconds}S`, thumbnailUrl: `https://i-feel.co.il/assets/smartsphere/${video.id}.jpg`, contentUrl: `https://i-feel.co.il/assets/smartsphere/${video.id}.webm`, publisher: { '@type': 'Organization', name: 'I FEEL', url: 'https://i-feel.co.il/' } };
+  return { '@context': 'https://schema.org', '@type': 'VideoObject', '@id': `${pageUrl}#smartsphere-${video.id}`, name: `${video.title} | SmartSphere של I FEEL`, description: video.description, inLanguage: 'he-IL', uploadDate: '2026-10-11', duration: `PT${video.seconds}S`, thumbnailUrl: `https://i-feel.co.il/assets/smartsphere/${video.id}.jpg`, contentUrl: `https://i-feel.co.il/assets/smartsphere/${video.id}.webm?v=20261011-2`, publisher: { '@type': 'Organization', name: 'I FEEL', url: 'https://i-feel.co.il/' } };
 }
