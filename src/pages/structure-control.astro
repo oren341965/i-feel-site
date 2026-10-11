@@ -1,5 +1,7 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import DesigoVideo from '../components/DesigoVideo.astro';
+import { desigoVideoSchema } from '../data/desigo-video-schema.mjs';
 import content from '../page-html/page-18.html?raw';
 
 const pageUrl = 'https://i-feel.co.il/structure-control/';
@@ -294,10 +296,12 @@ eilatVideoGraph["@graph"].push({
     "@id": "https://i-feel.co.il/#business"
   }
 });
+eilatVideoGraph["@graph"].push(desigoVideoSchema("https://i-feel.co.il/structure-control/"));
 meta.jsonLd = JSON.stringify(eilatVideoGraph);
 ---
 <BaseLayout {...meta}>
   <Fragment set:html={enhancedContent} />
+  <DesigoVideo heading="איך עובדת מערכת בקרת מבנה מקצה לקצה — Siemens Desigo" />
   <section class="bg-brand-50 border-y border-brand-100 py-10" dir="rtl" aria-labelledby="bms-integration-paths">
     <div class="max-w-4xl mx-auto px-4">
       <h2 id="bms-integration-paths" class="text-2xl font-bold text-brand-900 mb-5">מה צריך לחבר למערכת בקרת המבנה שלכם?</h2>
