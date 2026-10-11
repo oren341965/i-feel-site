@@ -4,6 +4,7 @@
 # Large source media is shared through GitHub LFS so both workstations receive
 # identical files without inflating normal Git history.
 *.mp4 filter=lfs diff=lfs merge=lfs -text
+public/assets/smartsphere/*.webm filter=lfs diff=lfs merge=lfs -text
 *.mov filter=lfs diff=lfs merge=lfs -text
 *.avi filter=lfs diff=lfs merge=lfs -text
 *.mkv filter=lfs diff=lfs merge=lfs -text
