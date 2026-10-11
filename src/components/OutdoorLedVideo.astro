@@ -15,10 +15,11 @@ const videoPoster = new URL(video.posterUrl).pathname;
     <p><a class="outdoor-video-cta" href={video.tiktokUrl} target="_blank" rel="noopener noreferrer">לצפייה בסרטון בטיקטוק</a></p>
   </div>
   <div class="outdoor-video-player">
-    <video controls muted playsinline preload="none" poster={videoPoster} width="720" height="1280" aria-label={video.title}>
+    <video controls playsinline preload="none" poster={videoPoster} width="720" height="1280" aria-label={video.title}>
       <source src={videoSource} type="video/webm" />
       <a href={videoSource}>לצפייה בסרטון מסכי LED חוץ</a>
     </video>
+    <p class="outdoor-video-note">מוזיקה: <a href="https://incompetech.com/music/royalty-free/index.html?isrc=USUAN1400037" target="_blank" rel="noopener noreferrer">Carefree — Kevin MacLeod (incompetech.com)</a>, ברישיון <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener noreferrer">CC BY 4.0</a>. קטע מקוצר עם התאמת עוצמה וכניסה וסיום הדרגתיים.</p>
   </div>
 </section>
 <style>

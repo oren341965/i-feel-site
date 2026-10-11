@@ -1,0 +1,13 @@
+Music: "Carefree" Kevin MacLeod (incompetech.com)
+Licensed under Creative Commons: By Attribution 4.0 License
+https://creativecommons.org/licenses/by/4.0/
+
+Track and license source verified 2026-10-11:
+https://incompetech.com/music/royalty-free/index.html?isrc=USUAN1400037
+ISRC: USUAN1400037. Tempo: 96 bpm.
+
+Website edit: first 53.533 seconds, -3 dB constant gain, 1.5-second fade-in,
+3.533-second fade-out from 50 seconds. No looping or splices.
+Encoded as 48 kHz stereo Opus, 128 kbit/s. Original VP9 video copied unchanged.
+Attribution appears beside every shared OutdoorLedVideo player and in media metadata.
+Original source files remain unchanged. The silent version is retained as an unused fallback.
