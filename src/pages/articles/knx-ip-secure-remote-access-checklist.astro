@@ -1,0 +1,186 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+const title = 'KNX IP Secure: אבטחת גישה מרחוק ו-ETS | מדריך i-feel';
+const description = 'איך מאבטחים מערכת KNX קיימת? בדיקת חשיפה של פורט 3671, גישה מרחוק, VLAN, KNX IP Secure, גיבויי ETS6.4 ורשימת מסירה מקצועית.';
+const canonical = 'https://i-feel.co.il/articles/knx-ip-secure-remote-access-checklist/';
+
+const faq = [
+  {
+    q: 'מה ההבדל בין KNX IP Secure ל-KNX Data Secure?',
+    a: 'KNX IP Secure מאבטח תקשורת KNX במדיום IP, בעוד KNX Data Secure מגן על הנתונים בטלגרמות KNX במדיומים נתמכים. שניהם משלימים תכנון רשת והרשאות, ולא מחליפים אותם.'
+  },
+  {
+    q: 'האם מומלץ לפתוח פורט 3671 באינטרנט לצורך שירות?',
+    a: 'לא. עדיף להימנע מחשיפה ישירה של KNXnet/IP לאינטרנט ולהשתמש בגישה מרחוק מאומתת ומתוכננת, כגון VPN או Gateway ייעודי מאובטח.'
+  },
+  {
+    q: 'האם צריך להחליף את כל רכיבי KNX כדי לשפר אבטחה?',
+    a: 'לא בהכרח. לעיתים אפשר להתחיל משינויים בנתב, בהרשאות, בגישה מרחוק ובהפרדת הרשתות ולבחון החלפת ממשקי IP בשלב מאוחר יותר.'
+  },
+  {
+    q: 'האם ETS6.4 עוזרת בתחזוקת פרויקט Secure?',
+    a: 'כן, למשל באמצעות Auto Backup to Archive ושיפורי תהליך עבודה. עם זאת, גיבוי מועיל רק אם שומרים אותו באופן מוגן ומוודאים שניתן לשחזר ממנו.'
+  },
+  {
+    q: 'איך משלבים KNX מאובטח עם מערכת BMS?',
+    a: 'מגדירים חלוקת אחריות, הרשאות כתיבה וקריאה, מיפוי נקודות וממשקים נתמכים, ומבצעים בדיקות תקשורת, משוב ותקלות.'
+  },
+  {
+    q: 'מה צריך לקבל במסירת מערכת KNX?',
+    a: 'קובצי ETS וגיבוי לפי הרשאות, תיעוד טופולוגיה וממשקים, נוהל גישה מאובטחת, תוצאות בדיקות ותוכנית שירות ושחזור.'
+  }
+];
+
+const jsonLd = JSON.stringify({
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': ['TechArticle', 'Article'],
+      headline: 'KNX IP Secure: רשימת בדיקות מעשית לאבטחת מערכת קיימת',
+      description,
+      url: canonical,
+      mainEntityOfPage: canonical,
+      datePublished: '2026-10-12',
+      dateModified: '2026-10-12',
+      inLanguage: 'he-IL',
+      author: { '@type': 'Organization', name: 'i-feel', url: 'https://i-feel.co.il/' },
+      publisher: { '@id': 'https://i-feel.co.il/#business' },
+      about: ['KNX IP Secure', 'KNX Data Secure', 'ETS6.4', 'BMS', 'Cybersecurity']
+    },
+    {
+      '@type': 'FAQPage',
+      mainEntity: faq.map((item) => ({
+        '@type': 'Question',
+        name: item.q,
+        acceptedAnswer: { '@type': 'Answer', text: item.a }
+      }))
+    },
+    {
+      '@type': 'BreadcrumbList',
+      itemListElement: [
+        { '@type': 'ListItem', position: 1, name: 'בית', item: 'https://i-feel.co.il/' },
+        { '@type': 'ListItem', position: 2, name: 'מאמרים ומדריכים', item: 'https://i-feel.co.il/articles/' },
+        { '@type': 'ListItem', position: 3, name: 'KNX IP Secure', item: canonical }
+      ]
+    }
+  ]
+});
+---
+<BaseLayout title={title} description={description} canonical={canonical} ogTitle={title} ogDescription={description} ogUrl={canonical} jsonLd={jsonLd}>
+  <article class="bg-white" dir="rtl">
+    <header class="bg-brand-900 text-white py-14 md:py-20">
+      <div class="max-w-4xl mx-auto px-4">
+        <a href="/articles/" class="text-accent-400 font-semibold hover:text-accent-300">מאמרים ומדריכים</a>
+        <p class="mt-4 text-sm text-brand-200">KNX · אבטחה · ETS6.4 · BMS · עודכן 12.10.2026</p>
+        <h1 class="mt-4 text-4xl md:text-5xl font-extrabold leading-tight">KNX IP Secure: רשימת בדיקות מעשית לאבטחת מערכת קיימת</h1>
+        <p class="mt-5 text-lg md:text-xl leading-8 text-brand-100">איך בודקים חשיפה של KNXnet/IP, איך מתכננים גישה מרחוק בטוחה, מה ההבדל בין IP Secure ל-Data Secure, ומה חייבים לקבל במסירה ובתחזוקה.</p>
+      </div>
+    </header>
+
+    <div class="max-w-4xl mx-auto px-4 py-12">
+      <section class="rounded-2xl border border-accent-100 bg-accent-50 p-6 md:p-8 mb-10">
+        <h2 class="text-2xl font-extrabold text-brand-900 mb-3">התשובה הקצרה: איך מאבטחים התקנת KNX קיימת?</h2>
+        <p class="text-lg leading-8 text-brand-700">מתחילים במפת החיבורים לרשת: בודקים אם KNXnet/IP נגיש ישירות מהאינטרנט, מבטלים חשיפה לא נחוצה, מגדירים גישה מרחוק מאומתת ומפרידים ציוד בקרה מרשתות אורחים. לאחר מכן בוחנים ממשקי KNX IP Secure, הרשאות, קובצי ETS, גיבוי ובדיקות מסירה. KNX IP Secure הוא שכבת הגנה חשובה — לא תחליף לתכנון רשת מאובטח.</p>
+      </section>
+
+      <section class="space-y-5 mb-12">
+        <h2 class="text-3xl font-bold text-brand-900">מה התחדש ומה המשמעות לפרויקט בישראל?</h2>
+        <p class="text-lg leading-8 text-brand-700">ב-21 בספטמבר 2026 פרסמה KNX Association מאמר מעשי על החשיפה של מתקני KNX בצד ה-IP. ההמלצה המרכזית איננה לקנות מיד בקר חדש, אלא לבדוק קודם את תצורת הנתב, דרך הגישה מרחוק, הפרדת הרשתות והממשקים הקיימים. זה רלוונטי במיוחד לבית שנמסר לפני שנים, למבנה שעובר שדרוג BMS ולמתקין שנכנס לטיפול תחזוקה לאחר שנים.</p>
+        <p class="text-lg leading-8 text-brand-700">מתקני KNX רבים פועלים לאורך זמן רב. לפעמים במקביל לממשק KNX IP הותקנו בבית מצלמות, אינטרקום, אזעקה, שרת ויזואליזציה, Home Assistant או ממשק לענן. שילוב מערכות מגדיל את יכולות הבית, אבל גם מחייב להבין מי רשאי להתחבר לאיזה רכיב ואילו פעולות מותרות לכל ספק. חשוב להפריד בין שליטה של דייר לבין גישה טכנית של מתקין ושל גורם תחזוקה.</p>
+        <h3 class="text-2xl font-bold text-brand-900">למה לא מספיק לבחור מוצר שעליו כתוב Secure?</h3>
+        <p class="text-lg leading-8 text-brand-700">השם של המוצר אינו מבטיח שהתצורה בפועל מאובטחת. מערכת עם נתב IP מאובטח יכולה עדיין להיות חשופה דרך פורט פתוח או באמצעות הרשאות חלשות בשרת אחר. לכן בוחנים יחד את הציוד, הגדרות הרשת, הנהלים וההרשאות. אבטחה אמיתית היא רצף שניתן לתחזק, ולא רשימת רכיבים.</p>
+      </section>
+
+      <section class="space-y-5 mb-12">
+        <h2 class="text-3xl font-bold text-brand-900">1. הנתב ופורט UDP 3671 — לפני החלפת ציוד</h2>
+        <p class="text-lg leading-8 text-brand-700">פורט UDP 3671 משמש כברירת מחדל לתקשורת KNXnet/IP. שימוש בו בתוך רשת מקומית מתוכננת אינו כשלעצמו תקלה. הסיכון עולה כאשר מוגדרת בנתב הפניית פורט מהאינטרנט ישירות לממשק KNX, לעיתים מתוך רצון לספק שירות מהיר מרחוק. הגדרה כזאת עשויה להישאר בשימוש שנים לאחר החלפת ספק אינטרנט, נתב או מתקין.</p>
+        <h3 class="text-2xl font-bold text-brand-900">איך בודקים נכון?</h3>
+        <p class="text-lg leading-8 text-brand-700">בעל המערכת או הגורם המורשה מבקשים מאיש הרשת לבדוק מיפוי פורטים, כללי NAT ו-Firewall, שירותי גישה חיצוניים והרשאות צד שלישי. KNX Association מספקת כלי בשם KNX Security Check לבדיקת חשיפה של כתובת IP לאינטרנט. משתמשים בכלי עבור מערכת שיש הרשאה לבדוק, ולא מצרפים פרטי רשת רגישים או סיסמאות לטופס ציבורי.</p>
+        <p class="text-lg leading-8 text-brand-700">אם יש חשיפה מיותרת, מתקנים אותה בתיאום עם מי שמכיר את המערכות. אין לבצע חסימה חפוזה שעלולה לנתק ממשק תפעולי חיוני ללא בדיקות חזרה לשגרה. שליטה במערכת חשמל, מיזוג או ציוד בניין צריכה להישמר בהתאם לתכנון המאושר.</p>
+      </section>
+
+      <section class="space-y-5 mb-12">
+        <h2 class="text-3xl font-bold text-brand-900">2. גישה מרחוק: VPN, Gateway מאובטח והרשאות</h2>
+        <p class="text-lg leading-8 text-brand-700">שירות מרחוק הוא צורך אמיתי. אינטגרטור צריך לפעמים לבדוק תקלה, ללמוד את מצב המערכת, לתאם עם ספק מיזוג ולבצע שינוי מורשה. במקום לחשוף KNXnet/IP ישירות לאינטרנט, בוחרים גישה מרחוק מאומתת באמצעות VPN ארגוני או פתרון ייעודי מאובטח. השיטה המדויקת תלויה במדיניות הלקוח, ברשת ובדרישות התחזוקה.</p>
+        <p class="text-lg leading-8 text-brand-700">מומלץ לנהל הרשאות לפי תפקיד: מי רשאי רק לצפות? מי רשאי לשנות תרחיש? מי רשאי להוריד תוכנה או לעדכן ממשק? יש להגדיר מי מאשר גישה, כיצד מבטלים אותה כשספק מסיים את עבודתו, והיכן נשמר תיעוד גישה. בפרויקטים מסחריים שבהם עובדים צוותי מיזוג, חשמל ו-BMS, חוסר בהירות בהרשאות הוא מקור אפשרי הן לסיכוני מידע והן לתקלות תפעוליות.</p>
+        <h3 class="text-2xl font-bold text-brand-900">הפרדת רשתות עם VLAN ו-Firewall</h3>
+        <p class="text-lg leading-8 text-brand-700">רשת אורחים, מחשבי משרד, מערכות מצלמות, שרת BMS וממשק KNX אינם צריכים בהכרח לתקשר בחופשיות זה עם זה. סגמנטציה באמצעות VLAN וכללי Firewall מאפשרת לפתוח רק את התעבורה הדרושה לתפעול. גם אחרי הפרדה, צריך לבדוק בפועל את מסלולי התקשורת בין הבקרים והממשקים, כדי לא להפריע לבקרה המתוכננת.</p>
+      </section>
+
+      <section class="space-y-5 mb-12">
+        <h2 class="text-3xl font-bold text-brand-900">3. KNX IP Secure לעומת KNX Data Secure</h2>
+        <p class="text-lg leading-8 text-brand-700"><strong>KNX IP Secure</strong> מאבטח תקשורת KNX על גבי מדיום IP באמצעות הגנות כגון אימות, שלמות נתונים והצפנה. הוא רלוונטי במיוחד כשמתכננים או משדרגים את עמוד השדרה של רשת הבקרה, נתבי KNX וממשקי IP תואמים. <strong>KNX Data Secure</strong> נועד להגן על המידע בטלגרמות KNX במדיומים נתמכים. ההבדל חשוב כאשר מתכננים מערכת שבה חלק מהתקשורת עובר ב-IP וחלקה ב-KNX TP או במדיום אחר.</p>
+        <p class="text-lg leading-8 text-brand-700">ההגנות אינן מחליפות זו את זו באופן אוטומטי, והן אינן מחליפות גישה מרחוק מאומתת, הפרדת רשתות או ניהול הרשאות. בפרויקט מעורב בודקים אילו רכיבים תומכים באיזו תצורה, אילו הגדרות הופעלו ב-ETS, ואילו רכיבים ישנים מחייבים פתרון מדורג.</p>
+        <h3 class="text-2xl font-bold text-brand-900">האם חייבים להחליף מערכת ישנה שלמה?</h3>
+        <p class="text-lg leading-8 text-brand-700">לא בהכרח. שיפור האבטחה יכול להתחיל מסגירת חשיפה חיצונית, החלפת שיטת גישה מרחוק, תיעוד ציוד וחיזוק חומת האש. בהמשך בוחנים אם נכון להחליף ממשק IP או נתב ישן לרכיב KNX IP Secure. את ההחלטה מבססים על התאמה טכנית, מצב הציוד, חשיבות המערכות והעלות לאורך חיי הפרויקט.</p>
+      </section>
+
+      <section class="space-y-5 mb-12">
+        <h2 class="text-3xl font-bold text-brand-900">4. ETS6.4, מפתחות Secure וגיבוי פרויקט</h2>
+        <p class="text-lg leading-8 text-brand-700">ETS6.4 מציעה, בין היתר, Auto Backup to Archive, המאפשר לשמור גרסת פרויקט בארכיון בעת סגירה לפי הגדרות המשתמש. זהו כלי שימושי בעבודה צוותית ובמערכות שממשיכות לקבל שירות במשך שנים, אך הוא אינו מחליף מדיניות גיבוי מסודרת, שמירה מוגנת או בדיקת שחזור בפועל.</p>
+        <p class="text-lg leading-8 text-brand-700">במערכת KNX Secure יש לטפל גם באישורי מכשירים, FDSK ומפתחות תכנות. מידע זה אינו מיועד להפצה בהודעת WhatsApp פתוחה או כנספח חופשי לקריאת שירות. יש להגדיר מי בעל ההרשאה לקבל גיבוי, באילו אמצעי הגנה הוא נשמר, וכיצד יטופל מעבר מסודר לספק שירות חדש. התחזוקה חייבת להתחיל מאימות בעלות והרשאות, לא מניסיון לעקוף מנגנוני הגנה.</p>
+      </section>
+
+      <section class="space-y-5 mb-12">
+        <h2 class="text-3xl font-bold text-brand-900">5. חיבור ל-BMS, BACnet, Modbus ו-Siemens Desigo</h2>
+        <p class="text-lg leading-8 text-brand-700">מבנה גדול יכול לשלב KNX ברמת החדר, BACnet בין בקרי מיזוג, Modbus למונים, DALI לתאורה ו-Siemens Desigo בשכבת ניהול המבנה. כאן צריך להגדיר לא רק מה מחברים, אלא גם מי רשאי לכתוב לכל נקודה. צפייה בנתון טמפרטורה אינה זהה לשינוי Setpoint או ביטול לוח זמנים של מערכת מיזוג.</p>
+        <p class="text-lg leading-8 text-brand-700">לכן מטריצת נקודות מקצועית צריכה לכלול את מקור הנתון, כיוון הקריאה או הכתיבה, יחידות מידה, קדימות פקודות, משוב ואחריות ספק. גם גישה מאובטחת צריכה לאפשר למערכת המקומית לפעול בהתאם לתכנון אם התקשורת למערכת המרכזית אינה זמינה.</p>
+        <div class="flex flex-wrap gap-3 mt-6">
+          <a href="/knx-smart-home/" class="rounded-lg bg-accent-600 px-5 py-3 font-bold text-white hover:bg-accent-700">תכנון מערכת KNX</a>
+          <a href="/structure-control/" class="rounded-lg bg-accent-600 px-5 py-3 font-bold text-white hover:bg-accent-700">בקרת מבנה BMS</a>
+          <a href="/siemens-desigo-bms/" class="rounded-lg bg-accent-600 px-5 py-3 font-bold text-white hover:bg-accent-700">Siemens Desigo</a>
+          <a href="/ddc-controllers-bms/" class="rounded-lg border border-brand-200 px-5 py-3 font-bold text-brand-900 hover:border-accent-500">בקרי DDC</a>
+          <a href="/bms-retrofit/" class="rounded-lg border border-brand-200 px-5 py-3 font-bold text-brand-900 hover:border-accent-500">שדרוג BMS</a>
+        </div>
+      </section>
+
+      <section class="rounded-2xl bg-brand-900 text-white p-7 md:p-9 mb-12">
+        <h2 class="text-3xl font-extrabold mb-4">6. רשימת מסירה ותחזוקה בשבע פעולות</h2>
+        <ol class="space-y-3 text-lg leading-8 list-decimal pr-6 text-brand-100">
+          <li>לאמת בעלות והרשאה לבדיקת האתר והרשת.</li>
+          <li>לתעד אם קיימת חשיפת KNXnet/IP חיצונית ישירה ולתקן חשיפה מיותרת.</li>
+          <li>לבדוק את פתרון הגישה מרחוק ואת הרשאות בעלי המקצוע.</li>
+          <li>למפות ממשקי IP, נתבי KNX, שרתי ויזואליזציה וציוד BMS רלוונטי.</li>
+          <li>להגדיר הפרדת רשתות וכללי Firewall, תוך בדיקת התקשורת הדרושה.</li>
+          <li>לבדוק גיבוי ETS, שמירת האישורים והמפתחות ונוהל שחזור.</li>
+          <li>למסור תיעוד בדיקות, אחריות תחזוקה ותוכנית שדרוג לפי סדר עדיפות.</li>
+        </ol>
+        <p class="mt-5 text-brand-200">זוהי מסגרת לבקרת איכות ולא תחליף לסקר אבטחה מלא הנערך לפי טופולוגיית האתר ודרישות הלקוח.</p>
+      </section>
+
+      <section class="space-y-5 mb-12">
+        <h2 class="text-3xl font-bold text-brand-900">מקרה בוחן וקישורים משלימים</h2>
+        <p class="text-lg leading-8 text-brand-700">לקריאה נוספת על מגמות אבטחה, ETS6.4 ואינטגרציה בין KNX ל-BMS, אפשר לעבור לסקירת <a href="/articles/knx-awards-2026-smart-building-trends/" class="text-accent-700 underline">KNX Awards 2026</a>. לפרויקט ציבורי שמדגים שכבת ניהול מבנה רחבה ראו את <a href="/structure-control/caesarea-rail-campus/" class="text-accent-700 underline">קמפוס הרכבת בקיסריה</a>. אין להסיק מכך שהפרויקט בקיסריה משתמש בתכונת Secure מסוימת שלא תועדה.</p>
+      </section>
+
+      <section class="mb-12">
+        <h2 class="text-3xl font-bold text-brand-900 mb-6">שאלות נפוצות</h2>
+        <div class="space-y-4">
+          {faq.map((item) => (
+            <details class="rounded-xl border border-brand-100 bg-brand-50 p-5">
+              <summary class="cursor-pointer font-bold text-lg text-brand-900">{item.q}</summary>
+              <p class="mt-3 text-brand-700 leading-7">{item.a}</p>
+            </details>
+          ))}
+        </div>
+      </section>
+
+      <section class="rounded-2xl border border-accent-200 bg-accent-50 p-7 md:p-9 mb-10">
+        <h2 class="text-3xl font-extrabold text-brand-900 mb-3">מערכת KNX קיימת? מתחילים בסקר מסודר</h2>
+        <p class="text-lg leading-8 text-brand-700 mb-5">אם בבית או במבנה יש KNX, מצלמות, אינטרקום, שרת ויזואליזציה או BMS, אפשר להתחיל מתיאור קצר של המערכת והבעיה — גם בלי קובץ ETS זמין. צוות I Feel יבחן את היקף הבדיקה והצעדים האפשריים לשיפור האבטחה והתחזוקה, בכפוף להרשאות ולתאימות הציוד. אין לשלוח סיסמאות, מפתחות או כתובת IP ציבורית בטופס.</p>
+        <a href="/contactus/#project-enquiry" class="inline-flex rounded-lg bg-accent-600 px-6 py-3 font-bold text-white hover:bg-accent-700">בקשה לסקר ושדרוג KNX / BMS</a>
+      </section>
+
+      <section class="border-t border-brand-100 pt-8">
+        <h2 class="text-2xl font-bold text-brand-900 mb-4">מקורות רשמיים</h2>
+        <ul class="space-y-3 text-brand-700 leading-7">
+          <li><a class="text-accent-700 underline" href="https://www.knx.org/news/your-knx-installation-exposed-securing-ip-side" target="_blank" rel="noopener">KNX Association — Is Your KNX Installation Exposed? Securing the IP Side</a></li>
+          <li><a class="text-accent-700 underline" href="https://support.knx.org/hc/en-us/articles/14774118731538-KNX-Security-Check" target="_blank" rel="noopener">KNX Security Check</a></li>
+          <li><a class="text-accent-700 underline" href="https://support.knx.org/hc/en-us/articles/360000216419-KNX-Secure-Devices" target="_blank" rel="noopener">KNX Secure Devices</a></li>
+          <li><a class="text-accent-700 underline" href="https://support.knx.org/hc/en-us/articles/31061986226450-ETS-v6-4-0" target="_blank" rel="noopener">ETS v6.4.0</a></li>
+        </ul>
+      </section>
+    </div>
+  </article>
+</BaseLayout>
