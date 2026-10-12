@@ -105,6 +105,8 @@
   <div class="max-w-2xl mx-auto px-4">
     <div class="bg-white rounded-2xl shadow-xl border border-brand-100 p-6 md:p-8">
       <h2 class="text-xl md:text-2xl font-extrabold text-brand-900 mb-1">מעדיפים שנחזור אליכם?</h2>
+      <div id="start-lead-sent" class="hidden mt-4 mb-4 rounded-lg bg-green-50 border border-green-200 p-4 text-green-900" role="status" aria-live="polite">הפנייה התקבלה. צוות המכירות יחזור אליכם בשעות הפעילות.</div>
+      <div id="start-lead-error" class="hidden mt-4 mb-4 rounded-lg bg-red-50 border border-red-200 p-4 text-red-900" role="alert" aria-live="assertive">לא הצלחנו להשלים את הפנייה. בדקו את הפרטים ונסו שוב, או התקשרו למכירות.</div>
       <p class="text-sm text-brand-600 mb-5">השאירו פרטים — ללא עלות וללא התחייבות.</p>
 
       <form action="/api/lead.php" method="post" accept-charset="UTF-8" class="grid gap-4">
@@ -168,3 +170,13 @@
     </p>
   </div>
 </section>
+
+<script>
+  (function () {
+    var status = new URLSearchParams(window.location.search).get('lead');
+    var sent = document.getElementById('start-lead-sent');
+    var error = document.getElementById('start-lead-error');
+    if ((status === 'sent' || status === 'sent-mail') && sent) sent.classList.remove('hidden');
+    if ((status === 'missing' || status === 'bad-email' || status === 'error') && error) error.classList.remove('hidden');
+  })();
+</script>
