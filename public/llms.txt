@@ -75,6 +75,7 @@ i-feel משרתת לקוחות פרטיים, יזמי בנייה, אדריכלי
 לרשימה העדכנית של המותגים והטכנולוגיות שאיתם i-feel עובדת: [מותגים וטכנולוגיות](https://i-feel.co.il/brands-and-technologies/).
 
 ## פרויקטים בולטים
+- [בית הלוחם אשדוד](https://i-feel.co.il/structure-control/beit-halochem-ashdod/): Siemens Desigo ותאורת KNX, תרחישים וחיווי מערכות המבנה.
 
 - [Amazon Sarona](https://i-feel.co.il/structure-control/amazon-sarona/): פרויקט בקרת מבנה בתל אביב.
 - [Brinks בני ברק](https://i-feel.co.il/structure-control/brinks-bnei-brak/): בקרת מבנה ואינטגרציה.
