@@ -1,5 +1,7 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import { beitHalochemVideoSchema } from '../data/beit-halochem-video-schema.mjs';
+import BeitHalochemVideo from '../components/BeitHalochemVideo.astro';
 import DesigoVideo from '../components/DesigoVideo.astro';
 import { desigoVideoSchema } from '../data/desigo-video-schema.mjs';
 import content from '../page-html/page-18.html?raw';
@@ -297,6 +299,7 @@ eilatVideoGraph["@graph"].push({
   }
 });
 eilatVideoGraph["@graph"].push(desigoVideoSchema("https://i-feel.co.il/structure-control/"));
+eilatVideoGraph["@graph"].push(beitHalochemVideoSchema("https://i-feel.co.il/structure-control/"));
 meta.jsonLd = JSON.stringify(eilatVideoGraph);
 ---
 <BaseLayout {...meta}>
@@ -327,4 +330,5 @@ meta.jsonLd = JSON.stringify(eilatVideoGraph);
       <p class="text-brand-700 leading-relaxed mt-6">לא בטוחים מה מותקן או איזה ממשק נדרש? אפשר להתחיל בשיחה קצרה על המבנה והקושי התפעולי, גם בלי תוכניות זמינות. <a href="/contactus/#project-enquiry" class="text-accent-700 font-bold underline">דברו איתנו על שילוב המערכות במבנה</a>.</p>
     </div>
   </section>
+  <BeitHalochemVideo />
 </BaseLayout>

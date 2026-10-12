@@ -1,6 +1,7 @@
 ---
 import SmartSphereScenarios from "../components/SmartSphereScenarios.astro";
 import BaseLayout from '../layouts/BaseLayout.astro';
+import { beitHalochemVideoSchema } from '../data/beit-halochem-video-schema.mjs';
 import content from '../page-html/page-20.html?raw';
 import KnxSwitchesVideo from '../components/KnxSwitchesVideo.astro';
 import OutdoorLedVideo from '../components/OutdoorLedVideo.astro';
@@ -153,6 +154,7 @@ if (switchesVideoSchema) {
   dmxVideoGraph['@graph'].push(switchesVideoSchema);
 }
 dmxVideoGraph['@graph'].push(desigoVideoSchema(meta.canonical));
+dmxVideoGraph['@graph'].push(beitHalochemVideoSchema(meta.canonical));
 meta.jsonLd = JSON.stringify(dmxVideoGraph);
 
 ---
