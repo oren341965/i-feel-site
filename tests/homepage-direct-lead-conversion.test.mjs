@@ -37,3 +37,11 @@ test('homepage CTA has a direct verified sales phone and email fallback', async 
   assert.match(source, /href="tel:\+972-3-508-9553"/);
   assert.match(source, /mailto:sales@i-feel\.co\.il/);
 });
+
+test('lead intake instruments unsuccessful validation and valid attempts without PII', async () => {
+  const capture = await read('src/components/LeadAttributionCapture.astro');
+  assert.match(capture, /lead_form_validation_failed/);
+  assert.match(capture, /lead_form_valid_submit_attempt/);
+  assert.match(capture, /\['name', 'phone', 'lead_type', 'city', 'heard_from', 'email'\]/);
+  assert.doesNotMatch(capture, /gtag\('event',[\s\S]*?phone:\s*form/);
+});
