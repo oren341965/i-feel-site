@@ -1,0 +1,11 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import content from '../../page-html/matrix-headquarters-knx-building-control.html?raw';
+const title = 'בקרת מבנה במטה מטריקס בכפר סבא | I Feel';
+const description = 'מערכת KNX לניהול התאורה והמיזוג בכל קומות מטה מטריקס החדש ברחוב עתיר ידע 3 בכפר סבא, עם ציוד Siemens, שליטה של ABB, תזמון ודיווח על חריגות.';
+const canonical = 'https://i-feel.co.il/articles/matrix-headquarters-knx-building-control/';
+const jsonLd = JSON.stringify({ '@context': 'https://schema.org', '@type': 'Article', headline: title, description, mainEntityOfPage: canonical, url: canonical, inLanguage: 'he-IL', datePublished: '2026-10-12', dateModified: '2026-10-12', author: { '@type': 'Organization', name: 'I Feel', url: 'https://i-feel.co.il/' }, publisher: { '@type': 'Organization', name: 'I Feel', url: 'https://i-feel.co.il/' } });
+---
+<BaseLayout title={title} description={description} canonical={canonical} jsonLd={jsonLd}>
+  <Fragment set:html={content} />
+</BaseLayout>
