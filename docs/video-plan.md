@@ -100,3 +100,5 @@
 | בחו״ל | /articles/smart-home-vacation-scenario/ | /assets/smartsphere/abroad.webm |
 | מצב חופשה | /articles/smart-home-vacation-scenario/ | /assets/smartsphere/vacation.webm |
 | לילה טוב | /smart-home/ | /assets/smartsphere/goodnight.webm |
+
+| בית הלוחם באשדוד — Siemens Desigo ותאורת KNX (2:30, הסברים כתובים) | BMS | `-_JsdqUoI3k` | /video/#beit-halochem-video, /structure-control/#beit-halochem-video, /siemens-desigo-bms/#beit-halochem-video |
