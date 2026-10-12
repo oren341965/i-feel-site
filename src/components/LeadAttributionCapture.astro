@@ -176,6 +176,32 @@
       fillAllLeadForms();
     }
 
+    // Track funnel drop-off without names, telephone numbers, or form free-text.
+    function recordLeadFormEvent(name, form, detail) {
+      if (typeof window.gtag !== 'function') return;
+      var source = form.querySelector('input[name="source_page"]');
+      var formPath = source && source.value && /^\/[a-z0-9_\/-]*$/i.test(source.value)
+        ? source.value.slice(0, 120)
+        : window.location.pathname.slice(0, 120);
+      window.gtag('event', name, {
+        form_path: formPath,
+        ...(detail ? { invalid_field: detail } : {})
+      });
+    }
+
+    // Native browser invalid events do not dispatch a submit event.
+    document.addEventListener('invalid', function (event) {
+      var target = event.target;
+      var form = target && target.form;
+      if (!form || !form.matches('form[action="/api/lead.php"]')) return;
+      var fieldName = String(target.name || '');
+      if (!['name', 'phone', 'lead_type', 'city', 'heard_from', 'email'].includes(fieldName)) return;
+      var now = Date.now();
+      if (now - Number(form.dataset.ifeelInvalidTrackedAt || 0) < 2500) return;
+      form.dataset.ifeelInvalidTrackedAt = String(now);
+      recordLeadFormEvent('lead_form_validation_failed', form, fieldName);
+    }, true);
+
     // Also cover a lead form that is rendered dynamically after page load.
     document.addEventListener('submit', function (event) {
       var form = event.target;
@@ -184,6 +210,8 @@
         if (!form.checkValidity()) {
           event.preventDefault();
           form.reportValidity();
+        } else {
+          recordLeadFormEvent('lead_form_valid_submit_attempt', form, '');
         }
       } else if (form && form.matches && form.matches('form[action="/api/newsletter.php"]')) {
         fillNewsletterForm(form);
