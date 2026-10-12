@@ -209,7 +209,7 @@
       <h1>פרויקטים ב<span class="grad">בקרת מבנה</span><br>ותאורה חכמה</h1>
       <p class="lead">מערכות BMS, אוטומציה ותאורה חכמה למלונות, משרדים, מבני ציבור ואולמות תצוגה — תכנון, הטמעה והפעלה מקצה לקצה.</p>
       <div class="stats">
-        <div class="stat"><b>84</b><span>פרויקטים נבחרים</span></div>
+        <div class="stat"><b>85</b><span>פרויקטים נבחרים</span></div>
         <div class="stat"><b>KNX</b><span>תקן בקרה פתוח</span></div>
         <div class="stat"><b>BMS</b><span>Siemens Desigo</span></div>
         <div class="stat"><b>100%</b><span>תכנון והטמעה עצמאיים</span></div>
@@ -228,6 +228,7 @@
 <main>
   <div class="wrap">
     <div class="grid" id="grid">
+<article class="card"><h3><a href="/structure-control/beit-halochem-ashdod/">בית הלוחם — אשדוד</a></h3><p>Siemens Desigo ותאורת KNX: שליטה בתאורה, תרחישים וניטור מערכות המבנה.</p></article>
       <!-- Static project list for search/AI crawlers (no-JS). JS replaces this with the interactive, filterable cards on load. -->
       
       <p class="text-sm text-brand-600 mb-4">רבים מפרויקטי הבקרה שלנו מבוססים על <a href="/siemens-desigo-bms/" class="text-accent-600 font-semibold hover:underline">מערכת BMS מבוססת Siemens Desigo</a>.</p>
@@ -356,6 +357,12 @@ const CATS = {
 
 /* ---------- Data ---------- */
 const P = [
+{n:85,t:'בית הלוחם',loc:'אשדוד',cat:'public',tech:'Siemens Desigo · KNX',img:'beit-halochem-exterior.jpg',
+ch:'ריכוז שליטה בתאורה וחיווי מערכות המבנה בממשק מחשב מרכזי עבור בית הלוחם באשדוד.',
+sol:'מערכת Desigo עם מסכים סינופטיים, מגמות, לוחות זמנים ותרחישים, בשילוב בקרת תאורה בתקן KNX.',
+sys:'Siemens Desigo ומערכת תאורה בתקן KNX.',
+scope:['תאורת חוץ, עמודים ופרוז׳קטורים','תאורת במה ותאורה כללית','חיווי גלאי הצפה וטמפרטורה וכימיקלים בבריכות','ניטור רבי־מודדים, שנאים ומפסקים ראשיים','מעקף ידני לכל מעגל תאורה באמצעות הבקר בלוח'],
+ben:['הפעלה מהמחשב הראשי','ממשק גרפי וניהול לפי תחומי מערכת','תזמון ותרחישים','מעקב מגמות ואפשרות הפעלה מקומית']},
 {n:1,t:'המכון הגיאולוגי',loc:'ירושלים',cat:'public',tech:'KNX · DALI',img:'image1.png',
  ch:'הקמת מערכת תאורה חכמה במבנה מחקר ומשרדים, המאפשרת שליטה מלאה בתאורה בהתאם לתפוסת החדרים, שעות הפעילות וצרכי המשתמשים. נדרש פתרון שיספק נוחות מרבית לעובדים לצד חיסכון משמעותי בצריכת האנרגיה ויכולת ניהול ותחזוקה פשוטה לאורך זמן.',
  sol:'תכנון והטמעה של מערכת תאורה חכמה המבוססת על אוטומציה מתקדמת, הכוללת בקרת תאורה לפי אזורים, הפעלה אוטומטית בהתאם לנוכחות משתמשים, ויכולת התאמה של עוצמות התאורה לצרכים המשתנים של המבנה.',
@@ -951,6 +958,7 @@ const IMG='/assets/structure-projects/img/';
 const grid=document.getElementById('grid');
 
 const PROJECT_URLS = {
+  85: '/structure-control/beit-halochem-ashdod/',
   25: '/structure-control/countrite-technologies/',
   2: '/structure-control/brinks-bnei-brak/',
   3: '/structure-control/caesarea-rail-campus/',
