@@ -7,7 +7,7 @@ const MCOHOME_HEADERS = [
   'חשד ל-Inrush Current', 'סטטוס היחידה', 'פעולה שבוצעה', 'הוחלף ליחידה חדשה?', 'תאריך החלפה',
   'נשלח ל-MCOHome?', 'מס׳ RMA / משלוח', 'מסקנת יצרן', 'זיכוי / החלפה מהיצרן', 'הערות',
   'תמונה / קישור', 'טכנאי', 'קונטרולר', 'Node ID', 'מספר מופעים', 'תקלה חוזרת?', 'חומרה',
-  'עדכון אחרון', 'Dropbox / מדיה', 'Root Cause', 'פתרון קבוע', 'אחראי'
+  'עדכון אחרון', 'Google Drive / מדיה', 'Root Cause', 'פתרון קבוע', 'אחראי'
 ];
 
 function doGet() {
@@ -60,7 +60,7 @@ function saveFault_(payload, fromPortal) {
     const inrush = faultType === 'ממסר נדבק' || truthy_(payload.inrushSuspected) ? 'כן' : 'לא';
     const technician = sanitize_(payload.technician || payload.employeeEmail);
     const mediaLinks = joinValue_(payload.mediaLinks);
-    const dropboxLinks = joinValue_(payload.dropboxLinks);
+    const googleDriveLinks = joinValue_(payload.googleDriveLinks || payload.dropboxLinks);
 
     const descriptionParts = [];
     if (sanitize_(payload.description)) descriptionParts.push(sanitize_(payload.description));
@@ -97,7 +97,7 @@ function saveFault_(payload, fromPortal) {
       truthy_(payload.recurring) ? 'כן' : 'לא',
       sanitize_(payload.severity) || 'NORMAL',
       sanitize_(payload.updatedAt) || Utilities.formatDate(now, tz, "yyyy-MM-dd'T'HH:mm:ssXXX"),
-      dropboxLinks,
+      googleDriveLinks,
       sanitize_(payload.rootCause),
       sanitize_(payload.resolution),
       sanitize_(payload.owner) || 'שירות I Feel / MCOHome'
@@ -156,7 +156,7 @@ function getFormOptions() {
       'Dead / Failed Node', 'תקשורת Z-Wave לסירוגין', 'Status לא חוזר לקונטרולר', 'בעיית Range / Mesh',
       'נזק פיזי', 'אחר'
     ],
-    statuses: ['פתוח', 'בבדיקה', 'תקלה אומתה', 'הוחלף', 'ממתין ל-RMA', 'נשלח ל-MCOHome', 'ממתין לתשובת יצרן', 'נסגר']
+    statuses: ['פתוח', 'בבדיקה', 'תקלה אומתה', 'הוחלף', 'ממתין ל-RMA', 'נשלח ל-MCOHome', 'ממתין לתשובת יצרן', 'ממתין לסנכרון מדיה ל-Google Drive', 'נסגר']
   };
 }
 

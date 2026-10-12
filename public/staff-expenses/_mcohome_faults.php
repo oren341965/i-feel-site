@@ -26,7 +26,7 @@ function mcohome_options(): array
             'בעיית Range / Mesh', 'נזק פיזי', 'אחר',
         ],
         'controllers' => ['Home Assistant', 'Touchwand', 'Fibaro', 'Vera', 'SmartThings', 'אחר / לא ידוע'],
-        'statuses' => ['פתוח', 'בבדיקה', 'תקלה אומתה', 'הוחלף', 'ממתין ל-RMA', 'נשלח ל-MCOHome', 'ממתין לתשובת יצרן', 'נסגר'],
+        'statuses' => ['פתוח', 'בבדיקה', 'תקלה אומתה', 'הוחלף', 'ממתין ל-RMA', 'נשלח ל-MCOHome', 'ממתין לתשובת יצרן', 'ממתין לסנכרון מדיה ל-Google Drive', 'נסגר'],
         'actions' => ['לא בוצעה פעולה', 'איפוס', 'זיווג מחדש / Inclusion', 'Exclusion', 'Factory Reset', 'Heal / Re-interview', 'בדיקת עומס', 'בדיקה ליד הקונטרולר', 'החלפת היחידה', 'ניתוק העומס', 'אחר'],
     ];
 }
@@ -123,9 +123,9 @@ function mcohome_save_media(string $eventId, array $files): array
             'name' => $original,
             'mime' => $mime,
             'size' => $size,
-            'dropboxStatus' => 'pending',
-            'dropboxPath' => '',
-            'dropboxUrl' => '',
+            'googleDriveStatus' => 'pending',
+            'googleDriveFileId' => '',
+            'googleDriveUrl' => '',
         ];
     }
     return $saved;
@@ -257,82 +257,119 @@ function mcohome_apply_recurrence(array $record): array
     return $record;
 }
 
-function mcohome_dropbox_config(): ?array
+function mcohome_gdrive_config(): ?array
 {
-    $token = defined('MCOHOME_DROPBOX_ACCESS_TOKEN')
-        ? trim((string) constant('MCOHOME_DROPBOX_ACCESS_TOKEN'))
-        : trim((string) getenv('MCOHOME_DROPBOX_ACCESS_TOKEN'));
-    if ($token === '') {
+    $clientId = defined('MCOHOME_GDRIVE_CLIENT_ID') ? trim((string) constant('MCOHOME_GDRIVE_CLIENT_ID')) : trim((string) getenv('MCOHOME_GDRIVE_CLIENT_ID'));
+    $clientSecret = defined('MCOHOME_GDRIVE_CLIENT_SECRET') ? trim((string) constant('MCOHOME_GDRIVE_CLIENT_SECRET')) : trim((string) getenv('MCOHOME_GDRIVE_CLIENT_SECRET'));
+    $refreshToken = defined('MCOHOME_GDRIVE_REFRESH_TOKEN') ? trim((string) constant('MCOHOME_GDRIVE_REFRESH_TOKEN')) : trim((string) getenv('MCOHOME_GDRIVE_REFRESH_TOKEN'));
+    $rootFolderId = defined('MCOHOME_GDRIVE_ROOT_FOLDER_ID') ? trim((string) constant('MCOHOME_GDRIVE_ROOT_FOLDER_ID')) : trim((string) getenv('MCOHOME_GDRIVE_ROOT_FOLDER_ID'));
+    if ($rootFolderId === '') {
+        $rootFolderId = '1xEElpkLxeCgXrYBJ-920IAPuqiN-tWxw';
+    }
+    if ($clientId === '' || $clientSecret === '' || $refreshToken === '' || $rootFolderId === '') {
         return null;
     }
-    $root = defined('MCOHOME_DROPBOX_ROOT_PATH')
-        ? trim((string) constant('MCOHOME_DROPBOX_ROOT_PATH'))
-        : trim((string) getenv('MCOHOME_DROPBOX_ROOT_PATH'));
-    if ($root === '') {
-        $root = '/Apps/MCOHome Service Calls';
-    }
-    $root = '/' . trim(str_replace('\\', '/', $root), '/');
-    return ['token' => $token, 'root' => $root];
+    return ['clientId' => $clientId, 'clientSecret' => $clientSecret, 'refreshToken' => $refreshToken, 'rootFolderId' => $rootFolderId];
 }
 
-function mcohome_dropbox_json_request(string $token, string $endpoint, array $payload): array
+function mcohome_gdrive_json_request(string $url, string $accessToken, string $method = 'GET', ?array $payload = null): array
 {
     if (!function_exists('curl_init')) {
         return ['ok' => false, 'status' => 0, 'body' => null];
     }
-    $ch = curl_init('https://api.dropboxapi.com/2/' . ltrim($endpoint, '/'));
+    $ch = curl_init($url);
+    $headers = ['Authorization: Bearer ' . $accessToken, 'Accept: application/json'];
+    $opts = [CURLOPT_RETURNTRANSFER => true, CURLOPT_CONNECTTIMEOUT => 8, CURLOPT_TIMEOUT => 60, CURLOPT_HTTPHEADER => $headers];
+    if ($method !== 'GET') {
+        $opts[CURLOPT_CUSTOMREQUEST] = $method;
+    }
+    if ($payload !== null) {
+        $headers[] = 'Content-Type: application/json; charset=utf-8';
+        $opts[CURLOPT_HTTPHEADER] = $headers;
+        $opts[CURLOPT_POSTFIELDS] = json_encode($payload, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+    }
+    curl_setopt_array($ch, $opts);
+    $raw = curl_exec($ch);
+    $status = (int) curl_getinfo($ch, CURLINFO_RESPONSE_CODE);
+    $error = curl_error($ch);
+    curl_close($ch);
+    $decoded = is_string($raw) ? json_decode($raw, true) : null;
+    return ['ok' => $raw !== false && $error === '' && $status >= 200 && $status < 300, 'status' => $status, 'body' => $decoded];
+}
+
+function mcohome_gdrive_access_token(array $config): string
+{
+    if (!function_exists('curl_init')) {
+        return '';
+    }
+    $ch = curl_init('https://oauth2.googleapis.com/token');
     curl_setopt_array($ch, [
         CURLOPT_POST => true,
         CURLOPT_RETURNTRANSFER => true,
         CURLOPT_CONNECTTIMEOUT => 8,
         CURLOPT_TIMEOUT => 25,
-        CURLOPT_HTTPHEADER => [
-            'Authorization: Bearer ' . $token,
-            'Content-Type: application/json',
-        ],
-        CURLOPT_POSTFIELDS => json_encode($payload, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES),
+        CURLOPT_HTTPHEADER => ['Content-Type: application/x-www-form-urlencoded'],
+        CURLOPT_POSTFIELDS => http_build_query([
+            'client_id' => $config['clientId'],
+            'client_secret' => $config['clientSecret'],
+            'refresh_token' => $config['refreshToken'],
+            'grant_type' => 'refresh_token',
+        ]),
     ]);
     $raw = curl_exec($ch);
     $status = (int) curl_getinfo($ch, CURLINFO_RESPONSE_CODE);
     curl_close($ch);
     $decoded = is_string($raw) ? json_decode($raw, true) : null;
-    return ['ok' => $status >= 200 && $status < 300, 'status' => $status, 'body' => $decoded];
+    return ($status >= 200 && $status < 300 && is_array($decoded)) ? trim((string) ($decoded['access_token'] ?? '')) : '';
 }
 
-function mcohome_dropbox_ensure_folder(string $token, string $path): void
+function mcohome_gdrive_find_folder(string $accessToken, string $parentId, string $name): string
 {
-    $parts = array_values(array_filter(explode('/', trim($path, '/')), static fn($part): bool => $part !== ''));
-    $current = '';
-    foreach ($parts as $part) {
-        $current .= '/' . $part;
-        $result = mcohome_dropbox_json_request($token, 'files/create_folder_v2', ['path' => $current, 'autorename' => false]);
-        if (!$result['ok'] && (int) $result['status'] !== 409) {
-            throw new RuntimeException('Dropbox folder creation failed.');
-        }
-    }
+    $q = "mimeType='application/vnd.google-apps.folder' and trashed=false and '" . str_replace("'", "\\'", $parentId) . "' in parents and name='" . str_replace("'", "\\'", $name) . "'";
+    $url = 'https://www.googleapis.com/drive/v3/files?q=' . rawurlencode($q) . '&fields=files(id,name)&pageSize=10&supportsAllDrives=true&includeItemsFromAllDrives=true';
+    $result = mcohome_gdrive_json_request($url, $accessToken);
+    if (!$result['ok'] || !is_array($result['body'])) return '';
+    $files = $result['body']['files'] ?? [];
+    return is_array($files) && isset($files[0]['id']) ? (string) $files[0]['id'] : '';
 }
 
-function mcohome_dropbox_upload(string $token, string $path, string $localPath): array
+function mcohome_gdrive_ensure_folder(string $accessToken, string $parentId, string $name): string
 {
-    if (!function_exists('curl_init') || !is_file($localPath)) {
-        return ['ok' => false, 'status' => 0, 'body' => null];
+    $existing = mcohome_gdrive_find_folder($accessToken, $parentId, $name);
+    if ($existing !== '') return $existing;
+    $result = mcohome_gdrive_json_request(
+        'https://www.googleapis.com/drive/v3/files?fields=id&supportsAllDrives=true',
+        $accessToken,
+        'POST',
+        ['name' => $name, 'mimeType' => 'application/vnd.google-apps.folder', 'parents' => [$parentId]]
+    );
+    if (!$result['ok'] || !is_array($result['body']) || empty($result['body']['id'])) {
+        throw new RuntimeException('Google Drive folder creation failed.');
     }
+    return (string) $result['body']['id'];
+}
+
+function mcohome_gdrive_upload(string $accessToken, string $parentId, string $name, string $mime, string $localPath): array
+{
+    if (!function_exists('curl_init') || !is_file($localPath)) return ['ok' => false, 'status' => 0, 'body' => null];
     $contents = file_get_contents($localPath);
-    if ($contents === false) {
-        return ['ok' => false, 'status' => 0, 'body' => null];
-    }
-    $ch = curl_init('https://content.dropboxapi.com/2/files/upload');
+    if ($contents === false) return ['ok' => false, 'status' => 0, 'body' => null];
+    $boundary = 'mcohome_' . bin2hex(random_bytes(12));
+    $metadata = json_encode(['name' => $name, 'parents' => [$parentId]], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+    $body = "--{$boundary}\r\nContent-Type: application/json; charset=UTF-8\r\n\r\n{$metadata}\r\n"
+        . "--{$boundary}\r\nContent-Type: {$mime}\r\n\r\n" . $contents . "\r\n--{$boundary}--\r\n";
+    $ch = curl_init('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id,name,mimeType,size&supportsAllDrives=true');
     curl_setopt_array($ch, [
         CURLOPT_POST => true,
         CURLOPT_RETURNTRANSFER => true,
         CURLOPT_CONNECTTIMEOUT => 8,
-        CURLOPT_TIMEOUT => 120,
+        CURLOPT_TIMEOUT => 180,
         CURLOPT_HTTPHEADER => [
-            'Authorization: Bearer ' . $token,
-            'Content-Type: application/octet-stream',
-            'Dropbox-API-Arg: ' . json_encode(['path' => $path, 'mode' => 'overwrite', 'autorename' => false, 'mute' => true], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES),
+            'Authorization: Bearer ' . $accessToken,
+            'Content-Type: multipart/related; boundary=' . $boundary,
+            'Content-Length: ' . strlen($body),
         ],
-        CURLOPT_POSTFIELDS => $contents,
+        CURLOPT_POSTFIELDS => $body,
     ]);
     $raw = curl_exec($ch);
     $status = (int) curl_getinfo($ch, CURLINFO_RESPONSE_CODE);
@@ -341,62 +378,75 @@ function mcohome_dropbox_upload(string $token, string $path, string $localPath):
     return ['ok' => $status >= 200 && $status < 300, 'status' => $status, 'body' => $decoded];
 }
 
-function mcohome_dropbox_shared_url(string $token, string $path): string
+function mcohome_gdrive_share_reader(string $accessToken, string $fileId, string $email): bool
 {
-    $create = mcohome_dropbox_json_request($token, 'sharing/create_shared_link_with_settings', ['path' => $path]);
-    if ($create['ok'] && is_array($create['body'])) {
-        return (string) ($create['body']['url'] ?? '');
-    }
-    $list = mcohome_dropbox_json_request($token, 'sharing/list_shared_links', ['path' => $path, 'direct_only' => true]);
-    if ($list['ok'] && is_array($list['body'])) {
-        $links = $list['body']['links'] ?? [];
-        if (is_array($links) && isset($links[0]['url'])) {
-            return (string) $links[0]['url'];
-        }
-    }
-    return '';
+    $url = 'https://www.googleapis.com/drive/v3/files/' . rawurlencode($fileId) . '/permissions?sendNotificationEmail=false&supportsAllDrives=true';
+    $result = mcohome_gdrive_json_request($url, $accessToken, 'POST', ['type' => 'user', 'role' => 'reader', 'emailAddress' => $email]);
+    return (bool) $result['ok'];
 }
 
-function mcohome_sync_media_to_dropbox(array $record): array
+function mcohome_sync_media_to_gdrive(array $record): array
 {
-    $config = mcohome_dropbox_config();
+    $config = mcohome_gdrive_config();
     if ($config === null) {
-        $record['dropboxSync'] = ['ok' => false, 'status' => 'not_configured'];
+        $record['googleDriveSync'] = ['ok' => false, 'status' => 'not_configured'];
+        return $record;
+    }
+    $accessToken = mcohome_gdrive_access_token($config);
+    if ($accessToken === '') {
+        $record['googleDriveSync'] = ['ok' => false, 'status' => 'auth_failed'];
         return $record;
     }
     $date = preg_replace('/[^0-9]/', '', (string) ($record['discoveryDate'] ?? '')) ?: date('Ymd');
     $year = substr($date, 0, 4) ?: date('Y');
     $month = substr($date, 4, 2) ?: date('m');
-    $folder = $config['root'] . '/' . $year . '/' . $month . '/' . $record['eventId'];
     try {
-        mcohome_dropbox_ensure_folder($config['token'], $folder);
+        $yearId = mcohome_gdrive_ensure_folder($accessToken, $config['rootFolderId'], $year);
+        $monthId = mcohome_gdrive_ensure_folder($accessToken, $yearId, $month);
+        $eventFolderId = mcohome_gdrive_ensure_folder($accessToken, $monthId, (string) $record['eventId']);
         $okCount = 0;
         foreach (($record['media'] ?? []) as $index => $media) {
             $name = preg_replace('/[^A-Za-z0-9._ -]/u', '_', (string) ($media['name'] ?? 'media')) ?: ('media-' . ($index + 1));
-            $destination = $folder . '/' . sprintf('%02d-', $index + 1) . $name;
-            $result = mcohome_dropbox_upload($config['token'], $destination, mcohome_media_path((string) $record['eventId'], $media));
-            if ($result['ok']) {
-                $url = mcohome_dropbox_shared_url($config['token'], $destination);
-                $record['media'][$index]['dropboxStatus'] = 'uploaded';
-                $record['media'][$index]['dropboxPath'] = $destination;
-                $record['media'][$index]['dropboxUrl'] = $url;
-                $okCount++;
+            $name = sprintf('%02d-', $index + 1) . $name;
+            $result = mcohome_gdrive_upload($accessToken, $eventFolderId, $name, (string) ($media['mime'] ?? 'application/octet-stream'), mcohome_media_path((string) $record['eventId'], $media));
+            if ($result['ok'] && is_array($result['body']) && !empty($result['body']['id'])) {
+                $fileId = (string) $result['body']['id'];
+                $shared = true;
+                foreach (mcohome_vendor_recipients() as $email) {
+                    $shared = mcohome_gdrive_share_reader($accessToken, $fileId, $email) && $shared;
+                }
+                $record['media'][$index]['googleDriveStatus'] = $shared ? 'uploaded_shared' : 'uploaded_share_failed';
+                $record['media'][$index]['googleDriveFileId'] = $fileId;
+                $record['media'][$index]['googleDriveUrl'] = 'https://drive.google.com/file/d/' . rawurlencode($fileId) . '/view?usp=sharing';
+                if ($shared) $okCount++;
             } else {
-                $record['media'][$index]['dropboxStatus'] = 'failed';
+                $record['media'][$index]['googleDriveStatus'] = 'failed';
             }
         }
-        $record['dropboxSync'] = [
-            'ok' => $okCount === count($record['media']),
-            'status' => $okCount === count($record['media']) ? 'completed' : 'partial',
-            'folder' => $folder,
+        $total = count($record['media'] ?? []);
+        $record['googleDriveSync'] = [
+            'ok' => $okCount === $total,
+            'status' => $okCount === $total ? 'completed' : 'partial',
+            'folderId' => $eventFolderId,
+            'folderUrl' => 'https://drive.google.com/drive/folders/' . rawurlencode($eventFolderId),
             'uploaded' => $okCount,
-            'total' => count($record['media']),
+            'total' => $total,
         ];
     } catch (Throwable $error) {
-        error_log('[mcohome dropbox] ' . $error->getMessage());
-        $record['dropboxSync'] = ['ok' => false, 'status' => 'error', 'folder' => $folder];
+        error_log('[mcohome gdrive] ' . $error->getMessage());
+        $record['googleDriveSync'] = ['ok' => false, 'status' => 'error'];
     }
     return $record;
+}
+
+function mcohome_gdrive_lines(array $record): array
+{
+    $lines = [];
+    foreach (($record['media'] ?? []) as $index => $media) {
+        $url = trim((string) ($media['googleDriveUrl'] ?? ''));
+        if ($url !== '') $lines[] = ($index + 1) . '. ' . $url;
+    }
+    return $lines;
 }
 
 function mcohome_email_attachments(array $record): array
@@ -418,30 +468,15 @@ function mcohome_email_attachments(array $record): array
     return $attachments;
 }
 
-function mcohome_dropbox_lines(array $record): array
-{
-    $lines = [];
-    foreach (($record['media'] ?? []) as $index => $media) {
-        $url = trim((string) ($media['dropboxUrl'] ?? ''));
-        $path = trim((string) ($media['dropboxPath'] ?? ''));
-        if ($url !== '') {
-            $lines[] = ($index + 1) . '. ' . $url;
-        } elseif ($path !== '') {
-            $lines[] = ($index + 1) . '. Dropbox: ' . $path;
-        }
-    }
-    return $lines;
-}
-
 function mcohome_build_vendor_draft(array $record): array
 {
     $recurring = (bool) ($record['recurring'] ?? false);
     $severity = (string) ($record['severity'] ?? 'NORMAL');
     $prefix = $recurring ? '[RECURRING ' . $severity . '] ' : '';
     $subject = $prefix . '[I Feel] MCOHome fault ' . $record['eventId'] . ' - ' . ($record['model'] ?: mcohome_translate_choice($record['deviceType']));
-    $dropboxLines = mcohome_dropbox_lines($record);
-    $evidenceEn = $dropboxLines === [] ? 'Evidence: stored in the secured I Feel fault record. Dropbox sync may still be pending.' : "Evidence / Dropbox:\r\n" . implode("\r\n", $dropboxLines);
-    $evidenceCn = $dropboxLines === [] ? '证据资料：已保存在 I Feel 安全故障记录中，Dropbox 同步可能仍在等待。' : "证据 / Dropbox：\r\n" . implode("\r\n", $dropboxLines);
+    $driveLines = mcohome_gdrive_lines($record);
+    $evidenceEn = $driveLines === [] ? 'Evidence: stored in the secured I Feel fault record. Google Drive sync may still be pending.' : "Evidence / Google Drive:\r\n" . implode("\r\n", $driveLines);
+    $evidenceCn = $driveLines === [] ? '证据资料：已保存在 I Feel 安全故障记录中，Google Drive 同步可能仍在等待。' : "证据 / Google Drive：\r\n" . implode("\r\n", $driveLines);
     $recurringEn = $recurring
         ? 'IMPORTANT: This fault has now been recorded ' . (int) ($record['repeatCount'] ?? 2) . ' times. We require Root Cause Analysis, corrective action and confirmation that the permanent solution is implemented.'
         : 'Please investigate this field fault and provide the recommended corrective action.';
@@ -521,8 +556,8 @@ function mcohome_send_internal_notification(array $record): array
     $mediaLines = [];
     foreach (($record['media'] ?? []) as $index => $media) {
         $line = ($index + 1) . '. ' . ($media['name'] ?? 'media') . ' - ' . mcohome_media_url($record['eventId'], $index);
-        if (($media['dropboxUrl'] ?? '') !== '') {
-            $line .= ' | Dropbox: ' . $media['dropboxUrl'];
+        if (($media['googleDriveUrl'] ?? '') !== '') {
+            $line .= ' | Google Drive: ' . $media['googleDriveUrl'];
         }
         $mediaLines[] = $line;
     }
@@ -546,7 +581,7 @@ function mcohome_send_internal_notification(array $record): array
         'Node ID: ' . ($record['nodeId'] ?: 'לא צוין'),
         'סטטוס: ' . ($record['unitStatus'] ?? 'פתוח'),
         'נשלח ל-MCOHome: ' . (($record['sentToMcohome'] ?? false) ? 'כן' : 'לא') . ' (' . $vendorOk . '/' . count(mcohome_vendor_recipients()) . ')',
-        'Dropbox: ' . (($record['dropboxSync']['status'] ?? '') ?: 'לא הוגדר'), '',
+        'Google Drive: ' . (($record['googleDriveSync']['status'] ?? '') ?: 'לא הוגדר'), '',
         'מדיה מאובטחת:',
         $mediaLines === [] ? 'לא צורפה מדיה' : implode("\r\n", $mediaLines), '',
         ($record['recurring'] ?? false)
@@ -569,12 +604,10 @@ function mcohome_send_internal_notification(array $record): array
 
 function mcohome_sheet_payload(array $record): array
 {
-    $dropboxLinks = [];
+    $googleDriveLinks = [];
     foreach (($record['media'] ?? []) as $media) {
-        if (($media['dropboxUrl'] ?? '') !== '') {
-            $dropboxLinks[] = $media['dropboxUrl'];
-        } elseif (($media['dropboxPath'] ?? '') !== '') {
-            $dropboxLinks[] = $media['dropboxPath'];
+        if (($media['googleDriveUrl'] ?? '') !== '') {
+            $googleDriveLinks[] = $media['googleDriveUrl'];
         }
     }
     return [
@@ -608,7 +641,8 @@ function mcohome_sheet_payload(array $record): array
         'recurring' => $record['recurring'] ?? false,
         'severity' => $record['severity'] ?? 'NORMAL',
         'updatedAt' => $record['updatedAt'] ?? date(DATE_ATOM),
-        'dropboxLinks' => $dropboxLinks,
+        'googleDriveLinks' => $googleDriveLinks,
+        'dropboxLinks' => $googleDriveLinks,
         'rootCause' => $record['rootCause'] ?? '',
         'resolution' => $record['resolution'] ?? '',
         'owner' => $record['owner'] ?? 'שירות I Feel / MCOHome',
@@ -622,14 +656,21 @@ function mcohome_finalize_record(array $record): array
     $record['sheetSync'] = ['ok' => false, 'status' => 'pending'];
     $record['notificationResults'] = [];
     $record['vendorNotificationResults'] = [];
-    $record['dropboxSync'] = ['ok' => false, 'status' => 'pending'];
+    $record['googleDriveSync'] = ['ok' => false, 'status' => 'pending'];
     mcohome_save_record($record);
 
-    $record = mcohome_sync_media_to_dropbox($record);
+    $record = mcohome_sync_media_to_gdrive($record);
     $record['vendorDraft'] = mcohome_build_vendor_draft($record);
-    $record['vendorNotificationResults'] = mcohome_send_vendor_notification($record);
-    $record['sentToMcohome'] = count(array_filter($record['vendorNotificationResults'])) > 0;
-    if ($record['sentToMcohome'] && ($record['unitStatus'] ?? '') !== 'נסגר') {
+    $hasMedia = count($record['media'] ?? []) > 0;
+    $mediaReady = !$hasMedia || (($record['googleDriveSync']['ok'] ?? false) === true);
+    $record['vendorNotificationResults'] = $mediaReady ? mcohome_send_vendor_notification($record) : [];
+    $vendorCount = count(mcohome_vendor_recipients());
+    $record['sentToMcohome'] = $vendorCount > 0
+        && count($record['vendorNotificationResults']) === $vendorCount
+        && count(array_filter($record['vendorNotificationResults'])) === $vendorCount;
+    if (!$mediaReady && ($record['unitStatus'] ?? '') !== 'נסגר') {
+        $record['unitStatus'] = 'ממתין לסנכרון מדיה ל-Google Drive';
+    } elseif ($record['sentToMcohome'] && ($record['unitStatus'] ?? '') !== 'נסגר') {
         $record['unitStatus'] = 'ממתין לתשובת יצרן';
     }
     $record['updatedAt'] = date(DATE_ATOM);
