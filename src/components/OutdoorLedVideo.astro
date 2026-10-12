@@ -7,7 +7,7 @@ const videoPoster = new URL(video.posterUrl).pathname;
 <section id="outdoor-led-video" class:list={['outdoor-video', { 'outdoor-video-card': card }]} aria-labelledby="outdoor-led-video-title">
   <div>
     <p class="outdoor-video-label">הקולנוע יוצא לגינה</p>
-    <h2 id="outdoor-led-video-title"><a href={video.pageUrl}>מסכי LED חוץ — ביום ובלילה</a></h2>
+    <h2 id="outdoor-video-title"><a href={video.pageUrl}>מסכי LED חוץ — ביום ובלילה</a></h2>
     <p>{video.description}</p>
     <p>בסרטון: פרימיום PixelPro Outdoor P2.976 בגודל 3×1.5 מטר וברזולוציה של 1008×504 פיקסלים. בסדרה הרגילה המפרט והרזולוציה נקבעים לפי הדגם שנבחר ומאושרים לפני הזמנה.</p>
     <p class="outdoor-video-note">הדמיה להמחשה, הכוללת בריכה ותאורה שנערכו באמצעות AI. הבהירות והתוצאה בפועל תלויות במפרט, בשמש ובתנאי ההתקנה. הרמקולים ממחישים שילוב אודיו לפי הפרויקט.</p>
@@ -19,7 +19,10 @@ const videoPoster = new URL(video.posterUrl).pathname;
       <source src={videoSource} type="video/webm" />
       <a href={videoSource}>לצפייה בסרטון מסכי LED חוץ</a>
     </video>
-    <p class="outdoor-video-note">מוזיקה: <a href="https://incompetech.com/music/royalty-free/index.html?isrc=USUAN1400037" target="_blank" rel="noopener noreferrer">Carefree — Kevin MacLeod (incompetech.com)</a>, ברישיון <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener noreferrer">CC BY 4.0</a>. קטע מקוצר עם התאמת עוצמה וכניסה וסיום הדרגתיים.</p>
+    <details class="outdoor-video-credit">
+      <summary>קרדיט למוזיקה</summary>
+      <p>מוזיקה: <a href="https://incompetech.com/music/royalty-free/index.html?isrc=USUAN1400037" target="_blank" rel="noopener noreferrer">Carefree — Kevin MacLeod (incompetech.com)</a> · גרסה מקוצרת וערוכה · <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener noreferrer">CC BY 4.0</a></p>
+    </details>
   </div>
 </section>
 <style>
@@ -31,6 +34,9 @@ const videoPoster = new URL(video.posterUrl).pathname;
   .outdoor-video-cta { display: inline-block; color: #087f9c; font-weight: 700; text-decoration: underline; }
   .outdoor-video-player { width: 100%; max-width: 360px; margin: auto; }
   .outdoor-video video { display: block; width: 100%; height: auto; aspect-ratio: 9 / 16; background: #07111c; border-radius: .75rem; }
+  .outdoor-video-credit { margin-top: .45rem; color: #64748b; font-size: .75rem; text-align: center; }
+  .outdoor-video-credit summary { display: inline-block; cursor: pointer; text-decoration: underline; text-underline-offset: .15em; }
+  .outdoor-video .outdoor-video-credit p { margin: .35rem 0 0; font-size: .75rem; line-height: 1.5; }
   .outdoor-video-card { margin: 0; height: 100%; }
   @media (min-width: 768px) { .outdoor-video:not(.outdoor-video-card) { grid-template-columns: 1.25fr 1fr; align-items: center; padding: 2rem; } }
 </style>
