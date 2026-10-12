@@ -1,0 +1,74 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+const title = 'איכות אוויר KNX ו-BMS: חיישני CO₂, לחות ואוורור | i-feel';
+const description = 'איך מתכננים אוורור לפי CO₂, לחות ותפוסה? מדריך KNX עם VAV, Siemens Desigo, BACnet, טבלת נקודות, תרחישי כשל ושאלות מקצועיות.';
+const canonical = 'https://i-feel.co.il/articles/knx-indoor-air-quality-co2-bms/';
+const faq = [
+  {q:'איך משלבים חיישן CO₂ עם KNX?',a:'מתכננים חיישן מתאים, ממפים את הנתון ב-ETS ומגדירים לוגיקת בקרה להפעלת אוורור או העברת נתונים ל-BMS לפי יכולות הציוד.'},
+  {q:'האם CO₂ לבדו מעיד על איכות האוויר?',a:'לא. הוא מדד שימושי לבדיקת התאמת אוורור לתפוסה, אך עשויים להידרש גם מדדי לחות, טמפרטורה וחומרים נוספים.'},
+  {q:'מה ההבדל בין CO₂ ל-CO₂eq?',a:'CO₂ הוא מדידה של ריכוז פחמן דו-חמצני; CO₂eq לעיתים מחושב בעקיפין מחיישן VOC ואינו שקול בהכרח למדידה ישירה.'},
+  {q:'אפשר לחבר KNX למערכת Siemens Desigo?',a:'בפרויקטים מתאימים ניתן להעביר נתונים ופקודות דרך ממשקים תואמים. נדרשת בדיקה של תצורה, רישוי, פרוטוקולים ומיפוי נקודות.'},
+  {q:'האם אוורור לפי ביקוש חוסך אנרגיה?',a:'הוא עשוי לצמצם הפעלה מיותרת לעומת לוח זמנים קבוע, אך אין להבטיח שיעור חיסכון בלי מדידה מול קו בסיס ותנאי שימוש דומים.'},
+  {q:'מה צריך לכלול מסמך מסירה לאיכות אוויר?',a:'מפת חיישנים, טיפוסי מדידה, יחידות, ספי פעולה והשהיות, פקודות ומשובים, תרחישי כשל, גרסאות תוכנה ותוצאות בדיקות.'}
+];
+const jsonLd = JSON.stringify({'@context':'https://schema.org','@graph':[
+  {'@type':['TechArticle','Article'],headline:'איכות אוויר KNX ו-BMS: מחיישן CO₂ לבקרת אוורור',description,url:canonical,mainEntityOfPage:canonical,datePublished:'2026-10-12',dateModified:'2026-10-12',inLanguage:'he-IL',author:{'@type':'Organization',name:'i-feel',url:'https://i-feel.co.il/'},publisher:{'@id':'https://i-feel.co.il/#business'}},
+  {'@type':'FAQPage',mainEntity:faq.map(x=>({'@type':'Question',name:x.q,acceptedAnswer:{'@type':'Answer',text:x.a}}))},
+  {'@type':'BreadcrumbList',itemListElement:[{'@type':'ListItem',position:1,name:'בית',item:'https://i-feel.co.il/'},{'@type':'ListItem',position:2,name:'מאמרים',item:'https://i-feel.co.il/articles/'},{'@type':'ListItem',position:3,name:'איכות אוויר KNX',item:canonical}]}
+]});
+---
+<BaseLayout title={title} description={description} canonical={canonical} ogTitle={title} ogDescription={description} ogUrl={canonical} jsonLd={jsonLd}>
+<article class="bg-white" dir="rtl">
+<header class="bg-brand-900 text-white py-14"><div class="max-w-4xl mx-auto px-4">
+  <a href="/articles/" class="text-accent-400 font-bold">מרכז ידע מקצועי</a>
+  <p class="mt-4 text-brand-200">KNX · BMS · איכות אוויר · עודכן 12.10.2026</p>
+  <h1 class="text-4xl md:text-5xl font-extrabold leading-tight mt-4">איכות אוויר KNX ו-BMS: מחיישן CO₂ לבקרת אוורור</h1>
+  <p class="text-lg leading-8 mt-5 text-brand-100">כך משלבים חיישני CO₂, לחות, טמפרטורה ותפוסה בבקרת חדרים, אוורור VAV ומערכות ניהול מבנה — בלי להסתפק במספר על צג.</p>
+</div></header>
+<div class="max-w-4xl mx-auto px-4 py-12">
+<section class="rounded-xl border border-accent-100 bg-accent-50 p-7 mb-12">
+<h2 class="text-2xl font-extrabold text-brand-900 mb-3">התשובה הקצרה: איך KNX משפר את בקרת האוורור?</h2>
+<p class="text-lg leading-8 text-brand-700">מודדים את התנאים בחלל — CO₂, לחות, טמפרטורה ונוכחות לפי הצורך — ומשתמשים בהם כדי להתאים את קצב האוורור לביקוש במקום להפעיל מערכת בעוצמה קבועה. KNX יכול לאסוף את המדידות ולהפעיל בקרה מקומית; בקרי DDC ומערכת BMS כגון Siemens Desigo יכולים לרכז נתונים, מגמות והתראות. חייבים להגדיר את סוג החיישן, מיפוי הנקודות ותגובת המערכת במקרה של כשל.</p>
+</section>
+<section class="space-y-5 mb-12">
+<h2 class="text-3xl font-bold text-brand-900">מה התחדש בתחום באוקטובר 2026?</h2>
+<p class="text-lg leading-8 text-brand-700">ב-26 בספטמבר 2026 פרסמה KNX Association סקירה מקצועית על מעבר מאוורור המתבסס על תחושה או לוח זמנים לאוורור לפי מדידה. בפרסי KNX Awards ב-6 באוקטובר הציג פרויקט HUB26 ביוון שילוב של ניטור CO₂ ושליטה באוורור לפי תפוסה, לצד בקרת תאורה לפי אור יום. אלו דוגמאות מתועדות של גורמים אחרים, לא פרויקטים של I Feel. התועלת לפרויקט בישראל היא בשיטת האפיון: לבחור מדד נכון לכל חלל ולבדוק שהוא מוביל לפעולה מועילה.</p>
+<h3 class="text-2xl font-bold text-brand-900">חדר ישיבות, כיתה או חדר רחצה — לא אותה לוגיקה</h3>
+<p class="text-lg leading-8 text-brand-700">בחדר ישיבות צפוף, עליית CO₂ עשויה להעיד שהאוורור אינו תואם את מספר המשתמשים. במקלחת ריקה דווקא הלחות יכולה להיות המדד שמצדיק המשך הפעלת מפוח. לחצן ידני, חיישן נוכחות וטמפרטורה מוסיפים הקשר. תוכנית טובה קובעת כיצד הנתונים פועלים יחד, ומונעת מעבר תכוף ומיותר בין מצבים.</p>
+</section>
+<section class="space-y-5 mb-12">
+<h2 class="text-3xl font-bold text-brand-900">CO₂, לחות, VOC ו-CO₂eq: מה באמת מודדים?</h2>
+<p class="text-lg leading-8 text-brand-700">CO₂ הוא אינדיקטור שימושי להתאמת חילוף אוויר לתפוסה, אך אינו מדד כולל לזיהום האוויר. לחות יחסית רלוונטית במיוחד לחדרים רטובים; טמפרטורה משלימה את תמונת הנוחות; ובחלק מהחללים עשוי להיות צורך בניטור VOC או חלקיקים. שימו לב להבדל בין חיישן שמודד CO₂ ישירות לבין מוצר המדווח CO₂eq — ערך שמחושב בחלק מהמוצרים לפי VOC ואינו שקול בהכרח למדידה ישירה.</p>
+<p class="text-lg leading-8 text-brand-700">בקטלוג KNX הרשמי מופיעים חיישנים רב-תכליתיים המשלבים CO₂, לחות, טמפרטורה, נוכחות ואף VOC או PM2.5 לפי הדגם. לפני רכישה מוודאים את שיטת המדידה, הטווח, נוהל הכיול, קובץ היישום ל-ETS, תנאי ההתקנה וכמות הנתונים הזמינים לבקרה.</p>
+</section>
+<section class="space-y-5 mb-12">
+<h2 class="text-3xl font-bold text-brand-900">ארכיטקטורת KNX + DDC + BACnet + Siemens Desigo</h2>
+<p class="text-lg leading-8 text-brand-700">KNX מתאים לאיסוף מידע מחיישני חדר ולביצוע פעולות מקומיות לפי תכנון. בקר DDC יכול לתרגם ביקוש לפקודות לציוד מיזוג או אוורור; במבנה רחב מערכת BMS מרכזת הפעלה, מגמות, התראות ותצוגות למנהל האחזקה. BACnet או ממשק מתאים אחר מאפשרים מעבר נתונים בין מערכות, בכפוף ליכולות המוצרים והרישוי.</p>
+<h3 class="text-2xl font-bold text-brand-900">רשימת נקודות מינימלית לאפיון ולמסירה</h3>
+<p class="text-lg leading-8 text-brand-700">לכל אזור הגדירו מזהה חלל, סוג חיישן ויחידות מדידה, מקור נתון, כתובת KNX או אובייקט BACnet, כיוון הקריאה והכתיבה, מצב אוורור מבוקש, משוב מצב בפועל, השהיה בין מצבים, התראות ומצב בעת נתק תקשורת. בדיקת שטח צריכה לכלול שינוי מדידה מבוקר, תצוגת הערך במערכת הניהול, תגובת המערכת וחזרה לשגרה.</p>
+<p class="text-lg leading-8 text-brand-700">בעת תכנון VAV או מפוחים, לא די בבחירת סף CO₂. נדרש תיאום עם מתכנן מיזוג האוויר לגבי ספיקות מינימום, רעש, זמני תגובה ודרישות בטיחות. מומלץ לשמור את בקרת הליבה המקומית עצמאית במידת האפשר, ולהימנע ממצב שבו תקלה בתצוגת BMS משביתה אוורור קריטי.</p>
+</section>
+<section class="space-y-5 mb-12">
+<h2 class="text-3xl font-bold text-brand-900">מה לומדים מפרויקט HUB26 ב-KNX Awards 2026?</h2>
+<p class="text-lg leading-8 text-brand-700">ב-HUB26 ביוון שולבו נתוני CO₂ ותפוסה לבקרת אוורור לפי ביקוש, לצד שימוש באור יום להפחתת תאורה מלאכותית. לקח שימושי למנהל מבנה בישראל הוא להגדיר מראש איזה שינוי תפעולי רוצים להשיג, מה המדד שיאמת אותו, ומי יוכל לעדכן את הלוגיקה לאחר מסירה. חיסכון שנמדד בפרויקט מסוים אינו מובטח בפרויקט אחר; יש להשוות נתוני אנרגיה ותנאי שימוש לפני ואחרי השינוי.</p>
+<p class="text-lg leading-8 text-brand-700">ראו גם את <a class="text-accent-700 underline" href="/articles/knx-awards-2026-smart-building-trends/">סקירת KNX Awards 2026</a>, <a class="text-accent-700 underline" href="/structure-control/caesarea-rail-campus/">מקרה הבוחן של I Feel בקמפוס קיסריה</a> ואת <a class="text-accent-700 underline" href="/knx-smart-home/">מרכז KNX באתר</a>. אין בטקסט זה טענה שבקיסריה הותקנו חיישנים או רצפים זהים לאלו של HUB26.</p>
+</section>
+<section class="space-y-4 mb-12">
+<h2 class="text-3xl font-bold text-brand-900">שאלות נפוצות על איכות אוויר ב-KNX</h2>
+{faq.map(x=><details class="border border-brand-100 bg-brand-50 rounded-xl p-5"><summary class="font-bold text-lg text-brand-900">{x.q}</summary><p class="mt-3 leading-7 text-brand-700">{x.a}</p></details>)}
+</section>
+<section class="rounded-xl border border-accent-200 bg-accent-50 p-7 mb-12">
+<h2 class="text-3xl font-extrabold text-brand-900 mb-3">מתכננים KNX או משדרגים BMS? מתחילים במדידה ובאפיון</h2>
+<p class="text-lg leading-8 text-brand-700 mb-5">I Feel מסייעת לתכנן חיבור בין בקרת חדרים, חיישנים, מיזוג ומערכת ניהול מבנה. אפשר להתחיל מתיאור שימושי החללים והציוד הקיים; נבדוק יחד התאמה ומפרט נקודות, בלי להבטיח חיסכון או תאימות לפני סקר.</p>
+<a href="/contactus/#project-enquiry" class="inline-flex bg-accent-600 text-white rounded-lg px-6 py-3 font-bold">בקשה לייעוץ KNX / BMS</a>
+</section>
+<section class="border-t border-brand-100 pt-8">
+<h2 class="text-2xl font-bold text-brand-900 mb-4">מקורות מקצועיים רשמיים</h2>
+<ul class="space-y-3 text-brand-700">
+<li><a class="text-accent-700 underline" href="https://www.knx.org/news/indoor-air-quality-guesswork-measured-control" target="_blank" rel="noopener">KNX Association — Indoor Air Quality, 26.09.2026</a></li>
+<li><a class="text-accent-700 underline" href="https://www.knx.org/news/knx-awards-2026-celebrate-people-and-projects-shaping-future-smart-buildings" target="_blank" rel="noopener">KNX Association — KNX Awards winners, 06.10.2026</a></li>
+<li><a class="text-accent-700 underline" href="https://www.knx.org/devices/multifunctional-sensor" target="_blank" rel="noopener">KNX Product Directory — Multifunctional Sensor</a></li>
+<li><a class="text-accent-700 underline" href="https://www.siemens.com/en-us/products/desigo/room-operation-units/" target="_blank" rel="noopener">Siemens — Desigo Room Operation Units</a></li>
+</ul>
+</section>
+</div></article></BaseLayout>
