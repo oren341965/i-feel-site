@@ -25,6 +25,89 @@
   </figure>
 </section>
 
+<!-- Direct enquiry: no extra /start/ step for a new sales lead. -->
+<section id="homepage-quick-consultation" class="bg-brand-50 border-y border-brand-100 py-10" aria-label="בקשת ייעוץ מהירה">
+  <div class="max-w-6xl mx-auto px-4">
+    <div class="bg-white rounded-2xl border border-brand-100 shadow-sm p-6 md:p-8">
+      <div class="mb-6">
+        <h2 class="text-2xl md:text-3xl font-extrabold text-brand-900">רוצים להתייעץ על פרויקט? נשמח לחזור אליכם</h2>
+        <p class="text-brand-700 mt-2">בית חכם, KNX או בקרת מבנה BMS. השאירו פרטים כאן, בלי לעבור לעמוד נוסף.</p>
+      </div>
+      <div id="homepage-lead-sent" class="hidden mb-5 rounded-lg bg-green-50 border border-green-200 px-4 py-3 text-green-900" role="status" aria-live="polite">
+        הפנייה התקבלה. צוות המכירות יחזור אליכם בשעות הפעילות.
+      </div>
+      <div id="homepage-lead-error" class="hidden mb-5 rounded-lg bg-red-50 border border-red-200 px-4 py-3 text-red-900" role="alert" aria-live="assertive">
+        לא הצלחנו להשלים את הפנייה. בדקו את הפרטים ונסו שוב, או התקשרו ישירות למכירות.
+      </div>
+      <form action="/api/lead.php" method="post" accept-charset="UTF-8" class="grid gap-4" aria-label="טופס בקשת ייעוץ מהיר">
+        <input type="hidden" name="subject" value="בקשת ייעוץ ישירה מדף הבית">
+        <input type="hidden" name="source_page" value="/">
+        <input type="hidden" name="redirect_to" value="/">
+        <div class="hidden" aria-hidden="true">
+          <label>Website <input type="text" name="website" tabindex="-1" autocomplete="off"></label>
+        </div>
+        <div class="grid md:grid-cols-2 gap-4">
+          <label class="block">
+            <span class="block text-sm font-bold text-brand-900 mb-1">שם מלא *</span>
+            <input type="text" name="name" required autocomplete="name" maxlength="120" placeholder="שם פרטי ומשפחה" class="w-full rounded-lg border border-brand-200 px-4 py-3 text-brand-900">
+          </label>
+          <label class="block">
+            <span class="block text-sm font-bold text-brand-900 mb-1">טלפון לחזרה *</span>
+            <input type="tel" name="phone" required autocomplete="tel" inputmode="tel" maxlength="80" placeholder="050-0000000" dir="ltr" class="w-full rounded-lg border border-brand-200 px-4 py-3 text-brand-900 text-right">
+          </label>
+          <label class="block">
+            <span class="block text-sm font-bold text-brand-900 mb-1">סוג הפרויקט *</span>
+            <select name="lead_type" required class="w-full rounded-lg border border-brand-200 px-4 py-3 text-brand-900 bg-white">
+              <option value="">בחרו תחום</option>
+              <option value="לקוח פרטי">בית חכם לדירה או בית פרטי</option>
+              <option value="יזם בנייה">פרויקט יזמי</option>
+              <option value="BMS / בקרת מבנה">בקרת מבנה BMS</option>
+              <option value="אדריכל / מעצב">אדריכל, מעצב או יועץ</option>
+              <option value="אחר">אחר</option>
+            </select>
+          </label>
+          <label class="block">
+            <span class="block text-sm font-bold text-brand-900 mb-1">עיר / יישוב *</span>
+            <input type="text" name="city" required autocomplete="address-level2" maxlength="160" placeholder="למשל ראשון לציון" class="w-full rounded-lg border border-brand-200 px-4 py-3 text-brand-900">
+          </label>
+          <label class="block md:col-span-2">
+            <span class="block text-sm font-bold text-brand-900 mb-1">איך שמעתם עלינו? *</span>
+            <select name="heard_from" required class="w-full rounded-lg border border-brand-200 px-4 py-3 text-brand-900 bg-white">
+              <option value="">בחרו מקור</option>
+              <option value="Google">Google</option>
+              <option value="ChatGPT">ChatGPT</option>
+              <option value="Gemini">Gemini</option>
+              <option value="כלי AI אחר">כלי AI אחר</option>
+              <option value="Facebook / Instagram">Facebook / Instagram</option>
+              <option value="המלצה מלקוח">המלצה מלקוח</option>
+              <option value="אדריכל / מעצב">אדריכל / מעצב</option>
+              <option value="קבלן / חשמלאי / מפקח">קבלן / חשמלאי / מפקח</option>
+              <option value="YouTube">YouTube</option>
+              <option value="כבר לקוח של i-feel">כבר לקוח של i-feel</option>
+              <option value="אחר">אחר</option>
+            </select>
+          </label>
+        </div>
+        <div class="flex flex-wrap items-center gap-4">
+          <button type="submit" data-ga-event="homepage_quick_lead_submit_click" data-ga-params='{"source_page":"/","form":"quick_consultation"}' class="rounded-lg bg-accent-500 hover:bg-accent-600 text-white font-extrabold px-8 py-4">בקשו שיחת ייעוץ</button>
+          <a href="tel:+972-3-508-9553" class="text-accent-700 font-bold underline" aria-label="התקשרו למחלקת המכירות 03-508-9553">מעדיפים לדבר? 03-508-9553</a>
+          <a href="mailto:sales@i-feel.co.il?subject=%D7%91%D7%A7%D7%A9%D7%AA%20%D7%99%D7%99%D7%A2%D7%95%D7%A5" class="text-accent-700 font-bold underline">פנייה למכירות במייל</a>
+        </div>
+        <p class="text-xs text-brand-600">ללא עלות וללא התחייבות. הפרטים מיועדים ליצירת קשר בנוגע לפנייה בלבד.</p>
+      </form>
+    </div>
+  </div>
+</section>
+<script>
+  (function () {
+    var status = new URLSearchParams(location.search).get('lead');
+    var sent = document.getElementById('homepage-lead-sent');
+    var failed = document.getElementById('homepage-lead-error');
+    if ((status === 'sent' || status === 'sent-mail') && sent) sent.classList.remove('hidden');
+    if ((status === 'error' || status === 'missing' || status === 'bad-email') && failed) failed.classList.remove('hidden');
+  })();
+</script>
+
 <!-- 2. VERIFIED PROOF BAR (no logos until written approval — decision 4) -->
 <section class="bg-brand-50 border-y border-brand-100" aria-label="נתוני אמון">
   <div class="max-w-6xl mx-auto px-4 py-10">
