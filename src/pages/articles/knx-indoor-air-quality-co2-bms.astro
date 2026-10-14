@@ -12,7 +12,7 @@ const faq = [
   {q:'מה צריך לכלול מסמך מסירה לאיכות אוויר?',a:'מפת חיישנים, טיפוסי מדידה, יחידות, ספי פעולה והשהיות, פקודות ומשובים, תרחישי כשל, גרסאות תוכנה ותוצאות בדיקות.'}
 ];
 const jsonLd = JSON.stringify({'@context':'https://schema.org','@graph':[
-  {'@type':['TechArticle','Article'],headline:'איכות אוויר KNX ו-BMS: מחיישן CO₂ לבקרת אוורור',description,url:canonical,mainEntityOfPage:canonical,dateModified:'2026-10-13',inLanguage:'he-IL',author:{'@type':'Organization',name:'i-feel',url:'https://i-feel.co.il/'},publisher:{'@id':'https://i-feel.co.il/#business'}},
+  {'@type':['TechArticle','Article'],headline:'איכות אוויר KNX ו-BMS: מחיישן CO₂ לבקרת אוורור',description,url:canonical,mainEntityOfPage:canonical,dateModified:'2026-10-14',inLanguage:'he-IL',author:{'@type':'Organization',name:'i-feel',url:'https://i-feel.co.il/'},publisher:{'@id':'https://i-feel.co.il/#business'}},
   {'@type':'FAQPage',mainEntity:faq.map(x=>({'@type':'Question',name:x.q,acceptedAnswer:{'@type':'Answer',text:x.a}}))},
   {'@type':'BreadcrumbList',itemListElement:[{'@type':'ListItem',position:1,name:'בית',item:'https://i-feel.co.il/'},{'@type':'ListItem',position:2,name:'מאמרים',item:'https://i-feel.co.il/articles/'},{'@type':'ListItem',position:3,name:'איכות אוויר KNX',item:canonical}]}
 ]});
@@ -21,7 +21,7 @@ const jsonLd = JSON.stringify({'@context':'https://schema.org','@graph':[
 <article class="bg-white" dir="rtl">
 <header class="bg-brand-900 text-white py-14"><div class="max-w-4xl mx-auto px-4">
   <a href="/articles/" class="text-accent-400 font-bold">מרכז ידע מקצועי</a>
-  <p class="mt-4 text-brand-200">KNX · BMS · איכות אוויר · עודכן 13.10.2026</p>
+  <p class="mt-4 text-brand-200">KNX · BMS · איכות אוויר · עודכן 14.10.2026</p>
   <h1 class="text-4xl md:text-5xl font-extrabold leading-tight mt-4">איכות אוויר KNX ו-BMS: מחיישן CO₂ לבקרת אוורור</h1>
   <p class="text-lg leading-8 mt-5 text-brand-100">כך משלבים חיישני CO₂, לחות, טמפרטורה ותפוסה בבקרת חדרים, אוורור VAV ומערכות ניהול מבנה — בלי להסתפק במספר על צג.</p>
 </div></header>
@@ -70,7 +70,7 @@ const jsonLd = JSON.stringify({'@context':'https://schema.org','@graph':[
 <section class="rounded-xl border border-accent-200 bg-accent-50 p-7 mb-12">
 <h2 class="text-3xl font-extrabold text-brand-900 mb-3">מתכננים KNX או משדרגים BMS? מתחילים במדידה ובאפיון</h2>
 <p class="text-lg leading-8 text-brand-700 mb-5">I Feel מסייעת לתכנן חיבור בין בקרת חדרים, חיישנים, מיזוג ומערכת ניהול מבנה. אפשר להתחיל מתיאור שימושי החללים והציוד הקיים; נבדוק יחד התאמה ומפרט נקודות, בלי להבטיח חיסכון או תאימות לפני סקר.</p>
-<a data-ga-event="cta_click" data-ga-params='{"cta_id":"knx_iaq_consultation","topic":"knx_iaq"}' href="/contactus/#project-enquiry" class="inline-flex bg-accent-600 text-white rounded-lg px-6 py-3 font-bold">בקשה לייעוץ KNX / BMS</a>
+<a data-ga-event="cta_click" data-ga-params='{"cta_id":"knx_iaq_consultation","topic":"knx_iaq"}' href="/contactus/#contact-form-wrapper" class="inline-flex bg-accent-600 text-white rounded-lg px-6 py-3 font-bold">בקשה לייעוץ KNX / BMS</a>
 </section>
 <section class="border-t border-brand-100 pt-8">
 <h2 class="text-2xl font-bold text-brand-900 mb-4">מקורות מקצועיים רשמיים</h2>
