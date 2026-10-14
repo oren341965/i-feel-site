@@ -434,10 +434,12 @@ function mcohome_email_attachments(array $record): array
 {
     $attachments = [];
     $total = 0;
-    foreach (($record['media'] ?? []) as $media) {
+    $items = $record['media'] ?? [];
+    usort($items, static fn($a, $b): int => (int) (strpos((string) ($b['mime'] ?? ''), 'video/') === 0) - (int) (strpos((string) ($a['mime'] ?? ''), 'video/') === 0));
+    foreach ($items as $media) {
         $mime = (string) ($media['mime'] ?? '');
         $size = (int) ($media['size'] ?? 0);
-        if (strpos($mime, 'image/') !== 0 || $size <= 0 || $total + $size > MCOHOME_EMAIL_ATTACHMENT_MAX_BYTES) {
+        if ((strpos($mime, 'image/') !== 0 && strpos($mime, 'video/') !== 0) || $size <= 0 || $total + $size > MCOHOME_EMAIL_ATTACHMENT_MAX_BYTES) {
             continue;
         }
         $path = mcohome_media_path((string) $record['eventId'], $media);
@@ -473,6 +475,12 @@ function mcohome_build_vendor_draft(array $record): array
     $dropboxLines = mcohome_dropbox_lines($record);
     $evidenceEn = $dropboxLines === [] ? 'Evidence: stored in the secured I Feel fault record. Dropbox sync may still be pending.' : "Evidence / Dropbox:\r\n" . implode("\r\n", $dropboxLines);
     $evidenceCn = $dropboxLines === [] ? '证据资料：已保存在 I Feel 安全故障记录中，Dropbox 同步可能仍在等待。' : "证据 / Dropbox：\r\n" . implode("\r\n", $dropboxLines);
+    if (!empty($record['vendorEvidenceLinks'])) {
+        $evidenceEn = "Watch / download evidence (no employee account required; private links expire in 30 days):\r\n" . implode("\r\n", $record['vendorEvidenceLinks'])
+            . "\r\nShort videos are attached within the email size limit. Free-text Hebrew notes below require translation until the Google gateway is activated.";
+        $evidenceCn = "观看 / 下载证据（无需员工账号；私密链接30天后过期）：\r\n" . implode("\r\n", $record['vendorEvidenceLinks'])
+            . "\r\n邮件大小允许时附上短视频。启用 Google 网关之前，下方希伯来语原文仍需翻译。";
+    }
     $recurringEn = $recurring
         ? 'IMPORTANT: This fault has now been recorded ' . (int) ($record['repeatCount'] ?? 2) . ' times. We require Root Cause Analysis, corrective action and confirmation that the permanent solution is implemented.'
         : 'Please investigate this field fault and provide the recommended corrective action.';
@@ -600,7 +608,7 @@ function mcohome_send_internal_notification(array $record): array
     $subjectPrefix = ($record['recurring'] ?? false) ? '[חוזרת ' . ($record['severity'] ?? 'HIGH') . '] ' : '';
     $subject = $subjectPrefix . 'MCOHome תקלה ' . $record['eventId'] . ' - ' . $record['faultType'];
     $results = [];
-    $recipients = array_unique(array_merge(mcohome_internal_recipients(), [$record['employeeEmail']]));
+    $recipients = array_unique(['oren@i-feel.co.il', 'arik@i-feel.co.il', $record['employeeEmail']]);
     foreach ($recipients as $email) {
         try {
             $results[$email] = portal_send_mail_with_attachments($email, $subject, $body);
@@ -678,7 +686,19 @@ function mcohome_finalize_record(array $record): array
     mcohome_save_record($record);
 
     $record = mcohome_sync_media_to_dropbox($record);
-    $record = mcohome_deliver_with_drive($record);
+    if (mcohome_gateway_config() === null) {
+        // Stage the connection screen without interrupting the existing sender.
+        // Even before gateway activation, attach short videos and use accessible links.
+        $record['driveSync'] = ['ok' => false, 'status' => 'not_configured'];
+        $record['vendorDraft'] = mcohome_build_vendor_draft($record);
+        $record['vendorNotificationResults'] = mcohome_send_vendor_notification($record);
+        $record['sentToMcohome'] = count(array_filter($record['vendorNotificationResults'])) === count(mcohome_vendor_recipients());
+        $record['deliveryMode'] = 'server_mail_pending_google_connection';
+        $record['translationStatus'] = 'original_notes_pending_translation';
+    } else {
+        $record = mcohome_deliver_with_drive($record);
+        $record['deliveryMode'] = 'google_gateway';
+    }
     mcohome_save_record($record);
     if ($record['sentToMcohome'] && ($record['unitStatus'] ?? '') !== 'נסגר') {
         $record['unitStatus'] = 'ממתין לתשובת יצרן';

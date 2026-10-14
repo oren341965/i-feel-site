@@ -896,6 +896,12 @@ try {
     portal_json_write(mcohome_connection_file(), $testGateway);
     portal_test_expect(mcohome_gateway_config() === ['url' => $testGateway['url'], 'secret' => $testGateway['secret']], 'Verified private portal gateway configuration failed.');
     portal_json_write(mcohome_connection_file(), []);
+    $videoEventId = 'MCO-20261014-100005-F3EFC4';
+    $videoFixture = ['stored' => str_repeat('d', 32) . '.mp4', 'mime' => 'video/mp4', 'name' => 'fault.mp4', 'size' => 3];
+    portal_ensure_directory(dirname(mcohome_media_path($videoEventId, $videoFixture)));
+    file_put_contents(mcohome_media_path($videoEventId, $videoFixture), 'abc');
+    $videoAttachments = mcohome_email_attachments(['eventId' => $videoEventId, 'media' => [$videoFixture]]);
+    portal_test_expect(count($videoAttachments) === 1 && $videoAttachments[0]['mime'] === 'video/mp4', 'Server mail must attach short fault videos before Google activation.');
 
     $readiness = portal_readiness_report();
     portal_test_expect(

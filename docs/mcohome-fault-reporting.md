@@ -42,9 +42,13 @@ the server's private portal storage before activation. Authenticated Oren can us
 verification. This does not edit `public/api/config.php`. The web app GET
 returns service/version metadata only. Direct public HTML-to-Sheet writes are
 disabled; only authenticated portal POSTs with the shared secret may deliver.
-Roll out the Apps Script first, then the approved website merge. Until compatible
-Apps Script is deployed, the PHP path preserves private originals and reports
-delivery as unverified; it does not fall back to the legacy inaccessible video mail.
+Before Google connection activation, the server mail path continues operating
+with direct short-video attachments and new expiring accessible links. It reports
+Drive as not configured and Hebrew free-text translation as pending, rather than
+claiming full gateway completion. This lets the approved website deploy the
+Oren-only setup screen without interrupting the existing sender. Once the connection
+passes the health check and is saved, future reports use the complete Drive,
+translation and same-message Cc gateway flow. Existing records are not replayed.
 
 The inline server-to-Apps-Script transfer is bounded to **30 MiB total per report**;
 larger old/offline reports remain on the private server and require manual handling.
