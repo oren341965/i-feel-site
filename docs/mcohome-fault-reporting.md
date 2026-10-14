@@ -30,10 +30,14 @@ authenticated Oren/Arik session and never resends historical reports. It disting
 multiple Event IDs for the same video from unique video contents. No stored token
 means legacy evidence remains employee-only until a reviewed recovery is completed.
 
-Deploy **both Code.gs and Delivery.gs** to the existing Apps Script web app as
+Deploy **both Code.gs and Delivery.gs** to the verified Apps Script web app as
 Oren, authorize Drive, Gmail and translation access, then create a new deployment
 version retaining the existing URL/shared secret. This is a separate deployment
 from the website PR; repository changes alone do not activate it.
+For a new project, the shared secret must be configured in Script Properties and
+the server's existing secure configuration before activation. The web app GET
+returns service/version metadata only. Direct public HTML-to-Sheet writes are
+disabled; only authenticated portal POSTs with the shared secret may deliver.
 Roll out the Apps Script first, then the approved website merge. Until compatible
 Apps Script is deployed, the PHP path preserves private originals and reports
 delivery as unverified; it does not fall back to the legacy inaccessible video mail.

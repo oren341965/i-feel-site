@@ -12,9 +12,7 @@ const MCOHOME_HEADERS = [
 ];
 
 function doGet() {
-  return HtmlService.createHtmlOutputFromFile('Index')
-    .setTitle('דיווח תקלה MCOHome | I Feel')
-    .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.DEFAULT);
+  return json_({ ok: true, service: 'I Feel MCOHome fault delivery', version: '20261014' });
 }
 
 function doPost(e) {
@@ -38,7 +36,7 @@ function doPost(e) {
 }
 
 function saveFaultFromHtml(payload) {
-  return saveFault_(payload || {}, false);
+  throw new Error('Use the authenticated I Feel employee portal. Direct public form writes are disabled.');
 }
 
 function saveFault_(payload, fromPortal, lockAlreadyHeld) {

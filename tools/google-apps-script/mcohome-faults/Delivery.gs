@@ -3,6 +3,9 @@ const MCOHOME_DRIVE_ROOT_ID = '1xEElpkLxeCgXrYBJ-920IAPuqiN-tWxw';
 const MCOHOME_DRIVE_TRANSFER_LIMIT = 30 * 1024 * 1024;
 
 function deliverFault_(payload) {
+  if (Session.getEffectiveUser().getEmail().toLowerCase() !== 'oren@i-feel.co.il') {
+    throw new Error('Deploy as the verified Oren account');
+  }
   const id = String(payload.eventId || '');
   if (!/^MCO-\d{8}-\d{6}-[A-F0-9]{6}$/.test(id)) throw new Error('Invalid Event ID');
   const technician = String(payload.employeeEmail || '').toLowerCase();
