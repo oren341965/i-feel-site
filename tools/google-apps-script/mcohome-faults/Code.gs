@@ -7,13 +7,12 @@ const MCOHOME_HEADERS = [
   'חשד ל-Inrush Current', 'סטטוס היחידה', 'פעולה שבוצעה', 'הוחלף ליחידה חדשה?', 'תאריך החלפה',
   'נשלח ל-MCOHome?', 'מס׳ RMA / משלוח', 'מסקנת יצרן', 'זיכוי / החלפה מהיצרן', 'הערות',
   'תמונה / קישור', 'טכנאי', 'קונטרולר', 'Node ID', 'מספר מופעים', 'תקלה חוזרת?', 'חומרה',
-  'עדכון אחרון', 'Dropbox / מדיה', 'Root Cause', 'פתרון קבוע', 'אחראי'
+  'עדכון אחרון', 'Dropbox / מדיה', 'Root Cause', 'פתרון קבוע', 'אחראי',
+  'Google Drive status', 'Manufacturer delivery status', 'Follow-up due'
 ];
 
 function doGet() {
-  return HtmlService.createHtmlOutputFromFile('Index')
-    .setTitle('דיווח תקלה MCOHome | I Feel')
-    .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.DEFAULT);
+  return json_({ ok: true, service: 'I Feel MCOHome fault delivery', version: '20261014' });
 }
 
 function doPost(e) {
@@ -25,6 +24,16 @@ function doPost(e) {
     }
 
     const payload = body.payload || {};
+    if (payload.action === 'health') {
+      const owner = Session.getEffectiveUser().getEmail().toLowerCase();
+      if (owner !== 'oren@i-feel.co.il') throw new Error('Deploy as Oren');
+      DriveApp.getFolderById(MCOHOME_DRIVE_ROOT_ID).getName();
+      SpreadsheetApp.openById(MCOHOME_SPREADSHEET_ID).getName();
+      return json_({ ok: true, health: { owner: owner, driveFolderId: MCOHOME_DRIVE_ROOT_ID, spreadsheetId: MCOHOME_SPREADSHEET_ID, mailQuota: MailApp.getRemainingDailyQuota() } });
+    }
+    if (payload.action === 'deliverFault') {
+      return json_({ ok: true, delivery: deliverFault_(payload) });
+    }
     const result = saveFault_(payload, true);
     return json_({ ok: true, eventId: result.eventId, row: result.row, updated: result.updated });
   } catch (err) {
@@ -34,12 +43,12 @@ function doPost(e) {
 }
 
 function saveFaultFromHtml(payload) {
-  return saveFault_(payload || {}, false);
+  throw new Error('Use the authenticated I Feel employee portal. Direct public form writes are disabled.');
 }
 
-function saveFault_(payload, fromPortal) {
+function saveFault_(payload, fromPortal, lockAlreadyHeld) {
   const lock = LockService.getScriptLock();
-  lock.waitLock(10000);
+  if (!lockAlreadyHeld) lock.waitLock(10000);
   try {
     const ss = SpreadsheetApp.openById(MCOHOME_SPREADSHEET_ID);
     const sheet = ss.getSheetByName(MCOHOME_SHEET_NAME);
@@ -100,7 +109,10 @@ function saveFault_(payload, fromPortal) {
       dropboxLinks,
       sanitize_(payload.rootCause),
       sanitize_(payload.resolution),
-      sanitize_(payload.owner) || 'שירות I Feel / MCOHome'
+      sanitize_(payload.owner) || 'שירות I Feel / MCOHome',
+      sanitize_(payload.driveStatus),
+      sanitize_(payload.deliveryStatus),
+      sanitize_(payload.followUpDue)
     ];
 
     const existingRow = findEventRow_(sheet, eventId);
@@ -114,7 +126,7 @@ function saveFault_(payload, fromPortal) {
     SpreadsheetApp.flush();
     return { ok: true, eventId: eventId, row: sheet.getLastRow(), updated: false };
   } finally {
-    lock.releaseLock();
+    if (!lockAlreadyHeld) lock.releaseLock();
   }
 }
 

@@ -879,6 +879,30 @@ try {
         'Supervision exact customer-name matching is wrong.'
     );
 
+    $vendorToken = str_repeat('a', 64);
+    $vendorRecord = ['vendorEvidenceTokenHash' => hash('sha256', $vendorToken), 'vendorEvidenceExpiresAt' => 200];
+    portal_test_expect(mcohome_evidence_token_valid($vendorRecord, $vendorToken, 100), 'Valid manufacturer token rejected.');
+    portal_test_expect(!mcohome_evidence_token_valid($vendorRecord, $vendorToken, 200), 'Expired manufacturer token accepted.');
+    portal_test_expect(!mcohome_evidence_token_valid($vendorRecord, str_repeat('b', 64), 100), 'Wrong manufacturer token accepted.');
+    portal_test_expect(!mcohome_evidence_token_valid([], $vendorToken, 100), 'Legacy evidence without token must remain private.');
+    portal_test_expect(mcohome_evidence_range('bytes=2-5', 10) === [2, 5], 'Video byte range failed.');
+    portal_test_expect(mcohome_evidence_range('bytes=-3', 10) === [7, 9], 'Video suffix range failed.');
+    portal_test_expect(mcohome_evidence_range('bytes=10-', 10) === null, 'Out-of-bounds video range accepted.');
+    portal_test_expect(mcohome_evidence_range('bytes=0-2,5-7', 10) === null, 'Multiple byte ranges must be rejected.');
+    portal_json_write(mcohome_connection_file(), ['url' => 'https://example.com/exec', 'secret' => str_repeat('c', 64), 'owner' => 'oren@i-feel.co.il', 'verifiedAt' => '2026-10-14']);
+    portal_test_expect(mcohome_gateway_config() === null, 'Non-Google gateway must be rejected.');
+    portal_test_expect(mcohome_request_gateway(['url' => 'https://example.com/exec', 'secret' => 'private'], ['action' => 'health'])['status'] === 'invalid_config', 'Gateway SSRF filter failed.');
+    $testGateway = ['url' => 'https://script.google.com/macros/s/' . str_repeat('A', 30) . '/exec', 'secret' => str_repeat('c', 64), 'owner' => 'oren@i-feel.co.il', 'verifiedAt' => '2026-10-14'];
+    portal_json_write(mcohome_connection_file(), $testGateway);
+    portal_test_expect(mcohome_gateway_config() === ['url' => $testGateway['url'], 'secret' => $testGateway['secret']], 'Verified private portal gateway configuration failed.');
+    portal_json_write(mcohome_connection_file(), []);
+    $videoEventId = 'MCO-20261014-100005-F3EFC4';
+    $videoFixture = ['stored' => str_repeat('d', 32) . '.mp4', 'mime' => 'video/mp4', 'name' => 'fault.mp4', 'size' => 3];
+    portal_ensure_directory(dirname(mcohome_media_path($videoEventId, $videoFixture)));
+    file_put_contents(mcohome_media_path($videoEventId, $videoFixture), 'abc');
+    $videoAttachments = mcohome_email_attachments(['eventId' => $videoEventId, 'media' => [$videoFixture]]);
+    portal_test_expect(count($videoAttachments) === 1 && $videoAttachments[0]['mime'] === 'video/mp4', 'Server mail must attach short fault videos before Google activation.');
+
     $readiness = portal_readiness_report();
     portal_test_expect(
         (bool) ($readiness['ready'] ?? false),

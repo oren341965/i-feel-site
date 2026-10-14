@@ -157,6 +157,11 @@
     async function validateFiles(targetForm) {
         const input = targetForm.querySelector('input[type="file"][name="media[]"]');
         if (!input || !input.files) return true;
+        const total = Array.from(input.files).reduce(function (sum, file) { return sum + file.size; }, 0);
+        if (total > 30 * 1024 * 1024) {
+            setStatus('ניתן לשלוח ל-Google Drive עד 30MB של מדיה לדיווח. יש לקצר או לדחוס את הסרטון.', 'error');
+            return false;
+        }
         for (const file of input.files) {
             if (file.size > MAX_FILE_BYTES) {
                 setStatus('הקובץ גדול מדי. ניתן לצרף עד 140MB לקובץ.', 'error');
@@ -203,7 +208,7 @@
                 const payload = await sendItem(item);
                 await queueDelete(item.eventId);
                 const repeat = payload.recurring ? ' התקלה זוהתה כחוזרת ונפתחה בחומרה ' + (payload.severity || 'HIGH') + '.' : '';
-                setStatus('התקלה ' + payload.eventId + ' נשלחה ונשמרה.' + repeat, payload.recurring ? 'error' : 'success');
+                showDeliveryStatus(payload, repeat);
             } catch (error) {
                 if (error && error.authRequired) {
                     setStatus('יש דיווחים שמורים במכשיר. התחבר לאזור העובדים כשיש אינטרנט והם יישלחו אוטומטית.', 'info');
@@ -213,6 +218,14 @@
             }
         }
         await updateQueueCount();
+    }
+
+    function showDeliveryStatus(payload, suffix) {
+        const delivered = payload.vendorSent === true && payload.driveSync && payload.driveSync.ok === true;
+        const text = delivered
+            ? 'הדיווח ' + payload.eventId + ' נשמר ב-Google Drive והודעה נשלחה ליצרן עם הטכנאי, אורן ואריק בעותק.'
+            : 'הדיווח ' + payload.eventId + ' נשמר בשרת. העלאה ל-Drive או שליחה ליצרן לא אושרו; נדרש טיפול של אריק ואורן.';
+        setStatus(text + suffix, delivered && !payload.recurring ? 'success' : 'error');
     }
 
     async function onSubmit(event) {
@@ -235,7 +248,7 @@
             try {
                 const payload = await sendItem(item);
                 const recurringText = payload.recurring ? ' זוהתה תקלה חוזרת. החומרה: ' + (payload.severity || 'HIGH') + '.' : '';
-                setStatus('הדיווח נשמר במספר ' + payload.eventId + ' ונשלח למעקב.' + recurringText, payload.recurring ? 'error' : 'success');
+                showDeliveryStatus(payload, recurringText);
                 targetForm.reset();
                 ensureClientEventId(targetForm);
             } catch (error) {

@@ -1,5 +1,14 @@
 # MCOHome fault reporting
 
+## Drive and shared manufacturer message rollout
+
+See `docs/mcohome-fault-reporting.md` in the repository for the October 2026 rollout.
+Deploy `Delivery.gs` together with `Code.gs` before merging the PHP delivery changes.
+Use Oren's verified `MCOHome Service Calls` root `1xEElpkLxeCgXrYBJ-920IAPuqiN-tWxw`.
+New Drive/Gmail/translation authorization must be completed by the deployment owner.
+The existing secret and deployment URL remain server-only; do not commit them.
+The old Dropbox archive remains optional; it does not replace Google Drive delivery.
+
 This workflow keeps one event ID per fault from technician capture through manufacturer closure. The Google Sheet is the tracking source for status, recurring faults, severity, RMA, Root Cause and permanent resolution.
 
 ## Technician app

@@ -63,6 +63,8 @@ try {
             'eventId' => $eventId,
             'recurring' => (bool) ($existing['recurring'] ?? false),
             'severity' => (string) ($existing['severity'] ?? 'NORMAL'),
+            'vendorSent' => (bool) ($existing['sentToMcohome'] ?? false),
+            'driveSync' => $existing['driveSync'] ?? ['ok' => false, 'status' => 'unverified'],
         ]);
     }
 
@@ -121,6 +123,7 @@ try {
         'repeatCount' => (int) ($record['repeatCount'] ?? 1),
         'severity' => (string) ($record['severity'] ?? 'NORMAL'),
         'vendorSent' => (bool) ($record['sentToMcohome'] ?? false),
+        'driveSync' => $record['driveSync'] ?? [],
         'sheetSync' => $record['sheetSync'] ?? [],
         'dropboxSync' => $record['dropboxSync'] ?? [],
     ]);

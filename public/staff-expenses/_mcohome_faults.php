@@ -123,6 +123,7 @@ function mcohome_save_media(string $eventId, array $files): array
             'name' => $original,
             'mime' => $mime,
             'size' => $size,
+            'sha256' => hash_file('sha256', $target),
             'dropboxStatus' => 'pending',
             'dropboxPath' => '',
             'dropboxUrl' => '',
@@ -160,6 +161,36 @@ function mcohome_media_path(string $eventId, array $media): string
 function mcohome_media_url(string $eventId, int $index): string
 {
     return portal_public_origin() . portal_base_path() . 'mcohome-media.php?id=' . rawurlencode($eventId) . '&f=' . $index;
+}
+
+function mcohome_vendor_media_url(string $eventId, int $index, string $token): string
+{
+    return portal_public_origin() . portal_base_path() . 'mcohome-evidence.php?id=' . rawurlencode($eventId)
+        . '&f=' . $index . '&token=' . rawurlencode($token);
+}
+
+function mcohome_evidence_token_valid(array $record, string $token, int $now): bool
+{
+    return preg_match('/^[a-f0-9]{64}$/', $token) === 1
+        && (int) ($record['vendorEvidenceExpiresAt'] ?? 0) > $now
+        && isset($record['vendorEvidenceTokenHash'])
+        && hash_equals((string) $record['vendorEvidenceTokenHash'], hash('sha256', $token));
+}
+
+function mcohome_evidence_range(string $header, int $size): ?array
+{
+    if ($size <= 0) { return null; }
+    if ($header === '') { return [0, $size - 1]; }
+    if (strlen($header) > 80 || !preg_match('/^bytes=(\d*)-(\d*)$/', $header, $match) || ($match[1] === '' && $match[2] === '')) {
+        return null;
+    }
+    if ($match[1] === '') {
+        $suffix = (int) $match[2];
+        return $suffix > 0 ? [max(0, $size - $suffix), $size - 1] : null;
+    }
+    $start = (int) $match[1];
+    $end = $match[2] !== '' ? min((int) $match[2], $size - 1) : $size - 1;
+    return $start <= $end && $start < $size ? [$start, $end] : null;
 }
 
 function mcohome_internal_recipients(): array
@@ -403,10 +434,12 @@ function mcohome_email_attachments(array $record): array
 {
     $attachments = [];
     $total = 0;
-    foreach (($record['media'] ?? []) as $media) {
+    $items = $record['media'] ?? [];
+    usort($items, static fn($a, $b): int => (int) (strpos((string) ($b['mime'] ?? ''), 'video/') === 0) - (int) (strpos((string) ($a['mime'] ?? ''), 'video/') === 0));
+    foreach ($items as $media) {
         $mime = (string) ($media['mime'] ?? '');
         $size = (int) ($media['size'] ?? 0);
-        if (strpos($mime, 'image/') !== 0 || $size <= 0 || $total + $size > MCOHOME_EMAIL_ATTACHMENT_MAX_BYTES) {
+        if ((strpos($mime, 'image/') !== 0 && strpos($mime, 'video/') !== 0) || $size <= 0 || $total + $size > MCOHOME_EMAIL_ATTACHMENT_MAX_BYTES) {
             continue;
         }
         $path = mcohome_media_path((string) $record['eventId'], $media);
@@ -442,6 +475,12 @@ function mcohome_build_vendor_draft(array $record): array
     $dropboxLines = mcohome_dropbox_lines($record);
     $evidenceEn = $dropboxLines === [] ? 'Evidence: stored in the secured I Feel fault record. Dropbox sync may still be pending.' : "Evidence / Dropbox:\r\n" . implode("\r\n", $dropboxLines);
     $evidenceCn = $dropboxLines === [] ? '证据资料：已保存在 I Feel 安全故障记录中，Dropbox 同步可能仍在等待。' : "证据 / Dropbox：\r\n" . implode("\r\n", $dropboxLines);
+    if (!empty($record['vendorEvidenceLinks'])) {
+        $evidenceEn = "Watch / download evidence (no employee account required; private links expire in 30 days):\r\n" . implode("\r\n", $record['vendorEvidenceLinks'])
+            . "\r\nShort videos are attached within the email size limit. Free-text Hebrew notes below require translation until the Google gateway is activated.";
+        $evidenceCn = "观看 / 下载证据（无需员工账号；私密链接30天后过期）：\r\n" . implode("\r\n", $record['vendorEvidenceLinks'])
+            . "\r\n邮件大小允许时附上短视频。启用 Google 网关之前，下方希伯来语原文仍需翻译。";
+    }
     $recurringEn = $recurring
         ? 'IMPORTANT: This fault has now been recorded ' . (int) ($record['repeatCount'] ?? 2) . ' times. We require Root Cause Analysis, corrective action and confirmation that the permanent solution is implemented.'
         : 'Please investigate this field fault and provide the recommended corrective action.';
@@ -524,6 +563,9 @@ function mcohome_send_internal_notification(array $record): array
         if (($media['dropboxUrl'] ?? '') !== '') {
             $line .= ' | Dropbox: ' . $media['dropboxUrl'];
         }
+        if (($media['driveUrl'] ?? '') !== '') {
+            $line .= ' | Google Drive: ' . $media['driveUrl'];
+        }
         $mediaLines[] = $line;
     }
     $vendorResults = $record['vendorNotificationResults'] ?? [];
@@ -547,16 +589,27 @@ function mcohome_send_internal_notification(array $record): array
         'סטטוס: ' . ($record['unitStatus'] ?? 'פתוח'),
         'נשלח ל-MCOHome: ' . (($record['sentToMcohome'] ?? false) ? 'כן' : 'לא') . ' (' . $vendorOk . '/' . count(mcohome_vendor_recipients()) . ')',
         'Dropbox: ' . (($record['dropboxSync']['status'] ?? '') ?: 'לא הוגדר'), '',
+        'Google Drive: ' . ($record['driveSync']['status'] ?? 'לא אומת'),
+        'אחראי מעקב: ' . ($record['owner'] ?? 'לא צוין'),
+        'מועד מעקב: ' . ($record['followUpDue'] ?? 'לא נקבע — נדרש טיפול בשליחה'),
+        'אישור השליחה הוא אישור מסירה לשירות הדואר, לא אישור קבלה או קריאה אצל היצרן.', '',
         'מדיה מאובטחת:',
         $mediaLines === [] ? 'לא צורפה מדיה' : implode("\r\n", $mediaLines), '',
         ($record['recurring'] ?? false)
             ? 'שימו לב: זו תקלה חוזרת. יש לנהל אותה כתקלה חמורה עד לקבלת Root Cause ופתרון קבוע מהיצרן.'
             : 'התקלה נשארת פתוחה במעקב עד לקבלת פתרון וסגירה מתועדת מול היצרן.',
     ]);
+    if (isset($record['vendorDraft'])) {
+        $body .= "\r\n\r\nעותק ההודעה ליצרן:\r\nTo: " . $record['vendorDraft']['to']
+            . "\r\nCc: " . ($record['vendorDraft']['cc'] ?? '')
+            . "\r\nSubject: " . $record['vendorDraft']['subject']
+            . "\r\n\r\n" . $record['vendorDraft']['body'];
+    }
     $subjectPrefix = ($record['recurring'] ?? false) ? '[חוזרת ' . ($record['severity'] ?? 'HIGH') . '] ' : '';
     $subject = $subjectPrefix . 'MCOHome תקלה ' . $record['eventId'] . ' - ' . $record['faultType'];
     $results = [];
-    foreach (mcohome_internal_recipients() as $email) {
+    $recipients = array_unique(['oren@i-feel.co.il', 'arik@i-feel.co.il', $record['employeeEmail']]);
+    foreach ($recipients as $email) {
         try {
             $results[$email] = portal_send_mail_with_attachments($email, $subject, $body);
         } catch (Throwable $error) {
@@ -601,7 +654,7 @@ function mcohome_sheet_payload(array $record): array
         'manufacturerConclusion' => $record['manufacturerConclusion'] ?? '',
         'manufacturerCredit' => $record['manufacturerCredit'] ?? '',
         'notes' => $record['notes'],
-        'mediaLinks' => array_map(static fn($i): string => mcohome_media_url($record['eventId'], $i), array_keys($record['media'] ?? [])),
+        'mediaLinks' => array_map(static fn($i): string => ($record['media'][$i]['driveUrl'] ?? '') ?: mcohome_media_url($record['eventId'], $i), array_keys($record['media'] ?? [])),
         'controller' => $record['controller'],
         'nodeId' => $record['nodeId'],
         'repeatCount' => $record['repeatCount'] ?? 1,
@@ -612,6 +665,9 @@ function mcohome_sheet_payload(array $record): array
         'rootCause' => $record['rootCause'] ?? '',
         'resolution' => $record['resolution'] ?? '',
         'owner' => $record['owner'] ?? 'שירות I Feel / MCOHome',
+        'driveStatus' => $record['driveSync']['status'] ?? 'pending',
+        'deliveryStatus' => $record['manufacturerDelivery']['status'] ?? 'pending',
+        'followUpDue' => $record['followUpDue'] ?? '',
     ];
 }
 
@@ -623,12 +679,27 @@ function mcohome_finalize_record(array $record): array
     $record['notificationResults'] = [];
     $record['vendorNotificationResults'] = [];
     $record['dropboxSync'] = ['ok' => false, 'status' => 'pending'];
+    $evidenceToken = bin2hex(random_bytes(32));
+    $record['vendorEvidenceTokenHash'] = hash('sha256', $evidenceToken);
+    $record['vendorEvidenceExpiresAt'] = time() + 30 * 86400;
+    $record['vendorEvidenceLinks'] = array_map(static fn($i): string => mcohome_vendor_media_url($record['eventId'], $i, $evidenceToken), array_keys($record['media'] ?? []));
     mcohome_save_record($record);
 
     $record = mcohome_sync_media_to_dropbox($record);
-    $record['vendorDraft'] = mcohome_build_vendor_draft($record);
-    $record['vendorNotificationResults'] = mcohome_send_vendor_notification($record);
-    $record['sentToMcohome'] = count(array_filter($record['vendorNotificationResults'])) > 0;
+    if (mcohome_gateway_config() === null) {
+        // Stage the connection screen without interrupting the existing sender.
+        // Even before gateway activation, attach short videos and use accessible links.
+        $record['driveSync'] = ['ok' => false, 'status' => 'not_configured'];
+        $record['vendorDraft'] = mcohome_build_vendor_draft($record);
+        $record['vendorNotificationResults'] = mcohome_send_vendor_notification($record);
+        $record['sentToMcohome'] = count(array_filter($record['vendorNotificationResults'])) === count(mcohome_vendor_recipients());
+        $record['deliveryMode'] = 'server_mail_pending_google_connection';
+        $record['translationStatus'] = 'original_notes_pending_translation';
+    } else {
+        $record = mcohome_deliver_with_drive($record);
+        $record['deliveryMode'] = 'google_gateway';
+    }
+    mcohome_save_record($record);
     if ($record['sentToMcohome'] && ($record['unitStatus'] ?? '') !== 'נסגר') {
         $record['unitStatus'] = 'ממתין לתשובת יצרן';
     }
@@ -639,22 +710,46 @@ function mcohome_finalize_record(array $record): array
     return $record;
 }
 
-function mcohome_try_apps_script(array $payload): array
+function mcohome_connection_file(): string
 {
+    return mcohome_storage_root() . DIRECTORY_SEPARATOR . 'gateway.json';
+}
+
+function mcohome_gateway_config(): ?array
+{
+    $saved = portal_json_read(mcohome_connection_file());
+    if (($saved['owner'] ?? '') === 'oren@i-feel.co.il' && !empty($saved['verifiedAt'])
+        && preg_match('~^https://script\.google\.com/macros/s/[A-Za-z0-9_-]{20,}/exec$~', (string) ($saved['url'] ?? ''))
+        && preg_match('/^[a-f0-9]{64}$/', (string) ($saved['secret'] ?? ''))) {
+        return ['url' => $saved['url'], 'secret' => $saved['secret']];
+    }
     $urlName = defined('MCOHOME_FAULT_APPS_SCRIPT_URL') ? 'MCOHOME_FAULT_APPS_SCRIPT_URL' : (defined('MCOHOME_FAULTS_WEB_APP_URL') ? 'MCOHOME_FAULTS_WEB_APP_URL' : '');
     $secretName = defined('MCOHOME_FAULT_APPS_SCRIPT_SECRET') ? 'MCOHOME_FAULT_APPS_SCRIPT_SECRET' : (defined('MCOHOME_FAULTS_SHARED_SECRET') ? 'MCOHOME_FAULTS_SHARED_SECRET' : '');
     if ($urlName === '' || $secretName === '') {
-        return ['ok' => false, 'status' => 'not_configured'];
+        return null;
     }
     $url = trim((string) constant($urlName));
     $secret = trim((string) constant($secretName));
-    if ($url === '' || $secret === '' || strpos($url, 'https://script.google.com/') !== 0 || !function_exists('curl_init')) {
+    return $url !== '' && $secret !== '' && strpos($url, 'https://script.google.com/') === 0 ? ['url' => $url, 'secret' => $secret] : null;
+}
+
+function mcohome_try_apps_script(array $payload): array
+{
+    $config = mcohome_gateway_config();
+    return $config === null ? ['ok' => false, 'status' => 'not_configured'] : mcohome_request_gateway($config, $payload);
+}
+
+function mcohome_request_gateway(array $config, array $payload): array
+{
+    $url = (string) ($config['url'] ?? '');
+    $secret = (string) ($config['secret'] ?? '');
+    if (!preg_match('~^https://script\.google\.com/macros/s/[A-Za-z0-9_-]{20,}/exec$~', $url) || $secret === '' || !function_exists('curl_init')) {
         return ['ok' => false, 'status' => 'invalid_config'];
     }
     $ch = curl_init($url);
     curl_setopt_array($ch, [
         CURLOPT_POST => true, CURLOPT_RETURNTRANSFER => true, CURLOPT_FOLLOWLOCATION => true,
-        CURLOPT_MAXREDIRS => 3, CURLOPT_CONNECTTIMEOUT => 5, CURLOPT_TIMEOUT => 15,
+        CURLOPT_MAXREDIRS => 3, CURLOPT_CONNECTTIMEOUT => 5, CURLOPT_TIMEOUT => (($payload['action'] ?? '') === 'deliverFault' ? 120 : 15),
         CURLOPT_HTTPHEADER => ['Content-Type: application/json; charset=utf-8'],
         CURLOPT_POSTFIELDS => json_encode(['secret' => $secret, 'payload' => $payload], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES),
     ]);
@@ -666,5 +761,56 @@ function mcohome_try_apps_script(array $payload): array
         return ['ok' => false, 'status' => 'communication_error'];
     }
     $decoded = json_decode((string) $raw, true);
-    return ['ok' => is_array($decoded) && (($decoded['ok'] ?? false) || ($decoded['success'] ?? false)), 'status' => 'completed', 'response' => $decoded];
+    $ok = is_array($decoded) && (($decoded['ok'] ?? false) || ($decoded['success'] ?? false));
+    return ['ok' => $ok, 'status' => $ok ? 'completed' : 'rejected', 'response' => $decoded];
+}
+
+function mcohome_deliver_with_drive(array $record): array
+{
+    $record['sentToMcohome'] = false;
+    $record['driveSync'] = ['ok' => false, 'status' => 'pending'];
+    $record['vendorNotificationResults'] = array_fill_keys(mcohome_vendor_recipients(), false);
+    $record['owner'] = 'arik@i-feel.co.il';
+    $payload = mcohome_sheet_payload($record);
+    $payload['action'] = 'deliverFault';
+    $payload['vendorEvidenceLinks'] = $record['vendorEvidenceLinks'] ?? [];
+    $payload['evidenceFiles'] = [];
+    $total = 0;
+    foreach (($record['media'] ?? []) as $media) {
+        $path = mcohome_media_path($record['eventId'], $media);
+        $size = is_file($path) ? (int) filesize($path) : 0;
+        $total += $size;
+        if ($size <= 0 || $total > 30 * 1024 * 1024) {
+            $record['driveSync']['status'] = $size <= 0 ? 'missing_media' : 'size_limit';
+            return $record;
+        }
+        $bytes = file_get_contents($path);
+        if ($bytes === false) {
+            $record['driveSync']['status'] = 'read_failed';
+            return $record;
+        }
+        $payload['evidenceFiles'][] = ['key' => $media['stored'], 'name' => $media['name'], 'mime' => $media['mime'], 'size' => $size, 'base64' => base64_encode($bytes)];
+    }
+    $result = mcohome_try_apps_script($payload);
+    $delivery = $result['response']['delivery'] ?? [];
+    $expectedCc = array_values(array_unique(['oren@i-feel.co.il', 'arik@i-feel.co.il', $record['employeeEmail']]));
+    $verified = ($result['ok'] ?? false) && ($delivery['status'] ?? '') === 'submitted'
+        && ($delivery['eventId'] ?? '') === $record['eventId']
+        && ($delivery['driveStatus'] ?? '') === 'completed'
+        && count($delivery['evidence'] ?? []) === count($record['media'] ?? [])
+        && ($delivery['to'] ?? []) === mcohome_vendor_recipients()
+        && ($delivery['cc'] ?? []) === $expectedCc;
+    $record['driveSync'] = ['ok' => $verified, 'status' => $verified ? 'completed' : ($result['status'] ?? 'failed')];
+    if ($verified) {
+        $record['manufacturerDelivery'] = $delivery;
+        $record['vendorDraft'] = ['to' => implode(',', $delivery['to']), 'cc' => implode(',', $delivery['cc']), 'subject' => $delivery['subject'], 'body' => $delivery['body']];
+        $record['sentToMcohome'] = true;
+        $record['vendorNotificationResults'] = array_fill_keys(mcohome_vendor_recipients(), true);
+        foreach ($delivery['evidence'] as $index => $file) {
+            $record['media'][$index]['driveId'] = $file['id'];
+            $record['media'][$index]['driveUrl'] = $file['url'];
+        }
+        $record['followUpDue'] = $delivery['followUpDue'];
+    }
+    return $record;
 }
