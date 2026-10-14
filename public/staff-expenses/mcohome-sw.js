@@ -1,4 +1,4 @@
-const CACHE = 'ifeel-mcohome-v2-drive';
+const CACHE = 'ifeel-mcohome-v3-private';
 const APP_SHELL = [
   './mcohome-offline.html',
   './mcohome-app.js',
@@ -33,7 +33,10 @@ self.addEventListener('fetch', event => {
     return;
   }
 
-  if (url.pathname.indexOf('/staff-expenses/') !== -1 || url.pathname.indexOf('/assets/ifeel-logo.png') !== -1) {
+  // Cache only the explicit public app shell. Never cache authenticated pages,
+  // login state, evidence, connection settings or incident receipts.
+  const shellUrls = APP_SHELL.map(path => new URL(path, self.location.href));
+  if (shellUrls.some(shell => shell.pathname === url.pathname)) {
     event.respondWith(
       caches.match(request).then(cached => cached || fetch(request).then(response => {
         if (response && response.ok) {
