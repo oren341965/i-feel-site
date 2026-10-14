@@ -57,7 +57,27 @@ function deliverFault_(payload) {
     const en = LanguageApp.translate(text, '', 'en');
     const cn = LanguageApp.translate(text, '', 'zh-CN');
     if (!en.trim() || !cn.trim()) throw new Error('Translation failed');
-    const links = evidence.map(function (file) { return file.name + ': ' + file.url; }).join('\n') || 'No media submitted / 未提交媒体';
+    const vendorLinks = payload.vendorEvidenceLinks || [];
+    if (!Array.isArray(vendorLinks) || vendorLinks.length !== evidence.length) throw new Error('Missing manufacturer-accessible evidence links');
+    vendorLinks.forEach(function (url, index) {
+      const expected = 'https://i-feel.co.il/staff-expenses/mcohome-evidence.php?id=' + id + '&f=' + index + '&token=';
+      if (typeof url !== 'string' || !url.startsWith(expected) || !/^[a-f0-9]{64}$/.test(url.slice(expected.length))) {
+        throw new Error('Invalid manufacturer evidence link');
+      }
+    });
+    const links = evidence.map(function (file, index) {
+      return file.name + '\nWatch / download (no employee login): ' + vendorLinks[index] + '\nGoogle Drive archive: ' + file.url;
+    }).join('\n\n') || 'No media submitted / 未提交媒体';
+    let attachmentBytes = 0;
+    const attachments = [];
+    const attachmentNames = [];
+    decoded.slice().sort(function (a, b) { return Number(b.mime.startsWith('video/')) - Number(a.mime.startsWith('video/')); }).forEach(function (file) {
+      if (attachmentBytes + file.bytes.length <= 12 * 1024 * 1024) {
+        attachments.push(Utilities.newBlob(file.bytes, file.mime, file.name));
+        attachmentNames.push(file.name);
+        attachmentBytes += file.bytes.length;
+      }
+    });
     const subject = '[I Feel][' + String(payload.severity || 'NORMAL') + '] MCOHome fault ' + id + ' - ' + String(payload.model || '');
     const due = new Date(Date.now() + 2 * 24 * 60 * 60 * 1000).toISOString();
     const body = [
@@ -69,20 +89,22 @@ function deliverFault_(payload) {
       'Fault description (automatic translation): ' + en,
       'Please acknowledge receipt and video access. Provide your diagnosis, Root Cause and permanent corrective action.',
       'Please reply to all and retain the Event ID. I Feel follow-up due: ' + due,
-      'Evidence / Google Drive:\n' + links, '', '中文',
+      'Short videos are attached where the email size limit permits. The I Feel watch/download link needs no employee account and expires in 30 days.',
+      'Evidence:\n' + links, '', '中文',
       '事件编号: ' + id, '型号: ' + String(payload.model || '未提供'),
       '序列号: ' + String(payload.serialNumber || '未提供'),
       '报告人: ' + technician, '已记录次数: ' + Number(payload.repeatCount || 1),
       '故障描述（自动翻译）: ' + cn,
       '请确认收到邮件并能够访问视频。请提供诊断、根本原因分析和永久纠正措施。',
       '请回复所有收件人并保留事件编号。I Feel 跟进日期: ' + due,
-      '证据 / Google Drive:\n' + links, '', 'Original technician description / 原始说明:', text
+      '邮件大小允许时，短视频将直接作为附件发送。I Feel 视频链接无需员工账号，30天后过期。',
+      '证据:\n' + links, '', 'Original technician description / 原始说明:', text
     ].join('\n');
     const tracked = Object.assign({}, payload, { mediaLinks: evidence.map(function (f) { return f.url; }), sentToMcohome: false, owner: 'arik@i-feel.co.il', unitStatus: 'ממתין לשליחה ליצרן', driveStatus: 'completed', deliveryStatus: 'submitting', followUpDue: due });
     saveFault_(tracked, true, true);
-    receipt = { eventId: id, status: 'submitting', driveStatus: 'completed', evidence: evidence, to: to, cc: cc, subject: subject, body: body, owner: 'arik@i-feel.co.il', followUpDue: due };
+    receipt = { eventId: id, status: 'submitting', driveStatus: 'completed', evidence: evidence, vendorEvidenceLinks: vendorLinks, attachmentNames: attachmentNames, to: to, cc: cc, subject: subject, body: body, owner: 'arik@i-feel.co.il', followUpDue: due };
     persist(receipt);
-    GmailApp.sendEmail(to.join(','), subject, body, { cc: cc.join(','), replyTo: 'oren@i-feel.co.il', name: 'I Feel Technical Team' });
+    GmailApp.sendEmail(to.join(','), subject, body, { cc: cc.join(','), replyTo: 'oren@i-feel.co.il', name: 'I Feel Technical Team', attachments: attachments });
     receipt.status = 'submitted';
     receipt.submittedAt = new Date().toISOString();
     persist(receipt);

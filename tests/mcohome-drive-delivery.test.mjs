@@ -38,7 +38,7 @@ function setup({ shareFails = false, sendFails = false, sheetFails = false } = {
     saveFault_: payload => { if (sheetFails) throw new Error('sheet unavailable'); tracked.push(payload); }
   });
   vm.runInContext(fs.readFileSync('tools/google-apps-script/mcohome-faults/Delivery.gs', 'utf8'), context);
-  const payload = { eventId: 'MCO-20261014-100005-F3EFC4', employeeEmail: 'refael@i-feel.co.il', description: 'תקלה חוזרת', model: 'MH-C621', repeatCount: 3, evidenceFiles: [{ key: 'a'.repeat(32) + '.mp4', name: 'fault.mp4', mime: 'video/mp4', size: 3, base64: 'YWJj' }] };
+  const payload = { eventId: 'MCO-20261014-100005-F3EFC4', employeeEmail: 'refael@i-feel.co.il', description: 'תקלה חוזרת', model: 'MH-C621', repeatCount: 3, vendorEvidenceLinks: ['https://i-feel.co.il/staff-expenses/mcohome-evidence.php?id=MCO-20261014-100005-F3EFC4&f=0&token=' + 'b'.repeat(64)], evidenceFiles: [{ key: 'a'.repeat(32) + '.mp4', name: 'fault.mp4', mime: 'video/mp4', size: 3, base64: 'YWJj' }] };
   return { run: (p = payload) => context.deliverFault_(p), payload, sent, stored, tracked, translated: () => translations };
 }
 
@@ -52,6 +52,10 @@ test('video stored, recipients granted access, full description translated, same
   assert.match(s.sent[0][2], /zh-CN: translated fault/);
   assert.match(s.sent[0][2], /drive.google.com/);
   assert.equal(s.sent[0][3].cc, r.cc.join(','));
+  assert.equal(s.sent[0][3].attachments.length, 1);
+  assert.equal(s.sent[0][3].attachments[0].mime, 'video/mp4');
+  assert.match(s.sent[0][2], /no employee login/);
+  assert.doesNotMatch(s.sent[0][2], /mcohome-media\.php/);
   assert.equal(s.stored.get('a'.repeat(32) + '.mp4').viewers.length, 5);
   assert.equal(s.tracked.at(-1).sentToMcohome, true);
   assert.ok(s.tracked.at(-1).followUpDue);
@@ -61,3 +65,8 @@ test('sharing failure blocks mail', () => { const s = setup({ shareFails: true }
 test('tracking failure blocks mail', () => { const s = setup({ sheetFails: true }); assert.throws(() => s.run(), /sheet unavailable/); assert.equal(s.sent.length, 0); });
 test('uncertain submission never automatically resends', () => { const s = setup({ sendFails: true }); assert.throws(() => s.run(), /uncertain/); assert.throws(() => s.run(), /outcome unknown/); });
 test('reject non-company technician and malformed media before external work', () => { const s = setup(); assert.throws(() => s.run({ ...s.payload, employeeEmail: 'other@example.com' }), /technician/); assert.throws(() => s.run({ ...s.payload, evidenceFiles: [{ ...s.payload.evidenceFiles[0], size: 50 }] }), /size/); assert.equal(s.stored.size, 0); });
+test('reject employee-only or third-party links before sending', () => {
+  const s = setup();
+  assert.throws(() => s.run({ ...s.payload, vendorEvidenceLinks: ['https://i-feel.co.il/staff-expenses/mcohome-media.php?id=' + s.payload.eventId] }), /Invalid manufacturer/);
+  assert.equal(s.sent.length, 0);
+});

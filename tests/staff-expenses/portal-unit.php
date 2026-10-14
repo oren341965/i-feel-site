@@ -879,6 +879,17 @@ try {
         'Supervision exact customer-name matching is wrong.'
     );
 
+    $vendorToken = str_repeat('a', 64);
+    $vendorRecord = ['vendorEvidenceTokenHash' => hash('sha256', $vendorToken), 'vendorEvidenceExpiresAt' => 200];
+    portal_test_expect(mcohome_evidence_token_valid($vendorRecord, $vendorToken, 100), 'Valid manufacturer token rejected.');
+    portal_test_expect(!mcohome_evidence_token_valid($vendorRecord, $vendorToken, 200), 'Expired manufacturer token accepted.');
+    portal_test_expect(!mcohome_evidence_token_valid($vendorRecord, str_repeat('b', 64), 100), 'Wrong manufacturer token accepted.');
+    portal_test_expect(!mcohome_evidence_token_valid([], $vendorToken, 100), 'Legacy evidence without token must remain private.');
+    portal_test_expect(mcohome_evidence_range('bytes=2-5', 10) === [2, 5], 'Video byte range failed.');
+    portal_test_expect(mcohome_evidence_range('bytes=-3', 10) === [7, 9], 'Video suffix range failed.');
+    portal_test_expect(mcohome_evidence_range('bytes=10-', 10) === null, 'Out-of-bounds video range accepted.');
+    portal_test_expect(mcohome_evidence_range('bytes=0-2,5-7', 10) === null, 'Multiple byte ranges must be rejected.');
+
     $readiness = portal_readiness_report();
     portal_test_expect(
         (bool) ($readiness['ready'] ?? false),

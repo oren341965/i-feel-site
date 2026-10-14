@@ -123,6 +123,7 @@ function mcohome_save_media(string $eventId, array $files): array
             'name' => $original,
             'mime' => $mime,
             'size' => $size,
+            'sha256' => hash_file('sha256', $target),
             'dropboxStatus' => 'pending',
             'dropboxPath' => '',
             'dropboxUrl' => '',
@@ -160,6 +161,36 @@ function mcohome_media_path(string $eventId, array $media): string
 function mcohome_media_url(string $eventId, int $index): string
 {
     return portal_public_origin() . portal_base_path() . 'mcohome-media.php?id=' . rawurlencode($eventId) . '&f=' . $index;
+}
+
+function mcohome_vendor_media_url(string $eventId, int $index, string $token): string
+{
+    return portal_public_origin() . portal_base_path() . 'mcohome-evidence.php?id=' . rawurlencode($eventId)
+        . '&f=' . $index . '&token=' . rawurlencode($token);
+}
+
+function mcohome_evidence_token_valid(array $record, string $token, int $now): bool
+{
+    return preg_match('/^[a-f0-9]{64}$/', $token) === 1
+        && (int) ($record['vendorEvidenceExpiresAt'] ?? 0) > $now
+        && isset($record['vendorEvidenceTokenHash'])
+        && hash_equals((string) $record['vendorEvidenceTokenHash'], hash('sha256', $token));
+}
+
+function mcohome_evidence_range(string $header, int $size): ?array
+{
+    if ($size <= 0) { return null; }
+    if ($header === '') { return [0, $size - 1]; }
+    if (strlen($header) > 80 || !preg_match('/^bytes=(\d*)-(\d*)$/', $header, $match) || ($match[1] === '' && $match[2] === '')) {
+        return null;
+    }
+    if ($match[1] === '') {
+        $suffix = (int) $match[2];
+        return $suffix > 0 ? [max(0, $size - $suffix), $size - 1] : null;
+    }
+    $start = (int) $match[1];
+    $end = $match[2] !== '' ? min((int) $match[2], $size - 1) : $size - 1;
+    return $start <= $end && $start < $size ? [$start, $end] : null;
 }
 
 function mcohome_internal_recipients(): array
@@ -640,6 +671,10 @@ function mcohome_finalize_record(array $record): array
     $record['notificationResults'] = [];
     $record['vendorNotificationResults'] = [];
     $record['dropboxSync'] = ['ok' => false, 'status' => 'pending'];
+    $evidenceToken = bin2hex(random_bytes(32));
+    $record['vendorEvidenceTokenHash'] = hash('sha256', $evidenceToken);
+    $record['vendorEvidenceExpiresAt'] = time() + 30 * 86400;
+    $record['vendorEvidenceLinks'] = array_map(static fn($i): string => mcohome_vendor_media_url($record['eventId'], $i, $evidenceToken), array_keys($record['media'] ?? []));
     mcohome_save_record($record);
 
     $record = mcohome_sync_media_to_dropbox($record);
@@ -694,6 +729,7 @@ function mcohome_deliver_with_drive(array $record): array
     $record['owner'] = 'arik@i-feel.co.il';
     $payload = mcohome_sheet_payload($record);
     $payload['action'] = 'deliverFault';
+    $payload['vendorEvidenceLinks'] = $record['vendorEvidenceLinks'] ?? [];
     $payload['evidenceFiles'] = [];
     $total = 0;
     foreach (($record['media'] ?? []) as $media) {

@@ -14,6 +14,22 @@ and submitting one Gmail message to `kristin@mcohome.com,dzsh@mcohome.com`, with
 go to Oren. English and Simplified Chinese machine translations retain the original.
 Gmail Sent provides a reviewable copy. Mail submission is not recipient acknowledgement.
 
+Manufacturer access is independent of I Feel employee login: original short videos
+are attached within a 12 MiB total attachment budget, and each media item also has
+an English/Chinese watch/download page at `mcohome-evidence.php`. This URL contains
+a 256-bit event-specific capability token, expires after 30 days, and is not a public
+gallery. Missing/wrong/expired tokens return 404; no token is written to audit logs.
+Video playback supports single byte ranges. Do not send the authenticated internal
+`mcohome-media.php` URLs to the manufacturer. Keep Drive as the archive and offer
+direct attachments and the I Feel mirror to avoid relying on Google login.
+
+Oren and Arik can use `/staff-expenses/mcohome-review.php?date=YYYY-MM-DD` to inspect
+stored records, original video SHA-256 hashes, Drive status, submission receipts,
+attachment names and follow-up due dates. This inventory is read-only, requires an
+authenticated Oren/Arik session and never resends historical reports. It distinguishes
+multiple Event IDs for the same video from unique video contents. No stored token
+means legacy evidence remains employee-only until a reviewed recovery is completed.
+
 Deploy **both Code.gs and Delivery.gs** to the existing Apps Script web app as
 Oren, authorize Drive, Gmail and translation access, then create a new deployment
 version retaining the existing URL/shared secret. This is a separate deployment
