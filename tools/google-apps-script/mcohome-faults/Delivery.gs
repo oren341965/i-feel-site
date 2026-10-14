@@ -38,7 +38,7 @@ function deliverFault_(payload) {
     let receipt = manifestFile ? JSON.parse(manifestFile.getBlob().getDataAsString()) : null;
     if (receipt && receipt.status === 'submitted') return receipt;
     // A timeout around Gmail submission is ambiguous. Never automatically send twice.
-    if (receipt && receipt.status === 'submitting') throw new Error('Delivery outcome unknown; inspect Gmail Sent before retry');
+    if (receipt && receipt.status === 'submitting') throw new Error('Delivery outcome unknown; inspect the Oren Cc copy and receipt before retry');
     function persist(value) {
       const json = JSON.stringify(value);
       if (manifestFile) manifestFile.setContent(json);
@@ -107,7 +107,7 @@ function deliverFault_(payload) {
     saveFault_(tracked, true, true);
     receipt = { eventId: id, status: 'submitting', driveStatus: 'completed', evidence: evidence, vendorEvidenceLinks: vendorLinks, attachmentNames: attachmentNames, to: to, cc: cc, subject: subject, body: body, owner: 'arik@i-feel.co.il', followUpDue: due };
     persist(receipt);
-    GmailApp.sendEmail(to.join(','), subject, body, { cc: cc.join(','), replyTo: 'oren@i-feel.co.il', name: 'I Feel Technical Team', attachments: attachments });
+    MailApp.sendEmail({ to: to.join(','), subject: subject, body: body, cc: cc.join(','), replyTo: 'oren@i-feel.co.il', name: 'I Feel Technical Team', attachments: attachments });
     receipt.status = 'submitted';
     receipt.submittedAt = new Date().toISOString();
     persist(receipt);

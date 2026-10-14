@@ -33,7 +33,7 @@ function setup({ shareFails = false, sendFails = false, sheetFails = false } = {
     } },
     Utilities: { base64Decode: value => [...Buffer.from(value, 'base64')], newBlob: (bytes, mime, name) => ({ bytes, mime, name }) },
     LanguageApp: { translate: (text, from, language) => { translations++; return language + ': translated fault'; } },
-    GmailApp: { sendEmail: (...args) => { if (sendFails) throw new Error('mail outcome uncertain'); sent.push(args); } },
+    MailApp: { sendEmail: message => { if (sendFails) throw new Error('mail outcome uncertain'); sent.push([message.to, message.subject, message.body, message]); } },
     Session: { getEffectiveUser: () => ({ getEmail: () => 'oren@i-feel.co.il' }) },
     LockService: { getScriptLock: () => ({ waitLock() {}, releaseLock() {} }) },
     saveFault_: payload => { if (sheetFails) throw new Error('sheet unavailable'); tracked.push(payload); }

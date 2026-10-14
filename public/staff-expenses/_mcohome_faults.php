@@ -690,16 +690,40 @@ function mcohome_finalize_record(array $record): array
     return $record;
 }
 
-function mcohome_try_apps_script(array $payload): array
+function mcohome_connection_file(): string
 {
+    return mcohome_storage_root() . DIRECTORY_SEPARATOR . 'gateway.json';
+}
+
+function mcohome_gateway_config(): ?array
+{
+    $saved = portal_json_read(mcohome_connection_file());
+    if (($saved['owner'] ?? '') === 'oren@i-feel.co.il' && !empty($saved['verifiedAt'])
+        && preg_match('~^https://script\.google\.com/macros/s/[A-Za-z0-9_-]{20,}/exec$~', (string) ($saved['url'] ?? ''))
+        && preg_match('/^[a-f0-9]{64}$/', (string) ($saved['secret'] ?? ''))) {
+        return ['url' => $saved['url'], 'secret' => $saved['secret']];
+    }
     $urlName = defined('MCOHOME_FAULT_APPS_SCRIPT_URL') ? 'MCOHOME_FAULT_APPS_SCRIPT_URL' : (defined('MCOHOME_FAULTS_WEB_APP_URL') ? 'MCOHOME_FAULTS_WEB_APP_URL' : '');
     $secretName = defined('MCOHOME_FAULT_APPS_SCRIPT_SECRET') ? 'MCOHOME_FAULT_APPS_SCRIPT_SECRET' : (defined('MCOHOME_FAULTS_SHARED_SECRET') ? 'MCOHOME_FAULTS_SHARED_SECRET' : '');
     if ($urlName === '' || $secretName === '') {
-        return ['ok' => false, 'status' => 'not_configured'];
+        return null;
     }
     $url = trim((string) constant($urlName));
     $secret = trim((string) constant($secretName));
-    if ($url === '' || $secret === '' || strpos($url, 'https://script.google.com/') !== 0 || !function_exists('curl_init')) {
+    return $url !== '' && $secret !== '' && strpos($url, 'https://script.google.com/') === 0 ? ['url' => $url, 'secret' => $secret] : null;
+}
+
+function mcohome_try_apps_script(array $payload): array
+{
+    $config = mcohome_gateway_config();
+    return $config === null ? ['ok' => false, 'status' => 'not_configured'] : mcohome_request_gateway($config, $payload);
+}
+
+function mcohome_request_gateway(array $config, array $payload): array
+{
+    $url = (string) ($config['url'] ?? '');
+    $secret = (string) ($config['secret'] ?? '');
+    if (!preg_match('~^https://script\.google\.com/macros/s/[A-Za-z0-9_-]{20,}/exec$~', $url) || $secret === '' || !function_exists('curl_init')) {
         return ['ok' => false, 'status' => 'invalid_config'];
     }
     $ch = curl_init($url);

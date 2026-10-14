@@ -889,6 +889,13 @@ try {
     portal_test_expect(mcohome_evidence_range('bytes=-3', 10) === [7, 9], 'Video suffix range failed.');
     portal_test_expect(mcohome_evidence_range('bytes=10-', 10) === null, 'Out-of-bounds video range accepted.');
     portal_test_expect(mcohome_evidence_range('bytes=0-2,5-7', 10) === null, 'Multiple byte ranges must be rejected.');
+    portal_json_write(mcohome_connection_file(), ['url' => 'https://example.com/exec', 'secret' => str_repeat('c', 64), 'owner' => 'oren@i-feel.co.il', 'verifiedAt' => '2026-10-14']);
+    portal_test_expect(mcohome_gateway_config() === null, 'Non-Google gateway must be rejected.');
+    portal_test_expect(mcohome_request_gateway(['url' => 'https://example.com/exec', 'secret' => 'private'], ['action' => 'health'])['status'] === 'invalid_config', 'Gateway SSRF filter failed.');
+    $testGateway = ['url' => 'https://script.google.com/macros/s/' . str_repeat('A', 30) . '/exec', 'secret' => str_repeat('c', 64), 'owner' => 'oren@i-feel.co.il', 'verifiedAt' => '2026-10-14'];
+    portal_json_write(mcohome_connection_file(), $testGateway);
+    portal_test_expect(mcohome_gateway_config() === ['url' => $testGateway['url'], 'secret' => $testGateway['secret']], 'Verified private portal gateway configuration failed.');
+    portal_json_write(mcohome_connection_file(), []);
 
     $readiness = portal_readiness_report();
     portal_test_expect(

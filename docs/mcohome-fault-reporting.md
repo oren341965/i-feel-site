@@ -12,7 +12,9 @@ It does not make the root or event folders public.
 and submitting one Gmail message to `kristin@mcohome.com,dzsh@mcohome.com`, with
 `oren@i-feel.co.il,arik@i-feel.co.il` and the reporting technician in Cc. Replies
 go to Oren. English and Simplified Chinese machine translations retain the original.
-Gmail Sent provides a reviewable copy. Mail submission is not recipient acknowledgement.
+Oren receives the same message in Cc as a reviewable copy. MailApp requests email
+submission permission only; it cannot read or delete Gmail messages. Mail submission
+is not recipient acknowledgement.
 
 Manufacturer access is independent of I Feel employee login: original short videos
 are attached within a 12 MiB total attachment budget, and each media item also has
@@ -35,7 +37,9 @@ Oren, authorize Drive, Gmail and translation access, then create a new deploymen
 version retaining the existing URL/shared secret. This is a separate deployment
 from the website PR; repository changes alone do not activate it.
 For a new project, the shared secret must be configured in Script Properties and
-the server's existing secure configuration before activation. The web app GET
+the server's private portal storage before activation. Authenticated Oren can use
+`mcohome-connection.php` to test and store the endpoint/key after Google health
+verification. This does not edit `public/api/config.php`. The web app GET
 returns service/version metadata only. Direct public HTML-to-Sheet writes are
 disabled; only authenticated portal POSTs with the shared secret may deliver.
 Roll out the Apps Script first, then the approved website merge. Until compatible
@@ -49,7 +53,7 @@ New captures are checked before submission. Videos retain the one-minute limit.
 Tracking includes Drive status, submission status, owner Arik and a follow-up due
 date two days later. The due date is a work deadline, **not an installed automatic
 reminder**. The private `delivery.json` receipt prevents automatic duplicate sends.
-A `submitting` receipt means the send outcome is unknown: inspect Gmail Sent before
+A `submitting` receipt means the send outcome is unknown: inspect Oren's Cc copy before
 any manual recovery. Existing reports are not automatically replayed by this change.
 Run `node --test tests/mcohome-drive-delivery.test.mjs`, then a separately authorized
 live synthetic capture to verify Drive permissions, Sent copy and tracking readback.

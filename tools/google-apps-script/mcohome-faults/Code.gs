@@ -24,6 +24,13 @@ function doPost(e) {
     }
 
     const payload = body.payload || {};
+    if (payload.action === 'health') {
+      const owner = Session.getEffectiveUser().getEmail().toLowerCase();
+      if (owner !== 'oren@i-feel.co.il') throw new Error('Deploy as Oren');
+      DriveApp.getFolderById(MCOHOME_DRIVE_ROOT_ID).getName();
+      SpreadsheetApp.openById(MCOHOME_SPREADSHEET_ID).getName();
+      return json_({ ok: true, health: { owner: owner, driveFolderId: MCOHOME_DRIVE_ROOT_ID, spreadsheetId: MCOHOME_SPREADSHEET_ID, mailQuota: MailApp.getRemainingDailyQuota() } });
+    }
     if (payload.action === 'deliverFault') {
       return json_({ ok: true, delivery: deliverFault_(payload) });
     }
