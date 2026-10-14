@@ -172,7 +172,7 @@ portal_nav('mcohome', $user);
         <label class="mcohome-media-box">
             <span>4. סרטון הסבר עד דקה או תמונות</span>
             <input type="file" name="media[]" id="mcohome-media" accept="image/*,video/*" capture="environment" multiple>
-            <small>עד 6 קבצים, עד 140MB לקובץ. סרטון עד דקה. בהיעדר אינטרנט הסרטון נשמר במכשיר ומסתנכרן בהמשך.</small>
+            <small>עד 6 קבצים, עד 30MB בסך הכול לדיווח. סרטון עד דקה. בהיעדר אינטרנט הסרטון נשמר במכשיר ומסתנכרן בהמשך.</small>
             <div id="mcohome-media-list" class="form-note"></div>
         </label>
 
