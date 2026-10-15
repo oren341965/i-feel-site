@@ -116,6 +116,7 @@ test('Oren runtime installer writes BOM-free JSON under Windows PowerShell 5.1',
     repository,
     '.claude/skills/ai-sales-manager/runtime/config.example.json',
   ), 'utf8'));
+  seed.paidMediaBudget.monthlyCapNis = 1800;
   seed.marketingDecision.businessTarget = {
     schemaVersion: 1,
     weeklyNewQualifiedTargets: { villas: 3, electricalContractors: 3, bmsNewCompanies: 3, totalMinimum: 9 },
@@ -139,6 +140,7 @@ test('Oren runtime installer writes BOM-free JSON under Windows PowerShell 5.1',
   const config = JSON.parse(configBytes.toString('utf8'));
   const report = JSON.parse(reportBytes.toString('utf8'));
   assert.equal(config.maturity, 0);
+  assert.equal(config.paidMediaBudget.monthlyCapNis, 1800);
   assert.equal(config.connections.monday.writesAllowed, false);
   assert.equal(config.capacity.responseSlaMaxBusinessHours, 4);
   assert.equal(config.capacity.plansToProposalMaxBusinessDays, 7);
