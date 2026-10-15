@@ -1,10 +1,14 @@
 [CmdletBinding()]
 param(
     [Parameter()]
-    [string]$ConfigPath = (Join-Path (Resolve-Path (Join-Path $PSScriptRoot '..')).Path 'config\config.json')
+    [string]$ConfigPath
 )
 
 $ErrorActionPreference = 'Stop'
+
+if ([string]::IsNullOrWhiteSpace($ConfigPath)) {
+    $ConfigPath = Join-Path (Split-Path -Parent $PSScriptRoot) 'config\config.json'
+}
 
 if (-not (Test-Path -LiteralPath $ConfigPath -PathType Leaf)) {
     throw "AI Sales Manager config is missing: $ConfigPath"
@@ -29,12 +33,21 @@ if (-not (Test-Path -LiteralPath $telemetryCommandPath -PathType Leaf)) {
     throw 'I FEEL MANAGEMENT telemetry is not installed on this host.'
 }
 
-$managerOutput = @(& node $managerScript --config $ConfigPath --telemetry-command $telemetryCommandPath 2>&1)
-$managerExitCode = $LASTEXITCODE
+# Native stderr is an ErrorRecord in Windows PowerShell. Capture the exit code
+# before restoring Stop so failures still produce the sanitized local artifact.
+try {
+    $ErrorActionPreference = 'Continue'
+    $managerOutput = @(& node $managerScript --config $ConfigPath --telemetry-command $telemetryCommandPath 2>&1)
+    $managerExitCode = $LASTEXITCODE
+}
+finally {
+    $ErrorActionPreference = 'Stop'
+}
 $managerOutput | Write-Output
 if ($managerExitCode -ne 0) {
     $errorText = ($managerOutput | ForEach-Object { [string]$_ }) -join "`n"
     $failureCode = switch -Regex ($errorText) {
+        'Invalid paid-media budget policy' { 'PAID_MEDIA_BUDGET_POLICY_INVALID'; break }
         'Attribution snapshot is stale' { 'ATTRIBUTION_SNAPSHOT_STALE'; break }
         'Monday snapshot is stale' { 'MONDAY_SNAPSHOT_STALE'; break }
         'Google Ads' { 'GOOGLE_ADS_READ_FAILED'; break }

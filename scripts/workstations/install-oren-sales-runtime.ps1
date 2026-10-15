@@ -113,7 +113,8 @@ $config.baseline.automaticScalingAllowed = $false
 $config.baseline.automaticBudgetOptimizationAllowed = $false
 $config.paidMediaBudget.enabled = $true
 $config.paidMediaBudget.currency = 'ILS'
-$config.paidMediaBudget.monthlyCapNis = 4000
+# Merge-MissingDefaults supplies a cap for new installs. Preserve a host's
+# existing owner-approved ceiling when repairing/upgrading its runtime.
 $config.paidMediaBudget.googleAverageDailyBudgetCapNis = 50
 $config.paidMediaBudget.maxEvidenceAgeHours = 24
 $config.paidMediaBudget.platforms = @('GOOGLE_ADS', 'META_ADS')
