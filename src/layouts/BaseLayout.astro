@@ -36,6 +36,73 @@ const {
 } = Astro.props;
 
 const canonicalPath = decodeURIComponent(new URL(canonical).pathname);
+const pageSegments = canonicalPath.split('/').filter(Boolean);
+const primarySection = pageSegments[0] || '';
+const breadcrumbLabels: Record<string, string> = {
+  'smart-home': 'בית פרטי',
+  'contractor-customer-care': 'יזמים ודיירים',
+  'structure-control': 'מבנים ו-BMS',
+  'architects-smart-home-planning': 'אדריכלים ויועצים',
+  'articles': 'מאמרים',
+  'answers': 'שאלות נפוצות',
+  'projects': 'פרויקטים',
+  'equipment': 'מוצרים ומפרטים',
+  'help': 'מרכז השירות',
+  'siemens-knx-products': 'מוצרים ומפרטים',
+  'en': 'Solutions'
+};
+const breadcrumbSection = breadcrumbLabels[primarySection] || '';
+const currentPageLabel = title.replace(/\\s*\\|\\s*i-feel$/i, '');
+const relatedPageGroups: Record<string, Array<{ href: string; label: string }>> = {
+  'smart-home': [
+    { href: '/smart-home-planning/', label: 'תכנון בית חכם' },
+    { href: '/smart-home-price/', label: 'מחיר בית חכם' },
+    { href: '/wireless-smart-home-existing-apartment/', label: 'בית חכם בדירה קיימת' }
+  ],
+  'contractor-customer-care': [
+    { href: '/contractor-customer-care/projects/', label: 'פרויקטים ליזמים' },
+    { href: '/start/', label: 'מתכננים פרויקט חדש?' },
+    { href: '/projects/', label: 'פרויקטים נבחרים' }
+  ],
+  'structure-control': [
+    { href: '/bms-hotels/', label: 'בקרת מבנה למלונות' },
+    { href: '/siemens-desigo-bms/', label: 'מערכת Siemens Desigo' },
+    { href: '/bms-universities-campuses/', label: 'BMS באוניברסיטאות וקמפוסים' }
+  ],
+  'architects-smart-home-planning': [
+    { href: '/smart-home-planning/', label: 'תכנון בית חכם' },
+    { href: '/knx-smart-home/', label: 'מערכת KNX לבית חכם' },
+    { href: '/projects/', label: 'פרויקטים נבחרים' }
+  ],
+  'articles': [
+    { href: '/answers/', label: 'תשובות ומדריכים' },
+    { href: '/equipment/', label: 'מאגר מוצרים ומפרטים' },
+    { href: '/projects/', label: 'פרויקטים נבחרים' }
+  ],
+  'answers': [
+    { href: '/articles/', label: 'מאמרים מקצועיים' },
+    { href: '/help/', label: 'מרכז השירות' },
+    { href: '/equipment/', label: 'מאגר מוצרים ומפרטים' }
+  ],
+  'help': [
+    { href: '/service-and-maintenance/', label: 'שירות ותחזוקה' },
+    { href: '/smart-home-support/', label: 'תמיכה בבית חכם' },
+    { href: '/contactus/', label: 'יצירת קשר' }
+  ],
+  'projects': [
+    { href: '/smart-home/', label: 'בית חכם ללקוחות פרטיים' },
+    { href: '/contractor-customer-care/', label: 'פתרונות ליזמים' },
+    { href: '/structure-control/', label: 'בקרת מבנה BMS' }
+  ],
+  'equipment': [
+    { href: '/siemens-knx-products/', label: 'מוצרי Siemens KNX' },
+    { href: '/catalogs/', label: 'קטלוגים להורדה' },
+    { href: '/articles/', label: 'מאמרים מקצועיים' }
+  ]
+};
+const relatedPages = (relatedPageGroups[primarySection] || [])
+  .filter((page) => page.href !== canonicalPath)
+  .slice(0, 3);
 
 const siemensKnxProducts: Record<string, string> = {
   '/articles/siemens-n12522-knx-power-supply-640ma/': '5WG1125-1AB22',
@@ -225,8 +292,33 @@ const siteIdentityJsonLd = JSON.stringify({
     <Header />
     <SiteSearch />
     <main id="main-content" tabindex="-1">
+      {canonicalPath !== '/' && (
+        <nav data-pagefind-ignore aria-label="פירורי לחם" class="mx-auto w-full max-w-7xl px-4 pt-4 text-sm text-brand-600">
+          <ol class="flex flex-wrap items-center gap-2">
+            <li><a href="/" class="hover:text-accent-700 hover:underline">דף הבית</a></li>
+            {pageSegments.length > 1 && breadcrumbSection && primarySection !== 'en' && (
+              <>
+                <li aria-hidden="true">/</li>
+                <li><a href={`/${primarySection}/`} class="hover:text-accent-700 hover:underline">{breadcrumbSection}</a></li>
+              </>
+            )}
+            <li aria-hidden="true">/</li>
+            <li aria-current="page" class="font-semibold text-brand-900">{currentPageLabel}</li>
+          </ol>
+        </nav>
+      )}
       <slot />
       <SiemensDwgDownload />
+      {relatedPages.length > 0 && (
+        <nav data-pagefind-ignore aria-label="דפים קשורים" class="mx-auto my-12 w-full max-w-7xl border-t border-brand-100 px-4 pt-8">
+          <h2 class="mb-4 text-xl font-extrabold text-brand-900">אולי יעניין אתכם</h2>
+          <ul class="flex flex-wrap gap-3">
+            {relatedPages.map((page) => (
+              <li><a href={page.href} class="inline-flex rounded-full border border-brand-200 px-4 py-2 text-sm font-semibold text-brand-700 transition hover:border-accent-500 hover:text-accent-700">{page.label}</a></li>
+            ))}
+          </ul>
+        </nav>
+      )}
     </main>
     {isSiemensKnxProduct && (
       <script is:inline define:vars={{ productSku }}>
