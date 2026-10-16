@@ -9,7 +9,7 @@ Maintain warm, credible relationships with architects and interior designers who
 
 ## Ownership
 
-- `ai-sales-manager` is the parent and fulfills I Feel's AI Marketing Manager responsibility for this program. It owns the idea, relationship objective, audience and watchlist governance, message policy, monthly quality review and the lifecycle of this skill.
+- `ai-sales-manager` is the delegated coordinator for the AI Marketing Manager responsibility under `ai-marketing-manager`, the business parent. It owns the idea, relationship objective, audience and watchlist governance, message policy, monthly quality review and the lifecycle of this skill.
 - Maya is the bounded worker. She verifies the social accounts, resolves professional Instagram and Facebook profiles from the manager's Monday candidate roster, reviews the approved watchlist, records concrete source evidence and prepares the exact message proposals. She does not set marketing strategy, expand the audience, change the skill or approve her own outreach.
 - Route improvement ideas and policy exceptions to `ai-sales-manager`. The manager may change the canonical skill only through a work branch and Pull Request; neither component edits the installed runtime copy.
 

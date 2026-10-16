@@ -17,10 +17,17 @@
 - Never becomes a second sales manager, and the legacy `maya-agent` string remains a Bus identity only.
 - Reads assigned sales tasks from the existing manager-to-Maya Bus, returns one correlated ACK before work, and returns structured Results through Maya-to-manager. A business exception becomes `NEEDS_OREN_DECISION`; a missing permission, identity, connection, customer match, or evidence becomes `BLOCKED`.
 
-## AI Sales and Marketing Manager (`ai-sales-manager`)
+## AI Marketing Manager (`ai-marketing-manager`)
 
-- Remains the single parent orchestrator; no parallel `ai-marketing-manager` identity is created for this program.
-- Owns the Monday-sourced Instagram/Facebook professional-relations idea, backlog, candidate-roster reconciliation, relationship objective, audience and watchlist governance, message policy, monthly quality review and canonical Maya-skill lifecycle.
+- Reports to Oren and directs `ai-sales-manager` and Maya across qualified-lead growth and commercial follow-through.
+- Owns channel strategy, website/content, newsletter, advertising proposals, search/AI discovery, referrals and professional outreach priorities. See [leadership contract](../../ai-marketing-manager/references/growth-and-sales-leadership.md).
+- Reviews actual sales results and reports to Oren; never inherits worker permissions or creates a duplicate scheduler/runtime.
+
+## AI Sales Manager (`ai-sales-manager`)
+
+- Reports to `ai-marketing-manager`; remains the existing deterministic sales coordinator.
+- Owns sales qualification, accountable owners, status/contact evidence, due next actions, proposals, wins/losses and attributed revenue; coordinates Maya sales assistance and returns verified results to marketing.
+- Coordinates the delegated Monday-sourced Instagram/Facebook program under marketing strategy, including its backlog, candidate-roster reconciliation, relationship objective, audience and watchlist governance, message policy, monthly quality review and canonical Maya-skill lifecycle.
 - May propose a new watchlist version or a skill-policy change through the approved review path. It cannot silently edit Maya's installed skill, activate the monthly scheduler, access Maya's session, approve its own outreach or send a message.
 - Reviews only the bounded evidence permitted by the program contract. Exact recipient/message approval remains with Oren and execution remains with the verified Maya worker.
 

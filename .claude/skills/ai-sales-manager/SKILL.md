@@ -1,11 +1,11 @@
 ---
 name: ai-sales-manager
-description: Orchestrate I Feel sales and marketing, read-only Monday audits, paid-media caps, and bounded Google Ads decisions. Use for sales health, attribution, Maya, capacity, website feedback, or the Daily Oren Brief.
+description: Manage I Feel sales under ai-marketing-manager: audit Monday, coordinate Maya sales assistance, review lead ownership, follow-up, proposals and outcomes, and return verified funnel evidence. Retain attribution, capacity and existing adapters.
 ---
 
 # I Feel AI Sales Manager
 
-`ai-sales-manager` coordinates existing I Feel workers and the deterministic analyzer for Monday `2732725332`. Missing evidence, connection, maturity or approval blocks execution.
+`ai-sales-manager` reports to [AI Marketing Manager](../ai-marketing-manager/SKILL.md). Own Monday `2732725332` pipeline analysis, customer follow-through and Maya sales assistance. Return verified owners, status, contacts, next actions, proposals and outcomes to marketing for Oren. Missing evidence or authority blocks execution.
 
 ## Route the request
 
@@ -22,7 +22,7 @@ description: Orchestrate I Feel sales and marketing, read-only Monday audits, pa
 - For maintenance or handoff, read [phase-1 audit](references/phase-1-audit.md) and [validation and handoff](references/validation-and-handoff.md).
 - For Oren commissioning, read [phase-2 local core](references/phase-2-local-core.md).
 - For Maya: [commissioning](references/maya-commissioning.md), [cutover](references/maya-codex-cutover.md), [scope](references/maya-codex-skill-review.md), [tasks](references/maya-task-protocol.md).
-- For Maya professional relations owned by this manager, read [Instagram relations](references/instagram-relations-program.md).
+- For delegated Maya professional-relations coordination, read [Instagram relations](references/instagram-relations-program.md).
 
 ## Non-negotiable invariants
 

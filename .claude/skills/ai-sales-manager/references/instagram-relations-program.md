@@ -1,12 +1,12 @@
 # AI Marketing Manager ownership of professional social relations
 
-This contract governs `maya-instagram-relations` across Instagram and Facebook. The technical parent remains `ai-sales-manager`, which fulfills I Feel's AI Marketing Manager responsibility for this program. Do not create a parallel manager, a second Maya worker or a separate outreach queue.
+This contract governs `maya-instagram-relations` across Instagram and Facebook. The business parent is `ai-marketing-manager`; `ai-sales-manager` remains the delegated technical coordinator for the existing program. Do not create a parallel manager, a second Maya worker or a separate outreach queue.
 
 ## Ownership map
 
 | Responsibility | Owner | Boundary |
 | --- | --- | --- |
-| Program idea and backlog | `ai-sales-manager` as AI Marketing Manager | May initiate relationship-nurturing ideas and propose improvements; cannot authorize its own external action. |
+| Program idea and backlog | `ai-marketing-manager` through `ai-sales-manager` | May initiate relationship-nurturing ideas and propose improvements; cannot authorize its own external action. |
 | Monday candidate roster and watchlist policy | `ai-sales-manager` | Reconciles existing architects/designers from the approved Monday boards, proposes exact verified social profiles and governs watchlist versions. |
 | Voice, selection criteria and contact limits | `ai-sales-manager` | Maintains the canonical policy through a repository work branch and Pull Request, never by editing Maya's installed copy. |
 | Instagram/Facebook profile resolution and monthly evidence | Maya through `maya-instagram-relations` | Uses the manager's Monday roster, verifies public professional profiles in Maya's sessions, selects evidence and prepares exact drafts. |
