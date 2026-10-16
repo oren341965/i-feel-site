@@ -1,0 +1,10 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import BacnetGuide from '../../components/BacnetGuide.astro';
+const title = 'KNX ו-BACnet: Gateway ומיפוי נקודות | i-feel';
+const description = 'מדריך KNX ו-BACnet למתכננים: Server מול Client, נקודות BMS, Siemens Desigo ובדיקות מסירה מקצועיות.';
+const canonical = 'https://i-feel.co.il/articles/knx-bacnet-gateway-server-client-bms/';
+---
+<BaseLayout title={title} description={description} canonical={canonical} ogTitle={title} ogDescription={description} ogUrl={canonical}>
+  <BacnetGuide />
+</BaseLayout>
