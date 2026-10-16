@@ -44,7 +44,8 @@ test('Maya social relations is Monday-sourced, monthly, approval-gated, and non-
   assert.match(scheduledTask, /NEXT_ELIGIBLE_MONTH/);
 
   assert.match(parent, /references\/instagram-relations-program\.md/);
-  assert.match(parent, /owns the program as I Feel's AI Marketing Manager/);
+  assert.match(parent, /reports to \[AI Marketing Manager\]\(\.\.\/ai-marketing-manager\/SKILL\.md\)/);
+  assert.match(governance, /business parent is `ai-marketing-manager`/);
   assert.match(governance, /Program idea and backlog.*ai-sales-manager/s);
   assert.match(governance, /Monday candidate roster and watchlist policy.*ai-sales-manager/s);
   assert.match(governance, /Maya through `maya-instagram-relations`/);
