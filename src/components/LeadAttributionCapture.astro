@@ -35,14 +35,12 @@
     }
 
     function firstSessionValue(storageKey, current, maxLength) {
-      var stored = '';
-      try { stored = sessionStorage.getItem(storageKey) || ''; } catch (error) {}
-      if (!stored && current) {
-        stored = String(current).trim().slice(0, maxLength);
-        if (stored) {
-          try { sessionStorage.setItem(storageKey, stored); } catch (error) {}
-        }
-      }
+      var stored = null;
+      try { stored = sessionStorage.getItem(storageKey); } catch (error) {}
+      // An empty entry referrer is still evidence. Later navigation must not replace it.
+      if (typeof stored === 'string') return stored;
+      stored = String(current || '').trim().slice(0, maxLength);
+      try { sessionStorage.setItem(storageKey, stored); } catch (error) {}
       return stored;
     }
 

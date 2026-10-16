@@ -55,7 +55,7 @@ test('lead.php accepts and maps every paid-platform click id to Monday', async (
 
 // Execute the real inline script with inert forms: no request or CRM side effect.
 import vm from 'node:vm';
-async function visit(storage, search) {
+async function visit(storage, search, { pathname = '/contactus/', referrer = '' } = {}) {
   const source = (await read('src/components/LeadAttributionCapture.astro')).replace(/^<script is:inline>\s*/, '').replace(/<\/script>\s*$/, '');
   const inputs = {};
   const form = {
@@ -69,9 +69,9 @@ async function visit(storage, search) {
   };
   const context = {
     URL, URLSearchParams,
-    window: { location: { search, origin: 'https://i-feel.co.il', pathname: '/contactus/' } },
+    window: { location: { search, origin: 'https://i-feel.co.il', pathname } },
     sessionStorage: { getItem: key => storage.get(key), setItem: (key, value) => storage.set(key, value) },
-    document: { referrer: '', readyState: 'complete', addEventListener() {}, createElement: () => ({}),
+    document: { referrer, readyState: 'complete', addEventListener() {}, createElement: () => ({}),
       querySelectorAll: selector => selector.includes('newsletter') ? [] : [form] },
   };
   vm.runInNewContext(source, context);
@@ -112,4 +112,26 @@ test('privacy-preserving Google click IDs stay on the same captured touch', asyn
   const later = await visit(storage, '?utm_campaign=other&gclid=other-click');
   assert.equal(later.wbraid, 'web-click');
   assert.equal(later.gclid, undefined);
+});
+
+test('an empty entry referrer stays empty after internal navigation', async () => {
+  const storage = new Map();
+  await visit(storage, '', { pathname: '/smart-home/' });
+  const contact = await visit(storage, '', { referrer: 'https://i-feel.co.il/smart-home/?private=query#fragment' });
+  assert.equal(contact.first_referrer, undefined);
+  assert.equal(contact.entry_page, '/smart-home/');
+  assert.equal(contact.last_referrer, '/smart-home/');
+  assert.equal(contact.last_page, '/contactus/');
+});
+
+test('a known external entry referrer survives internal navigation without URL query data', async () => {
+  const storage = new Map();
+  await visit(storage, '', {
+    pathname: '/structure-control/',
+    referrer: 'https://chatgpt.com/?private=query#fragment',
+  });
+  const contact = await visit(storage, '', { referrer: 'https://i-feel.co.il/structure-control/' });
+  assert.equal(contact.first_referrer, 'https://chatgpt.com/');
+  assert.equal(contact.entry_page, '/structure-control/');
+  assert.equal(contact.last_referrer, '/structure-control/');
 });
