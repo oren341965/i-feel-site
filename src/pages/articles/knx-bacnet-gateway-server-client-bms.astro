@@ -1,0 +1,94 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+const title = "KNX ו-BACnet: בחירת Gateway ל-BMS | i-feel";
+const description = "Gateway KNX-BACnet: Server מול Client, מיפוי נקודות, COV, BACnet/SC, Modbus ו-Siemens Desigo. מדריך תכנון ומסירה ל-BMS.";
+const canonical = "https://i-feel.co.il/articles/knx-bacnet-gateway-server-client-bms/";
+const faq = [{"q": "KNX ו-BACnet הם פרוטוקולים מתחרים?", "a": "לא בהכרח. KNX מתאים לבקרת חדרים וחיישנים, ו-BACnet מקשר לעיתים קרובות בקרי מיזוג ומערכות ניהול. אפשר לשלב ביניהם בממשק מתאים."}, {"q": "מה ההבדל בין Gateway מסוג Server לבין Client?", "a": "בדגמי GVS המופיעים בקטלוג KNX, Server חושף מידע מ-KNX לצד BACnet/IP, ו-Client נועד לגשת לציוד BACnet/IP מתוך KNX. יש לאשר את הכיוון והתכונות לכל דגם."}, {"q": "האם כל Gateway מתאים ל-Siemens Desigo?", "a": "לא. יש לאמת פרוטוקול, גרסה, רישוי, טיפוסי אובייקטים, הרשאות ויכולת קריאה וכתיבה, ולבצע בדיקות התאמה."}, {"q": "מה זה BACnet COV?", "a": "Change of Value הוא מנגנון לקבלת עדכוני ערך כאשר חל שינוי באובייקט תומך. הוא אינו מחליף בדיקות תקשורת ותוקף נתונים."}, {"q": "מתי משתמשים ב-Modbus במקום BACnet?", "a": "Modbus נפוץ בציוד עם מפת רגיסטרים כגון מונים. חשוב לאמת יחידות, טיפוסי נתונים, Scaling וסדר בתים; הבחירה נעשית לפי הציוד בפועל."}, {"q": "מה צריך למסור בסיום אינטגרציית KNX ו-BMS?", "a": "מטריצת נקודות מאומתת, הפרדה בין פקודה למשוב, הרשאות, תוצאות בדיקות, קובצי תכנות והגדרות, ותוכנית טיפול בתקלות."}, {"q": "האם Gateway בין KNX ל-BACnet/IP מספק אוטומטית אבטחת BACnet/SC?", "a": "לא. BACnet/SC ו-KNX Secure הם מנגנוני אבטחה נפרדים. יכולות האבטחה תלויות בדגם, בממשקים ובתצורה, ויש לאמת אותן במפרט היצרן ובארכיטקטורת הרשת."}];
+const jsonLd = JSON.stringify({
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": ["TechArticle", "Article"],
+      "headline": "KNX ו-BACnet: איך בוחרים Gateway ל-BMS וממפים נקודות נכון?",
+      "description": description,
+      "url": canonical,
+      "mainEntityOfPage": canonical,
+      "datePublished": "2026-10-15",
+      "dateModified": "2026-10-15",
+      "inLanguage": "he-IL",
+      "author": {"@type":"Organization","name":"i-feel","url":"https://i-feel.co.il/"},
+      "publisher": {"@id":"https://i-feel.co.il/#business"}
+    },
+    {
+      "@type": "FAQPage",
+      "mainEntity": faq.map((item) => ({
+        "@type": "Question",
+        "name": item.q,
+        "acceptedAnswer": {"@type":"Answer","text":item.a}
+      }))
+    },
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {"@type":"ListItem","position":1,"name":"ראשי","item":"https://i-feel.co.il/"},
+        {"@type":"ListItem","position":2,"name":"מאמרים","item":"https://i-feel.co.il/articles/"},
+        {"@type":"ListItem","position":3,"name":"KNX ו-BACnet","item":canonical}
+      ]
+    }
+  ]
+});
+---
+
+<BaseLayout title={title} description={description} canonical={canonical} ogTitle={title} ogDescription={description} ogUrl={canonical} jsonLd={jsonLd}>
+<article dir="rtl" class="bg-white">
+<header class="bg-brand-900 py-16 text-white"><div class="mx-auto max-w-4xl px-4"><a href="/articles/" class="font-bold text-accent-400">מרכז ידע מקצועי</a><p class="mt-4 text-brand-200">KNX · BACnet · BMS · 15.10.2026</p><h1 class="mt-4 text-4xl font-extrabold leading-tight">KNX ו-BACnet: איך בוחרים Gateway ל-BMS וממפים נקודות נכון?</h1><p class="mt-4 text-lg leading-8 text-brand-100">Gateway Server או Client, מיפוי נקודות, COV ושילוב Siemens Desigo.</p></div></header>
+<div class="mx-auto max-w-4xl space-y-12 px-4 py-12">
+<section class="space-y-4"><h2 class="text-3xl font-bold text-brand-900">התשובה הקצרה: איך מחברים KNX למערכת BACnet?</h2>
+<p class="text-lg leading-8 text-brand-700">מתחילים ברשימת הנקודות שצריכות לעבור בין שתי המערכות: מדידות, סטטוסים, פקודות, משובים והתראות. אחר כך בוחרים ממשק תקשורת או בקר תואם, ממפים אובייקטי תקשורת של KNX לנקודות BACnet, קובעים מי רשאי לקרוא ולכתוב ומבצעים בדיקות בשטח. עצם העובדה ששני הצדדים תומכים ב-KNX וב-BACnet אינה מוכיחה שהאינטגרציה עובדת נכון.</p>
+</section>
+<section class="space-y-4"><h2 class="text-3xl font-bold text-brand-900">למה משלבים KNX, BACnet ו-Siemens Desigo?</h2>
+<p class="text-lg leading-8 text-brand-700">KNX נפוץ בבקרת חדרים: מפסקים, חיישני נוכחות, תאורה, הצללה ומיזוג מקומי. BACnet נפוץ בתקשורת בין בקרי DDC, ציוד HVAC ומערכות ניהול מבנה. מערכת מרכזית דוגמת Siemens Desigo יכולה לשמש לצפייה, לוחות זמנים, מגמות, התראות ובקרה רוחבית. לכן הפרוטוקולים אינם מתחרים בהכרח, אלא משלימים שכבות שונות של אותה ארכיטקטורה.</p>
+<p class="text-lg leading-8 text-brand-700">לפני החיבור מגדירים מקור סמכות: מה פועל אוטומטית בחדר, מה רשאי המפעיל לשנות במסך BMS, ומי אחראי על התנהגות המערכת בעת תקלה. חוסר החלטה כאן עלול לגרום לפקודות סותרות ולקריאות שירות חוזרות.</p>
+</section>
+<section class="space-y-4"><h2 class="text-3xl font-bold text-brand-900">מה מלמד קטלוג KNX בספטמבר 2026: Server לעומת Client?</h2>
+<p class="text-lg leading-8 text-brand-700">בקטלוג הרשמי של KNX מופיעים שני ממשקים של GVS. דגם KNX-BACnet/IP Gateway Server, מקט BTIC-00/02.2, נועד לחשוף נתונים ופונקציות מתוך KNX לשימוש במערכת BACnet/IP. דגם KNX-BACnet/IP Gateway Client, מקט BTIC-00/02.1, נועד לגשת לציוד BACnet/IP כגון יחידות מיזוג וחיישנים ולהעביר נתונים לאובייקטי KNX. התיעוד שבקטלוג נושא תאריכים 9 ו-15 בספטמבר 2026 בהתאמה. אלה תאריכי המדריכים ולא בהכרח מועדי השקה.</p>
+<p class="text-lg leading-8 text-brand-700">כך מנסחים את השאלה הנכונה: האם מערכת BMS צריכה לקרוא נתוני KNX, או שמערכת KNX צריכה לקרוא או להפעיל ציוד BACnet? לפני רכישה מאמתים מול מדריך היצרן את מספר הנקודות, טיפוסי האובייקטים, התמיכה בכתיבה, אבטחה, פרמטרים ב-ETS ותאימות לגרסאות.</p>
+<p class="text-lg leading-8 text-brand-700">דוגמה נוספת היא IPAS ComBridge BACnet Server, שמופיע אף הוא בקטלוג KNX. התיאור הרשמי שלו מזכיר חשיפת אובייקטי KNX לבקרי BACnet, כולל ReadProperty ועדכוני Change of Value במוצרים התומכים. אין להסיק מכך שכל Gateway מספק את אותן יכולות.</p>
+</section>
+<section class="space-y-4"><h2 class="text-3xl font-bold text-brand-900">מיפוי נקודות: פקודה אינה משוב</h2>
+<p class="text-lg leading-8 text-brand-700">מטריצת נקודות חייבת לכלול מזהה חדר ואזור, שם נקודה, כתובת KNX Group Address, סוג מידע, אובייקט BACnet או מזהה מקביל, יחידות מידה, כיוון קריאה וכתיבה, מקור סמכות ותגובה במקרה של כשל. רצוי להוסיף גם קצב עדכון, הרשאות, גרסת יישום, ותוצאות בדיקת קצה לקצה.</p>
+<p class="text-lg leading-8 text-brand-700">דוגמה: פקודת ON/OFF של תאורה אינה זהה למשוב אמיתי על מצב הממסר. בחדר ישיבות, דרישת הטמפרטורה (Setpoint) אינה מדידת טמפרטורה בפועל. אם לא מפרידים בין הסוגים, מסך BMS יכול להציג ערך תקין לכאורה בזמן שהציוד אינו מבצע את ההוראה.</p>
+<h3 class="text-2xl font-bold text-brand-900">דוגמה לאפיון חדר ישיבות</h3><p class="text-lg leading-8 text-brand-700">חדר 201: KNX Lighting Command בנפרד מ-Feedback; Occupancy לפי Boolean והשהיה; Temperature ב-°C בנפרד מ-Setpoint. זוהי המחשה בלבד, ללא כתובות או קדימויות של פרויקט אמיתי.</p>
+</section>
+<section class="space-y-4"><h2 class="text-3xl font-bold text-brand-900">BACnet COV, ReadProperty ומתי בוחרים Modbus?</h2>
+<p class="text-lg leading-8 text-brand-700">מנגנון BACnet ReadProperty מאפשר לקרוא תכונות של אובייקטים; במוצרים תומכים, Change of Value או COV מאפשר רישום לעדכונים כאשר ערך משתנה. יש לבדוק שהצרכן מטפל בחידוש המנוי, זמני עדכון, תוקף נתונים ואובדן תקשורת. IPAS מתאר תמיכה באפשרויות אלה בדגם ComBridge שלו.</p>
+<p class="text-lg leading-8 text-brand-700">ציוד Modbus עשוי להתאים יותר למונים ולציוד טכני המספק מפת רגיסטרים. יש לאמת Scaling, רוחב נתון, סדר בתים, סימן מספרי ויחידות. בפרויקט אחד אפשר להשתמש ב-KNX לחדרים, BACnet לבקרי מיזוג ו-BMS, Modbus למונים, ו-DALI לתאורה. הבחירה תלויה בציוד ובדרישות התכנון, לא בסיסמת שיווק.</p>
+</section>
+<section class="space-y-4"><h2 class="text-3xl font-bold text-brand-900">עדכון 15.10.2026: BACnet/SC אינו תחליף ל-KNX Secure</h2>
+<p class="text-lg leading-8 text-brand-700">במסמכי Desigo CC V9 של Siemens נכללים BACnet/SC, KNX Secure, Modbus TCP ופרוטוקולים נוספים בין יכולות הממשק האפשריות. עם זאת, אלו מנגנונים שונים: BACnet/SC עוסק באבטחת תקשורת BACnet, ו-KNX Secure מיועד לתקשורת KNX. אין להסיק מכך ש-Gateway KNX-BACnet/IP רגיל יודע להמיר אוטומטית בין מנגנוני ההצפנה או לספק אבטחה מקצה לקצה.</p>
+<h3 class="text-2xl font-bold text-brand-900">שלוש שאלות לתכנון אינטגרציה מאובטחת</h3>
+<p class="text-lg leading-8 text-brand-700">האם כל ממשק תומך בפרוטוקול ובגרסת האבטחה הנדרשת? היכן מסתיימת ההצפנה ומי מנהל תעודות והרשאות? כיצד מפרידים בין רשת הבקרה, רשת הניהול וגישה מרחוק של ספק השירות? יש לבחון זאת לצד <a class="text-accent-700 underline" href="/articles/knx-ip-secure-remote-access-checklist/">מדריך KNX IP Secure</a>, ולתעד את גבולות האמון במפרט האינטגרציה לפני מסירה.</p>
+</section>
+<section class="space-y-4"><h2 class="text-3xl font-bold text-brand-900">Siemens Desigo: איך בודקים אינטגרציה אמיתית?</h2>
+<p class="text-lg leading-8 text-brand-700">כאשר Desigo היא שכבת הניהול, בודקים את המהדורה, הממשקים והרישוי, את מספר האובייקטים, גישת הקריאה והכתיבה ותצוגת המגמות וההתראות. תכנון מסודר קובע אילו פקודות רשאי מפעיל לתת, מה קדימות הפקודה המקומית ומה קורה כשמסך הניהול מאבד קשר עם הציוד.</p>
+<p class="text-lg leading-8 text-brand-700">אפשר להיעזר במרכז הידע Siemens BMS ובדפי בקרי DDC באתר i-feel; עבור מבנה קיים יש להעריך שדרוג בשלבים. מומלץ לתאם עם צוותי החשמל והמיזוג תרחישי בדיקה, ולא לבצע ניתוק יזום של ציוד חיוני ללא אישור ותוכנית חזרה לשגרה.</p>
+<p class="text-lg leading-8 text-brand-700">ראו גם <a class="text-accent-700 underline" href="/siemens-desigo-bms/">Siemens Desigo</a>, <a class="text-accent-700 underline" href="/ddc-controllers-bms/">בקרי DDC</a> ו-<a class="text-accent-700 underline" href="/bms-retrofit/">שדרוג BMS</a>.</p>
+</section>
+<section class="space-y-4"><h2 class="text-3xl font-bold text-brand-900">שבע בדיקות מסירה שכדאי לתעד</h2>
+<p class="text-lg leading-8 text-brand-700">1. אישור רשימת נקודות בשני הצדדים; 2. פקודה מקומית ובדיקת משוב אמיתי ב-BMS; 3. השוואת ערכים אנלוגיים ליחידות וסקלת המדידה; 4. בדיקת קדימויות, שינוי ידני ולוחות זמנים; 5. בדיקת COV או רענון מחזורי לפי יכולת הציוד; 6. בדיקת אובדן תקשורת מבוקרת רק לאחר אישור האתר; 7. מסירת קובצי ETS, הגדרות Gateway, מטריצת נקודות, גרסאות ותוצאות בדיקות.</p>
+<p class="text-lg leading-8 text-brand-700">בפרויקטים ציבוריים ומסחריים מסירה מקצועית אמורה לאפשר לצוות האחזקה להבין מי אחראי לכל נקודה, מה נחשב כשל ואיך מחזירים את המערכת לעבודה. התועלת איננה רק שהמסך מציג נתונים, אלא שהמערכת ניתנת לבדיקה ולתחזוקה לאורך שנים.</p>
+</section>
+<section class="space-y-4"><h2 class="text-3xl font-bold text-brand-900">מה רואים בפרויקטים ומה הצעד הבא?</h2>
+<p class="text-lg leading-8 text-brand-700">i-feel עוסקת בתכנון והטמעה של מערכות KNX ובקרת מבנה בשילוב Siemens Desigo, BACnet, Modbus ו-DDC לפי הצורך. לקריאה נוספת ראו את דף בקרת המבנה, דף Siemens Desigo, המדריך לחיישני CO2 ואיכות אוויר, ומקרה הבוחן של קמפוס הרכבת בקיסריה. אין בכך טענה שהדגמים של GVS או IPAS המוזכרים כאן מותקנים בפרויקט המסוים.</p>
+<p class="text-lg leading-8 text-brand-700">לפני הזמנת Gateway אפשר להתחיל במסמך קצר: המערכות הקיימות, מטרת האינטגרציה, מי נדרש לקרוא או לכתוב, ומי יתחזק את הממשק. צוות i-feel יכול לסייע לגבש מפרט ובדיקות מסירה מותאמים — תאימות של דגם או רישוי טעונה בדיקה פרטנית.</p>
+<p class="text-lg leading-8 text-brand-700">קישורים משלימים: <a class="text-accent-700 underline" href="/knx-smart-home/">KNX</a>, <a class="text-accent-700 underline" href="/structure-control/">BMS</a>, <a class="text-accent-700 underline" href="/articles/knx-indoor-air-quality-co2-bms/">איכות אוויר</a>, <a class="text-accent-700 underline" href="/structure-control/caesarea-rail-campus/">קמפוס קיסריה</a> ו-<a class="text-accent-700 underline" href="/articles/knx-ip-secure-remote-access-checklist/">KNX Secure</a>.</p>
+<a href="/contactus/#project-enquiry" data-ga-event="cta_click" data-ga-params='{"cta_id":"knx_bacnet_gateway_consultation","topic":"knx_bms_gateway"}' class="inline-flex rounded-lg bg-accent-600 px-6 py-3 font-bold text-white">לבקשת סקר אינטגרציה KNX ו-BMS</a>
+</section>
+<section><h2 class="mb-4 text-3xl font-bold text-brand-900">שאלות נפוצות</h2><div class="space-y-4">{faq.map((item) => (<details class="rounded-xl border border-brand-100 bg-brand-50 p-5"><summary class="cursor-pointer font-bold text-brand-900">{item.q}</summary><p class="mt-3 text-brand-700 leading-7">{item.a}</p></details>))}</div></section>
+<section class="border-t border-brand-100 pt-8"><h2 class="mb-4 text-2xl font-bold text-brand-900">מקורות מקצועיים רשמיים</h2><ul class="space-y-3 text-brand-700">
+<li><a href="https://www.knx.org/devices/knx-bacnetip-gateway-server" target="_blank" rel="noopener noreferrer" class="text-accent-700 underline">KNX Association: GVS KNX-BACnet/IP Gateway Server BTIC-00/02.2</a></li>
+<li><a href="https://www.knx.org/devices/knx-bacnetip-gateway-client" target="_blank" rel="noopener noreferrer" class="text-accent-700 underline">KNX Association: GVS KNX-BACnet/IP Gateway Client BTIC-00/02.1</a></li>
+<li><a href="https://www.knx.org/devices/combridge-bacnet-server" target="_blank" rel="noopener noreferrer" class="text-accent-700 underline">KNX Association: IPAS ComBridge BACnet Server</a></li>
+<li><a href="https://www.siemens.com/en-us/products/desigo/" target="_blank" rel="noopener noreferrer" class="text-accent-700 underline">Siemens: Desigo building automation</a></li>
+<li><a href="https://sid.siemens.com/r/A6V12900997/33153351179___en-US_33213215115" target="_blank" rel="noopener noreferrer" class="text-accent-700 underline">Siemens Desigo CC V9 — System Openness (BACnet/SC, KNX Secure)</a></li>
+</ul></section></div></article></BaseLayout>
