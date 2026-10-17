@@ -1,0 +1,11 @@
+{
+  "voice_provider": "elevenlabs",
+  "default_voice_id": null,
+  "voice_owner": "Oren Levy",
+  "voice_verified": false,
+  "language": "he",
+  "model_id": "eleven_v3",
+  "fallback": "captions-only-draft",
+  "allow_alternate_voice": false,
+  "allow_overage": false
+}
