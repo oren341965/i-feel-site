@@ -117,6 +117,13 @@ meta.jsonLd = JSON.stringify(desigoGraph);
 ---
 <BaseLayout {...meta}>
   <Fragment set:html={content} />
+  <section class="bg-accent-50 border-y border-accent-100 py-10" dir="rtl" aria-label="KNX BACnet Siemens Desigo">
+    <div class="max-w-4xl mx-auto px-4">
+      <h2 class="text-2xl font-bold text-brand-900 mb-3">חיבור KNX ל-BACnet ול-Siemens Desigo</h2>
+      <p class="text-brand-700 leading-relaxed mb-4">מדריך חדש מסביר איך לבחור Gateway, לבנות מטריצת נקודות, להפריד פקודה ממשוב ולבדוק BACnet/SC מול KNX Secure.</p>
+      <a href="/articles/knx-bacnet-gateway-server-client-bms/" class="text-accent-700 font-bold underline">למדריך KNX ו-BACnet</a>
+    </div>
+  </section>
   <DesigoVideo heading="Siemens Desigo בחמש דקות — סרטון הסבר" tone="tint" />
   <BeitHalochemVideo />
 </BaseLayout>
