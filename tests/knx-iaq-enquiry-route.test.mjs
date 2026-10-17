@@ -4,15 +4,19 @@ import { readFile } from 'node:fs/promises';
 
 const read = path => readFile(new URL('../' + path, import.meta.url), 'utf8');
 
-test('KNX IAQ consultation lands on the existing commercial form, not private-home choices', async () => {
+for (const [path, ctaId, topic] of [
+  ['knx-indoor-air-quality-co2-bms', 'knx_iaq_consultation', 'knx_iaq'],
+  ['knx-bacnet-gateway-server-client-bms', 'knx_bacnet_gateway_consultation', 'knx_bms_gateway'],
+]) test(`${ctaId} lands on the existing commercial form, not private-home choices`, async () => {
   const [article, contact] = await Promise.all([
-    read('src/pages/articles/knx-indoor-air-quality-co2-bms.astro'),
+    read(`src/pages/articles/${path}.astro`),
     read('src/page-html/page-07.html'),
   ]);
-  const cta = article.match(/<a\b[^>]*\bdata-ga-params='[^']*"cta_id":"knx_iaq_consultation"[^']*'[^>]*>/)?.[0];
+  const cta = [...article.matchAll(/<a\b[^>]*\bdata-ga-params='([^']*)'[^>]*>/g)]
+    .find(match => JSON.parse(match[1]).cta_id === ctaId)?.[0];
   assert.ok(cta, 'the existing measurable consultation CTA must remain');
   assert.match(cta, /data-ga-event="cta_click"/);
-  assert.match(cta, /"topic":"knx_iaq"/);
+  assert.ok(cta.includes(`"topic":"${topic}"`));
   assert.match(cta, /href="\/contactus\/#contact-form-wrapper"/);
   assert.match(contact, /<section\b[^>]*id="contact-form-wrapper"/);
   assert.match(contact, /<form\b[^>]*action="\/api\/lead\.php"[^>]*method="post"/);
