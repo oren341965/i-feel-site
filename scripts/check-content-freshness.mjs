@@ -19,7 +19,7 @@ const articlePagesDir = path.join(root, 'src/pages/articles');
 for (const entry of await readdir(articlePagesDir, { withFileTypes: true })) {
   if (!entry.isFile() || !entry.name.endsWith('.astro') || entry.name.startsWith('[') || entry.name === 'index.astro') continue;
   const source = await readFile(path.join(articlePagesDir, entry.name), 'utf8');
-  const date = source.match(/datePublished:\s*'(\d{4}-\d{2}-\d{2})'/)?.[1];
+  const date = source.match(/(?:["']datePublished["']|\bdatePublished)\s*:\s*(["'])(\d{4}-\d{2}-\d{2})\1/)?.[2];
   if (date) publicDates.push({ slug: entry.name.replace(/\.astro$/, ''), date });
 }
 
