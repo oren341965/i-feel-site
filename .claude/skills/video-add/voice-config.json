@@ -1,11 +1,17 @@
 {
   "voice_provider": "elevenlabs",
-  "default_voice_id": null,
+  "default_voice_id": "5kUjV6fSdBB4eONNJnvT",
   "voice_owner": "Oren Levy",
-  "voice_verified": false,
+  "voice_verified": true,
   "language": "he",
   "model_id": "eleven_v3",
   "fallback": "captions-only-draft",
   "allow_alternate_voice": false,
-  "allow_overage": false
+  "allow_overage": false,
+  "listening_approval": "approved by Oren 2026-10-18",
+  "voice_settings": {
+    "similarity_boost": 0.75,
+    "speed": 1.0,
+    "stability": 0.5
+  }
 }
