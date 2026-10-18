@@ -20,3 +20,9 @@ For a script, use `node .claude/skills/video-add/scripts/elevenlabs-narrate.mjs 
 ## HeyGen avatar
 
 The planned marketing workflow pairs this ElevenLabs audio with Oren's personal HeyGen avatar. As of 2026-10-18 Oren says he has no personal avatar yet. Keep avatar status unconfigured; do not fabricate, clone or substitute an avatar. Narrated product drafts can proceed. Once Oren has created and verified an avatar, verify its ID, access and included rendering quota before uploading the frozen audio and creating an avatar clip. No API key goes in this skill.
+
+The HeyGen account for oren@i-feel.co.il was created and email-authenticated on 2026-10-18, on the Free plan with no purchase. Personal-avatar recording is still required. Account access in the browser does not imply CLI/API access.
+
+## Marketing direction — 2026-10-18
+
+Oren explicitly rejected a product-image slideshow and requested an impressive, meaningful marketing film. Start with the value in a real home and a visual story: daylight/blinds, evening lighting, comfort, then the verified product as the means of control. Use moving scenes or purposeful animated demonstrations; a sequence of product stills with headings is only a reference draft. Product photographs can support a short reveal but should not carry the whole film. Label illustrative scenes, preserve the exact product appearance, and do not invent its screen UI or suggest a generic scene is footage of an I FEEL installation. A HeyGen cinematic plan is a plan until its generated moving assets have been inspected; do not report it as a completed film.
