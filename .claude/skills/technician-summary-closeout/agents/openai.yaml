@@ -1,0 +1,4 @@
+interface:
+  display_name: "Technician Summary Closeout"
+  short_description: "Validate each Monday technician summary and its customer record"
+  default_prompt: "Use $technician-summary-closeout to close the latest technician summary received in Monday and prepare any required internal follow-up."
