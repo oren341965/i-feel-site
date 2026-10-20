@@ -259,7 +259,7 @@ function renderProgress(): void {
   qsa<HTMLElement>('[data-step]').forEach((panel) => { panel.hidden = Number(panel.dataset.step) !== state.step; });
   qs<HTMLElement>('#advisor-step-label').textContent = `שלב ${state.step} מתוך ${TOTAL_STEPS}`;
   const progress = qs<HTMLElement>('#advisor-progress-bar');
-  progress.style.width = `${(state.step / TOTAL_STEPS) * 100}%`;
+  progress.style.transform = `scaleX(${state.step / TOTAL_STEPS})`;
   const track = progress.parentElement;
   track?.setAttribute('aria-valuenow', String(state.step));
   qs<HTMLButtonElement>('#previous-step').hidden = state.step === 1;
