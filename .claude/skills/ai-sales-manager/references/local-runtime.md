@@ -24,6 +24,13 @@ C:\ifeel-sales\
   `monday-repair-preview-current.json` containing item IDs and repair codes but no customer or employee
   names. It then refreshes the attribution snapshot from a separate complete read. Either reconciliation
   failure stops the morning run; neither refresh can write to Monday.
+- A successful Monday refresh also atomically saves the complete PII-free
+  `analysisEvidence` projection as `state\sales-analysis-current.json`. Configure
+  decision `salesAnalysis` to that file and decision `attribution` to the existing
+  refreshed attribution snapshot after read-back verification. The older aggregate
+  snapshot lacks treatment and reconciliation fields and cannot replace this input.
+  Failed refreshes preserve the prior evidence time; decision readiness still
+  rejects evidence older than 24 hours or inconsistent source populations.
 - The qualified-lead producer accepts only an approved private CRM export inside the runtime, derives
   opaque identity keys with a machine-local HMAC credential, and emits the strict PII-free snapshot under
   `data\` or `state\`. The installer never creates that credential or fabricates business classifications.

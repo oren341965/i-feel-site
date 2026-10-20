@@ -377,6 +377,14 @@ export async function refreshMondaySalesSnapshotReadOnly({
   await rename(snapshotTemporary, runtime.snapshotFile);
   await writeFile(previewPath, `${JSON.stringify(live.repairPreview, null, 2)}\n`, 'utf8');
   const verified = await collectMondaySnapshotReadOnly({ configPath, now });
+  // The legacy aggregate intentionally excludes treatment/source reconciliation.
+  // Persist the complete PII-free projection separately for decision readiness.
+  // Publish only after the complete live read and aggregate read-back succeed;
+  // a failed refresh must never give older evidence a new generation timestamp.
+  const analysisEvidencePath = resolve(stateRoot, 'sales-analysis-current.json');
+  const analysisTemporary = `${analysisEvidencePath}.pending`;
+  await writeFile(analysisTemporary, `${JSON.stringify(live.analysisEvidence, null, 2)}\n`, 'utf8');
+  await rename(analysisTemporary, analysisEvidencePath);
   return {
     schemaVersion: 1,
     mode: 'LIVE_READ_ONLY_LOCAL_REFRESH',
@@ -386,6 +394,7 @@ export async function refreshMondaySalesSnapshotReadOnly({
     snapshotFile: basename(runtime.snapshotFile),
     backupFile: backupCreated ? basename(backupPath) : null,
     repairPreviewFile: basename(previewPath),
+    analysisEvidenceFile: basename(analysisEvidencePath),
     counts: verified.counts,
     dataQualityScore: verified.dataQualityScore,
     analysisEvidence: live.analysisEvidence,
@@ -395,7 +404,7 @@ export async function refreshMondaySalesSnapshotReadOnly({
       structuralChanges: 0,
       externalSends: 0,
       rawPiiOutput: false,
-      localFilesWritten: backupCreated ? 3 : 2,
+      localFilesWritten: backupCreated ? 4 : 3,
     },
   };
 }
