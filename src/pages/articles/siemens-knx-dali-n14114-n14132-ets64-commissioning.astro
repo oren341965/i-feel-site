@@ -1,0 +1,147 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+const title = "Siemens N141/14 ו-N141/32: DALI-2 ו-ETS6.4 | i-feel";
+const description = "מדריך Siemens KNX/DALI-2: השוואת N141/14 ו-N141/32, ETS 6.4, חיישנים, DT8, אבחון תקלות, Commissioning ושילוב BMS.";
+const canonical = "https://i-feel.co.il/articles/siemens-knx-dali-n14114-n14132-ets64-commissioning/";
+const jsonLd = JSON.stringify({"@context":"https://schema.org","@graph":[{"@type":"TechArticle","headline":"Siemens N 141/14 ו-N 141/32: מדריך KNX/DALI-2 ו-ETS 6.4","description":"מדריך Siemens KNX/DALI-2: השוואת N141/14 ו-N141/32, ETS6.4, חיישנים, DT8, אבחון תקלות, Commissioning ושילוב BMS.","datePublished":"2026-10-20","dateModified":"2026-10-20","url":"https://i-feel.co.il/articles/siemens-knx-dali-n14114-n14132-ets64-commissioning/","mainEntityOfPage":"https://i-feel.co.il/articles/siemens-knx-dali-n14114-n14132-ets64-commissioning/","inLanguage":"he-IL","author":{"@type":"Organization","name":"i-feel","url":"https://i-feel.co.il/"},"publisher":{"@id":"https://i-feel.co.il/#business"}},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"האם N 141/14 ו-N 141/32 דורשים ETS 6.4?","acceptedAnswer":{"@type":"Answer","text":"כן, בהתאם לרישום הדגמים בקטלוג KNX. יש לבדוק תוכנית יישום, DCA אם נדרש וקושחה תואמת."}},{"@type":"Question","name":"מה ההבדל המרכזי בין שני הדגמים?","acceptedAnswer":{"@type":"Answer","text":"N 141/14 כולל קו DALI אחד, N 141/32 Twin כולל שני קווים. כל קו תומך בעד 64 התקני בקרת תאורה לפי קטלוג KNX."}},{"@type":"Question","name":"האם אפשר לחבר חיישני נוכחות DALI-2?","acceptedAnswer":{"@type":"Answer","text":"אפשר לשלב חיישנים ולחצנים תואמים בגרסאות הנתמכות; יש לבדוק את מגבלות הדגם ואת ההגדרות."}},{"@type":"Question","name":"האם כל דרייבר DT8 מאפשר Tunable White?","acceptedAnswer":{"@type":"Answer","text":"לא. יש לוודא תמיכה בדרייבר ובגוף התאורה, ולא להסתפק בתמיכת ה-Gateway בלבד."}},{"@type":"Question","name":"האם KNX Secure מצפין גם DALI?","acceptedAnswer":{"@type":"Answer","text":"לא. KNX Secure חל על התקשורת הנתמכת בצד KNX; שאר הממשקים מחייבים תכנון אבטחה משלהם."}},{"@type":"Question","name":"האם שער KNX/DALI כולל BACnet?","acceptedAnswer":{"@type":"Answer","text":"לא בהכרח. חיבור BACnet דורש יכולת מובנית מפורשת או אינטגרציה מתאימה."}},{"@type":"Question","name":"מה נמסר בסיום ההתקנה?","acceptedAnswer":{"@type":"Answer","text":"מפת כתובות, קבוצות, סצנות, גיבוי ETS, גרסאות ותוצאות בדיקות עם הוראות תחזוקה."}},{"@type":"Question","name":"האם DALI-2 לבדו מספיק לתאורת חירום?","acceptedAnswer":{"@type":"Answer","text":"לא. יש צורך באפיון נפרד, בציוד תואם IEC 62386-202 ובדרישות הבטיחות המקומיות."}},{"@type":"Question","name":"כמה חיישני נוכחות ובהירות נתמכים בכל קו DALI?","acceptedAnswer":{"@type":"Answer","text":"לפי KNX, עד 12 חיישני נוכחות ועד 12 חיישני בהירות לקו, ובנוסף לחצני DALI-2 לפי מגבלות המוצר, הזרם ותאימות היצרן."}},{"@type":"Question","name":"האם אפשר להחליף דרייבר DALI בלי לתכנת מחדש ב-ETS?","acceptedAnswer":{"@type":"Answer","text":"לפי קטלוג KNX, בשני הדגמים יש תהליך נתמך להחלפת ECG ללא פרמטריזציה מחדש ב-ETS. יש לפעול לפי הוראות Siemens ולוודא התאמת דרייבר, כתובת וקבוצות, סצנות ומשוב תקלה."}},{"@type":"Question","name":"איך מאמתים שהסמכת DALI-2 תקפה לרכיב המותקן?","acceptedAnswer":{"@type":"Answer","text":"מאמתים במאגר DALI Alliance את המותג, מק״ט, GTIN וגרסאות חומרה וקושחה מול הרכיב הפיזי. הסמכה של דגם אחד אינה מאשרת אוטומטית תצורה או גרסה אחרת."}},{"@type":"Question","name":"מה לבדוק כשמסך BMS מציג ON אבל הגוף אינו מאיר?","acceptedAnswer":{"@type":"Answer","text":"מפרידים פקודה מסטטוס אמיתי, בודקים תקלה בדרייבר, כשל תקשורת והגדרות קדימות או מצב ידני. מציגים ב-BMS משוב אמיתי כאשר הוא זמין בציוד."}}]},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"ראשי","item":"https://i-feel.co.il/"},{"@type":"ListItem","position":2,"name":"מאמרים","item":"https://i-feel.co.il/articles/"},{"@type":"ListItem","position":3,"name":"Siemens KNX/DALI-2","item":"https://i-feel.co.il/articles/siemens-knx-dali-n14114-n14132-ets64-commissioning/"}]}]});
+---
+<BaseLayout title={title} description={description} canonical={canonical} ogTitle={title} ogDescription={description} ogUrl={canonical} jsonLd={jsonLd}>
+<header dir="rtl" class="bg-brand-900 py-14 text-white"><div class="mx-auto max-w-4xl px-4"><a href="/articles/" class="font-bold text-accent-400">מרכז ידע מקצועי</a><p class="mt-3 text-brand-200">Siemens GAMMA · KNX/DALI-2 · עודכן 20.10.2026</p><h1 class="mt-4 text-4xl font-extrabold leading-tight">Siemens N 141/14 ו-N 141/32: תכנון KNX/DALI-2 עם ETS 6.4</h1><p class="mt-4 text-lg text-brand-100">בחירת Gateway, כתובות, DT8, חיישנים, תכנות ובדיקות מסירה.</p></div></header>
+<article dir="rtl" class="dots-article mx-auto max-w-4xl px-4 py-10">
+<p>לשלב DALI-2 בתוך KNX צריך הרבה יותר מחיבור חוטים: יש לתכנן קווים, לוודא תאימות דרייברים וחיישנים, לקבוע קבוצות וסצנות, ולמסור ללקוח מיפוי מדויק לטיפול בתקלות. Siemens פרסמה ב-1 בספטמבר 2026 הוראות commissioning חדשות באנגלית לדגמי N 141/14 ו-N 141/32. המדריך שלפניכם מתרגם את ההשלכות של עדכון התיעוד לשאלות שעולות בפועל אצל יועצי חשמל, מתקיני KNX ואנשי BMS.</p>
+<h2>התשובה הקצרה: מתי N 141/14 ומתי N 141/32?</h2>
+<p>דגם <strong>N 141/14</strong> (מק״ט <strong>5WG1141-1AB14</strong>) מיועד לקו DALI יחיד. דגם <strong>N 141/32 Twin</strong> (מק״ט <strong>5WG1141-1AB32</strong>) מיועד לשני קווי DALI עצמאיים. לפי קטלוג KNX, בכל קו אפשר לחבר עד 64 התקני בקרת תאורה. אלה מגבלות הממשק ולא המלצה לתכנן כל קו עד הקצה: יש לחשב אספקת זרם, מספר חיישנים, חלוקת אזורים, תקלות עתידיות ונגישות להחלפה.</p>
+<table>
+<thead>
+<tr>
+  <th>מאפיין</th>
+  <th>N 141/14</th>
+  <th>N 141/32 Twin</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>מספר יציאות DALI</td>
+  <td>1</td>
+  <td>2</td>
+</tr>
+<tr>
+  <td>מספר התקני בקרת תאורה</td>
+  <td>עד 64 בקו</td>
+  <td>עד 64 לכל קו, עד 128 יחד</td>
+</tr>
+<tr>
+  <td>מק״ט</td>
+  <td>5WG1141-1AB14</td>
+  <td>5WG1141-1AB32</td>
+</tr>
+<tr>
+  <td>תכנות</td>
+  <td>ETS מגרסה 6.4, בהתאם לגרסה וליישום</td>
+  <td>ETS מגרסה 6.4, בהתאם לגרסה וליישום</td>
+</tr>
+<tr>
+  <td>יישומים</td>
+  <td>קבוצות, עמעום, חיישנים, DT8</td>
+  <td>אותם יישומים בשני קווים</td>
+</tr>
+</tbody>
+</table>
+<h3>מה באמת התעדכן ב-2026?</h3>
+<p>באתר התיעוד הרשמי של Siemens מופיעה גרסת הוראות commissioning באנגלית שנושאת תאריך <strong>01.09.2026</strong>, מספר מסמך <strong>A6V17260771_en--_b</strong>. זוהי אינדיקציה לפרסום תיעוד עדכני, לא הוכחה להשקת המוצר בספטמבר. בקטלוג KNX הרשמי מופיעות יכולות כגון ממשק IP מובנה, KNX Secure, חיישני DALI-2, לחצנים, DT8 Tunable White ו-RGB/RGBW, בקרה לפי אור קבוע ו-Human Centric Lighting, בהתאם להגדרות המוצר. ב-DALI Alliance מופיע רישום הסמכת DALI-2 ספציפי ל-N 141/14 ולגרסאות שנבדקו; אין להניח שהסמכה זו עוברת אוטומטית לכל שילוב חומרה וקושחה.</p>
+<h2>תכנון קווי DALI-2: יותר מ-64 כתובות</h2>
+<h3>קו יחיד או שני קווים</h3>
+<p>מתכנן תאורה צריך לשאול מה יקרה ביום שבו יש להחליף דרייבר, לשנות מחיצות או לבצע עבודת תחזוקה. שני קווים יכולים להקל על חלוקה לפי קומות, אגפים או אזורי שירות, אך הם אינם תחליף לחישוב נכון של עומס. חשוב לתכנן גם את מספר החיישנים והלחצנים, אשר אינם זהים למספר דרייברי התאורה, ולקרוא את מגבלות הגרסה המסוימת במדריך היצרן.</p>
+<h3>DT8, Tunable White וחיישני DALI-2</h3>
+<p>כאשר הפרויקט כולל תאורת Tunable White או צבע, בודקים שהדרייבר תומך בפונקציות DT8 הרלוונטיות, שקיימת התאמה לגוף התאורה ושאפשר להעביר פקודות ברמת החדר. Gateway המפרסם תמיכה ב-DT8 אינו יכול להשלים יכולת שאינה קיימת בדרייבר. גם חיישני אור ונוכחות צריכים להיות מזוהים, משויכים לאזור ולהשתלב בלוגיקת ההפעלה: מנגנוני בקרה כפולים שעלולים לשלוח פקודות סותרות לאותו גוף אינם תכנון מוצלח.</p>
+<h3>כמה חיישני DALI-2 מותר לתכנן בכל קו?</h3>
+<p>לפי רישום KNX לשני דגמי Siemens, בכל קו DALI אפשר לשלב עד 12 חיישני נוכחות ועד 12 חיישני בהירות. נוסף על כך אפשר לשלב לחצני DALI-2 בהיקף של עד 24 זוגות לחצנים או עד 48 לחצנים בודדים לכל קו. המספרים האלה הם גבולות מוצר המתוארים בקטלוג, לא המלצה למלא כל קו: יש לוודא התאמת חיישנים ל-IEC 62386, לצריכת הזרם וללוגיקת הבקרה המתוכננת.</p>
+<h2>ETS 6.4: מה לבדוק לפני התכנות?</h2>
+<p>בקטלוג KNX מצוין שהפרמטריזציה של דגמי N 141/14 ו-N 141/32 נעשית מ-ETS 6.4. מעבר למספר הגרסה, בדקו זמינות קובץ יישום תואם, תוכנת DCA אם נדרשת עבור אותה תצורה, גרסת קושחה מדויקת, נתיב גיבוי ומדיניות שימוש ב-KNX Secure. אל תבצעו שינוי קושחה במבנה פעיל ללא חלון תחזוקה, גיבוי מאומת ואפשרות חזרה.</p>
+<h3>שמונה בדיקות commissioning מומלצות</h3>
+<ol>
+<li><strong>מלאי כתובות:</strong> טבלה עם אזור, גוף, דרייבר, סוג DT, כתובת DALI, קבוצת KNX ושם נקודת BMS.</li>
+<li><strong>בדיקת חשמל:</strong> חשמלאי מוסמך מאמת חיווט, אספקה והיעדר מתח לא מתאים על קו DALI, לפי מדריך היצרן.</li>
+<li><strong>תוכנות וגרסאות:</strong> אימות ETS, קובצי מוצר, תוכנית יישום, DCA אם נדרש, קושחה וגיבוי טרם שינוי.</li>
+<li><strong>זיהוי:</strong> חיפוש התקנים, זיהוי פיזי, אימות כתובות ופתרון כפילויות או רכיבים חסרים.</li>
+<li><strong>תפעול:</strong> בדיקת מיתוג, עמעום, פקודת עוצמה מוחלטת, סצנות ושיוך קבוצות.</li>
+<li><strong>חיישנים:</strong> בדיקת נוכחות, השהיה, אור יום, מצב ידני וכללי קדימות.</li>
+<li><strong>תקלות:</strong> הפרדת פקודת ON מסטטוס בפועל, בדיקת חיווי דרייבר ותקשורת באופן מבוקר.</li>
+<li><strong>מסירה:</strong> מפת כתובות וקבוצות, תוכניות, גיבוי ETS, גרסאות, תוצאות בדיקות והוראות החלפה.</li>
+</ol>
+<h2>עדכון 20.10.2026: איך מאבחנים תקלת KNX/DALI-2 בלי לפרק את התכנון?</h2>
+<p>בהיעדר עדכון יצרן מהותי נוסף היום, הרחבנו את מדריך המסירה של Siemens למטרת תפעול ואבחון. במערכת KNX/DALI-2 חשוב להפריד ארבע שכבות: אובייקט פקודה של KNX, מצב ה-Gateway, מצב קו DALI ומצב הדרייבר או החיישן. טלגרמת ON שהתקבלה ב-ETS אינה הוכחה שהגוף אכן נדלק, וחיווי של סצנה אינו בהכרח משוב עומס בפועל. כך אפשר לצמצם קריאות שירות חוזרות ולשפר את הערך התפעולי של המערכת.</p>
+<h3>טבלת אבחון מהיר למתקין ולמנהל האחזקה</h3>
+<div class="overflow-x-auto"><table><thead><tr><th>הסימפטום</th><th>בדיקה מומלצת</th><th>תיעוד חשוב במסירה</th></tr></thead><tbody>
+<tr><td>דרייבר חדש אינו מזוהה</td><td>לאמת דגם ותאימות, אספקת קו, כתובת DALI ותהליך זיהוי לפי הוראות Siemens; חיווט ייבדק רק בידי גורם מוסמך.</td><td>מק״ט, חומרה/קושחה, כתובת לפני ואחרי, תוצאת חיפוש.</td></tr>
+<tr><td>חיישן נוכחות מזוהה אך התאורה אינה נדלקת</td><td>לבדוק שיוך לקבוצת התאורה, אירועי Occupancy, זמן השהיה, מצב ידני, בקרי אור יום וכללי קדימות.</td><td>כתובת חיישן, ערוץ בקרה, תרחיש ותוצאת בדיקה.</td></tr>
+<tr><td>העמעום עובד אבל Tunable White או RGB אינם עובדים</td><td>לבדוק תמיכת DT8 בדרייבר עצמו, בתצורת הערוצים ובגוף התאורה; אין להסתפק בתמיכה המוצהרת של ה-Gateway.</td><td>Device Type, פרמטרים וערכים בבדיקת סצנה.</td></tr>
+<tr><td>BMS מציג ON אך גוף התאורה כבוי</td><td>להבחין בין פקודת ON למשוב אמיתי, ולאמת חיווי תקלה בדרייבר, התראות תקשורת וקדימות מקומית.</td><td>מזהה פקודה, מזהה משוב, זמני עדכון ורישום אירועים.</td></tr>
+<tr><td>גוף הוחלף אבל אינו חוזר לקבוצה</td><td>לבדוק תהליך החלפת ECG, התאמת דרייבר, כתובת, קבוצות, סצנות והפעלת מבחן מחדש.</td><td>זהות רכיב מוחלף, שלבי החלפה ואישור תפעול.</td></tr>
+</tbody></table></div>
+<h3>האם החלפת דרייבר מחייבת תכנות מחדש ב-ETS?</h3>
+<p>קטלוג KNX עבור N 141/14 ו-N 141/32 מתאר אפשרות להחלפת ECG ללא פרמטריזציה מחדש ב-ETS, בתהליך שהמכשיר תומך בו. זה אינו אישור להחליף כל סוג דרייבר ללא בדיקות. יש לבצע זיהוי לפי מדריך Siemens ולאמת לאחר ההחלפה עמעום, קבוצות, DT8 במידת הצורך, פקודה ומשוב. כדאי לשמור גם דגם חלופי מאושר ומפת רכיבים.</p>
+<h3>איך בודקים הסמכת DALI-2 של רכיב?</h3>
+<p>לוגו בלבד אינו תחליף לבדיקה במאגר DALI Alliance. במאגר הרשמי מפורסמים המותג, מספר המוצר, GTIN וגרסאות חומרה וקושחה שנבדקו. לדוגמה, רישום N 141/14 מגדיר במפורש את מספר החלק 5WG1141-1AB14. התאימות של חיישן חדש ל-Gateway, לרכיב DT8 או לקושחה קיימת דורשת בדיקה פרטנית; השוואה זו צריכה להיכלל במסמכי המכרז או בהזמנת הציוד.</p>
+<h2>שילוב עם Siemens Desigo ו-BMS</h2>
+<p>במערכת BMS מנהלים מידע תפעולי — למשל מצב תאורה לפי אזור, פקודת כיבוי, תקלה בדרייבר וחיווי תפעול כאשר הציוד תומך בכך. לא כל טלגרמה מ-DALI נחוצה במסך הניהול. יש להפריד בין פקודה שנשלחה ובין משוב מהשטח ולבחור את רזולוציית הנתונים לפי אחריות מנהל האחזקה. שימוש ב-BACnet או Modbus כרוך בממשק מתאים; מחבר Ethernet ב-Gateway KNX/DALI אינו מבטיח שרת BACnet מובנה.</p>
+<h3>KNX Secure אינו הצפנת DALI</h3>
+<p>התמיכה ב-KNX Secure מחייבת תכנון הרשאות, קובצי ETS ומפתחות, גישה מרחוק והפרדת רשתות. היא אינה מעידה שכל תעבורת DALI או תקשורת עם BMS מוצפנת באותו אופן. אפשר להרחיב בנושא ב<a href="/articles/knx-ip-secure-remote-access-checklist/">מדריך KNX IP Secure</a> וב<a href="/articles/knx-bacnet-gateway-server-client-bms/">מדריך KNX-BACnet</a> הקיימים באתר.</p>
+<h2>דוגמת אפיון: קומת משרדים עם תאורה מבוססת נוכחות</h2>
+<p>קומת משרדים כוללת חלל פתוח, מסדרון וחדרי ישיבות. אפשר לשייך לכל אזור קבוצות, חיישני נוכחות, פקודת ניקיון, תרחיש מצגת וסצנת ערב, לצד דיווח תקלות למערכת BMS. חלוקת הקווים צריכה לשקף גם גבולות תחזוקה ותנועה פיזית, ולא רק כמות ציוד. זו דוגמה תכנונית, לא טענה כי דגמי N 141/14 או N 141/32 כבר הותקנו בפרויקט מסוים של i-feel. לקישור לפרויקט רלוונטי ראו <a href="/structure-control/caesarea-rail-campus/">קמפוס הרכבת בקיסריה</a> או <a href="/structure-control/projects/iscar/">עבודות התאורה במשרדי Iscar</a> באתר החברה.</p>
+<h2>תאורת חירום: נושא בטיחותי שיש לאפיין בנפרד</h2>
+<p>לפי DALI Alliance, ציוד תאורת חירום תואם IEC 62386-202 עשוי לאפשר בדיקת תפקוד ובדיקת משך ומעקב דרך מערכת DALI. עם זאת, תמיכה כללית ב-DALI-2 לא מהווה אישור של תכנון תאורת חירום. יש לאמת תמיכת הדגם והדרייבר, דרישות תיעוד, אחריות ובדיקות לפי תקנות הפרויקט.</p>
+<h2>שאלות ותשובות מקצועיות (FAQ / AEO)</h2>
+<h3>כמה חיישני נוכחות ובהירות נתמכים בכל קו DALI?</h3>
+<p>קטלוג KNX מציין עד 12 חיישני נוכחות ועד 12 חיישני בהירות בכל קו, בנוסף ללחצני DALI-2 בכפוף למגבלות זרם, קושחה ותאימות. יש לאמת את התצורה בדגם המותקן.</p>
+<h3>האם N 141/14 ו-N 141/32 דורשים ETS 6.4?</h3>
+<p>כן, בהתאם לרישום הדגמים בקטלוג KNX. התאמת גרסת יישום, DCA במידת הצורך וקושחה נבדקת מול מסמכי Siemens בעת ההתקנה.</p>
+<h3>מה ההבדל המרכזי בין שני הדגמים?</h3>
+<p>N 141/14 מכיל יציאת DALI אחת, בעוד N 141/32 Twin כולל שתי יציאות. לפי התיעוד, כל קו מתאים לעד 64 התקני בקרת תאורה; תכנון החיישנים, הזרם והקבוצות נשאר הכרחי.</p>
+<h3>האם אפשר לחבר חיישני נוכחות ישירות ל-DALI-2?</h3>
+<p>בגרסאות הנתמכות אפשר לשלב חיישני DALI-2 ולחצנים דרך ה-Gateway. התאמת חיישן, מספר התקנים ותפקוד הבקרה מחייבים בדיקה פרטנית.</p>
+<h3>האם כל דרייבר DT8 מאפשר Tunable White?</h3>
+<p>לא. יש לאמת את סוג הבקרה הנתמך בדרייבר ואת התאמת גוף התאורה. התמיכה של ה-Gateway ב-DT8 אינה מבטיחה שכל דרייבר יתאים.</p>
+<h3>האם KNX Secure מאבטח גם את קו DALI?</h3>
+<p>לא באופן אוטומטי. KNX Secure חל על חלקי התקשורת הנתמכים בצד KNX; את אבטחת ממשקי IP, DALI ו-BMS בוחנים בנפרד.</p>
+<h3>האם ה-Gateway כולל BACnet?</h3>
+<p>אין להסיק זאת מהימצאות יציאת IP. חיבור ל-BACnet נעשה דרך בקר או ממשק ייעודי, בהתאם לארכיטקטורה ולציוד.</p>
+<h3>מה מוסרים בסיום ההתקנה?</h3>
+<p>מטריצת כתובות, קבוצות, סצנות, גרסאות תוכנה, גיבויי ETS, תיעוד בדיקות והוראות החלפת דרייבר ותחזוקה.</p>
+<h3>האם DALI-2 לבדו מספיק לתאורת חירום?</h3>
+<p>לא. נדרשים ציוד חירום מאושר, תכנון לפי התקנים הרלוונטיים ובדיקות נדרשות בהתאם לאתר ולדין.</p>
+<h3>האם אפשר להחליף דרייבר DALI בלי לתכנת מחדש ב-ETS?</h3>
+<p>לפי קטלוג KNX, בשני הדגמים יש תהליך נתמך להחלפת ECG ללא פרמטריזציה מחדש ב-ETS. יש לפעול לפי הוראות Siemens ולוודא התאמת דרייבר, כתובת וקבוצות, סצנות ומשוב תקלה.</p>
+<h3>איך מאמתים שהסמכת DALI-2 תקפה לרכיב המותקן?</h3>
+<p>מאמתים במאגר DALI Alliance את המותג, מק״ט, GTIN וגרסאות חומרה וקושחה מול הרכיב הפיזי. הסמכה של דגם אחד אינה מאשרת אוטומטית תצורה או גרסה אחרת.</p>
+<h3>מה לבדוק כשמסך BMS מציג ON אבל הגוף אינו מאיר?</h3>
+<p>מפרידים פקודה מסטטוס אמיתי, בודקים תקלה בדרייבר, כשל תקשורת והגדרות קדימות או מצב ידני. מציגים ב-BMS משוב אמיתי כאשר הוא זמין בציוד.</p>
+<h2>קריאה לפעולה</h2>
+<p><strong>מתכננים KNX/DALI-2 במבנה חדש או מחליפים Gateway ישן?</strong> העבירו ל-i-feel תוכניות חשמל, רשימת גופי תאורה או כתב כמויות. נבדוק התאמה בין Siemens, DALI-2, ETS ומערכת ה-BMS, ונגדיר בדיקות מסירה ותחזוקה. <a href="https://i-feel.co.il/contactus/#project-enquiry">פנייה מקצועית לבדיקת מפרט</a>.</p>
+<h2>מקורות מקצועיים רשמיים</h2>
+<ul>
+<li>Siemens, <strong>N 141/14 / N 141/32 Commissioning Instructions</strong>, מסמך A6V17260771_en--_b מתאריך 01.09.2026: <a href="https://sid.siemens.com/v/u/A6V13087530" target="_blank" rel="noopener noreferrer">מסמך Siemens הרשמי</a></li>
+<li>KNX Association, <strong>KNX/DALI Gateway N 141/14</strong> עם מידע גם על N 141/32: <a href="https://www.knx.org/devices/knxdali-gateway-n-14114-0" target="_blank" rel="noopener noreferrer">קטלוג KNX Association</a></li>
+<li>DALI Alliance, <strong>רישום הסמכת DALI-2 לדגם Siemens N 141/14</strong>: <a href="https://api.dali-alliance.org/products/10290/knx-dali-gateway-n-141-14" target="_blank" rel="noopener noreferrer">רישום הסמכת DALI Alliance</a></li>
+<li>DALI Alliance, <strong>מצב הסמכות DALI-2</strong>, דף עם עדכון מסמך ביוני 2026: <a href="https://www.dali-alliance.org/dali2/status.html" target="_blank" rel="noopener noreferrer">הסמכות DALI-2</a></li>
+<li>DALI Alliance, <strong>תאורת חירום לפי IEC 62386-202</strong>: <a href="https://www.dali-alliance.org/dali/emergency.html" target="_blank" rel="noopener noreferrer">תאורת חירום DALI</a></li>
+<li>DALI Alliance, <strong>מאגר מוצרים מוסמכים</strong>: <a href="https://api.dali-alliance.org/products" target="_blank" rel="noopener noreferrer">אימות תוקף הסמכה לפי דגם וגרסה</a></li>
+</ul>
+
+<div class="my-10 rounded-xl border border-accent-200 bg-accent-50 p-6"><h2>צריכים לבדוק מפרט Siemens KNX/DALI-2?</h2><p>שלחו ל-i-feel תוכניות תאורה, רשימת דרייברים או כתב כמויות. נבדוק את התאמת השער, קווי DALI, גרסאות ETS ותהליך המסירה.</p><a href="/contactus/#project-enquiry" data-ga-event="cta_click" data-ga-params='{"cta_id":"siemens_dali2_ets64_spec_review","topic":"knx_dali2_bms"}' class="inline-flex rounded-lg bg-accent-600 px-6 py-3 font-bold text-white">לבקשת בדיקת מפרט KNX/DALI-2</a></div>
+<p>עוד באתר: <a href="/siemens-knx-products/">Siemens KNX</a> · <a href="/structure-control/dali-lighting-control/">DALI/BMS</a> · <a href="/articles/knx-dimmers-triac-0-10v-dali2/">דימרים</a> · <a href="/siemens-desigo-bms/">Desigo</a>.</p>
+</article>
+<style is:global>
+.dots-article h1 {display:none}
+.dots-article h2 {font-size:1.7rem;line-height:1.35;font-weight:800;color:#132843;margin:2.2rem 0 1rem}
+.dots-article h3 {font-size:1.3rem;line-height:1.4;font-weight:700;color:#132843;margin:1.7rem 0 .7rem}
+.dots-article p,.dots-article li {line-height:1.85;margin-bottom:.85rem}
+.dots-article ul,.dots-article ol {padding-inline-start:1.6rem;margin:1rem 0}
+.dots-article ul {list-style:disc}.dots-article ol {list-style:decimal}
+.dots-article a {color:#0369a1;text-decoration:underline}
+.dots-article table {border-collapse:collapse;width:100%;margin:1.2rem 0}
+.dots-article th,.dots-article td {border:1px solid #d7e1eb;padding:.65rem;text-align:right}
+.dots-article th {background:#edf3fa;font-weight:700}
+.dots-article hr {margin:2rem 0;border-color:#e0e8ee}
+</style>
+</BaseLayout>
