@@ -39,6 +39,7 @@
 
   # High-value legacy SEO routes still visible in Google.
   RewriteRule ^home-automation/?$ /smart-home/ [R=301,L]
+  RewriteRule ^wired-smart-home/?$ /knx-smart-home/ [R=301,L]
   # /about-us/ pointed at the homepage (soft 404). The About page is an E-E-A-T asset (2026-07-22).
   RewriteRule ^about-us/?$ /about-i-feel-smart-building-company/ [R=301,L]
   RewriteRule ^i-feel-smart-home-bms-israel/?$ /about-i-feel-smart-building-company/#entity-hub [R=301,L,NE]

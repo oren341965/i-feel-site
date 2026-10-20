@@ -95,6 +95,7 @@
 # Product-specific KNX legacy routes are intentionally not redirected here.
 # Keep old Schneider and Siemens assets separate unless a redirect is approved explicitly.
 /home-automation/ /smart-home/ 301
+/wired-smart-home/ /knx-smart-home/ 301
 
 # ---- BMS case studies ----
 /structure-control/amazon-tel-aviv-1/ /structure-control/amazon-sarona/ 301
