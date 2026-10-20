@@ -2,6 +2,7 @@ import { readdir } from "node:fs/promises";
 import path from "node:path";
 import process from "node:process";
 import { Client } from "basic-ftp";
+import { uploadFileVerified } from "./upload-file-verified.mjs";
 
 function getRequiredEnvironmentValue(name) {
   const value = process.env[name];
@@ -141,7 +142,7 @@ try {
           await client.ensureDir(remoteDirectory);
           currentRemoteDirectory = remoteDirectory;
         }
-        await client.uploadFrom(file.absolutePath, remoteName);
+        await uploadFileVerified(client, file.absolutePath, remoteName);
         completed = true;
       } catch (error) {
         client.close();
