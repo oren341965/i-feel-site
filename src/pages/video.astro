@@ -155,6 +155,19 @@ if (switchesVideoSchema) {
 }
 dmxVideoGraph['@graph'].push(desigoVideoSchema(meta.canonical));
 dmxVideoGraph['@graph'].push(beitHalochemVideoSchema(meta.canonical));
+dmxVideoGraph['@graph'].push({
+  "@type": "VideoObject",
+  "@id": "https://i-feel.co.il/video/#v-jaffa-smart-building",
+  "name": "בניין חכם ביפו — אינטרקום, חשמל חכם ומערכות בניין | i-feel",
+  "description": "פרויקט מגורים ביפו: אינטרקום בכניסה ומסך שליטה בכל דירה, מערכת חשמל חכם בדירות, מצלמות היקפיות, רשת תקשורת לבניין ותאורה היקפית. אדריכל ומבצע: פורסן.",
+  "uploadDate": "2026-10-20",
+  "duration": "PT24.7S",
+  "thumbnailUrl": "https://i.ytimg.com/vi/F2vOg-dMbqo/hqdefault.jpg",
+  "contentUrl": "https://www.youtube.com/watch?v=F2vOg-dMbqo",
+  "embedUrl": "https://www.youtube-nocookie.com/embed/F2vOg-dMbqo",
+  "inLanguage": "he-IL",
+  "publisher": { "@id": "https://i-feel.co.il/#business" }
+});
 meta.jsonLd = JSON.stringify(dmxVideoGraph);
 
 ---
