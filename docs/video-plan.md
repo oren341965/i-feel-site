@@ -33,6 +33,7 @@
 | שינוי עוצמת התאורה במפסקים | הדרכות שימוש | `rq23WL6a0Aw` | `/video/lighting-dimmer/` |
 | C-Gym תל אביב — בקרת מבנה חכמה | BMS | `n8tXISZ63gI` | `/structure-control/#cgym-video` |
 | בית חכם בחוות סוסים — שליטה פשוטה בתאורה עם Siemens KNX ו-SmartSphere | סרטוני פרויקטים | `ianNM88rqF0` | `/video/#horse-farm-video` |
+| אינטרקום חכם ומסכי שליטה משולבים בבית חכם | הסברים על בית חכם ו-KNX | `uFmbUDpK-ZE` | `/gallery/smart-intercom-residential-building/#video` |
 
 ---
 
