@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import content from '../../page-html/gallery/page-22.html?raw';
+import { intercomVideoSchema } from '../../data/intercom-video-schema.mjs';
 
 const meta = {
   title: "אינטרקום חכם לבניין מגורים | פרויקט i-feel",
@@ -12,6 +13,10 @@ const meta = {
   ogImage: "https://i-feel.co.il/assets/og-cover.jpg",
   jsonLd: "{\"@context\":\"https://schema.org\",\"@type\":\"ImageGallery\",\"name\":\"אינטרקום חכם לבניין מגורים\",\"description\":\"פרויקט אינטרקום חכם משולב — וידאו, פתיחת שערים, בקרת גישה לבניין מגורים\",\"mainEntityOfPage\":\"https://i-feel.co.il/gallery/smart-intercom-residential-building/\"}"
 };
+const gallerySchema = JSON.parse(meta.jsonLd);
+const { ["@context"]: schemaContext, ...gallerySchemaBody } = gallerySchema;
+meta.jsonLd = JSON.stringify({ "@context": schemaContext, "@graph": [gallerySchemaBody, intercomVideoSchema(meta.canonical)] });
+
 ---
 <BaseLayout {...meta}>
   <Fragment set:html={content} />
