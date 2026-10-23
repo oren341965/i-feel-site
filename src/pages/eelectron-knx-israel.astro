@@ -1,0 +1,68 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+const canonical = 'https://i-feel.co.il/eelectron-knx-israel/';
+const catalogue = 'https://www.eelectron.com/wp-content/uploads/2026/06/Technical_Catalogue_EN.pdf';
+const products = [
+  {name:'גלאי נוכחות Eelectron Basic KNX',sku:'PD00E00KNX',description:'גלאי נוכחות לתקרה לבקרת תאורה מבוססת KNX; יש לבדוק את שטח הכיסוי והגובה בהתאם לנתוני היצרן.',category:'גלאים',url:'/knx-presence-motion-detectors/'},
+  {name:'גלאי נוכחות Eelectron Standard MicroFL',sku:'PD00M01KNX',description:'גלאי זעיר עם חיישן אור, ערוצי בקרה ופונקציות לוגיות, המתאים גם ליישומי חדרי מלון.',category:'גלאים ומלונאות',url:'/knx-presence-motion-detectors/'},
+  {name:'מפסקי זכוכית KNX מסדרת 9025',sku:'9025GL',description:'מפסקי זכוכית בעיצובים שונים להפעלת תאורה, דימור, הצללה ותרחישים. מספר הלחצנים וגימור החזית נקבעים לפי הדגם.',category:'מפסקים',url:'/knx-switch-advisor/'},
+  {name:'יחידת ממשק למפסקי זכוכית',sku:'CS10A01KNX',description:'יחידת KNX אחורית למשפחת מפסקים תואמת; לפני הזמנה יש לאמת התאמה בין החזית למודול.',category:'מפסקים',url:'/catalogs/'},
+  {name:'מצמד קווים KNX',sku:'LC00B01KNX',description:'חיבור בין ענפי או אזורי KNX תוך הפרדה גלוונית וסינון הודעות, בהתאם לתכנון הרשת.',category:'תשתיות KNX',url:'/catalogs/'},
+  {name:'ממשק KNX IP',sku:'IN00501RIP-1',description:'רכיב תקשורת למערכות KNX; מפרט, גרסת מוצר ותפקוד מדויק ייבדקו לפי דף הנתונים העדכני.',category:'תקשורת',url:'/catalogs/'},
+  {name:'מערכת ניהול למלונות E-Suite',sku:'SW01D05KNX',description:'מערכת לניהול חדרי מלון, פיקוח על סביבת KNX, התראות ואינטגרציות בכפוף למודולים ולרישוי.',category:'מלונאות',url:'/assets/catalogs/hotel-room-control.pdf'}
+];
+const hotel = [
+  ['בקרי חדר ויציאות KNX','מיתוג תאורה, עמעום, וילונות ותריסים בהתאם לציוד החדר ולתכנון החשמל'],
+  ['מפסקי כניסה, מיטה וחדר רחצה','שליטה נוחה לאורח, תרחישי תאורה והצללה וממשקים מקומיים'],
+  ['יחידות תצוגה וסטטוס לחדר','נא לא להפריע (DND), בקשת ניקיון (MUR) וחיווי צוות לפי תכנון המערכת'],
+  ['בקרת מיזוג וטמפרטורה','תרמוסטטים וחיישני טמפרטורה, בממשק למערכת HVAC המתאימה'],
+  ['גלאי נוכחות ומגעי דלת','חיסכון באנרגיה והערכת תפוסת חדר בכפוף ללוגיקה המאושרת'],
+  ['שערי תקשורת ומצמדי קו','ממשקי KNX IP, חיבור בין קווים ואזורים ותשתית רשת'],
+  ['מערכת ניהול E-Suite','ניהול חדרים, פיקוח, התראות ואינטגרציה למערכות מלון לפי היקף הפרויקט']
+];
+const meta={
+ title:'Eelectron ישראל | מפיץ מורשה, מפסקי KNX ופתרונות למלונות | i-feel',
+ description:'I Feel מפיצה מורשית של Eelectron בישראל, עם התקנות KNX מאז 2012. קטלוג טכני 2026, מפסקים, גלאים, בקרי KNX ופתרונות בקרה לחדרי מלון.',
+ canonical,ogUrl:canonical,robots:'index, follow, max-image-preview:large',
+ jsonLd: JSON.stringify({'@context':'https://schema.org','@graph':[
+ {'@type':'CollectionPage',name:'Eelectron בישראל – בקרת KNX ומלונאות',url:canonical,inLanguage:'he-IL',description:'מרכז מידע טכני בעברית למערכות Eelectron KNX בישראל',about:{'@type':'Brand',name:'Eelectron'}},
+ {'@type':'BreadcrumbList',itemListElement:[{'@type':'ListItem',position:1,name:'ראשי',item:'https://i-feel.co.il/'},{'@type':'ListItem',position:2,name:'Eelectron',item:canonical}]},
+ {'@type':'ItemList',name:'מוצרי Eelectron KNX',itemListElement:products.map((p,i)=>({'@type':'ListItem',position:i+1,name:p.name,description:p.description,url:new URL(p.url,'https://i-feel.co.il').href}))}
+ ]})
+};
+---
+<BaseLayout {...meta}>
+<article dir="rtl" class="bg-slate-50 text-slate-900">
+ <div class="max-w-6xl mx-auto px-4 py-12">
+  <nav class="text-sm mb-6"><a href="/">ראשי</a> / <a href="/catalogs/">קטלוגים</a> / Eelectron</nav>
+  <header class="bg-white rounded-2xl shadow-sm border border-slate-200 p-7 md:p-12 mb-10">
+   <p class="font-bold text-sky-700 mb-3">EELECTRON • KNX • HOSPITALITY</p>
+   <h1 class="text-3xl md:text-5xl font-extrabold leading-tight mb-5">Eelectron בישראל — מפיץ מורשה, בקרי KNX, מפסקים ופתרונות לבתי מלון</h1>
+   <p class="text-lg leading-8 mb-4"><strong>I Feel היא מפיצה מורשית של Eelectron בישראל</strong>, עם ניסיון בהתקנות ובפרויקטי KNX מאז שנת 2012. אנו מלווים יועצים, חשמלאים, אינטגרטורים, יזמים ומנהלי פרויקטים משלב התכנון ועד ההתקנה, התכנות והשירות.</p>
+   <p class="leading-7 mb-7">Eelectron היא יצרנית איטלקית של רכיבי אוטומציה ובקרת מבנה. באתר זה תמצאו הסברים בעברית על משפחות המוצרים, קישורים למק״טים ולמסמכי תכנון, וכן פתרונות בקרה ייעודיים למלונות.</p>
+   <div class="flex flex-wrap gap-3"><a class="bg-sky-800 text-white font-bold rounded-lg px-5 py-3" href={catalogue} target="_blank" rel="noopener noreferrer">קטלוג Eelectron הטכני 2026 (PDF)</a><a class="border border-sky-800 text-sky-900 rounded-lg px-5 py-3 font-bold" href="/contactus/">ייעוץ ומפרט לפרויקט</a></div>
+  </header>
+  <section class="mb-12" aria-labelledby="families">
+   <h2 id="families" class="text-3xl font-bold mb-4">מוצרי Eelectron KNX — מידע בעברית</h2>
+   <p class="leading-7 mb-6">דפי סקירה למוצרים ומשפחות מוצרים שזוהו בקטלוגים ובחומר הקיים של I Feel. לצורך בחירת מק״ט סופי, יש להצליב גרסת יצרן, התאמה חשמלית, נתוני ETS ואביזרים נדרשים.</p>
+   <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
+    {products.map(p=><section class="bg-white rounded-xl p-6 border border-slate-200">
+     <p class="text-sm text-sky-700 font-bold mb-2">{p.category}</p><h3 class="text-xl font-bold mb-2">{p.name}</h3><p class="font-mono text-sm mb-3" dir="ltr">{p.sku}</p><p class="leading-7 mb-4">{p.description}</p><a class="text-sky-800 font-semibold underline" href={p.url}>לפרטים ולחומר נוסף</a>
+    </section>)}
+   </div>
+  </section>
+  <section class="bg-white rounded-2xl border border-slate-200 p-7 mb-12">
+   <h2 class="text-3xl font-bold mb-4">בקרה חכמה למלונות — מערכת חדר מלאה</h2>
+   <p class="leading-8 mb-6">פתרון מלונאי אינו מסתכם בבקר KNX בלבד: יש לתכנן את מכלול אביזרי החדר, ממשקי האורח, הגלאים, חיבורי החשמל, התקשורת ותוכנת הניהול. המוצרים המדויקים משתנים לפי הפרויקט.</p>
+   <div class="grid md:grid-cols-2 gap-4">{hotel.map(([name,description])=><div class="rounded-lg border border-slate-200 p-5"><h3 class="font-bold text-lg mb-2">{name}</h3><p class="leading-7">{description}</p></div>)}</div>
+   <p class="mt-6"><a href="/assets/catalogs/hotel-room-control.pdf" class="text-sky-800 underline font-bold">ספר מערכת בקרת מלון קיים (PDF)</a> · <a href={catalogue} class="text-sky-800 underline font-bold" target="_blank" rel="noopener noreferrer">קטלוג יצרן 2026</a></p>
+  </section>
+  <section class="bg-white rounded-2xl border border-slate-200 p-7">
+   <h2 class="text-2xl font-bold mb-3">מפסקים, גמרים ומסמכים טכניים</h2>
+   <p class="leading-8 mb-4">במפסקי הזכוכית יש לבחור חזית, מספר אזורי מגע, גוון, סימונים ומודול אחורי מתאים. ניתן לשלב פקודות תאורה, עמעום, תריסים, מיזוג ותרחישים לפי הדגם.</p>
+   <p class="leading-8"><a class="text-sky-800 underline font-bold" href="/knx-switch-advisor/">מדריך בחירת מפסק KNX</a> · <a class="text-sky-800 underline font-bold" href="/catalogs/">כל הקטלוגים</a> · <a class="text-sky-800 underline font-bold" href="/knx-presence-motion-detectors/">גלאי נוכחות KNX</a></p>
+   <p class="text-sm text-slate-600 mt-6">המידע בעברית הוא הסבר מקצועי כללי ולא תחליף להוראות בטיחות, לנתוני היצרן או לתכנון חשמל חתום. תכונות תלויות בדגם ובגרסת התוכנה.</p>
+  </section>
+ </div>
+</article>
+</BaseLayout>
