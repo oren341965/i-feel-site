@@ -1,18 +1,21 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 
-const title = 'KNX Awards 2026: 6 מגמות שמשנות את KNX ובקרת המבנה | i-feel';
-const description = 'לקראת KNX Awards 2026: אבטחת KNX/IP, ETS6.4, אנרגיה, איכות אוויר, BMS ואינטגרציה. המגמות שכדאי ליועצים, מתקינים ומנהלי מבנים בישראל להכיר.';
+const title = 'KNX Awards 2026: הזוכים ו-6 מגמות KNX ו-BMS | i-feel';
+const description = '13 הזוכים ב-KNX Awards 2026 ומה כדאי ללמוד מהם על KNX, BMS, DALI-2, CO₂, אנרגיה ו-ETS6.4 בישראל.';
 const canonical = 'https://i-feel.co.il/articles/knx-awards-2026-smart-building-trends/';
 const faq = [
   {
-    q: 'מתי מתקיים KNX Awards 2026?',
-    a: 'טקס KNX Awards 2026 מתקיים אונליין ב-6 באוקטובר 2026 בשעה 17:30 CEST, במהדורה ה-16 של האירוע.'
+    q: 'מתי התקיים KNX Awards 2026?',
+    a: 'הטקס התקיים ב-6 באוקטובר 2026, במהדורה ה-16, ובה הוכרזו 13 זוכים.'
   },
   {
-    q: 'כמה פרויקטים ומוצרים מועמדים השנה?',
-    a: 'KNX Association דיווחה על 55 פרויקטים מועמדים ועל 33 מוצרים במסגרת KNX Product Award.'
+    q: 'כמה זוכים הוכרו ב-KNX Awards 2026?',
+    a: 'KNX Association הודיעה על 13 זוכים. לפני הטקס הוצגו 55 פרויקטים ו-33 מוצרים מועמדים.'
   },
+  { q: 'מי זכה בפרס המוצר?', a: 'Iddero זכתה ב-KNX Product Award 2026 עם מסך החדר Verso Q.' },
+  { q: 'איך הזוכים משלבים CO₂?', a: 'HUB26 משתמש בניטור CO₂ לצד תפוסה לאוורור לפי ביקוש, בכפוף לאפיון הנדסי.' },
+  { q: 'האם חיסכון של 40% בתאורה מובטח?', a: 'לא. הנתון מתואר בפרויקט HUB26 בלבד ואינו תחזית לאתרים אחרים.' },
   {
     q: 'מה הקשר בין KNX ל-BMS?',
     a: 'KNX מתאים במיוחד לבקרת חדרים, תאורה, חיישנים, הצללה ופקודות משתמש. במבנים מורכבים משלבים אותו עם DDC ומערכת BMS מרכזית לניהול HVAC, אנרגיה, התראות ומערכות טכניות.'
@@ -36,10 +39,10 @@ const jsonLd = JSON.stringify({
   '@graph': [
     {
       '@type': ['Article', 'TechArticle'],
-      headline: 'KNX Awards 2026: 6 מגמות שמשנות את KNX ובקרת המבנה',
+      headline: 'KNX Awards 2026: הזוכים ושישה לקחים ל-KNX ול-BMS',
       description,
       datePublished: '2026-10-03',
-      dateModified: '2026-10-05',
+      dateModified: '2026-10-22',
       inLanguage: 'he-IL',
       mainEntityOfPage: canonical,
       author: { '@type': 'Organization', name: 'i-feel', url: 'https://i-feel.co.il/' },
@@ -70,20 +73,72 @@ const jsonLd = JSON.stringify({
     <header class="bg-brand-900 text-white py-14 md:py-20">
       <div class="max-w-4xl mx-auto px-4">
         <a href="/articles/" class="text-accent-400 font-semibold hover:text-accent-300">מאמרים ומדריכים</a>
-        <p class="mt-4 text-sm text-brand-200">KNX · BMS · ETS6.4 · אבטחה · עודכן 05.10.2026</p>
-        <h1 class="mt-4 text-4xl md:text-5xl font-extrabold leading-tight">KNX Awards 2026: 6 מגמות שמשנות את KNX ובקרת המבנה</h1>
-        <p class="mt-5 text-lg md:text-xl leading-8 text-brand-100">לקראת טקס KNX Awards 2026, בחנו את הכיוונים המקצועיים שחוזרים שוב ושוב בעולם ה-KNX: אבטחת IP, אנרגיה, ETS6.4, איכות אוויר, אינטגרציה עם BMS ותחזוקה ארוכת טווח.</p>
+        <p class="mt-4 text-sm text-brand-200">KNX · BMS · ETS6.4 · 13 הזוכים · עודכן 22.10.2026</p>
+        <h1 class="mt-4 text-4xl md:text-5xl font-extrabold leading-tight">KNX Awards 2026: הזוכים ו-6 מגמות שמשנות את KNX ובקרת המבנה</h1>
+        <p class="mt-5 text-lg md:text-xl leading-8 text-brand-100">אחרי הכרזת 13 הזוכים ב-6 באוקטובר 2026: מה אפשר ללמוד על KNX, BMS, DALI-2 ואנרגיה ממלונות, משרדים ובתים.</p>
       </div>
     </header>
 
     <div class="max-w-4xl mx-auto px-4 py-12">
       <section class="rounded-2xl border border-accent-100 bg-accent-50 p-6 md:p-8 mb-10">
         <h2 class="text-2xl font-extrabold text-brand-900 mb-3">התשובה הקצרה</h2>
-        <p class="text-lg leading-8 text-brand-700">KNX ב-2026 הוא כבר לא רק תקן לשליטה בתאורה ותריסים. הכיוון הוא מערכת פתוחה ומאובטחת שמשתלבת עם BMS, DDC, DALI, BACnet ומערכות אנרגיה, ונדרשת להיות מתועדת ותחזוקתית לשנים. KNX Awards הוא חלון טוב לראות לאן התחום הולך ומה כדאי ליישם כבר היום בפרויקטים בישראל.</p>
+        <p class="text-lg leading-8 text-brand-700">KNX ב-2026 הוא כבר לא רק תקן לשליטה בתאורה ותריסים. הכיוון הוא מערכת פתוחה ומאובטחת שמשתלבת עם BMS, DDC, DALI, BACnet ומערכות אנרגיה, ונדרשת להיות מתועדת ותחזוקתית לשנים. הפרויקטים הזוכים מראים איך מגמות אלה הופכות לתכנון הנדסי ומה כדאי ליישם בפרויקטים בישראל.</p>
       </section>
 
-      <p class="text-lg leading-8 text-brand-700 mb-5">ב-6 באוקטובר 2026 תקיים KNX Association את המהדורה ה-16 של KNX Awards. לפי KNX, השנה יש 13 קטגוריות, ובהן Energy Efficiency, Innovation, Education, People’s Choice ו-Best Product. הארגון דיווח גם על 55 פרויקטים מועמדים ועל 33 מוצרים שהתמודדו בקטגוריית המוצר.</p>
-      <p class="text-lg leading-8 text-brand-700 mb-8">מעבר לשאלה מי יזכה, יש כאן הזדמנות להבין אילו יכולות הופכות לסטנדרט בפרויקט חכם: אבטחת תקשורת, אינטגרציה בין מערכות, מדידה אמיתית של ביצועי מבנה, תחזוקה מסודרת ואפשרות לשדרג את המערכת בעתיד בלי להתחיל מחדש.</p>
+      <p class="text-lg leading-8 text-brand-700 mb-5">KNX Association קיימה את המהדורה ה-16 של KNX Awards ב-6 באוקטובר 2026 והכריזה על 13 זוכים. לפני הטקס הוצגו 55 פרויקטים מועמדים ו-33 מוצרים שהתמודדו בפרס המוצר.</p>
+      <p class="text-lg leading-8 text-brand-700 mb-8">מעבר לשמות הזוכים, יש כאן הזדמנות להבין אילו יכולות הופכות לסטנדרט בפרויקט חכם: אבטחת תקשורת, אינטגרציה בין מערכות, מדידה אמיתית של ביצועי מבנה, תחזוקה מסודרת ואפשרות לשדרג את המערכת בעתיד בלי להתחיל מחדש.</p>
+
+<!-- DOTS 2026-10-22: official KNX Awards winners update -->
+      <section class="space-y-5 mb-12" id="knx-awards-2026-winners" aria-labelledby="knx-awards-2026-winners-title">
+        <p class="text-sm font-bold text-accent-700">עודכן 22.10.2026 · תוצאות רשמיות שפורסמו ב־6.10.2026</p>
+        <h2 id="knx-awards-2026-winners-title" class="text-3xl font-bold text-brand-900">מי זכה ב־KNX Awards 2026 ומה אפשר ללמוד מהפרויקטים?</h2>
+        <p class="text-lg leading-8 text-brand-700"><strong>התשובה הקצרה:</strong> KNX Association הכריזה ב־6 באוקטובר 2026 על 13 זוכים בטקס KNX Awards. בין הפרויקטים הבולטים: מלון Novotel Madinah, מגדל 435 Bourke במלבורן, HUB26 ביוון, משרד חכם בטוקיו ובית עצמאי בנמיביה. בפרס המוצר זכתה Iddero עם Verso Q. הזוכים מציגים שילוב בין KNX, BMS, תאורה, הצללה, איכות אוויר ומדידת אנרגיה — אך אינם תחליף לאפיון הנדסי של פרויקט בישראל.</p>
+
+        <h3 class="text-2xl font-bold text-brand-900">Novotel Madinah: KNX יחד עם BMS, BACnet, DALI ו־Modbus</h3>
+        <p class="text-lg leading-8 text-brand-700">מלון Novotel Madinah, פרויקט של Tera Systems שזכה בקטגוריית Smart Building Asia, מציג תיאום בין חדרי האירוח לבין מערכות מרכזיות של מיזוג, תאורה, אנרגיה, אבטחה וניטור. לפי פרסום KNX Association, בפרויקט שולבו פרוטוקולי BACnet, DALI, Modbus, Zigbee ו־M-Bus. במלון אין די בכך שכל רכיב יגיב לפקודה בנפרד: נדרשת רשימת נקודות המגדירה מה ניתן לקרוא, מה ניתן לכתוב, מהו המשוב וכיצד מתועדת תקלה. שילוב <a class="text-accent-700 underline" href="/articles/knx-bacnet-gateway-server-client-bms/">KNX ו־BACnet</a> עם <a class="text-accent-700 underline" href="/siemens-desigo-bms/">Siemens Desigo</a> צריך להתחיל בארכיטקטורה ובמבחן Point-to-Point, ולא רק בחירת Gateway.</p>
+
+        <h3 class="text-2xl font-bold text-brand-900">435 Bourke במלבורן: KNX כשכבת נתונים לתאורה ולהצללה</h3>
+        <p class="text-lg leading-8 text-brand-700">לפי KNX, מגדל 435 Bourke במלבורן הוא מבנה משרדים בן 48 קומות, הכולל בחזית יותר מ־1,300 פאנלים פוטו־וולטאיים. KNX מנהל בו תאורה והצללה, ונקודות הבקרה משולבות במערכת ניהול מרכזית. ההמלצה למתכנן היא להגדיר גם סטטוס, מצבי ידני, גיבוי, תנאי רוח ואור טבעי ומדידה תפעולית. מספר הפאנלים והתכנון של המגדל אינם תחזית לביצועי פרויקט אחר.</p>
+
+        <h3 class="text-2xl font-bold text-brand-900">HUB26 ביוון: שימוש ב־CO₂ ובתפוסה להפעלת מערכות לפי צורך</h3>
+        <p class="text-lg leading-8 text-brand-700">HUB26 בסלוניקי, שזכה בקטגוריית Smart Building Europe, משלב התאמת תאורה לאור יום, מצבי מיזוג לפי תפוסה וניטור CO₂ להפעלת אוורור לפי ביקוש. לפי תיאור הפרויקט באתר KNX, בקרת אור יום סייעה להפחית עד 40% מצריכת האנרגיה לתאורה; זהו נתון מקרה הבוחן שפרסם הארגון, לא הבטחת חיסכון של I Feel. ביישום מקצועי מגדירים ספים, זמני השהיה, מיקום חיישנים, רצף הפעלה, משוב מיזוג ומצב בטוח בתקלה. ראו את המדריך ל<a class="text-accent-700 underline" href="/articles/knx-indoor-air-quality-co2-bms/">איכות אוויר עם KNX ו־BMS</a>.</p>
+
+        <h3 class="text-2xl font-bold text-brand-900">טוקיו: תאורה ואוורור המותאמים למשתמש</h3>
+        <p class="text-lg leading-8 text-brand-700">פרויקט Human-Centric Smart Office של Matt &amp; Massimo זכה בפרס Innovation. העובדים יכולים להזדהות ליד עמדת העבודה באמצעות NFC ולהתאים את תאורת המשימה וזרימת האוויר. לפי KNX, שרתי קומות מטפלים בפעולות מקומיות בעוד שרת מרכזי מנהל מדיניות ותזמון. הלקח אינו שכל משרד זקוק לזיהוי אישי; הוא שיש להגדיר אילו פונקציות חייבות לפעול מיד ובמקומי, מה תלוי במערכת מרכזית ואילו הרשאות וגבולות פרטיות נחוצים.</p>
+
+        <h3 class="text-2xl font-bold text-brand-900">House J בנמיביה: בית חכם המתפקד ללא תלות בענן</h3>
+        <p class="text-lg leading-8 text-brand-700">הבית House J, זוכה Smart Home Africa/America/Australia, פועל מחוץ לרשת החשמל הרגילה. תיאור הזוכה מדגיש בקרת KNX מבוזרת, שליטה בתאורה, מיזוג, וילונות והצללה לצד DALI וממשקים נוספים. בפרויקט בישראל כדאי להגדיר מראש מה עובד ללא אינטרנט, מה קורה אם שרת מרכזי אינו זמין, כיצד משתמש מפעיל ידנית מערכת חיונית ומה יש למסור לצורך שירות. מערכת טובה אינה מסתיימת במסך יפה אלא ביכולת להפעיל ולתחזק אותה לאורך שנים.</p>
+
+        <h3 class="text-2xl font-bold text-brand-900">KNX Product Award: מסך החדר Iddero Verso Q</h3>
+        <p class="text-lg leading-8 text-brand-700">לפי KNX Association, פרס המוצר הוענק ל־Iddero עבור Verso Q, בקר חדר עם מסך מגע בגודל 3.5 אינץ׳, עמודי שליטה ניתנים להגדרה, תרמוסטט כפול וחיבור ישיר ל־KNX TP1. הפרס מעיד על בחירת קהילת KNX — הוא אינו אישור התאמה אוטומטי למפרט ואין בו משום הצהרה שהדגם משווק על ידי I Feel. לפני בחירה נבדקים ממשק המשתמש, תשתית, עומק ההתקנה, פונקציות חדר ונוהל תחזוקה.</p>
+
+        <div class="rounded-xl border border-accent-100 bg-accent-50 p-6">
+          <h3 class="text-xl font-extrabold text-brand-900 mb-3">שישה לקחים שאפשר להכניס כבר למפרט</h3>
+          <ol class="list-decimal pr-6 space-y-2 leading-8 text-brand-700">
+            <li>להגדיר אילו פעולות קריטיות נשארות מקומיות ללא חיבור לשרת או לענן.</li>
+            <li>לדרוש טבלת KNX–BMS עם יחידות, קריאה, כתיבה, משוב, הרשאות ותקלות.</li>
+            <li>לקשור חיישני CO₂, תפוסה ואור יום לרצף הפעלה בדיק ולא רק לתצוגה.</li>
+            <li>לדרוש מדידה מול נתוני בסיס לפני קביעת יעדי חיסכון באנרגיה.</li>
+            <li>להגדיר אבטחת גישה מרחוק, תיעוד KNX Secure וגיבויי ETS6.4.</li>
+            <li>למסור דוחות בדיקה, תרחישי כשל, מסמכי הפעלה וקובצי פרויקט.</li>
+          </ol>
+          <p class="mt-4 leading-7 text-brand-700">לקריאה נוספת: <a class="text-accent-700 underline" href="/articles/siemens-knx-dali-n14114-n14132-ets64-commissioning/">Siemens KNX/DALI-2 עם ETS6.4</a>, <a class="text-accent-700 underline" href="/articles/knx-ip-secure-remote-access-checklist/">אבטחת KNX IP</a> ו<a class="text-accent-700 underline" href="/structure-control/caesarea-rail-campus/">מקרה הבוחן בקמפוס קיסריה</a>.</p>
+        </div>
+
+        <div class="rounded-xl border border-brand-100 bg-brand-50 p-6">
+          <h3 class="text-xl font-bold text-brand-900 mb-3">בדיקות מסירה מומלצות לשילוב KNX ו-BMS</h3>
+          <p class="leading-7 text-brand-700">הפרויקטים הזוכים מדגישים שילוב מערכות; בפרויקט בישראל כדאי להפוך אותו למבחן מסירה מדיד. הבדיקות שלהלן הן המלצה מקצועית של I Feel, ולא תיאור בדיקות שבוצעו בפרויקטים הזוכים.</p>
+          <ol class="list-decimal pr-6 space-y-2 mt-3 leading-7 text-brand-700">
+            <li><strong>כשל שרת:</strong> נתקו את ה-BMS בסביבת בדיקה מתואמת וודאו שתאורה, הצללה ופעולות חדר חיוניות ממשיכות לפי ההגדרה.</li>
+            <li><strong>מיפוי נקודות:</strong> הפעילו נקודה מכל סוג ובדקו קריאה, כתיבה, סטטוס חוזר, יחידות וזיהוי מקור הפקודה.</li>
+            <li><strong>תאורה DALI-2:</strong> הדמו תקלה בדרייבר נתמך וודאו שמצב התקלה מגיע לשרת או לאחראי התחזוקה.</li>
+            <li><strong>אוורור לפי ביקוש:</strong> הדמו שינוי ברמת CO₂ או תפוסה ובדקו ספי הפעלה, זמני השהיה ומשוב ממערכת המיזוג.</li>
+            <li><strong>שירות ואבטחה:</strong> אמתו גיבוי ETS, תיעוד מפתחות KNX Secure, הרשאות ונוהל שחזור באישור בעל המערכת.</li>
+          </ol>
+        </div>
+        <p class="text-sm leading-7 text-brand-600">מקור הזוכים: <a href="https://www.knx.org/news/knx-awards-2026-celebrate-people-and-projects-shaping-future-smart-buildings" target="_blank" rel="noopener" class="text-accent-700 underline">KNX Association, 6.10.2026</a>. ההמלצות התכנוניות הן ניתוח מקצועי מקורי של I Feel ואינן תיאור מחייב של מפרטי הזוכים.</p>
+      </section>
+<!-- END DOTS 2026-10-22 -->
 
       <section class="space-y-5 mb-12">
         <h2 class="text-3xl font-bold text-brand-900">1. KNX הופך משכבת חדר לחלק מארכיטקטורת Smart Building</h2>
@@ -135,7 +190,7 @@ const jsonLd = JSON.stringify({
       </section>
 
       <section class="rounded-2xl bg-brand-900 text-white p-7 md:p-9 mb-12">
-        <h2 class="text-3xl font-extrabold mb-4">מה כדאי לבדוק בפרויקטים שיוצגו ב-KNX Awards?</h2>
+        <h2 class="text-3xl font-extrabold mb-4">מה כדאי לבדוק בפרויקטים הזוכים ב-KNX Awards?</h2>
         <ul class="space-y-3 text-lg leading-8 list-disc pr-6 text-brand-100">
           <li>האם מערכת החדרים ממשיכה לעבוד גם כאשר שרת מרכזי אינו זמין?</li>
           <li>איך חולקה האחריות בין KNX, DDC ומערכת BMS?</li>
@@ -201,13 +256,13 @@ const jsonLd = JSON.stringify({
       <section class="rounded-2xl border border-accent-200 bg-accent-50 p-7 md:p-9 mb-10">
         <h2 class="text-3xl font-extrabold text-brand-900 mb-3">יש פרויקט או מערכת שהייתם רוצים לשפר? בואו נדבר</h2>
         <p class="text-lg leading-8 text-brand-700 mb-5">ספרו לנו מה הייתם רוצים שיקרה בבית או במבנה. אפשר להתחיל בשיחה קצרה גם בלי תוכניות, דגמי ציוד או קובץ ETS. אם יש לכם חומר זמין, נשמח לעבור עליו יחד. לפי הצורך נתאם פגישה במשרד או באתר, ואפשר גם להגיע אלינו לקפה ולהכיר את הציוד. לאחר בדיקה נגדיר מה אפשר לשמר ומה כדאי לשפר.</p>
-        <a href="/contactus/#project-enquiry" class="inline-flex rounded-lg bg-accent-600 px-6 py-3 font-bold text-white hover:bg-accent-700">בואו נדבר על הבית או המבנה שלי</a>
+        <a href="/contactus/#project-enquiry" data-ga-event="cta_click" data-ga-params={JSON.stringify({ cta_id: "knx_awards_2026_consultation" })} class="inline-flex rounded-lg bg-accent-600 px-6 py-3 font-bold text-white hover:bg-accent-700">בואו נדבר על הבית או המבנה שלי</a>
       </section>
 
       <section class="border-t border-brand-100 pt-8">
         <h2 class="text-2xl font-bold text-brand-900 mb-4">מקורות רשמיים להמשך קריאה</h2>
         <ul class="space-y-3 text-brand-700 leading-7">
-          <li><a class="text-accent-700 underline" href="https://www.knx.org/knx-awards" target="_blank" rel="noopener">KNX Awards 2026 — KNX Association</a></li>
+          <li><a class="text-accent-700 underline" href="https://www.knx.org/news/knx-awards-2026-celebrate-people-and-projects-shaping-future-smart-buildings" target="_blank" rel="noopener">13 הזוכים — KNX Association, 6.10.2026</a></li>\n          <li><a class="text-accent-700 underline" href="https://www.knx.org/knx-awards" target="_blank" rel="noopener">KNX Awards 2026 — KNX Association</a></li>
           <li><a class="text-accent-700 underline" href="https://www.knx.org/news/meet-knx-awards-2026-nominees-and-cast-your-vote" target="_blank" rel="noopener">55 הפרויקטים ו-33 המוצרים המועמדים</a></li>
           <li><a class="text-accent-700 underline" href="https://support.knx.org/hc/en-us/articles/31061986226450-ETS-v6-4-0" target="_blank" rel="noopener">ETS6.4 — תכונות ושיפורים</a></li>
           <li><a class="text-accent-700 underline" href="https://www.knx.org/news/your-knx-installation-exposed-securing-ip-side" target="_blank" rel="noopener">Securing the IP Side</a></li>

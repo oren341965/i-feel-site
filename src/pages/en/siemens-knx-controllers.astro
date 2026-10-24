@@ -1,0 +1,79 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+const canonical = 'https://i-feel.co.il/en/siemens-knx-controllers/';
+const title = 'Siemens KNX Controllers: Product Guides | i-feel';
+const description = 'English product guides for Siemens KNX switching actuators, blind actuators, dimmers and multifunction controllers.';
+const items = [
+  { id: 'n532d31', model: 'Siemens N 532D31', name: '4-output switching actuator', summary: 'A compact KNX switching actuator for four independent lighting or suitable load circuits.', specs: '4 relay outputs · 10AX · 230 V switching · 4 DIN modules · capacitive load up to 140 µF', sections: [
+    ['Independent potential-free outputs', 'Four bistable relays switch separate electrical circuits. Potential-free contacts allow the electrical supply arrangement to be selected for the panel design. Suitable resistive, inductive and capacitive loads must remain within Siemens ratings and the project design.'],
+    ['Local testing and ETS functions', 'Mechanical indicators show relay state and allow local contact changes for commissioning or emergency use. A mechanical change is not reported to the KNX bus. ETS functions include status feedback, central and logical control, delays, timed operation, night mode, warning before switch-off, up to eight scenes per channel, override functions, operating-hour and switching-cycle counters, and configurable behavior after power or bus recovery.'],
+    ['Application limits', 'This is an on/off switching actuator. It is not a lighting dimmer and does not directly control shutter motors. Check the actual inrush current and manufacturer limits for LED drivers and other loads before selecting the number of devices per channel.']
+  ], datasheet: 'https://sid.siemens.com/v/u/A6V11252209', he: '/articles/siemens-n532d31-knx-4-switch-output/' },
+  { id: 'n532d51', model: 'Siemens N 532D51', name: '8-output switching actuator', summary: 'Eight separately programmable KNX relay outputs for lighting, sockets and other compatible loads.', specs: '8 relay outputs · 10AX · 230 V switching · 8 DIN modules · capacitive load up to 140 µF', sections: [
+    ['Eight independent circuits', 'Each potential-free bistable relay can switch an independent circuit. The actuator is designed for resistive, inductive and capacitive loads, including suitable modern lighting systems, subject to the manufacturer’s limits and professional electrical design.'],
+    ['Commissioning and ETS', 'Mechanical indicators and local operation support wiring checks. Local mechanical operation does not send a telegram to KNX. ETS provides per-channel status feedback, logic and central functions, delays, timed and night operation, warning before switch-off, up to eight scenes per output, override functions, operating-hour and switching-cycle counters, and settings for power and bus return.'],
+    ['Load checks', 'The 10AX rating and up to 140 µF capacitive-load figure do not replace an inrush-current calculation. Verify the actual LED driver or power-supply data, protective devices, wiring and installation conditions. The unit switches loads; it does not dim lights or directly operate shutter motors.']
+  ], datasheet: 'https://sid.siemens.com/v/u/A6V11252209', he: '/articles/siemens-n532d51-knx-8-switch-output/' },
+  { id: 'n543d31', model: 'Siemens N 543D31', name: '4-channel AC blind actuator', summary: 'KNX control for up to four 230 V AC blind, curtain, awning or shading motors.', specs: '4 AC motor channels · 230 V AC · end-position detection · automatic travel-time measurement', sections: [
+    ['Position and shading control', 'The actuator controls compatible AC motors for raising, lowering and stopping. KNX functions can provide position and slat adjustment, scenes, status feedback and automatic travel-time measurement, according to the ETS application and motor wiring.'],
+    ['Commissioning and safety', 'Set up each motor and its travel limits according to Siemens instructions. Interlocking prevents simultaneous commands in opposing directions. Use the manufacturer’s wiring diagram and suitable electrical protections; do not connect motors with incompatible control inputs.'],
+    ['Application limits', 'This model is for AC shading motors. It is not a lighting switch or dimmer. Confirm motor current, wiring and end-position behavior before installation.']
+  ], datasheet: 'https://sid.siemens.com/v/u/A6V13264591', he: '/articles/siemens-n543d31-knx-4-blind-actuator/' },
+  { id: 'n543d51', model: 'Siemens N 543D51', name: '8-channel AC blind actuator', summary: 'A higher-capacity KNX actuator for up to eight compatible 230 V AC shading motors.', specs: '8 AC motor channels · 230 V AC · position and slat control · status and safety functions', sections: [
+    ['Control for eight shading motors', 'Manage up to eight compatible AC motors for blinds, curtains, awnings or louvers. Commands can include up, down, stop, position and slat adjustment, along with scenes and status feedback where supported by the selected ETS application.'],
+    ['Travel times and commissioning', 'Configure motor travel and position behavior during commissioning, then verify direction and end positions at the motor. Interlocking and safety behavior depend on correct wiring and parameterization. Follow the official Siemens application and installation instructions.'],
+    ['Application limits', 'This controller operates AC shading motors. It does not provide lighting dimming. Check the electrical ratings and the motor manufacturer’s requirements for every channel.']
+  ], datasheet: 'https://sid.siemens.com/v/u/A6V13264591', he: '/articles/siemens-n543d51-knx-8-blind-actuator/' },
+  { id: 'n554d31', model: 'Siemens N 554D31', name: '4-channel universal KNX dimmer', summary: 'Four phase-control dimming channels with automatic load recognition and electronic protection.', specs: '4 channels · up to 300 VA per channel · up to 1,000 VA across adjacent channels · phase dimming', sections: [
+    ['Flexible dimming', 'The universal dimmer is designed for compatible resistive, inductive and capacitive loads. It detects the connected load type automatically and supports phase-control dimming. Output capacity depends on the channel configuration and connected load.'],
+    ['Load capacity and protection', 'The rated capacity is up to 300 VA per channel, or up to 1,000 VA when adjacent channels are combined as specified by Siemens. Electronic protection helps respond to overload, short circuit and temperature conditions. Derating and load compatibility still need to be checked.'],
+    ['Application limits', 'Use only lamps and drivers explicitly suitable for the selected phase-cut dimming method. A dimmable label alone does not guarantee compatibility; test the exact lamp/driver combination and follow Siemens limits.']
+  ], datasheet: 'https://sid.siemens.com/v/u/A6V15749829', he: '/articles/siemens-n554d31-knx-4-channel-dimmer/' },
+  { id: 'n56722', model: 'Siemens N 567/22', name: '16-output switching actuator', summary: 'Central KNX switching for up to 16 lighting and suitable load circuits, with a local button and status indicator for every output.', specs: '16 relay outputs · up to 10 A for resistive loads · 8 DIN modules · 8 scenes per output · 230 V electronics supply', sections: [
+    ['Sixteen separately programmable outputs', 'Each relay output can switch a separate lighting, socket, fan, pump or other suitable load when the load type, inrush current, protection and wiring comply with Siemens instructions and the electrical design. The 10 A figure is for resistive loads and should not be applied automatically to LED drivers or motors.'],
+    ['Direct operation at the panel', 'A button and status indicator are provided for each channel. Direct mode makes installation checks and service easier. The electronics use an internal 230 V AC supply, so direct operation is available when mains power is present even if KNX bus communication is unavailable.'],
+    ['ETS functions and limits', 'ETS supports individual channel settings including normally open or normally closed contacts, switch-on/off delays, logic, status feedback, night mode, warning before automatic switch-off, up to eight 8-bit scenes per output and behavior after power returns. This is an on/off actuator, not a dimmer or a direct shutter-motor controller.']
+  ], datasheet: 'https://sid.siemens.com/api/khub/documents/iYsEFlCM~23xEGwvrDHQvw/content', he: '/articles/siemens-n56722-knx-16-output/' },
+  { id: 'n56881', model: 'Siemens N 568/81', name: '24-output multifunction KNX actuator', summary: 'A multifunction actuator combining switching, AC and DC shading, fan-speed control and heating/cooling valve functions.', specs: '24 relay outputs · up to 10 A switching · up to 12 AC motors · up to 2 DC motors · 3 fan speeds', sections: [
+    ['Switching and shading', 'The 24 relay outputs can be configured for suitable switching loads. The actuator can control up to 12 AC shading motors, using two outputs per motor, or up to two DC motors, using four outputs per motor for polarity reversal. Functions can include movement, stop, position, slat adjustment, scenes and status feedback, subject to the Siemens application and wiring.'],
+    ['Room functions', 'The device can control a single-phase fan with up to three speeds and compatible heating/cooling valves in two-pipe or four-pipe systems. Valve control modes include on/off, PWM or three-point control as supported by the application.'],
+    ['Important distinction', 'The DC motor outputs are for shading motors; they are not lighting dimmer channels. PWM valve control is for heating/cooling valves, not lamp dimming. Check each load rating, output grouping, motor type and wiring against the official Siemens documentation.']
+  ], datasheet: 'https://sid.siemens.com/api/khub/documents/QHpaRe5AzLTfZHRTZ9gDqg/content', he: '/articles/siemens-n56881-knx-24-output/' }
+];
+const jsonLd = JSON.stringify({ '@context':'https://schema.org', '@type':'CollectionPage', name:title, description, inLanguage:'en', url:canonical });
+---
+<BaseLayout title={title} description={description} canonical={canonical} ogTitle={title} ogDescription={description} ogUrl={canonical} jsonLd={jsonLd}>
+  <main lang="en" dir="ltr" class="bg-white text-brand-900">
+    <header class="bg-brand-900 text-white py-12 md:py-16">
+      <div class="max-w-5xl mx-auto px-4">
+        <nav aria-label="Language" class="flex gap-3 text-sm font-bold mb-7">
+          <a class="rounded-full border border-white/30 px-4 py-2 hover:bg-white/10" href="/siemens-knx-products/">עברית</a>
+          <a class="rounded-full bg-accent-500 px-4 py-2" href="/en/siemens-knx-controllers/" aria-current="page">English</a>
+          <a class="rounded-full border border-white/30 px-4 py-2 hover:bg-white/10" href="/ar/siemens-knx-controllers/">العربية</a>
+        </nav>
+        <p class="text-accent-300 font-bold">Siemens GAMMA / KNX · Product guides</p>
+        <h1 class="mt-3 text-4xl md:text-5xl font-extrabold">Siemens KNX Controllers</h1>
+        <p class="mt-5 max-w-4xl text-lg text-brand-100 leading-relaxed">English explanations of the Siemens KNX switching, shading, dimming and multifunction actuators used in our projects. Technical ratings and load compatibility must be checked against the current Siemens datasheet and the project design.</p>
+      </div>
+    </header>
+    <div class="max-w-5xl mx-auto px-4 py-10">
+      <nav class="rounded-2xl border border-brand-100 bg-brand-50 p-5 mb-10" aria-label="Controller list">
+        <h2 class="font-extrabold text-xl mb-3">Choose a controller</h2>
+        <div class="flex flex-wrap gap-2">{items.map((item) => <a class="rounded-full bg-white border border-brand-100 px-3 py-2 text-sm font-semibold hover:border-accent-500" href={'#' + item.id}>{item.model}</a>)}</div>
+      </nav>
+      {items.map((item) => <article id={item.id} class="scroll-mt-6 border-b border-brand-100 py-9">\n        <nav aria-label="Language" class="flex flex-wrap gap-2 mb-5 text-sm font-bold">\n          <a class="rounded-full border border-brand-200 px-3 py-2 hover:border-accent-500" href={item.he}>עברית</a>\n          <a class="rounded-full border border-brand-200 px-3 py-2 hover:border-accent-500" href={'/en/siemens-knx-controllers/#' + item.id}>English</a>\n          <a class="rounded-full border border-brand-200 px-3 py-2 hover:border-accent-500" href={'/ar/siemens-knx-controllers/#' + item.id}>العربية</a>\n        </nav>
+        <p class="text-sm uppercase tracking-wide text-accent-700 font-bold">Siemens GAMMA / KNX</p>
+        <h2 class="mt-2 text-3xl font-extrabold">{item.model}: {item.name}</h2>
+        <p class="mt-3 text-lg text-brand-700 leading-relaxed">{item.summary}</p>
+        <p class="mt-4 rounded-xl bg-brand-50 p-4 font-semibold text-brand-800">{item.specs}</p>
+        {item.sections.map(([heading, body]) => <section class="mt-6"><h3 class="text-xl font-extrabold">{heading}</h3><p class="mt-2 text-brand-700 leading-7">{body}</p></section>)}
+        <div class="mt-6 flex flex-wrap gap-3">
+          <a class="rounded-lg bg-accent-600 px-4 py-3 font-bold text-white hover:bg-accent-700" href={item.datasheet} target="_blank" rel="noopener noreferrer">Official Siemens datasheet</a>
+          <a class="rounded-lg border border-brand-200 px-4 py-3 font-bold text-brand-800 hover:border-accent-500" href={item.he}>העמוד בעברית</a>
+        </div>
+      </article>)}
+      <p class="mt-8 text-sm leading-6 text-brand-600">This guide summarizes product capabilities. Final selection, wiring, load ratings and protective devices must be verified against the latest Siemens documentation and applicable electrical requirements.</p>
+    </div>
+  </main>
+</BaseLayout>
