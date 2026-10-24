@@ -39,8 +39,15 @@ C:\ifeel-sales\
   cases. A measured breach writes `state\urgent-alert-current.json` and appears at the top of the Daily
   Oren Brief. Capacity alerts name Oren; critical-service alerts name Oren and Arik. The artifact does
   not send externally until a delivery channel and exact recipient identities receive separate approval.
-- Installation removes the former reporting-only target 9 and returns decision readiness to the
-  registered v1 5–6 net-new target. No campaign or budget is changed by this config migration.
+- Oren's 2026-10-24 decision sets the business reporting target to 9 qualified leads per week
+  (4 villas, 2 electrical contractors, 3 new BMS companies) and the monthly paid-media ceiling
+  to ILS 4,000. The template supplies these defaults to new/missing configuration; upgrades
+  preserve an existing owner target as one atomic value and preserve an existing monthly cap.
+  Updating an existing host to the newly approved values is a separate scoped config change.
+  Invalid/null configured targets remain invalid for the readiness validator, not silently repaired.
+  Report progress through `businessLeadGoal`; the legacy Ads write-policy hold at five remains
+  separate. `POLICY_TARGET_MISMATCH` must not be bypassed. This decision neither changes live
+  campaign budgets nor renews authorization, enables writes, or changes maturity/schedulers.
 - Set `VAULT_ROOT` in each machine's local `config.json`; never commit the machine-specific path.
 - Copy aggregate snapshots to the Vault only after a future maturity/approval change.
 - `morning-run.mjs` may write `state/system-state.json`, one daily local log, one local Daily Oren Brief, one idempotent dry-run request under `${VAULT_ROOT}/AI-Sales/_bus/to-claude`, and one idempotent Maya `SYSTEM_TEST_RESPONSE`. It performs no external send or platform mutation.
