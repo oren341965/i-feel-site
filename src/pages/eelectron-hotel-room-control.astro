@@ -1,0 +1,43 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+const canonical = 'https://i-feel.co.il/eelectron-hotel-room-control/';
+const brochure = '/assets/catalogs/hotel-room-control.pdf';
+const catalogue = 'https://www.eelectron.com/wp-content/uploads/2026/06/Technical_Catalogue_EN.pdf';
+const topics = [
+ {title:'בקרי KNX לחדר',description:'בקרי מיתוג, עמעום, תריסים והצללה לפי אפיון החדר והעומסים.'},
+ {title:'מפסקים וממשק לאורח',description:'מפסקים וממשקי הפעלה לצד המיטה, בכניסה לחדר ובחדר הרחצה, כולל תרחישי תאורה ונוחות.'},
+ {title:'נא לא להפריע וניקיון',description:'חיווי DND ו-MUR לצוות המלון וממשקי שירות התואמים לצורכי התפעול.'},
+ {title:'מיזוג וחיסכון באנרגיה',description:'תרמוסטטים, חיישני טמפרטורה ונוכחות, לוגיקת ניהול חדר בהתאם למערכת המיזוג.'},
+ {title:'חיישנים ותפוסת חדר',description:'גלאי תנועה ונוכחות, מגעי דלת וכניסות רלוונטיות לחיווי ולתרחישים.'},
+ {title:'תשתית KNX ורשת',description:'ספקי כוח, מצמדי קווים וממשקי KNX IP לפי ארכיטקטורת הרשת והפרויקט.'},
+ {title:'פיקוח ותוכנת מלון',description:'ממשק ניהול לחדרים, סטטוסים, התראות ושילוב עם מערכות המלון בכפוף לפתרונות ולרישוי.'}
+];
+const meta = { title:'מערכת בקרת חדרים לבתי מלון Eelectron KNX | I Feel',
+ description:'מערכת בקרת חדרים למלונות Eelectron KNX בישראל: בקרי תאורה, מפסקים, תרמוסטטים, DND, MUR, חיישני תפוסה, תשתית KNX וניהול חדרים. מידע מקצועי וקישורים לקטלוג.',
+ canonical,ogUrl:canonical, robots:'index, follow, max-image-preview:large',
+ jsonLd:JSON.stringify({'@context':'https://schema.org','@graph':[
+ {'@type':'WebPage',name:'מערכת בקרת חדרי מלון Eelectron KNX',url:canonical,inLanguage:'he-IL',description:'רכיבי מערכת בקרת חדרים ומלונאות מבוססת KNX בישראל'},
+ {'@type':'Service',name:'תכנון והתקנת בקרת חדרים למלונות KNX',serviceType:'Hotel guest room management system',provider:{'@id':'https://i-feel.co.il/#business'},areaServed:'Israel',url:canonical},
+ {'@type':'BreadcrumbList',itemListElement:[{'@type':'ListItem',position:1,name:'ראשי',item:'https://i-feel.co.il/'},{'@type':'ListItem',position:2,name:'Eelectron',item:'https://i-feel.co.il/eelectron-knx-israel/'},{'@type':'ListItem',position:3,name:'בקרת מלונות',item:canonical}]}
+ ]})};
+---
+<BaseLayout {...meta}>
+ <article dir="rtl" class="bg-slate-50 text-slate-900">
+  <div class="max-w-6xl mx-auto py-12 px-4">
+   <nav class="mb-6 text-sm"><a href="/">ראשי</a> / <a href="/eelectron-knx-israel/">Eelectron בישראל</a> / מערכת למלונות</nav>
+   <header class="bg-white border border-slate-200 shadow-sm rounded-2xl p-8 md:p-12 mb-10">
+    <p class="text-sky-700 font-bold mb-3">EELECTRON • HOSPITALITY • KNX</p>
+    <h1 class="text-3xl md:text-5xl font-extrabold mb-5">מערכת בקרת חדרים לבתי מלון — Eelectron KNX</h1>
+    <p class="text-lg leading-8 mb-5">I Feel מתכננת ומשלבת מערכות בקרת חדרים למלונות בישראל, המשלבות בקרי KNX, ממשקי אורח, בקרת תאורה, הצללה, מיזוג, נוכחות וחיווי שירות. הבחירה הסופית בכל הרכיבים נעשית לפי אפיון המלון ומפרט היצרן.</p>
+    <div class="flex gap-3 flex-wrap"><a href={brochure} class="bg-sky-800 text-white font-bold rounded-lg px-5 py-3">הורדת ספר מערכת בתי מלון (PDF)</a><a href={catalogue} class="border border-sky-800 text-sky-900 font-bold rounded-lg px-5 py-3" target="_blank" rel="noopener noreferrer">קטלוג Eelectron 2026</a><a href="/contactus/" class="border border-slate-400 rounded-lg px-5 py-3 font-bold">ייעוץ ותכנון למלון</a></div>
+   </header>
+   <h2 class="text-3xl font-bold mb-5">כל רכיבי המערכת — מעבר לבקר עצמו</h2>
+   <div class="grid md:grid-cols-2 gap-5 mb-10">{topics.map(t=><section class="bg-white rounded-xl border border-slate-200 p-6"><h3 class="text-xl font-bold mb-3">{t.title}</h3><p class="leading-8">{t.description}</p></section>)}</div>
+   <section class="bg-white rounded-2xl border border-slate-200 p-7">
+    <h2 class="text-2xl font-bold mb-4">מידע טכני ומוצרים קשורים</h2>
+    <p class="leading-8 mb-4">המידע המוצג הוא הסבר ראשוני בעברית; מק״טים מדויקים, חיבורים, מידות והגדרות ETS יאומתו מול דפי הנתונים לפי גרסת הציוד לפני רכישה והתקנה.</p>
+    <p class="leading-8"><a class="text-sky-800 font-bold underline" href="/eelectron-knx-israel/">מוצרים ובקרים של Eelectron בישראל</a> · <a class="text-sky-800 font-bold underline" href="/knx-switch-advisor/">מפסקים</a> · <a class="text-sky-800 font-bold underline" href="/knx-presence-motion-detectors/">גלאי נוכחות KNX</a></p>
+   </section>
+  </div>
+ </article>
+</BaseLayout>
