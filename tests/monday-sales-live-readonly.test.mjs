@@ -7,6 +7,7 @@ import {
   collectMondaySalesLiveReadOnly,
   refreshMondaySalesSnapshotReadOnly,
 } from '../.claude/skills/ai-sales-manager/scripts/monday-sales-live-readonly.mjs';
+import { evaluateDecisionReadiness } from '../.claude/skills/google-ads-manager/scripts/decision-readiness.mjs';
 
 const REPO = resolve(import.meta.dirname, '..');
 const NOW = '2026-09-18T03:00:00.000Z';
@@ -131,7 +132,7 @@ test('live Monday sales reader produces a PII-free aggregate and exact repair pr
   assert.match(query, /items_page/);
 });
 
-test('daily Monday refresh atomically writes only aggregate snapshot and local repair preview', async (t) => {
+test('daily Monday refresh persists complete PII-free decision evidence separately from the aggregate', async (t) => {
   const { configPath, snapshotFile, stateRoot } = await fixture(t);
   const result = await refreshMondaySalesSnapshotReadOnly({
     configPath,
@@ -148,10 +149,49 @@ test('daily Monday refresh atomically writes only aggregate snapshot and local r
   assert.equal(result.safety.mondayWrites, 0);
   const snapshot = JSON.parse(await readFile(snapshotFile, 'utf8'));
   const preview = JSON.parse(await readFile(join(stateRoot, 'monday-repair-preview-current.json'), 'utf8'));
+  const evidence = JSON.parse(await readFile(join(stateRoot, 'sales-analysis-current.json'), 'utf8'));
   assert.equal(snapshot.counts.total, 1);
   assert.equal(Object.hasOwn(snapshot, 'items'), false);
   assert.equal(preview.summary.actionableRows, 0);
-  assert.equal(JSON.stringify({ snapshot, preview }).includes('Synthetic Employee Name'), false);
+  assert.equal(JSON.stringify({ snapshot, preview, evidence }).includes('Synthetic Employee Name'), false);
+  assert.equal(result.analysisEvidenceFile, 'sales-analysis-current.json');
+  assert.equal(result.safety.localFilesWritten, 3);
+  assert.deepEqual(evidence, result.analysisEvidence);
+  assert.equal(evidence.source.mode, 'live');
+  assert.equal(evidence.source.uniqueIds, 1);
+  assert.equal(evidence.generatedAt, NOW);
+  assert.equal(evidence.treatment.openCount, 0);
+  assert.equal(evidence.treatment.excludedFutureCount, 1);
+  assert.equal(evidence.reconciliation.treatmentPopulationMatchesOpen, true);
+  assert.equal(Object.hasOwn(evidence, 'items'), false);
+  assert.equal(Object.hasOwn(evidence, 'priorities'), false);
+  const readiness = evaluateDecisionReadiness({ salesAnalysis: evidence, now: new Date(NOW) });
+  assert.equal(readiness.blockers.includes('SALES_EVIDENCE_MISSING_STALE_OR_INVALID'), false);
+  assert.equal(readiness.blockers.includes('DATA_QUALITY_EVIDENCE_INVALID'), false);
+});
+
+test('failed refresh preserves prior decision evidence without renewing its freshness', async (t) => {
+  const { configPath, stateRoot } = await fixture(t);
+  await refreshMondaySalesSnapshotReadOnly({
+    configPath,
+    now: NOW,
+    fetchImpl: async () => livePage([item('1', { status: '1. ליד חדש' })]),
+  });
+  const evidencePath = join(stateRoot, 'sales-analysis-current.json');
+  const before = await readFile(evidencePath, 'utf8');
+  const later = new Date(Date.parse(NOW) + 25 * 3_600_000);
+  await assert.rejects(refreshMondaySalesSnapshotReadOnly({
+    configPath,
+    now: later,
+    fetchImpl: async () => response({ data: { boards: [{
+      items_count: 2,
+      columns: COLUMN_IDS.map((id) => ({ id, title: id, type: 'text' })),
+      items_page: { cursor: null, items: [item('1', { status: '1. ליד חדש' })] },
+    }] } }),
+  }), /pagination or unique-ID reconciliation failed/);
+  assert.equal(await readFile(evidencePath, 'utf8'), before);
+  const readiness = evaluateDecisionReadiness({ salesAnalysis: JSON.parse(before), now: later });
+  assert.equal(readiness.blockers.includes('SALES_EVIDENCE_MISSING_STALE_OR_INVALID'), true);
 });
 
 test('live Monday sales reader fails closed on incomplete pagination', async (t) => {
