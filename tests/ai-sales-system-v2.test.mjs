@@ -606,7 +606,7 @@ test('sales manager entrypoint is a bounded router with explicit authority and l
     'validation-and-handoff.md',
   ];
 
-  assert.ok(router.length < 7000, 'SKILL.md must stay a concise router');
+  assert.ok(router.replace(/\r\n/g, '\n').length < 7000, 'SKILL.md must stay a concise router');
   for (const reference of references) {
     assert.match(router, new RegExp(`references/${reference.replaceAll('.', '\\.')}`));
     await readFile(resolve(skillRoot, 'references', reference), 'utf8');
