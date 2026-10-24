@@ -1,11 +1,14 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 
-const title = 'KNX IP Secure: אבטחת גישה מרחוק ו-ETS | מדריך i-feel';
-const description = 'איך מאבטחים מערכת KNX קיימת? בדיקת חשיפה של פורט 3671, גישה מרחוק, VLAN, KNX IP Secure, גיבויי ETS6.4 ורשימת מסירה מקצועית.';
+const title = 'KNX Secure ו-Security Proxy: שדרוג ETS6.4 | i-feel';
+const description = 'איך משדרגים אבטחת KNX קיימת? Security Proxy, ETS6.4, IP Secure, גישה מאובטחת, בדיקות מסירה ואינטגרציה ל-BMS.';
 const canonical = 'https://i-feel.co.il/articles/knx-ip-secure-remote-access-checklist/';
 
 const faq = [
+  { q: 'האם Security Proxy מצפין ציוד KNX ישן?', a: 'לא. מקשר תואם עשוי לגשר בין מקטעים עם יכולות אבטחה שונות, אך התקן ישן אינו הופך למוצפן אוטומטית.' },
+  { q: 'כיצד בודקים התאמת Security Proxy?', a: 'בודקים את דגם המקשר, תצורת TP/IP/RF, גרסת ETS, כתובות קבוצתיות, קושחה, הרשאות ותהליך בדיקה ומסירה.' },
+  { q: 'האם ETS6.4 מחליפה VPN?', a: 'לא. ETS היא סביבת הנדסה; VPN וגישה מאומתת מרחוק מטפלים בשכבת הרשת. נדרש תכנון משולב.' },
   {
     q: 'מה ההבדל בין KNX IP Secure ל-KNX Data Secure?',
     a: 'KNX IP Secure מאבטח תקשורת KNX במדיום IP, בעוד KNX Data Secure מגן על הנתונים בטלגרמות KNX במדיומים נתמכים. שניהם משלימים תכנון רשת והרשאות, ולא מחליפים אותם.'
@@ -42,7 +45,7 @@ const jsonLd = JSON.stringify({
       url: canonical,
       mainEntityOfPage: canonical,
       datePublished: '2026-10-12',
-      dateModified: '2026-10-12',
+      dateModified: '2026-10-24',
       inLanguage: 'he-IL',
       author: { '@type': 'Organization', name: 'i-feel', url: 'https://i-feel.co.il/' },
       publisher: { '@id': 'https://i-feel.co.il/#business' },
@@ -72,7 +75,7 @@ const jsonLd = JSON.stringify({
     <header class="bg-brand-900 text-white py-14 md:py-20">
       <div class="max-w-4xl mx-auto px-4">
         <a href="/articles/" class="text-accent-400 font-semibold hover:text-accent-300">מאמרים ומדריכים</a>
-        <p class="mt-4 text-sm text-brand-200">KNX · אבטחה · ETS6.4 · BMS · עודכן 12.10.2026</p>
+        <p class="mt-4 text-sm text-brand-200">KNX · אבטחה · ETS6.4 · BMS · עודכן 24.10.2026</p>
         <h1 class="mt-4 text-4xl md:text-5xl font-extrabold leading-tight">KNX IP Secure: רשימת בדיקות מעשית לאבטחת מערכת קיימת</h1>
         <p class="mt-5 text-lg md:text-xl leading-8 text-brand-100">איך בודקים חשיפה של KNXnet/IP, איך מתכננים גישה מרחוק בטוחה, מה ההבדל בין IP Secure ל-Data Secure, ומה חייבים לקבל במסירה ובתחזוקה.</p>
       </div>
@@ -114,6 +117,29 @@ const jsonLd = JSON.stringify({
         <p class="text-lg leading-8 text-brand-700">ההגנות אינן מחליפות זו את זו באופן אוטומטי, והן אינן מחליפות גישה מרחוק מאומתת, הפרדת רשתות או ניהול הרשאות. בפרויקט מעורב בודקים אילו רכיבים תומכים באיזו תצורה, אילו הגדרות הופעלו ב-ETS, ואילו רכיבים ישנים מחייבים פתרון מדורג.</p>
         <h3 class="text-2xl font-bold text-brand-900">האם חייבים להחליף מערכת ישנה שלמה?</h3>
         <p class="text-lg leading-8 text-brand-700">לא בהכרח. שיפור האבטחה יכול להתחיל מסגירת חשיפה חיצונית, החלפת שיטת גישה מרחוק, תיעוד ציוד וחיזוק חומת האש. בהמשך בוחנים אם נכון להחליף ממשק IP או נתב ישן לרכיב KNX IP Secure. את ההחלטה מבססים על התאמה טכנית, מצב הציוד, חשיבות המערכות והעלות לאורך חיי הפרויקט.</p>
+      </section>
+
+      <section class="space-y-5 mb-12" id="security-proxy-ets64">
+        <p class="text-sm font-bold text-accent-700">עדכון מקצועי 24.10.2026 · KNX Secure / ETS6.4</p>
+        <h2 class="text-3xl font-bold text-brand-900">Security Proxy: האם ניתן לשדרג מערכת KNX ותיקה בשלבים?</h2>
+        <p class="text-lg leading-8 text-brand-700"><strong>התשובה הקצרה:</strong> בחלק מההתקנות אפשר לשלב מכשירי KNX Secure ומכשירים ותיקים באמצעות מקשר תואם המממש Security Proxy. זהו פתרון התלוי בדגם, בטופולוגיה וביישום ETS; הוא אינו מצפין אוטומטית את כל התקשורת של ציוד ישן ואינו מחליף VPN, חומת אש או מדיניות הרשאות.</p>
+        <p class="text-lg leading-8 text-brand-700">תוכנית ההכשרה הרשמית של KNX Secure, שעודכנה באוקטובר 2026, כוללת תרגול מעשי ב-ETS והתייחסות ל-Security Proxy. מבחינת מתכנן, השאלה החשובה היא היכן עובר גבול האמון בין המקטע המאובטח למקטע הוותיק, ומה נדרש להמשך תחזוקה בשטח. פרסום מסמך הכשרה הוא עדכון מקצועי, לא הודעה על מוצר חדש.</p>
+        <h3 class="text-2xl font-bold text-brand-900">מתי Security Proxy מתאים ומתי לא?</h3>
+        <p class="text-lg leading-8 text-brand-700">במקרה של Retrofit ממפים קודם את קווי TP, מקטעי IP ו-RF, הבקרים הקיימים וכתובות הקבוצות. מאמתים במפרט המקשר תמיכה מפורשת ב-Security Proxy ואת גרסת ETS הנדרשת. לדוגמה, בקטלוג KNX מופיע מקשר RF Multi/TP עם יכולת זו. אין להניח שכל Line Coupler או IP Router תומך באותה פונקציה, או שהגנה על מקטע אחד מעניקה הצפנה מקצה לקצה.</p>
+        <h3 class="text-2xl font-bold text-brand-900">ETS6.4: ניהול מצב אבטחה, טבלאות וגיבוי</h3>
+        <p class="text-lg leading-8 text-brand-700">ETS6.4 מוסיפה שיפורים הנוגעים גם לטבלאות Security Proxy ולתהליכי גיבוי. לפני שינוי בשטח יש לשמור פרויקט עדכני, לוודא הרשאות לטיפול במפתחות, לתעד גרסאות מוצר ויישום ולבחון שחזור מבוקר. גיבוי אוטומטי אינו מחליף בדיקת שחזור ואינו מתיר להפיץ FDSK או מפתחות בצ'אט לא מאובטח.</p>
+        <h3 class="text-2xl font-bold text-brand-900">בדיקות מסירה למערכת KNX מעורבת</h3>
+        <ol class="list-decimal pr-7 space-y-2 text-lg leading-8 text-brand-700">
+          <li>מיפוי מפורש של ציוד Secure וציוד שאינו תומך Secure.</li>
+          <li>אימות תאימות מקשר, קושחה וגרסת ETS מול מסמכי היצרן.</li>
+          <li>בדיקת כתובות קבוצתיות, פקודות ומשובים משני צדי המקשר.</li>
+          <li>בדיקות תפקוד מקומי והתנהגות בכשל תקשורת מתוכנן ומאושר.</li>
+          <li>בדיקת רשת, גישה מרחוק וגבולות ההרשאה מול מערכת <a class="text-accent-700 underline" href="/articles/knx-bacnet-gateway-server-client-bms/">BACnet/BMS</a>.</li>
+          <li>מסירת קובץ ETS, מפת נקודות ונוהל שחזור בערוץ מאובטח.</li>
+        </ol>
+        <p class="text-lg leading-8 text-brand-700">בפרויקט המשולב עם <a class="text-accent-700 underline" href="/siemens-desigo-bms/">Siemens Desigo</a>, <a class="text-accent-700 underline" href="/structure-control/">BMS</a> או <a class="text-accent-700 underline" href="/articles/siemens-knx-dali-n14114-n14132-ets64-commissioning/">KNX/DALI-2</a>, בוחנים בנפרד את אבטחת כל ממשק. דוגמה לפעילות החברה בבקרת מבנה: <a class="text-accent-700 underline" href="/structure-control/beit-halochem-ashdod/">בית הלוחם אשדוד</a> — ללא טענה ש-Security Proxy יושם בו.</p>
+        <a href="/contactus/?intent=bms#contact-form-wrapper" data-ga-event="cta_click" data-ga-params='{"cta_id":"knx_security_proxy_retrofit","topic":"knx_secure"}' class="inline-flex rounded-lg bg-accent-600 px-6 py-3 font-bold text-white">לתיאום בדיקת שדרוג KNX קיימת</a>
+        <p class="text-sm text-brand-600 leading-7">מקורות רשמיים: <a href="https://support.knx.org/hc/en-us/articles/39356318941970-KNX-Secure-course" class="underline">KNX Secure Course</a> · <a href="https://support.knx.org/hc/en-us/articles/31061986226450-ETS-v6-4-0" class="underline">ETS 6.4</a> · <a href="https://www.knx.org/devices/knx-rf-multitp-media-coupler-0" class="underline">קטלוג KNX — דוגמת מקשר</a>.</p>
       </section>
 
       <section class="space-y-5 mb-12">
