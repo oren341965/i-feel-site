@@ -119,6 +119,15 @@
     }
   },
   "marketingDecision": {
+    "businessTarget": {
+      "schemaVersion": 1,
+      "weeklyNewQualifiedTargets": {
+        "villas": 4,
+        "electricalContractors": 2,
+        "bmsNewCompanies": 3,
+        "totalMinimum": 9
+      }
+    },
     "maturity": 1,
     "mode": "BOUNDED_AUTONOMOUS",
     "authorizationId": "oren-google-ads-daily-bounded-v1",
