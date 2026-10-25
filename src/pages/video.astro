@@ -157,6 +157,17 @@ if (switchesVideoSchema) {
 dmxVideoGraph['@graph'].push(desigoVideoSchema(meta.canonical));
 dmxVideoGraph['@graph'].push(beitHalochemVideoSchema(meta.canonical));
 dmxVideoGraph['@graph'].push(intercomVideoSchema(meta.canonical));
+dmxVideoGraph['@graph'].push({
+  '@type': 'VideoObject',
+  '@id': 'https://i-feel.co.il/video/#gp9-wireless-switches',
+  name: 'GP9 — המפסקים האלחוטיים של I FEEL',
+  description: 'סרטון הדגל של מפסקי GP9 האלחוטיים של I FEEL — היכרות עם המוצר ופתרון המפסקים האלחוטיים לבית חכם.',
+  thumbnailUrl: 'https://i.ytimg.com/vi/AZrlxGY4aqQ/hqdefault.jpg',
+  contentUrl: 'https://www.youtube.com/watch?v=AZrlxGY4aqQ',
+  embedUrl: 'https://www.youtube-nocookie.com/embed/AZrlxGY4aqQ',
+  inLanguage: 'he-IL',
+  publisher: { '@id': 'https://i-feel.co.il/#business' }
+});
 meta.jsonLd = JSON.stringify(dmxVideoGraph);
 
 ---
