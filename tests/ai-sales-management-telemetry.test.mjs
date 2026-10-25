@@ -12,6 +12,29 @@ import {
   runPowerShell,
   runManagedMorning,
 } from '../.claude/skills/ai-sales-manager/scripts/run-morning-managed.mjs';
+import { evaluateBusinessTarget }
+  from '../.claude/skills/google-ads-manager/scripts/decision-readiness.mjs';
+
+const approvedBusinessTarget = {
+  schemaVersion: 1,
+  weeklyNewQualifiedTargets: { villas: 4, electricalContractors: 2, bmsNewCompanies: 3, totalMinimum: 9 },
+};
+
+test('Oct24 template reports nine and ILS4000 without extending Ads write authority', async () => {
+  const template = JSON.parse(await readFile(new URL(
+    '../.claude/skills/ai-sales-manager/runtime/config.example.json', import.meta.url,
+  ), 'utf8'));
+  assert.deepEqual(template.marketingDecision.businessTarget, approvedBusinessTarget);
+  assert.equal(template.paidMediaBudget.monthlyCapNis, 4000);
+  assert.equal(template.maturity, 0);
+  assert.equal(template.connections.googleAds.writeEnabled, false);
+  assert.equal(template.connections.monday.writesAllowed, false);
+  assert.equal(template.paidMediaBudget.automaticBudgetIncreaseAllowed, false);
+  const target = evaluateBusinessTarget(template.marketingDecision);
+  assert.equal(target.minimum, 9);
+  assert.equal(target.writePolicy.holdAt, 5);
+  assert.deepEqual(target.blockers, ['POLICY_TARGET_MISMATCH']);
+});
 
 test('managed morning uses one stable Jerusalem-local run key and sanitized counters', async () => {
   const calls = [];
@@ -121,6 +144,8 @@ test('Oren runtime installer writes BOM-free JSON under Windows PowerShell 5.1',
     schemaVersion: 1,
     weeklyNewQualifiedTargets: { villas: 3, electricalContractors: 3, bmsNewCompanies: 3, totalMinimum: 9 },
   };
+  seed.marketingDecision.authorizationExpiresAt = '2025-01-01T00:00:00.000Z';
+  seed.marketingDecision.mode = 'PREVIEW';
   await writeFile(resolve(runtime, 'config/config.json'), JSON.stringify(seed), 'utf8');
 
   const result = spawnSync('powershell.exe', [
@@ -150,7 +175,64 @@ test('Oren runtime installer writes BOM-free JSON under Windows PowerShell 5.1',
   assert.deepEqual(config.capacity.urgentAlerts.capacityRecipients, ['oren']);
   assert.deepEqual(config.capacity.urgentAlerts.serviceRiskRecipients, ['oren', 'arik']);
   assert.equal(config.capacity.urgentAlerts.externalSendEnabled, false);
-  assert.equal(config.marketingDecision.businessTarget, undefined);
+  assert.deepEqual(config.marketingDecision.businessTarget, seed.marketingDecision.businessTarget);
+  assert.equal(config.marketingDecision.authorizationExpiresAt, seed.marketingDecision.authorizationExpiresAt);
+  assert.equal(config.marketingDecision.mode, 'PREVIEW');
+  assert.equal(config.connections.googleAds.writeEnabled, false);
   assert.equal(report.external_actions_performed, false);
   assert.equal(report.task_scheduler_installed, false);
+});
+
+test('installer preserves targets atomically across upgrades and supplies missing defaults', {
+  skip: process.platform !== 'win32',
+}, async (t) => {
+  const repository = resolve(import.meta.dirname, '..');
+  const fixture = await mkdtemp(resolve(tmpdir(), 'ifeel-sales-owner-target-'));
+  t.after(() => rm(fixture, { recursive: true, force: true }));
+  const vault = resolve(fixture, 'vault');
+  await mkdir(resolve(vault, '.obsidian'), { recursive: true });
+  const template = JSON.parse(await readFile(resolve(
+    repository, '.claude/skills/ai-sales-manager/runtime/config.example.json',
+  ), 'utf8'));
+  const cases = [
+    { name: 'new', fresh: true, expected: approvedBusinessTarget },
+    { name: 'missing', expected: approvedBusinessTarget },
+    { name: 'approved', existing: approvedBusinessTarget, expected: approvedBusinessTarget },
+    { name: 'incomplete', existing: { schemaVersion: 1 }, expected: { schemaVersion: 1 } },
+    { name: 'null', existing: null, expected: null },
+  ];
+  for (const entry of cases) {
+    const runtime = resolve(fixture, entry.name);
+    if (!entry.fresh) {
+      await mkdir(resolve(runtime, 'config'), { recursive: true });
+      const seed = structuredClone(template);
+      delete seed.marketingDecision.businessTarget;
+      if (Object.hasOwn(entry, 'existing')) seed.marketingDecision.businessTarget = entry.existing;
+      await writeFile(resolve(runtime, 'config/config.json'), JSON.stringify(seed), 'utf8');
+    }
+    for (let pass = 0; pass < 2; pass += 1) {
+      const result = spawnSync('powershell.exe', [
+        '-NoProfile', '-ExecutionPolicy', 'Bypass',
+        '-File', resolve(repository, 'scripts/workstations/install-oren-sales-runtime.ps1'),
+        '-RepositoryPath', repository, '-RuntimeRoot', runtime, '-VaultRoot', vault,
+      ], { encoding: 'utf8' });
+      assert.equal(result.status, 0, `${entry.name} pass ${pass}: ${result.stderr}`);
+      const config = JSON.parse(await readFile(resolve(runtime, 'config/config.json'), 'utf8'));
+      assert.deepEqual(config.marketingDecision.businessTarget, entry.expected, entry.name);
+      assert.equal(config.paidMediaBudget.monthlyCapNis, 4000);
+      assert.equal(config.connections.googleAds.writeEnabled, false);
+      assert.equal(config.connections.monday.writesAllowed, false);
+      assert.equal(config.maturity, 0);
+      const target = evaluateBusinessTarget(config.marketingDecision);
+      if (entry.name === 'incomplete' || entry.name === 'null') {
+        assert.equal(target.status, 'INVALID');
+      } else {
+        assert.equal(target.minimum, 9);
+        assert.equal(target.writePolicy.holdAt, 5);
+      }
+      const report = JSON.parse(await readFile(resolve(runtime, 'logs/installation-status.json'), 'utf8'));
+      assert.equal(report.task_scheduler_installed, false);
+      assert.equal(report.external_actions_performed, false);
+    }
+  }
 });

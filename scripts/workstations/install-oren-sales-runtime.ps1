@@ -23,7 +23,8 @@ function Copy-JsonValue {
 function Merge-MissingDefaults {
     param(
         [Parameter(Mandatory)]$Target,
-        [Parameter(Mandatory)]$Defaults
+        [Parameter(Mandatory)]$Defaults,
+        [Parameter()][string]$Path = ''
     )
     foreach ($property in $Defaults.PSObject.Properties) {
         $existing = $Target.PSObject.Properties[$property.Name]
@@ -31,8 +32,14 @@ function Merge-MissingDefaults {
             $Target | Add-Member -MemberType NoteProperty -Name $property.Name -Value (Copy-JsonValue $property.Value)
             continue
         }
+        $propertyPath = if ($Path) { "$Path.$($property.Name)" } else { $property.Name }
+        # An existing owner target is an atomic decision, not mergeable defaults.
+        # Preserve even invalid/null targets so the readiness validator fails closed.
+        if ($propertyPath -eq 'marketingDecision.businessTarget') {
+            continue
+        }
         if ($existing.Value -is [pscustomobject] -and $property.Value -is [pscustomobject]) {
-            Merge-MissingDefaults -Target $existing.Value -Defaults $property.Value
+            Merge-MissingDefaults -Target $existing.Value -Defaults $property.Value -Path $propertyPath
         }
     }
 }
@@ -149,11 +156,9 @@ $config.capacity.urgentAlerts.enabled = $true
 $config.capacity.urgentAlerts.capacityRecipients = @('oren')
 $config.capacity.urgentAlerts.serviceRiskRecipients = @('oren', 'arik')
 $config.capacity.urgentAlerts.externalSendEnabled = $false
-if ($config.marketingDecision.PSObject.Properties['businessTarget']) {
-    # Oren approved the registered v1 5-6 net-new target on 2026-09-18.
-    # Remove the prior reporting-only target 9 so it cannot keep the safety gate in mismatch.
-    $config.marketingDecision.PSObject.Properties.Remove('businessTarget') | Out-Null
-}
+# The 2026-10-24 owner decision sets the reporting target to nine for new/missing
+# configurations. Preserve existing targets; never rewrite the separate v1 Ads
+# write-policy hold, authorization expiry, or mode to match the business target.
 $config.websiteImprovement.enabled = $true
 $config.websiteImprovement.automaticPublishAllowed = $false
 
