@@ -4,6 +4,8 @@ const title = 'איכות אוויר KNX ו-BMS: חיישני CO₂, לחות ו
 const description = 'איך מתכננים אוורור לפי CO₂, לחות ותפוסה? מדריך KNX עם VAV, Siemens Desigo, BACnet, טבלת נקודות, תרחישי כשל ושאלות מקצועיות.';
 const canonical = 'https://i-feel.co.il/articles/knx-indoor-air-quality-co2-bms/';
 const faq = [
+  {q:'האם כל חיישן Siemens QMX3 מודד CO₂?',a:'לא. בתיעוד Siemens ל-KNX PL-Link, QMX3.P30 מודד טמפרטורה, QMX3.P40 טמפרטורה ולחות, ואילו QMX3.P70 כולל גם CO₂. יש לאמת מק״ט, מצב תקשורת ותאימות לבקר; שם משפחה או מראה דומה אינם הוכחת התאמה.'},
+  {q:'האם ערך CO₂ קבוע מוכיח שהחיישן תקוע?',a:'לא. ערך יציב יכול להיות תקין. בודקים זמן קבלת עדכון, מדיניות שידור מחזורית או לפי שינוי, זמינות תקשורת וסטטוס תקפות. אם אין מנגנון תקפות זמין, מגדירים אותו באפיון ולא מציגים ערך ישן כמדידה חדשה.'},
   {q:'איך משלבים חיישן CO₂ עם KNX?',a:'מתכננים חיישן מתאים, ממפים את הנתון ב-ETS ומגדירים לוגיקת בקרה להפעלת אוורור או העברת נתונים ל-BMS לפי יכולות הציוד.'},
   {q:'האם CO₂ לבדו מעיד על איכות האוויר?',a:'לא. הוא מדד שימושי לבדיקת התאמת אוורור לתפוסה, אך עשויים להידרש גם מדדי לחות, טמפרטורה וחומרים נוספים.'},
   {q:'מה ההבדל בין CO₂ ל-CO₂eq?',a:'CO₂ הוא מדידה של ריכוז פחמן דו-חמצני; CO₂eq לעיתים מחושב בעקיפין מחיישן VOC ואינו שקול בהכרח למדידה ישירה.'},
@@ -12,7 +14,7 @@ const faq = [
   {q:'מה צריך לכלול מסמך מסירה לאיכות אוויר?',a:'מפת חיישנים, טיפוסי מדידה, יחידות, ספי פעולה והשהיות, פקודות ומשובים, תרחישי כשל, גרסאות תוכנה ותוצאות בדיקות.'}
 ];
 const jsonLd = JSON.stringify({'@context':'https://schema.org','@graph':[
-  {'@type':['TechArticle','Article'],headline:'איכות אוויר KNX ו-BMS: מחיישן CO₂ לבקרת אוורור',description,url:canonical,mainEntityOfPage:canonical,dateModified:'2026-10-14',inLanguage:'he-IL',author:{'@type':'Organization',name:'i-feel',url:'https://i-feel.co.il/'},publisher:{'@id':'https://i-feel.co.il/#business'}},
+  {'@type':['TechArticle','Article'],headline:'איכות אוויר KNX ו-BMS: מחיישן CO₂ לבקרת אוורור',description,url:canonical,mainEntityOfPage:canonical,dateModified:'2026-10-26',inLanguage:'he-IL',author:{'@type':'Organization',name:'i-feel',url:'https://i-feel.co.il/'},publisher:{'@id':'https://i-feel.co.il/#business'}},
   {'@type':'FAQPage',mainEntity:faq.map(x=>({'@type':'Question',name:x.q,acceptedAnswer:{'@type':'Answer',text:x.a}}))},
   {'@type':'BreadcrumbList',itemListElement:[{'@type':'ListItem',position:1,name:'בית',item:'https://i-feel.co.il/'},{'@type':'ListItem',position:2,name:'מאמרים',item:'https://i-feel.co.il/articles/'},{'@type':'ListItem',position:3,name:'איכות אוויר KNX',item:canonical}]}
 ]});
@@ -21,7 +23,7 @@ const jsonLd = JSON.stringify({'@context':'https://schema.org','@graph':[
 <article class="bg-white" dir="rtl">
 <header class="bg-brand-900 text-white py-14"><div class="max-w-4xl mx-auto px-4">
   <a href="/articles/" class="text-accent-400 font-bold">מרכז ידע מקצועי</a>
-  <p class="mt-4 text-brand-200">KNX · BMS · איכות אוויר · עודכן 14.10.2026</p>
+  <p class="mt-4 text-brand-200">KNX · BMS · איכות אוויר · עודכן 26.10.2026</p>
   <h1 class="text-4xl md:text-5xl font-extrabold leading-tight mt-4">איכות אוויר KNX ו-BMS: מחיישן CO₂ לבקרת אוורור</h1>
   <p class="text-lg leading-8 mt-5 text-brand-100">כך משלבים חיישני CO₂, לחות, טמפרטורה ותפוסה בבקרת חדרים, אוורור VAV ומערכות ניהול מבנה — בלי להסתפק במספר על צג.</p>
 </div></header>
@@ -63,6 +65,16 @@ const jsonLd = JSON.stringify({'@context':'https://schema.org','@graph':[
 <tr><td class="p-3 border">תקשורת ומצב כשל</td><td class="p-3 border">timeout, איכות נתון, מצב גיבוי מאושר והתראה</td><td class="p-3 border">ניתוק חיישן/שער/BMS וחזרת מתח, בתנאי בדיקה מתואמים</td></tr>
 </tbody></table></div>
 <p class="text-lg leading-8">ברצף המסירה בודקים מדידה → דרישה → פקודה → משוב → חזרה לשגרה. מתעדים גם שינוי ידני, ערך תקוע ואובדן תקשורת; שומרים מגמות מסונכרנות של CO₂, תפוסה, פקודה וספיקה, עם חותמות זמן וסטטוס תקפות. מגמה לבדה אינה מוכיחה שהאוורור פעל. למסירה מצרפים גיבוי ETS/DDC, מפת נקודות, תוצאות בדיקה ואחראי לתחזוקה. קדימויות אש והגנות ציוד נשארות בהתאם לתכנון המאושר.</p></section>
+<section class="space-y-5 mb-12" id="iaq-data-validity">
+<h2 class="text-3xl font-bold text-brand-900">נתון CO₂ אמין: לבחור חיישן נכון ולבדוק שהמידע עדכני</h2>
+<h3 class="text-2xl font-bold text-brand-900">שם משפחה אינו מפרט מדידה</h3>
+<p class="text-lg leading-8">בתיעוד Siemens עבור חיישני KNX PL-Link הנתמכים בבקרי PXC4/PXC5/PXC7 מופיעים דגמים שונים באותה משפחה: QMX3.P30 לטמפרטורה, QMX3.P40 לטמפרטורה ולחות ו-QMX3.P70 לטמפרטורה, לחות ו-CO₂. לכן אין לבחור חיישן לפי צורת המארז או הכיתוב QMX3 בלבד. מאמתים מק״ט מלא, פונקציות וגרסה מול דף היצרן והבקר המיועד. זהו מידע על התצורות המתועדות, לא אישור מלאי או התחייבות להתאמה לכל פרויקט.</p>
+<p class="text-lg leading-8">גם החיבור דורש אימות: טבלת PL-Link אינה אישור אוטומטי לתכנות כל רכיב ב-ETS או להחלפתו בכל חיישן KNX. יש לקבוע את מצב התקשורת הנתמך, כלי ההפעלה והמיפוי הדרושים. ראו את <a class="text-accent-700 underline" href="https://sid.siemens.com/r/A6V13202299/20504245259___en-US_24180128139" target="_blank" rel="noopener noreferrer">טבלת Siemens לחיישני PL-Link</a>; תאריך עדכון אינו מוצג בעמוד שנבדק ב-26.10.2026, ולכן אין כאן טענה להשקה חדשה.</p>
+<h3 class="text-2xl font-bold text-brand-900">ערך יציב אינו בהכרח ערך תקוע</h3>
+<p class="text-lg leading-8">במסך BMS עלול להישאר מספר שנקרא בעבר גם כאשר החיישן כבר אינו זמין. מנגד, מספר שאינו משתנה יכול להיות מדידה תקינה. בהמלצת האפיון שלנו מפרידים בין מועד שינוי הערך לבין מועד קבלת הודעה תקפה. בודקים האם החיישן משדר במחזור קבוע או רק בעקבות שינוי, ומה משמעות חותמת הזמן שמציגה האינטגרציה. אם ההודעות נשלחות רק לפי שינוי, העדר שינוי לבדו אינו סיבה לקבוע שהחיישן נכשל.</p>
+<ul class="list-disc ps-6 space-y-3 leading-8"><li>לכל נקודה מגדירים מקור, יחידות, מדיניות עדכון ודרך אימות זמינות שהציוד באמת תומך בה.</li><li>מגדירים בנפרד התראת ריכוז גבוה והתראת נתון לא תקף; אין להחליף נתון חסר באפס שמרמז בטעות על אוויר תקין.</li><li>בבדיקה מתואמת מאמתים ערך יציב עם עדכונים תקפים, אובדן עדכון וחזרה לשגרה; מתעדים את חותמות הזמן ותגובת הבקר.</li><li>זמן ההתיישנות ותגובת הגיבוי נקבעים עם מתכנן המיזוג לפי צרכי האזור ומגבלות המכשיר; אין timeout אחיד לכל המבנים.</li></ul>
+<p class="text-lg leading-8">במערכת משולבת מסכמים מי מחזיק את בדיקת התקפות — הבקר המקומי, השער או <a class="text-accent-700 underline" href="/siemens-desigo-bms/">Siemens Desigo</a> — ומה מועבר דרך <a class="text-accent-700 underline" href="/articles/knx-bacnet-gateway-server-client-bms/">KNX–BACnet</a>. אפשר לבחון את שיטת האינטגרציה ב<a class="text-accent-700 underline" href="/structure-control/projects/">פרויקטי בקרת המבנה שלנו</a>, בלי להסיק שהחיישנים המתוארים מותקנים בכל אחד מהם. זו המלצת תכנון ובדיקה, לא הוראת שינוי למערכת פעילה; בדיקות כשל מחייבות גיבוי וחלון תחזוקה מאושר.</p>
+</section>
 <section class="space-y-4 mb-12">
 <h2 class="text-3xl font-bold text-brand-900">שאלות נפוצות על איכות אוויר ב-KNX</h2>
 {faq.map(x=><details class="border border-brand-100 bg-brand-50 rounded-xl p-5"><summary class="font-bold text-lg text-brand-900">{x.q}</summary><p class="mt-3 leading-7 text-brand-700">{x.a}</p></details>)}
@@ -75,6 +87,7 @@ const jsonLd = JSON.stringify({'@context':'https://schema.org','@graph':[
 <section class="border-t border-brand-100 pt-8">
 <h2 class="text-2xl font-bold text-brand-900 mb-4">מקורות מקצועיים רשמיים</h2>
 <ul class="space-y-3 text-brand-700">
+<li><a class="text-accent-700 underline" href="https://sid.siemens.com/r/A6V13202299/20504245259___en-US_24180128139" target="_blank" rel="noopener noreferrer">Siemens — חיישנים ויחידות חדר PL-Link, מסמך A6V13054432_en--_k; נבדק 26.10.2026, תאריך עדכון אינו מוצג</a></li>
 <li><a class="text-accent-700 underline" href="https://www.knx.org/news/indoor-air-quality-guesswork-measured-control" target="_blank" rel="noopener">KNX Association — Indoor Air Quality, 26.09.2026</a></li>
 <li><a class="text-accent-700 underline" href="https://www.knx.org/news/knx-awards-2026-celebrate-people-and-projects-shaping-future-smart-buildings" target="_blank" rel="noopener">KNX Association — KNX Awards winners, 06.10.2026</a></li>
 <li><a class="text-accent-700 underline" href="https://knx.org/devices/air-quality-multisensor" target="_blank" rel="noopener">KNX Product Directory — Air Quality Multisensor</a></li>
