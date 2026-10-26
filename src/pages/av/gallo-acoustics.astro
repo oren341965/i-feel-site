@@ -1,0 +1,56 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import prices from '../../data/gallo-prices.json';
+const canonical = 'https://i-feel.co.il/av/gallo-acoustics/';
+const title = 'רמקולים וסאבוופרים Gallo Acoustics | קטלוג AV ומחירים | I FEEL';
+const description = 'קטלוג Gallo Acoustics של I FEEL: רמקולי Micro ו-Micro SE וסאבוופרים TR-3D, ProfileSub ו-RoomSub. כל הצבעים והמחירים כולל מע״מ.';
+const models = ['Micro', 'Micro SE', 'TR-3D', 'ProfileSub', 'RoomSub 8', 'RoomSub 10'];
+const slug = (s: string) => s.toLowerCase().replaceAll(' ', '-');
+const productId = (p: typeof prices[number]) => slug(`${p.model}-${p.color}`);
+const descriptions: Record<string, string> = {
+  'Micro': 'רמקול לווייני פסיבי בעיצוב כדורי קומפקטי, לשילוב במערכת מוזיקה או קולנוע ביתי.',
+  'Micro SE': 'רמקול לווייני פסיבי עם דרייבר בעל ממברנה שטוחה ופיזור צליל רחב, במארז כדורי קומפקטי.',
+  'TR-3D': 'סאבוופר אקטיבי להשלמת תחום הבס במערכת השמע ובקולנוע הביתי.',
+  'ProfileSub': 'סאבוופר דק המיועד גם לתלייה על הקיר, לפתרון בס שמשתלב בעיצוב החלל.',
+  'RoomSub 8': 'סאבוופר אקטיבי עם דרייבר 8 אינץ׳, להשלמת מערכת השמע הביתית.',
+  'RoomSub 10': 'סאבוופר אקטיבי עם דרייבר 10 אינץ׳, למערכת מוזיקה או קולנוע ביתי.',
+};
+const colors: Record<string, string> = {'Satin Black':'שחור סאטן','Gloss Black':'שחור מבריק','Gloss White':'לבן מבריק','Matt White':'לבן מט','Sky Blue':'כחול שמיים','Race Red':'אדום','Urban Grey':'אפור','Creme':'קרם','Bronze':'ברונזה','Stainless Steel':'נירוסטה','Gold':'זהב','Luxe Gold':'זהב Luxe','Luxe Copper':'נחושת Luxe','Luxe Chrome':'כרום Luxe','Luxe Aged Bronze':'ברונזה מיושנת Luxe','Satin White':'לבן סאטן','לבן':'לבן','שחור':'שחור'};
+const money = (n: number) => new Intl.NumberFormat('he-IL').format(n);
+const jsonLd = JSON.stringify({'@context':'https://schema.org','@graph':[
+ {'@type':'CollectionPage',name:title,description,url:canonical,inLanguage:'he-IL'},
+ {'@type':'BreadcrumbList',itemListElement:[{'@type':'ListItem',position:1,name:'דף הבית',item:'https://i-feel.co.il/'},{'@type':'ListItem',position:2,name:'אודיו ו-AV',item:'https://i-feel.co.il/audio-and-sound-systems/'},{'@type':'ListItem',position:3,name:'Gallo Acoustics',item:canonical}]},
+ ...prices.map(p=>({'@type':'Product',name:`Gallo Acoustics ${p.model} - ${p.color}`,model:p.model,color:p.color,description:descriptions[p.model],brand:{'@type':'Brand',name:'Gallo Acoustics'},url:`${canonical}#${productId(p)}`,offers:{'@type':'Offer',url:`${canonical}#${productId(p)}`,price:p.price,priceCurrency:'ILS',seller:{'@type':'Organization',name:'I FEEL',url:'https://i-feel.co.il/'}}}))
+]});
+---
+<BaseLayout title={title} description={description} canonical={canonical} ogTitle={title} ogDescription={description} ogUrl={canonical} jsonLd={jsonLd}>
+ <main dir="rtl">
+  <header class="bg-brand-900 py-12 text-white md:py-20"><div class="mx-auto max-w-7xl px-4">
+   <nav aria-label="פירורי לחם" class="mb-8 text-sm text-brand-200"><a href="/audio-and-sound-systems/" class="underline">אודיו ו-AV</a> / Gallo Acoustics</nav>
+   <p class="font-bold text-accent-300" dir="ltr">I FEEL · AV COLLECTION</p>
+   <h1 class="mt-3 text-4xl font-extrabold md:text-6xl">Gallo Acoustics</h1>
+   <p class="mt-5 max-w-3xl text-xl leading-8">רמקולים קטנים. מקום גדול למוזיקה.</p>
+   <p class="mt-4 max-w-3xl leading-8 text-brand-100">בחרו דגם, צבע וגימור למערכת השמע שלכם. רמקולי Micro ו-Micro SE וסאבוופרים משלימים, עם תכנון והתקנה מקצועיים של I FEEL.</p>
+   <p class="mt-6 font-bold text-accent-300">37 גרסאות · 6 דגמים · מחיר ליחידה כולל מע״מ</p>
+  </div></header>
+  <div class="mx-auto max-w-7xl px-4 py-10">
+   <nav aria-label="בחירה לפי דגם" class="mb-8 flex flex-wrap gap-3">{models.map(model=><a href={`#${slug(model)}`} class="rounded-full border border-brand-300 px-5 py-2 font-bold text-brand-900 hover:bg-brand-50" dir="ltr">{model}</a>)}</nav>
+   <p class="mb-10 rounded-xl bg-brand-50 p-5 leading-7 text-brand-800">המחירים ליחידה אחת וכוללים מע״מ. התקנה, רסיבר או מגבר, תושבות ואביזרים נוספים בתמחור נפרד. זמינות הצבע ומועד האספקה יאושרו בעת ההזמנה. מחירים עודכנו ב־25.10.2026.</p>
+   {models.map(model=><section id={slug(model)} class="mb-14 scroll-mt-28" aria-labelledby={`${slug(model)}-heading`}>
+    <h2 id={`${slug(model)}-heading`} class="text-3xl font-extrabold text-brand-900" dir="ltr">{model}</h2>
+    <p class="mt-3 mb-6 max-w-3xl leading-8 text-brand-700">{descriptions[model]}</p>
+    <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+     {prices.filter(p=>p.model===model).map(p=><article id={productId(p)} data-gallo-product class="flex scroll-mt-28 flex-col rounded-2xl border border-brand-200 bg-white p-6 shadow-sm">
+      <p class="text-sm font-bold text-brand-500" dir="ltr">Gallo Acoustics {p.model}</p>
+      <h3 class="mt-3 text-xl font-bold text-brand-900">{colors[p.color] || p.color}</h3>
+      <p class="mt-2 text-sm text-brand-600" dir="ltr">{p.color}</p>
+      <p class="mt-6 text-3xl font-extrabold text-brand-900">{money(p.price)} ₪</p>
+      <p class="mt-1 text-sm text-brand-600">ליחידה, כולל מע״מ</p>
+      <a href={`mailto:sales@i-feel.co.il?subject=${encodeURIComponent(`הזמנת Gallo ${p.model} - ${p.color}`)}&body=${encodeURIComponent(`שלום, אני מעוניין/ת ב-Gallo Acoustics ${p.model}, צבע ${p.color}, במחיר ${p.price} ₪ ליחידה כולל מע״מ. אשמח לאישור זמינות, אספקה ופרטי הזמנה.`)}`} class="mt-6 rounded-lg bg-accent-500 px-4 py-3 text-center font-bold text-white hover:bg-accent-600">לבירור והזמנה</a>
+     </article>)}
+    </div>
+   </section>)}
+   <aside class="rounded-2xl bg-brand-900 p-8 text-white"><h2 class="text-2xl font-bold">מתאימים את הצליל לבית שלכם</h2><p class="mt-3 max-w-3xl leading-8">צוות I FEEL יסייע בבחירת רמקולים, מגבר וסאבוופר, בתכנון מיקומים ובהתקנה. רמקולי Micro ו-Micro SE הם פסיביים ודורשים מגבר או רסיבר מתאים.</p><a href="tel:+972-3-508-9553" class="mt-5 inline-block rounded-lg bg-white px-6 py-3 font-bold text-brand-900">03-508-9553</a><a href="/audio-and-sound-systems/" class="mr-5 inline-block underline">לכל פתרונות האודיו והקולנוע הביתי</a></aside>
+  </div>
+ </main>
+</BaseLayout>
