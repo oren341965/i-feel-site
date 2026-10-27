@@ -71,3 +71,13 @@ test('reject employee-only or third-party links before sending', () => {
   assert.throws(() => s.run({ ...s.payload, vendorEvidenceLinks: ['https://i-feel.co.il/staff-expenses/mcohome-media.php?id=' + s.payload.eventId] }), /Invalid manufacturer/);
   assert.equal(s.sent.length, 0);
 });
+
+for (const missing of ['evidence', 'description']) {
+  test('incomplete ' + missing + ' blocks all external work', () => {
+    const s = setup();
+    const payload = { ...s.payload, ...(missing === 'evidence' ? { evidenceFiles: [] } : { description: '  ' }) };
+    assert.throws(() => s.run(payload), /evidence|description/);
+    assert.equal(s.sent.length, 0);
+    assert.equal(s.stored.size, 0);
+  });
+}
