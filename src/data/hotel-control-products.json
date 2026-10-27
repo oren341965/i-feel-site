@@ -1,0 +1,100 @@
+[
+  {
+    "slug": "eelectron-cs10a01knx",
+    "name": "לחצן חדר Eelectron 9025",
+    "model": "CS10A01KNX-X",
+    "brand": "Eelectron",
+    "image": "eelectron-switch.jpg",
+    "pdf": "eelectron-cs10a01knx.pdf",
+    "description": "לחצן KNX קיבולי להפעלת תאורה, וילונות ותרחישי חדר, עם חיישן טמפרטורה ובקר PI משולב לפי גרסת המוצר.",
+    "features": [
+      "הקצאת פעולות ללחצנים באמצעות תכנות KNX.",
+      "שליטה בתאורה ובהצללה והפעלת תרחישים כמו לילה ויציאה.",
+      "בחירת חזית וסימונים בהתאם לעיצוב החדר."
+    ]
+  },
+  {
+    "slug": "eelectron-rt07a01knx",
+    "name": "תרמוסטט Eelectron 9025",
+    "model": "RT07A01KNX-X",
+    "brand": "Eelectron",
+    "image": "eelectron-thermostat.jpg",
+    "pdf": "eelectron-rt07a01knx.pdf",
+    "description": "ממשק KNX לבקרת טמפרטורה בחדר, הכולל שבעה לחצנים קיבוליים ניתנים להגדרה ובקר PI לחימום ולקירור.",
+    "features": [
+      "שליטה מקומית של האורח בטמפרטורה ובמצב המיזוג.",
+      "אפשרות לשילוב פקודות תאורה והצללה לפי הגדרות הפרויקט.",
+      "התאמה למערכות מיזוג באמצעות בקר וממשק תואמים לפי תפ״מ."
+    ]
+  },
+  {
+    "slug": "eelectron-cs05b01knx",
+    "name": "פאנל כניסה לחדר Eelectron 9025",
+    "model": "CS05B01KNX-X",
+    "brand": "Eelectron",
+    "image": "eelectron-door-panel.jpg",
+    "pdf": "eelectron-cs05b01knx.pdf",
+    "description": "פאנל KNX מחוץ לדלת החדר להצגת מספר חדר וחיווי שירות, בשילוב חזית תואמת ותכנות לפי צורכי המלון.",
+    "features": [
+      "חיווי נא לא להפריע ובקשת ניקיון לפי תצורת הפרויקט.",
+      "ממשק פעמון וחיווי לצוות הקומה.",
+      "קורא הכרטיס והמנעול נבחרים ומתואמים כחלק ממערכת בקרת הכניסה."
+    ]
+  },
+  {
+    "slug": "eelectron-th00c02knx",
+    "name": "מחזיק כרטיס Eelectron 9025",
+    "model": "TH00C02KNX-X",
+    "brand": "Eelectron",
+    "image": "eelectron-card-holder.png",
+    "pdf": "eelectron-th00c02knx.pdf",
+    "description": "מחזיק כרטיס KNX עם טכנולוגיית RFID למשפחת בקרת חדרי המלון 9025, לשילוב במצבי החדר ובניהול אנרגיה.",
+    "features": [
+      "שילוב עם תרחישי כניסה ויציאה בהתאם לכרטיס ולתכנון.",
+      "התאמה למערכת הכרטיסים ולגרסת המוצר לפני הזמנה.",
+      "מצבי תפוסה וחיסכון משלבים גם חיישן נוכחות ומגעי דלת וחלון."
+    ]
+  },
+  {
+    "slug": "eelectron-pd00e00knx",
+    "name": "חיישן נוכחות תקרתי Eelectron Basic KNX",
+    "model": "PD00E00KNX",
+    "brand": "Eelectron",
+    "image": "eelectron-sensor.jpg",
+    "pdf": "eelectron-pd00e00knx.pdf",
+    "description": "חיישן נוכחות PIR להתקנה בתקרה ולשילוב ברשת KNX, לבקרת תאורה ולהערכת תפוסת החדר.",
+    "features": [
+      "שילוב מידע מחיישן הנוכחות עם גלאי מגנט בדלת ובחלון.",
+      "לוגיקת שהייה ובדיקת תפוסה לפני מעבר לחיסכון.",
+      "הגדרת לוגיקה המתאימה גם לאורח ישן ולשהייה ללא תנועה."
+    ]
+  },
+  {
+    "slug": "siemens-tc4",
+    "name": "מסך מגע Siemens KNX TC4",
+    "model": "5WG1204-2SB12 / 5WG1204-2SB22",
+    "brand": "Siemens",
+    "image": "siemens-tc4.jpg",
+    "pdf": "siemens-tc4-manufacturer.pdf",
+    "description": "מסך מגע צבעוני בגודל 4 אינץ׳ ברשת KNX להפעלת תאורה, הצללה, תרחישים ובקרת טמפרטורה בחדר.",
+    "features": [
+      "ממשק אורח אחד למספר מערכות בחדר.",
+      "בקרת טמפרטורה PI לפי תצורת היישום והמיזוג.",
+      "קופסת השקעה TAV TC4 של I FEEL זמינה לתכנון התקנה בקו אפס."
+    ]
+  },
+  {
+    "slug": "schneider-system-m",
+    "name": "לחצן Schneider System M עם בקרת טמפרטורה",
+    "model": "MTN6212-0414",
+    "brand": "Schneider Electric",
+    "image": "schneider-system-m.jpg",
+    "pdf": "schneider-mtn6212-0414.pdf",
+    "description": "לחצן KNX מסדרת System M בגוון אנתרציט, עם יחידת בקרת טמפרטורת חדר. חלופה לממשק אורח המבוסס על לחצנים פיזיים.",
+    "features": [
+      "הגדרת פעולות תאורה, עמעום, הצללה ותרחישים ב־KNX.",
+      "יחידת בקרת טמפרטורה משולבת לפי דגם היצרן.",
+      "בחירת מסגרת ואביזרים תואמים מסדרת System M."
+    ]
+  }
+]

@@ -1,0 +1,17 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import products from '../../data/hotel-control-products.json';
+export function getStaticPaths() { return products.map(product => ({ params: { slug: product.slug }, props: { product } })); }
+const { product } = Astro.props;
+const canonical = `https://i-feel.co.il/hotel-control-products/${product.slug}/`;
+const asset = '/assets/hotel-products/';
+const meta = {title:`${product.name} | ${product.model} | I FEEL`,description:product.description,canonical,ogUrl:canonical,robots:'index, follow, max-image-preview:large',jsonLd:JSON.stringify({'@context':'https://schema.org','@type':'WebPage',name:product.name,url:canonical,inLanguage:'he-IL',description:product.description})};
+---
+<BaseLayout {...meta}>
+<article dir="rtl" class="bg-slate-50 text-slate-900"><div class="max-w-6xl mx-auto px-4 py-12">
+<nav class="text-sm mb-6"><a href="/">ראשי</a> / <a href="/eelectron-hotel-room-control/">בקרת מלון</a> / <a href="/hotel-control-products/">ספריית מוצרים</a></nav>
+<header class="bg-white rounded-2xl border border-slate-200 p-7 md:p-10 mb-8"><p class="text-sky-800 font-bold mb-3">{product.brand} · KNX</p><h1 class="text-3xl md:text-4xl font-extrabold mb-4">{product.name}</h1><p class="font-mono text-slate-600 mb-5"><bdi dir="ltr">{product.model}</bdi></p><div class="grid md:grid-cols-2 gap-8 items-center"><div><p class="text-lg leading-8 mb-6">{product.description}</p><div class="flex flex-wrap gap-3"><a class="bg-sky-800 text-white rounded-lg px-5 py-3 font-bold" href={asset+product.pdf}>דף נתונים של היצרן (PDF)</a><a class="border border-sky-800 text-sky-900 rounded-lg px-5 py-3 font-bold" href="/contactus/">ייעוץ והתאמה לפרויקט</a></div></div><img src={asset+product.image} alt={product.name} width="600" height="450" class="w-full h-72 object-contain" /></div></header>
+<section class="bg-white rounded-2xl border border-slate-200 p-7 mb-8"><h2 class="text-2xl font-bold mb-4">שימוש במערכת המלון</h2><ul class="list-disc ps-6 space-y-3 leading-8">{product.features.map(feature=><li>{feature}</li>)}</ul><p class="leading-8 mt-5">במערכת המלון, בקרת החדר והקומה משתלבת בניהול המרכזי של Siemens DESIGO CC. ההתאמה הסופית של הבקרים, החיבורים והלוגיקה נקבעת לפי תפ״מ הפרויקט ודפי היצרן.</p></section>
+<section class="bg-white rounded-2xl border border-slate-200 p-7"><h2 class="text-2xl font-bold mb-4">תכנון וחומר נוסף בעברית</h2><p class="leading-8 mb-4">יש לאמת לפני הזמנה את המק״ט, גרסת המוצר, תכונות ETS, חזיתות ואביזרים נלווים. מסמך היצרן המקורי מוצג באתר I FEEL ללא שינוי.</p><div class="flex flex-wrap gap-5"><a class="text-sky-800 underline font-bold" href="/hotel-control-products/">כל מוצרי בקרת המלון</a><a class="text-sky-800 underline font-bold" href="/siemens-desigo-bms/">מערכת Siemens Desigo</a><a class="text-sky-800 underline font-bold" href="/assets/catalogs/hotel-room-control.pdf">ספר מערכת מלון (PDF)</a></div></section>
+</div></article>
+</BaseLayout>
