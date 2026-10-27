@@ -2,20 +2,13 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import FloatingCta from '../../components/FloatingCta.astro';
 
-// זמני לענף העבודה בלבד: יש להחליף ל-YouTube ציבורי לפני מיזוג לפרודקשן.
-// קבצים אלה נמצאים בדרייב אך הרשאת צפייה ציבורית טרם אומתה.
+// הסרטון האופקי פורסם בערוץ YouTube הרשמי.
 const videos = [
   {
-    name: 'סרטון הפרויקט - תצוגה אופקית',
+    name: 'בוטיק הנביאים - מערכת צלונים כלואים 24V | I FEEL',
     ratio: '16 / 9',
-    src: 'https://drive.google.com/file/d/1cJB_xBPdfdAvb4G-MGsr-d43jGnWpOsx/preview',
-    link: 'https://drive.google.com/file/d/1cJB_xBPdfdAvb4G-MGsr-d43jGnWpOsx/view',
-  },
-  {
-    name: 'סרטון הפרויקט - תצוגה אנכית',
-    ratio: '9 / 16',
-    src: 'https://drive.google.com/file/d/12H2uKthX9Ub3ZfhBwg-fr9EwFvWotwV1/preview',
-    link: 'https://drive.google.com/file/d/12H2uKthX9Ub3ZfhBwg-fr9EwFvWotwV1/view',
+    src: 'https://www.youtube-nocookie.com/embed/iOplohn-kQs',
+    link: 'https://youtu.be/iOplohn-kQs',
   },
 ];
 
@@ -29,13 +22,30 @@ const meta = {
   ogImage: 'https://i-feel.co.il/assets/og-cover.jpg',
   jsonLd: JSON.stringify({
     '@context': 'https://schema.org',
-    '@type': 'WebPage',
-    name: 'בוטיק הנביאים - מערכת צלונים כלואים 24V',
-    url: 'https://i-feel.co.il/projects/boutique-haneviim-24v/',
-    description: 'תיעוד מצולם של מערכת הצלונים הכלואים במתח 24V בפרויקט בוטיק הנביאים.',
-    inLanguage: 'he-IL',
-    isPartOf: { '@id': 'https://i-feel.co.il/#website' },
-    publisher: { '@id': 'https://i-feel.co.il/#business' },
+    '@graph': [
+      {
+        '@type': 'WebPage',
+        '@id': 'https://i-feel.co.il/projects/boutique-haneviim-24v/#page',
+        name: 'בוטיק הנביאים - מערכת צלונים כלואים 24V',
+        url: 'https://i-feel.co.il/projects/boutique-haneviim-24v/',
+        description: 'תיעוד מצולם של מערכת הצלונים הכלואים במתח 24V בפרויקט בוטיק הנביאים.',
+        inLanguage: 'he-IL',
+        isPartOf: { '@id': 'https://i-feel.co.il/#website' },
+        publisher: { '@id': 'https://i-feel.co.il/#business' },
+      },
+      {
+        '@type': 'VideoObject',
+        '@id': 'https://i-feel.co.il/projects/boutique-haneviim-24v/#video',
+        name: 'בוטיק הנביאים - מערכת צלונים כלואים 24V | I FEEL',
+        description: 'הדגמה מצולמת של מערכת צלונים כלואים במתח 24V בפרויקט בוטיק הנביאים.',
+        uploadDate: '2026-10-27',
+        thumbnailUrl: 'https://i.ytimg.com/vi/iOplohn-kQs/hqdefault.jpg',
+        contentUrl: 'https://www.youtube.com/watch?v=iOplohn-kQs',
+        embedUrl: 'https://www.youtube-nocookie.com/embed/iOplohn-kQs',
+        inLanguage: 'he-IL',
+        publisher: { '@id': 'https://i-feel.co.il/#business' },
+      }
+    ]
   }),
 };
 ---
@@ -64,11 +74,11 @@ const meta = {
     <div class="mb-10 text-brand-800">
       <h2 class="text-2xl font-extrabold text-brand-900 mb-3">מערכת הצלונים בפרויקט</h2>
       <p class="text-lg leading-relaxed">
-        הסרטונים מציגים את פתרון הצלונים הכלואים ואת אופן הפעולה שלו בפרויקט.
+        הסרטון מציג את פתרון הצלונים הכלואים ואת אופן הפעולה שלו בפרויקט.
         לתכנון פתרון הצללה ובקרה בפרויקט מגורים ניתן לפנות לצוות I FEEL.
       </p>
     </div>
-    <div class="grid lg:grid-cols-2 gap-8 items-start" id="videos">
+    <div class="grid lg:grid-cols-2 gap-8 items-start" id="video">
       {videos.map((video) => (
         <article class="border border-brand-100 shadow-sm bg-white rounded-2xl overflow-hidden">
           <h2 class="text-lg font-bold text-brand-900 px-5 pt-5 pb-3">{video.name}</h2>
@@ -76,7 +86,7 @@ const meta = {
             <iframe class="w-full h-full" loading="lazy" src={video.src} title={video.name} allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>
           </div>
           <div class="px-5 py-4">
-            <a href={video.link} target="_blank" rel="noopener noreferrer" class="text-accent-700 underline">פתיחת הסרטון בחלון חדש</a>
+            <a href={video.link} target="_blank" rel="noopener noreferrer" class="text-accent-700 underline">צפייה בסרטון ב-YouTube</a>
           </div>
         </article>
       ))}
