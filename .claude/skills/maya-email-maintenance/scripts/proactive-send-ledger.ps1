@@ -122,7 +122,13 @@ function Set-PrivateFileAcl {
         [Security.AccessControl.AccessControlType]::Allow
     ))
     $file = [IO.FileInfo]::new($Path)
-    $file.SetAccessControl($acl)
+    # On .NET / PowerShell 7 this API is an extension, not an instance method.
+    # Preserve the same descriptor and fail closed if applying it fails.
+    if ($PSVersionTable.PSEdition -eq 'Core') {
+        [IO.FileSystemAclExtensions]::SetAccessControl($file, $acl)
+    } else {
+        $file.SetAccessControl($acl)
+    }
 }
 
 function New-Ledger {
@@ -207,7 +213,9 @@ function Get-Eligibility {
         return @{ eligible = $false; code = 'RECONCILIATION_REQUIRED' }
     }
     if ($Entry.status -eq 'sent_verified') {
-        $sentAt = [datetime]::Parse($Entry.sentAt).ToUniversalTime()
+        # ConvertFrom-Json may already return DateTime on PowerShell 7.
+        # Do not stringify it through the current culture before checking cooldown.
+        $sentAt = ([datetime]$Entry.sentAt).ToUniversalTime()
         if ($Now.ToUniversalTime() -lt $sentAt.AddDays($Cooldown)) {
             return @{ eligible = $false; code = 'COOLDOWN_ACTIVE' }
         }
