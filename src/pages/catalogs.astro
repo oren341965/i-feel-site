@@ -184,6 +184,7 @@ const meta = {
 };
 ---
 <BaseLayout {...meta}>
+  <Fragment set:html={content} />
 
   <section id="siemens-professional-resources" class="bg-white py-12 lg:py-16 border-b border-brand-100" dir="rtl">
     <div class="max-w-7xl mx-auto px-4">
@@ -216,7 +217,6 @@ const meta = {
     </div>
   </section>
 
-  <Fragment set:html={content} />
   <PeoniaExamples />
   <DesignerSwitchExamples />
 
