@@ -64,6 +64,7 @@ try {
             'recurring' => (bool) ($existing['recurring'] ?? false),
             'severity' => (string) ($existing['severity'] ?? 'NORMAL'),
             'vendorSent' => (bool) ($existing['sentToMcohome'] ?? false),
+            'deliveryBlockers' => $existing['deliveryBlockers'] ?? [],
             'driveSync' => $existing['driveSync'] ?? ['ok' => false, 'status' => 'unverified'],
         ]);
     }
@@ -123,6 +124,7 @@ try {
         'repeatCount' => (int) ($record['repeatCount'] ?? 1),
         'severity' => (string) ($record['severity'] ?? 'NORMAL'),
         'vendorSent' => (bool) ($record['sentToMcohome'] ?? false),
+        'deliveryBlockers' => $record['deliveryBlockers'] ?? [],
         'driveSync' => $record['driveSync'] ?? [],
         'sheetSync' => $record['sheetSync'] ?? [],
         'dropboxSync' => $record['dropboxSync'] ?? [],
