@@ -148,6 +148,18 @@ dmxVideoGraph["@graph"].push({
     "@id": "https://i-feel.co.il/#business"
   }
 });
+dmxVideoGraph['@graph'].push({
+  '@type': 'VideoObject',
+  '@id': 'https://i-feel.co.il/video/#boutique-haneviim-video',
+  name: 'בוטיק הנביאים - מערכת צלונים כלואים 24V | I FEEL',
+  description: 'הדגמה של מערכת הצלונים הכלואים במתח 24V בפרויקט בוטיק הנביאים.',
+  uploadDate: '2026-10-27',
+  thumbnailUrl: 'https://i.ytimg.com/vi/iOplohn-kQs/hqdefault.jpg',
+  contentUrl: 'https://www.youtube.com/watch?v=iOplohn-kQs',
+  embedUrl: 'https://www.youtube-nocookie.com/embed/iOplohn-kQs',
+  inLanguage: 'he-IL',
+  publisher: { '@id': 'https://i-feel.co.il/#business' }
+});
 meta.jsonLd = JSON.stringify(dmxVideoGraph);
 const switchesVideoSchema = knxSwitchesVideoSchema(meta.canonical);
 dmxVideoGraph['@graph'].push(outdoorLedVideoSchema(meta.canonical));
