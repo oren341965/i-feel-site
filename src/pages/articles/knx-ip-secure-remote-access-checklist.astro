@@ -32,7 +32,9 @@ const faq = [
   {
     q: 'מה צריך לקבל במסירת מערכת KNX?',
     a: 'קובצי ETS וגיבוי לפי הרשאות, תיעוד טופולוגיה וממשקים, נוהל גישה מאובטחת, תוצאות בדיקות ותוכנית שירות ושחזור.'
-  }
+  },
+  { q: 'האם קובץ Keyring מחליף גיבוי של פרויקט ETS?', a: 'לא. Keyring מיועד לנתוני אבטחה. למסירה ולתחזוקה שומרים גם גיבוי פרויקט עדכני, הרשאות וסיסמאות נדרשות, ובודקים שניתן לייבא את הגיבוי בסביבה מבוקרת.' },
+  { q: 'מה עושים כשאין ללקוח קובץ ETS או סיסמת פרויקט?', a: 'מתחילים באימות בעלות ואיסוף התיעוד מול הגורם שהתקין את המערכת. אפשר לפנות ל-I Feel גם בלי הקבצים, אך היקף הטיפול ייקבע לאחר בדיקה; אין הבטחה לשחזור ואין לבצע איפוס או לבטל אבטחה כדי לנסות להשיג גישה.' }
 ];
 
 const jsonLd = JSON.stringify({
@@ -45,7 +47,7 @@ const jsonLd = JSON.stringify({
       url: canonical,
       mainEntityOfPage: canonical,
       datePublished: '2026-10-12',
-      dateModified: '2026-10-24',
+      dateModified: '2026-10-28',
       inLanguage: 'he-IL',
       author: { '@type': 'Organization', name: 'i-feel', url: 'https://i-feel.co.il/' },
       publisher: { '@id': 'https://i-feel.co.il/#business' },
@@ -75,7 +77,7 @@ const jsonLd = JSON.stringify({
     <header class="bg-brand-900 text-white py-14 md:py-20">
       <div class="max-w-4xl mx-auto px-4">
         <a href="/articles/" class="text-accent-400 font-semibold hover:text-accent-300">מאמרים ומדריכים</a>
-        <p class="mt-4 text-sm text-brand-200">KNX · אבטחה · ETS6.4 · BMS · עודכן 24.10.2026</p>
+        <p class="mt-4 text-sm text-brand-200">KNX · אבטחה · ETS6.4 · BMS · עודכן 28.10.2026</p>
         <h1 class="mt-4 text-4xl md:text-5xl font-extrabold leading-tight">KNX IP Secure: רשימת בדיקות מעשית לאבטחת מערכת קיימת</h1>
         <p class="mt-5 text-lg md:text-xl leading-8 text-brand-100">איך בודקים חשיפה של KNXnet/IP, איך מתכננים גישה מרחוק בטוחה, מה ההבדל בין IP Secure ל-Data Secure, ומה חייבים לקבל במסירה ובתחזוקה.</p>
       </div>
@@ -146,6 +148,27 @@ const jsonLd = JSON.stringify({
         <h2 class="text-3xl font-bold text-brand-900">4. ETS6.4, מפתחות Secure וגיבוי פרויקט</h2>
         <p class="text-lg leading-8 text-brand-700">ETS6.4 מציעה, בין היתר, Auto Backup to Archive, המאפשר לשמור גרסת פרויקט בארכיון בעת סגירה לפי הגדרות המשתמש. זהו כלי שימושי בעבודה צוותית ובמערכות שממשיכות לקבל שירות במשך שנים, אך הוא אינו מחליף מדיניות גיבוי מסודרת, שמירה מוגנת או בדיקת שחזור בפועל.</p>
         <p class="text-lg leading-8 text-brand-700">במערכת KNX Secure יש לטפל גם באישורי מכשירים, FDSK ומפתחות תכנות. מידע זה אינו מיועד להפצה בהודעת WhatsApp פתוחה או כנספח חופשי לקריאת שירות. יש להגדיר מי בעל ההרשאה לקבל גיבוי, באילו אמצעי הגנה הוא נשמר, וכיצד יטופל מעבר מסודר לספק שירות חדש. התחזוקה חייבת להתחיל מאימות בעלות והרשאות, לא מניסיון לעקוף מנגנוני הגנה.</p>
+      </section>
+
+      <section class="space-y-5 mb-12 scroll-mt-28" id="secure-handover-backup">
+        <h2 class="text-3xl font-bold text-brand-900">מסירת KNX Secure: איך מוודאים שאפשר לתת שירות גם בהמשך?</h2>
+        <p class="text-lg leading-8 text-brand-700">הבית עובד היום, אבל מה יקרה כשצריך לשנות תרחיש או להחליף ספק שירות? כדאי לבדוק שיש גיבוי שמיש ושברור מי מורשה לקבל אותו. קובץ שנשמר במחשב הישן של המתקין לבדו אינו תוכנית תחזוקה.</p>
+        <h3 class="text-2xl font-bold text-brand-900">שלושה דברים שונים שצריך להכיר</h3>
+        <ul class="list-disc pr-7 space-y-2 text-lg leading-8 text-brand-700">
+          <li><strong>גיבוי פרויקט ETS:</strong> שומרים גרסה עדכנית ובודקים שניתן לייבא אותה. KNX ממליצה לגבות לאחר השלמת שינוי בפרויקט ולוודא שהייבוא תקין.</li>
+          <li><strong>סיסמת הפרויקט:</strong> בפרויקט KNX Secure נדרשת סיסמה לפתיחה, לייבוא ולייצוא. שומרים אותה באופן מוגן ונגיש לגורם המורשה.</li>
+          <li><strong>Keyring:</strong> יצוא נתוני האבטחה הוא גיבוי נוסף, לא תחליף לפרויקט ההנדסי. ב-ETS נתוני האבטחה ביצוא מוגנים בסיסמה; הכללת FDSK היא אפשרות שיש להחליט עליה במסגרת מדיניות המסירה.</li>
+        </ul>
+        <h3 class="text-2xl font-bold text-brand-900">בדיקת מסירה מעשית של I Feel</h3>
+        <ol class="list-decimal pr-7 space-y-2 text-lg leading-8 text-brand-700">
+          <li>מאמתים בעלות, הרשאה וגורם אחראי לקבלת חומרי הפרויקט.</li>
+          <li>מתעדים תאריך וגרסת ETS של הגיבוי, כדי לזהות את הגרסה שנמסרת.</li>
+          <li>בודקים ייבוא בסביבת עבודה מבוקרת, ללא הורדה לציוד הפעיל או שינוי במערכת.</li>
+          <li>מגדירים ערוץ העברה מוגן ואופן קבלת סיסמאות בנפרד; מתעדים מה התקבל ומה עדיין חסר.</li>
+        </ol>
+        <p class="text-lg leading-8 text-brand-700">אין לכם את הקבצים? אפשר להתחיל בשיחה ולברר מה ניתן לאסוף. נבחן את האפשרויות לפני שמתחייבים לשינוי, גם אם המערכת הותקנה בידי חברה אחרת. אין לשלוח סיסמאות, FDSK או Keyring בטופס הציבורי, ואין לאפס ציוד או לכבות Secure כדי להתגבר על חוסר בתיעוד.</p>
+        <p class="text-lg leading-8 text-brand-700">במערכת המחוברת ל-<a href="/siemens-desigo-bms/" class="text-accent-700 underline">Siemens Desigo</a> ול-<a href="/structure-control/" class="text-accent-700 underline">BMS</a>, מתעדים גם את הממשקים בנפרד. אפשר להתרשם מ<a href="/structure-control/projects/" class="text-accent-700 underline">פרויקטי בקרת המבנה שלנו</a>; קישור לפרויקט אינו מעיד שנוהל מסוים כבר יושם בו.</p>
+        <p class="text-sm leading-7 text-brand-600">מקורות KNX רשמיים: <a class="underline" href="https://support.knx.org/hc/en-us/articles/360018505379-Security">Security — עודכן 27.8.2026</a>; <a class="underline" href="https://support.knx.org/hc/en-us/articles/4407073499410-Project-backup">Project backup — עודכן 1.9.2026</a>. נבדקו 28.10.2026. רשימת המסירה היא המלצת עבודה של I Feel, ואינה הודעה על תקן חדש.</p>
       </section>
 
       <section class="space-y-5 mb-12">
