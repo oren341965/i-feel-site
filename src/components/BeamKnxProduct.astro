@@ -10,7 +10,7 @@ const route = he ? `/${slug}/` : `/en/${slug}/`;
 const other = he ? `/en/${slug}/` : `/${slug}/`;
 const canonical = `https://i-feel.co.il${route}`;
 const sections = ['components','power','wiring','commissioning','sources'];
-const diagrams = ['system-topology','contact-wiring'].map(name=>he?`${name}-he`:name);
+const diagrams = ['pima-tp20-system-topology','pima-tp20-contact-wiring'].map(name=>he?`${name}-he`:name);
 const jsonLd = JSON.stringify({
  '@context':'https://schema.org', '@graph':[
   {'@type':'LocalBusiness','@id':'https://i-feel.co.il/#business',name:'i-feel',url:'https://i-feel.co.il/',telephone:'+972-3-508-9553',address:{'@type':'PostalAddress',streetAddress:'אימבר 14',addressLocality:'פתח תקווה',addressCountry:'IL'}},
@@ -22,10 +22,10 @@ const jsonLd = JSON.stringify({
   {'@type':'WebPage','@id':canonical,name:t.title,description:t.description,url:canonical,inLanguage:language,
     translationOfWork:he?undefined:{'@id':`https://i-feel.co.il/${slug}/`},
     workTranslation:he?{'@id':`https://i-feel.co.il/en/${slug}/`}:undefined},
-  {'@type':'Product',name:he?'פתרון משולב: RISCO Beam 7115 עם Siemens KNX':'RISCO Beam 7115 with Siemens KNX integration',description:t.description,url:canonical,
-   image:[`https://i-feel.co.il/assets/beam-knx/system-topology.svg`],
+  {'@type':'Product',name:he?'פתרון משולב: PIMA PROTECTOR TP-20 עם Siemens KNX':'PIMA PROTECTOR TP-20 with Siemens KNX integration',description:t.description,url:canonical,
+   image:[`https://i-feel.co.il/assets/beam-knx/pima-tp20-system-topology.svg`],
    isRelatedTo:[
-    {'@type':'Product',name:'RISCO Beam 7115',model:'Beam 7115',brand:{'@type':'Brand',name:'RISCO'}},
+    {'@type':'Product',name:'PIMA PROTECTOR TP-20',model:'TP-20',brand:{'@type':'Brand',name:'PIMA'}},
     {'@type':'Product',name:'Siemens UP 220/21',mpn:'5WG1220-2AB21',brand:{'@type':'Brand',name:'Siemens'}},
     {'@type':'Product',name:'Siemens N 305',mpn:'5WG1305-1AB01',brand:{'@type':'Brand',name:'Siemens'}}
    ]},
@@ -45,12 +45,12 @@ const jsonLd = JSON.stringify({
     <div class="beam-top"><a href="/siemens-knx-products/">Siemens KNX</a><a href={other} hreflang={he?'en':'he'} lang={he?'en':'he'}>{t.other} ↗</a></div>
     <p class="beam-eyebrow">{t.eyebrow}</p>
     <h1>{t.title}</h1><p class="beam-lead">{t.intro}</p>
-    <div class="beam-badges"><span>15 m / Twin Beam</span><span>UP 220/21</span><span>N 305</span><span>12 V DC + KNX</span></div>
+    <div class="beam-badges"><span>20 m / Twin Beam</span><span>UP 220/21</span><span>N 305</span><span>12 V DC + KNX</span></div>
    </div>
   </header>
   <nav class="beam-nav beam-wrap" aria-label={he?'תוכן הדף':'Page contents'}>{t.nav.map((name,i)=><a href={`#${sections[i]}`}>{name}</a>)}</nav>
   <div class="beam-wrap beam-body">
-   <section class="beam-benefits"><h2>{t.benefitsTitle}</h2><p>{t.benefitsIntro}</p><ul>{t.benefits.map(([heading,text])=><li><strong>{heading}: </strong>{text}</li>)}</ul><p class="beam-note">{t.benefitsNote} <a href={beamKnxSources[1][1]} target="_blank" rel="noopener noreferrer">{he?'קטלוג RISCO — שיטת הזיהוי ותכונות הסדרות':'RISCO catalogue — detection method and series features'} ↗</a></p></section>
+   <section class="beam-benefits"><h2>{t.benefitsTitle}</h2><p>{t.benefitsIntro}</p><ul>{t.benefits.map(([heading,text])=><li><strong>{heading}: </strong>{text}</li>)}</ul><p class="beam-note">{t.benefitsNote} <a href={beamKnxSources[1][1]} target="_blank" rel="noopener noreferrer">{he?'PIMA — מסמכים טכניים רשמיים':'PIMA — official technical documents'} ↗</a></p></section>
    <section id="power" class="beam-power">
     <p class="beam-eyebrow">01 / POWER</p><h2>{t.powerTitle}</h2><p>{t.power}</p>
     <div class="beam-compat"><h3>{t.psuTitle}</h3><p>{t.psu}</p><p>{t.converter}</p><a href="/articles/siemens-n12522-knx-power-supply-640ma/">Siemens N 125/22 — 640 mA ↗</a></div>

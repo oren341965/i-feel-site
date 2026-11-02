@@ -11,8 +11,8 @@ i-feel משרתת לקוחות פרטיים, יזמי בנייה, אדריכלי
 
 ## תחומי פעילות עיקריים
 
-- [גלאי קרן 15 מטר עם Siemens KNX](https://i-feel.co.il/beam-detector-knx-integration/): שילוב RISCO Beam 7115, ממשק UP 220/21 ובקר N 305, שרטוטים והזנת 12V DC קבועה ונפרדת; אין לחבר את הגלאי ישירות ל־29V.
-- [15 m beam detector with Siemens KNX — English](https://i-feel.co.il/en/beam-detector-knx-integration/): reference specifications, continuous detector power, dry-contact wiring and KNX scene/event commissioning.
+- [PIMA PROTECTOR TP-20 עם Siemens KNX](https://i-feel.co.il/beam-detector-knx-integration/): גלאי קרן עד 20 מטר, ממשק UP 220/21 ובקר N 305; שרטוטי הזנת 12V קבועה נפרדת ומגע יבש. בדיקת יציאת עזר 29V דורשת אימות גרסה ותקציב זרם.
+- [PIMA PROTECTOR TP-20 with Siemens KNX — English](https://i-feel.co.il/en/beam-detector-knx-integration/): reference specifications, continuous detector power, dry-contact wiring and KNX scene/event commissioning.
 
 - [תאורת DMX לבית](https://i-feel.co.il/dmx-home-lighting/): שילוב DMX, DALI-2 ו־KNX של סימנס, בקרת צבע ותרחישים.
 
