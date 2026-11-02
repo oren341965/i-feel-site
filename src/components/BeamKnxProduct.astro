@@ -50,6 +50,7 @@ const jsonLd = JSON.stringify({
   </header>
   <nav class="beam-nav beam-wrap" aria-label={he?'תוכן הדף':'Page contents'}>{t.nav.map((name,i)=><a href={`#${sections[i]}`}>{name}</a>)}</nav>
   <div class="beam-wrap beam-body">
+   <section class="beam-benefits"><h2>{t.benefitsTitle}</h2><p>{t.benefitsIntro}</p><ul>{t.benefits.map(([heading,text])=><li><strong>{heading}: </strong>{text}</li>)}</ul><p class="beam-note">{t.benefitsNote} <a href={beamKnxSources[1][1]} target="_blank" rel="noopener noreferrer">{he?'קטלוג RISCO — שיטת הזיהוי ותכונות הסדרות':'RISCO catalogue — detection method and series features'} ↗</a></p></section>
    <section id="power" class="beam-power">
     <p class="beam-eyebrow">01 / POWER</p><h2>{t.powerTitle}</h2><p>{t.power}</p>
     <div class="beam-compat"><h3>{t.psuTitle}</h3><p>{t.psu}</p><p>{t.converter}</p><a href="/articles/siemens-n12522-knx-power-supply-640ma/">Siemens N 125/22 — 640 mA ↗</a></div>
