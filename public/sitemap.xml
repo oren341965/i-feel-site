@@ -990,14 +990,14 @@
   <url><loc>https://i-feel.co.il/articles/roborock-smart-home-integration-2026/</loc></url>
   <url><loc>https://i-feel.co.il/smart-home-support/</loc></url>
   <url><loc>https://i-feel.co.il/video/lighting-dimmer/</loc></url>
-  <url><loc>https://i-feel.co.il/articles/siemens-knx-push-button-interface/</loc><lastmod>2026-10-02</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://i-feel.co.il/articles/siemens-knx-push-button-interface/</loc><lastmod>2026-11-02</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url>
     <loc>https://i-feel.co.il/articles/knx-awards-2026-smart-building-trends/</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
-  <url><loc>https://i-feel.co.il/siemens-knx-products/</loc><lastmod>2026-10-08</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://i-feel.co.il/siemens-knx-products/</loc><lastmod>2026-11-02</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url>
     <loc>https://i-feel.co.il/dmx-home-lighting/</loc>
     <lastmod>2026-10-08</lastmod>
@@ -1060,4 +1060,6 @@
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
+  <url><loc>https://i-feel.co.il/beam-detector-knx-integration/</loc><lastmod>2026-11-02</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://i-feel.co.il/en/beam-detector-knx-integration/</loc><lastmod>2026-11-02</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
 </urlset>

@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="930" viewBox="0 0 1200 930" role="img" aria-labelledby="title desc">
+<title id="title">Beam 7115 continuous power and dry-contact wiring to UP220/21</title>
+<desc id="desc">The positive and zero volt of a separate 12 volt supply feed the POWER terminal pair on each detector. The isolated NC alarm contact connects only to the two wires of input channel A. Optional isolated tamper connects to channel B. No detector power conductor connects to either PBI input pair or the KNX bus.</desc>
+<defs><style>text{font-family:Arial,sans-serif;fill:#102d41;font-size:19px}.h{font-size:24px;font-weight:700}.s{font-size:16px}.box{fill:#fff;stroke:#8ca3b1;stroke-width:2}.p{fill:none;stroke:#a84b0b;stroke-width:3}.z{fill:none;stroke:#545f68;stroke-width:3}.a{fill:none;stroke:#166e9b;stroke-width:3}.b{fill:none;stroke:#537847;stroke-width:3;stroke-dasharray:8 5}.bus{fill:none;stroke:#7951a8;stroke-width:3}.dot{fill:#fff;stroke:#102d41;stroke-width:2}</style></defs>
+<rect width="1200" height="930" rx="20" fill="#f3f7fa"/>
+<text x="35" y="43" class="h">02 / CONNECTION DETAIL — CONTINUOUS DC + ISOLATED CONTACTS</text>
+<rect x="35" y="82" width="270" height="142" rx="12" class="box"/>
+<text x="55" y="116" class="h">Separate 12 V DC PSU</text><text x="55" y="147">Regulated SELV / always on</text><text x="55" y="184">+12 V</text><text x="55" y="211">0 V</text>
+<circle cx="290" cy="178" r="5" class="dot"/><circle cx="290" cy="205" r="5" class="dot"/>
+<rect x="410" y="82" width="300" height="142" rx="12" class="box"/>
+<text x="430" y="116" class="h">TX / Beam 7115</text><text x="430" y="147">POWER pair / 10–28 V DC</text><text x="555" y="182" class="s">POWER terminal</text><text x="555" y="210" class="s">POWER terminal</text>
+<circle cx="435" cy="178" r="5" class="dot"/><circle cx="435" cy="205" r="5" class="dot"/>
+<rect x="840" y="82" width="325" height="480" rx="12" class="box"/>
+<text x="862" y="116" class="h">RX / Beam 7115</text><text x="862" y="147">POWER pair / 10–28 V DC</text>
+<text x="930" y="182" class="s">POWER terminal</text><text x="930" y="210" class="s">POWER terminal</text>
+<circle cx="860" cy="178" r="5" class="dot"/><circle cx="860" cy="205" r="5" class="dot"/>
+<path d="M295 178 H430 M350 178 V255 H805 V178 H855" class="p"/>
+<path d="M295 205 H430 M380 205 V280 H825 V205 H855" class="z"/>
+<circle cx="350" cy="178" r="5" fill="#a84b0b"/><circle cx="380" cy="205" r="5" fill="#545f68"/>
+<text x="865" y="320">ALARM NC / voltage-free</text><text x="865" y="346" class="s">Closed at rest · opens on alarm</text>
+<circle cx="860" cy="370" r="5" class="dot"/><circle cx="860" cy="405" r="5" class="dot"/>
+<path d="M865 370 H1115 V405 H865" fill="none" stroke="#102d41" stroke-width="2"/>
+<text x="865" y="455">TAMPER / optional</text>
+<circle cx="860" cy="485" r="5" class="dot"/><circle cx="860" cy="520" r="5" class="dot"/>
+<path d="M865 485 H1115 V520 H865" fill="none" stroke="#102d41" stroke-width="2"/>
+<rect x="35" y="330" width="350" height="330" rx="12" class="box"/>
+<text x="55" y="365" class="h">Siemens UP 220/21</text><text x="55" y="395" class="s">Input harness / channel aliases</text>
+<text x="55" y="436">A1</text><circle cx="365" cy="430" r="5" class="dot"/>
+<text x="55" y="471">A2</text><circle cx="365" cy="465" r="5" class="dot"/>
+<text x="55" y="526">B1 (optional)</text><circle cx="365" cy="520" r="5" class="dot"/>
+<text x="55" y="561">B2 (optional)</text><circle cx="365" cy="555" r="5" class="dot"/>
+<text x="55" y="620">KNX +</text><circle cx="200" cy="614" r="5" class="dot"/>
+<text x="235" y="620">KNX −</text><circle cx="350" cy="614" r="5" class="dot"/>
+<path d="M370 430 H620 V370 H855 M370 465 H665 V405 H855" class="a"/>
+<text x="440" y="355" class="s">Channel A: NC alarm contact only</text>
+<path d="M370 520 H720 V485 H855 M370 555 H765 V520 H855" class="b"/>
+<text x="425" y="600" class="s">Channel B: verify voltage-free tamper before connecting</text>
+<path d="M200 619 V705 M350 619 V705" class="bus"/>
+<text x="45" y="738">To KNX + / − (N 125/22 choked bus, N 305 and actuator in parallel)</text>
+<rect x="35" y="767" width="1130" height="136" rx="12" fill="#fff7e8" stroke="#d6ae6c"/>
+<text x="55" y="797" class="s">• A1/A2/B1/B2 are functional drawing aliases, NOT manufacturer pin numbers. Verify the actual harness.</text>
+<text x="55" y="825" class="s">• POWER input is non-polar per RISCO manual. Supply + / 0 V shown for distribution clarity.</text>
+<text x="55" y="853" class="s">• NO link from detector + / 0 V to PBI inputs or KNX. Max. contact cable length: 10 m per channel.</text>
+<text x="55" y="881" class="s">• Lines are not wire-colour instructions. Contact symbols show continuity at rest, not PCB layout.</text>
+</svg>

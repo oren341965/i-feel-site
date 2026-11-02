@@ -1,0 +1,78 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { beamKnx, beamKnxSources } from '../data/beam-knx';
+interface Props { language: 'he' | 'en' }
+const { language } = Astro.props;
+const t = beamKnx[language];
+const he = language === 'he';
+const slug = 'beam-detector-knx-integration';
+const route = he ? `/${slug}/` : `/en/${slug}/`;
+const other = he ? `/en/${slug}/` : `/${slug}/`;
+const canonical = `https://i-feel.co.il${route}`;
+const sections = ['components','power','wiring','commissioning','sources'];
+const diagrams = ['system-topology','contact-wiring'].map(name=>he?`${name}-he`:name);
+const jsonLd = JSON.stringify({
+ '@context':'https://schema.org', '@graph':[
+  {'@type':'LocalBusiness','@id':'https://i-feel.co.il/#business',name:'i-feel',url:'https://i-feel.co.il/',telephone:'+972-3-508-9553',address:{'@type':'PostalAddress',streetAddress:'אימבר 14',addressLocality:'פתח תקווה',addressCountry:'IL'}},
+  {'@type':'BreadcrumbList',itemListElement:[
+   {'@type':'ListItem',position:1,name:he?'דף הבית':'Home',item:'https://i-feel.co.il/'},
+   {'@type':'ListItem',position:2,name:he?'ציוד Siemens KNX':'Siemens KNX products',item:'https://i-feel.co.il/siemens-knx-products/'},
+   {'@type':'ListItem',position:3,name:t.title,item:canonical}
+  ]},
+  {'@type':'WebPage','@id':canonical,name:t.title,description:t.description,url:canonical,inLanguage:language,
+    translationOfWork:he?undefined:{'@id':`https://i-feel.co.il/${slug}/`},
+    workTranslation:he?{'@id':`https://i-feel.co.il/en/${slug}/`}:undefined},
+  {'@type':'Product',name:he?'פתרון משולב: RISCO Beam 7115 עם Siemens KNX':'RISCO Beam 7115 with Siemens KNX integration',description:t.description,url:canonical,
+   image:[`https://i-feel.co.il/assets/beam-knx/system-topology.svg`],
+   isRelatedTo:[
+    {'@type':'Product',name:'RISCO Beam 7115',model:'Beam 7115',brand:{'@type':'Brand',name:'RISCO'}},
+    {'@type':'Product',name:'Siemens UP 220/21',mpn:'5WG1220-2AB21',brand:{'@type':'Brand',name:'Siemens'}},
+    {'@type':'Product',name:'Siemens N 305',mpn:'5WG1305-1AB01',brand:{'@type':'Brand',name:'Siemens'}}
+   ]},
+  {'@type':'FAQPage',mainEntity:t.faq.map(([q,a])=>({'@type':'Question',name:q,acceptedAnswer:{'@type':'Answer',text:a}}))}
+ ]
+});
+---
+<BaseLayout title={`${t.title} | i-feel`} description={t.description} canonical={canonical} ogTitle={t.title} ogDescription={t.description} ogUrl={canonical} jsonLd={jsonLd} lang={language} dir={he?'rtl':'ltr'}>
+ <Fragment slot="head">
+  <link rel="alternate" hreflang="he" href={`https://i-feel.co.il/${slug}/`} />
+  <link rel="alternate" hreflang="en" href={`https://i-feel.co.il/en/${slug}/`} />
+  <link rel="alternate" hreflang="x-default" href={`https://i-feel.co.il/${slug}/`} />
+ </Fragment>
+ <article class="beam-product" lang={language} dir={he?'rtl':'ltr'}>
+  <header class="beam-hero">
+   <div class="beam-wrap">
+    <div class="beam-top"><a href="/siemens-knx-products/">Siemens KNX</a><a href={other} hreflang={he?'en':'he'} lang={he?'en':'he'}>{t.other} ↗</a></div>
+    <p class="beam-eyebrow">{t.eyebrow}</p>
+    <h1>{t.title}</h1><p class="beam-lead">{t.intro}</p>
+    <div class="beam-badges"><span>15 m / Twin Beam</span><span>UP 220/21</span><span>N 305</span><span>12 V DC + KNX</span></div>
+    <p class="beam-date">{t.date}</p>
+   </div>
+  </header>
+  <nav class="beam-nav beam-wrap" aria-label={he?'תוכן הדף':'Page contents'}>{t.nav.map((name,i)=><a href={`#${sections[i]}`}>{name}</a>)}</nav>
+  <div class="beam-wrap beam-body">
+   <section id="power" class="beam-power">
+    <p class="beam-eyebrow">01 / POWER</p><h2>{t.powerTitle}</h2><p>{t.power}</p>
+    <div class="beam-compat"><h3>{t.psuTitle}</h3><p>{t.psu}</p><p>{t.converter}</p><a href="/articles/siemens-n12522-knx-power-supply-640ma/">Siemens N 125/22 — 640 mA ↗</a></div>
+   </section>
+   <section id="components"><p class="beam-eyebrow">02 / COMPONENTS</p><h2>{t.productsTitle}</h2>
+    <div class="beam-cards">{t.products.map((p,i)=><section class="beam-card"><span class="beam-number">0{i+1}</span><h3 dir="ltr">{p.name}</h3><p class="beam-role">{p.role}</p>{i===1&&<img src="/assets/siemens-knx-interface/5wg1220-2ab21.webp" width="581" height="900" loading="lazy" class="beam-pbi" alt={he?'מתאם Siemens UP 220/21 בעל שני ערוצים':'Siemens UP 220/21 two-channel interface'} />}<p>{p.text}</p><dl>{p.rows.map(([key,value])=><div><dt>{key}</dt><dd>{value}</dd></div>)}</dl><p class="beam-note">{p.note}</p></section>)}</div>
+   </section>
+   <section id="wiring"><p class="beam-eyebrow">03 / CONNECTIONS</p><h2>{t.diagramTitle}</h2><p>{t.diagramIntro}</p>
+    {diagrams.map((diagram,i)=><figure class="beam-figure"><a href={`/assets/beam-knx/${diagram}.svg`} target="_blank" rel="noopener noreferrer" aria-label={t.download}><img src={`/assets/beam-knx/${diagram}.svg`} width="1200" height={i===0?800:930} loading="lazy" alt={t.diagramAlt} /></a><figcaption>{t.captions[i]} <a href={`/assets/beam-knx/${diagram}.svg`} target="_blank" rel="noopener noreferrer">{t.download} ↗</a></figcaption></figure>)}
+    <h3>{t.wiresTitle}</h3><div class="beam-table"><table><thead><tr>{t.wireHeads.map(h=><th scope="col">{h}</th>)}</tr></thead><tbody>{t.wires.map(row=><tr>{row.map(cell=><td>{cell}</td>)}</tr>)}</tbody></table></div><p class="beam-note">{t.boundary}</p>
+   </section>
+   <section><h2>{t.scopeTitle}</h2><ul>{t.scope.map(s=><li>{s}</li>)}</ul></section>
+   <section id="commissioning"><p class="beam-eyebrow">04 / ETS &amp; HANDOVER</p><h2>{t.setupTitle}</h2><p>{t.setupIntro}</p><div class="beam-table"><table><thead><tr>{t.setupHeads.map(h=><th scope="col">{h}</th>)}</tr></thead><tbody>{t.setup.map(row=><tr>{row.map((cell,i)=><td dir={i<3?'ltr':undefined}>{cell}</td>)}</tr>)}</tbody></table></div><p>{t.setupNotes}</p><h3>{t.testsTitle}</h3><ol>{t.tests.map(s=><li>{s}</li>)}</ol><h3>{t.limitsTitle}</h3><p>{t.limits}</p></section>
+   <section><h2>{he?'שאלות ותשובות':'Frequently asked questions'}</h2><div class="beam-faq">{t.faq.map(([q,a])=><details><summary>{q}</summary><p>{a}</p></details>)}</div></section>
+   <section id="sources"><p class="beam-eyebrow">05 / TECHNICAL SOURCES</p><h2>{t.sourcesTitle}</h2><p>{t.sourcesIntro}</p><ul class="beam-sources" dir="ltr">{beamKnxSources.map(([label,href])=><li><a href={href} target="_blank" rel="noopener noreferrer">{label} ↗</a></li>)}</ul></section>
+   <section class="beam-cta"><h2>{t.ctaTitle}</h2><p>{t.cta}</p><div><a class="beam-button" href="/contactus/">{t.contact}</a><a class="beam-phone" href="tel:+97235089553" dir="ltr">{he?'03-508-9553':'+972-3-508-9553'}</a></div></section>
+   <section class="beam-related"><h2>{t.related}</h2><a href="/articles/siemens-knx-push-button-interface/">{he?'מדריך PBI של Siemens':'Siemens PBI guide (Hebrew)'} ↗</a><a href="/knx-smart-home/">{he?'תכנון בית חכם KNX':'KNX smart-home planning (Hebrew)'} ↗</a><a href={other} hreflang={he?'en':'he'}>{t.other} ↗</a></section>
+  </div>
+ </article>
+</BaseLayout>
+<style>
+ .beam-product{color:#153447;background:#fff;line-height:1.85}.beam-wrap{max-width:1180px;margin:auto;padding-inline:24px}.beam-hero{background:#102e42;color:#fff;padding:38px 0 54px}.beam-top{display:flex;justify-content:space-between;gap:16px}.beam-top a{color:#a8ead6;text-decoration:underline;text-underline-offset:5px}.beam-eyebrow{font-size:.8rem;letter-spacing:.06em;font-weight:800;color:#176d57;margin:0 0 14px}.beam-hero .beam-eyebrow{color:#a8ead6;margin-top:45px}.beam-product h1{font-size:clamp(2.1rem,4.5vw,3.6rem);line-height:1.25;font-weight:850;max-width:1000px}.beam-lead{font-size:1.2rem;max-width:850px;color:#d5e5ef;margin:24px 0}.beam-badges{display:flex;flex-wrap:wrap;gap:10px;direction:ltr;justify-content:flex-start}.beam-badges span{border:1px solid #5e849a;border-radius:7px;padding:5px 13px;font-size:.9rem}.beam-date{color:#c1d5e1;font-size:.85rem;margin-top:22px}.beam-nav{display:flex;flex-wrap:wrap;gap:12px 28px;padding-block:22px;border-bottom:1px solid #dce5ec}.beam-nav a{font-weight:700;color:#176d57}.beam-body>section{margin-block:52px;scroll-margin-top:110px}.beam-product h2{font-size:clamp(1.65rem,3vw,2.15rem);font-weight:800;line-height:1.4;margin-bottom:20px}.beam-product h3{font-size:1.35rem;font-weight:800;line-height:1.45;margin:22px 0 12px}.beam-product p{margin-bottom:18px}.beam-power{background:#eff8f4;border:1px solid #a4cbb9;border-radius:18px;padding:28px}.beam-compat{margin-top:24px;border-top:1px solid #accbbb;padding-top:10px}.beam-compat a,.beam-figure a,.beam-sources a,.beam-related a{color:#126650;text-decoration:underline;text-underline-offset:4px}.beam-cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px}.beam-card{border:1px solid #d4e0e8;border-radius:16px;padding:24px;background:#fafcfd;min-width:0}.beam-number{font-size:.85rem;color:#176d57;font-weight:800}.beam-card h3{text-align:start;font-size:1.65rem;margin:12px 0}.beam-role{font-weight:700;color:#176d57}.beam-pbi{height:155px;width:100%;object-fit:contain;background:#fff;border-radius:12px;margin-bottom:18px}.beam-card dl>div{padding:12px 0;border-top:1px solid #dce5ec}.beam-card dt{font-size:.85rem;font-weight:800}.beam-card dd{font-size:.95rem;margin:3px 0 0;overflow-wrap:anywhere}.beam-note{font-size:.9rem;background:#f0f4f7;border-inline-start:3px solid #60849a;padding:15px;margin-top:20px!important}.beam-figure{border:1px solid #cedde5;border-radius:16px;overflow:hidden;margin:30px 0}.beam-figure img{display:block;width:100%;height:auto}.beam-figure figcaption{padding:18px;font-size:.9rem;background:#f8fafc}.beam-figure figcaption a{display:block;margin-top:8px}.beam-table{overflow-x:auto;margin:20px 0;border:1px solid #d4e0e8;border-radius:12px}.beam-table table{width:100%;border-collapse:collapse;min-width:650px;text-align:start;font-size:.95rem}.beam-table th,.beam-table td{padding:14px 16px;border-bottom:1px solid #dce5ec;vertical-align:top;text-align:start}.beam-table th{background:#edf5f2}.beam-product ul,.beam-product ol{padding-inline-start:24px}.beam-product ul{list-style:disc}.beam-product ol{list-style:decimal}.beam-product li{margin-bottom:12px}.beam-faq details{border-bottom:1px solid #d4e0e8;padding:18px 0}.beam-faq summary{font-weight:750;cursor:pointer}.beam-faq p{margin:14px 0 0}.beam-sources{font-size:.9rem;overflow-wrap:anywhere}.beam-cta{background:#102e42;color:#fff;padding:32px;border-radius:18px}.beam-cta p{max-width:850px;color:#d5e5ef}.beam-cta>div{display:flex;align-items:center;flex-wrap:wrap;gap:20px}.beam-button{background:#a8ead6;color:#103d30;padding:12px 22px;border-radius:8px;font-weight:800}.beam-phone{color:#fff;font-weight:800;text-decoration:underline}.beam-related a{display:inline-block;margin-inline-end:25px;margin-bottom:10px}.beam-product a:focus-visible,.beam-product summary:focus-visible{outline:3px solid #ca8d19;outline-offset:5px}
+ @media(max-width:850px){.beam-cards{grid-template-columns:1fr}.beam-card{padding:22px}.beam-pbi{height:190px}.beam-wrap{padding-inline:18px}.beam-power{padding:22px}.beam-body>section{margin-block:36px}.beam-hero{padding-bottom:36px}.beam-cta{padding:25px}}
+ @media print{.beam-nav,.beam-cta{display:none}.beam-hero{background:#fff;color:#102e42}.beam-lead,.beam-date{color:#102e42}.beam-cards{display:block}.beam-card,.beam-figure{break-inside:avoid;margin-bottom:20px}.beam-figure img{max-height:600px;object-fit:contain}}
+</style>

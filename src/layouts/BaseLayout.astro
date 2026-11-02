@@ -173,6 +173,7 @@ const siteIdentityJsonLd = JSON.stringify({
     <meta property="og:locale" content={lang === 'en' ? 'en_US' : 'he_IL'} />
     <meta name="twitter:card" content="summary_large_image" />
     <link rel="icon" type="image/png" href="/assets/favicon.png" />
+    <slot name="head" />
     <link rel="alternate" type="text/plain" href="/llms.txt" title="llms.txt" />
     <link rel="alternate" type="application/json" href="/agent-info.json" title="I FEEL public services and contact paths" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />

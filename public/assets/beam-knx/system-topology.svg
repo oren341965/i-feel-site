@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="800" viewBox="0 0 1200 800" role="img" aria-labelledby="title desc">
+<title id="title">RISCO Beam 7115 with Siemens PBI and N 305 — system topology</title>
+<desc id="desc">A separate regulated 12 volt DC supply continuously powers both beam units. Only the receiver dry contact reaches the PBI. A Siemens N125/22 supply feeds a common KNX bus; PBI, N305 and actuator connect in parallel. Its 29 volt auxiliary output is not connected to the detector.</desc>
+<defs><style>text{font-family:Arial,sans-serif;fill:#102d41;font-size:19px}.h{font-size:25px;font-weight:700}.s{font-size:16px}.box{fill:#fff;stroke:#8ca3b1;stroke-width:2}.power{fill:none;stroke:#a84b0b;stroke-width:4}.signal{fill:none;stroke:#166e9b;stroke-width:4}.bus{fill:none;stroke:#7951a8;stroke-width:7}.optical{fill:none;stroke:#198362;stroke-width:3;stroke-dasharray:10 7}</style></defs>
+<rect width="1200" height="800" fill="#f3f7fa" rx="20"/>
+<text x="40" y="43" class="h">01 / SYSTEM TOPOLOGY — TWO SEPARATE POWER DOMAINS</text>
+<rect x="30" y="70" width="1140" height="280" rx="16" fill="#fff9f1" stroke="#e2bf91"/>
+<text x="50" y="101" class="s">DETECTOR POWER / optical beam up to 15 m outdoors</text>
+<rect x="55" y="140" width="270" height="125" rx="12" class="box"/>
+<text x="77" y="174" class="h">Regulated 12 V DC PSU</text><text x="77" y="205">Continuous SELV supply</text><text x="77" y="235" class="s">Separate from KNX power</text>
+<rect x="450" y="140" width="230" height="125" rx="12" class="box"/>
+<text x="470" y="175" class="h">TX / Beam 7115</text><text x="470" y="208">POWER: 10–28 V DC</text><text x="470" y="238" class="s">12 V DC in this design</text>
+<rect x="890" y="140" width="230" height="125" rx="12" class="box"/>
+<text x="910" y="175" class="h">RX / Beam 7115</text><text x="910" y="208">POWER: 10–28 V DC</text><text x="910" y="238" class="s">ALARM: NC dry contact</text>
+<path d="M325 202 H390 V125 H1005 V140 M565 125 V140" class="power"/>
+<circle cx="565" cy="125" r="5" fill="#a84b0b"/>
+<path d="M680 187 H890 M680 212 H890" class="optical"/>
+<text x="734" y="171" class="s">2 IR beams</text><text x="735" y="244" class="s">clear sightline</text>
+<text x="50" y="314" class="s">Orange: DC supply pair (TX and RX in parallel) · Green dashed: optical path</text>
+<path d="M1005 265 V383 H505 V430" class="signal"/>
+<rect x="560" y="364" width="405" height="35" rx="6" fill="#f3f7fa"/>
+<text x="572" y="388" class="s">ALARM NC pair → PBI channel A · max. 10 m</text>
+<rect x="45" y="430" width="270" height="135" rx="12" class="box"/>
+<text x="65" y="466" class="h">Siemens N 125/22</text><text x="65" y="497">KNX PSU / 640 mA</text><text x="65" y="529" class="s">Choked output → KNX bus</text>
+<rect x="395" y="430" width="220" height="135" rx="12" class="box"/>
+<text x="415" y="466" class="h">UP 220/21 PBI</text><text x="415" y="497">2 input channels</text><text x="415" y="529" class="s">Bus-powered / dry indoors</text>
+<rect x="695" y="430" width="190" height="135" rx="12" class="box"/>
+<text x="715" y="466" class="h">N 305</text><text x="715" y="497">Scene / event logic</text><text x="715" y="529" class="s">Bus-powered / DIN rail</text>
+<rect x="965" y="430" width="190" height="135" rx="12" class="box"/>
+<text x="985" y="466" class="h">KNX actuator</text><text x="985" y="497">Load switching</text><text x="985" y="529" class="s">Selected for actual load</text>
+<path d="M180 565 V615 H1060 V565 M505 565 V615 M790 565 V615" class="bus"/>
+<circle cx="505" cy="615" r="6" fill="#7951a8"/><circle cx="790" cy="615" r="6" fill="#7951a8"/>
+<text x="390" y="651">KNX TP bus pair — all devices in parallel, observe + / −</text>
+<text x="45" y="699" class="s">Blue: dry-contact pair · Purple: KNX power + telegrams · Lines show functional pairs, not wire colours.</text>
+<text x="45" y="733" class="s">N 125/22 auxiliary output: NOT connected to Beam 7115 (29 V exceeds its 28 V maximum).</text>
+<text x="45" y="767" class="s">Actuator load supply / mains / protection not shown. Reference interconnection, not a site panel construction drawing.</text>
+</svg>
