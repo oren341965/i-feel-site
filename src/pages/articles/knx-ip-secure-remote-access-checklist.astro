@@ -8,7 +8,11 @@ const canonical = 'https://i-feel.co.il/articles/knx-ip-secure-remote-access-che
 const faq = [
   { q: 'האם Security Proxy מצפין ציוד KNX ישן?', a: 'לא. מקשר תואם עשוי לגשר בין מקטעים עם יכולות אבטחה שונות, אך התקן ישן אינו הופך למוצפן אוטומטית.' },
   { q: 'כיצד בודקים התאמת Security Proxy?', a: 'בודקים את דגם המקשר, תצורת TP/IP/RF, גרסת ETS, כתובות קבוצתיות, קושחה, הרשאות ותהליך בדיקה ומסירה.' },
-  { q: 'האם ETS6.4 מחליפה VPN?', a: 'לא. ETS היא סביבת הנדסה; VPN וגישה מאומתת מרחוק מטפלים בשכבת הרשת. נדרש תכנון משולב.' },
+  { q: 'האם ETS6.4 מחליפה VPN?', a: 'לא. ETS היא סביבת הנדסה. KNX Standard v3.0.5 מגדיר Cloud Interface לגישה מאובטחת ללא VPN עבור יישומים תואמים, אך זו אינה יכולת כללית של ETS ואינה קיימת אוטומטית בכל מערכת. נדרש פתרון גישה שמאושר לדגם, לגרסה ולמדיניות הלקוח.' },
+  {
+    q: 'האם KNX Standard v3.0.5 מאפשר להתחבר לכל מערכת KNX בלי VPN?',
+    a: 'לא. התקן מספק ליצרנים מסגרת ל-Cloud Interface מאובטח, אבל התמיכה תלויה במוצר, בקושחה, בשירות ובתצורת הפרויקט. לפני שימוש מאמתים תאימות, הרשאות, תיעוד ובדיקות מסירה.'
+  },
   {
     q: 'מה ההבדל בין KNX IP Secure ל-KNX Data Secure?',
     a: 'KNX IP Secure מאבטח תקשורת KNX במדיום IP, בעוד KNX Data Secure מגן על הנתונים בטלגרמות KNX במדיומים נתמכים. שניהם משלימים תכנון רשת והרשאות, ולא מחליפים אותם.'
@@ -45,7 +49,7 @@ const jsonLd = JSON.stringify({
       url: canonical,
       mainEntityOfPage: canonical,
       datePublished: '2026-10-12',
-      dateModified: '2026-10-24',
+      dateModified: '2026-11-01',
       inLanguage: 'he-IL',
       author: { '@type': 'Organization', name: 'i-feel', url: 'https://i-feel.co.il/' },
       publisher: { '@id': 'https://i-feel.co.il/#business' },
@@ -75,7 +79,7 @@ const jsonLd = JSON.stringify({
     <header class="bg-brand-900 text-white py-14 md:py-20">
       <div class="max-w-4xl mx-auto px-4">
         <a href="/articles/" class="text-accent-400 font-semibold hover:text-accent-300">מאמרים ומדריכים</a>
-        <p class="mt-4 text-sm text-brand-200">KNX · אבטחה · ETS6.4 · BMS · עודכן 24.10.2026</p>
+        <p class="mt-4 text-sm text-brand-200">KNX · אבטחה · ETS6.4 · BMS · עודכן 1.11.2026</p>
         <h1 class="mt-4 text-4xl md:text-5xl font-extrabold leading-tight">KNX IP Secure: רשימת בדיקות מעשית לאבטחת מערכת קיימת</h1>
         <p class="mt-5 text-lg md:text-xl leading-8 text-brand-100">איך בודקים חשיפה של KNXnet/IP, איך מתכננים גישה מרחוק בטוחה, מה ההבדל בין IP Secure ל-Data Secure, ומה חייבים לקבל במסירה ובתחזוקה.</p>
       </div>
@@ -109,6 +113,30 @@ const jsonLd = JSON.stringify({
         <p class="text-lg leading-8 text-brand-700">מומלץ לנהל הרשאות לפי תפקיד: מי רשאי רק לצפות? מי רשאי לשנות תרחיש? מי רשאי להוריד תוכנה או לעדכן ממשק? יש להגדיר מי מאשר גישה, כיצד מבטלים אותה כשספק מסיים את עבודתו, והיכן נשמר תיעוד גישה. בפרויקטים מסחריים שבהם עובדים צוותי מיזוג, חשמל ו-BMS, חוסר בהירות בהרשאות הוא מקור אפשרי הן לסיכוני מידע והן לתקלות תפעוליות.</p>
         <h3 class="text-2xl font-bold text-brand-900">הפרדת רשתות עם VLAN ו-Firewall</h3>
         <p class="text-lg leading-8 text-brand-700">רשת אורחים, מחשבי משרד, מערכות מצלמות, שרת BMS וממשק KNX אינם צריכים בהכרח לתקשר בחופשיות זה עם זה. סגמנטציה באמצעות VLAN וכללי Firewall מאפשרת לפתוח רק את התעבורה הדרושה לתפעול. גם אחרי הפרדה, צריך לבדוק בפועל את מסלולי התקשורת בין הבקרים והממשקים, כדי לא להפריע לבקרה המתוכננת.</p>
+      </section>
+
+      <section class="space-y-5 mb-12 scroll-mt-24" id="standard-305-cloud-access" aria-labelledby="standard-305-cloud-access-heading">
+        <p class="text-sm font-bold text-accent-700">עדכון מקצועי 1.11.2026 · KNX Standard v3.0.5</p>
+        <h2 id="standard-305-cloud-access-heading" class="text-3xl font-bold text-brand-900">גישה מאובטחת ל-KNX ללא VPN: מה באמת השתנה בתקן 3.0.5?</h2>
+        <p class="text-lg leading-8 text-brand-700"><strong>התשובה הקצרה:</strong> KNX Standard v3.0.5 מוסיף Cloud Interface תקני שמאפשר ליצרנים לפתח גישה מרחוק מאובטחת ל-KNXnet/IP בלי להקים VPN עבור כל חיבור. זהו בסיס לפיתוח ולהסמכת מוצרים. הוא אינו מעדכן אוטומטית נתב KNX קיים, אינו הופך את ETS לשירות ענן ואינו מוכיח שהמערכת שכבר מותקנת תומכת ביכולת הזאת.</p>
+        <p class="text-lg leading-8 text-brand-700">KNX Association פרסמה את גרסת התקן ב-15 בספטמבר 2026. הפרסום מיועד בראש ובראשונה ליצרנים ומתאר גם עדכוני קושחה מאובטחים, יכולות תאורה מבוססות HSV ויישור מפרטי KNX IoT. לכן בפרויקט פעיל לא מסתפקים בשם התקן: בודקים מה היצרן מימש בפועל, באיזו גרסת מוצר וקושחה, ומה כלול ברישוי ובשירות.</p>
+
+        <h3 class="text-2xl font-bold text-brand-900">חמש בדיקות לפני שמאשרים גישה ללא VPN</h3>
+        <ol class="list-decimal pr-7 space-y-2 text-lg leading-8 text-brand-700">
+          <li><strong>תאימות:</strong> מתעדים דגם מדויק, גרסת קושחה ויישום ETS, ומקבלים מהיצרן אישור מפורש לתמיכה ב-Cloud Interface הרלוונטי.</li>
+          <li><strong>זהות והרשאות:</strong> מגדירים מי רשאי לצפות, מי רשאי לכתוב ומי רשאי לבצע שינוי או עדכון, וכן כיצד מבטלים גישה של ספק שסיים את עבודתו.</li>
+          <li><strong>גבול האבטחה:</strong> מסמנים בתרשים היכן מסתיימת הגנת הענן וכיצד היא מתחברת ל-KNX IP Secure, ל-KNX Data Secure, ל-Firewall ולמערכות נוספות.</li>
+          <li><strong>תיעוד ובקרה:</strong> מוודאים שיש יומן גישה, נוהל החלפת אישורים או מפתחות, בעלים לשירות ותהליך תגובה במקרה של חשבון חסום או שירות שאינו זמין.</li>
+          <li><strong>בדיקת מסירה:</strong> בודקים התחברות, הרשאה מוגבלת, ביטול הרשאה וחזרה לעבודה מקומית. אין לבצע שינוי חי או עדכון קושחה ללא חלון מאושר ותוכנית חזרה.</li>
+        </ol>
+
+        <h3 class="text-2xl font-bold text-brand-900">מה קורה כשהענן או החיבור לא זמינים?</h3>
+        <p class="text-lg leading-8 text-brand-700">בקרת התאורה, ההצללה והמיזוג המקומית צריכה להמשיך לפי תכנון הפרויקט גם כשאין גישה מרחוק. מערכת שירות טובה מציגה שהמידע אינו עדכני, שומרת את גבולות ההרשאה ואינה עוקפת לוגיקה מקומית כדי להחזיר חיבור. במבנה המשולב עם <a class="text-accent-700 underline" href="/structure-control/">BMS</a>, <a class="text-accent-700 underline" href="/siemens-desigo-bms/">Siemens Desigo</a>, BACnet או Modbus, בודקים בנפרד את מנגנון האבטחה של כל ממשק.</p>
+
+        <h3 class="text-2xl font-bold text-brand-900">האם עדכון הקושחה החדש מתאים לציוד שכבר מותקן?</h3>
+        <p class="text-lg leading-8 text-brand-700">לא מניחים שכן. התקן מוסיף מנגנון תקני שיצרנים יכולים לממש במוצרים מתאימים; האפשרות לעדכן רכיב קיים תלויה בדגם, בגרסת החומרה, בקושחה ובהנחיות היצרן. לפני עדכון שומרים גיבוי, מתעדים מצב קיים ומגדירים דרך חזרה. לקריאה על השפעת התקן גם על תאורה ראו את <a class="text-accent-700 underline" href="/articles/siemens-knx-dali-n14114-n14132-ets64-commissioning/">מדריך KNX/DALI-2</a>. להתרשמות מניסיון החברה אפשר לעבור ל<a class="text-accent-700 underline" href="/structure-control/projects/">פרויקטי בקרת המבנה</a>; אין בכך טענה שתכונת Cloud Interface הוטמעה בפרויקט מסוים.</p>
+
+        <p class="text-sm leading-7 text-brand-600">מקור רשמי: <a class="underline" href="https://www.knx.org/news/knx-releases-standard-v305" target="_blank" rel="noopener noreferrer">KNX Association — KNX Releases Standard v3.0.5</a>, פורסם 15.9.2026; נבדק 1.11.2026. פירוט בדיקות הקבלה הוא המלצה מקצועית של I Feel ולא נוסח דרישה מתוך התקן.</p>
       </section>
 
       <section class="space-y-5 mb-12">
@@ -205,6 +233,7 @@ const jsonLd = JSON.stringify({
           <li><a class="text-accent-700 underline" href="https://support.knx.org/hc/en-us/articles/14774118731538-KNX-Security-Check" target="_blank" rel="noopener">KNX Security Check</a></li>
           <li><a class="text-accent-700 underline" href="https://support.knx.org/hc/en-us/articles/360000216419-KNX-Secure-Devices" target="_blank" rel="noopener">KNX Secure Devices</a></li>
           <li><a class="text-accent-700 underline" href="https://support.knx.org/hc/en-us/articles/31061986226450-ETS-v6-4-0" target="_blank" rel="noopener">ETS v6.4.0</a></li>
+          <li><a class="text-accent-700 underline" href="https://www.knx.org/news/knx-releases-standard-v305" target="_blank" rel="noopener">KNX Standard v3.0.5 — Cloud Interface, עדכוני קושחה ותאורה</a></li>
         </ul>
       </section>
     </div>
