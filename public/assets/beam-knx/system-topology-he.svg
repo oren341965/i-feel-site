@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="800" viewBox="0 0 1200 800" role="img" aria-labelledby="title desc">
+<title id="title">RISCO Beam 7115 with Siemens PBI and N 305 — system topology</title>
+<desc id="desc">A separate regulated 12 volt DC supply continuously powers both beam units. Only the receiver dry contact reaches the PBI. A Siemens N125/22 supply feeds a common KNX bus; PBI, N305 and actuator connect in parallel. Its 29 volt auxiliary output is not connected to the detector.</desc>
+<defs><style>text{font-family:Arial,sans-serif;fill:#102d41;font-size:19px}.h{font-size:25px;font-weight:700}.s{font-size:16px}.box{fill:#fff;stroke:#8ca3b1;stroke-width:2}.power{fill:none;stroke:#a84b0b;stroke-width:4}.signal{fill:none;stroke:#166e9b;stroke-width:4}.bus{fill:none;stroke:#7951a8;stroke-width:7}.optical{fill:none;stroke:#198362;stroke-width:3;stroke-dasharray:10 7}</style></defs>
+<rect width="1200" height="800" fill="#f3f7fa" rx="20"/>
+<text x="40" y="43" class="h" direction="rtl" unicode-bidi="plaintext" text-anchor="end">01 / מבנה המערכת — שני מקורות מתח נפרדים</text>
+<rect x="30" y="70" width="1140" height="280" rx="16" fill="#fff9f1" stroke="#e2bf91"/>
+<text x="50" y="101" class="s" direction="rtl" unicode-bidi="plaintext" text-anchor="end">הזנת הגלאים / קרן אופטית עד 15 מטר בחוץ</text>
+<rect x="55" y="140" width="270" height="125" rx="12" class="box"/>
+<text x="77" y="174" class="h" direction="rtl" unicode-bidi="plaintext" text-anchor="end">ספק 12V DC מיוצב</text><text x="77" y="205" direction="rtl" unicode-bidi="plaintext" text-anchor="end">הזנת SELV קבועה</text><text x="77" y="235" class="s" direction="rtl" unicode-bidi="plaintext" text-anchor="end">נפרד מהזנת KNX</text>
+<rect x="450" y="140" width="230" height="125" rx="12" class="box"/>
+<text x="470" y="175" class="h">TX / Beam 7115</text><text x="470" y="208" direction="rtl" unicode-bidi="plaintext" text-anchor="end">POWER: 10–28 V DC</text><text x="470" y="238" class="s" direction="rtl" unicode-bidi="plaintext" text-anchor="end">12V DC בתכנון זה</text>
+<rect x="890" y="140" width="230" height="125" rx="12" class="box"/>
+<text x="910" y="175" class="h">RX / Beam 7115</text><text x="910" y="208" direction="rtl" unicode-bidi="plaintext" text-anchor="end">POWER: 10–28 V DC</text><text x="910" y="238" class="s" direction="rtl" unicode-bidi="plaintext" text-anchor="end">ALARM: מגע יבש NC</text>
+<path d="M325 202 H390 V125 H1005 V140 M565 125 V140" class="power"/>
+<circle cx="565" cy="125" r="5" fill="#a84b0b"/>
+<path d="M680 187 H890 M680 212 H890" class="optical"/>
+<text x="734" y="171" class="s" direction="rtl" unicode-bidi="plaintext" text-anchor="end">שתי קרני IR</text><text x="735" y="244" class="s" direction="rtl" unicode-bidi="plaintext" text-anchor="end">קו ראייה פנוי</text>
+<text x="50" y="314" class="s" direction="rtl" unicode-bidi="plaintext" text-anchor="end">כתום: זוג הזנת DC במקביל ל־TX ול־RX · ירוק מקווקו: מסלול הקרן</text>
+<path d="M1005 265 V383 H505 V430" class="signal"/>
+<rect x="560" y="364" width="405" height="35" rx="6" fill="#f3f7fa"/>
+<text x="572" y="388" class="s" direction="rtl" unicode-bidi="plaintext" text-anchor="end">זוג ALARM NC לערוץ A בממשק PBI · עד 10 מטר</text>
+<rect x="45" y="430" width="270" height="135" rx="12" class="box"/>
+<text x="65" y="466" class="h">Siemens N 125/22</text><text x="65" y="497" direction="rtl" unicode-bidi="plaintext" text-anchor="end">ספק KNX / 640mA</text><text x="65" y="529" class="s" direction="rtl" unicode-bidi="plaintext" text-anchor="end">יציאה עם משנק לקו KNX</text>
+<rect x="395" y="430" width="220" height="135" rx="12" class="box"/>
+<text x="415" y="466" class="h">UP 220/21 PBI</text><text x="415" y="497" direction="rtl" unicode-bidi="plaintext" text-anchor="end">שני ערוצי כניסה</text><text x="415" y="529" class="s" direction="rtl" unicode-bidi="plaintext" text-anchor="end">מוזן מהאפיק / בתוך מבנה יבש</text>
+<rect x="695" y="430" width="190" height="135" rx="12" class="box"/>
+<text x="715" y="466" class="h">N 305</text><text x="715" y="497" direction="rtl" unicode-bidi="plaintext" text-anchor="end">לוגיקת תרחישים / אירועים</text><text x="715" y="529" class="s" direction="rtl" unicode-bidi="plaintext" text-anchor="end">מוזן מהאפיק / מסילת DIN</text>
+<rect x="965" y="430" width="190" height="135" rx="12" class="box"/>
+<text x="985" y="466" class="h" direction="rtl" unicode-bidi="plaintext" text-anchor="end">אקטואטור KNX</text><text x="985" y="497" direction="rtl" unicode-bidi="plaintext" text-anchor="end">מיתוג עומס</text><text x="985" y="529" class="s" direction="rtl" unicode-bidi="plaintext" text-anchor="end">מותאם לעומס בפועל</text>
+<path d="M180 565 V615 H1060 V565 M505 565 V615 M790 565 V615" class="bus"/>
+<circle cx="505" cy="615" r="6" fill="#7951a8"/><circle cx="790" cy="615" r="6" fill="#7951a8"/>
+<text x="390" y="651" direction="rtl" unicode-bidi="plaintext" text-anchor="end">זוג מוליכי KNX TP — כל הרכיבים במקביל, תוך שמירת קוטביות</text>
+<text x="45" y="699" class="s" direction="rtl" unicode-bidi="plaintext" text-anchor="end">כחול: זוג מגע יבש · סגול: מתח ותקשורת KNX · צבעי הקווים הם מקרא תפקודי בלבד.</text>
+<text x="45" y="733" class="s" direction="rtl" unicode-bidi="plaintext" text-anchor="end">יציאת העזר של N 125/22 אינה מחוברת לגלאי: 29V חורג מהמתח המרבי שלו, 28V.</text>
+<text x="45" y="767" class="s" direction="rtl" unicode-bidi="plaintext" text-anchor="end">הזנת העומס, רשת החשמל וההגנות אינן מוצגות. שרטוט ייחוס לחיבור יחידות; אינו תכנית ביצוע ללוח.</text>
+</svg>
