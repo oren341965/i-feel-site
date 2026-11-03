@@ -807,8 +807,26 @@
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://i-feel.co.il/articles/smart-home-winter-climate-control/</loc>
+    <lastmod>2026-11-03</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://i-feel.co.il/articles/smart-home-rain-wind-shading/</loc>
+    <lastmod>2026-11-03</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://i-feel.co.il/articles/smart-home-winter-lighting-scenes/</loc>
+    <lastmod>2026-11-03</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://i-feel.co.il/articles/water-leak-sensors-smart-home/</loc>
-    <lastmod>2026-07-27</lastmod>
+    <lastmod>2026-11-03</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>

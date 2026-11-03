@@ -231,6 +231,17 @@ const jsonLd = JSON.stringify(articleSchema);
         ))}
       </div>
 
+      {article.sources && article.sources.length > 0 && (
+        <aside class="mt-12 rounded-xl border border-brand-100 bg-brand-50 p-6" aria-labelledby="article-sources-title">
+          <h2 id="article-sources-title" class="text-xl font-bold text-brand-900 mb-3">מקורות ופרטי יצרנים</h2>
+          <ul class="space-y-2 text-brand-700">
+            {article.sources.map((source) => (
+              <li><a href={source.href} target="_blank" rel="noopener noreferrer" class="underline decoration-accent-500 underline-offset-4 hover:text-accent-700">{source.label}</a></li>
+            ))}
+          </ul>
+        </aside>
+      )}
+
       <aside class="mt-12 border-t border-brand-100 pt-8">
         <h2 class="text-2xl font-bold mb-4">קישורים שימושיים</h2>
         <div class="flex flex-wrap gap-3">
