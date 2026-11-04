@@ -38,6 +38,20 @@ const tenInchScreenVideoObject = `,
       "publisher": { "@id": "https://i-feel.co.il/#business" }
     }`;
 
+const shuttersVideoObject = `,
+    {
+      "@type": "VideoObject",
+      "@id": "https://i-feel.co.il/smart-home/#shutters-curtains-control-video",
+      "name": "שליטה חכמה בתריסים, צלונים ווילונות",
+      "description": "מדריך וידאו לשליטה בתריסים חשמליים, צלונים ווילונות בבית חכם, ולבחירת מצבי פתיחה וסגירה שמתאימים לשימוש היומיומי.",
+      "uploadDate": "2026-11-04",
+      "thumbnailUrl": "https://i.ytimg.com/vi/eHC2rN1SNPE/hqdefault.jpg",
+      "contentUrl": "https://www.youtube.com/watch?v=eHC2rN1SNPE",
+      "embedUrl": "https://www.youtube-nocookie.com/embed/eHC2rN1SNPE",
+      "inLanguage": "he-IL",
+      "publisher": { "@id": "https://i-feel.co.il/#business" }
+    }`;
+
 const smartHomeFaqObject = `,
     {
       "@type": "FAQPage",
@@ -86,7 +100,7 @@ const smartHomeFaqObject = `,
       ]
     }`;
 
-meta.jsonLd = meta.jsonLd.replace("\n  ]\n}", `${tenInchScreenVideoObject}${smartHomeFaqObject}\n  ]\n}`);
+meta.jsonLd = meta.jsonLd.replace("\n  ]\n}", `${tenInchScreenVideoObject}${shuttersVideoObject}${smartHomeFaqObject}\n  ]\n}`);
 ---
 <BaseLayout {...meta}>
   <Fragment set:html={smartHomeContent} />
