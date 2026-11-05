@@ -50,6 +50,11 @@ const jsonLd = JSON.stringify({
   </header>
   <nav class="beam-nav beam-wrap" aria-label={he?'תוכן הדף':'Page contents'}>{t.nav.map((name,i)=><a href={`#${sections[i]}`}>{name}</a>)}</nav>
   <div class="beam-wrap beam-body">
+   <section class="beam-related" aria-label={he?'הסבר פשוט על בקרת תאורה':'Lighting control overview'}>
+    <h2>{he?'רוצים קודם להבין בפשטות איך זה עובד?':'Start with a simple explanation'}</h2>
+    <p>{he?'זהו דף המפרט והשרטוטים של פתרון הקרן. ההסבר המלא על תאורה לחניונים ולמרלו״גים מרוכז בדף אחד: מתי האור נדלק, מה ההבדל בין קרן לגלאי תנועה ואיך משלבים מצבי שבת וחג.':'This page contains beam-system specifications and wiring diagrams. The central lighting guide explains parking and warehouse lighting, motion versus beam detection, and optional Sabbath/holiday modes.'}</p>
+    <a href="/knx-presence-motion-detectors/#parking-warehouse-lighting">{he?'להסבר הפשוט: אור כשצריך בחניון ובמרלו״ג':'Read the central parking and warehouse lighting guide (Hebrew)'} ↗</a>
+   </section>
    <section class="beam-benefits"><h2>{t.benefitsTitle}</h2><p>{t.benefitsIntro}</p><ul>{t.benefits.map(([heading,text])=><li><strong>{heading}: </strong>{text}</li>)}</ul><p class="beam-note">{t.benefitsNote} <a href={beamKnxSources[1][1]} target="_blank" rel="noopener noreferrer">{he?'PIMA — מסמכים טכניים רשמיים':'PIMA — official technical documents'} ↗</a></p></section>
    <section id="power" class="beam-power">
     <p class="beam-eyebrow">01 / POWER</p><h2>{t.powerTitle}</h2><p>{t.power}</p>

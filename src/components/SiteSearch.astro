@@ -111,10 +111,15 @@
     .toLocaleLowerCase('he')
     .replace(/[\u0591-\u05c7]/g, '')
     .replace(/[ךםןףץ]/g, (letter) => ({ ך: 'כ', ם: 'מ', ן: 'נ', ף: 'פ', ץ: 'צ' })[letter] || letter)
+    .replace(/([\u05d0-\u05ea])["'׳״“”‘’]+(?=[\u05d0-\u05ea])/g, '$1')
     .replace(/[^\p{L}\p{N}]+/gu, ' ')
     .trim();
 
   const TERM_SYNONYMS: Record<string, string[]> = {
+    'מרלוג': ['מרלוגימ', 'מרכז לוגיסטי', 'מרכזימ לוגיסטיימ'],
+    'מרלוגימ': ['מרלוג', 'מרכז לוגיסטי', 'מרכזימ לוגיסטיימ'],
+    'חניונ': ['חניונימ'],
+    'חניונימ': ['חניונ'],
     'מוצא': ['יציאה', 'יציאות'],
     'מוצאימ': ['יציאה', 'יציאות'],
     'יציאה': ['יציאות', 'מוצא', 'מוצאימ'],
@@ -161,7 +166,7 @@
 
   const loadIndex = () => {
     if (!indexPromise) {
-      indexPromise = fetch('/search-index.json')
+      indexPromise = fetch('/search-index.json', { cache: 'no-cache' })
         .then((response) => {
           if (!response.ok) throw new Error(`Search index returned ${response.status}`);
           return response.json() as Promise<SearchRecord[]>;

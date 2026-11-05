@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "astro dev",
+    "test:site-search": "node --test tests/site-search.test.mjs",
     "check:content-freshness": "node scripts/check-content-freshness.mjs",
     "check:build": "node scripts/validate-build.mjs && node scripts/validate-seo.mjs",
     "test:youtube": "node --test tests/youtube-uploader.test.mjs",
