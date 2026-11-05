@@ -4,7 +4,7 @@ import content from '../page-html/knx-presence-motion-detectors.html?raw';
 
 const canonical = 'https://i-feel.co.il/knx-presence-motion-detectors/';
 const faq = [
-  ['איזה פתרון מתאים למרלו״ג או לחניון עם מסדרונות ארוכים?', 'אפשר לתכנן חיישני תנועה ייעודיים לטווחי גילוי של כ־15–50 מטר, לפי הדגם ותנאי ההתקנה. החיישנים מדליקים את התאורה באזור שבו זוהתה תנועה ומשתלבים בבקרת תאורה מבוססת KNX של Siemens.'],
+  ['איך מחברים גלאי קרן לתאורה במרלו״ג?', 'בדוגמת החיבור, PIMA PROTECTOR TP-20 מוזן מספק 12V DC נפרד; מגע יבש COM–NC מהמקלט נכנס ל-Siemens UP 220/21, שמדווח ב-KNX ל-N 305. בקר N 305 שולח פקודה לאקטואטור התאורה. דגם TP-20 מתאים לעד 20 מטר; למעבר ארוך יותר מתכננים דגם מתאים או מספר אזורי גילוי.'],
   ['האם גלאי KNX זקוק לחשמל נפרד?', 'ברוב הדגמים המתוארים ההזנה והתקשורת מתקבלות מכבל KNX TP. יש לפעול לפי דף הנתונים של כל דגם.'],
   ['האם אותו גלאי יכול לנהל תאורה ומיזוג?', 'כן. בדגמים בעלי מספר ערוצים או פונקציות HVAC ניתן להעביר פקודות נפרדות לתאורה, למיזוג ולאוורור.'],
   ['איזה גלאי מתאים לחדר מלון?', 'Eelectron MicroFL מתאים במיוחד בזכות הגוף הקטן, חמשת הערוצים והלוגיקה המלונאית. הבחירה הסופית תלויה בגודל החדר ובמיקום הדלת, המיטה וחדר הרחצה.'],
@@ -89,8 +89,28 @@ const meta = {
       <section class="warehouse-card" aria-labelledby="warehouse-lighting-heading">
         <p class="answer-kicker">פתרון למבנים מסחריים</p>
         <h2 id="warehouse-lighting-heading">תאורה אוטומטית במרלו״גים ובחניונים עם מסדרונות ארוכים</h2>
-        <p>במסדרונות ארוכים אפשר להתקין חיישני תנועה ייעודיים לטווחי גילוי של כ־15–50 מטר, לפי דגם ותנאי השטח. כשהחיישן מזהה מעבר או תנועה, הוא מפעיל את התאורה באזור המתאים; ניתן לתכנן הפעלה לפי מקטעים לאורך המעבר.</p>
-        <p>החיישנים מחוברים למערכת בקרת תאורה מבוססת KNX של Siemens, שמאפשרת ניהול מרכזי של התאורה. את הטווח, מיקום החיישנים, חלוקת האזורים והשהיית הכיבוי מתכננים לפי גובה ההתקנה, המבנה ואופי הפעילות.</p>
+        <p>במרלו״ג או בחניון, חיישני קו ייעודיים יכולים לזהות מעבר לאורך מסדרון ולהדליק את אזור התאורה המתאים. טווחי הפתרון נקבעים לפי דגם ותנאי השטח, בדרך כלל בטווחים של כ־15–50 מטר, ובמעבר ארוך מחלקים את התאורה לאזורי גילוי.</p>
+        <h3>כך חיברנו את גלאי הקרן למערכת התאורה של Siemens KNX</h3>
+        <p>דוגמת החיבור המפורטת משתמשת בזוג גלאי קרן PIMA PROTECTOR TP-20, בממשק Siemens UP 220/21 (PBI) ובבקר האירועים Siemens N 305. זוג ה־TX/RX מזהה חציית קרן; מגע הממסר היבש במקלט מעביר את אירוע הגילוי ל־PBI. ה־PBI שולח הודעת KNX ל־N 305, והבקר מפעיל תרחיש ושולח פקודת KNX לאקטואטור שמדליק את מעגל התאורה באזור.</p>
+        <ol class="warehouse-steps">
+          <li><strong>הזנת הגלאים:</strong> ספק 12V DC מיוצב ונפרד מזין ברציפות את המשדר TX ואת המקלט RX במקביל.</li>
+          <li><strong>אות הגילוי:</strong> מגע האזעקה היבש COM–NC של המקלט מתחבר לכניסה A בממשק UP 220/21. לא מזרימים מתח גלאי לכניסת ה־PBI; אורך חיווט המגע מוגבל ל־10 מטר לכל ערוץ.</li>
+          <li><strong>תקשורת ובקרה:</strong> ה־UP 220/21, בקר N 305 והאקטואטור מחוברים במקביל לקו KNX. ה־N 305 מתרגם את אירוע הגילוי לתרחיש או לפקודת תאורה מתוכנתת ב־ETS.</li>
+          <li><strong>הפעלת התאורה:</strong> האקטואטור הוא שממתג את מעגל התאורה. ה־PBI וה־N 305 אינם מספקים מתח לגופי התאורה.</li>
+        </ol>
+        <div class="warehouse-diagrams">
+          <figure>
+            <img src="/assets/beam-knx/pima-tp20-system-topology-he.svg" width="1200" height="800" loading="lazy" alt="תרשים מערכת: ספק 12V DC נפרד מזין את גלאי PIMA TX ו-RX, מגע יבש מהמקלט נכנס ל-Siemens UP 220/21, ובקר N 305 שולח פקודת KNX לאקטואטור התאורה." />
+            <figcaption>תרשים מערכת: הזנה נפרדת לגלאים, מגע יבש, קו KNX ואקטואטור תאורה.</figcaption>
+          </figure>
+          <figure>
+            <img src="/assets/beam-knx/pima-tp20-contact-wiring-he.svg" width="1200" height="930" loading="lazy" alt="תרשים חיווט: ספק 12V DC מחובר במקביל להזנות TX ו-RX; מגע NC יבש של המקלט מחובר לכניסה A של UP 220/21; כניסת B אופציונלית למגע חבלה." />
+            <figcaption>תרשים חיווט: הזנת TX/RX וחיבור מגע הגילוי לכניסת PBI. הצבעים בתרשים הם סימון תפקודי בלבד.</figcaption>
+          </figure>
+        </div>
+        <p class="warehouse-range-note"><strong>הערת טווח:</strong> דגם TP-20 שבתרשים מיועד לטווח גילוי חוץ של עד 20 מטר. למעבר של 15–50 מטר בוחרים דגם מתאים או מתכננים כמה אזורי גילוי; לא מאריכים את טווח הדגם מעבר למפרט שלו.</p>
+        <p>זהו תרשים ייחוס לרכיבים המפורטים. לפני התקנה מאמתים את סימוני המסופים, גרסת הגלאי והרתמה מול הציוד המסופק. ההזנה של הגלאים נפרדת מה־KNX BUS ומהכניסות של ה־PBI.</p>
+        <p><a class="warehouse-detail-link" href="/beam-detector-knx-integration/">למפרט המלא, טבלת החיבורים, דוגמת תכנות ETS והשרטוטים ↗</a></p>
         <a class="warehouse-link" href="/contactus/">לתכנון פתרון תאורה למרלו״ג או לחניון</a>
       </section>
       <div class="article-content" set:html={content} />
@@ -142,5 +162,5 @@ const meta = {
   .cta-actions{display:flex;gap:.8rem;justify-content:center;flex-wrap:wrap}
   .cta-actions a{padding:.8rem 1.25rem;border-radius:999px;font-weight:700;text-decoration:none}
   .cta-primary{background:#fff;color:#092f52}.cta-secondary{border:1px solid #fff;color:#fff}
-  @media(max-width:640px){.knx-detectors-page{padding:1rem .65rem 3rem}.article-content{border-radius:16px}.article-content :global(p),.article-content :global(li){font-size:1rem}}
+  @media(max-width:640px){.warehouse-diagrams{grid-template-columns:1fr}.knx-detectors-page{padding:1rem .65rem 3rem}.article-content{border-radius:16px}.article-content :global(p),.article-content :global(li){font-size:1rem}}
 </style>
