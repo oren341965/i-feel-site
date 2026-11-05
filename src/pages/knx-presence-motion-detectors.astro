@@ -1,4 +1,5 @@
 ---
+import BeamKnxDetails from '../components/BeamKnxDetails.astro';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import content from '../page-html/knx-presence-motion-detectors.html?raw';
 
@@ -109,7 +110,15 @@ const meta = {
         <h2>יש שתי דרכים לזהות שמישהו עובר</h2>
         <p><strong>גלאי תנועה:</strong> מבחין בתנועה בתוך אזור מסוים. בוחרים את הדגם לפי המקום שבו מתקינים אותו.</p>
         <p><strong>גלאי קרן:</strong> יחידה אחת שולחת קרן בלתי נראית ליחידה שממול. כשמישהו חוצה את הקרן, המערכת מקבלת סימן. הקרן בודקת חצייה של קו; היא אינה בודקת לבדה אם מישהו עדיין נשאר בכל האזור.</p>
-        <p>בפתרון הקרן המתועד באתר, הגלאי הוא <strong>PIMA PROTECTOR TP-20, לטווח חוץ של עד 20 מטר</strong>. רכיבי Siemens מחברים את הסימן שלו למערכת KNX. זהו פתרון משולב, ולא גלאי קרן מתוצרת Siemens. <a href="/beam-detector-knx-integration/">למפרט הרכיבים ולשרטוטי החיבור</a> · <a href="/en/beam-detector-knx-integration/" lang="en">English technical specifications</a>.</p>
+        <section id="beam-detector-knx" aria-labelledby="beam-simple-heading">
+          <h2 id="beam-simple-heading">גלאי קרן עם Siemens KNX — איך זה עובד?</h2>
+          <p>דמיינו חוט בלתי נראה מצד אחד של המעבר לצד השני. בצד אחד יש משדר ובצד השני מקלט. כשאדם או רכב חוצים את הקרן, המקלט מודיע למערכת: ״מישהו עבר כאן״ — והאור באזור נדלק לפי התכנון.</p>
+          <p><strong>שלושה חלקים עובדים יחד:</strong> גלאי הקרן מבחין בחצייה; מתאם Siemens UP 220/21 מעביר את הסימן למערכת KNX; בקר Siemens N 305 שולח פקודה לרכיב שמפעיל את התאורה.</p>
+          <p><strong>הגלאי בתכנון העדכני הוא PIMA PROTECTOR TP-20, לטווח חוץ של עד 20 מטר.</strong> רכיבי Siemens מחברים אותו ל־KNX. הגלאי אינו מתוצרת Siemens. במעבר ארוך יותר בוחרים דגם מתאים או מחלקים את המעבר לכמה אזורי גילוי.</p>
+          <p>הקרן מזהה שחצו קו; היא אינה יודעת לבדה אם אדם נשאר במחסן, ואינה סופרת אנשים או קובעת את כיוון התנועה. לכן מתכננים יחד את זמן התאורה ואת הגלאים הנוספים לפי המקום.</p>
+          <p>גם המשדר וגם המקלט צריכים חשמל קבוע. בתכנון המוצג כאן ספק 12V נפרד מזין את שניהם; מתאם ה־KNX קורא רק את הסימן ואינו מזין את הגלאים.</p>
+          <p><a href="#lighting-technical-details">כל הרכיבים, השרטוטים והוראות החיבור נמצאים בהמשך הדף הזה</a>.</p>
+        </section>
         <h2>אפשר גם בשבת ובחגים?</h2>
         <p>כן. לפי הצורך מתכננים ״מצב שבת וחג״: התאורה פועלת לפי שעות ומצבים שנקבעו מראש, במקום להשתנות בכל פעם שמישהו עובר. קובעים יחד מתי המצב מתחיל ומתי חוזרים לשגרה, ובהתאם לדרישות הלקוח ולהנחיות הגורם ההלכתי מטעמו, אם נדרש.</p>
         <h2>ומה זה KNX ו־BMS?</h2>
@@ -127,24 +136,11 @@ const meta = {
         <p><strong>גלאי נוכחות KNX</strong> מתחבר ל-BUS ויכול להפעיל תאורה, עמעום ומיזוג לפי נוכחות ורמת Lux, ללא תלות בענן לפעולה הבסיסית. גלאי תנועה מתאים בעיקר למעברים, וגלאי נוכחות מתאים לחללים שבהם אנשים נשארים ועושים תנועות קטנות. הבחירה תלויה בגובה התקרה, שטח הכיסוי, דפוס השימוש והמערכות שאותן רוצים לנהל.</p>
         <p>I Feel מתכננת ומשלבת בישראל גלאי KNX קוויים של Siemens, ABB ו-Eelectron כחלק מ<a href="/knx-smart-home/">מערכות בית חכם KNX</a> ומ<a href="/structure-control/">מערכות BMS</a>. אפשר לראות גם <a href="/projects/knx-smart-home-central-moshav/">פרויקט KNX שבוצע בבית פרטי</a>.</p>
       </section>
-      <details class="warehouse-card" id="lighting-technical-details">
-        <summary>למתכנן ולחשמלאי: שרטוטי החיבור והפרטים הטכניים</summary>
-        <p>ההסבר למשתמש מרוכז למעלה. כאן אפשר לפתוח את השרטוטים; המפרט המלא נשאר בדף הטכני המקושר.</p>
-        <div class="warehouse-diagrams">
-          <figure>
-            <img src="/assets/beam-knx/pima-tp20-system-topology-he.svg" width="1200" height="800" loading="lazy" alt="תרשים מערכת: ספק 12V DC נפרד מזין את גלאי PIMA TX ו-RX, מגע יבש מהמקלט נכנס ל-Siemens UP 220/21, ובקר N 305 שולח פקודת KNX לאקטואטור התאורה." />
-            <figcaption>תרשים מערכת: הזנה נפרדת לגלאים, מגע יבש, קו KNX ואקטואטור תאורה.</figcaption>
-          </figure>
-          <figure>
-            <img src="/assets/beam-knx/pima-tp20-contact-wiring-he.svg" width="1200" height="930" loading="lazy" alt="תרשים חיווט: ספק 12V DC מחובר במקביל להזנות TX ו-RX; מגע NC יבש של המקלט מחובר לכניסה A של UP 220/21; כניסת B אופציונלית למגע חבלה." />
-            <figcaption>תרשים חיווט: הזנת TX/RX וחיבור מגע הגילוי לכניסת PBI. הצבעים בתרשים הם סימון תפקודי בלבד.</figcaption>
-          </figure>
-        </div>
-        <p class="warehouse-range-note"><strong>הערת טווח:</strong> דגם TP-20 שבתרשים מיועד לטווח גילוי חוץ של עד 20 מטר. למעבר של 15–50 מטר בוחרים דגם מתאים או מתכננים כמה אזורי גילוי; לא מאריכים את טווח הדגם מעבר למפרט שלו.</p>
-        <p>זהו תרשים ייחוס לרכיבים המפורטים. לפני התקנה מאמתים את סימוני המסופים, גרסת הגלאי והרתמה מול הציוד המסופק. ההזנה של הגלאים נפרדת מה־KNX BUS ומהכניסות של ה־PBI.</p>
-        <p><a class="warehouse-detail-link" href="/beam-detector-knx-integration/">למפרט המלא, טבלת החיבורים, דוגמת תכנות ETS והשרטוטים ↗</a></p>
-
-      </details>
+      <section class="warehouse-card" id="lighting-technical-details" aria-labelledby="beam-spec-heading">
+        <h2 id="beam-spec-heading">גלאי הקרן: המפרט והחיבורים, כאן באותו דף</h2>
+        <p>ללקוח מספיק ההסבר הפשוט למעלה. למתכנן ולחשמלאי ריכזנו כאן את כל הרכיבים, ההזנות, שרטוטי החיבור, דוגמת התכנות ומסמכי היצרנים.</p>
+        <details><summary>לפתיחת המפרט המלא ושרטוטי החיבור</summary><BeamKnxDetails /></details>
+      </section>
       <div class="article-content" set:html={content} />
       <aside class="article-cta">
         <h2>צריכים לבחור גלאי KNX לפרויקט?</h2>
