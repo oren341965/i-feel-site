@@ -39,6 +39,8 @@ const faq = [
   }
 ];
 
+faq.push(...[{"q": "האם KNX אסרה על שימוש ב-AI או הפסיקה אפליקציות MCP שכבר מותקנות ב-ETS?", "a": "בהודעה מ-3.11.2026 הושהו רישום ואימות ראשוני של אפליקציות MCP חדשות ל-ETS. אפליקציות מותקנות ממשיכות לעבוד; זו אינה הפסקה גורפת של AI או של ETS. יש לבדוק תיעוד, הרשאות וגיבוי לפני שינוי בפרויקט."}, {"q": "מה לברר לפני שנותנים לכלי AI גישה לפרויקט ETS?", "a": "איזה מידע יוצא מהמחשב, האם הכלי קורא בלבד או גם משנה, מי מאשר שינוי ואיך משחזרים גיבוי. אלה שאלות בדיקה מומלצות של I Feel; התאמת כלי מסוים נבחנת לפי התיעוד והפרויקט."}]);
+
 const jsonLd = JSON.stringify({
   '@context': 'https://schema.org',
   '@graph': [
@@ -49,7 +51,7 @@ const jsonLd = JSON.stringify({
       url: canonical,
       mainEntityOfPage: canonical,
       datePublished: '2026-10-12',
-      dateModified: '2026-11-01',
+      dateModified: '2026-11-05',
       inLanguage: 'he-IL',
       author: { '@type': 'Organization', name: 'i-feel', url: 'https://i-feel.co.il/' },
       publisher: { '@id': 'https://i-feel.co.il/#business' },
@@ -79,7 +81,7 @@ const jsonLd = JSON.stringify({
     <header class="bg-brand-900 text-white py-14 md:py-20">
       <div class="max-w-4xl mx-auto px-4">
         <a href="/articles/" class="text-accent-400 font-semibold hover:text-accent-300">מאמרים ומדריכים</a>
-        <p class="mt-4 text-sm text-brand-200">KNX · אבטחה · ETS6.4 · BMS · עודכן 1.11.2026</p>
+        <p class="mt-4 text-sm text-brand-200">KNX · אבטחה · ETS6.4 · BMS · עודכן 5.11.2026</p>
         <h1 class="mt-4 text-4xl md:text-5xl font-extrabold leading-tight">KNX IP Secure: רשימת בדיקות מעשית לאבטחת מערכת קיימת</h1>
         <p class="mt-5 text-lg md:text-xl leading-8 text-brand-100">איך בודקים חשיפה של KNXnet/IP, איך מתכננים גישה מרחוק בטוחה, מה ההבדל בין IP Secure ל-Data Secure, ומה חייבים לקבל במסירה ובתחזוקה.</p>
       </div>
@@ -115,6 +117,22 @@ const jsonLd = JSON.stringify({
         <p class="text-lg leading-8 text-brand-700">רשת אורחים, מחשבי משרד, מערכות מצלמות, שרת BMS וממשק KNX אינם צריכים בהכרח לתקשר בחופשיות זה עם זה. סגמנטציה באמצעות VLAN וכללי Firewall מאפשרת לפתוח רק את התעבורה הדרושה לתפעול. גם אחרי הפרדה, צריך לבדוק בפועל את מסלולי התקשורת בין הבקרים והממשקים, כדי לא להפריע לבקרה המתוכננת.</p>
       </section>
 
+      <section id="ets-ai-mcp-update" class="space-y-5 mb-12 scroll-mt-24" aria-labelledby="ets-ai-mcp-heading">
+        <h2 id="ets-ai-mcp-heading" class="text-3xl font-bold text-brand-900">AI ו-ETS: מה השתנה בהודעת KNX מ-3.11.2026?</h2>
+        <p class="text-lg leading-8 text-brand-700">KNX Association הודיעה על השהיית רישום ואימות ראשוני של אפליקציות MCP חדשות ל-ETS, עד להודעה נוספת. אפליקציות שכבר מותקנות ממשיכות לעבוד. ההודעה מתייחסת לתוספים שמחברים כלי AI חיצוני לסביבת ההנדסה; היא אינה הפסקה של ETS, איסור גורף על AI או דרישה להחליף את בקרי הבית.</p>
+        <h3 class="text-2xl font-bold text-brand-900">איך זה נוגע לבעל מערכת KNX?</h3>
+        <p class="text-lg leading-8 text-brand-700">יש הבדל בין עוזר שמסביר תרחיש במילים לבין כלי שמקבל גישה לקובץ הפרויקט ועשוי לשנות הגדרות או לתכנת התקנים. לפני חיבור כזה צריך להבין מה הכלי מורשה לעשות ומה נשלח החוצה. גם אישור אפליקציה אינו אישור אוטומטי לכל שינוי שהלקוח מבקש לבצע.</p>
+        <h3 class="text-2xl font-bold text-brand-900">ארבע שאלות לבדיקה מקצועית</h3>
+        <ul class="list-disc pr-6 space-y-3 text-lg leading-8 text-brand-700">
+          <li>איזה חלק מהפרויקט נקרא, ואיזה מידע מועבר לשירות חיצוני?</li>
+          <li>האם ניתן להפריד קריאה מכתיבה ולבדוק הצעה לפני שינוי?</li>
+          <li>מי מאשר את הפעולה המדויקת, ואיך מתועדת תוצאת הבדיקה?</li>
+          <li>האם קיים גיבוי שניתן לשחזר ממנו, ומהו נוהל החזרה לעבודה?</li>
+        </ul>
+        <p class="text-lg leading-8 text-brand-700">השאלות הן תהליך בדיקה מוצע של I Feel, ולא דרישות תקן חדשות. אם רוצים לשפר תרחישים או לעבור לספק שירות אחר, אפשר להתחיל בשיחה גם בלי לדעת מה מותקן. נברר יחד את מצב <a class="text-accent-700 underline" href="/knx-smart-home/">מערכת ה-KNX</a> ואת היקף <a class="text-accent-700 underline" href="/smart-home-system-upgrade/">השדרוג והשירות</a>. בחיבור למערכת ניהול נבחן גם את גבולות ההרשאות מול <a class="text-accent-700 underline" href="/siemens-desigo-bms/">Siemens Desigo</a> ו-<a class="text-accent-700 underline" href="/structure-control/">BMS</a>; להיכרות עם תחומי העבודה ראו <a class="text-accent-700 underline" href="/structure-control/projects/">פרויקטים של החברה</a>.</p>
+        <a href="/contactus/#project-enquiry" data-ga-event="cta_click" data-ga-params='{"cta_id":"knx_ets_ai_review","topic":"knx_secure_ai"}' class="inline-flex rounded-lg bg-accent-600 px-6 py-3 font-bold text-white">נדבר על שדרוג KNX ועל שימוש אחראי ב-AI</a>
+        <p class="text-sm leading-7 text-brand-600">מקור רשמי: <a class="underline" href="https://support.knx.org/hc/en-us/articles/40411574251026-Registration-of-new-MCP-Apps-for-ETS-paused-until-further-notice" target="_blank" rel="noopener noreferrer">KNX — Registration of new MCP Apps for ETS paused until further notice</a>, עודכן 3.11.2026; נבדק 5.11.2026. סטטוס של כלי מסוים ותמיכתו בפרויקט דורשים בדיקה פרטנית.</p>
+      </section>
       <section class="space-y-5 mb-12 scroll-mt-24" id="standard-305-cloud-access" aria-labelledby="standard-305-cloud-access-heading">
         <p class="text-sm font-bold text-accent-700">עדכון מקצועי 1.11.2026 · KNX Standard v3.0.5</p>
         <h2 id="standard-305-cloud-access-heading" class="text-3xl font-bold text-brand-900">גישה מאובטחת ל-KNX ללא VPN: מה באמת השתנה בתקן 3.0.5?</h2>
