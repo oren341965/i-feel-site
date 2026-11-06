@@ -1,0 +1,21 @@
+---
+import { beamKnx, beamKnxSources } from '../data/beam-knx';
+const t = beamKnx.he;
+---
+<div class="beam-details">
+  <h3>{t.productsTitle}</h3>
+  <div class="component-cards">{t.products.map(p => <section><h4 dir="ltr">{p.name}</h4><p><strong>{p.role}</strong></p><p>{p.text}</p><dl>{p.rows.map(([key,value]) => <div><dt>{key}</dt><dd>{value}</dd></div>)}</dl><p>{p.note}</p></section>)}</div>
+  <h3>{t.powerTitle}</h3><p>{t.power}</p>
+  <h4>{t.psuTitle}</h4><p>{t.psu}</p><p>{t.converter}</p>
+  <h3>{t.diagramTitle}</h3><p>{t.diagramIntro}</p>
+  {['pima-tp20-system-topology-he','pima-tp20-contact-wiring-he'].map((name,i) => <figure><a href={`/assets/beam-knx/${name}.svg`} target="_blank" rel="noopener noreferrer"><img src={`/assets/beam-knx/${name}.svg`} width="1200" height={i===0?800:930} loading="lazy" alt={t.diagramAlt} /></a><figcaption>{t.captions[i]} <a href={`/assets/beam-knx/${name}.svg`} target="_blank" rel="noopener noreferrer">{t.download}</a></figcaption></figure>)}
+  <h3>{t.wiresTitle}</h3><div class="technical-table"><table><thead><tr>{t.wireHeads.map(x=><th scope="col">{x}</th>)}</tr></thead><tbody>{t.wires.map(row=><tr>{row.map(x=><td>{x}</td>)}</tr>)}</tbody></table></div><p>{t.boundary}</p>
+  <h3>{t.scopeTitle}</h3><ul>{t.scope.map(x=><li>{x}</li>)}</ul>
+  <h3>{t.setupTitle}</h3><p>{t.setupIntro}</p><div class="technical-table"><table><thead><tr>{t.setupHeads.map(x=><th scope="col">{x}</th>)}</tr></thead><tbody>{t.setup.map(row=><tr>{row.map((x,i)=><td dir={i<3?'ltr':undefined}>{x}</td>)}</tr>)}</tbody></table></div><p>{t.setupNotes}</p>
+  <h3>{t.testsTitle}</h3><ol>{t.tests.map(x=><li>{x}</li>)}</ol>
+  <h3>{t.limitsTitle}</h3><p>{t.limits}</p>
+  <h3>{t.sourcesTitle}</h3><p>{t.sourcesIntro}</p><ul class="sources" dir="ltr">{beamKnxSources.map(([name,url])=><li><a href={url} target="_blank" rel="noopener noreferrer">{name}</a></li>)}</ul>
+</div>
+<style>
+ .beam-details{line-height:1.8}.beam-details h3{font-size:1.35rem;font-weight:800;margin:1.6rem 0 .7rem}.beam-details h4{font-size:1.15rem;font-weight:750;margin:1rem 0 .4rem}.beam-details p{margin:.6rem 0}.beam-details a{color:#075ea8;text-decoration:underline}.component-cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1rem}.component-cards section{min-width:0;padding:1rem;border:1px solid #c9deed;background:#fff;border-radius:14px}.component-cards dl>div{border-top:1px solid #dce6ef;padding:.5rem 0}.component-cards dt{font-weight:700}.component-cards dd{margin:0;overflow-wrap:anywhere}.beam-details figure{margin:1rem 0;background:#fff;border:1px solid #c9deed;border-radius:14px;overflow:hidden}.beam-details img{display:block;width:100%;height:auto}.beam-details figcaption{padding:1rem}.technical-table{overflow-x:auto}.technical-table table{border-collapse:collapse;width:100%;min-width:560px}.technical-table th,.technical-table td{padding:.7rem;border:1px solid #c9deed;text-align:start;vertical-align:top}.technical-table th{background:#eaf4fb}.beam-details ul{list-style:disc;padding-inline-start:1.3rem}.beam-details ol{list-style:decimal;padding-inline-start:1.3rem}.sources{overflow-wrap:anywhere}@media(max-width:850px){.component-cards{grid-template-columns:1fr}}
+</style>

@@ -2,6 +2,14 @@
 
 Date: 2026-11-03. Draft measurement fix only; no production deployment.
 
+## Verified update — 2026-11-06
+
+The access statements below describe the historical 3 November investigation, not current connectivity. Windsor now confirms canonical non-www Search Console and GA4 property 440660138, stream 8141821132, hostname i-feel.co.il. The current paired windows are 7 Oct–3 Nov versus 9 Sep–6 Oct, web/all countries/all devices. Across the five pages: 16 versus 15 clicks, 1,453 versus 1,458 impressions, 21 versus 18 organic landing sessions, and 5 versus 3 AI Assistant sessions. Original-landing-page to Monday-confirmed leads remains Unknown; four contactus generate_lead events are not proof of delivered leads. CTR must be computed from clicks/impressions.
+
+This draft was integrated with main 78f2ddc2828cef949e89905a5f51aa2d62dbdeca, preserving later site work. Source-page paths now normalize a single trailing slash, with regression coverage for all five slashless variants. Explicitly tagged links remain owned by the existing shared tracker. No duplicate form/phone/WhatsApp listener was added. PR #572 is separately approved and deployed; neither this #566 nor #569 is approved for production.
+
+Soro's 6 November reply says Brand DNA changes apply to future content, its lead attribution is not built in, and existing pipeline review is self-service. These are vendor statements, not independently verified ranking results. No live Soro account changes or messages were made by this run.
+
 ## Five fixed pages
 
 - /smart-home-villa/

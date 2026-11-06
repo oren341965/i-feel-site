@@ -1,9 +1,11 @@
 ---
+import BeamKnxDetails from '../components/BeamKnxDetails.astro';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import content from '../page-html/knx-presence-motion-detectors.html?raw';
 
 const canonical = 'https://i-feel.co.il/knx-presence-motion-detectors/';
 const faq = [
+  ['איזה פתרון מתאים למרלו״ג או לחניון עם מסדרונות ארוכים?', 'אפשר לתכנן בקרת תאורה KNX עם גלאי Siemens וחלוקה לאזורים. במעבר שאורכו עד 50 מטר מתאימים גלאי אחד או כמה גלאים לפי דף הנתונים ותנאי ההתקנה. טווח גלאי יחיד נבדק בנפרד.'],
   ['האם גלאי KNX זקוק לחשמל נפרד?', 'ברוב הדגמים המתוארים ההזנה והתקשורת מתקבלות מכבל KNX TP. יש לפעול לפי דף הנתונים של כל דגם.'],
   ['האם אותו גלאי יכול לנהל תאורה ומיזוג?', 'כן. בדגמים בעלי מספר ערוצים או פונקציות HVAC ניתן להעביר פקודות נפרדות לתאורה, למיזוג ולאוורור.'],
   ['איזה גלאי מתאים לחדר מלון?', 'Eelectron MicroFL מתאים במיוחד בזכות הגוף הקטן, חמשת הערוצים והלוגיקה המלונאית. הבחירה הסופית תלויה בגודל החדר ובמיקום הדלת, המיטה וחדר הרחצה.'],
@@ -12,11 +14,11 @@ const faq = [
 ];
 
 const meta = {
-  title: 'גלאי נוכחות KNX בישראל | Siemens, ABB ו-Eelectron | i-feel',
-  description: 'גלאי נוכחות ותנועה KNX בישראל לבית חכם, משרדים ו-BMS. השוואת Siemens, ABB ו-Eelectron, חיישן Lux, טווח, מיקום ושילוב בתאורה ומיזוג.',
+  title: 'בקרת תאורה KNX לחניונים ולמרלו״גים | i-feel',
+  description: 'בקרת תאורה KNX לחניונים ולמרלו״גים עם גלאי Siemens: הפעלה לפי תנועה, חלוקה לאזורים ומצבי שבת וחג לפי צורך. לתכנון: 03-508-9553.',
   canonical,
-  ogTitle: 'גלאי נוכחות ותנועה KNX בישראל | i-feel',
-  ogDescription: 'מדריך לבחירת גלאי נוכחות ותנועה KNX קוויים של Siemens, ABB ו-Eelectron לבית חכם ול-BMS בישראל.',
+  ogTitle: 'גלאי KNX למרלו״גים, חניונים ומעברים ארוכים | i-feel',
+  ogDescription: 'למה להאיר מעבר ריק? בקרת תאורה KNX לחניונים ולמרלו״גים, עם גלאי Siemens ומצבי שבת וחג לפי תכנון.',
   ogUrl: canonical,
   ogImage: 'https://i-feel.co.il/assets/knx-detectors/siemens-up-258-knx-presence-detector.jpg',
   robots: 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1',
@@ -26,7 +28,7 @@ const meta = {
       {
         '@type': 'Article',
         '@id': `${canonical}#article`,
-        headline: 'גלאי KNX לבית חכם ולמבנה חכם: איזה גלאי מתאים לכל חלל?',
+        headline: 'בקרת תאורה KNX לחניונים ולמרלו״גים — אור כשצריך',
         description: 'מדריך לבחירת גלאי KNX קווי לפי סוג החלל, טווח הגילוי, חיישן התאורה והשילוב עם תאורה, מיזוג ו-BMS.',
         image: [
           'https://i-feel.co.il/assets/knx-detectors/siemens-up-258-knx-presence-detector.jpg',
@@ -37,11 +39,11 @@ const meta = {
         author: { '@type': 'Organization', name: 'i-feel', url: 'https://i-feel.co.il/' },
         publisher: { '@id': 'https://i-feel.co.il/#business' },
         datePublished: '2026-09-12',
-        dateModified: '2026-09-24',
+        dateModified: '2026-11-05',
         mainEntityOfPage: canonical,
         inLanguage: 'he-IL',
-        keywords: ['גלאי KNX', 'גלאי נוכחות KNX', 'גלאי תנועה KNX', 'חיישן KNX', 'KNX PIR', 'KNX BMS', 'Siemens KNX', 'ABB KNX', 'Eelectron KNX'],
-        about: ['גלאי נוכחות KNX', 'גלאי תנועה KNX', 'KNX TP', 'חיישן Lux', 'בקרת תאורה', 'HVAC', 'BMS']
+        keywords: ['גלאים למרלו״גים', 'גלאים לחניונים', 'גלאים למסדרונות ארוכים', 'תאורה למרלו״ג', 'חיישני תנועה לטווח ארוך', 'גלאי KNX', 'גלאי נוכחות KNX', 'גלאי תנועה KNX', 'חיישן KNX', 'KNX PIR', 'KNX BMS', 'Siemens KNX', 'ABB KNX', 'Eelectron KNX'],
+        about: ['גלאי נוכחות KNX', 'גלאי תנועה KNX', 'חיישני תנועה למרלו״גים ולחניונים', 'בקרת תאורה במסדרונות ארוכים', 'KNX TP', 'חיישן Lux', 'בקרת תאורה', 'HVAC', 'BMS']
       },
       {
         '@type': 'Service',
@@ -51,7 +53,7 @@ const meta = {
         url: canonical,
         provider: { '@id': 'https://i-feel.co.il/#business' },
         areaServed: { '@type': 'Country', name: 'Israel' },
-        description: 'תכנון, בחירה, מיקום ותכנות של גלאי נוכחות ותנועה KNX לתאורה, מיזוג ובקרת מבנה בישראל.'
+        description: 'תכנון, בחירה ומיקום של חיישני תנועה לתאורה אוטומטית במרלו״גים ובחניונים, כולל חלוקה לאזורים, מעברים ארוכים ומצבי שבת וחג לפי צורך, בשילוב מערכת בקרת תאורה KNX של Siemens.'
       },
       {
         '@type': 'BreadcrumbList',
@@ -79,11 +81,65 @@ const meta = {
       <nav class="breadcrumbs" aria-label="פירורי לחם">
         <a href="/">דף הבית</a><span>/</span><a href="/knx-smart-home/">בית חכם KNX</a><span>/</span><span>גלאי KNX</span>
       </nav>
+      <section class="warehouse-card" id="parking-warehouse-lighting" aria-labelledby="warehouse-lighting-heading">
+        <p class="answer-kicker">תאורה לחניונים ולמרלו״גים, בפשטות</p>
+        <h1 id="warehouse-lighting-heading">בקרת תאורה KNX לחניונים ולמרלו״גים — אור כשצריך</h1>
+        <p>דמיינו מעבר ארוך עם הרבה מנורות. למה שכל המנורות יאירו כשאף אחד לא עובר שם?</p>
+        <p>הרעיון פשוט: כשמישהו עובר, האור באזור שלו נדלק. אחרי שהאזור מתרוקן, האור חוזר למצב שקבענו מראש. כך לא משאירים אור דולק בלי צורך.</p>
+        <h2>איך האור יודע מתי להידלק?</h2>
+        <ol>
+          <li><strong>הגלאי מבחין במעבר.</strong> הוא כמו עיניים קטנות ששמות לב שמישהו הגיע.</li>
+          <li><strong>המערכת שולחת הודעה:</strong> ״להדליק כאן את האור״.</li>
+          <li><strong>המנורות באזור המתאים נדלקות.</strong> לא חייבים להדליק את כל הבניין.</li>
+          <li><strong>כשהמקום פנוי, מחכים קצת.</strong> ואז התאורה חוזרת למצב שהוגדר לאזור.</li>
+        </ol>
+        <p>למשל: רכב נכנס לחניון. התאורה במסלול שלו נדלקת לפי התכנון. במרלו״ג — מרכז לוגיסטי שבו שומרים ומעבירים סחורה — אפשר להפעיל את התאורה במעבר שבו עובדים.</p>
+        <div class="lighting-examples" aria-label="המחשות תאורה לפי תנועה בחניון ובמרלו״ג">
+          <figure>
+            <img src="/assets/knx-detectors/parking-zoned-lighting.webp" width="1200" height="628" loading="lazy" decoding="async" alt="המחשת חניון: אזור הרכב הנוסע מואר, והאזור הריק בהמשך נשאר בתאורה חלשה." />
+            <figcaption><strong>בחניון:</strong> הרכב מגיע — האור במסלול שלו מתחזק. במקום ריק נשארת התאורה שנקבעה מראש.</figcaption>
+          </figure>
+          <figure>
+            <img src="/assets/knx-detectors/warehouse-zoned-lighting.webp" width="1200" height="628" loading="lazy" decoding="async" alt="המחשת מרלו״ג: מעבר עם מלגזה ועובד מואר, והמעברים הריקים בהמשך בתאורה חלשה." />
+            <figcaption><strong>במרלו״ג:</strong> עובדים במעבר אחד — מאירים אותו לפי הצורך. אין צורך להאיר את כל המחסן באותה עוצמה.</figcaption>
+          </figure>
+        </div>
+        <p class="lighting-image-note">התמונות הן המחשות שנוצרו ב־AI. עוצמת התאורה והפעולה בפועל נקבעות בתכנון, לפי תנאי המקום ודרישות הבטיחות.</p>
+        <h2>ומה עושים במעבר ארוך?</h2>
+        <p>מחלקים אותו לחלקים. בודקים איפה צריך אור, ומציבים גלאים במקומות הנכונים. גם במעבר באורך 50 מטר מתאימים את מספר הגלאים ואת המיקום שלהם למבנה. אין פירוש הדבר שכל גלאי רואה 50 מטר.</p>
+        <h2>יש שתי דרכים לזהות שמישהו עובר</h2>
+        <p><strong>גלאי תנועה:</strong> מבחין בתנועה בתוך אזור מסוים. בוחרים את הדגם לפי המקום שבו מתקינים אותו.</p>
+        <p><strong>גלאי קרן:</strong> יחידה אחת שולחת קרן בלתי נראית ליחידה שממול. כשמישהו חוצה את הקרן, המערכת מקבלת סימן. הקרן בודקת חצייה של קו; היא אינה בודקת לבדה אם מישהו עדיין נשאר בכל האזור.</p>
+        <section id="beam-detector-knx" aria-labelledby="beam-simple-heading">
+          <h2 id="beam-simple-heading">גלאי קרן עם Siemens KNX — איך זה עובד?</h2>
+          <p>דמיינו חוט בלתי נראה מצד אחד של המעבר לצד השני. בצד אחד יש משדר ובצד השני מקלט. כשאדם או רכב חוצים את הקרן, המקלט מודיע למערכת: ״מישהו עבר כאן״ — והאור באזור נדלק לפי התכנון.</p>
+          <p><strong>שלושה חלקים עובדים יחד:</strong> גלאי הקרן מבחין בחצייה; מתאם Siemens UP 220/21 מעביר את הסימן למערכת KNX; בקר Siemens N 305 שולח פקודה לרכיב שמפעיל את התאורה.</p>
+          <p><strong>הגלאי בתכנון העדכני הוא PIMA PROTECTOR TP-20, לטווח חוץ של עד 20 מטר.</strong> רכיבי Siemens מחברים אותו ל־KNX. הגלאי אינו מתוצרת Siemens. במעבר ארוך יותר בוחרים דגם מתאים או מחלקים את המעבר לכמה אזורי גילוי.</p>
+          <p>הקרן מזהה שחצו קו; היא אינה יודעת לבדה אם אדם נשאר במחסן, ואינה סופרת אנשים או קובעת את כיוון התנועה. לכן מתכננים יחד את זמן התאורה ואת הגלאים הנוספים לפי המקום.</p>
+          <p>גם המשדר וגם המקלט צריכים חשמל קבוע. בתכנון המוצג כאן ספק 12V נפרד מזין את שניהם; מתאם ה־KNX קורא רק את הסימן ואינו מזין את הגלאים.</p>
+          <p><a href="#lighting-technical-details">כל הרכיבים, השרטוטים והוראות החיבור נמצאים בהמשך הדף הזה</a>.</p>
+        </section>
+        <h2>אפשר גם בשבת ובחגים?</h2>
+        <p>כן. לפי הצורך מתכננים ״מצב שבת וחג״: התאורה פועלת לפי שעות ומצבים שנקבעו מראש, במקום להשתנות בכל פעם שמישהו עובר. קובעים יחד מתי המצב מתחיל ומתי חוזרים לשגרה, ובהתאם לדרישות הלקוח ולהנחיות הגורם ההלכתי מטעמו, אם נדרש.</p>
+        <h2>ומה זה KNX ו־BMS?</h2>
+        <p><strong>KNX</strong> היא הדרך שבה הגלאים ורכיבי הבקרה מעבירים הודעות זה לזה. כאן משתמשים בה לניהול תאורה בלבד. הפתרון הזה אינו DDC או DALI.</p>
+        <p><strong>BMS</strong> היא מערכת שעוזרת לנהל כמה מערכות בבניין ממקום אחד. I Feel מספקת גם <a href="/structure-control/">פתרונות BMS לבקרת מבנה</a>. אם צריך לחבר אליה את התאורה, בודקים זאת בתכנון.</p>
+        <h2>איך מתחילים?</h2>
+        <p>שולחים לנו תוכנית או תמונה של המקום, את גובה התקרה ואת שעות הפעילות. אנחנו בודקים איפה צריך אור, בוחרים את הגלאים, מגדירים את הפעולה ובודקים שהכול עובד במקום.</p>
+        <p>החיסכון תלוי בכמה זמן התאורה דולקת ובאופן השימוש במקום. משאירים את התאורה הדרושה לבטיחות ולתפעול; תאורת חירום ונתיבי מילוט נשארים בהתאם לדרישות הפרויקט.</p>
+        <a class="warehouse-link" href="/contactus/">בדיקת התאמה לחניון או למרלו״ג שלכם</a>
+        <p><a href="tel:035089553">03-508-9553</a></p>
+      </section>
       <section class="answer-card" aria-labelledby="knx-presence-direct-answer">
         <p class="answer-kicker">תשובה ישירה</p>
         <h2 id="knx-presence-direct-answer">מהו גלאי נוכחות KNX ואיך בוחרים אותו?</h2>
         <p><strong>גלאי נוכחות KNX</strong> מתחבר ל-BUS ויכול להפעיל תאורה, עמעום ומיזוג לפי נוכחות ורמת Lux, ללא תלות בענן לפעולה הבסיסית. גלאי תנועה מתאים בעיקר למעברים, וגלאי נוכחות מתאים לחללים שבהם אנשים נשארים ועושים תנועות קטנות. הבחירה תלויה בגובה התקרה, שטח הכיסוי, דפוס השימוש והמערכות שאותן רוצים לנהל.</p>
         <p>I Feel מתכננת ומשלבת בישראל גלאי KNX קוויים של Siemens, ABB ו-Eelectron כחלק מ<a href="/knx-smart-home/">מערכות בית חכם KNX</a> ומ<a href="/structure-control/">מערכות BMS</a>. אפשר לראות גם <a href="/projects/knx-smart-home-central-moshav/">פרויקט KNX שבוצע בבית פרטי</a>.</p>
+      </section>
+      <section class="warehouse-card" id="lighting-technical-details" aria-labelledby="beam-spec-heading">
+        <h2 id="beam-spec-heading">גלאי הקרן: המפרט והחיבורים, כאן באותו דף</h2>
+        <p>ללקוח מספיק ההסבר הפשוט למעלה. למתכנן ולחשמלאי ריכזנו כאן את כל הרכיבים, ההזנות, שרטוטי החיבור, דוגמת התכנות ומסמכי היצרנים.</p>
+        <details><summary>לפתיחת המפרט המלא ושרטוטי החיבור</summary><BeamKnxDetails /></details>
       </section>
       <div class="article-content" set:html={content} />
       <aside class="article-cta">
@@ -115,7 +171,14 @@ const meta = {
   .answer-card p{font-size:1.05rem;line-height:1.8;margin:.55rem 0}
   .answer-card a{color:#075ea8;font-weight:700}
   .answer-kicker{font-size:.82rem!important;font-weight:800;letter-spacing:.04em;color:#0a5f94;margin:0!important}
+  .warehouse-card{background:#fff7e8;border:2px solid #f0bd61;border-radius:20px;padding:clamp(1.15rem,3vw,2rem);margin:1rem 0 1.5rem;color:#17324e}.warehouse-card h1,.warehouse-card h2{font-size:clamp(1.4rem,3vw,2rem);line-height:1.3;margin:.25rem 0 .75rem;color:#0d2e52}.warehouse-card p{font-size:1.05rem;line-height:1.8;margin:.6rem 0}.warehouse-link{display:inline-block;margin-top:.6rem;background:#092f52;color:#fff;padding:.75rem 1.1rem;border-radius:999px;font-weight:700;text-decoration:none}
   .article-content{background:#fff;border:1px solid #dce6ef;border-radius:24px;padding:clamp(1.3rem,4vw,3.5rem);box-shadow:0 18px 45px rgba(20,35,59,.08)}
+  .lighting-examples{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1rem;margin:1.3rem 0 .5rem}
+  .lighting-examples figure{margin:0;overflow:hidden;border:1px solid #e3d2b4;border-radius:14px;background:#fff}
+  .lighting-examples img{display:block;width:100%;height:auto;aspect-ratio:1200/628;object-fit:cover}
+  .lighting-examples figcaption{padding:.8rem 1rem;font-size:1rem;line-height:1.7}
+  .warehouse-card .lighting-image-note{font-size:.88rem;color:#52637a}
+  @media(max-width:640px){.lighting-examples{grid-template-columns:1fr}}
   .article-content :global(h1){font-size:clamp(2rem,5vw,3.4rem);line-height:1.12;margin:0 0 1.4rem;color:#0d2e52}
   .article-content :global(h2){font-size:clamp(1.45rem,3vw,2rem);line-height:1.25;margin:3rem 0 1rem;color:#0a4f86;border-bottom:2px solid #e4edf5;padding-bottom:.55rem}
   .article-content :global(h3){font-size:1.2rem;margin:1.6rem 0 .65rem;color:#163d63}

@@ -30,3 +30,13 @@ test('tagged links, external contacts, phones and non-sales pages are excluded',
   assert.equal(click('/articles/', '/contactus/').length, 0);
   assert.equal(click('/smart-home-villa/', '/contactus/', false, false).length, 0);
 });
+test('slash variants identify one sales page without exposing query or fragment', () => {
+  for (const path of ['/smart-home-villa', '/knx-smart-home', '/smart-home-system-upgrade', '/structure-control', '/bms-retrofit']) {
+    const calls = click(path, '/contactus?phone=private#project-enquiry');
+    assert.equal(calls.length, 1);
+    assert.equal(calls[0][2].sales_page, path + '/');
+    assert.equal(calls[0][2].page_path, path + '/');
+    assert.equal(calls[0][2].destination_path, '/contactus/');
+    assert.ok(!JSON.stringify(calls).includes('private'));
+  }
+});
