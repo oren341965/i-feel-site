@@ -41,6 +41,12 @@ The live public Soro embed and browser listing identify four published entries, 
 
 Public listing is evidence of publication, not indexing, rankings or leads. Latest final GSC day predates three of these entries. Query-parameter routing requires separate attribution/indexability inspection before counting the parent architect page's traffic as Soro. Never attribute ordinary article traffic to Soro without exact URL evidence. Current Soro-attributed delivered leads: Unknown, not zero. Vault search found historical Knowledge/Completed references but no verified current Active document; no customer facts were drawn from them.
 
+Follow-up inspection: all four exact ?post URLs return HTTP 200, but raw HTML gives the parent architect-page title and canonical and lacks each article's own slug/content. In the rendered KNX post, the article body and BlogPosting do load, while canonical still points to the parent and two H1s remain (parent plus article). This is a confirmed implementation discrepancy, not proof of Google's selected canonical or deindexing. Recommendation: plan one independently crawlable canonical representation per article, reconcile existing topic overlap, and verify both raw and rendered output before any approved change. Do not simply rewrite the parent canonical for every query parameter or add these URLs to the sitemap blindly.
+
+Exact ?post GSC rows through 3 November and GA4 landing_page_plus_query_string rows for 3–5 November returned no rows. These are absence of recorded results in those requested scopes, not proof of zero readers, no indexing or no future value. No Soro-attributed lead was inferred.
+
+Validation: full build/SEO gates passed (255 HTML, 228 indexable/search/sitemap records, 459 JSON-LD blocks); 18 targeted attribution/conversion/search tests passed, including the new five-page trailing-slash regression. Diff check clean; no deletions. PowerShell publisher is unavailable on this Linux host; equivalent fresh-base, build/test, size/no-deletion and exact local/remote Git tree checks precede authenticated fast-forward update of the existing Draft PR. This does not merge main or deploy.
+
 ## KNX editorial package — draft only, supports villa and KNX sales pages
 
 Target an existing planning guide (/articles/smart-home-planning-before-building/) after content review, not a new competing page. Preserve its current SEO title/meta unless separate approval selects the proposed alternatives. No unverified project case study.
