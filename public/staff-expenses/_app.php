@@ -18,6 +18,7 @@ require_once __DIR__ . '/_form.php';
 require_once __DIR__ . '/_admin.php';
 require_once __DIR__ . '/_supervision.php';
 require_once __DIR__ . '/_readiness.php';
+require_once __DIR__ . '/_installation_closeout.php';
 
 function portal_render_maintenance_page(?string $requestId = null): never
 {
@@ -185,14 +186,20 @@ try {
     }
 
     $tab = trim((string) ($_GET['tab'] ?? 'new'));
-    if (($user['role'] ?? '') !== 'admin' && !in_array($tab, ['new', 'history', 'work', 'handovers', 'supervision', 'profile', 'my_vehicle'], true)) {
+    if (($user['role'] ?? '') !== 'admin' && !in_array($tab, ['new', 'history', 'work', 'closeout', 'handovers', 'supervision', 'profile', 'my_vehicle'], true)) {
         $tab = 'new';
     }
-    if (!in_array($tab, ['new', 'history', 'work', 'handovers', 'supervision', 'profile', 'my_vehicle', 'work_stats', 'reports', 'employees', 'vehicles'], true)) {
+    if (!in_array($tab, ['new', 'history', 'work', 'closeout', 'handovers', 'supervision', 'profile', 'my_vehicle', 'work_stats', 'reports', 'employees', 'vehicles'], true)) {
         $tab = 'new';
     }
     if ($tab === 'my_vehicle' && portal_vehicles_for_employee($user) === []) {
         $tab = 'profile';
+    }
+
+    if ($tab === 'closeout' && !portal_closeout_can_view($user)) {
+        http_response_code(403);
+        $tab = 'new';
+        portal_flash_set('error', 'אין הרשאה לצפייה בסיום התקנות.');
     }
 
     $flash = portal_flash_take();
@@ -206,6 +213,7 @@ try {
         'work' => 'סיום התקנה או שירות',
         'handovers' => 'מסירות דיירים',
         'supervision' => 'טופס פיקוח באתר',
+        'closeout' => 'השלמות התקנה',
         'work_stats' => 'סטטיסטיקת עבודות',
     ];
     $pageTitle = $pageTitles[$tab] ?? 'דיווח חדש';
@@ -232,8 +240,13 @@ try {
         portal_render_tenant_handovers($user, $flash);
     } elseif ($tab === 'supervision') {
         portal_render_supervision($user, $flash);
+    } elseif ($tab === 'closeout') {
+        portal_render_closeout($user);
     } elseif ($tab === 'work_stats') {
         portal_render_work_report_stats($flash);
+        if (portal_closeout_is_manager($user)) {
+            portal_render_project_economics(portal_all_work_reports());
+        }
     } else {
         $view = trim((string) ($_GET['view'] ?? ''));
         if ($view !== '') {
