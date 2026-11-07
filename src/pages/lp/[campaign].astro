@@ -1,0 +1,14 @@
+---
+import CampaignLanding from '../../components/CampaignLanding.astro';
+import { campaignLandings } from '../../data/campaign-landings';
+
+export function getStaticPaths() {
+  return Object.entries(campaignLandings).filter(([campaign]) => campaign !== "smart-home-developers").map(([campaign, content]) => ({
+    params: { campaign },
+    props: { content },
+  }));
+}
+
+const { content } = Astro.props;
+---
+<CampaignLanding path={`/lp/${Astro.params.campaign}/`} content={content} />
