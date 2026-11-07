@@ -418,6 +418,17 @@ test('Maya commissioning is role-scoped, hash-verified, and activation-free', ()
   assert.match(liveReadonlyPreflight, /customerSendReady = \$false/);
   assert.match(liveReadonlyPreflight, /activationClaimed = \$false/);
   assert.match(liveReadonlyPreflight, /proactiveLedgerConsulted = \$false/);
+  const readiness = readFileSync(new URL('../agent-config/maya-codex/show-maya-activation-readiness.ps1', import.meta.url), 'utf8');
+  assert.match(readiness, /COMPUTER_ON_CONNECTORS_UNVERIFIED/);
+  assert.match(readiness, /gmailProfileVerified = \$false/);
+  assert.match(readiness, /mondayBoardVerified = \$false/);
+  assert.match(readiness, /localFlagsAreCentralProof = \$false/);
+  assert.match(readiness, /centralCheckinRepeated = \$false/);
+  assert.match(readiness, /windowsTasksChanged = 0/);
+  assert.match(readiness, /Do not type verified=true/);
+  assert.match(installer, /show-maya-activation-readiness\.ps1/);
+  assert.match(exporter, /show-maya-activation-readiness\.ps1/);
+  assert.doesNotMatch(readiness, /invoke-host-checkin|Enable-ScheduledTask|Register-ScheduledTask|Get-ScheduledTask|review-read-only --config/);
   assert.match(liveReadonlyPreflight, /DORMANT_PRODUCTION_DISABLED/);
   assert.match(liveReadonlyPreflight, /CURRENT_COMMISSIONING_RESULT/);
   assert.match(liveReadonlyPreflight, /ACK_RESULT_WRITES_NOT_CONFIGURED/);

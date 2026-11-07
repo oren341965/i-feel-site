@@ -248,6 +248,7 @@ if (-not $VerifyOnly) {
             'invoke-host-checkin.ps1',
             'test-management-smoke.ps1',
             'test-live-readonly-preflight.ps1',
+            'show-maya-activation-readiness.ps1',
             'provision-management-telemetry.ps1'
         )) {
             $source = Join-Path $bundle "payload\management-system\$managementHelper"
