@@ -1,4 +1,4 @@
-const CACHE = 'ifeel-mcohome-v3-private';
+const CACHE = 'ifeel-mcohome-v4-private';
 const APP_SHELL = [
   './mcohome-offline.html',
   './mcohome-app.js',

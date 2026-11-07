@@ -103,7 +103,7 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
         if (($createdRecord['sentToMcohome'] ?? false) && ($createdRecord['driveSync']['ok'] ?? false)) {
             $success = 'הדיווח נשמר ב-Google Drive ונשלח ליצרן עם הטכנאי, אורן ואריק בעותק. מספר אירוע: ' . $createdRecord['eventId'];
         } else {
-            $error = 'הדיווח נשמר בשרת, אך העלאה ל-Drive או שליחה ליצרן לא אושרו. נדרש טיפול של אריק ואורן. מספר אירוע: ' . $createdRecord['eventId'];
+            $error = 'הדיווח נשמר בשרת. ' . implode(' ', $createdRecord['deliveryBlockers'] ?? []) . ' מספר אירוע: ' . $createdRecord['eventId'];
         }
         $_POST = [];
     } catch (Throwable $submitError) {
@@ -167,12 +167,12 @@ portal_nav('mcohome', $user);
             <div class="mcohome-fault-grid"><?php foreach ($options['faultTypes'] as $item): ?><label class="mcohome-chip mcohome-chip--fault"><input type="radio" name="fault_type" value="<?= portal_h($item) ?>" <?= mcohome_post_value('fault_type', 120) === $item ? 'checked' : '' ?> required><span><?= portal_h($item) ?></span></label><?php endforeach; ?></div>
         </fieldset>
 
-        <label><span>3. הסבר קצר</span><textarea name="description" rows="3" maxlength="600" required placeholder="מה בדיוק קורה? מה ניסיתם ומה התוצאה?"><?= portal_h(mcohome_post_value('description', 600)) ?></textarea></label>
+        <label><span>3. הסבר קצר</span><textarea name="description" rows="3" maxlength="600" required placeholder="מה הפעלתם? מה אמור לקרות? מה קרה בפועל? מה ניסיתם ומה התוצאה?"><?= portal_h(mcohome_post_value('description', 600)) ?></textarea></label>
 
         <label class="mcohome-media-box">
-            <span>4. סרטון הסבר עד דקה או תמונות</span>
+            <span>4. ראיות לתקלה: סרטון עד דקה או תמונות</span>
             <input type="file" name="media[]" id="mcohome-media" accept="image/*,video/*" capture="environment" multiple>
-            <small>עד 6 קבצים, עד 30MB בסך הכול לדיווח. סרטון עד דקה. בהיעדר אינטרנט הסרטון נשמר במכשיר ומסתנכרן בהמשך.</small>
+            <small>צלמו את הפעולה ואת התקלה בפועל. לתקלת תנועה או תגובה צרפו סרטון; לנזק או חיווט צרפו תמונה ברורה. ללא ראיות הדיווח יישמר להשלמה ולא יישלח ליצרן. עד 6 קבצים, עד 30MB בסך הכול לדיווח. סרטון עד דקה. בהיעדר אינטרנט הסרטון נשמר במכשיר ומסתנכרן בהמשך.</small>
             <div id="mcohome-media-list" class="form-note"></div>
         </label>
 
@@ -195,11 +195,11 @@ portal_nav('mcohome', $user);
         </details>
 
         <button type="submit" class="button button--primary button--wide mcohome-submit" id="mcohome-submit">שמירת ושליחת התקלה</button>
-        <p class="form-note">כל תקלה נשמרת עם מספר אירוע אחד, נשלחת לאורן, אריק, שגיב, מוחמד, עוביידה ושירות, ונשלחת אוטומטית ל-Kristin ול-Mr. Dong באנגלית ובסינית. תקלה חוזרת מסומנת HIGH או CRITICAL ונשארת פתוחה עד Root Cause ופתרון קבוע.</p>
+        <p class="form-note">כל תקלה נשמרת עם מספר אירוע אחד. אורן, אריק והטכנאי מקבלים עדכון. רק תיק הכולל הסבר וראיות, לאחר העלאה ותרגום, נשלח ל-Kristin ול-Mr. Dong באנגלית ובסינית. אם חסר מידע תוצג הסיבה להשלמה. תקלה חוזרת מסומנת HIGH או CRITICAL ונשארת פתוחה עד Root Cause ופתרון קבוע.</p>
     </form>
 </section>
 <style>
 .mcohome-panel{max-width:920px;margin-inline:auto}.mcohome-quick-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.mcohome-fieldset{border:1px solid #dbe4ef;border-radius:16px;padding:14px;margin:0}.mcohome-fieldset legend{font-weight:800;padding:0 8px}.mcohome-chip-grid,.mcohome-fault-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}.mcohome-chip{position:relative}.mcohome-chip input{position:absolute;opacity:0;pointer-events:none}.mcohome-chip span{display:flex;min-height:50px;align-items:center;justify-content:center;text-align:center;border:1px solid #cdd8e6;border-radius:12px;padding:8px;background:#fff;font-weight:700;cursor:pointer}.mcohome-chip input:checked+span{background:#1769aa;color:#fff;border-color:#1769aa}.mcohome-chip--fault span{font-size:14px}.mcohome-media-box{border:2px dashed #a9bdd2;border-radius:16px;padding:18px;background:#f8fbff}.mcohome-media-box input{margin-top:8px}.mcohome-details{border:1px solid #dbe4ef;border-radius:14px;padding:14px}.mcohome-details summary{font-weight:800;cursor:pointer}.mcohome-details[open] summary{margin-bottom:14px}.mcohome-submit{font-size:18px;min-height:54px}.mcohome-result-card{display:grid;gap:8px;border:1px solid #b9dec6;background:#f2fbf5;border-radius:14px;padding:16px;margin-bottom:18px}@media(max-width:720px){.mcohome-quick-grid{grid-template-columns:1fr}.mcohome-chip-grid,.mcohome-fault-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.mcohome-panel{padding:14px}.mcohome-chip span{min-height:56px}}
 </style>
-<script defer src="<?= portal_h(portal_base_path()) ?>mcohome-app.js?v=3"></script>
+<script defer src="<?= portal_h(portal_base_path()) ?>mcohome-app.js?v=4"></script>
 <?php portal_page_end();
