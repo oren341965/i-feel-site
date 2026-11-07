@@ -1176,15 +1176,50 @@ function requireFreshEvidenceTimestamp(value, label, now, maxAgeMinutes = 15) {
   return observedAt.toISOString();
 }
 
-function isOrdinaryMessagingWindow(now, timezone) {
+function jerusalemClock(now, timezone) {
   const parts = Object.fromEntries(new Intl.DateTimeFormat('en-US', {
     timeZone: timezone,
     weekday: 'short',
     hour: '2-digit',
+    minute: '2-digit',
     hourCycle: 'h23',
   }).formatToParts(new Date(now)).map(({ type, value }) => [type, value]));
   const hour = Number(parts.hour);
-  return ['Sun', 'Mon', 'Tue', 'Wed', 'Thu'].includes(parts.weekday) && hour >= 9 && hour < 18;
+  const minute = Number(parts.minute);
+  if (!['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].includes(parts.weekday)
+    || !Number.isInteger(hour) || hour < 0 || hour > 23
+    || !Number.isInteger(minute) || minute < 0 || minute > 59) {
+    return null;
+  }
+  return { weekday: parts.weekday, minutes: hour * 60 + minute };
+}
+
+// External customer messages only. Independent inbox reading and read-only review
+// do not call this. Friday morning and Saturday night stay closed: neither cutoff
+// is configured, and inventing one would be permissive. Explicit urgency never opens them.
+export function evaluateExternalCustomerMessageWindow(now, timezone, options = {}) {
+  if (timezone !== 'Asia/Jerusalem') {
+    return { open: false, reason: 'TIMEZONE_NOT_JERUSALEM' };
+  }
+  if (options.isIsraeliHoliday !== false) {
+    return { open: false, reason: 'HOLIDAY_UNVERIFIED_OR_CLOSED' };
+  }
+  const clock = jerusalemClock(now, timezone);
+  if (!clock) return { open: false, reason: 'LOCAL_CLOCK_UNAVAILABLE' };
+  if (clock.weekday === 'Fri') {
+    return { open: false, reason: 'FRIDAY_MORNING_CUTOFF_UNSPECIFIED' };
+  }
+  if (clock.weekday === 'Sat') {
+    return {
+      open: false,
+      reason: options.explicitUrgent === true ? 'SATURDAY_NIGHT_CUTOFF_UNSPECIFIED' : 'SHABBAT_CLOSED',
+    };
+  }
+  const ordinaryOpen = clock.minutes >= 9 * 60 && clock.minutes < 18 * 60;
+  if (['Sun', 'Mon', 'Tue', 'Wed', 'Thu'].includes(clock.weekday) && ordinaryOpen) {
+    return { open: true, reason: 'OPEN_SUN_THU' };
+  }
+  return { open: false, reason: 'OUTSIDE_ORDINARY_HOURS' };
 }
 
 function validateProductionReadEvidence({ task, monday, gmail, channel, authorization, now, timezone }) {
@@ -1216,9 +1251,11 @@ function validateProductionReadEvidence({ task, monday, gmail, channel, authoriz
   if (channel.equivalentMessageWithinDays === true) throw new Error('RECENT_DUPLICATE_FOUND');
   if (!Number.isInteger(channel.unansweredAttempts) || channel.unansweredAttempts < 0
     || channel.unansweredAttempts >= 2) throw new Error('UNANSWERED_ATTEMPT_LIMIT');
-  if (channel.isIsraeliHoliday !== false || !isOrdinaryMessagingWindow(now, timezone)) {
-    throw new Error('CUSTOMER_MESSAGING_WINDOW_CLOSED');
-  }
+  const messageWindow = evaluateExternalCustomerMessageWindow(now, timezone, {
+    isIsraeliHoliday: channel.isIsraeliHoliday,
+    explicitUrgent: channel.explicitUrgent === true,
+  });
+  if (!messageWindow.open) throw new Error('CUSTOMER_MESSAGING_WINDOW_CLOSED');
 }
 
 function validateApprovedActionReceipt(receipt, { task, authorization, now, recipientIdentitySha256 }) {
