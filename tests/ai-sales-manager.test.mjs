@@ -408,6 +408,16 @@ test('Maya commissioning is role-scoped, hash-verified, and activation-free', ()
   assert.match(managementSmoke, /externalSends = 0/);
   assert.match(managementSmoke, /mondayWrites = 0/);
   assert.match(liveReadonlyPreflight, /WHATSAPP_INSTALLED_HASH_MISMATCH/);
+  assert.match(liveReadonlyPreflight, /Add-PreflightBlocker 'WHATSAPP_INSTALLED_HASH_MISMATCH' -Scope send/);
+  assert.match(liveReadonlyPreflight, /Add-PreflightBlocker 'WHATSAPP_MANIFEST_ENTRY_INVALID' -Scope send/);
+  assert.match(liveReadonlyPreflight, /REVIEW_RUNNER_HASH_MISMATCH/);
+  assert.match(liveReadonlyPreflight, /REVIEW_BRIDGE_HASH_MISMATCH/);
+  assert.match(liveReadonlyPreflight, /EMAIL_SKILL_HASH_MISMATCH/);
+  assert.match(liveReadonlyPreflight, /independentReadReviewReady = \$readPathBlockers\.Count -eq 0/);
+  assert.match(liveReadonlyPreflight, /safeForLiveMondaySmoke = \$readPathBlockers\.Count -eq 0/);
+  assert.match(liveReadonlyPreflight, /customerSendReady = \$false/);
+  assert.match(liveReadonlyPreflight, /activationClaimed = \$false/);
+  assert.match(liveReadonlyPreflight, /proactiveLedgerConsulted = \$false/);
   assert.match(liveReadonlyPreflight, /DORMANT_PRODUCTION_DISABLED/);
   assert.match(liveReadonlyPreflight, /CURRENT_COMMISSIONING_RESULT/);
   assert.match(liveReadonlyPreflight, /ACK_RESULT_WRITES_NOT_CONFIGURED/);

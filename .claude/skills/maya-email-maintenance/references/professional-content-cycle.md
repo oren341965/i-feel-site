@@ -2,9 +2,9 @@
 
 ## Authority and activation
 
-Oren granted explicit standing authorization on 2026-09-04 for this bounded I Feel professional-content workflow. The authorization permits Maya, after Oren supplies the day's material and at least one approved image, to prepare and publish the relevant organic post(s) on connected I Feel channels and to send professional email to eligible contacts under the rules below without asking Oren for another per-send approval.
+Oren recorded this professional-content workflow on 2026-09-04. As of the 2026-11-07 instruction, that record is not a blanket send or publish authorization. Every external professional message still needs a fresh per-message approval for that exact message and channel. Do not send or schedule from this file.
 
-This standing authorization is the separate approval required by `maya-email-maintenance` for marketing, broadcasts and new-recipient professional outreach. It applies only to this workflow and does not authorize any paid-media budget, bid, campaign or targeting changes.
+The professional-campaign cooldown is 90 days between initiated professional contacts. It does not replace the seven-day operational follow-up interval used inside an existing customer or employee thread. This workflow does not authorize any paid-media budget, bid, campaign or targeting change.
 
 The workflow is staged but not active until Oren gives Maya/Codex a direct start instruction on the Maya workstation. Before that command, keep `activation_state=AWAITING_OREN_START`, do not send or publish, and do not turn on another scheduler.
 
@@ -12,7 +12,7 @@ After activation, keep the existing four-Skill Maya bundle. Do not add a fifth i
 
 ## Business objective
 
-Generate professional interest, qualified traffic to `https://i-feel.co.il/`, and new leads. The normal daily working target is 40–80 professional emails across all eligible segments when enough suitable material and eligible contacts exist. Never force volume by using irrelevant content, violating the 14-day cooldown, or contacting an ineligible recipient.
+Generate professional interest, qualified traffic to `https://i-feel.co.il/`, and new leads. The normal daily working target is 40–80 professional emails across all eligible segments when enough suitable material and eligible contacts exist. Never force volume by using irrelevant content, violating the 90-day professional-campaign cooldown, or contacting an ineligible recipient.
 
 ## Daily source gate
 
@@ -39,9 +39,9 @@ Mandatory fields and rules:
 
 - `boolean_mm6wggnf` / `ללא דיוור מקצועי`: exclude when checked.
 - `date_mm6w3ncx` / `דיוור מקצועי אחרון`: record the actual professional send date.
-- `date_mm6wrh6h` / `זכאי לדיוור הבא`: earliest next professional contact date, at least 14 days after the last send.
-- Before each send, check contact history. One person receives at most one I Feel professional update in any 14-day period.
-- After at least 14 days, use a different subject/content theme. Do not repeat the same article, video or message unless there is a material new update.
+- `date_mm6wrh6h` / `זכאי לדיוור הבא`: earliest next professional contact date, at least 90 days after the last professional-campaign send.
+- Before each send, check contact history. One person receives at most one I Feel professional-campaign update in any 90-day period. This interval is not an operational-response cooldown.
+- After at least 90 days, use a different subject/content theme. Do not repeat the same article, video or message unless there is a material new update.
 - Deduplicate by person and business email before send.
 - When several suitable content items exist, run multiple audience groups in parallel, each with its own content and wording, while preserving the cooldown.
 - Base target when suitable architectural content exists: up to 20 eligible architects/designers that day. Distribute the remainder across other relevant professional segments when eligible.
@@ -90,11 +90,11 @@ After each successful send, update only the existing contact item on board `3040
 Record, when fields exist, the send date, segment, subject, content URL, UTM/campaign, image/asset, whether the update CTA was included, response status and the earliest next contact date. At minimum update:
 
 - `דיוור מקצועי אחרון` = actual send date;
-- `זכאי לדיוור הבא` = send date + at least 14 days.
+- `זכאי לדיוור הבא` = send date + at least 90 days.
 
 If the current board lacks dedicated columns for subject, URL, UTM, asset, CTA or response, write those details as one concise item update rather than creating columns automatically.
 
-For every daily run also retain counts: sent, disqualified for opt-out, duplicate, relevance or 14-day cooldown; and business outcomes by segment/content: replies, real leads, qualified leads, meetings, RFQs, proposals and deals.
+For every daily run also retain counts: sent, disqualified for opt-out, duplicate, relevance or 90-day professional-campaign cooldown; and business outcomes by segment/content: replies, real leads, qualified leads, meetings, RFQs, proposals and deals.
 
 ## I Feel Management integration
 

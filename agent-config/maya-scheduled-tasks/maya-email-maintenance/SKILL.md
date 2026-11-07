@@ -56,7 +56,7 @@ For an authorized professional-content control message:
 - the only permitted sender is exactly `myhome@i-feel.co.il`; never use `oren@i-feel.co.il` or another account;
 - professional email requires a verified Gmail send/write capability. `gmail.readonly` alone returns `GMAIL_SEND_SCOPE_REQUIRED`; follow the approved local reauthorization path described in `professional-content-runtime.md`, and if interactive consent is required return `NEEDS_INTERACTIVE_GMAIL_CONSENT` without sending;
 - `MAYA_WHATSAPP_TELEMETRY_MISSING` is not a blocker for a professional email campaign that does not require a customer-specific WhatsApp check;
-- verify daily content, approved image, live destination, UTM, opt-out, deduplication and 14-day eligibility before every send;
+- verify daily content, approved image, live destination, UTM, opt-out, deduplication, the 90-day professional-campaign cooldown and a fresh per-message approval before every send; this staged prompt is not activation and is not an operational-response cooldown;
 - every email must contain a clearly visible `טיפ של I Feel`, the commercial CTA, and the Google Preferred Sources CTA;
 - after a verified successful send, Maya may perform only the bounded professional-content documentation writes on existing contact items in Monday board `3040781819` described in the runtime reference;
 - report the run to I Feel Management as host `maya-front-office`, capability `maya-email-maintenance`, mode `professional_content_cycle`;
