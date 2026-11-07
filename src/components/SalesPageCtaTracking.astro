@@ -1,0 +1,21 @@
+<script is:inline>
+  (function () {
+    var salesPages = ['/smart-home-villa/', '/knx-smart-home/', '/smart-home-system-upgrade/', '/structure-control/', '/bms-retrofit/'];
+    var salesPage = window.location.pathname.replace(/\/$/, '') + '/';
+    if (salesPages.indexOf(salesPage) === -1) return;
+    document.addEventListener('click', function (event) {
+      var link = event.target.closest && event.target.closest('a[href]');
+      // The existing shared tracker owns explicitly tagged links.
+      if (!link || link.closest('[data-ga-event]') || typeof window.gtag !== 'function') return;
+      var target;
+      try { target = new URL(link.getAttribute('href'), window.location.href); } catch (error) { return; }
+      if (target.origin !== window.location.origin || target.pathname.replace(/\/$/, '') !== '/contactus') return;
+      window.gtag('event', 'cta_click', {
+        cta_id: 'sales_page_contact',
+        page_path: salesPage,
+        sales_page: salesPage,
+        destination_path: '/contactus/'
+      });
+    });
+  })();
+</script>
