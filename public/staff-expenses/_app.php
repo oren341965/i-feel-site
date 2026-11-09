@@ -150,6 +150,9 @@ try {
         if (portal_post('action', 60) === 'submit_report' && $verifiedEmail !== null) {
             $_POST['employee_email'] = $verifiedEmail;
         }
+        if (portal_post('action', 60) === 'import_closeout_snapshot') {
+            portal_closeout_import($user);
+        }
         if (portal_post('action', 60) === 'submit_work_report') {
             portal_handle_work_report_post($user);
         }

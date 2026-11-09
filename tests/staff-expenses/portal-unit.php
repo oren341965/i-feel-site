@@ -38,8 +38,35 @@ require_once $repositoryRoot . '/public/staff-expenses/_history.php';
 require_once $repositoryRoot . '/public/staff-expenses/_readiness.php';
 require_once $repositoryRoot . '/public/staff-expenses/_mcohome_faults.php';
 require_once $repositoryRoot . '/public/staff-expenses/_supervision.php';
+require_once $repositoryRoot . '/public/staff-expenses/_installation_closeout.php';
 
 try {
+    $closeoutUrl = 'https://i-feel.monday.com/boards/123/pulses/456';
+    $closeoutProject = [
+        'name' => 'Example project', 'date' => 'Site visit', 'schedule' => 'Not booked',
+        'evidence' => 'No verified receipt', 'monday' => $closeoutUrl,
+        'tasks' => [['Installer', 'Confirm installation', 'Open']],
+        'equipment' => [['Switch', '1', 'Unverified']], 'checks' => [['Delivery', 'Open']],
+        'docs' => [['Source', $closeoutUrl]], 'viewers' => ['outside@example.com'],
+    ];
+    $closeoutSnapshot = ['snapshot_date' => '2026-11-09', 'projects' => [$closeoutProject]];
+    $closeoutCurrent = ['projects' => [
+        ['monday' => $closeoutUrl, 'viewers' => ['authorized@example.com'], 'approved_cost_budget' => 100],
+        ['monday' => 'https://i-feel.monday.com/boards/123/pulses/789', 'name' => 'Other project'],
+    ]];
+    $closeoutMerged = portal_closeout_merge_snapshot($closeoutCurrent, $closeoutSnapshot);
+    portal_test_expect(count($closeoutMerged['projects']) === 2, 'Import should retain unrelated projects.');
+    portal_test_expect($closeoutMerged['projects'][0]['viewers'] === ['authorized@example.com'], 'Import should preserve permissions.');
+    portal_test_expect($closeoutMerged['projects'][0]['approved_cost_budget'] === 100, 'Import should preserve verified economics.');
+    portal_test_expect(portal_closeout_merge_snapshot($closeoutMerged, $closeoutSnapshot) === $closeoutMerged, 'Import should be idempotent.');
+    portal_test_expect(portal_closeout_merge_snapshot([], $closeoutSnapshot)['projects'][0]['viewers'] === [], 'New records must default to managers only.');
+    $closeoutSnapshot['projects'][] = $closeoutProject;
+    try {
+        portal_closeout_merge_snapshot($closeoutCurrent, $closeoutSnapshot);
+        throw new RuntimeException('Duplicate Monday cards must be rejected.');
+    } catch (InvalidArgumentException $expected) {
+    }
+
     portal_test_expect(
         defined('IFEEL_PORTAL_SESSION_COOKIE_PATH')
         && constant('IFEEL_PORTAL_SESSION_COOKIE_PATH') === '/staff-expenses/',
