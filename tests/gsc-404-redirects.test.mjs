@@ -9,6 +9,7 @@ const rules = [...htaccess.matchAll(/^\s*RewriteRule (\S+) (\S+) \[([^\]]+)\]/gm
   .filter(([, pattern]) => pattern !== '^')
   .map(([, pattern, target, flags]) => ({ pattern: new RegExp(pattern), target, flags }));
 const migrated = [
+  ['electric-lock-smart-home', '/communication-networks/#smart-lock-video'],
   ['articles/smart-home', '/articles/what-is-smart-home/'],
   ['articles/existing-', '/articles/existing-home-smart-upgrade/'],
   ['תאורה-חכמה-לבית-המדריך-המלא-לעיצוב-מוש', '/smart-lighting/'],
@@ -32,6 +33,18 @@ for (const [source, target] of migrated) {
     assert.ok(!rules.some(rule => rule.pattern.test(`${source}/unrelated`) && rule.target === target), 'no broad prefix redirect');
   });
 }
+
+test('legacy favicon redirects directly to the built PNG icon', () => {
+  const rule = rules.find(rule => rule.pattern.test('favicon.ico') && rule.flags.includes('R='));
+  assert.equal(rule?.target, '/assets/favicon.png');
+  assert.match(rule.flags, /R=301/);
+  assert.match(rule.flags, /(?:^|,)L(?:,|$)/);
+  assert.ok(!rule.pattern.test('faviconXico'), 'literal dot is required');
+  assert.ok(!rule.pattern.test('favicon.ico/unrelated'), 'only the icon URL matches');
+  assert.ok(!rules.some(rule => rule.pattern.test('assets/favicon.png') && rule.flags.includes('R=')), 'no redirect chain');
+  const icon = fs.readFileSync(new URL('../dist/assets/favicon.png', import.meta.url));
+  assert.equal(icon.subarray(0, 8).toString('hex'), '89504e470d0a1a0a', 'target is a PNG image');
+});
 
 test('unmatched content and asset paths are not sent to unrelated pages', () => {
   for (const path of ['articles/knx-ai-era-', 'smart-home-arabic/', 'assets/structure-projects/img/', 'articles/unknown-article']) {

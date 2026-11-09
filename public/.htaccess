@@ -7,6 +7,9 @@
   RewriteRule ^ https://i-feel.co.il%{REQUEST_URI} [R=301,L,NE]
 
   # Search Console 404 audit (2026-10-07): only redirect to matching live content.
+  # 2026-11-09: restore the legacy lock URL and browser favicon request.
+  RewriteRule ^electric-lock-smart-home/?$ /communication-networks/#smart-lock-video [R=301,L,NE]
+  RewriteRule ^favicon\.ico$ /assets/favicon.png [R=301,L]
   RewriteRule ^articles/smart-home/?$ /articles/what-is-smart-home/ [R=301,L]
   RewriteRule ^articles/existing-/?$ /articles/existing-home-smart-upgrade/ [R=301,L]
   RewriteRule ^תאורה-חכמה-לבית-המדריך-המלא-לעיצוב-מוש/?$ /smart-lighting/ [R=301,L,NE]
