@@ -1,0 +1,45 @@
+---
+import LandingLayout from '../layouts/LandingLayout.astro';
+import LeadForm from './LeadForm.astro';
+import type { campaignLandings } from '../data/campaign-landings';
+
+interface Props {
+  path: string;
+  content: (typeof campaignLandings)[keyof typeof campaignLandings];
+}
+
+const { path, content } = Astro.props;
+---
+<LandingLayout title={`${content.title} | i-feel`} description={content.description} canonical={`https://i-feel.co.il${path}`} indexable>
+  <section class="hero-gradient text-white">
+    <div class="max-w-6xl mx-auto px-4 py-10 lg:py-16 grid lg:grid-cols-2 gap-8 items-start">
+      <div>
+        <p class="font-bold text-accent-300 mb-4">{content.audience}</p>
+        <h1 class="text-3xl md:text-5xl font-extrabold leading-tight mb-4">{content.title}</h1>
+        <p class="text-lg leading-relaxed mb-6">{content.description}</p>
+        <figure>
+          <img src={content.image} alt={content.caption} class="w-full max-h-72 object-contain rounded-xl bg-white" />
+          <figcaption class="text-sm text-brand-100 mt-2">{content.caption}</figcaption>
+        </figure>
+      </div>
+      <LeadForm leadType={content.leadType} subject={content.audience} sourcePage={path} heading={content.action} buttonText={content.action} messagePlaceholder={content.prompt} />
+    </div>
+  </section>
+
+  <section class="max-w-6xl mx-auto px-4 py-10">
+    <h2 class="text-2xl font-extrabold mb-6">מה בודקים בשיחת האפיון?</h2>
+    <div class="grid md:grid-cols-3 gap-6">
+      {content.points.map(([title, detail]) => (
+        <div class="border border-brand-100 rounded-xl p-5">
+          <h3 class="font-extrabold mb-2">{title}</h3>
+          <p class="text-brand-700">{detail}</p>
+        </div>
+      ))}
+    </div>
+    <h2 class="text-2xl font-extrabold mt-10 mb-4">מפרטים, סרטונים ודוגמאות מהשטח</h2>
+    <ul class="flex flex-wrap gap-x-6 gap-y-3">
+      {content.links.map(([label, url]) => <li><a href={url} class="text-accent-700 underline font-bold">{label}</a></li>)}
+    </ul>
+    <a href="#lead-form" class="inline-flex mt-8 bg-accent-500 text-white px-6 py-3 rounded-lg font-bold">{content.action}</a>
+  </section>
+</LandingLayout>

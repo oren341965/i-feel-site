@@ -5,6 +5,7 @@ export interface Props {
   sourcePage: string;    // LP path, e.g. /lp/smart-home/
   heading?: string;
   buttonText?: string;
+  messagePlaceholder?: string;
 }
 
 const {
@@ -12,7 +13,8 @@ const {
   subject,
   sourcePage,
   heading = 'השאירו פרטים ונחזור אליכם עוד היום*',
-  buttonText = 'קבלו שיחת ייעוץ חינם'
+  buttonText = 'קבלו שיחת ייעוץ חינם',
+  messagePlaceholder = 'שלב הבנייה ומה תרצו לתכנן'
 } = Astro.props;
 ---
 <div id="lead-form" class="bg-white rounded-2xl shadow-xl border border-brand-100 p-6 md:p-8 scroll-mt-24">
@@ -52,8 +54,25 @@ const {
     </label>
 
     <label class="block">
+      <span class="block text-sm font-bold text-brand-900 mb-1">עיר / יישוב *</span>
+      <input name="city" required type="text" autocomplete="address-level2" maxlength="160" class="w-full rounded-lg border border-brand-200 px-4 py-3 text-brand-900">
+    </label>
+
+    <label class="block">
+      <span class="block text-sm font-bold text-brand-900 mb-1">איך שמעתם עלינו? *</span>
+      <select name="heard_from" required class="w-full rounded-lg border border-brand-200 bg-white px-4 py-3 text-brand-900">
+        <option value="">בחרו מקור</option>
+        <option value="Google">Google</option>
+        <option value="המלצה">המלצה</option>
+        <option value="רשתות חברתיות">רשתות חברתיות</option>
+        <option value="כלי AI">כלי AI</option>
+        <option value="אחר">אחר</option>
+      </select>
+    </label>
+
+    <label class="block">
       <span class="block text-sm font-bold text-brand-900 mb-1">כמה מילים על הפרויקט <span class="text-brand-400 font-normal">(לא חובה)</span></span>
-      <textarea name="message" rows="2" toolparamdescription="Optional project details such as city, building stage, plans, specification or systems of interest." class="w-full rounded-lg border border-brand-200 px-4 py-3 text-brand-900 focus:border-accent-500 focus:ring-2 focus:ring-accent-500/20" placeholder="עיר, שלב הבנייה, מה מעניין אתכם"></textarea>
+      <textarea name="message" rows="2" toolparamdescription="Optional project details such as city, building stage, plans, specification or systems of interest." class="w-full rounded-lg border border-brand-200 px-4 py-3 text-brand-900 focus:border-accent-500 focus:ring-2 focus:ring-accent-500/20" placeholder={messagePlaceholder}></textarea>
     </label>
 
     <label class="block">

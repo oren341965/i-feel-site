@@ -93,6 +93,9 @@ function portal_nav(string $tab, array $user): void
         <a href="<?= portal_h(portal_url(['tab' => 'supervision'])) ?>" class="tab tab--supervision<?= $tab === 'supervision' ? ' is-active' : '' ?>">טופס פיקוח</a>
         <a href="<?= portal_h(portal_base_path()) ?>mcohome.php" class="tab<?= $tab === 'mcohome' ? ' is-active' : '' ?>">תקלות MCOHome</a>
         <a href="<?= portal_h(portal_installation_form_url()) ?>" class="tab" target="_blank" rel="noopener noreferrer">סיום התקנה ↗</a>
+        <?php if (function_exists('portal_closeout_can_view') && portal_closeout_can_view($user)): ?>
+            <a href="<?= portal_h(portal_url(['tab' => 'closeout'])) ?>" class="tab<?= $tab === 'closeout' ? ' is-active' : '' ?>">השלמות התקנה</a>
+        <?php endif; ?>
         <?php if (($user['role'] ?? '') === 'admin'): ?>
             <a href="<?= portal_h(portal_url(['tab' => 'reports'])) ?>" class="tab<?= $tab === 'reports' ? ' is-active' : '' ?>">דיווחים ומסמכים</a>
             <a href="<?= portal_h(portal_url(['tab' => 'employees'])) ?>" class="tab<?= $tab === 'employees' ? ' is-active' : '' ?>">עובדים וימי הולדת</a>

@@ -51,6 +51,18 @@ const meta={
     </section>)}
    </div>
   </section>
+  <section class="bg-white rounded-2xl border border-slate-200 p-7 mb-12" aria-labelledby="momentary-switches">
+   <h2 id="momentary-switches" class="text-3xl font-bold mb-4">לחצנים קפיציים רגילים בבית חכם KNX</h2>
+   <p class="leading-8 mb-4">אפשר לשלב לחצני קיר רגילים בעיצוב שבוחרים לבית ולשלוט באמצעותם בתאורה, בתריסים ובתרחישים. לחצן קפיצי חוזר למקומו כשמשחררים אותו. בדגם עם מגע פתוח רגיל (<bdi>NO</bdi>), המגע נסגר בזמן הלחיצה ונפתח בשחרור. המערכת מזהה את הלחיצה ומבצעת את הפעולה שהוגדרה, למשל הדלקה וכיבוי של האור באותו לחצן.</p>
+   <p class="leading-8 mb-6"><a class="text-sky-800 underline font-bold" href="https://yashir-group.biz/collections/nisko-switch/products/%D7%9C%D7%97%D7%A6%D7%9F-%D7%9E%D7%95%D7%93%D7%95%D7%9C-%D7%99%D7%97%D7%99%D7%93-%D7%9C%D7%91%D7%9F-sw">דוגמה ללחצן קפיצי רגיל מסדרת NISKO SWITCH</a>. את התאמת הדגם והמסגרת לפרויקט בודקים עם החשמלאי לפני הרכישה.</p>
+   <h3 class="text-xl font-bold mb-2">חיבור ישיר ללוח החשמל בטופולוגיית כוכב</h3>
+   <p class="leading-8 mb-4">חיווט הפיקוד מכל נקודת לחצנים חוזר ללוח החשמל ומתחבר לכניסות המיועדות למגעים יבשים. כך כל נקודות הלחצנים מתרכזות בלוח. לכל לחצן שמיועד לפעולה עצמאית מקצים כניסה ומגדירים בתוכנת ETS מה היא תפעיל. אין להזין מתח חיצוני, כגון 230 וולט, לכניסות המגע היבש.</p>
+   <p class="leading-8 mb-4">לדוגמה, בקר <bdi>Eelectron IO08F01KNX</bdi> כולל שמונה כניסות למגעים יבשים ושמונה יציאות ממסר. הכניסות מזהות לחיצות. היציאות מפעילות את מעגלי התאורה והתריסים. לחצן יכול להפעיל יציאה בבקר הזה, יציאה בבקר KNX אחר או כמה יציאות יחד. מעגל תאורה להדלקה וכיבוי משתמש בדרך כלל ביציאה אחת. לתריס מקצים זוג יציאות שמוגדר כערוץ אחד לעלייה ולירידה. לדוגמה, אפשר להקצות ארבע יציאות לארבעה מעגלי תאורה ועוד ארבע יציאות לשני תריסים.</p>
+   <p class="leading-8 mb-6"><a class="text-sky-800 underline font-bold" href="https://www.eelectron.com/en/products/universal-din-module-8-in-8-out-plus/">מפרט בקר הכניסות והיציאות באתר Eelectron</a></p>
+   <h3 class="text-xl font-bold mb-2">כשקשה להעביר צינור ישירות ללוח</h3>
+   <p class="leading-8 mb-4">אם קו KNX מגיע לקופסת הלחצנים ויש בה מקום, אפשר להתקין בה ממשק לחצנים מקומי, למשל <bdi>PBI</bdi> של Siemens. הלחצן מתחבר בחיווט קצר לממשק, והממשק שולח פקודה על קו ה־KNX לבקר שמפעיל את התאורה או התריס. אפשר לשלב באותו בית נקודות שמחוברות ישירות ללוח ונקודות עם ממשק מקומי.</p>
+   <p class="leading-8"><a class="text-sky-800 underline font-bold" href="https://knx-td.sihub.siemens.com/en/tpi/5WG1_220_2AB21_tpi_en_DS01.pdf">מפרט לדוגמה של ממשק לחצנים Siemens PBI (PDF)</a></p>
+  </section>
   <section class="bg-white rounded-2xl border border-slate-200 p-7 mb-12">
    <h2 class="text-3xl font-bold mb-4">בקרה חכמה למלונות — מערכת חדר מלאה</h2><p class="mb-5"><a href="/eelectron-hotel-room-control/" class="inline-block bg-sky-800 text-white font-bold px-6 py-3 rounded-lg">למערכת בקרת חדרי מלון Eelectron — כל הרכיבים והמידע המקצועי ←</a></p>
    <p class="leading-8 mb-6">פתרון מלונאי אינו מסתכם בבקר KNX בלבד: יש לתכנן את מכלול אביזרי החדר, ממשקי האורח, הגלאים, חיבורי החשמל, התקשורת ותוכנת הניהול. המוצרים המדויקים משתנים לפי הפרויקט.</p>

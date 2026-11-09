@@ -5,8 +5,8 @@ import LeadForm from '../../components/LeadForm.astro';
 const page = '/lp/smart-home-villa/';
 ---
 <LandingLayout
-  title="בית חכם לוילה — תכנון והתקנה ברמה אחרת | i-feel"
-  description="בית חכם לוילה: תאורה, תריסים, מיזוג, קולנוע ביתי, אודיו רב-אזורי ואבטחה — בפרויקט אחד מתוכנן היטב. ייעוץ חינם."
+  title="בית חכם לווילה | תכנון ואומדן לפי הפרויקט | i-feel"
+  description="בונים או משפצים וילה? בדקו מה להכין לפני עבודות החשמל, מה משפיע על העלות ומה כלול בהצעה. בקשו שיחת תכנון עם I Feel."
   canonical={`https://i-feel.co.il${page}`}
 >
   <!-- HERO + FORM -->
@@ -19,17 +19,15 @@ const page = '/lp/smart-home-villa/';
           <span class="bg-white/10 border border-white/20 rounded-full px-3 py-1">וילות ובתי יוקרה בכל הארץ</span>
         </p>
         <h1 class="text-3xl md:text-5xl font-extrabold leading-tight mb-4">
-          בית חכם לוילה —<br class="hidden md:block" /> פרויקט אחד, יד אחת, אפס פשרות
+          בונים וילה? עשו סדר בתכנון ובעלויות
         </h1>
         <p class="text-lg md:text-xl text-brand-100 leading-relaxed mb-6">
-          בווילה יש הרבה מערכות: תאורה, תריסים, מיזוג, קולנוע ביתי, אודיו רב-אזורי, בריכה, גינה, שערים ואבטחה.
-          i-feel מאחדת את כולן למערכת אחת מתוכננת — עם קבלן משנה אחד שאחראי על הכול, מהתוכניות ועד המסירה.
+          בשיחת תכנון עם I Feel נעבור על שלב הבנייה, המערכות שתרצו לשלב ומה נדרש כדי לתת אומדן לפי הפרויקט.
         </p>
         <ul class="space-y-3 text-brand-50 mb-8">
-          <li class="flex items-start gap-3"><span class="text-accent-400 font-extrabold mt-0.5">✓</span> תכנון מלא על גבי תוכניות האדריכל — לפני סגירת קירות</li>
-          <li class="flex items-start gap-3"><span class="text-accent-400 font-extrabold mt-0.5">✓</span> תשתית קווית בתקן KNX — האמינות שוילות בעולם נבנות עליה</li>
-          <li class="flex items-start gap-3"><span class="text-accent-400 font-extrabold mt-0.5">✓</span> קולנוע ביתי ואודיו רב-אזורי בתכנון אקוסטי מקצועי</li>
-          <li class="flex items-start gap-3"><span class="text-accent-400 font-extrabold mt-0.5">✓</span> גורם אחד מול האדריכל, המעצב והחשמלאי — פחות תקלות תיאום</li>
+          <li>מה כדאי להכין לפני שסוגרים קירות, בתיאום עם האדריכל והחשמלאי.</li>
+          <li>מה משפיע על המחיר ואילו תוספות אפשר לתכנן לשלב מאוחר יותר.</li>
+          <li>איך מפרידים בהצעה בין ציוד, התקנה ותכנות, ומה לבדוק בתנאי האחריות.</li>
         </ul>
         <a href="tel:+972-3-508-9553" class="hidden md:inline-flex items-center gap-2 bg-white/10 hover:bg-white/20 border border-white/30 text-white px-6 py-3 rounded-lg font-bold transition">
           מעדיפים לדבר? 03-508-9553
@@ -40,8 +38,8 @@ const page = '/lp/smart-home-villa/';
         leadType="לקוח פרטי"
         subject="LP בית חכם לוילה (Google Ads)"
         sourcePage={page}
-        heading="בונים או משפצים וילה? דברו איתנו"
-        buttonText="קבלו פגישת ייעוץ חינם"
+        heading="בקשו שיחת תכנון ואומדן"
+        buttonText="בקשו שיחת תכנון"
       />
     </div>
   </section>
@@ -50,13 +48,16 @@ const page = '/lp/smart-home-villa/';
   <section class="py-10 bg-white">
     <div class="max-w-6xl mx-auto px-4">
       <h2 class="text-2xl md:text-3xl font-extrabold text-brand-900 text-center mb-6">וילות ובתים פרטיים שביצענו</h2>
-      <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
-        <img src="/assets/private-homes-gallery/kfar-shmaryahu-facade-01-scaled.jpg" alt="וילה חכמה בכפר שמריהו" class="rounded-xl object-cover w-full h-40 md:h-48" loading="lazy" />
-        <img src="/assets/private-homes-gallery/private-home-gallery-02.jpg" alt="סלון בוילה חכמה" class="rounded-xl object-cover w-full h-40 md:h-48" loading="lazy" />
-        <img src="/assets/home-cinema-render.png" alt="קולנוע ביתי בוילה" class="rounded-xl object-cover w-full h-40 md:h-48" loading="lazy" />
-        <img src="/assets/private-homes-gallery/private-home-gallery-06.jpg" alt="תאורה חכמה בבית פרטי" class="rounded-xl object-cover w-full h-40 md:h-48" loading="lazy" />
-      </div>
-      <p class="text-center mt-4 text-sm text-brand-600">חלק מהפרויקטים — גלריית הפרויקטים המלאה מוצגת בפגישת הייעוץ.</p>
+      <figure class="max-w-3xl mx-auto">
+        <img src="/assets/smart-home-ramat-hasharon.webp" alt="חלל מגורים בפרויקט בית חכם של I Feel ברמת השרון" class="rounded-xl object-cover w-full" loading="lazy" />
+        <figcaption class="mt-3 text-sm text-brand-600">פרויקט בית חכם של I Feel ברמת השרון</figcaption>
+      </figure>
+      <ul class="mt-5 flex flex-wrap gap-x-6 gap-y-3 font-bold text-accent-700 underline">
+        <li><a href="/smart-home-villa/">מדריך לתכנון בית חכם לווילה</a></li>
+        <li><a href="/video/">סרטוני בית חכם ו־KNX</a></li>
+        <li><a href="/catalogs/">קטלוגים ומפרטי ציוד</a></li>
+        <li><a href="/projects/knx-smart-home-central-moshav/">דוגמה מבית חכם במושב</a></li>
+      </ul>
     </div>
   </section>
 
@@ -132,7 +133,7 @@ const page = '/lp/smart-home-villa/';
         </details>
         <details class="bg-white border border-brand-100 rounded-xl p-5">
           <summary class="font-bold text-brand-900 cursor-pointer">מי מטפל בבית אחרי המסירה?</summary>
-          <p class="text-brand-700 mt-3">אנחנו. ל-i-feel מערך שירות ותחזוקה פעיל מאז 2008, עם הסכמי שירות לוילות הכוללים תמיכה מרחוק וטכנאים בבית.</p>
+          <p class="text-brand-700 mt-3">צוות השירות של I Feel מטפל בפניות לאחר המסירה. לפני אישור ההצעה בקשו פירוט מה מכוסה באחריות על הציוד, ההתקנה והתכנות, לכמה זמן ואילו שירותים אפשר להוסיף.</p>
         </details>
       </div>
     </div>
