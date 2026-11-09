@@ -525,3 +525,41 @@ input[readonly] { background: #f3f5f8; }
     .activity-timeline li::after { inset-inline-start: 6px; }
     .work-review-card__header > div:last-child { justify-items: start; }
 }
+
+/* Installation closeout is primarily used in the field, on phones. */
+.closeout-picker {
+    display: grid;
+    gap: .65rem;
+    max-inline-size: 32rem;
+}
+.closeout-picker :is(select, button),
+.closeout-project summary,
+.closeout-link {
+    min-block-size: 44px;
+}
+.closeout-project {
+    overflow-wrap: anywhere;
+}
+.closeout-project summary {
+    cursor: pointer;
+    padding-block: .65rem;
+}
+.closeout-project > summary span {
+    display: block;
+    margin-block-start: .25rem;
+}
+.closeout-project .closeout-rows {
+    padding: 0;
+    list-style: none;
+}
+.closeout-rows li {
+    display: grid;
+    gap: .2rem;
+    padding: .7rem 0;
+    border-block-start: 1px solid #dce4ec;
+}
+.closeout-link {
+    display: flex;
+    align-items: center;
+    padding-block: .4rem;
+}
