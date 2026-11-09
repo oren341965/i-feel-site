@@ -60,6 +60,19 @@ try {
     portal_test_expect($closeoutMerged['projects'][0]['approved_cost_budget'] === 100, 'Import should preserve verified economics.');
     portal_test_expect(portal_closeout_merge_snapshot($closeoutMerged, $closeoutSnapshot) === $closeoutMerged, 'Import should be idempotent.');
     portal_test_expect(portal_closeout_merge_snapshot([], $closeoutSnapshot)['projects'][0]['viewers'] === [], 'New records must default to managers only.');
+    $economics = [
+        'contract_net' => 10000, 'payment_url' => $closeoutUrl,
+        'delivered_equipment_cost' => 3500, 'equipment_cost_url' => $closeoutUrl,
+        'actual_worker_days' => 2, 'actual_work_url' => $closeoutUrl,
+        'other_cost' => 0, 'other_cost_url' => $closeoutUrl,
+        'planned_worker_days' => 1, 'schedule_url' => $closeoutUrl,
+        'remaining_equipment_cost' => 200, 'remaining_other_cost' => 0, 'remaining_cost_url' => $closeoutUrl,
+    ];
+    $projection = portal_closeout_economics(portal_closeout_validate_economics($economics));
+    portal_test_expect($projection['labor'] === 4800.0 && $projection['margin'] === 1700.0, 'Fully loaded actual labor is incorrect.');
+    portal_test_expect($projection['forecast_margin'] === -900.0, 'Forecast must include remaining labor and equipment.');
+    unset($economics['equipment_cost_url']);
+    portal_test_expect(portal_closeout_economics($economics)['forecast_margin'] === null, 'Costs without evidence must not produce a loss.');
     $closeoutSnapshot['projects'][] = $closeoutProject;
     try {
         portal_closeout_merge_snapshot($closeoutCurrent, $closeoutSnapshot);
