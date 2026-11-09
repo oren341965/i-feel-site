@@ -13,6 +13,26 @@ function portal_equipment_statuses(): array
     ];
 }
 
+function portal_equipment_get(string $key, int $max = 4000): string
+{
+    $value = $_GET[$key] ?? '';
+    if (is_array($value)) {
+        return '';
+    }
+    $value = trim((string) $value);
+    $value = preg_replace('/[\\x00-\\x08\\x0B\\x0C\\x0E-\\x1F\\x7F]/u', '', $value) ?? '';
+    if (portal_strlen($value) > $max) {
+        $value = portal_substr($value, 0, $max);
+    }
+    return $value;
+}
+
+function portal_equipment_safe_url(string $value): string
+{
+    $value = trim($value);
+    return preg_match('~^https://~i', $value) && filter_var($value, FILTER_VALIDATE_URL) ? $value : '';
+}
+
 function portal_equipment_file(): string
 {
     return portal_storage_root() . DIRECTORY_SEPARATOR . 'equipment' . DIRECTORY_SEPARATOR . 'records.json';
@@ -26,7 +46,7 @@ function portal_equipment_records(): array
         return array_values(array_filter($records, 'is_array'));
     }
 
-    // Carry the already reviewed Kotsik summary into the employee portal.
+    // Carry the already documented Kotsik summary into the employee portal.
     // Unknown quantities, suppliers, costs and dates stay blank until verified.
     $records = [[
         'id' => 'kotsik-summary-2026-11-08',
@@ -102,8 +122,8 @@ function portal_equipment_handle_post(array $user): never
         'location' => portal_post('location', 160),
         'cost' => portal_post('cost', 80),
         'paymentStatus' => portal_post('paymentStatus', 100),
-        'quoteLink' => portal_post('quoteLink', 800),
-        'purchaseOrderLink' => portal_post('purchaseOrderLink', 800),
+        'quoteLink' => portal_equipment_safe_url(portal_post('quoteLink', 800)),
+        'purchaseOrderLink' => portal_equipment_safe_url(portal_post('purchaseOrderLink', 800)),
         'owner' => portal_post('owner', 120),
         'status' => $status,
         'nextTask' => portal_post('nextTask', 1200),
@@ -155,7 +175,7 @@ function portal_render_equipment(array $user, ?array $flash = null): void
     $admin = ($user['role'] ?? '') === 'admin';
     $statuses = portal_equipment_statuses();
     $filters = [
-        'q' => portal_get('q', 160),
+        'q' => portal_equipment_get('q', 160),
         'project' => portal_get('project', 160),
         'supplier' => portal_get('supplier', 120),
         'owner' => portal_get('owner', 120),
