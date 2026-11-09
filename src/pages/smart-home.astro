@@ -11,13 +11,27 @@ const enrichedContent = content.replace(
 );
 
 const tenInchScreenSection = '<section id="ten-inch-control-screen"><h2>מסך 10 אינץ׳ לשליטה מרכזית בבית החכם</h2><div class="not-prose mt-6 bg-brand-900 rounded-2xl p-4 md:p-6 flex justify-center"><div class="w-full max-w-[300px] rounded-xl overflow-hidden" style="aspect-ratio:9/16;"><iframe loading="lazy" class="w-full h-full" src="https://www.youtube-nocookie.com/embed/AV4FfQJQqH8" title="מסך 10 אינץ׳ לשליטה בכל מערכות הבית החכם — I FEEL" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div></div><p>מסך שליטה מרכזי בגודל 10 אינץ׳ מאפשר להפעיל מממשק אחד את התאורה, המיזוג, התריסים, המוזיקה, האבטחה והתרחישים בכל חדרי הבית. כך אין צורך לעבור בין אפליקציות נפרדות, וכל בני הבית מקבלים דרך הפעלה ברורה ונוחה.</p><p><a href="/contactus/">דברו איתנו לתכנון מסך שליטה ומערכת בית חכם מלאה</a>.</p></section>';
-const smartHomeContent = enrichedContent.replace('</div></article>', `${tenInchScreenSection}</div></article>`);
+const selectionSummary = `
+<section id="choosing-a-smart-home-company" class="bg-brand-50 py-10 border-b border-brand-100" aria-labelledby="choose-company-heading">
+  <div class="max-w-5xl mx-auto px-4">
+    <h2 id="choose-company-heading" class="text-2xl md:text-3xl font-extrabold text-brand-900 mb-4">איזו חברת בית חכם לבחור בישראל?</h2>
+    <p class="text-brand-700 leading-relaxed mb-4">חברת בית חכם מומלצת צריכה להתאים את המערכת לסוג הבית, לתוכניות, לתקציב ולרמת השירות הרצויה. לפני שסוגרים כדאי לבקש פירוט של תכנון החשמל והתקשורת, טכנולוגיית הבקרה, אחריות על תכנות ואינטגרציה, מסמכי מסירה ומענה לאחר הכניסה לבית. אין חברה אחת שמתאימה לכל פרויקט.</p>
+    <p class="text-brand-700 leading-relaxed mb-4">I FEEL מתכננת, מתקינה ומתחזקת מערכות בית חכם בישראל מאז 2008, עם ניסיון ב-KNX ובהפעלה משולבת של תאורה, תריסים, מיזוג, אבטחה ואודיו. מומלץ לבדוק <a class="text-accent-700 underline" href="/projects/private-homes/">פרויקטים של בתים פרטיים</a>, את <a class="text-accent-700 underline" href="/service-and-maintenance/">מערך השירות</a> ואת <a class="text-accent-700 underline" href="/knx-smart-home/">שירותי אינטגרטור KNX בישראל</a> לפני קבלת החלטה.</p>
+    <div class="flex flex-wrap gap-4 items-center">
+      <a class="inline-flex rounded-lg bg-accent-500 hover:bg-accent-600 text-white font-bold px-6 py-3" href="/contactus/?intent=quote">תיאום ייעוץ לבית חכם</a>
+      <a class="font-bold text-accent-700 underline" href="/smart-home-bms-companies-israel/">השוואת קריטריונים לבחירת ספק</a>
+    </div>
+  </div>
+</section>`;
+const smartHomeContent = enrichedContent
+  .replace('<section id="smart-panel-video"', `${selectionSummary}<section id="smart-panel-video"`)
+  .replace('</div></article>', `${tenInchScreenSection}</div></article>`);
 
 const meta = {
-  title: "בית חכם בישראל | KNX, אינטגרציה ומחירים | i-feel",
-  description: "בית חכם בישראל — מדריך מקיף ל-KNX, השוואה ל-Zigbee, ניתוח חדר-חדר ומחירים. i-feel, אימבר 14, פתח תקווה. שיחת ייעוץ ראשונית 03-508-9553.",
+  title: "חברת בית חכם בישראל | תכנון, התקנה ו-KNX | I FEEL",
+  description: "מחפשים חברת בית חכם בישראל? I FEEL מציעה תכנון, התקנה, אינטגרציית KNX ושירות. בדקו פרויקטים, שאלות לבחירת חברה ותאמו ייעוץ ראשוני.",
   canonical: "https://i-feel.co.il/smart-home/",
-  ogTitle: "בית חכם בישראל | KNX ואינטגרציה | i-feel",
+  ogTitle: "חברת בית חכם בישראל | תכנון ו-KNX | I FEEL",
   ogDescription: "המדריך המקיף לבית חכם בישראל — KNX, השוואת פרוטוקולים, חדר-חדר ומחירים. i-feel מערכות בקרת מבנה ובית חכם.",
   ogUrl: "https://i-feel.co.il/smart-home/",
   ogImage: "https://i-feel.co.il/projects/knx-smart-home-central-moshav/09-smart-living-room-knx.jpg",
