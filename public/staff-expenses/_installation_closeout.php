@@ -92,6 +92,12 @@ function portal_closeout_merge_snapshot(array $current, array $snapshot): array
         foreach (['monday', 'name', 'date', 'schedule', 'evidence', 'tasks', 'docs', 'equipment', 'checks'] as $field) {
             $existing[$field] = $project[$field];
         }
+        if (array_key_exists('economics', $project)) {
+            if (!is_array($project['economics'])) {
+                throw new InvalidArgumentException('נתוני כלכליות אינם תקינים.');
+            }
+            $existing['economics'] = portal_closeout_validate_economics($project['economics']);
+        }
         $existing['snapshot_date'] = $date;
         $current['projects'][$index] = $existing;
     }
@@ -203,6 +209,9 @@ function portal_render_closeout(array $user): void
             <p><strong>ביקור:</strong> <?= portal_h($project['schedule'] ?? 'טרם אומת') ?></p>
             <p><strong>מה ידוע:</strong> <?= portal_h($project['evidence'] ?? 'טרם אומת') ?></p>
             <p><strong>תמונת מצב:</strong> <?= portal_h($project['snapshot_date'] ?? 'מועד לא ידוע') ?></p>
+            <?php if (portal_closeout_is_manager($user)): ?>
+                <?php portal_render_closeout_economics($project['economics'] ?? []); ?>
+            <?php endif; ?>
             <h3>משימות ופעולות הבאות</h3>
             <ul class="closeout-rows">
                 <?php foreach ($project['tasks'] ?? [] as [$owner, $task, $status]): ?>
@@ -240,6 +249,107 @@ function portal_render_closeout(array $user): void
         </details>
     <?php endforeach; ?>
     <?php if ($selected !== '' && !array_key_exists($selected, $projects)): ?><p>הכרטיס המבוקש אינו זמין.</p><?php endif; ?>
+    <?php
+}
+
+const IFEEL_CLOSEOUT_WORKDAY_COST = 2400;
+
+function portal_closeout_validate_economics(array $data): array
+{
+    $clean = [];
+    foreach (['contract_reported', 'receipts_reported', 'balance_reported', 'contract_net',
+        'delivered_equipment_cost', 'actual_worker_days', 'remaining_equipment_cost',
+        'planned_worker_days', 'other_cost', 'remaining_other_cost'] as $field) {
+        if (isset($data[$field])) {
+            $value = portal_project_verified_cost($data[$field]);
+            if ($value === null) {
+                throw new InvalidArgumentException('סכום או ימי עבודה אינם תקינים.');
+            }
+            $clean[$field] = $value;
+        }
+    }
+
+    foreach (['payment_note', 'schedule_note'] as $field) {
+        if (isset($data[$field])) {
+            if (!is_string($data[$field]) || strlen($data[$field]) > 2000) {
+                throw new InvalidArgumentException('הערת כלכליות אינה תקינה.');
+            }
+            $clean[$field] = $data[$field];
+        }
+    }
+
+    foreach (['payment_url', 'schedule_url', 'equipment_cost_url', 'actual_work_url', 'remaining_cost_url', 'other_cost_url'] as $field) {
+        if (isset($data[$field])) {
+            if (!is_string($data[$field]) || !portal_closeout_url_is_allowed($data[$field])) {
+                throw new InvalidArgumentException('קישור כלכליות אינו תקין.');
+            }
+            $clean[$field] = $data[$field];
+        }
+    }
+
+    return $clean;
+}
+
+function portal_closeout_economics(array $data): array
+{
+    $verified = static fn(string $field, string $source): ?float =>
+        portal_closeout_url_is_allowed((string) ($data[$source] ?? ''))
+            ? portal_project_verified_cost($data[$field] ?? null)
+            : null;
+    $contract = $verified('contract_net', 'payment_url');
+    $equipment = $verified('delivered_equipment_cost', 'equipment_cost_url');
+    $days = $verified('actual_worker_days', 'actual_work_url');
+    $labor = $days === null ? null : $days * IFEEL_CLOSEOUT_WORKDAY_COST;
+    $actual = portal_project_cost_total([$equipment, $labor, $verified('other_cost', 'other_cost_url')]);
+    $remainingDays = $verified('planned_worker_days', 'schedule_url');
+    $plannedLabor = $remainingDays === null ? null : $remainingDays * IFEEL_CLOSEOUT_WORKDAY_COST;
+    $forecast = portal_project_cost_total([
+        $actual, $plannedLabor, $verified('remaining_equipment_cost', 'remaining_cost_url'),
+        $verified('remaining_other_cost', 'remaining_cost_url'),
+    ]);
+    return [
+        'equipment' => $equipment, 'days' => $days, 'labor' => $labor, 'actual' => $actual,
+        'planned_labor' => $plannedLabor,
+        'margin' => $contract !== null && $actual !== null ? round($contract - $actual, 2) : null,
+        'forecast_margin' => $contract !== null && $forecast !== null ? round($contract - $forecast, 2) : null,
+    ];
+}
+
+function portal_render_closeout_economics(array $data): void
+{
+    $result = portal_closeout_economics($data);
+    $money = static fn($n): string => $n === null ? 'חסר אימות' : number_format((float) $n, 2) . ' ₪';
+    ?>
+    <details>
+        <summary>כלכליות הפרויקט</summary>
+        <p>2,400 ₪ ליום עובד, כולל העמסות, עלויות היקפיות ורכב. שיבוץ מתוכנן מוצג בנפרד מביצוע.</p>
+        <ul class="closeout-rows">
+            <?php foreach ([
+                'סכום פרויקט לפי סיכום תשלום' => $data['contract_reported'] ?? null,
+                'תקבולים לפי הסיכום' => $data['receipts_reported'] ?? null,
+                'יתרה לפי הסיכום' => $data['balance_reported'] ?? null,
+                'הכנסה מאומתת לפני מע״מ' => $data['contract_net'] ?? null,
+                'עלות ציוד שסופק' => $result['equipment'],
+                'עלות ימי עבודה שבוצעו' => $result['labor'],
+                'עלות כוללת עד כה' => $result['actual'],
+                'עלות עבודה מתוכננת להשלמה' => $result['planned_labor'],
+                'יתרת הכנסה חוזית לאחר עלות עד כה' => $result['margin'],
+                'רווח או הפסד חזוי בסיום' => $result['forecast_margin'],
+            ] as $label => $amount): ?>
+                <li><strong><?= portal_h($label) ?></strong><span><?= portal_h($money($amount)) ?></span></li>
+            <?php endforeach; ?>
+        </ul>
+        <?php if ($result['days'] !== null): ?><p><?= portal_h((string) $result['days']) ?> ימי עובד מאומתים</p><?php endif; ?>
+        <?php if (!empty($data['payment_note'])): ?><p><?= portal_h($data['payment_note']) ?></p><?php endif; ?>
+        <?php if (!empty($data['schedule_note'])): ?><p><?= portal_h($data['schedule_note']) ?></p><?php endif; ?>
+        <?php foreach (['payment_url' => 'סיכום לתשלום', 'schedule_url' => 'שיבוץ בלו״ז',
+            'equipment_cost_url' => 'עלות ציוד מאומתת', 'actual_work_url' => 'דיווחי ביצוע',
+            'remaining_cost_url' => 'עלויות להשלמה', 'other_cost_url' => 'עלויות נוספות'] as $field => $label): ?>
+            <?php if (portal_closeout_url_is_allowed((string) ($data[$field] ?? ''))): ?>
+                <a class="closeout-link" href="<?= portal_h($data[$field]) ?>" target="_blank" rel="noopener noreferrer"><?= portal_h($label) ?></a>
+            <?php endif; ?>
+        <?php endforeach; ?>
+    </details>
     <?php
 }
 
