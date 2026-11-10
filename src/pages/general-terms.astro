@@ -1,21 +1,27 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 const meta = {
- title: 'תנאים כלליים | מערכת Z-Wave | I FEEL',
- description: 'תנאים כלליים להזמנת מערכת בית חכם Z-Wave של I FEEL, כולל תנאי תשלום, שינויים וביטול הזמנה.',
+ title: 'תנאים כלליים להזמנה | Z-Wave, KNX ומתח נמוך | I FEEL',
+ description: 'תנאים כלליים להזמנה לפי סוג המערכת: בית חכם אלחוטי Z-Wave, מערכת KNX, או מתח נמוך בלבד.',
  canonical: 'https://i-feel.co.il/general-terms/',
  ogTitle: 'תנאים כלליים | I FEEL',
- ogDescription: 'תנאים כלליים להזמנת מערכת Z-Wave, נוסח 2026.',
+ ogDescription: 'בחרו את סוג המערכת לצפייה בתנאים הכלליים הרלוונטיים.',
  ogUrl: 'https://i-feel.co.il/general-terms/',
 };
 ---
 <BaseLayout {...meta}>
  <main dir="rtl" class="mx-auto max-w-4xl px-4 py-12 text-brand-900">
-  <nav class="mb-6 text-sm"><a class="underline" href="/">דף הבית</a> / תנאים כלליים</nav>
-  <h1 class="text-4xl font-extrabold mb-3">תנאים כלליים</h1>
-  <p class="text-xl mb-5">מערכת בית חכם Z-Wave | נוסח 2026</p>
-  <p class="mb-8 rounded-xl bg-brand-50 p-4 leading-7">המידע להלן מרכז את הוראות התשלום, שינוי התוכניות וביטול ההזמנה מתוך טופס התנאים הכלליים למערכת Z-Wave משנת 2026. זהו דף מידע ולא תחליף לטופס ההזמנה המלא והחתום. במקרה של הבדל, יש לעיין בנוסח ההסכם שנמסר ונחתם עם הלקוח ובדין החל.</p>
-  <section class="mb-8" id="payment"><h2 class="text-2xl font-bold mb-3">תנאי תשלום</h2>
+ <nav class="mb-6 text-sm"><a href="/" class="underline">דף הבית</a> / תנאים כלליים</nav>
+ <h1 class="text-4xl font-extrabold mb-3">תנאים כלליים</h1>
+ <p class="text-lg mb-6">יש לבחור את סוג המערכת בהתאם להצעת המחיר שקיבלתם:</p>
+ <div class="grid gap-3 md:grid-cols-3 mb-8" aria-label="בחירת סוג מערכת">
+ <button type="button" data-terms-choice="zwave" aria-pressed="true" class="rounded-xl border-2 border-brand-900 px-4 py-4 font-bold bg-brand-900 text-white">מערכת אלחוטית Z-Wave</button>
+ <button type="button" data-terms-choice="knx" aria-pressed="false" class="rounded-xl border-2 border-brand-200 px-4 py-4 font-bold">מערכת KNX</button>
+ <button type="button" data-terms-choice="low-voltage" aria-pressed="false" class="rounded-xl border-2 border-brand-200 px-4 py-4 font-bold">מתח נמוך בלבד</button>
+ </div>
+ <p class="mb-7 bg-brand-50 rounded-xl p-4 leading-7">המידע בדף זה מבוסס על טופסי התנאים הכלליים לשנת 2026 והוא מוצג לצורך עיון. זהו נוסח אתר תמציתי ואינו מחליף את טופס ההזמנה המלא והחתום; בכל מקרה יש לפעול לפי ההסכם שנחתם והדין החל.</p>
+ <article data-terms-panel="zwave">
+ <h2 class="text-2xl font-extrabold mb-5">מערכת אלחוטית Z-Wave | 2026</h2>  <section class="mb-8" id="payment"><h2 class="text-2xl font-bold mb-3">תנאי תשלום</h2>
    <ul class="list-disc pr-6 space-y-2"><li>30% מסך ההזמנה בעת החתימה.</li><li>60% מסך ההזמנה לפני הכנת הציוד עבור אספקה.</li><li>10% בעת סיום התקנה ותכנות הציוד.</li></ul>
    <p class="mt-3">החיוב לפי כמות הציוד בפועל. מחיר הכבילה אינו כלול אלא אם צוין אחרת.</p></section>
   <section class="mb-8" id="planning"><h2 class="text-2xl font-bold mb-3">תכנון ותיקונים</h2>
@@ -38,6 +44,63 @@ const meta = {
    <li>אחריות לציוד בהתאם לאחריות היצרן, לפי ההגדרות בטופס.</li>
   </ul></section>
   <p class="rounded-xl border border-brand-100 p-4 text-sm leading-7">לתנאי האחריות הטכניים, דרישות הכנת האתר, בטיחות החשמל, שירותי ענן וחתימות יש לעיין בטופס התנאים הכלליים המלא שנמסר במסגרת ההזמנה.</p>
-  <a href="/contactus/" class="mt-6 inline-block underline font-bold">לפנייה לחברה לקבלת הטופס המלא</a>
+
+ </article>
+ <article data-terms-panel="knx" hidden>
+ <h2 class="text-2xl font-extrabold mb-5">מערכת KNX | 2026</h2>
+ <div id="knx-cancellation"><section class="mb-6 border-b border-brand-100 pb-5"><h3 class="text-lg font-bold mb-2">תנאי תשלום</h3><p class="leading-8">30% בעת החתימה; 60% בעת אספקת הציוד המתוכנת לחשמלאי; 10% בעת מסירת מערכת מתוכנתת ואישור הלקוח. החיוב לפי כמות הציוד בפועל. מחיר הכבילה כלול אלא אם נכתב אחרת.</p></section>
+<section class="mb-6 border-b border-brand-100 pb-5"><h3 class="text-lg font-bold mb-2">תוקף הצעה</h3><p class="leading-8">20 יום.</p></section>
+<section class="mb-6 border-b border-brand-100 pb-5"><h3 class="text-lg font-bold mb-2">ביטול הזמנה</h3><p class="leading-8">אם הלקוח מבטל או מוריד מעל 30% מהציוד לאחר תחילת העבודה, I FEEL זכאית לתשלום לפי שעות העבודה שבוצעו בפועל בתעריף 450 ₪ לשעה, לא כולל מע״מ. החזר, ככל שמגיע, בהמחאה לפי שוטף + 30.</p></section>
+<section class="mb-6 border-b border-brand-100 pb-5"><h3 class="text-lg font-bold mb-2">תוכניות ותיקונים</h3><p class="leading-8">עלות התוכניות בביטול או בהפחתה משמעותית של הציוד לא תפחת מ־3,900 ₪ לפני מע״מ, ללא קשר לפיקוח. שני סבבי תיקונים כלולים, וכל סבב נוסף יחויב ב־300 ₪ לפני מע״מ.</p></section>
+<section class="mb-6 border-b border-brand-100 pb-5"><h3 class="text-lg font-bold mb-2">תנאי תשלום נוספים</h3><p class="leading-8">שיק בהוצאת חשבונית לפי שוטף + 45, כאמור בטופס.</p></section>
+<section class="mb-6 border-b border-brand-100 pb-5"><h3 class="text-lg font-bold mb-2">עבודות שאינן כלולות</h3><p class="leading-8">עבודות גבס, עבודת חשמלאי, העברת כבילה בצנרת ואספקת לוחות חשמל אינן כלולות בהצעה.</p></section>
+<section class="mb-6 border-b border-brand-100 pb-5"><h3 class="text-lg font-bold mb-2">פריטים נוספים</h3><p class="leading-8">פריטים נוספים יוזמנו לפי המחיר בהזמנה וישולמו בנפרד בהתאם לתנאי הטופס.</p></section>
+<section class="mb-6 border-b border-brand-100 pb-5"><h3 class="text-lg font-bold mb-2">ביצוע ומסירה</h3><p class="leading-8">העבודה תבוצע לפי תוכניות ביצוע ולוח מאושרות. סיום התקנה הוא הגדרת כל היחידות לפעולה; לאחר התשלום יתואמו הדרכה והגדרת תרחישים.</p></section>
+<section class="mb-6 border-b border-brand-100 pb-5"><h3 class="text-lg font-bold mb-2">בעלות ומועדים</h3><p class="leading-8">הציוד נשאר בבעלות I FEEL עד להשלמת כל התשלומים. המועדים המשוערים תלויים במוכנות המבנה ובשיתוף הפעולה של הלקוח, וניתנים להארכה עקב נסיבות שאינן בשליטת החברה.</p></section>
+<section class="mb-6 border-b border-brand-100 pb-5"><h3 class="text-lg font-bold mb-2">חשבוניות</h3><p class="leading-8">חתימה על התנאים מהווה הסכמה לקבלת חשבוניות מס וקבלות בדואר אלקטרוני.</p></section>
+<section class="mb-6 border-b border-brand-100 pb-5"><h3 class="text-lg font-bold mb-2">אחריות</h3><p class="leading-8">לפי אחריות היצרן: חשמל חכם 3 שנים, אזעקה/מצלמות/רשת/אינטרקום 15 חודשים, מערכות אודיו 24 חודשים. אחריות על בקרי KNX בלוח מותנית בבדיקת תקינות התקנתם על ידי I FEEL.</p></section>
+<section class="mb-6 border-b border-brand-100 pb-5"><h3 class="text-lg font-bold mb-2">שירות, ענן וקבצים</h3><p class="leading-8">שירות בתום תקופת האחריות לפי הסכם שירות או קריאת שירות בתשלום. הטופס מציין אפשרות לרישיון אפליקציית ענן בתשלום שנתי, ושירות ענן של I FEEL ללא תשלום לשלוש שנים עם הודעה שלושה חודשים מראש על שינוי. קבצי לקוח נמסרים לאחר התשלום האחרון.</p></section>
+<section class="mb-6 border-b border-brand-100 pb-5"><h3 class="text-lg font-bold mb-2">הכנות לביקור טכנאי</h3><p class="leading-8">הלקוח יוודא מוכנות חשמל ואינטרנט, הכנות לפי הנחיות הפרויקט ונוכחות בעלי מקצוע רלוונטיים. אי מוכנות עלולה לגרור ביקור נוסף בתשלום לפי שעות עבודה בפועל.</p></section></div>
+ </article>
+ <article data-terms-panel="low-voltage" hidden>
+ <h2 class="text-2xl font-extrabold mb-5">מתח נמוך בלבד | 2026</h2>
+ <section class="mb-6 border-b border-brand-100 pb-5"><h3 class="text-lg font-bold mb-2">תנאי תשלום</h3><p class="leading-8">15% בעת החתימה, 15% עם אספקת הכבילה, 60% ביום אספקת הציוד לבית הלקוח, 10% בסיום תכנות המפסקים. התשלומים בהעברה בנקאית, לפי כמות הציוד בפועל.</p></section>
+<section class="mb-6 border-b border-brand-100 pb-5"><h3 class="text-lg font-bold mb-2">אספקה ומסירה</h3><p class="leading-8">ציוד שסופק או אוחסן במחסני I FEEL לבקשת הלקוח או בשל אי מוכנות האתר יחויב במועד האספקה המתוכנן. סיום תכנות ייחשב כמושלם לאחר 21 יום מהפעלת המערכת ומסירתה לשימוש, גם אם פעולות התלויות בלקוח או בקבלניו טרם הושלמו.</p></section>
+<section class="mb-6 border-b border-brand-100 pb-5"><h3 class="text-lg font-bold mb-2">תוקף הצעה</h3><p class="leading-8">60 יום.</p></section>
+<section class="mb-6 border-b border-brand-100 pb-5"><h3 class="text-lg font-bold mb-2">הכנות הלקוח</h3><p class="leading-8">ההכנות יבוצעו לפי הנחיות מנהל הפרויקט ותוכניות מאושרות. יש לדאוג לחשמל ולאינטרנט פעילים ולנוכחות בעלי מקצוע נחוצים. אי מוכנות עשויה לחייב ביקור נוסף לפי שעות עבודה בפועל.</p></section>
+<section class="mb-6 border-b border-brand-100 pb-5"><h3 class="text-lg font-bold mb-2">ביטול או הפחתת הזמנה</h3><p class="leading-8">אם הלקוח מבטל או מפחית מעל 25% מהציוד לאחר תחילת העבודה, I FEEL זכאית לתשלום בעד שעות עבודה בפועל, לרבות תכנון, רכש, תיאום ותכנות, לפי 450 ₪ לשעת מהנדס מערכות לפני מע״מ. החזר, ככל שמגיע, בהמחאה בתנאי שוטף + 30.</p></section>
+<section class="mb-6 border-b border-brand-100 pb-5"><h3 class="text-lg font-bold mb-2">עבודות שאינן כלולות</h3><p class="leading-8">עבודות גבס, חיבורי מפסקים, עבודת חשמלאי, העברת כבילה בצנרת ואספקת לוחות חשמל אינן כלולות.</p></section>
+<section class="mb-6 border-b border-brand-100 pb-5"><h3 class="text-lg font-bold mb-2">תוספות ציוד</h3><p class="leading-8">פריטים מחוץ להזמנה משולמים בעת האספקה. פריטים בהזמנה מיוחדת משולמים במלואם בעת אישור ההצעה הנוספת ואינם ניתנים לביטול, בכפוף לדין.</p></section>
+<section class="mb-6 border-b border-brand-100 pb-5"><h3 class="text-lg font-bold mb-2">סיום התקנה</h3><p class="leading-8">סיום התקנה הוא הגדרת כלל היחידות לפעולה. לאחר ההתקנה והתשלום יתואמו הדרכה והגדרת תרחישים.</p></section>
+<section class="mb-6 border-b border-brand-100 pb-5"><h3 class="text-lg font-bold mb-2">בעלות ומועדים</h3><p class="leading-8">הציוד נשאר בבעלות I FEEL עד לביצוע מלוא התשלומים. המועדים המשוערים תלויים במוכנות האתר ובנסיבות שאינן בשליטת החברה.</p></section>
+<section class="mb-6 border-b border-brand-100 pb-5"><h3 class="text-lg font-bold mb-2">אחריות</h3><p class="leading-8">לפי אחריות היצרן: מערכות אזעקה, מצלמות, רשת ואינטרקום 15 חודשים; מערכות אודיו 15 חודשים. שירות נוסף לאחר סיום התקופה לפי הסכם שירות או קריאת שירות בתשלום.</p></section>
+<section class="mb-6 border-b border-brand-100 pb-5"><h3 class="text-lg font-bold mb-2">שירותי ענן ותקשורת</h3><p class="leading-8">מוצרים מסוימים, כגון מערכות אזעקה, דורשים תשלום עבור שירותי ענן לספק חיצוני. גישה מרחוק עשויה לדרוש כתובת IP קבועה בתשלום לספק האינטרנט. יש להודיע למחלקת השירות לפני החלפת ספק אינטרנט.</p></section>
+<section class="mb-6 border-b border-brand-100 pb-5"><h3 class="text-lg font-bold mb-2">אישורים</h3><p class="leading-8">הטופס כולל מקום לחתימת הלקוח, תאריך ותעודת זהות או ח.פ., וכן הסכמה לקבלת מסמכי מס בדואר אלקטרוני.</p></section>
+ </article>
+ <a href="/contactus/" class="inline-block mt-6 underline font-bold">פנייה לקבלת טופס התנאים המלא</a>
  </main>
+ <script is:inline>
+ (function () {
+   const buttons = Array.from(document.querySelectorAll('[data-terms-choice]'));
+   const panels = Array.from(document.querySelectorAll('[data-terms-panel]'));
+   function show(name) {
+      panels.forEach(p => { p.hidden = p.dataset.termsPanel !== name; });
+      buttons.forEach(b => {
+         const active = b.dataset.termsChoice === name;
+         b.setAttribute('aria-pressed', active ? 'true' : 'false');
+         b.classList.toggle('bg-brand-900',active);
+         b.classList.toggle('text-white',active);
+         b.classList.toggle('border-brand-900',active);
+         b.classList.toggle('border-brand-200',!active);
+      });
+   }
+   buttons.forEach(b => b.addEventListener('click', () => {
+      const name = b.dataset.termsChoice;
+      show(name);
+      history.replaceState(null,'', name === 'zwave' ? '#cancellation' : '#'+name);
+   }));
+   const hash=location.hash.replace('#','');
+   show(hash === 'knx' || hash === 'low-voltage' ? hash : 'zwave');
+ })();
+ </script>
 </BaseLayout>
