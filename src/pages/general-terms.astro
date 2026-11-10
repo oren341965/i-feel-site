@@ -2,6 +2,8 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 
 const url = 'https://i-feel.co.il/general-terms/';
+// Set to the active DocuSign PowerForm URL after verifying the signed document and required fields.
+const signingUrl = '';
 const title = 'תנאים כלליים להתקנת מערכות | i-feel';
 const description = 'תנאים כלליים להזמנת מערכות בית חכם ומתח נמוך, תשלום, התקנה, אחריות ושירותי ענן של I FEEL.';
 ---
@@ -50,6 +52,18 @@ const description = 'תנאים כלליים להזמנת מערכות בית ח
       <li>גישה מרחוק יכולה להתבצע באמצעות שירותי ענן או כתובת IP קבועה הכרוכה בתשלום לספק האינטרנט. תמיכה במערכות התקשורת יכולה להינתן בידי I FEEL או גורם מטעם הלקוח.</li>
       <li>קובצי הפרויקט נשמרים בשרתי I FEEL וניתן למסור אותם ללקוח לאחר התשלום האחרון.</li>
     </ul>
+
+    <section id="digital-signature" aria-labelledby="digital-signature-heading" class="mt-8 rounded-lg border border-brand-100 bg-brand-50 p-5">
+      <h2 id="digital-signature-heading" class="text-2xl font-extrabold text-brand-900">חתימה דיגיטלית על התנאים</h2>
+      {signingUrl ? (
+        <>
+          <p>בטופס החתימה בחרו אם אתם חותמים כאדם פרטי או בשם חברה. הזינו מספר תעודת זהות לחתימה פרטית או מספר ח״פ לחתימה בשם חברה. את מספר הזיהוי מזינים בטופס של DocuSign.</p>
+          <a href={signingUrl} rel="noreferrer" class="inline-block rounded-lg bg-brand-900 px-4 py-2 font-semibold text-white hover:bg-brand-800">מעבר לחתימה ב־DocuSign</a>
+        </>
+      ) : (
+        <p>לקבלת קישור לחתימה על התנאים, <a href="/contactus/" class="text-accent-600 hover:underline">פנו אלינו</a>.</p>
+      )}
+    </section>
 
     <p>לשאלות על תנאי ההזמנה או על שירותי הענן, פנו אל <a href="mailto:support@i-feel.co.il" class="text-accent-600 hover:underline">מחלקת השירות</a>.</p>
   </article>
