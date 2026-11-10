@@ -1,0 +1,86 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+const canonical = 'https://i-feel.co.il/wireless-switch-catalog-2027/';
+---
+<BaseLayout
+  title="קטלוג מפסקים אלחוטיים 2027 | TOUCHWAND | i-feel"
+  description="קטלוג קונספטים למפסקים חכמים אלחוטיים להתקנה בקופסאות 3 ו-4 מודולים. הרשמת עניין, בחירת גימורים ודימרים."
+  canonical={canonical}
+  ogTitle="קטלוג מפסקים אלחוטיים 2027 | i-feel"
+  ogDescription="בחרו גימור, מספר מודולים ופעולות במפסקים חכמים אלחוטיים. הרשמה מוקדמת."
+  robots="noindex,follow"
+>
+  <main class="switch-catalog" dir="rtl">
+    <section class="intro">
+      <p class="eyebrow">TOUCHWAND × I FEEL • קולקציית 2027</p>
+      <h1>קטלוג מפסקים אלחוטיים 2027</h1>
+      <p class="lead">קולקציית מפסקים חכמים מודולריים עם לחצנים פיזיים, אפשרויות התאמה אישית, צבעים וגימורים שונים.</p>
+      <p class="notice">הקטלוג המצורף נמצא בשלב תכנון והדמיות קונספט. התמונות להמחשה בלבד; התאמה חשמלית, אישורים, זמינות ונתונים סופיים יאומתו לפני מכירה.</p>
+    </section>
+    <section aria-labelledby="types">
+      <h2 id="types">מה ניתן לבחור?</h2>
+      <div class="features">
+        <article><h3>חזית ולחצנים</h3><p>לחצנים בגובה מלא או חצי גובה, כולל שילובים באותה מסגרת, אייקונים וכיתוב בהתאמה אישית.</p></article>
+        <article><h3>קופסאות התקנה</h3><p>תצורות לקופסאות 3 ו-4 מודולים (תקן איטלקי/גביס), עם עדיפות לקופסאות עמוקות. נדרשת בדיקת התאמה בשטח.</p></article>
+        <article><h3>גימורים</h3><p>פלסטיק במגוון צבעים לצד גימורי ברונזה ומתכת. גימורי ברונזה ומתכת צפויים להיות יקרים משמעותית מלחצני הפלסטיק.</p></article>
+        <article><h3>פעולות</h3><p>תאורה, תריסים, תרחישים, ובכפוף לדגם המתאים גם עמעום תאורה (דימר). בקשת דימר חייבת להופיע במפורש בטופס.</p></article>
+      </div>
+    </section>
+    <section class="technical" aria-labelledby="technical-heading">
+      <h2 id="technical-heading">תשתית והתקנה</h2>
+      <p>מדובר במפסקים עם תקשורת אלחוטית, אך הם <strong>מוזנים מרשת החשמל ואינם מפסקים הפועלים מסוללה</strong>. לפי אפיון הקולקציה נדרש <strong>קו אפס (N)</strong> וקופסת 3 או 4 מודולים, ועדיף קופסה עמוקה. התאימות לפרוטוקול תקשורת מסוים, סוג העומס והמפרט המחייב יאושרו לדגם הסופי.</p>
+      <p>התקנה וחיבור לרשת החשמל יבוצעו בידי חשמלאי מוסמך בלבד.</p>
+    </section>
+    <section class="terms" aria-labelledby="preorder">
+      <h2 id="preorder">הרשמה מוקדמת ותמחור</h2>
+      <p>ניתן כעת להביע עניין בהזמנה ולהירשם. <strong>דמי רצינות ראשוניים מתוכננים: 100 ₪</strong>. התמחור הסופי למפסקים צפוי להתפרסם <strong>עד דצמבר 2026</strong>.</p>
+      <p><strong>בעת מעבר להזמנה מחייבת יידרשו דמי רצינות בסך 1,000 ₪</strong>, בהתאם לתנאים שיימסרו לפני התשלום. טרם הובהר האם 100 ₪ הראשונים נכללים בסכום זה; עד לפרסום התנאים אין גבייה אוטומטית באתר.</p>
+    </section>
+    <section class="registration" aria-labelledby="register">
+      <h2 id="register">טופס רישום והתעניינות</h2>
+      <p>מילוי הטופס מכין בקשת רישום בדואר האלקטרוני שלכם; הוא אינו מהווה הזמנה או תשלום.</p>
+      <form id="wireless-interest" class="registration-form">
+        <label>שם מלא <input name="fullName" autocomplete="name" required /></label>
+        <label>טלפון <input name="phone" type="tel" autocomplete="tel" required /></label>
+        <label>דואר אלקטרוני <input name="email" type="email" autocomplete="email" required /></label>
+        <label>כמות משוערת <input name="quantity" type="number" min="1" required /></label>
+        <label>סוג קופסה <select name="box"><option>3 מודולים</option><option>4 מודולים</option><option>שניהם / עדיין לא ידוע</option></select></label>
+        <label>גימור מבוקש <select name="finish"><option>פלסטיק</option><option>ברונזה</option><option>מתכת</option><option>טרם החלטתי</option></select></label>
+        <label>האם דרושים דימרים? <select name="dimmer" required><option value="">יש לבחור</option><option>כן, אני מבקש דימרים</option><option>לא, ללא דימרים</option><option>נדרש ייעוץ</option></select></label>
+        <label class="full">בקשות נוספות, צבעים, חריטה ואייקונים <textarea name="notes" rows="4"></textarea></label>
+        <label class="consent full"><input type="checkbox" required /> ידוע לי שההרשמה הראשונית אינה הזמנה מחייבת; דמי רצינות ראשוניים מתוכננים בסך 100 ₪, ובעת ביצוע הזמנה מחייבת יידרש תשלום בסך 1,000 ₪ לפי תנאים שיוצגו מראש. מחירי המפסקים הסופיים טרם נקבעו.</label>
+        <label class="consent full"><input type="checkbox" required /> אני מסכים/ה שפרטי הקשר ישמשו למענה לפנייתי.</label>
+        <button type="submit">הכנת בקשת הרשמה במייל</button>
+      </form>
+      <p id="form-info" role="status" aria-live="polite"></p>
+      <p>לפרטים: <a href="mailto:sales@i-feel.co.il">sales@i-feel.co.il</a> | <a href="tel:035089553">03-508-9553</a></p>
+    </section>
+  </main>
+</BaseLayout>
+<script>
+  document.getElementById('wireless-interest')?.addEventListener('submit', (event) => {
+    event.preventDefault();
+    const form = event.currentTarget;
+    if (!(form instanceof HTMLFormElement) || !form.reportValidity()) return;
+    const d = new FormData(form);
+    const fields = ['fullName','phone','email','quantity','box','finish','dimmer','notes'];
+    const labels = ['שם','טלפון','מייל','כמות','קופסה','גימור','דימרים','הערות'];
+    const message = fields.map((key,i) => labels[i] + ': ' + String(d.get(key) ?? '')).join('\n');
+    const subject = encodeURIComponent('הרשמה מוקדמת – קטלוג מפסקים אלחוטיים 2027');
+    window.location.href = 'mailto:sales@i-feel.co.il?subject=' + subject + '&body=' + encodeURIComponent(message + '\n\nמאשר/ת שקראתי את תנאי ההרשמה והעברת פרטי הקשר.');
+    const status = document.getElementById('form-info');
+    if (status) status.textContent = 'נפתחה טיוטת מייל. יש לשלוח אותה כדי להעביר את ההרשמה ל-i-feel. לא נגבה תשלום.';
+  });
+</script>
+<style>
+  .switch-catalog{max-width:1060px;margin:0 auto;padding:48px 20px 80px;color:#1d2939;font-family:Arial,sans-serif;line-height:1.75}
+  .switch-catalog section{margin-bottom:44px}.intro{background:#f5f7fa;border-radius:22px;padding:42px 32px}
+  .eyebrow{letter-spacing:.07em;color:#526982;font-weight:700}.switch-catalog h1{font-size:clamp(2rem,5vw,3.2rem);line-height:1.2;margin:12px 0 20px}
+  .switch-catalog h2{font-size:1.7rem;margin-bottom:20px}.lead{font-size:1.2rem}.notice{border-right:4px solid #c18b51;padding:10px 16px;background:white}
+  .features{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}.features article,.technical,.terms,.registration{padding:25px;border:1px solid #dce1e7;border-radius:18px}
+  .features h3{margin-top:0}.registration-form{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+  .registration-form label{display:flex;flex-direction:column;font-weight:600;gap:7px}.registration-form input:not([type=checkbox]),.registration-form select,.registration-form textarea{width:100%;min-height:46px;padding:10px;border:1px solid #94a3b8;border-radius:8px;background:#fff;color:#17202f}
+  .registration-form .full{grid-column:1/-1}.registration-form .consent{display:flex;flex-direction:row;gap:10px;align-items:flex-start;font-weight:400}
+  .registration-form button{border:0;background:#164573;color:#fff;padding:14px 24px;border-radius:9px;font:inherit;font-weight:700;cursor:pointer}
+  .switch-catalog a{text-decoration:underline} @media(max-width:640px){.features,.registration-form{grid-template-columns:1fr}.intro{padding:25px 18px}}
+</style>
