@@ -42,13 +42,9 @@ the server's private portal storage before activation. Authenticated Oren can us
 verification. This does not edit `public/api/config.php`. The web app GET
 returns service/version metadata only. Direct public HTML-to-Sheet writes are
 disabled; only authenticated portal POSTs with the shared secret may deliver.
-Before Google connection activation, the server mail path continues operating
-with direct short-video attachments and new expiring accessible links. It reports
-Drive as not configured and Hebrew free-text translation as pending, rather than
-claiming full gateway completion. This lets the approved website deploy the
-Oren-only setup screen without interrupting the existing sender. Once the connection
-passes the health check and is saved, future reports use the complete Drive,
-translation and same-message Cc gateway flow. Existing records are not replayed.
+Before Google connection activation, preserve server capture and internal notices but hold manufacturer delivery. A report without a nonempty description or any evidence is also held. Return `deliveryBlockers` to both fresh and duplicate API submissions and show the technician exactly what is missing. Never fall back to untranslated server manufacturer email. The authenticated technician, Arik and Oren receive the internal notice. Historical records are not replayed.
+
+Manufacturer reminders must re-include their verified evidence and explain what each file demonstrates. The separately hosted MCOHome Fault Watch prompt controls reminders; a repository change alone does not update that automation. Its prompt was updated on 27 October 2026 to gate incomplete follow-ups and preserve factual per-file explanations. No reminder was sent as part of this repair.
 
 The inline server-to-Apps-Script transfer is bounded to **30 MiB total per report**;
 larger old/offline reports remain on the private server and require manual handling.
