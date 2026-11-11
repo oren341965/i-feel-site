@@ -130,6 +130,23 @@
     'כניסות': ['כניסה'],
     'אקטואטור': ['בקר'],
     'actuator': ['בקר'],
+    'מפסק': ['מפסקי', 'מפסקים', 'מתג', 'מתגים', 'לחצן', 'לחצנים'],
+    'מפסקי': ['מפסק', 'מפסקים', 'מתג', 'מתגים'],
+    'מפסקים': ['מפסק', 'מפסקי', 'מתג', 'מתגים'],
+    'מתג': ['מפסק', 'מפסקים', 'מתגים'],
+    'מתגים': ['מפסק', 'מפסקי', 'מפסקים'],
+    'מערכת': ['מערכות'],
+    'מערכות': ['מערכת'],
+    'אודיו': ['שמע', 'סאונד', 'audio'],
+    'שמע': ['אודיו', 'סאונד', 'audio'],
+    'סאונד': ['אודיו', 'שמע', 'audio'],
+    'audio': ['אודיו', 'שמע'],
+    'רמקול': ['רמקולים', 'רמקולי', 'speakers'],
+    'רמקולים': ['רמקול', 'רמקולי', 'speakers'],
+    'רמקולי': ['רמקול', 'רמקולים', 'speakers'],
+    'speakers': ['רמקול', 'רמקולים'],
+    'קולנוע': ['הום תיאטר', 'home theater'],
+    'knx': ['קנקס'],
   };
 
   const getTermVariants = (term: string) => {
@@ -152,10 +169,14 @@
     url === '/siemens-knx-products/' ||
     url === '/equipment/' ||
     url.startsWith('/equipment/') ||
-    url.startsWith('/articles/siemens-');
+    url.startsWith('/articles/siemens-') ||
+    url.startsWith('/av/') ||
+    url === '/knx-switch-advisor/' ||
+    url === '/knx-switch-configurator/';
 
   const isProductHubUrl = (url: string) =>
-    url === '/siemens-knx-products/' || url === '/equipment/';
+    url === '/siemens-knx-products/' || url === '/equipment/' ||
+    url === '/audio-and-sound-systems/' || url === '/knx-switch-advisor/';
 
   const containsTerm = (text: string, term: string) => {
     if (/^\d+$/.test(term)) {
@@ -255,8 +276,12 @@
     const requiredMatches = termGroups.length <= 4 ? termGroups.length : Math.ceil(termGroups.length * 0.7);
     if (matchedTerms < requiredMatches) return 0;
 
-    if (isProductUrl(record.url)) score += 75;
-    if (isProductHubUrl(record.url)) score += 15;
+    const asksAudio = /(?:אודיו|שמע|סאונד|רמקול|קולנוע|audio|speaker)/.test(normalizedQuery);
+    const asksSwitches = /(?:מפסק|מתג|לחצנ|knx|קנקס)/.test(normalizedQuery);
+    if (asksAudio && (record.url.startsWith('/av/') || record.url === '/audio-and-sound-systems/')) score += 100;
+    if (asksSwitches && (record.url === '/knx-switch-advisor/' || record.url === '/knx-switch-configurator/' || record.url.includes('knx-switch'))) score += 100;
+    if (isProductUrl(record.url) && (asksAudio || asksSwitches || /(?:מוצר|מק ט|בקר|סימנס|siemens|ציוד)/.test(normalizedQuery))) score += 25;
+    if (isProductHubUrl(record.url) && (asksAudio || asksSwitches)) score += 20;
     return score + matchedTerms * 5;
   };
 
