@@ -37,7 +37,7 @@ $cart = cp_cart_summary($user);
 <html lang="he" dir="rtl">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<meta http-equiv="origin-trial" content="Ah+4b0aP/hQJnF215qC+sRdcwmNp2ZlkRLld2YTDlnzGITuBdYEDsqlw9POmquiVw2rKMD52HObo3GUk+o6BcgMAAABMeyJvcmlnaW4iOiJodHRwczovL2ktZmVlbC5jby5pbDo0NDMiLCJmZWF0dXJlIjoiV2ViTUNQIiwiZXhwaXJ5IjoxNzk0ODczNjAwfQ==">
+<meta http-equiv="origin-trial" content="AkThvl+ML3qF6DmSXw82oxoaKuSv4p0UZKyqHj5HO8OIjvZwCQuzqtrgDskRHmWkkSis9GWSS4u4n+wpNCv+jw4AAABMeyJvcmlnaW4iOiJodHRwczovL2ktZmVlbC5jby5pbDo0NDMiLCJmZWF0dXJlIjoiV2ViTUNQIiwiZXhwaXJ5IjoxODA2MzY0ODAwfQ==">
 <title>חנות לקוחות I Feel</title><meta name="robots" content="noindex,nofollow">
 <style>
 body{margin:0;font-family:Arial,sans-serif;background:#f4f7fb;color:#102038}.wrap{max-width:1180px;margin:auto;padding:24px}.top{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px}.card{background:#fff;border:1px solid #dfe7f0;border-radius:16px;padding:18px}.price{font-size:24px;font-weight:800}.old{text-decoration:line-through;color:#718096}.pill{display:inline-block;padding:6px 10px;border-radius:999px;background:#edf6ff;color:#145a94;font-weight:700}.ok{background:#ecfdf3;padding:12px;border-radius:10px}.err{background:#fff1f2;padding:12px;border-radius:10px}button{padding:10px 14px;border:0;border-radius:9px;background:#124d85;color:white;font-weight:700}input{width:70px;padding:8px}.cart{margin-top:24px}.muted{color:#62748a}a{color:#124d85}
