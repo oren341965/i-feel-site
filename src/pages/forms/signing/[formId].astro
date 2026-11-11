@@ -1,0 +1,7 @@
+---
+import forms from '../../../data/form-signing.json';
+import FormSigning from '../../../components/FormSigning.astro';
+export function getStaticPaths() { return Object.keys(forms).map(formId=>({params:{formId}})); }
+const {formId}=Astro.params;
+---
+<!doctype html><html lang="he" dir="rtl"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><meta name="robots" content="noindex, nofollow"/><title>חתימה וקבלת העתק | i-feel</title><meta name="description" content="זמינות חתימה וקבלת העתק למסמך הנבחר"/><style>body{margin:0;font-family:Arial,sans-serif;background:transparent}aside.signing-panel{margin:0;box-sizing:border-box}</style></head><body><FormSigning formId={formId}/></body></html>

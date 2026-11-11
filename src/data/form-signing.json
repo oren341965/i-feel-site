@@ -1,0 +1,50 @@
+{
+  "service": {
+    "title": "הסכם שירות ותחזוקה 2026",
+    "path": "/service-agreement-2026/",
+    "copyEmail": "support@i-feel.co.il",
+    "templateId": "8c5cd209-12b9-45c8-88c1-5a9bf8a677ce",
+    "powerFormUrl": "",
+    "completionDeliveryVerified": false
+  },
+  "service-private": {
+    "title": "הסכם שירות פרטי נוסף",
+    "path": "/service-agreement-private/",
+    "copyEmail": "support@i-feel.co.il",
+    "templateId": "",
+    "powerFormUrl": "",
+    "completionDeliveryVerified": false
+  },
+  "knx": {
+    "title": "תנאים כלליים למערכת KNX",
+    "path": "/general-terms-docs/knx/",
+    "copyEmail": "admin@i-feel.co.il",
+    "templateId": "6dc0adb8-c288-4eb2-9c6f-ae4c5275c566",
+    "powerFormUrl": "",
+    "completionDeliveryVerified": false
+  },
+  "zwave": {
+    "title": "תנאים כלליים למערכת Z-Wave",
+    "path": "/general-terms-docs/zwave/",
+    "copyEmail": "admin@i-feel.co.il",
+    "templateId": "78fdeec6-1cb1-4a5e-8e02-e9262fd17860",
+    "powerFormUrl": "",
+    "completionDeliveryVerified": false
+  },
+  "low-voltage": {
+    "title": "תנאים כלליים למערכות מתח נמוך",
+    "path": "/general-terms-docs/low-voltage/",
+    "copyEmail": "admin@i-feel.co.il",
+    "templateId": "f0d78907-58b9-452a-a83c-41cbe5edad11",
+    "powerFormUrl": "",
+    "completionDeliveryVerified": false
+  },
+  "risco": {
+    "title": "הסכם ריסקו לענן ותמיכה מרחוק",
+    "path": "/risco-service-agreement/",
+    "copyEmail": "admin@i-feel.co.il",
+    "templateId": "",
+    "powerFormUrl": "",
+    "completionDeliveryVerified": false
+  }
+}

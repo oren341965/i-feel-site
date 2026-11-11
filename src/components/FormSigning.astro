@@ -1,0 +1,17 @@
+---
+import forms from '../data/form-signing.json';
+import { getSigningUrl } from '../utils/form-signing.mjs';
+const { formId } = Astro.props;
+const config = forms[formId as keyof typeof forms];
+if (!config) throw new Error(`Unknown form: ${formId}`);
+const url = getSigningUrl(config);
+---
+<aside class="signing-panel" dir="rtl" aria-label="חתימה וקבלת העתק">
+ <div><span class="signing-kicker">חתימה וקבלת העתק</span><h2>אישור המסמך בחתימה</h2>
+ {url ? <p>לאחר השלמת החתימה יישלח העתק לכתובת הדוא״ל של הלקוח ול־<bdi>{config.copyEmail}</bdi>.</p> : <p>החתימה המקוונת במסמך זה טרם הופעלה. אין אפשרות לחתום או לשלוח ממנו העתק חתום כרגע.</p>}
+ {!url && <p class="delivery-plan">יעד ההעתקים להפעלה: כתובת הדוא״ל של הלקוח ו־<bdi>{config.copyEmail}</bdi>.</p>}</div>
+ {url ? <a class="signing-button" href={url}>מילוי פרטים וחתימה ב־Docusign</a> : <span class="signing-pending" role="status">ממתין להפעלת חתימה</span>}
+</aside>
+<style>
+.signing-panel{background:#eaf2f8;border:1px solid #b6cadc;border-radius:18px;padding:24px;display:flex;gap:24px;align-items:center;justify-content:space-between;margin:24px 0;color:#17324b;text-align:right}.signing-kicker{font-size:12px;font-weight:800;color:#315b7a}.signing-panel h2{font-size:22px;line-height:1.5;margin:5px 0 9px;font-weight:800}.signing-panel p{font-size:15px;line-height:1.8;margin:0}.signing-panel .delivery-plan{font-size:13px;margin-top:8px}.signing-button{background:#14334b;color:white;padding:13px 20px;border-radius:10px;font-weight:700;white-space:nowrap}.signing-pending{background:#fff4dc;color:#735118;border:1px solid #e9cc8c;border-radius:10px;padding:12px 16px;white-space:nowrap;font-size:14px;font-weight:700}@media(max-width:700px){.signing-panel{flex-direction:column;align-items:stretch;padding:19px;gap:16px}.signing-button,.signing-pending{text-align:center;white-space:normal}}@media print{.signing-panel{display:none}}
+</style>
