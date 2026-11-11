@@ -1,0 +1,21 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import { readFile } from 'node:fs/promises';
+import { getSigningUrl } from '../src/utils/form-signing.mjs';
+const verified = { templateId: 'known-template', completionDeliveryVerified: true, powerFormUrl: 'https://na4.docusign.net/Member/PowerFormSigning.aspx?PowerFormId=example' };
+test('signing remains unavailable until a template and completion delivery are verified', () => {
+ for (const override of [{completionDeliveryVerified:false},{templateId:''},{powerFormUrl:''}]) assert.equal(getSigningUrl({...verified,...override}), '');
+ assert.equal(getSigningUrl(undefined), '');
+});
+test('only HTTPS Docusign PowerForm links are accepted', () => {
+ assert.equal(getSigningUrl(verified), verified.powerFormUrl);
+ for (const powerFormUrl of ['http://na4.docusign.net/Member/PowerFormSigning.aspx','https://docusign.net.evil.example/PowerForm','https://user:password@na4.docusign.net/PowerForm','https://na4.docusign.net/send/home','javascript:alert(1)']) assert.equal(getSigningUrl({...verified,powerFormUrl}), '');
+});
+test('company copy destinations match the requested document routing and all remain unverified', async () => {
+ const config=JSON.parse(await readFile(new URL('../src/data/form-signing.json',import.meta.url),'utf8'));
+ for(const [id,entry] of Object.entries(config)) {
+  assert.equal(entry.copyEmail, id.startsWith('service') ? 'support@i-feel.co.il' : 'admin@i-feel.co.il');
+  assert.equal(getSigningUrl(entry), '');
+  assert.equal(entry.completionDeliveryVerified,false);
+ }
+});

@@ -18,3 +18,11 @@ Prepared for the requested I Feel cloud-access and remote telephone support pack
 - Existing return-to-service provision preserved. General service agreement's 3-year term, penalty, ILS 250 technician rate and product discounts were not copied into this separate package.
 - Consumer cancellation reference consulted: https://www.consumers.org.il/category/ongoing_transaction_download
 - Consumer price display reference consulted: https://www.gov.il/he/pages/cpfta_display_of_prices
+
+## Follow-up: forms layout and signed-copy routing
+
+User explicitly requested service agreement copies to the customer + support@i-feel.co.il, and all other documents to the customer + admin@i-feel.co.il. This supersedes any unspecified routing. src/data/form-signing.json records the required destinations, not live Docusign configuration. All completionDeliveryVerified flags remain false because no end-to-end signing or email delivery has been verified. Do not change them based on a URL alone.
+
+Docusign check: four named templates exist but carbonCopies arrays are empty. Create a locked company CC recipient at routing order 2, after customer signing at order 1, and configure customer completion email delivery and completed-PDF attachment according to account signing/email settings. Ensure PowerForm signer cannot edit the fixed company recipient. Verify the exact template version matches the displayed full document. Both service versions have different cancellation clauses and must not share an assumed template.
+
+The /forms/ hub and restyled original full-condition pages improve layout without rewriting the contract text. Source-text preservation is checked ignoring whitespace. The old RISCO signing config is retained for compatibility but its URL is no longer used; unified config is now authoritative for that page. These are review changes; no live signing claim or completion email is permitted until tested.
