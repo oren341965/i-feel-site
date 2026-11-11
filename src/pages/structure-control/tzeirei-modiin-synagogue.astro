@@ -1,0 +1,31 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+const photo = 'https://www.modiin.muni.il/ModiinWebSite/GlobalImages/02102020102512172002.jpg';
+const meta = {
+ title: 'בית הכנסת צעירי מודיעין | בקרת מבנה Siemens KNX לשבת וחג | I FEEL',
+ description: 'פרויקט בקרת מבנה (BMS) בבית הכנסת צעירי מודיעין ע״ש אדמון ספרא: בקרי Siemens KNX, מפסקים, גלאי נוכחות ותרחישי תאורה לימי חול, שבתות וחגי ישראל.',
+ canonical: 'https://i-feel.co.il/structure-control/tzeirei-modiin-synagogue/',
+ ogTitle: 'בית הכנסת צעירי מודיעין | מערכת בקרת מבנה KNX',
+ ogDescription: 'בקרת תאורה לבית כנסת באמצעות Siemens KNX, בהתאמה לשבתות ולחגי ישראל.',
+ ogUrl: 'https://i-feel.co.il/structure-control/tzeirei-modiin-synagogue/',
+ ogImage: photo
+};
+---
+<BaseLayout {...meta}>
+<nav class="bg-brand-50 border-b border-brand-100" aria-label="פירורי לחם"><div class="max-w-7xl mx-auto px-4 py-3 text-sm"><a href="/">דף הבית</a> <span class="mx-2">›</span> <a href="/structure-control/">בקרת מבנה</a> <span class="mx-2">›</span> <span>בית הכנסת צעירי מודיעין</span></div></nav>
+<article class="max-w-4xl mx-auto px-4 py-12 lg:py-16 prose-he" dir="rtl">
+ <p class="text-accent-600 font-semibold">פרויקטי בקרת מבנה (BMS) | מבני ציבור ומוסדות דת</p>
+ <h1>בית הכנסת צעירי מודיעין: מערכת בקרת מבנה מותאמת לשבת ולחג</h1>
+ <p class="text-xl text-brand-700">בית הכנסת צעירי מודיעין ע״ש אדמון ספרא, נחל פארן 12, מודיעין-מכבים-רעות.</p>
+ <figure class="my-8"><img src={photo} alt="כניסת בית הכנסת צעירי מודיעין ע״ש אדמון ספרא, מודיעין" loading="eager" decoding="async" class="w-full rounded-xl shadow-lg" /><figcaption class="text-sm text-brand-600 mt-2">צילום המבנה: אתר עיריית מודיעין-מכבים-רעות. <a href="https://www.modiin.muni.il/ModiinWebSite/ChannelArticle.aspx?PageID=12_348" rel="noopener noreferrer" target="_blank">מקור הצילום</a>.</figcaption></figure>
+ <h2>פתרון בקרת המבנה של I FEEL</h2>
+ <p>בבית הכנסת הותקנה מערכת בקרת תאורה מבוססת תקן KNX הכוללת בקרי Siemens, מפסקי KNX וגלאי נוכחות. המערכת תוכננה לאפשר ניהול נוח של התאורה בחללי בית הכנסת והתאמה לשגרת התפילות, לימי חול, לשבתות ולחגי ישראל.</p>
+ <h2>ניהול תאורה בשבת ובחג</h2>
+ <p>המערכת מאפשרת הגדרת תרחישי תאורה וזמני פעולה לפי צורכי הקהילה, לרבות כניסת שבת, יציאת שבת וחגים. התאמת ההפעלה להנחיות ההלכתיות וללוחות הזמנים נעשית במסגרת תכנון והגדרת המערכת.</p>
+ <h2>מרכיבי המערכת</h2>
+ <ul><li>בקרי KNX של Siemens לבקרה על מעגלי התאורה.</li><li>מפסקי KNX לשליטה בתאורה ובתרחישים המוגדרים.</li><li>גלאי נוכחות באולם התפילה להפעלה לפי מצבי המערכת.</li><li>תרחישי תאורה מותאמים לפעילות בית הכנסת, לשבת ולחג.</li></ul>
+ <h2>יתרונות לפרויקט</h2>
+ <ul><li>בקרת מבנה קווית, מודולרית וגמישה בתכנות.</li><li>הפעלה פשוטה וארגון התאורה לפי אזורים ותרחישים.</li><li>אפשרות להתאמת תזמוני התאורה לצרכים משתנים של הקהילה.</li><li>שירות ותחזוקה מקצועיים למערכת הבקרה.</li></ul>
+ <p><a href="/structure-control/" class="text-accent-600 font-semibold hover:underline">לפתרונות בקרת המבנה של I FEEL</a></p>
+</article>
+</BaseLayout>
