@@ -20,3 +20,8 @@ test('company copy destinations and activation match the verified forms', async 
   assert.equal(entry.completionDeliveryVerified, enabled);
  }
 });
+
+test('embedded signing panels navigate the full page to Docusign', async () => {
+ const component = await readFile(new URL('../src/components/FormSigning.astro', import.meta.url), 'utf8');
+ assert.match(component, /<a\b[^>]*class="signing-button"[^>]*target="_top"/);
+});
