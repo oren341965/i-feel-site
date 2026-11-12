@@ -20,24 +20,24 @@
     "path": "/general-terms-docs/knx/",
     "copyEmail": "admin@i-feel.co.il",
     "templateId": "6dc0adb8-c288-4eb2-9c6f-ae4c5275c566",
-    "powerFormUrl": "",
-    "completionDeliveryVerified": false
+    "powerFormUrl": "https://na4.docusign.net/Member/PowerFormSigning.aspx?PowerFormId=af1328ca-781c-421e-96d6-027ef8b79411&env=na4&acct=d33f11e7-4759-4d3e-bde6-c163ed1ec11c&v=2",
+    "completionDeliveryVerified": true
   },
   "zwave": {
     "title": "תנאים כלליים למערכת Z-Wave",
     "path": "/general-terms-docs/zwave/",
     "copyEmail": "admin@i-feel.co.il",
     "templateId": "78fdeec6-1cb1-4a5e-8e02-e9262fd17860",
-    "powerFormUrl": "",
-    "completionDeliveryVerified": false
+    "powerFormUrl": "https://na4.docusign.net/Member/PowerFormSigning.aspx?PowerFormId=c499d8c8-7480-4163-9ffc-9e2adcb75c10&env=na4&acct=d33f11e7-4759-4d3e-bde6-c163ed1ec11c&v=2",
+    "completionDeliveryVerified": true
   },
   "low-voltage": {
     "title": "תנאים כלליים למערכות מתח נמוך",
     "path": "/general-terms-docs/low-voltage/",
     "copyEmail": "admin@i-feel.co.il",
     "templateId": "f0d78907-58b9-452a-a83c-41cbe5edad11",
-    "powerFormUrl": "",
-    "completionDeliveryVerified": false
+    "powerFormUrl": "https://na4.docusign.net/Member/PowerFormSigning.aspx?PowerFormId=d7055a8a-9c70-4f96-a0ad-5c28b86d3337&env=na4&acct=d33f11e7-4759-4d3e-bde6-c163ed1ec11c&v=2",
+    "completionDeliveryVerified": true
   },
   "risco": {
     "title": "הסכם ריסקו לענן ותמיכה מרחוק",
