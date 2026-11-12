@@ -11,11 +11,17 @@ test('only HTTPS Docusign PowerForm links are accepted', () => {
  assert.equal(getSigningUrl(verified), verified.powerFormUrl);
  for (const powerFormUrl of ['http://na4.docusign.net/Member/PowerFormSigning.aspx','https://docusign.net.evil.example/PowerForm','https://user:password@na4.docusign.net/PowerForm','https://na4.docusign.net/send/home','javascript:alert(1)']) assert.equal(getSigningUrl({...verified,powerFormUrl}), '');
 });
-test('company copy destinations match the requested document routing and all remain unverified', async () => {
+test('company copy destinations and activation match the verified forms', async () => {
  const config=JSON.parse(await readFile(new URL('../src/data/form-signing.json',import.meta.url),'utf8'));
  for(const [id,entry] of Object.entries(config)) {
   assert.equal(entry.copyEmail, id.startsWith('service') ? 'support@i-feel.co.il' : 'admin@i-feel.co.il');
-  assert.equal(getSigningUrl(entry), '');
-  assert.equal(entry.completionDeliveryVerified,false);
+  const enabled = ['knx', 'zwave', 'low-voltage'].includes(id);
+  assert.equal(Boolean(getSigningUrl(entry)), enabled);
+  assert.equal(entry.completionDeliveryVerified, enabled);
  }
+});
+
+test('embedded signing panels navigate the full page to Docusign', async () => {
+ const component = await readFile(new URL('../src/components/FormSigning.astro', import.meta.url), 'utf8');
+ assert.match(component, /<a\b[^>]*class="signing-button"[^>]*target="_top"/);
 });
