@@ -155,6 +155,11 @@ class EvidenceAndThreadTests(unittest.TestCase):
         self.assertEqual(result.target_thread_id, "customer-thread-1")
 
 
+class OperationalCooldownTests(unittest.TestCase):
+    def test_followup_interval_stays_seven_days(self):
+        self.assertEqual(writer.MIN_FOLLOWUP_INTERVAL.days, 7)
+
+
 class StaticSecurityTests(unittest.TestCase):
     def test_ast_allows_only_drafts_create(self):
         self.assertEqual(writer.ast_findings(str(WRITER_PATH)), [])

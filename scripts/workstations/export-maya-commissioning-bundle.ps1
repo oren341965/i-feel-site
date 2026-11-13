@@ -91,6 +91,7 @@ $copyMap = [ordered]@{
     'agent-config\maya-codex\invoke-host-checkin.ps1' = 'payload\management-system\invoke-host-checkin.ps1'
     'agent-config\maya-codex\test-management-smoke.ps1' = 'payload\management-system\test-management-smoke.ps1'
     'agent-config\maya-codex\test-live-readonly-preflight.ps1' = 'payload\management-system\test-live-readonly-preflight.ps1'
+    'agent-config\maya-codex\show-maya-activation-readiness.ps1' = 'payload\management-system\show-maya-activation-readiness.ps1'
     'agent-config\maya-codex\provision-management-telemetry.ps1' = 'payload\management-system\provision-management-telemetry.ps1'
     'agent-config\maya-scheduled-tasks\maya-email-maintenance\SKILL.md' = 'payload\scheduled-tasks\maya-email-maintenance\SKILL.md'
     'agent-config\maya-scheduled-tasks\maya-instagram-relations\SKILL.md' = 'payload\scheduled-tasks\maya-instagram-relations\SKILL.md'

@@ -10,11 +10,16 @@ $runtimeConfigPath = 'C:\ifeel-maya\config\config.json'
 $installedWhatsappPath = Join-Path ([Environment]::GetFolderPath('UserProfile')) '.codex\skills\maya-whatsapp\SKILL.md'
 $managementRoot = Join-Path ([Environment]::GetFolderPath('LocalApplicationData')) 'I Feel\Management System'
 $checkinWrapper = Join-Path $managementRoot 'invoke-host-checkin.ps1'
-$blockers = [System.Collections.Generic.List[string]]::new()
+$readPathBlockers = [System.Collections.Generic.List[string]]::new()
+$sendGateBlockers = [System.Collections.Generic.List[string]]::new()
 
 function Add-PreflightBlocker {
-    param([Parameter(Mandatory)][string]$Code)
-    if (-not $blockers.Contains($Code)) { $blockers.Add($Code) }
+    param(
+        [Parameter(Mandatory)][string]$Code,
+        [ValidateSet('read', 'send')][string]$Scope = 'read'
+    )
+    $target = if ($Scope -eq 'send') { $sendGateBlockers } else { $readPathBlockers }
+    if (-not $target.Contains($Code)) { $target.Add($Code) }
 }
 
 function Get-BusFileCount {
@@ -84,7 +89,7 @@ $whatsappManifestEntry = @($manifest.files | Where-Object {
     ([string]$_.path).Replace('/', '\') -eq 'payload\skills\maya-whatsapp\SKILL.md'
 })
 if ($whatsappManifestEntry.Count -ne 1) {
-    Add-PreflightBlocker 'WHATSAPP_MANIFEST_ENTRY_INVALID'
+    Add-PreflightBlocker 'WHATSAPP_MANIFEST_ENTRY_INVALID' -Scope send
     $expectedWhatsappHash = $null
 }
 else {
@@ -96,7 +101,54 @@ $installedWhatsappHash = if (Test-Path -LiteralPath $installedWhatsappPath -Path
 else { $null }
 $whatsappHashMatch = -not [string]::IsNullOrWhiteSpace($expectedWhatsappHash) -and
     $installedWhatsappHash -eq $expectedWhatsappHash
-if (-not $whatsappHashMatch) { Add-PreflightBlocker 'WHATSAPP_INSTALLED_HASH_MISMATCH' }
+if (-not $whatsappHashMatch) { Add-PreflightBlocker 'WHATSAPP_INSTALLED_HASH_MISMATCH' -Scope send }
+
+$reviewArtifacts = @(
+    @{
+        ManifestPath = 'payload\runtime\maya-task-production-runner.mjs'
+        InstalledPath = 'C:\ifeel-maya\jobs\maya-task-production-runner.mjs'
+        MissingCode = 'REVIEW_RUNNER_MANIFEST_ENTRY_INVALID'
+        MismatchCode = 'REVIEW_RUNNER_HASH_MISMATCH'
+    },
+    @{
+        ManifestPath = 'payload\runtime\maya-vault-bridge.mjs'
+        InstalledPath = 'C:\ifeel-maya\jobs\maya-vault-bridge.mjs'
+        MissingCode = 'REVIEW_BRIDGE_MANIFEST_ENTRY_INVALID'
+        MismatchCode = 'REVIEW_BRIDGE_HASH_MISMATCH'
+    },
+    @{
+        ManifestPath = 'payload\skills\maya-email-maintenance\SKILL.md'
+        InstalledPath = Join-Path ([Environment]::GetFolderPath('UserProfile')) '.codex\skills\maya-email-maintenance\SKILL.md'
+        MissingCode = 'EMAIL_SKILL_MANIFEST_ENTRY_INVALID'
+        MismatchCode = 'EMAIL_SKILL_HASH_MISMATCH'
+    }
+)
+$reviewArtifactEvidence = foreach ($artifact in $reviewArtifacts) {
+    $entry = @($manifest.files | Where-Object {
+        ([string]$_.path).Replace('/', '\') -eq $artifact.ManifestPath
+    })
+    $expectedHash = $null
+    $manifestValid = $entry.Count -eq 1 -and -not [string]::IsNullOrWhiteSpace([string]$entry[0].sha256)
+    if (-not $manifestValid) {
+        Add-PreflightBlocker $artifact.MissingCode
+    }
+    else {
+        $expectedHash = ([string]$entry[0].sha256).ToUpperInvariant()
+    }
+    $installedHash = if (Test-Path -LiteralPath $artifact.InstalledPath -PathType Leaf) {
+        (Get-FileHash -LiteralPath $artifact.InstalledPath -Algorithm SHA256).Hash.ToUpperInvariant()
+    }
+    else { $null }
+    $hashMatch = $manifestValid -and $installedHash -eq $expectedHash
+    if ($manifestValid -and -not $hashMatch) { Add-PreflightBlocker $artifact.MismatchCode }
+    [ordered]@{
+        manifestPath = $artifact.ManifestPath
+        installedPath = $artifact.InstalledPath
+        hashMatch = $hashMatch
+        installedHash = $installedHash
+        manifestHash = $expectedHash
+    }
+}
 
 $managerToMaya = Join-Path $vaultRoot 'AI-Sales\_bus\manager-to-maya'
 $mayaToManager = Join-Path $vaultRoot 'AI-Sales\_bus\maya-to-manager'
@@ -222,7 +274,14 @@ $busFilesAfter = (Get-BusFileCount -Root $managerToMaya) + (Get-BusFileCount -Ro
 $busDelta = $busFilesAfter - $busFilesBefore
 if ($busDelta -ne 0) { Add-PreflightBlocker 'BUS_CHANGED_DURING_PREFLIGHT' }
 
-$status = if ($blockers.Count -eq 0) { 'LOCAL_PREFLIGHT_PASS' } else { 'LOCAL_PREFLIGHT_BLOCKED' }
+$independentReadReviewReady = $readPathBlockers.Count -eq 0
+$status = if ($independentReadReviewReady -and $sendGateBlockers.Count -eq 0) {
+    'LOCAL_PREFLIGHT_PASS'
+}
+else { 'LOCAL_PREFLIGHT_BLOCKED' }
+$allBlockers = [System.Collections.Generic.List[string]]::new()
+foreach ($code in $readPathBlockers) { [void]$allBlockers.Add($code) }
+foreach ($code in $sendGateBlockers) { [void]$allBlockers.Add($code) }
 [ordered]@{
     status = $status
     computer = $env:COMPUTERNAME
@@ -230,6 +289,8 @@ $status = if ($blockers.Count -eq 0) { 'LOCAL_PREFLIGHT_PASS' } else { 'LOCAL_PR
     whatsappInstalledHash = $installedWhatsappHash
     whatsappManifestHash = $expectedWhatsappHash
     whatsappHashMatch = $whatsappHashMatch
+    reviewArtifacts = @($reviewArtifactEvidence)
+    proactiveLedgerConsulted = $false
     busAckResultWritesConfigured = $ackResultWritesConfigured
     busEffectiveState = if ($productionExecutionAllowed) { 'PRODUCTION_ENABLED' } else { 'DORMANT_PRODUCTION_DISABLED' }
     commissioningReadOnlyWritesAllowed = $commissioningReadOnlyWritesAllowed
@@ -243,9 +304,14 @@ $status = if ($blockers.Count -eq 0) { 'LOCAL_PREFLIGHT_PASS' } else { 'LOCAL_PR
     mondayRead = 'REQUIRES_CODEX_CONNECTOR'
     productionExecutionAllowed = $productionExecutionAllowed
     schedulersActivated = $schedulersActivated
-    safeForLiveMondaySmoke = $blockers.Count -eq 0
+    independentReadReviewReady = $independentReadReviewReady
+    safeForLiveMondaySmoke = $readPathBlockers.Count -eq 0
+    customerSendReady = $false
+    activationClaimed = $false
     externalSends = 0
     gmailMutations = 0
     mondayWrites = 0
-    blockers = @($blockers)
+    readPathBlockers = @($readPathBlockers)
+    sendGateBlockers = @($sendGateBlockers)
+    blockers = @($allBlockers)
 } | ConvertTo-Json -Depth 8
