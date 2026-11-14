@@ -1,6 +1,6 @@
 interface:
-  display_name: "I Feel AI Sales Manager"
-  short_description: "Sales orchestration and bounded marketing decisions"
+  display_name: "כריש | מנהל המכירות I Feel"
+  short_description: "כריש: ניתוח מכירות ומעקב לידים, במסגרת הרשאות קיימות בלבד"
   default_prompt: "Use $ai-sales-manager to run the I Feel sales audit and route Google Ads to its registered bounded daily decision worker without expanding external-write authority."
 
 policy:
