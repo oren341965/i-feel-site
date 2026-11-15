@@ -99,7 +99,26 @@ body{background:#f8fafb;color:#17212a}
 .gp9-3d-callout{padding:12px 14px;border-right:4px solid #177d9f;background:white;border-radius:8px;font-size:14px;line-height:1.7}.gp9-3d-links{display:flex;gap:12px;flex-wrap:wrap;margin-top:16px}.gp9-3d-links a{padding:11px 13px;border:1px solid #a9c6d6;background:white;border-radius:10px;color:#075779;font-weight:700}
 @media(max-width:780px){.gp9-3d-grid{grid-template-columns:1fr}.gp9-3d-stage{min-height:280px;padding:20px}.gp9-3d{margin:22px 12px;padding:19px}}
 @media(prefers-reduced-motion:reduce){.gp9-3d-panel{transition:none}}
-.gp9-3d-controls button[aria-pressed="true"]{background:#0b607f;color:white;border-color:#0b607f}.gp9-angle-status{font-weight:700;min-height:28px;margin:8px 0 12px}.gp9-3d-stage{touch-action:pan-y}</style>
+.gp9-3d-controls button[aria-pressed="true"]{background:#0b607f;color:white;border-color:#0b607f}.gp9-angle-status{font-weight:700;min-height:28px;margin:8px 0 12px}.gp9-3d-stage{touch-action:pan-y}
+/* GP9 robust, accessible control: native radio inputs work without JavaScript. */
+#electrician-3d{scroll-margin-top:105px;max-width:100%;box-sizing:border-box}
+#electrician-3d .gp9-3d-grid{min-width:0}
+#electrician-3d .gp9-3d-grid>*{min-width:0}
+#electrician-3d .gp9-3d-controls{border:0;padding:0;margin:16px 0;display:flex;flex-wrap:wrap;gap:10px;min-width:0}
+#electrician-3d .gp9-3d-legend{font-size:14px;font-weight:700;margin-bottom:8px}
+#electrician-3d .gp9-3d-controls label{position:relative;display:inline-flex;min-width:120px;max-width:100%;cursor:pointer;flex:1 1 125px}
+#electrician-3d .gp9-3d-controls input{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer;z-index:2;margin:0}
+#electrician-3d .gp9-3d-controls span{display:flex;justify-content:center;align-items:center;width:100%;min-height:48px;padding:10px 12px;border:2px solid #9bb8c8;border-radius:10px;background:white;color:#12364a;font-weight:700;text-align:center;box-sizing:border-box}
+#electrician-3d .gp9-3d-controls input:checked+span{background:#0b607f;color:#fff;border-color:#0b607f}
+#electrician-3d .gp9-3d-controls input:focus-visible+span{outline:3px solid #ffab32;outline-offset:3px}
+#electrician-3d .gp9-3d-stage{min-width:0;max-width:100%;box-sizing:border-box}
+#electrician-3d .gp9-3d-panel{max-width:100%;box-sizing:border-box}
+#electrician-3d:has(#gp9-view-front:checked) .gp9-3d-panel{transform:rotateY(0deg) rotateX(0deg)}
+#electrician-3d:has(#gp9-view-side:checked) .gp9-3d-panel{transform:rotateY(-38deg) rotateX(9deg)}
+#electrician-3d:has(#gp9-view-other:checked) .gp9-3d-panel{transform:rotateY(38deg) rotateX(9deg)}
+#electrician-3d:has(#gp9-view-front:checked) .gp9-angle-status::after{content:' · נבחר מבט חזיתי'}
+@media(max-width:780px){#electrician-3d{width:calc(100% - 20px);margin:20px 10px;padding:16px}#electrician-3d .gp9-3d-grid{grid-template-columns:minmax(0,1fr)}#electrician-3d .gp9-3d-controls label{min-width:0;flex:1 1 110px}#electrician-3d .gp9-3d-stage{min-height:230px;padding:12px}#electrician-3d .gp9-3d-panel{width:85%}}
+</style>
 </head>
 <body>
 <header class="siteHeader"><a class="siteBrand" href="https://i-feel.co.il/" aria-label="i-feel — מעבר לאתר"><span class="brandWord">i<span>•</span>feel</span></a><div class="siteHeaderNote">בית חכם, בהתאמה אישית</div><a class="siteCTA" href="https://i-feel.co.il/contactus/" target="_blank" rel="noopener">ייעוץ ותכנון <b>←</b></a></header><nav class="tabs" aria-label="ניווט בדף GP9"><a class="active" href="#overview">המוצר</a><a href="#configuration">בחירת תצורה</a><a href="#installations">התקנות</a><a href="#details">פרטים טכניים</a></nav><main class="container"><section class="productIntro" id="overview"><div><div class="mainPhoto" id="mainPhoto"><img src="/gp9/assets/gp9-panel-visual.svg" alt="הדמיית מוצר של מפסק הזכוכית החכם Touchwand GP9 בבית מעוצב" onerror="this.parentElement.classList.add('missing')"><span class="noPic"><b>צילום GP9 מקורי</b><br>התמונה לא נטענה בתצוגה זו. לא הוחלפה בהדמיה של מוצר אחר.</span></div><div class="photoNote">הדמיית עיצוב מלבנית לתצוגת GP9 עם תשעה אייקונים רשמיים ממאגר GlassWand של האתר.</div></div>
@@ -118,7 +137,7 @@ body{background:#f8fafb;color:#17212a}
 <div><span style="font-size:12px;font-weight:800;letter-spacing:.06em;color:#116786">TOUCHWAND GP9 · לאנשי מקצוע</span>
 <h2 id="gp9-3d-title">תצוגה תלת־ממדית להמחשה</h2>
 <p>סובבו את המחשת חזית מפסק הזכוכית כדי לראות מבט חזיתי או אלכסוני. הסמלים והגימור ניתנים להתאמה לפרויקט. זו הדמיה חזותית בלבד, לא מודל תלת־ממדי הנדסי ואינה מתארת עומק, מידות או חיבורים מדודים.</p>
-<div class="gp9-3d-controls" role="group" aria-label="בחירת זווית תצוגה"><button type="button" data-gp9-angle="front" aria-pressed="false">מבט חזיתי</button><button type="button" data-gp9-angle="side" aria-pressed="true">מבט אלכסוני</button><button type="button" data-gp9-angle="other" aria-pressed="false">זווית הפוכה</button></div>
+<fieldset class="gp9-3d-controls" aria-label="בחירת זווית תצוגה"><legend class="gp9-3d-legend">בחרו זווית צפייה</legend><label><input type="radio" name="gp9-view" id="gp9-view-front" value="front"><span>מבט חזיתי</span></label><label><input type="radio" name="gp9-view" id="gp9-view-side" value="side" checked><span>מבט אלכסוני</span></label><label><input type="radio" name="gp9-view" id="gp9-view-other" value="other"><span>זווית הפוכה</span></label></fieldset>
 <p class="gp9-angle-status" id="gp9-angle-status" role="status" aria-live="polite">זווית נוכחית: מבט אלכסוני</p>
 <div class="gp9-3d-callout"><b>לחשמלאי:</b> להוראות התקנה, להזנת מתח ולחלוקת יציאות יש להשתמש בתרשימי החיווט וה־PDF בהמשך העמוד, ולא בהדמיה זו. כל מפת כפתורים ותצורה חייבת אישור לפני הזמנה.</div>
 <div class="gp9-3d-links"><a href="#wiring-guide">לתרשימי החיווט</a><a href="#installations">לתמונות התקנה אמיתיות</a><a href="mailto:oren@i-feel.co.il?subject=GP9%20-%20%D7%AA%D7%9E%D7%95%D7%A0%D7%95%D7%AA%20%D7%94%D7%AA%D7%A7%D7%A0%D7%94">שליחת תמונות התקנה נוספות</a></div>
@@ -153,6 +172,6 @@ const panes={desc:'<h2>מפסק זכוכית חכם, בתכנון אישי</h2><
 </script>
 
 <script>
-(function(){const p=document.getElementById('gp9-3d-panel');const status=document.getElementById('gp9-angle-status');if(!p)return;const views={front:['rotateY(0deg) rotateX(0deg)','מבט חזיתי'],side:['rotateY(-38deg) rotateX(9deg)','מבט אלכסוני'],other:['rotateY(38deg) rotateX(9deg)','זווית הפוכה']};function view(k){const v=views[k]||views.side;p.style.transform=v[0];if(status)status.textContent='זווית נוכחית: '+v[1];document.querySelectorAll('[data-gp9-angle]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.gp9Angle===k)));}document.querySelectorAll('[data-gp9-angle]').forEach(b=>b.addEventListener('click',()=>view(b.dataset.gp9Angle)));view('side');})();
+(function(){const root=document.getElementById('electrician-3d');if(!root)return;const status=root.querySelector('#gp9-angle-status');const labels={front:'מבט חזיתי',side:'מבט אלכסוני',other:'זווית הפוכה'};const panel=root.querySelector('#gp9-3d-panel');const views={front:'rotateY(0deg) rotateX(0deg)',side:'rotateY(-38deg) rotateX(9deg)',other:'rotateY(38deg) rotateX(9deg)'};root.querySelectorAll('input[name="gp9-view"]').forEach(input=>input.addEventListener('change',function(){if(!this.checked)return;if(panel)panel.style.transform=views[this.value]||views.side;if(status)status.textContent='זווית נוכחית: '+(labels[this.value]||labels.side)}));})();
 </script>
 </body></html>
