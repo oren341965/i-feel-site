@@ -187,6 +187,22 @@
       });
     }
 
+    // Measure a real first edit, not focus, autofill setup or a lead conversion.
+    // Delegation also covers forms inserted after load; never read field values.
+    var startedLeadForms = new WeakSet();
+    function recordLeadFormStart(event) {
+      var target = event.target;
+      var form = target && target.form;
+      if (!event.isTrusted || !form || !form.matches('form[action="/api/lead.php"]')) return;
+      if (!['INPUT', 'SELECT', 'TEXTAREA'].includes(target.tagName)
+        || target.type === 'hidden' || target.name === 'website' || target.disabled) return;
+      if (typeof window.gtag !== 'function' || startedLeadForms.has(form)) return;
+      startedLeadForms.add(form);
+      recordLeadFormEvent('lead_form_start', form, '');
+    }
+    document.addEventListener('input', recordLeadFormStart, true);
+    document.addEventListener('change', recordLeadFormStart, true);
+
     // Native browser invalid events do not dispatch a submit event.
     document.addEventListener('invalid', function (event) {
       var target = event.target;
