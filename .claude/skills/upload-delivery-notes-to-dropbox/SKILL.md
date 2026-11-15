@@ -10,6 +10,7 @@ Act as the delivery-note worker owned by `ai-operations-manager`. Read bounded s
 ## Start
 
 - Read [references/delivery-note-intake.md](references/delivery-note-intake.md).
+- Before any exception, signature, or sequence-gap reminder, follow [references/reminder-preflight.md](references/reminder-preflight.md) and run its deterministic gate. A missing register or blocked candidate prohibits sending that reminder.
 - When reconciling issued delivery-note numbers or investigating gaps from 2026-08-01 onward, read and follow [references/delivery-note-sequence-control.md](references/delivery-note-sequence-control.md).
 - When auditing scheduled installations or Maya's installation summaries, read and follow [references/signed-delivery-note-follow-up.md](references/signed-delivery-note-follow-up.md).
 - When collecting from WhatsApp, read and follow [references/whatsapp-web-intake.md](references/whatsapp-web-intake.md). The worker, not Oren, downloads the attachments when an authenticated browser connection is available.
