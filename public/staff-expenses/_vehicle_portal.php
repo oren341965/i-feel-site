@@ -476,12 +476,16 @@ function portal_render_my_vehicle_page(array $user, ?array $flash): void
             <span class="status <?= portal_h($status['class']) ?>"><?= portal_h($status['label']) ?></span>
             <div class="vehicle-hero__stats"><span>טסט<strong><?= portal_h($vehicle['test_due_date'] ?: 'חסר') ?></strong></span><span>ביטוח חובה<strong><?= portal_h($vehicle['compulsory_insurance_due_date'] ?: 'חסר') ?></strong></span><span>ק״מ אחרון<strong><?= portal_h($vehicle['current_km'] ?: 'טרם דווח') ?></strong></span><span>עדכון אחרון<strong><?= portal_h($vehicle['last_update'] ?: 'טרם דווח') ?></strong></span></div>
         </section>
-        <?php portal_render_vehicle_monthly_form($vehicle); ?>
+        <section class="detail-card">
+            <h2>ביטוחים ושירותי דרך</h2>
+            <?php portal_render_vehicle_insurance($vehicle, portal_json_read(portal_vehicle_insurance_file($vehicle['plate']))); ?>
+        </section>
         <section class="detail-card vehicle-documents-card"><h2>מסמכי הרכב והנהג</h2>
             <?php $documents = portal_vehicle_documents_for_user($user, (string) $vehicle['plate']); ?>
             <?php if ($documents === []): ?><div class="alert alert--info">עדיין לא נשמרו מסמכים לרכב זה. מנהל יכול להעלות רישיון, טסט וביטוחים במסך רכבי העובדים.</div>
-            <?php else: ?><div class="document-list"><?php foreach ($documents as $document): ?><div><strong><?= portal_h($document['type_label'] ?? 'מסמך') ?></strong><span><a class="text-link" href="<?= portal_h(portal_url(['action' => 'vehicle_document_download', 'plate' => $vehicle['plate'], 'document' => $document['id'] ?? ''])) ?>"><?= portal_h($document['name'] ?? '') ?></a></span><span><?= portal_h(($document['expires_on'] ?? '') !== '' ? 'תוקף ' . $document['expires_on'] : 'ללא תוקף') ?></span></div><?php endforeach; ?></div><?php endif; ?>
+            <?php else: ?><div class="document-list"><?php foreach ($documents as $document): ?><div><strong><?= portal_h($document['type_label'] ?? 'מסמך') ?></strong><span><a class="text-link" href="<?= portal_h(portal_url(['action' => 'vehicle_document_download', 'plate' => $vehicle['plate'], 'document' => $document['id'] ?? ''])) ?>"><?= portal_h($document['name'] ?? '') ?></a><?php if (($document['policy_number'] ?? '') !== ''): ?><small>פוליסה <bdi><?= portal_h($document['policy_number']) ?></bdi></small><?php endif; ?></span><span><?= portal_h(($document['expires_on'] ?? '') !== '' ? 'תוקף ' . $document['expires_on'] : 'ללא תוקף') ?></span></div><?php endforeach; ?></div><?php endif; ?>
         </section>
+        <?php portal_render_vehicle_monthly_form($vehicle); ?>
         <section class="detail-card"><h2>היסטוריית דיווחים חודשיים</h2>
             <?php $history = portal_vehicle_reports_for_plate((string) $vehicle['plate']); ?>
             <?php if ($history === []): ?><p class="muted-text">עדיין לא נשלח דיווח חודשי.</p><?php else: ?><div class="history-list"><?php krsort($history); foreach ($history as $month => $versions): $last = is_array($versions) ? end($versions) : []; ?><article class="history-card"><div><span class="history-card__date"><?= portal_h($month) ?></span><h2><?= portal_h((string) ($last['odometer'] ?? '')) ?> ק״מ</h2><code><?= count($versions) ?> גרסאות</code></div><span class="status <?= ($last['manager_review_required'] ?? false) ? 'status--review' : 'status--approved' ?>"><?= ($last['manager_review_required'] ?? false) ? 'לבדיקת מנהל' : 'תקין' ?></span></article><?php endforeach; ?></div><?php endif; ?>

@@ -393,6 +393,13 @@ function portal_handle_post(array $user): never
         portal_redirect(['tab' => 'vehicles']);
     }
 
+    if ($action === 'save_vehicle_insurance') {
+        portal_require_admin();
+        portal_save_vehicle_insurance(portal_post('plate', 20));
+        portal_flash_set('success', 'פרטי הביטוחים ומוקד הגרירה נשמרו.');
+        portal_redirect(['tab' => 'vehicles']);
+    }
+
     if ($action === 'save_vehicle_document') {
         portal_require_admin();
         $document = portal_save_vehicle_document($user);
