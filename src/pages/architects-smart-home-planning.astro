@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import ArchitectSwitchCatalogs from '../components/ArchitectSwitchCatalogs.astro';
 import content from '../page-html/page-02.html?raw';
 
 const meta = {
@@ -15,4 +16,5 @@ const meta = {
 ---
 <BaseLayout {...meta}>
   <Fragment set:html={content} />
+  <ArchitectSwitchCatalogs />
 </BaseLayout>

@@ -1,0 +1,60 @@
+[
+  {
+    "id": "knx",
+    "title": "מפסקים לבית חכם קווי KNX",
+    "pdf": "/assets/catalogs/ifeel-knx-switches-he.pdf",
+    "note": "לפני בחירה סופית מאמתים מק״ט, גימור, קופסת התקנה וסוג חיבור.",
+    "products": [
+      {
+        "name": "Lithoss Select",
+        "description": "לחצנים שטוחים בגימורים מתכתיים. לסדרת Select יש גרסאות KNX ייעודיות לפי מק״ט.",
+        "image": "/assets/designer-switches/lithoss-select.webp",
+        "href": "https://www.lithoss.com/en/technologies/knx"
+      },
+      {
+        "name": "Moorgen Swiss / Newton Retro",
+        "description": "פאנל קיר מסדרת Swiss ולחצני מנוף מסדרת Newton Retro. התאמה וחיבור נקבעים לפי הדגם.",
+        "image": "/assets/switch-catalogs/moorgen-swiss.webp",
+        "href": "/moorgen-knx/"
+      },
+      {
+        "name": "ABB PEONIA",
+        "description": "מפסקים עם לחצנים ניתנים להחלפה. בתמונה דגם 3/6 לחצנים בשחור מט.",
+        "image": "/assets/abb-peonia/3-6-black.webp",
+        "href": "/catalogs/#abb-peonia"
+      },
+      {
+        "name": "Eelectron 9025",
+        "description": "לחצני מגע לתאורה, עמעום, תריסים ותרחישים. בסדרת LINE אפשר לבחור 4, 8 או 10 ערוצים.",
+        "image": "/assets/switch-catalogs/eelectron-9025.webp",
+        "href": "https://www.eelectron.com/en/products/9025-capacitive-knx-switch-line-series/"
+      },
+      {
+        "name": "Siemens TC4",
+        "description": "מסך מגע קירי קומפקטי להפעלת תאורה, הצללה ותרחישים.",
+        "image": "/assets/knx-advisor/siemens-tc4.webp",
+        "href": "/assets/catalogs/siemens-touch-control-tc4-tc5-he.pdf"
+      }
+    ]
+  },
+  {
+    "id": "wireless",
+    "title": "מפסקים לבית חכם אלחוטי Z-Wave",
+    "pdf": "/assets/catalogs/ifeel-wireless-switches-he.pdf",
+    "note": "בחירת הדגם תלויה בתשתית, בחיווט ההזנה ובפעולות שנדרשות בכל נקודה.",
+    "products": [
+      {
+        "name": "Touchwand GP9",
+        "description": "מפסק קירי עם תשעה לחצנים ואפשרות לתכנון פעולות לתאורה, תריסים ותרחישים.",
+        "image": "/gp9/assets/gp9-installed-switch-20261105.jpg",
+        "href": "/gp9/"
+      },
+      {
+        "name": "Touchwand GlassWand",
+        "description": "מפסק מגע מזכוכית עם תשעה לחצנים. ניתן לבחור אייקונים לפי הפעולות בכל חדר.",
+        "image": "/assets/switch-catalogs/touchwand-glasswand.webp",
+        "href": "/assets/catalogs/glasswand-9-button.pdf"
+      }
+    ]
+  }
+]
