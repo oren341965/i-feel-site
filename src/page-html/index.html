@@ -4,26 +4,37 @@
      ============================================================ -->
 
 <!-- 1. HERO — real project photo and two equally visible routes -->
-<section class="home-intro" aria-label="פתיח">
+<section class="home-intro" aria-labelledby="home-intro-title">
   <div class="home-intro-copy">
     <p class="home-intro-eyebrow">I FEEL · תכנון, התקנה ושירות משנת 2008</p>
-    <h1>מערכות חכמות לבית ולמבנה,<br><span>תחת אחריות אחת</span></h1>
+    <h1 id="home-intro-title">מערכות חכמות לבית ולמבנה,<br><span>תחת אחריות אחת</span></h1>
     <p class="home-intro-description">תאורה, מיזוג, הצללה ואבטחה שמתוכננים לעבוד יחד. צוות אחד מלווה אתכם מהתוכניות ועד השימוש ביום־יום.</p>
     <div class="home-intro-routes">
       <a href="/start/" data-ga-event="homepage_new_project_click" data-ga-params='{"source_page":"homepage_hero"}'>
-        <strong>אני מתכנן פרויקט חדש</strong><span>בית פרטי, פרויקט יזמי או מבנה ←</span>
+        <strong>אני מתכנן פרויקט חדש</strong><span>בית פרטי, פרויקט יזמי או מבנה</span><b aria-hidden="true">←</b>
       </a>
       <a href="/help/" data-ga-event="homepage_existing_system_click" data-ga-params='{"source_page":"homepage_hero"}'>
-        <strong>כבר יש לי מערכת ואני צריך עזרה</strong><span>תמיכה, תחזוקה ושדרוגים ←</span>
+        <strong>כבר יש לי מערכת ואני צריך עזרה</strong><span>תמיכה, תחזוקה ושדרוגים</span><b aria-hidden="true">←</b>
       </a>
     </div>
-    <p class="home-intro-note">בית חכם ו־KNX · מסלול נפרד לבקרת מבנה BMS</p>
+    <a class="home-intro-consultation" href="#homepage-quick-consultation"
+       data-ga-event="consultation_click" data-ga-params='{"source_page":"/","placement":"homepage_hero"}'>תיאום שיחת ייעוץ <span aria-hidden="true">←</span></a>
   </div>
   <figure class="home-intro-photo">
     <img src="/assets/smart-home-ramat-hasharon.webp" alt="חלל מגורים בפרויקט בית חכם של I FEEL ברמת השרון" width="750" height="510" fetchpriority="high" />
-    <figcaption>מהפרויקטים שלנו · בית חכם ברמת השרון <a href="/projects/">לצפייה בפרויקטים ←</a></figcaption>
+    <figcaption>בית חכם ברמת השרון <a href="/projects/">לצפייה בפרויקטים ←</a></figcaption>
   </figure>
 </section>
+
+<nav class="home-solution-rail" aria-label="כניסה לפי תחום">
+  <span>פתרונות לפי סוג פרויקט</span>
+  <a href="/smart-home/" data-ga-event="audience_private_click"
+     data-ga-params='{"audience_type":"private","source_page":"homepage_solution_rail"}'>בית חכם ו־KNX <b aria-hidden="true">←</b></a>
+  <a href="/contractor-customer-care/" data-ga-event="audience_developer_click"
+     data-ga-params='{"audience_type":"developer","source_page":"homepage_solution_rail"}'>פרויקטים ליזמים <b aria-hidden="true">←</b></a>
+  <a href="/structure-control/" data-ga-event="audience_bms_click"
+     data-ga-params='{"audience_type":"bms","source_page":"homepage_solution_rail"}'>בקרת מבנה · Siemens Desigo <b aria-hidden="true">←</b></a>
+</nav>
 
 <!-- Clear entry paths for the two distinct decision-makers. -->
 <nav aria-label="שירותי בית חכם, KNX ובקרת מבנה" class="border-b border-brand-100 bg-white py-5">
@@ -136,18 +147,8 @@
       <div><div class="text-3xl font-extrabold text-brand-700">אלפי</div><div class="text-sm text-brand-600 mt-1">דירות חכמות</div></div>
     </div>
     <p class="text-center text-brand-700 max-w-3xl mx-auto">
-      פרויקטים במשרדי חברות טכנולוגיה, מוסדות רפואיים, אצטדיונים ומבנים מסחריים מובילים — בין לקוחותינו לאורך השנים:
+      פרויקטים במשרדי חברות טכנולוגיה, מוסדות רפואיים, אצטדיונים ומבנים מסחריים מובילים.
     </p>
-    <ul class="mt-6 flex flex-wrap justify-center items-center gap-x-10 gap-y-5 list-none p-0" aria-label="לקוחות נבחרים לאורך השנים">
-      <li><img src="/assets/client-logos/amazon1-150x70.jpg" alt="Amazon" width="150" height="70" loading="lazy" class="h-7 w-auto grayscale opacity-60 mix-blend-multiply"></li>
-      <li><img src="/assets/client-logos/intel-150x70.jpg" alt="Intel" width="150" height="70" loading="lazy" class="h-7 w-auto grayscale opacity-60 mix-blend-multiply"></li>
-      <li><img src="/assets/client-logos/ibm-150x70.jpg" alt="IBM" width="150" height="70" loading="lazy" class="h-7 w-auto grayscale opacity-60 mix-blend-multiply"></li>
-      <li><img src="/assets/client-logos/checkpoint-150x70.jpg" alt="Check Point" width="150" height="70" loading="lazy" class="h-7 w-auto grayscale opacity-60 mix-blend-multiply"></li>
-      <li><img src="/assets/client-logos/tidhar-150x70.jpg" alt="תדהר" width="150" height="70" loading="lazy" class="h-7 w-auto grayscale opacity-60 mix-blend-multiply"></li>
-      <li><img src="/assets/client-logos/ashtrum-150x70.png" alt="אשטרום" width="150" height="70" loading="lazy" class="h-7 w-auto grayscale opacity-60 mix-blend-multiply"></li>
-      <li><img src="/assets/client-logos/africa-israel-150x70.png" alt="אפריקה ישראל" width="150" height="70" loading="lazy" class="h-7 w-auto grayscale opacity-60 mix-blend-multiply"></li>
-      <li><img src="/assets/client-logos/rotshtein-150x70.jpg" alt="רוטשטיין" width="150" height="70" loading="lazy" class="h-7 w-auto grayscale opacity-60 mix-blend-multiply"></li>
-    </ul>
   </div>
 </section>
 
@@ -487,6 +488,8 @@
          data-ga-params='{"source_page":"homepage_service_section"}'
          class="bg-brand-700 hover:bg-brand-800 text-white px-7 py-3.5 rounded-lg font-semibold transition">למרכז השירות ←</a>
       <a href="/service-and-maintenance/" class="bg-white border-2 border-brand-200 hover:border-brand-700 text-brand-900 px-7 py-3.5 rounded-lg font-semibold transition">הסכמי שירות ותחזוקה ←</a>
+      <a href="/service-request/" class="bg-white border-2 border-brand-200 hover:border-brand-700 text-brand-900 px-7 py-3.5 rounded-lg font-semibold transition">פתיחת קריאת שירות ←</a>
+      <a href="https://wa.me/972533006239" class="bg-white border-2 border-brand-200 hover:border-brand-700 text-brand-900 px-7 py-3.5 rounded-lg font-semibold transition">WhatsApp של השירות ←</a>
     </div>
   </div>
 </section>

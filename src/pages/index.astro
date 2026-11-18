@@ -2,6 +2,7 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import FloatingCta from '../components/FloatingCta.astro';
 import content from '../page-html/index.html?raw';
+import '../styles/homepage.css';
 
 const jsonLd = JSON.stringify({
   "@context": "https://schema.org",
@@ -117,6 +118,6 @@ const meta = {
 };
 ---
 <BaseLayout {...meta}>
-  <Fragment set:html={content} />
+  <div class="home-page" set:html={content} />
   <FloatingCta label="קבלת ייעוץ" href="/contactus/" event="consultation_click" params={{ source_page: '/' }} />
 </BaseLayout>
