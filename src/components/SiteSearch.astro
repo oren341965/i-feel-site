@@ -50,6 +50,7 @@
           הקלידו לפחות שתי אותיות כדי להתחיל לחפש.
         </p>
         <ol id="site-search-results" class="mt-4 space-y-3" aria-label="תוצאות חיפוש"></ol>
+        <button id="site-search-more" type="button" hidden class="mt-4 rounded-lg border border-brand-200 px-4 py-2 text-sm font-bold hover:bg-brand-50">הצגת תוצאות נוספות</button>
       </div>
     </div>
 </dialog>
@@ -85,6 +86,8 @@
     description: string;
     headings: string;
     body: string;
+    type?: 'pdf';
+    identifiers?: string;
   };
 
   type PreparedRecord = SearchRecord & {
@@ -92,7 +95,9 @@
     normalizedDescription: string;
     normalizedHeadings: string;
     normalizedBody: string;
-    compactSearch: string;
+    normalizedUrl: string;
+    normalizedIdentifiers: string;
+    headlineWords: string[];
   };
 
   const openButton = document.querySelector<HTMLButtonElement>('#site-search-open');
@@ -102,9 +107,11 @@
   const input = document.querySelector<HTMLInputElement>('#site-search-input');
   const status = document.querySelector<HTMLElement>('#site-search-status');
   const results = document.querySelector<HTMLOListElement>('#site-search-results');
+  const moreButton = document.querySelector<HTMLButtonElement>('#site-search-more');
 
   let indexPromise: Promise<PreparedRecord[]> | undefined;
   let debounceTimer: number | undefined;
+  const resultsPerPage = 10;
 
   const normalize = (value: string) => value
     .normalize('NFKD')
@@ -113,7 +120,13 @@
     .replace(/[ךםןףץ]/g, (letter) => ({ ך: 'כ', ם: 'מ', ן: 'נ', ף: 'פ', ץ: 'צ' })[letter] || letter)
     .replace(/([\u05d0-\u05ea])["'׳״“”‘’]+(?=[\u05d0-\u05ea])/g, '$1')
     .replace(/[^\p{L}\p{N}]+/gu, ' ')
-    .trim();
+    .trim()
+    .replace(/\bz wave\b/g, 'zwave')
+    .replace(/(^| )זי וו?יי?ב(?= |$)/g, '$1zwave')
+    .replace(/(^| )קיי אנ אקס(?= |$)/g, '$1knx')
+    .replace(/(^| )(?:micro module|מיקרו מודול)(?= |$)/g, '$1micromodule')
+    .replace(/\bwi fi\b/g, 'wifi')
+    .replace(/\b(os|tc|gp|pxc|ap|mega) (\d+[a-z]?)\b/g, '$1$2');
 
   const TERM_SYNONYMS: Record<string, string[]> = {
     'מרלוג': ['מרלוגימ', 'מרכז לוגיסטי', 'מרכזימ לוגיסטיימ'],
@@ -141,12 +154,36 @@
     'שמע': ['אודיו', 'סאונד', 'audio'],
     'סאונד': ['אודיו', 'שמע', 'audio'],
     'audio': ['אודיו', 'שמע'],
-    'רמקול': ['רמקולים', 'רמקולי', 'speakers'],
-    'רמקולים': ['רמקול', 'רמקולי', 'speakers'],
-    'רמקולי': ['רמקול', 'רמקולים', 'speakers'],
-    'speakers': ['רמקול', 'רמקולים'],
+    'רמקולי': ['רמקול', 'רמקולימ', 'speaker', 'speakers'],
+    'speakers': ['רמקול', 'רמקולימ', 'speaker'],
     'קולנוע': ['הום תיאטר', 'home theater'],
-    'knx': ['קנקס'],
+    'knx': ['קנקס', 'קיי אנ אקס'],
+    'קנקס': ['knx'],
+    'zwave': ['זיוויב', 'זי וייב', 'זי וויב'],
+    'זיוויב': ['zwave'],
+    'דימר': ['דימור', 'עמעומ', 'עמעמ', 'dimmer', 'dimming'],
+    'דימור': ['דימר', 'עמעומ', 'dimming'],
+    'עמעומ': ['דימר', 'דימור', 'dimmer'],
+    'dimmer': ['דימר', 'דימור', 'עמעומ', 'dimming'],
+    'dimming': ['דימר', 'דימור', 'dimmer'],
+    'זכוכית': ['glass'],
+    'glass': ['זכוכית'],
+    'switch': ['מפסק', 'מתג', 'לחצנ'],
+    'מסמכ': ['מפרט', 'קטלוג', 'pdf'],
+    'מפרט': ['spec', 'specification', 'datasheet'],
+    'spec': ['מפרט', 'specification', 'datasheet'],
+    'datasheet': ['מפרט', 'spec', 'specification'],
+    'סכמת': ['סכמה', 'סכמות', 'תרשימ', 'diagram'],
+    'סכמה': ['סכמת', 'סכמות', 'תרשימ', 'diagram'],
+    'סכמות': ['סכמה', 'סכמת', 'תרשימ', 'diagram'],
+    'diagram': ['סכמת', 'סכמות', 'תרשימ'],
+    'רמקול': ['רמקולימ', 'רמקולי', 'speaker', 'speakers'],
+    'רמקולימ': ['רמקול', 'רמקולי', 'speaker', 'speakers'],
+    'speaker': ['רמקול', 'רמקולימ', 'speakers'],
+    'אינטרקומ': ['intercom'],
+    'intercom': ['אינטרקומ'],
+    'סימנס': ['siemens'],
+    'siemens': ['סימנס'],
   };
 
   const getTermVariants = (term: string) => {
@@ -162,7 +199,7 @@
       if (variant.length > 3 && variant.endsWith('ת')) variants.add(`${variant.slice(0, -1)}ה`);
       if (variant.length > 3 && variant.endsWith('ה')) variants.add(`${variant.slice(0, -1)}ת`);
     }
-    return [...variants].filter((variant) => variant.length > 1);
+    return [...variants].map(normalize).filter((variant) => variant.length > 1);
   };
 
   const isProductUrl = (url: string) =>
@@ -179,11 +216,57 @@
     url === '/siemens-knx-products/' || url === '/equipment/' ||
     url === '/audio-and-sound-systems/' || url === '/knx-switch-advisor/';
 
+  const hasPhrase = (text: string, phrase: string) => (` ${text} `).includes(` ${phrase} `);
+
   const containsTerm = (text: string, term: string) => {
-    if (/^\d+$/.test(term)) {
-      return (` ${text} `).includes(` ${term} `);
+    if (hasPhrase(text, term)) return true;
+    if (term.length < 3 || /\d| /.test(term)) return false;
+    const padded = ` ${text}`;
+    if (padded.includes(` ${term}`)) return true;
+    return /^[א-ת]{4,}$/.test(term) && [...'ובלכמשה'].some((prefix) => padded.includes(` ${prefix}${term}`));
+  };
+
+  const fillerWords = new Set(['את', 'של', 'על', 'עם', 'כל', 'יש', 'איפה', 'מחפש', 'מחפשת', 'תמצא', 'הראה', 'the', 'for', 'with', 'please', 'find', 'show', 'me']);
+  const getQueryTerms = (query: string) => {
+    const terms = [...new Set(query.split(' ').filter((term) => term.length > 1 || /^\d$/.test(term)))];
+    const meaningful = terms.filter((term) => !fillerWords.has(term));
+    return meaningful.length ? meaningful : terms;
+  };
+
+  const getModelPattern = (query: string) => {
+    const compact = query.replace(/ /g, '');
+    if (!/^[a-z0-9]{3,36}$/.test(compact) || !/[a-z]/.test(compact) || !/\d/.test(compact)) return null;
+    return new RegExp(`(?:^| )${[...compact].join(' ?')}(?= |$)`);
+  };
+
+  const isNearMatch = (word: string, term: string) => {
+    if (Math.abs(word.length - term.length) > 1) return false;
+    let mismatch = 0;
+    while (mismatch < term.length && word[mismatch] === term[mismatch]) mismatch += 1;
+    if (mismatch === term.length) return word.length === term.length + 1;
+    if (word.length !== term.length) {
+      const [longer, shorter] = word.length > term.length ? [word, term] : [term, word];
+      return longer.slice(mismatch + 1) === shorter.slice(mismatch);
     }
-    return text.includes(term);
+    return word.slice(mismatch + 1) === term.slice(mismatch + 1) ||
+      (word[mismatch] === term[mismatch + 1] && word[mismatch + 1] === term[mismatch] &&
+        word.slice(mismatch + 2) === term.slice(mismatch + 2));
+  };
+
+  const prepareRecord = (record: SearchRecord): PreparedRecord => {
+    const normalizedTitle = normalize(record.title);
+    const normalizedDescription = normalize(record.description);
+    const normalizedHeadings = normalize(record.headings);
+    return {
+      ...record,
+      normalizedTitle,
+      normalizedDescription,
+      normalizedHeadings,
+      normalizedBody: normalize(record.body),
+      normalizedUrl: normalize(record.url),
+      normalizedIdentifiers: normalize(record.identifiers || ''),
+      headlineWords: [...new Set(`${normalizedTitle} ${normalizedDescription} ${normalizedHeadings}`.split(' '))],
+    };
   };
 
   const loadIndex = () => {
@@ -193,20 +276,11 @@
           if (!response.ok) throw new Error(`Search index returned ${response.status}`);
           return response.json() as Promise<SearchRecord[]>;
         })
-        .then((records) => records.map((record) => {
-          const normalizedTitle = normalize(record.title);
-          const normalizedDescription = normalize(record.description);
-          const normalizedHeadings = normalize(record.headings);
-          const normalizedBody = normalize(record.body);
-          return {
-            ...record,
-            normalizedTitle,
-            normalizedDescription,
-            normalizedHeadings,
-            normalizedBody,
-            compactSearch: `${normalizedTitle} ${normalizedDescription} ${normalizedHeadings} ${normalizedBody}`.replace(/\s+/g, ''),
-          };
-        }));
+        .then((records) => records.map(prepareRecord))
+        .catch((error) => {
+          indexPromise = undefined;
+          throw error;
+        });
     }
     return indexPromise;
   };
@@ -255,103 +329,139 @@
     return `${start ? '…' : ''}${text.slice(start, end).trim()}${end < text.length ? '…' : ''}`;
   };
 
-  const scoreRecord = (record: PreparedRecord, normalizedQuery: string, compactQuery: string, termGroups: string[][]) => {
-    let score = 0;
+  const scoreRecord = (
+    record: PreparedRecord,
+    normalizedQuery: string,
+    modelPattern: RegExp | null,
+    termGroups: string[][],
+  ) => {
+    const fields = [
+      [record.normalizedIdentifiers, 56],
+      [record.normalizedTitle, 48],
+      [record.normalizedHeadings, 24],
+      [record.normalizedDescription, 18],
+      [record.normalizedUrl, 16],
+      [record.normalizedBody, 5],
+    ] as const;
+    const modelScore = modelPattern && fields.find(([value]) => modelPattern.test(value))?.[1];
+    let score = fields.reduce((sum, [value, weight]) => sum + (hasPhrase(value, normalizedQuery) ? weight * 2 : 0), 0);
     let matchedTerms = 0;
-
-    if (record.normalizedTitle.includes(normalizedQuery)) score += 100;
-    if (record.normalizedHeadings.includes(normalizedQuery)) score += 55;
-    if (record.normalizedDescription.includes(normalizedQuery)) score += 35;
-    if (record.normalizedBody.includes(normalizedQuery)) score += 14;
-    if (compactQuery.length >= 6 && record.compactSearch.includes(compactQuery)) score += 95;
-
-    for (const variants of termGroups) {
-      let matched = false;
-      if (variants.some((term) => containsTerm(record.normalizedTitle, term))) { score += 38; matched = true; }
-      if (variants.some((term) => containsTerm(record.normalizedHeadings, term))) { score += 22; matched = true; }
-      if (variants.some((term) => containsTerm(record.normalizedDescription, term))) { score += 14; matched = true; }
-      if (variants.some((term) => containsTerm(record.normalizedBody, term))) { score += 4; matched = true; }
-      if (matched) matchedTerms += 1;
+    let strongMatches = 0;
+    let usedTypo = false;
+    for (const alternatives of termGroups) {
+      const [term] = alternatives;
+      const termModel = /\d/.test(term) ? getModelPattern(term) : null;
+      const field = fields.find(([value]) => alternatives.some((variant) => containsTerm(value, variant)) || termModel?.test(value));
+      if (field) {
+        const [value, weight] = field;
+        score += hasPhrase(value, term) ? weight : weight * 0.72;
+        matchedTerms += 1;
+        if (weight >= 18) strongMatches += 1;
+      } else if (!usedTypo && !/\d/.test(term) && term.length >= (/^[a-z]+$/.test(term) ? 5 : 4) &&
+        record.headlineWords.some((word) => isNearMatch(word, term))) {
+        matchedTerms += 1;
+        usedTypo = true;
+        score += 8;
+      } else if (/\d/.test(term) && !modelScore) {
+        return 0;
+      }
     }
 
-    const requiredMatches = termGroups.length <= 4 ? termGroups.length : Math.ceil(termGroups.length * 0.7);
-    if (matchedTerms < requiredMatches) return 0;
+    if (modelScore) score += 180 + modelScore * 2;
+    else if (matchedTerms < termGroups.length) {
+      if (termGroups.length < 3 || matchedTerms !== termGroups.length - 1 || !strongMatches) return 0;
+      score *= 0.32;
+    }
+    if (usedTypo) score *= 0.65;
+    if (record.type === 'pdf' && matchedTerms === termGroups.length && /(?:מפרט|סכמ|קטלוג|pdf|spec|diagram)/.test(normalizedQuery)) score += 18;
 
     const asksAudio = /(?:אודיו|שמע|סאונד|רמקול|קולנוע|audio|speaker)/.test(normalizedQuery);
     const asksSwitches = /(?:מפסק|מתג|לחצנ|knx|קנקס)/.test(normalizedQuery);
-    if (asksAudio && (record.url.startsWith('/av/') || record.url === '/audio-and-sound-systems/')) score += 100;
-    if (asksSwitches && (record.url === '/knx-switch-advisor/' || record.url === '/knx-switch-configurator/' || record.url.includes('knx-switch'))) score += 100;
-    if (isProductUrl(record.url) && (asksAudio || asksSwitches || /(?:מוצר|מק ט|בקר|סימנס|siemens|ציוד)/.test(normalizedQuery))) score += 25;
-    if (isProductHubUrl(record.url) && (asksAudio || asksSwitches)) score += 20;
-    return score + matchedTerms * 5;
+    if (asksAudio && record.url.startsWith('/av/')) score += 16;
+    if (asksSwitches && (record.url === '/knx-switch-advisor/' || record.url === '/knx-switch-configurator/')) score += 8;
+    if (isProductUrl(record.url) && !isProductHubUrl(record.url)) score += 10;
+    return score;
   };
 
   const renderResults = (matches: Array<{ record: SearchRecord; score: number }>, query: string, terms: string[]) => {
     if (!results || !status) return;
     results.replaceChildren();
+    if (moreButton) moreButton.hidden = true;
 
     if (!matches.length) {
       status.textContent = `לא נמצאו תוצאות עבור „${query}”. נסו מונח קצר, מק״ט או מספר יציאות.`;
       return;
     }
 
-    status.textContent = `נמצאו ${matches.length} תוצאות מובילות עבור „${query}”.`;
-    for (const { record } of matches) {
-      const item = document.createElement('li');
-      const link = document.createElement('a');
-      link.href = record.url;
-      link.className = 'group block rounded-xl border border-brand-100 p-4 transition hover:border-accent-400 hover:bg-brand-50 hover:shadow-sm focus:outline-none focus:ring-2 focus:ring-accent-500';
-
-      if (isProductUrl(record.url)) {
-        const type = document.createElement('span');
-        type.className = 'mb-1.5 inline-flex rounded-full bg-accent-50 px-2.5 py-1 text-xs font-bold text-accent-800';
-        type.textContent = isProductHubUrl(record.url) ? 'מרכז מוצרים ומפרטים' : 'מוצר / מפרט טכני';
-        link.append(type);
+    const appendResults = (start: number) => {
+      const end = Math.min(start + resultsPerPage, matches.length);
+      status.textContent = `מוצגות ${end} מתוך ${matches.length} תוצאות עבור „${query}”.`;
+      if (moreButton) {
+        moreButton.hidden = end === matches.length;
+        moreButton.onclick = () => appendResults(end);
       }
+      for (const { record } of matches.slice(start, end)) {
+        const item = document.createElement('li');
+        const link = document.createElement('a');
+        link.href = record.url;
+        link.className = 'group block rounded-xl border border-brand-100 p-4 transition hover:border-accent-400 hover:bg-brand-50 hover:shadow-sm focus:outline-none focus:ring-2 focus:ring-accent-500';
 
-      const title = document.createElement('h3');
-      title.className = 'text-lg font-bold text-brand-900 transition group-hover:text-accent-700';
-      appendHighlighted(title, record.title, terms);
+        if (record.type === 'pdf' || isProductUrl(record.url)) {
+          const type = document.createElement('span');
+          type.className = 'mb-1.5 inline-flex rounded-full bg-accent-50 px-2.5 py-1 text-xs font-bold text-accent-800';
+          type.textContent = record.type === 'pdf' ? 'מסמך PDF' : isProductHubUrl(record.url) ? 'מרכז מוצרים ומפרטים' : 'מוצר / מפרט טכני';
+          link.append(type);
+        }
 
-      const snippet = document.createElement('p');
-      snippet.className = 'mt-1.5 line-clamp-2 text-sm leading-6 text-brand-600';
-      appendHighlighted(snippet, makeSnippet(record, query, terms), terms);
+        const title = document.createElement('h3');
+        title.className = 'text-lg font-bold text-brand-900 transition group-hover:text-accent-700';
+        appendHighlighted(title, record.title, terms);
 
-      const path = document.createElement('span');
-      path.className = 'mt-2 block text-xs font-medium text-accent-700';
-      path.dir = 'ltr';
-      path.textContent = record.url;
+        const snippet = document.createElement('p');
+        snippet.className = 'mt-1.5 line-clamp-2 text-sm leading-6 text-brand-600';
+        appendHighlighted(snippet, makeSnippet(record, query, terms), terms);
 
-      link.append(title, snippet, path);
-      item.append(link);
-      results.append(item);
-    }
+        const path = document.createElement('span');
+        path.className = 'mt-2 block text-xs font-medium text-accent-700';
+        path.dir = 'ltr';
+        path.textContent = record.url;
+
+        link.append(title, snippet, path);
+        item.append(link);
+        results.append(item);
+      }
+      if (start > 0) results.children[start]?.querySelector('a')?.focus();
+    };
+    appendResults(0);
   };
 
   const search = async () => {
     if (!input || !status || !results) return;
     const query = input.value.trim();
     const normalizedQuery = normalize(query);
-    const compactQuery = normalizedQuery.replace(/\s+/g, '');
-    const terms = [...new Set(normalizedQuery.split(' ').filter((term) => term.length > 1 || /^\d+$/.test(term)))];
+    const modelPattern = getModelPattern(normalizedQuery);
+    const terms = getQueryTerms(normalizedQuery);
     const termGroups = terms.map(getTermVariants);
 
     if (normalizedQuery.length < 2 || !terms.length) {
       results.replaceChildren();
+      if (moreButton) moreButton.hidden = true;
       status.textContent = 'הקלידו לפחות שתי אותיות כדי להתחיל לחפש.';
       return;
     }
 
+    if (moreButton) moreButton.hidden = true;
     status.textContent = 'מחפש…';
     try {
       const records = await loadIndex();
+      if (input.value.trim() !== query) return;
       const matches = records
-        .map((record) => ({ record, score: scoreRecord(record, normalizedQuery, compactQuery, termGroups) }))
+        .map((record) => ({ record, score: scoreRecord(record, normalizedQuery, modelPattern, termGroups) }))
         .filter(({ score }) => score > 0)
-        .sort((left, right) => right.score - left.score || left.record.title.localeCompare(right.record.title, 'he'))
-        .slice(0, 10);
+        .sort((left, right) => right.score - left.score || left.record.title.localeCompare(right.record.title, 'he'));
       renderResults(matches, query, query.split(/\s+/).filter((term) => term.length > 1 || /^\d+$/.test(term)));
     } catch (error) {
+      if (input.value.trim() !== query) return;
       console.error(error);
       status.textContent = 'לא הצלחנו לטעון את החיפוש. נסו שוב בעוד רגע.';
     }

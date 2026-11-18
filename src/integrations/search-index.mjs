@@ -1,4 +1,4 @@
-import { readdir, readFile, writeFile } from 'node:fs/promises';
+import { readdir, readFile, stat, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -12,7 +12,7 @@ function decodeEntities(value) {
     if (code[0] === '#') {
       const hex = code[1]?.toLowerCase() === 'x';
       const number = Number.parseInt(code.slice(hex ? 2 : 1), hex ? 16 : 10);
-      return Number.isFinite(number) ? String.fromCodePoint(number) : entity;
+      return number >= 0 && number <= 0x10ffff ? String.fromCodePoint(number) : entity;
     }
     return ENTITY_MAP[code.toLowerCase()] ?? entity;
   });
@@ -61,9 +61,35 @@ async function findHtmlFiles(directory) {
   return files;
 }
 
-async function buildSearchIndex(outputDirectory) {
+function pdfLinks(html) {
+  return [...html.matchAll(/<a\b([^>]*)>([\s\S]*?)<\/a>/gi)].flatMap(([, attributes, content]) => {
+    const href = decodeEntities(attributes.match(/\shref\s*=\s*["']([^"']+)["']/i)?.[1] ?? '');
+    const url = href.replace(/^https:\/\/(?:www\.)?i-feel\.co\.il(?=\/)/i, '').split(/[?#]/, 1)[0];
+    if (!/^\/(?:assets\/(?:catalogs|siemens-bms)|gp9\/assets)\/[\w.-]+\.pdf$/i.test(url)) return [];
+    return [{ url, label: toPlainText(content) }];
+  });
+}
+
+function getProductIdentifiers(html) {
+  const identifiers = new Set();
+  for (const [, content] of html.matchAll(/<script\b[^>]*\btype=["']application\/ld\+json["'][^>]*>([\s\S]*?)<\/script>/gi)) {
+    let schema;
+    try { schema = JSON.parse(content); } catch { continue; }
+    const nodes = schema?.['@graph'] ?? schema;
+    for (const node of [nodes].flat()) {
+      if (![node?.['@type']].flat().includes('Product')) continue;
+      for (const value of [node.sku, node.mpn, node.model, node.alternateName].flat()) {
+        if (typeof value === 'string' && value.trim()) identifiers.add(value.trim());
+      }
+    }
+  }
+  return [...identifiers].join(' · ');
+}
+
+export async function buildSearchIndex(outputDirectory) {
   const files = await findHtmlFiles(outputDirectory);
   const records = [];
+  const documents = new Map();
   for (const file of files) {
     const html = await readFile(file, 'utf8');
     const relativeFile = path.relative(outputDirectory, file);
@@ -71,7 +97,9 @@ async function buildSearchIndex(outputDirectory) {
     const robots = getMetaContent(html, 'robots').toLowerCase();
     if (url === '/search/' || robots.includes('noindex')) continue;
 
-    const mainHtml = getTag(html, 'main') || getTag(html, 'body');
+    const mainStart = html.search(/<main\b[^>]*>/i);
+    const mainEnd = html.toLowerCase().lastIndexOf('</main>');
+    const mainHtml = mainStart >= 0 && mainEnd > mainStart ? html.slice(mainStart, mainEnd) : getTag(html, 'body');
     const browserTitle = toPlainText(getTag(html, 'title'));
     const pageTitle = toPlainText(getTag(mainHtml, 'h1')) || browserTitle;
     const description = toPlainText(getMetaContent(html, 'description'));
@@ -81,9 +109,34 @@ async function buildSearchIndex(outputDirectory) {
       .join(' · ');
     const body = toPlainText(mainHtml).slice(0, 24000);
     if (!pageTitle || body.length < 20) continue;
-    records.push({ url, title: pageTitle.slice(0, 180), description, headings, body });
+    const identifiers = getProductIdentifiers(html);
+    records.push({ url, title: pageTitle.slice(0, 180), description, headings, body, ...(identifiers && { identifiers }) });
+
+    for (const { url: pdfUrl, label } of pdfLinks(mainHtml)) {
+      if (documents.has(pdfUrl)) continue;
+      const title = label.length > 5 ? `${pageTitle} · ${label}` : pageTitle;
+      documents.set(pdfUrl, { url: pdfUrl, title: title.slice(0, 180), description, headings: '', body: '', type: 'pdf' });
+    }
+    if (url !== '/catalogs/') continue;
+    for (const [card] of mainHtml.matchAll(/<article\b[^>]*>[\s\S]*?<\/article>/gi)) {
+      const title = toPlainText(getTag(card, 'h3'));
+      if (!title) continue;
+      const description = [...card.matchAll(/<p\b[^>]*>([\s\S]*?)<\/p>/gi)]
+        .map(([, content]) => toPlainText(content)).join(' ');
+      for (const { url: pdfUrl } of pdfLinks(card)) {
+        documents.set(pdfUrl, { url: pdfUrl, title, description, headings: '', body: '', type: 'pdf' });
+      }
+    }
   }
 
+  const publishedDocuments = await Promise.all([...documents.values()].map(async (record) => {
+    const file = await stat(path.join(outputDirectory, record.url.slice(1))).catch((error) => {
+      if (error.code !== 'ENOENT') throw error;
+      return null;
+    });
+    return file?.isFile() ? record : null;
+  }));
+  records.push(...publishedDocuments.filter(Boolean));
   records.sort((left, right) => left.url.localeCompare(right.url, 'he'));
   await writeFile(path.join(outputDirectory, 'search-index.json'), JSON.stringify(records), 'utf8');
   return records.length;
@@ -95,7 +148,7 @@ export default function searchIndex() {
     hooks: {
       'astro:build:done': async ({ dir, logger }) => {
         const count = await buildSearchIndex(fileURLToPath(dir));
-        logger.info(`Indexed ${count} pages for free-text search.`);
+        logger.info(`Indexed ${count} pages and documents for site search.`);
       },
     },
   };

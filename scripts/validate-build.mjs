@@ -100,6 +100,8 @@ if (!sitemap.includes('https://i-feel.co.il/as-made/')) errors.push('sitemap: AS
 if (!homepage.includes('href="/as-made/"')) errors.push('homepage: footer link to AS-MADE hub is missing');
 
 const searchRecords = JSON.parse(await readFile(path.join(distRoot, 'search-index.json'), 'utf8'));
+const dimmerPdf = searchRecords.find((record) => record.url === '/assets/catalogs/zwave-glass-dimmer-spec.pdf');
+if (dimmerPdf?.type !== 'pdf' || !/דימר.*Z-Wave/.test(dimmerPdf.title)) errors.push('search index: searchable Z-Wave dimmer PDF is missing');
 const asMadeSearchRecord = searchRecords.find((record) => record.url === '/as-made/');
 if (!asMadeSearchRecord) errors.push('search index: AS-MADE hub is missing');
 const indexedAsMadeForms = searchRecords.filter((record) => record.url.startsWith('/as-made/') && record.url !== '/as-made/');
