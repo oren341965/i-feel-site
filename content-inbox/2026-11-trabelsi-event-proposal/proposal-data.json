@@ -50,24 +50,29 @@
       "type": "UP 258E22",
       "desc": "גלאי נוכחות תקרתי KNX. פריסת הגלאים והתאמתם לגובה ולכיסוי ייקבעו בתוכנית הביצוע.",
       "url": "https://hit.sbt.siemens.com/RWD/AssetsByProduct.aspx?RC=WW&asset_type=Data+Sheet+for+Product&lang=en&prodId=5WG1258-2EB22"
-    }
-  ],
-  "pbiUnitPrices": [
-    {
-      "name": "ממשק PBI לשני לחצנים",
-      "sku": "5WG1220-2AB21",
-      "price": 500
     },
     {
       "name": "ממשק PBI לארבעה לחצנים",
       "sku": "5WG1220-2DB31",
+      "qty": 17,
+      "price": 555,
+      "type": "UP 220D31",
+      "desc": "ממשק 4 כניסות למפסקים רגילים. ממשק אחד בכל אחד מ־17 החללים; מפסק הקיר מסופק בידי החשמלאי.",
+      "url": "https://sid.siemens.com/v/u/A6V10416507"
+    }
+  ],
+  "pbiUnitPrices": [
+    {
+      "name": "ממשק PBI לארבעה לחצנים",
+      "sku": "5WG1220-2DB31",
+      "qty": 17,
       "price": 555
     }
   ],
-  "pricedEquipmentSubtotalExVat": 27940,
+  "pricedEquipmentSubtotalExVat": 37375,
   "vatRate": 0.18,
-  "pricedEquipmentVat": 5029.2,
-  "pricedEquipmentSubtotalIncVat": 32969.2,
+  "pricedEquipmentVat": 6727.5,
+  "pricedEquipmentSubtotalIncVat": 44102.5,
   "finalProjectTotal": null,
   "excluded": [
     "all dimmers",
@@ -75,8 +80,7 @@
     "HVAC controls"
   ],
   "open": [
-    "PBI quantity and selection",
-    "ordinary switches quantity and selection",
+    "ordinary switch series and color",
     "design installation programming commissioning pricing"
   ],
   "priceSource": {
@@ -104,5 +108,13 @@
       "sha256": "f4dd6fcb0a2909c8d8e18f226e10e08da2b9106b887d621ff17121f122d34f2f"
     }
   ],
-  "websiteActivationRequestedAfterClarification": false
+  "websiteActivationRequestedAfterClarification": false,
+  "approvedSpaceCount": 17,
+  "ordinarySwitchPoints": {
+    "quantity": 17,
+    "supplyBy": "electrical contractor",
+    "includedInIfeelSupply": false
+  },
+  "quantityBasis": "User explicitly confirmed 17 spaces, 17 detectors and 17 PBI; one ordinary switch point per space. Not an independently verified count of all physical switch mechanisms in the architectural plan.",
+  "revision": "02"
 }
