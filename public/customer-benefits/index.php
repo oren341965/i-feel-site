@@ -81,7 +81,7 @@ header('Referrer-Policy: no-referrer');
     <section class="active-group" aria-labelledby="neve-shuster-title">
       <div>
         <p class="eyebrow" style="color:#8d672e">פרויקט דיירים פעיל</p>
-        <h3 id="neve-shuster-title">שכונת הפרדס, רעננה</h3>
+        <h3 id="neve-shuster-title">שכונת הפרדס, רעננה - נווה שוסטר</h3>
         <p>אזור ייעודי לדיירי נווה שוסטר / קבוצת דניה סיבוס: המפרט בדירה, חבילות ומחירי שדרוג, שינויי תכניות, פתרונות רשת ואודיו, מצב שבת וחגים, סרטוני הדרכה, אנשי קשר והפלייר להורדה. הכניסה באמצעות הדוא״ל הרשום בפרויקט וקוד חד־פעמי.</p>
       </div>
       <a class="button button--primary" href="/neve-shuster/">כניסה לאזור הדיירים</a>
