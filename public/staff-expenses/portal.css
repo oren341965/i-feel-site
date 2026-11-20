@@ -204,6 +204,10 @@ input[readonly] { background: #f3f5f8; }
 .vehicle-deadline > span:first-child { color: var(--muted); font-size: .8rem; }
 .vehicle-deadline .status { width: fit-content; }
 .vehicle-card__meta { margin: 0; }
+.vehicle-insurance { display: grid; gap: 12px; }
+.vehicle-insurance > .button { justify-self: start; }
+.vehicle-insurance .vehicle-card__meta { overflow-wrap: anywhere; }
+
 .tab--vehicle { background: #eef8f2; color: #17653a; border-color: #b8dfc8; }
 .tab--handover { background: #fff7e8; color: #7a4b00; border-color: #efd39a; }
 .handover-selector { grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); align-items: end; }
