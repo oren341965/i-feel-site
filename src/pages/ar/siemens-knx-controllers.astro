@@ -43,7 +43,7 @@ const items = [
 ];
 const jsonLd = JSON.stringify({ '@context':'https://schema.org', '@type':'CollectionPage', name:title, description, inLanguage:'ar', url:canonical });
 ---
-<BaseLayout title={title} description={description} canonical={canonical} ogTitle={title} ogDescription={description} ogUrl={canonical} jsonLd={jsonLd}>
+<BaseLayout title={title} description={description} canonical={canonical} ogTitle={title} ogDescription={description} ogUrl={canonical} jsonLd={jsonLd} lang="ar" dir="rtl">
   <main lang="ar" dir="rtl" class="bg-white text-brand-900">
     <header class="bg-brand-900 text-white py-12 md:py-16">
       <div class="max-w-5xl mx-auto px-4">
@@ -62,7 +62,12 @@ const jsonLd = JSON.stringify({ '@context':'https://schema.org', '@type':'Collec
         <h2 class="font-extrabold text-xl mb-3">اختر وحدة التحكم</h2>
         <div class="flex flex-wrap gap-2">{items.map((item) => <a class="rounded-full bg-white border border-brand-100 px-3 py-2 text-sm font-semibold hover:border-accent-500" href={'#' + item.id}>{item.model}</a>)}</div>
       </nav>
-      {items.map((item) => <article id={item.id} class="scroll-mt-6 border-b border-brand-100 py-9">\n        <nav aria-label="Language" class="flex flex-wrap gap-2 mb-5 text-sm font-bold">\n          <a class="rounded-full border border-brand-200 px-3 py-2 hover:border-accent-500" href={item.he}>עברית</a>\n          <a class="rounded-full border border-brand-200 px-3 py-2 hover:border-accent-500" href={'/en/siemens-knx-controllers/#' + item.id}>English</a>\n          <a class="rounded-full border border-brand-200 px-3 py-2 hover:border-accent-500" href={'/ar/siemens-knx-controllers/#' + item.id}>العربية</a>\n        </nav>
+      {items.map((item) => <article id={item.id} class="scroll-mt-6 border-b border-brand-100 py-9">
+        <nav aria-label="Language" class="flex flex-wrap gap-2 mb-5 text-sm font-bold">
+          <a class="rounded-full border border-brand-200 px-3 py-2 hover:border-accent-500" href={item.he}>עברית</a>
+          <a class="rounded-full border border-brand-200 px-3 py-2 hover:border-accent-500" href={'/en/siemens-knx-controllers/#' + item.id}>English</a>
+          <a class="rounded-full border border-brand-200 px-3 py-2 hover:border-accent-500" href={'/ar/siemens-knx-controllers/#' + item.id}>العربية</a>
+        </nav>
         <p class="text-sm uppercase tracking-wide text-accent-700 font-bold">Siemens GAMMA / KNX</p>
         <h2 class="mt-2 text-3xl font-extrabold">{item.model}: {item.name}</h2>
         <p class="mt-3 text-lg text-brand-700 leading-relaxed">{item.summary}</p>
