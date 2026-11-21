@@ -28,7 +28,7 @@ const articleSchema = {
   headline: article.title,
   description: article.description,
   ...(ogImage ? { image: ogImage } : {}),
-  datePublished: article.updated,
+  datePublished: article.published ?? article.updated,
   dateModified: article.updated,
   inLanguage: 'he-IL',
   mainEntityOfPage: canonical,
@@ -55,7 +55,16 @@ const articleSchema = {
     },
   } : {}),
 };
-const jsonLd = JSON.stringify(articleSchema);
+const faqSchema = article.faq?.length ? {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: article.faq.map(({ question, answer }) => ({
+    '@type': 'Question',
+    name: question,
+    acceptedAnswer: { '@type': 'Answer', text: answer },
+  })),
+} : undefined;
+const jsonLd = JSON.stringify(faqSchema ? [articleSchema, faqSchema] : articleSchema);
 ---
 <BaseLayout title={title} description={article.description} canonical={canonical} ogTitle={article.title} ogDescription={article.description} ogUrl={canonical} ogImage={ogImage} jsonLd={jsonLd} robots={article.noindex ? 'noindex, nofollow, noarchive' : undefined}>
   <article class="bg-white">
@@ -198,6 +207,12 @@ const jsonLd = JSON.stringify(articleSchema);
             <div class="space-y-4 text-lg leading-8 text-brand-700">
               {section.body.map((paragraph) => <p>{paragraph}</p>)}
             </div>
+            {section.subsections?.map(({ heading, body }) => (
+              <div class="mt-5 text-lg leading-8 text-brand-700">
+                <h3 class="mb-2 text-xl font-bold text-brand-900">{heading}</h3>
+                <p>{body}</p>
+              </div>
+            ))}
             {section.bullets && section.bullets.length > 0 && (
               <ul class="mt-4 space-y-3 pr-1 text-lg leading-8 text-brand-700 list-none">
                 {section.bullets.map((item) => (
@@ -223,13 +238,25 @@ const jsonLd = JSON.stringify(articleSchema);
               </figure>
             )}
             {section.cta && (
-              <a href={section.cta.href} class="inline-flex items-center mt-5 bg-accent-500 hover:bg-accent-600 text-white px-6 py-3 rounded-lg font-semibold transition">
+              <a href={section.cta.href} data-ga-event={section.cta.tracking ? 'cta_click' : undefined} data-ga-params={section.cta.tracking ? JSON.stringify(section.cta.tracking) : undefined} class="inline-flex items-center mt-5 bg-accent-500 hover:bg-accent-600 text-white px-6 py-3 rounded-lg font-semibold transition">
                 {section.cta.label}
               </a>
             )}
           </section>
         ))}
       </div>
+
+      {article.faq?.length > 0 && (
+        <section class="mt-12 space-y-4" aria-labelledby="article-faq-title">
+          <h2 id="article-faq-title" class="text-2xl font-bold text-brand-900">שאלות נפוצות</h2>
+          {article.faq.map(({ question, answer }) => (
+            <div>
+              <h3 class="text-xl font-bold text-brand-900">{question}</h3>
+              <p class="leading-8 text-brand-700">{answer}</p>
+            </div>
+          ))}
+        </section>
+      )}
 
       {article.sources && article.sources.length > 0 && (
         <aside class="mt-12 rounded-xl border border-brand-100 bg-brand-50 p-6" aria-labelledby="article-sources-title">
