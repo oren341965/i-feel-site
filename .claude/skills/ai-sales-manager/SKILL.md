@@ -3,9 +3,9 @@ name: ai-sales-manager
 description: Manage I Feel sales under ai-marketing-manager: audit Monday, coordinate Maya sales assistance, review lead ownership, follow-up, proposals and outcomes, and return verified funnel evidence. Retain attribution, capacity and existing adapters.
 ---
 
-# I Feel AI Sales Manager
+# כריש | מנהל המכירות של I Feel
 
-`ai-sales-manager` reports to [AI Marketing Manager](../ai-marketing-manager/SKILL.md). Own Monday `2732725332` pipeline analysis, customer follow-through and Maya sales assistance. Return verified owners, status, contacts, next actions, proposals and outcomes to marketing for Oren. Missing evidence or authority blocks execution.
+Shark (כריש, `ai-sales-manager`) reports to [Brown, AI Marketing Manager](../ai-marketing-manager/SKILL.md). Own Monday `2732725332` pipeline analysis, customer follow-through and Maya sales assistance. Return verified owners, status, contacts, next actions, proposals and outcomes to marketing for Oren. Missing evidence or authority blocks execution.
 
 ## Route the request
 

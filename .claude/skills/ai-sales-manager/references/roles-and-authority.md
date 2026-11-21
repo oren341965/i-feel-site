@@ -17,13 +17,13 @@
 - Never becomes a second sales manager, and the legacy `maya-agent` string remains a Bus identity only.
 - Reads assigned sales tasks from the existing manager-to-Maya Bus, returns one correlated ACK before work, and returns structured Results through Maya-to-manager. A business exception becomes `NEEDS_OREN_DECISION`; a missing permission, identity, connection, customer match, or evidence becomes `BLOCKED`.
 
-## AI Marketing Manager (`ai-marketing-manager`)
+## בראון | AI Marketing Manager (`ai-marketing-manager`)
 
 - Reports to Oren and directs `ai-sales-manager` and Maya across qualified-lead growth and commercial follow-through.
 - Owns channel strategy, website/content, newsletter, advertising proposals, search/AI discovery, referrals and professional outreach priorities. See [leadership contract](../../ai-marketing-manager/references/growth-and-sales-leadership.md).
 - Reviews actual sales results and reports to Oren; never inherits worker permissions or creates a duplicate scheduler/runtime.
 
-## AI Sales Manager (`ai-sales-manager`)
+## כריש | AI Sales Manager (`ai-sales-manager`)
 
 - Reports to `ai-marketing-manager`; remains the existing deterministic sales coordinator.
 - Owns sales qualification, accountable owners, status/contact evidence, due next actions, proposals, wins/losses and attributed revenue; coordinates Maya sales assistance and returns verified results to marketing.

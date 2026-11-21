@@ -1,0 +1,4 @@
+interface:
+  display_name: "בראון | מנהל השיווק I Feel"
+  short_description: "בראון: אסטרטגיית שיווק, SEO ובקרת לידים, ללא הפעלה או שינוי הרשאות"
+  default_prompt: "Use $ai-marketing-manager for evidence-based I Feel marketing analysis and delegation within current permissions. Brown is the human display name of ai-marketing-manager and Shark is ai-sales-manager; do not activate, duplicate, send, spend or merge based on this name metadata."
