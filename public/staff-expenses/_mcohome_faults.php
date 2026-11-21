@@ -590,6 +590,7 @@ function mcohome_send_internal_notification(array $record): array
         'נשלח ל-MCOHome: ' . (($record['sentToMcohome'] ?? false) ? 'כן' : 'לא') . ' (' . $vendorOk . '/' . count(mcohome_vendor_recipients()) . ')',
         'Dropbox: ' . (($record['dropboxSync']['status'] ?? '') ?: 'לא הוגדר'), '',
         'Google Drive: ' . ($record['driveSync']['status'] ?? 'לא אומת'),
+        'נדרש להשלמה: ' . implode(' | ', $record['deliveryBlockers'] ?? []),
         'אחראי מעקב: ' . ($record['owner'] ?? 'לא צוין'),
         'מועד מעקב: ' . ($record['followUpDue'] ?? 'לא נקבע — נדרש טיפול בשליחה'),
         'אישור השליחה הוא אישור מסירה לשירות הדואר, לא אישור קבלה או קריאה אצל היצרן.', '',
@@ -686,18 +687,30 @@ function mcohome_finalize_record(array $record): array
     mcohome_save_record($record);
 
     $record = mcohome_sync_media_to_dropbox($record);
+    $record['sentToMcohome'] = false;
+    $record['owner'] = 'arik@i-feel.co.il';
+    $record['deliveryBlockers'] = [];
+    if (trim((string) ($record['description'] ?? '')) === '') {
+        $record['deliveryBlockers'][] = 'חסר הסבר תקלה: מה הופעל, מה ציפיתם שיקרה, מה קרה בפועל ומה נוסה.';
+    }
+    if (empty($record['media'])) {
+        $record['deliveryBlockers'][] = 'לא צורפו סרטון או תמונות. הדיווח נשמר להשלמה ולא נשלח ליצרן.';
+    }
     if (mcohome_gateway_config() === null) {
-        // Stage the connection screen without interrupting the existing sender.
-        // Even before gateway activation, attach short videos and use accessible links.
         $record['driveSync'] = ['ok' => false, 'status' => 'not_configured'];
-        $record['vendorDraft'] = mcohome_build_vendor_draft($record);
-        $record['vendorNotificationResults'] = mcohome_send_vendor_notification($record);
-        $record['sentToMcohome'] = count(array_filter($record['vendorNotificationResults'])) === count(mcohome_vendor_recipients());
-        $record['deliveryMode'] = 'server_mail_pending_google_connection';
-        $record['translationStatus'] = 'original_notes_pending_translation';
-    } else {
+        $record['deliveryBlockers'][] = 'חיבור Google Drive והתרגום טרם הוגדר. נדרש טיפול של אורן.';
+        $record['deliveryMode'] = 'held_pending_google_connection';
+        $record['translationStatus'] = 'pending';
+    } elseif ($record['deliveryBlockers'] === []) {
         $record = mcohome_deliver_with_drive($record);
         $record['deliveryMode'] = 'google_gateway';
+        $record['translationStatus'] = $record['sentToMcohome'] ? 'completed' : 'unverified';
+        if (!$record['sentToMcohome']) {
+            $record['deliveryBlockers'][] = 'העלאת הראיות או השליחה לא אושרו. אריק ואורן יבדקו לפני ניסיון נוסף.';
+        }
+    } else {
+        $record['driveSync'] = ['ok' => false, 'status' => 'incomplete_report'];
+        $record['deliveryMode'] = 'held_incomplete_report';
     }
     mcohome_save_record($record);
     if ($record['sentToMcohome'] && ($record['unitStatus'] ?? '') !== 'נסגר') {

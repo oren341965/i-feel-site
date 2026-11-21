@@ -225,7 +225,8 @@
         const text = delivered
             ? 'הדיווח ' + payload.eventId + ' נשמר ב-Google Drive והודעה נשלחה ליצרן עם הטכנאי, אורן ואריק בעותק.'
             : 'הדיווח ' + payload.eventId + ' נשמר בשרת. העלאה ל-Drive או שליחה ליצרן לא אושרו; נדרש טיפול של אריק ואורן.';
-        setStatus(text + suffix, delivered && !payload.recurring ? 'success' : 'error');
+        const blockers = (payload.deliveryBlockers || []).join(' ');
+        setStatus(text + ' ' + blockers + suffix, delivered && !payload.recurring ? 'success' : 'error');
     }
 
     async function onSubmit(event) {

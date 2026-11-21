@@ -14,7 +14,8 @@ function deliverFault_(payload) {
   const cc = Array.from(new Set(['oren@i-feel.co.il', 'arik@i-feel.co.il', technician]));
   const viewers = Array.from(new Set(to.concat(cc)));
   const files = payload.evidenceFiles || [];
-  if (!Array.isArray(files) || files.length > 6) throw new Error('Invalid evidence');
+  if (!Array.isArray(files) || files.length === 0 || files.length > 6) throw new Error('Invalid evidence');
+  if (!String(payload.description || '').trim()) throw new Error('Fault description required');
   const decoded = files.map(function (file, index) {
     if (!/^[a-f0-9]{32}\.(jpg|png|webp|heic|heif|avif|mp4|mov|webm)$/.test(file.key || '')) {
       throw new Error('Invalid evidence key');
