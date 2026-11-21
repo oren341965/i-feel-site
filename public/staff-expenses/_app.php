@@ -189,10 +189,10 @@ try {
     }
 
     $tab = trim((string) ($_GET['tab'] ?? 'new'));
-    if (($user['role'] ?? '') !== 'admin' && !in_array($tab, ['new', 'history', 'work', 'closeout', 'handovers', 'supervision', 'profile', 'my_vehicle'], true)) {
+    if (($user['role'] ?? '') !== 'admin' && !in_array($tab, ['new', 'history', 'work', 'closeout', 'handovers', 'supervision', 'profile', 'my_vehicle', true)) {
         $tab = 'new';
     }
-    if (!in_array($tab, ['new', 'history', 'work', 'closeout', 'handovers', 'supervision', 'profile', 'my_vehicle', 'work_stats', 'reports', 'employees', 'vehicles'], true)) {
+    if (!in_array($tab, ['new', 'history', 'work', 'closeout', 'handovers', 'supervision', 'profile', 'my_vehicle', 'work_stats', 'reports', 'employees', 'vehicles', 'equipment'], true)) {
         $tab = 'new';
     }
     if ($tab === 'my_vehicle' && portal_vehicles_for_employee($user) === []) {
