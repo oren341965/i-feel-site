@@ -4,6 +4,8 @@ const title = 'איכות אוויר KNX ו-BMS: חיישני CO₂, לחות ו
 const description = 'איך מתכננים אוורור לפי CO₂, לחות ותפוסה? מדריך KNX עם VAV, Siemens Desigo, BACnet, טבלת נקודות, תרחישי כשל ושאלות מקצועיות.';
 const canonical = 'https://i-feel.co.il/articles/knx-indoor-air-quality-co2-bms/';
 const faq = [
+  {q:'האם ערך CO₂ ב-ppm כולל גם מידע על תקלה?',a:'לא תמיד. DPT 9.008 מעביר ערך איכות אוויר, ואילו DPT 203.100 כולל ערך ושדה סטטוס/פקודה עם Fault. בודקים מה המוצר והיישום באמת תומכים בו; אין להניח שסטטוס תקלה קיים בכל חיישן או עובר אוטומטית לשער ול-BMS.'},
+  {q:'האם דגל Fault ונתון מיושן הם אותה תקלה?',a:'לא. Fault מדווח על כשל שזוהה במקור התומך בו. נתון מיושן יכול לנבוע גם מאובדן תקשורת או הפסקת עדכונים בלי שהתקבלה הודעת Fault. מאפיינים ובודקים את שני המצבים בנפרד.'},
   {q:'ערך CO₂ ב-ETS וב-BMS שונה: האם צריך להחליף חיישן?',a:'לא בהכרח. משווים את אותה נקודה ואותו זמן עדכון, ובודקים יחידות, DPT בכתובת הקבוצתית, פענוח ב-ETS והמרה בשער ל-BMS. רק לאחר שמבודדים את מקור הפער מחליטים אם נדרשת בדיקת חיישן או תיקון מיפוי.'},
   {q:'האם שינוי DPT באובייקט מעדכן אוטומטית את הכתובת הקבוצתית?',a:'לא. לפי KNX, שינוי DPT ב-Group Object אינו מעדכן אוטומטית את ה-DPT שהוגדר ב-Group Address. בודקים את שניהם מול תיעוד המוצר; פענוח ידני של טלגרמה בתצוגת ETS אינו מתקן את המיפוי במערכת.'},
   {q:'האם כל חיישן Siemens QMX3 מודד CO₂?',a:'לא. בתיעוד Siemens ל-KNX PL-Link, QMX3.P30 מודד טמפרטורה, QMX3.P40 טמפרטורה ולחות, ואילו QMX3.P70 כולל גם CO₂. יש לאמת מק״ט, מצב תקשורת ותאימות לבקר; שם משפחה או מראה דומה אינם הוכחת התאמה.'},
@@ -16,7 +18,7 @@ const faq = [
   {q:'מה צריך לכלול מסמך מסירה לאיכות אוויר?',a:'מפת חיישנים, טיפוסי מדידה, יחידות, ספי פעולה והשהיות, פקודות ומשובים, תרחישי כשל, גרסאות תוכנה ותוצאות בדיקות.'}
 ];
 const jsonLd = JSON.stringify({'@context':'https://schema.org','@graph':[
-  {'@type':['TechArticle','Article'],headline:'איכות אוויר KNX ו-BMS: מחיישן CO₂ לבקרת אוורור',description,url:canonical,mainEntityOfPage:canonical,dateModified:'2026-10-31',inLanguage:'he-IL',author:{'@type':'Organization',name:'i-feel',url:'https://i-feel.co.il/'},publisher:{'@id':'https://i-feel.co.il/#business'}},
+  {'@type':['TechArticle','Article'],headline:'איכות אוויר KNX ו-BMS: מחיישן CO₂ לבקרת אוורור',description,url:canonical,mainEntityOfPage:canonical,dateModified:'2026-11-03',inLanguage:'he-IL',author:{'@type':'Organization',name:'i-feel',url:'https://i-feel.co.il/'},publisher:{'@id':'https://i-feel.co.il/#business'}},
   {'@type':'FAQPage',mainEntity:faq.map(x=>({'@type':'Question',name:x.q,acceptedAnswer:{'@type':'Answer',text:x.a}}))},
   {'@type':'BreadcrumbList',itemListElement:[{'@type':'ListItem',position:1,name:'בית',item:'https://i-feel.co.il/'},{'@type':'ListItem',position:2,name:'מאמרים',item:'https://i-feel.co.il/articles/'},{'@type':'ListItem',position:3,name:'איכות אוויר KNX',item:canonical}]}
 ]});
@@ -25,7 +27,7 @@ const jsonLd = JSON.stringify({'@context':'https://schema.org','@graph':[
 <article class="bg-white" dir="rtl">
 <header class="bg-brand-900 text-white py-14"><div class="max-w-4xl mx-auto px-4">
   <a href="/articles/" class="text-accent-400 font-bold">מרכז ידע מקצועי</a>
-  <p class="mt-4 text-brand-200">KNX · BMS · איכות אוויר · עודכן 31.10.2026</p>
+  <p class="mt-4 text-brand-200">KNX · BMS · איכות אוויר · עודכן 3.11.2026</p>
   <h1 class="text-4xl md:text-5xl font-extrabold leading-tight mt-4">איכות אוויר KNX ו-BMS: מחיישן CO₂ לבקרת אוורור</h1>
   <p class="text-lg leading-8 mt-5 text-brand-100">כך משלבים חיישני CO₂, לחות, טמפרטורה ותפוסה בבקרת חדרים, אוורור VAV ומערכות ניהול מבנה — בלי להסתפק במספר על צג.</p>
 </div></header>
@@ -93,6 +95,21 @@ const jsonLd = JSON.stringify({'@context':'https://schema.org','@graph':[
 <p class="text-lg leading-8 text-brand-700">עמודת הזמן במוניטור ETS מתייחסת לשעון המחשב. לצורך ההשוואה מתעדים גם אזור זמן והפרש שעונים ידוע, ומבררים אם זמן ה-BMS הוא זמן קבלה או זמן דגימה. היעדר פער בתצוגה אינו בדיקת כיול ואינו מוכיח שקיימת ספיקת אוויר תקינה. אם חסר קובץ פרויקט או שאין ודאות לגבי מקור הנתון, מסמנים את הבדיקה כחסרה וממשיכים באיתור מקצועי.</p>
 <p class="text-lg leading-8 text-brand-700">במערכת עם <a class="text-accent-700 underline" href="/siemens-desigo-bms/">Siemens Desigo</a> או <a class="text-accent-700 underline" href="/articles/knx-bacnet-gateway-server-client-bms/">ממשק KNX–BACnet</a>, הרשומה יכולה לחבר את בדיקת החדר לבדיקת האינטגרציה. דוגמאות להיקף העבודה שלנו נמצאות ב<a class="text-accent-700 underline" href="/structure-control/projects/">פרויקטי הבקרה</a>; הן אינן ראיה לתוצאת בדיקת החיישן בפרויקט שלכם.</p>
 <p class="text-lg leading-8 text-brand-700">המערכת מציגה נתונים שלא מסתדרים? אפשר לפנות אלינו גם אם היא הותקנה בידי ספק אחר, ואין צורך לזהות לבד את החיישן או להכין קובץ ETS לפני השיחה. נברר יחד מה רואים ובאיזה חלל, ובהתאם לצורך נתאם בדיקת מיפוי. האבחון מיועד לאיש מקצוע מורשה: כלי המוניטור כוללים גם שליחת פקודות, ולכן אין לבצע Write, שידור מחזורי או שינוי פעיל כחלק מבדיקה זו ללא תוכנית ואישור נפרדים.</p>
+</section>
+<section class="space-y-5 mb-12 scroll-mt-24" id="iaq-fault-status" aria-labelledby="iaq-fault-heading">
+<h2 id="iaq-fault-heading" class="text-3xl font-bold text-brand-900">מספר CO₂ אינו מספיק: איך מעבירים גם תקלה ל-BMS?</h2>
+<p class="text-lg leading-8 text-brand-700"><strong>התשובה הקצרה:</strong> לצד ערך CO₂ צריך לדעת אם המדידה תקפה ומתי התקבל עדכון. נתון ב-ppm לבדו אינו מבטיח שהחיישן תקין. בודקים אם קיים אובייקט תקלה נפרד או סוג נתון משולב, ומוודאים שהמידע מגיע עד למסך האחזקה וללוגיקת הבקרה.</p>
+<h3 class="text-2xl font-bold text-brand-900">DPT 9.008 לעומת DPT 203.100 — לא מחליפים רק תווית</h3>
+<p class="text-lg leading-8 text-brand-700">מפרט Datapoint Types של KNX, גרסה 02.02.01 משנת 2021, מבחין בין DPT 9.008 לערך איכות אוויר לבין DPT 203.100, המוגדר במפרט כמבנה משולב ל-LTE וכולל ערך ושדה סטטוס/פקודה. בסוג המשולב נדרש דגל Fault כאשר מזוהה כשל בחיישן. זהו הסבר על המפרט הקיים, לא תקן חדש ולא הוכחה שחיישן מסוים מיישם אותו. לפני שינוי בודקים את אובייקטי המוצר, קובץ היישום, גודל הנתון והתמיכה בשער. שינוי שם הנקודה או ה-DPT בתצוגה אינו מוסיף יכולת לציוד.</p>
+<h3 class="text-2xl font-bold text-brand-900">שלוש בדיקות קבלה לפני שסומכים על המספר</h3>
+<ol class="list-decimal ps-7 space-y-3 text-lg leading-8 text-brand-700">
+<li><strong>מדידה תקפה:</strong> מאמתים שהערך והיחידות מגיעים מהחיישן הנכון, ושקבלת עדכון תקף נרשמת בנפרד משינוי הערך.</li>
+<li><strong>כשל מדווח:</strong> אם המוצר תומך בסטטוס תקלה, בודקים בתנאי מעבדה או בחלון מאושר כיצד הוא מופיע ב-ETS, בשער וב-BMS. אין להמציא דרך יצירת תקלה שאינה נתמכת בהוראות היצרן.</li>
+<li><strong>אובדן עדכונים:</strong> בודקים בנפרד מה קורה כאשר לא מגיעה הודעה חדשה. מגדירים זמן התיישנות לפי מדיניות השידור והפרויקט; אין לקבוע timeout אחיד או לצפות לדגל Fault שלא יכול להגיע לאחר נתק.</li>
+</ol>
+<p class="text-lg leading-8 text-brand-700">במסירה מתעדים ארבעה פריטים: ערך אחרון, מועד קבלת עדכון תקף, סטטוס המקור ומצב התקשורת. נתון חסר לא מוחלף באפס, ואישור התראה אינו הופך אותו לתקין. את תגובת האוורור ואת החזרה לשגרה מאשר מתכנן המיזוג; אין כאן הוראה לכבות מפוח או להוריד ספיקה במבנה פעיל.</p>
+<p class="text-lg leading-8 text-brand-700">בפרויקט עם <a class="text-accent-700 underline" href="/siemens-desigo-bms/">Siemens Desigo</a> או <a class="text-accent-700 underline" href="/articles/knx-bacnet-gateway-server-client-bms/">KNX–BACnet</a>, מגדירים מי מחזיק כל בדיקה ואיך היא עוברת בין המערכות. ראו גם <a class="text-accent-700 underline" href="/knx-smart-home/">פתרונות KNX</a> ו<a class="text-accent-700 underline" href="/structure-control/projects/">פרויקטי בקרת המבנה שלנו</a>. אפשר לפנות אלינו גם כשהמערכת הותקנה בידי חברה אחרת ואין בידיכם קובץ ETS; נתחיל מהתופעה ונברר יחד את הציוד והאפשרויות.</p>
+<p class="text-sm leading-7 text-brand-600">מקור: <a class="underline" href="https://support.knx.org/hc/en-us/article_attachments/15392631105682" target="_blank" rel="noopener noreferrer">KNX Datapoint Types v02.02.01, סעיף 4.10.1</a>, 2021; נבדק 3.11.2026. רשימת הקבלה היא המלצת I Feel, לא נוסח דרישה מתוך התקן.</p>
 </section>
 <section class="space-y-4 mb-12">
 <h2 class="text-3xl font-bold text-brand-900">שאלות נפוצות על איכות אוויר ב-KNX</h2>
