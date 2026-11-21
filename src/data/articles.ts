@@ -4,6 +4,7 @@ export type Article = {
   description: string;
   category: string;
   updated: string;
+  published?: string;
   noindex?: boolean;
   hidden?: boolean;
   image?: string;
@@ -36,13 +37,15 @@ export type Article = {
   }>;
   related: Array<{ label: string; href: string }>;
   sources?: Array<{ label: string; href: string }>;
+  faq?: Array<{ question: string; answer: string }>;
   sections: Array<{
     heading: string;
     body: string[];
+    subsections?: Array<{ heading: string; body: string }>;
     bullets?: string[];
     afterBullets?: string[];
     image?: { src: string; alt: string; width?: number; height?: number };
-    cta?: { label: string; href: string };
+    cta?: { label: string; href: string; tracking?: { cta_id: string; topic: string } };
   }>;
 };
 
@@ -989,26 +992,49 @@ export const articles: Article[] = [
   },
   {
     slug: 'what-is-knx',
-    title: 'מה זה KNX ולמה הוא חשוב בבית חכם',
-    description: 'הסבר פשוט על תקן KNX, יתרונותיו בפרויקטי בית חכם ודוגמה מצולמת לגלאי נוכחות שמפעיל תאורה לפי תנועה ורמת LUX.',
+    title: 'מה זה KNX? תקן לבית חכם, ETS ותכנון לווילה',
+    description: 'מהו תקן KNX לבית חכם, איך מגדירים רכיבים ב־ETS, מה כדאי לתכנן לפני עבודות החשמל ואילו בדיקות ומסמכים לבקש במסירת המערכת לווילה חדשה.',
     category: 'KNX',
-    updated: '2026-07-23',
+    published: '2026-07-23',
+    updated: '2026-11-21',
     image: '/projects/knx-smart-home-central-moshav/02-knx-outdoor-presence-detector-close.jpg',
     imageAlt: 'גלאי נוכחות KNX חיצוני המותקן בבית פרטי ומפעיל תאורה לפי תנועה ורמת LUX',
     imageWidth: 900,
     imageHeight: 1600,
     imageCrop: true,
     related: [
-      { label: 'קטלוג KNX 2025', href: '/assets/catalogs/knx-catalog-2025.pdf' },
-      { label: 'מערכת KNX בהדסה נתיבות', href: '/hadassah-knx-system/' },
+      { label: 'תכנון והתקנת KNX', href: '/knx-smart-home/' },
+      { label: 'בית חכם לווילה חדשה', href: '/smart-home-villa/' },
       { label: 'פרויקט KNX מצולם במושב במרכז', href: '/projects/knx-smart-home-central-moshav/' },
+      { label: 'ציוד Siemens KNX', href: '/siemens-knx-products/' },
+      { label: 'מערכת KNX בהדסה נתיבות', href: '/hadassah-knx-system/' },
+      { label: 'שילוב KNX ו־BACnet בבקרת מבנה', href: '/articles/knx-bacnet-gateway-server-client-bms/' },
+      { label: 'Siemens Desigo לבקרת מבנים', href: '/siemens-desigo-bms/' },
+    ],
+    sources: [
+      { label: 'KNX Association: מהו KNX (ללא תאריך עדכון מוצג)', href: 'https://www.knx.org/explore-knx/what-is-knx' },
+      { label: 'KNX Association: מהו ETS (עודכן ב־9.11.2026)', href: 'https://support.knx.org/hc/en-us/articles/21037139544722-What-is-ETS-KNX-Engineering-Tool-Software-explained' },
+    ],
+    faq: [
+      { question: 'האם KNX תלוי ביצרן אחד?', answer: 'לא. KNX הוא תקן פתוח. אפשר לשלב רכיבים מוסמכים מיצרנים שונים לאחר בדיקת התאמה לפונקציות ולתשתית בפרויקט.' },
+      { question: 'מהו ETS בפרויקט KNX?', answer: 'ETS הוא כלי ההנדסה הרשמי של KNX לתכנון, הגדרה והכנסה לפעולה של המערכת. המתקין משתמש בו כדי לקשר בין הפעולות של הלחצנים, החיישנים והבקרים.' },
+      { question: 'מה כדאי לקבל במסירת מערכת KNX?', answer: 'כדאי לסכם מראש על קובץ פרויקט ETS וגיבוי, רשימת רכיבים, תיעוד הלוחות והתרחישים, בדיקות קבלה והדרכת שימוש. ההיקף המדויק נקבע בהסכם.' },
     ],
     sections: [
       {
-        heading: 'KNX בקצרה',
+        heading: 'מה זה KNX בתשובה קצרה?',
         body: [
-          'KNX הוא תקן בינלאומי לבקרת מבנים ובתים חכמים. הוא מאפשר למוצרים של יצרנים שונים לעבוד יחד תחת שפה משותפת.',
-          'בבית חכם KNX ניתן לשלוט בתאורה, תריסים, מיזוג, חיישנים, תרחישים וממשקים שונים בצורה יציבה ומתועדת.',
+          'KNX הוא תקן פתוח לתקשורת בין רכיבי בקרה במבנים. בבית חכם הוא מאפשר למפסקים, לחיישנים ולבקרים של יצרנים שונים לעבוד יחד ולשלוט בתאורה, בתריסים ובמיזוג לפי התכנון.',
+          'בווילה חדשה כדאי להגדיר את הפעולות בכל חדר ואת נקודות השליטה לפני סגירת תוכניות החשמל. כך אפשר לתאם מראש את הלוחות, קווי התקשורת והחיבורים למערכות נוספות.',
+        ],
+      },
+      {
+        heading: 'איך עוברים מתכנון KNX למסירה?',
+        body: ['איגוד KNX מגדיר את ETS ככלי תכנון, הגדרה והכנסה לפעולה. סדר הבדיקות שלהלן הוא המלצה לפרויקט וילה של I Feel.'],
+        subsections: [
+          { heading: 'מגדירים מה הבית צריך לעשות', body: 'רושמים לפי חדר מי מפעיל תאורה, תריס ומיזוג ומה אמור לקרות בתרחיש כניסה או יציאה. הרשימה מנחה את בחירת הציוד ואת תיאום התשתית עם המתכננים והחשמלאי.' },
+          { heading: 'מגדירים את הקשרים ב־ETS', body: 'האינטגרטור מתעד את מבנה המערכת, ומגדיר בעזרת כתובות קבוצתיות אילו רכיבים שולחים פקודות ואילו מבצעים אותן או מדווחים על מצבם.' },
+          { heading: 'בודקים פעולה ומשוב ומוסרים תיעוד', body: 'בהרצה בודקים פעולה לדוגמה משתי נקודות שליטה ואת התאמת החיווי למצב בפועל. במסירה עוברים על תוצאות הבדיקה ומוודאים שהגיבוי והתיעוד שנקבעו בהסכם זמינים לשירות עתידי.' },
         ],
       },
       {
@@ -1017,10 +1043,6 @@ export const articles: Article[] = [
           'בפרויקט בית חכם במושב במרכז הותקנו גלאי נוכחות KNX בחצר ובפרגולה. הגלאי אינו מדליק את האור רק בגלל שמישהו עבר: הוא בודק שני תנאים יחד — זוהתה תנועה, ורמת התאורה הנמדדת נמוכה מסף ה-LUX שהוגדר.',
           'רק כאשר שני התנאים מתקיימים נשלחת פקודת הדלקה. בצהריים, כאשר יש מספיק אור טבעי, תנועה לבדה אינה מדליקה את התאורה. בתכנות קובעים לכל אזור את סף ה-LUX, משך ההדלקה והמעגלים שיופעלו.',
         ],
-        cta: {
-          label: 'לכל תמונות ההתקנה והציוד בפרויקט',
-          href: '/projects/knx-smart-home-central-moshav/',
-        },
       },
       {
         heading: 'למה זה משנה ללקוח',
@@ -1036,10 +1058,11 @@ export const articles: Article[] = [
           'מערכת בית חכם מבוססת Siemens KNX יכולה לרכז את החשמל החכם, התאורה, התריסים, המיזוג והתרחישים. באמצעות ממשקים תואמים ותכנות מתאים ניתן לשלב גם אזעקה, מצלמות, אינטרקום ותקשורת אלחוטית מנוהלת; התאימות נבדקת לפי הדגמים והפרוטוקולים בכל פרויקט.',
           'תשתית קווית, מפסקי Siemens במיקומים נבחרים, מסך מרכזי ואפליקציה מאפשרים להפחית את מספר המפסקים על הקירות. כך מתקבלים קירות נקיים יותר ושליטה מדויקת בתריסים ובהצללה, בלי לפזר מפסקים אלחוטיים ליד כל פתח.',
         ],
-        cta: {
-          label: 'לראות כיצד הציוד משתלב בבית אמיתי',
-          href: '/projects/knx-smart-home-central-moshav/',
-        },
+      },
+      {
+        heading: 'מתכננים וילה חדשה?',
+        body: ['בשיחת אפיון נבדוק את שלב הבנייה, את תוכניות החשמל שכבר קיימות ואת הפעולות שתרצו להגדיר לפני סגירת התשתית.'],
+        cta: { label: 'לתיאום שיחת תכנון KNX לווילה', href: '/contactus/#project-enquiry', tracking: { cta_id: 'what_is_knx_villa_plan', topic: 'knx_villa_planning' } },
       },
     ],
   },
