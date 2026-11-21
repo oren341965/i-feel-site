@@ -30,7 +30,7 @@ Oren explicitly authorized independent Gmail maintenance on 2026-09-07. For this
 
 Oren recorded standing authorization on 2026-09-04 and gave the direct Start instruction on 2026-09-06. The workflow state is now `AUTHORIZED_ACTIVE_PENDING_RUNTIME_GATES`.
 
-- Do not ask Oren again for per-recipient or per-message approval when the workflow rules pass.
+- Per-message approval is still required. The 2026-09-04/06 record is not blanket send authorization. Do not send or schedule a customer message from this file. The professional-campaign cooldown is 90 days and is not the operational follow-up cooldown.
 - Read both professional-content references completely before every professional-content run.
 - Do not add another scheduler or another installed Skill. Run through the existing Maya/Codex execution surface.
 - Use Monday board `3040781819` only for bounded contact eligibility and post-send documentation. No board-structure changes.
@@ -51,10 +51,11 @@ Oren recorded standing authorization on 2026-09-04 and gave the direct Start ins
 - A fresh commissioning installation starts and remains `INSTALLED_PAUSED` until the required Codex, channel and Management System identity smoke tests pass.
 - Before enabling real Maya sales-task transport, run `node C:\ifeel-maya\jobs\maya-task-e2e-smoke.mjs --config C:\ifeel-maya\config\config.json`. This isolated test must report `END_TO_END_TEST=PASS_ISOLATED`, zero external actions, and `READY_FOR_REAL_TASKS=NO`; real readiness requires the later live read-only identity and connector gate.
 - The production runner may write only bounded PII-free preparation and execution-ledger state under `C:\ifeel-maya\state\maya-tasks`. This local state is not authority; assignment authorization, fresh live evidence, exact-content hash, customer identity and direct-conversation verification remain mandatory.
-- During commissioning, run the installed `test-live-readonly-preflight.ps1` helper before browser connector checks. It compares the installed WhatsApp Skill directly with the current Vault manifest, treats configured ACK/Result support as dormant while `productionExecutionAllowed=false`, performs no Bus write, and uses the current elevated commissioning result as Windows Task evidence instead of calling `Get-ScheduledTask` again.
+- When the workstation is on, `show-maya-activation-readiness.ps1 -ConfirmMayaWorkstation` only reads local flags. It does not verify Gmail or Monday, decrypt credentials, repeat a check-in, enable a task, or authorize `review-read-only`.
+- During commissioning, run the installed `test-live-readonly-preflight.ps1` helper before browser connector checks. It hash-checks the review runner, Vault bridge and email Skill for the independent read path, records a WhatsApp Skill mismatch only as a send-gate finding, does not consult the proactive-send ledger, treats configured ACK/Result support as dormant while `productionExecutionAllowed=false`, performs no Bus write, and uses the current elevated commissioning result as Windows Task evidence instead of calling `Get-ScheduledTask` again. `customerSendReady` stays false. A local pass is not activation and not a live review.
 - Do not activate a scheduler, send a message, create a draft in an external service, label/archive mail, write Monday, change a connector, or provision a secret merely because Codex or a Skill is installed. Only a separately recorded authorization below can permit its bounded exception after all gates pass.
 - The default maturity-0 Gmail maintenance pass remains report-only unless Oren's explicit independent email maintenance authorization above applies.
-- The professional-content cycle is the explicit standing exception: it may send professional email from the exact Maya mailbox and perform the bounded post-send Monday documentation after all runtime gates pass.
+- The professional-content cycle remains a bounded exception only after a fresh per-message approval, the 90-day professional-campaign cooldown, and its other runtime gates. It is not blanket send authorization.
 - The professional-social scheduler remains staged disabled. Social relationship messaging outside the authorized professional-content cycle still requires its own approval.
 - Prices, discounts, commitments, complaints, liability, finance, legal and safety cases require Oren.
 - Paid-media budgets, bids, targeting and campaign settings are outside the professional-content authorization.

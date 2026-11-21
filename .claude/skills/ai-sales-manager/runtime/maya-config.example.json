@@ -69,7 +69,7 @@
     "mondayTaskItemId": "12984367316",
     "dailyTargetMin": 40,
     "dailyTargetMax": 80,
-    "cooldownDays": 14,
+    "cooldownDays": 90,
     "approvedImageRequired": true,
     "ifeelTipRequired": true,
     "preferredSourcesCtaRequired": true,

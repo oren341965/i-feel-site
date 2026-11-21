@@ -18,6 +18,7 @@ import {
   createMayaReadyResponse,
   emitManagerHandshake,
   emitMayaReady,
+  evaluateExternalCustomerMessageWindow,
   evaluateMayaProductionReadiness,
   inspectMayaConnection,
   completeMayaProductionTask,
@@ -305,6 +306,149 @@ test('read-only results cannot claim a send, Monday write, or customer-action co
     configPath: f.mayaConfigPath, taskId: f.assignment.task_id, now: NOW,
     resultInput: { execution_state: 'MAYA_EXECUTED', result: 'Do not bypass the production gate.' },
   }), /production execution is blocked/);
+});
+
+test('external customer window stays closed when a cutoff is unspecified', () => {
+  const zone = 'Asia/Jerusalem';
+  const holidayClear = { isIsraeliHoliday: false };
+  assert.deepEqual(
+    evaluateExternalCustomerMessageWindow('2026-08-23T06:00:00.000Z', zone, holidayClear),
+    { open: true, reason: 'OPEN_SUN_THU' },
+  );
+  assert.equal(
+    evaluateExternalCustomerMessageWindow('2026-08-23T05:59:00.000Z', zone, holidayClear).reason,
+    'OUTSIDE_ORDINARY_HOURS',
+  );
+  assert.equal(
+    evaluateExternalCustomerMessageWindow('2026-08-20T15:00:00.000Z', zone, holidayClear).reason,
+    'OUTSIDE_ORDINARY_HOURS',
+  );
+  assert.equal(
+    evaluateExternalCustomerMessageWindow('2026-08-21T04:00:00.000Z', zone, holidayClear).reason,
+    'FRIDAY_MORNING_CUTOFF_UNSPECIFIED',
+  );
+  assert.equal(
+    evaluateExternalCustomerMessageWindow('2026-08-21T15:00:00.000Z', zone, holidayClear).reason,
+    'FRIDAY_MORNING_CUTOFF_UNSPECIFIED',
+  );
+  assert.equal(
+    evaluateExternalCustomerMessageWindow('2026-08-22T06:00:00.000Z', zone, holidayClear).reason,
+    'SHABBAT_CLOSED',
+  );
+  assert.equal(
+    evaluateExternalCustomerMessageWindow('2026-08-22T18:00:00.000Z', zone, {
+      ...holidayClear, explicitUrgent: true,
+    }).reason,
+    'SATURDAY_NIGHT_CUTOFF_UNSPECIFIED',
+  );
+  for (const holiday of [undefined, null, true, 'false']) {
+    assert.equal(
+      evaluateExternalCustomerMessageWindow('2026-08-23T06:00:00.000Z', zone, { isIsraeliHoliday: holiday }).reason,
+      'HOLIDAY_UNVERIFIED_OR_CLOSED',
+    );
+  }
+  assert.equal(
+    evaluateExternalCustomerMessageWindow('2026-08-23T06:00:00.000Z', 'UTC', holidayClear).reason,
+    'TIMEZONE_NOT_JERUSALEM',
+  );
+});
+
+test('read-only review ignores a closed send window and missing WhatsApp telemetry', async (t) => {
+  const f = await readOnlyReviewFixture(t);
+  assert.equal(f.config.controlState.whatsappTelemetryVerified, false);
+  assert.equal(
+    evaluateExternalCustomerMessageWindow(NOW, 'Asia/Jerusalem', { isIsraeliHoliday: false }).open,
+    false,
+  );
+  const reviewed = await reviewMayaTaskReadOnly({
+    configPath: f.mayaConfigPath, taskId: f.assignment.task_id, evidence: f.evidence, now: NOW,
+  });
+  assert.equal(reviewed.status, 'READ_ONLY_REVIEWED');
+  assert.deepEqual(reviewed.safety, { externalSends: 0, gmailMutations: 0, mondayWrites: 0 });
+});
+
+test('an approved Friday prepare stays fail-closed and writes no prepared send', async (t) => {
+  const { root, managerConfigPath, mayaConfigPath } = await fixture(t);
+  const fridayMorning = new Date('2026-08-21T04:00:00.000Z');
+  const mayaConfig = JSON.parse(await readFile(mayaConfigPath, 'utf8'));
+  mayaConfig.identity = {
+    role: 'maya-agent', machineId: 'desktop-maya', serviceIdentityVerified: true,
+    serviceIdentityId: 'maya-front-office-codex-v10',
+  };
+  mayaConfig.taskQueue = {
+    productionExecutionAllowed: true,
+    productionExecutionRequiresReadyGate: true,
+    productionExecutionMode: 'TWO_PHASE_APPROVED_ACTION',
+    mondayWritesAllowed: false,
+  };
+  mayaConfig.controlState = {
+    mayaState: 'ACTIVE', documentedOnly: false, verifiedSkillCount: 4,
+    serviceIdentityVerified: true, whatsappTelemetryVerified: true,
+    emailSnapshotFresh: true, gmailProfileRole: 'MAYA', proactiveMessagingApproval: 'APPROVED',
+  };
+  await writeFile(mayaConfigPath, JSON.stringify(mayaConfig), 'utf8');
+  const authorization = createMayaActionAuthorization({
+    approval_id: 'oren-window-20260821-001',
+    approved_at: '2026-08-20T09:00:00.000Z',
+    expires_at: '2026-08-21T14:59:59.000Z',
+    channel: 'EMAIL',
+    action_kind: 'STATUS_FOLLOWUP',
+    approved_content: 'Approved content that must stay unsent on Friday morning.',
+    next_treatment_date: '2026-08-23',
+  });
+  const assigned = await assignMayaSalesTask({
+    configPath: managerConfigPath,
+    now: fridayMorning,
+    input: {
+      task_id: 'maya-sales-friday-window-001',
+      monday_board_id: '2732725332',
+      monday_item_id: '1234567890',
+      customer_name: 'WINDOW TEST CUSTOMER',
+      current_sales_status: '9. וידוא קבלת ההצעה',
+      instruction: 'Do not send during an unspecified Friday cutoff.',
+      required_action: 'STATUS_FOLLOWUP',
+      priority: 'NORMAL',
+      monday_item_source: 'MONDAY_LIVE',
+      monday_item_verified_at: fridayMorning.toISOString(),
+      test_task: false,
+      execution_gate: { ready: true, status: 'MAYA_PRODUCTION_READY', blockers: [] },
+      action_authorization: authorization,
+    },
+  });
+  const identity = '2'.repeat(64);
+  const blocked = await prepareMayaProductionTask({
+    configPath: mayaConfigPath,
+    taskId: assigned.assignment.task_id,
+    now: fridayMorning,
+    evidence: {
+      monday: {
+        boardId: '2732725332', itemId: '1234567890', verified: true,
+        verifiedAt: fridayMorning.toISOString(), eligible: true, futureTimeline: false, salesEnded: false,
+        customerIdentitySha256: identity,
+      },
+      gmail: {
+        checked: true, checkedAt: fridayMorning.toISOString(), responseFound: false,
+        optOutFound: false, needsOrenDecision: false,
+      },
+      channel: {
+        channel: 'EMAIL', identityVerified: true, directRecipientVerified: true,
+        recentConversationRead: true, responseFound: false, optOutFound: false,
+        equivalentMessageWithinDays: false, unansweredAttempts: 0, isIsraeliHoliday: false,
+        explicitUrgent: true, verifiedAt: fridayMorning.toISOString(), recipientIdentitySha256: identity,
+      },
+      preview: {
+        ready: true, idempotencyKey: assigned.assignment.task_id, channel: 'EMAIL',
+        recipientType: 'CUSTOMER', directRecipientVerified: true,
+        recipientIdentitySha256: identity, approvedContentSha256: authorization.approved_content_sha256,
+      },
+    },
+  });
+  assert.equal(blocked.status, 'BLOCKED');
+  assert.equal(blocked.result.next_action, 'CUSTOMER_MESSAGING_WINDOW_CLOSED');
+  assert.deepEqual(blocked.safety, { externalSends: 0, gmailMutations: 0, mondayWrites: 0 });
+  await assert.rejects(stat(join(
+    root, 'maya', 'state', 'maya-tasks', 'maya-sales-friday-window-001.prepared.json',
+  )), { code: 'ENOENT' });
 });
 
 test('existing runner exposes read-only mode without interpreting it as production completion', async (t) => {

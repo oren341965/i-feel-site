@@ -4,7 +4,7 @@ This file supplements `professional-content-cycle.md` and is authoritative for e
 
 ## Activation state
 
-Oren's direct start instruction was received on 2026-09-06. The workflow state is therefore `AUTHORIZED_ACTIVE_PENDING_RUNTIME_GATES`, not `AWAITING_OREN_START`. No additional per-send approval is required when the content and recipients satisfy the standing workflow.
+Oren's 2026-09-06 start record left the workflow `AUTHORIZED_ACTIVE_PENDING_RUNTIME_GATES`, not `AWAITING_OREN_START`. That record does not remove per-message approval. An external professional send stays closed until a fresh approval names that exact message and channel. The campaign cooldown is 90 days and is not the operational-response cooldown.
 
 ## Exact sender gate
 
@@ -31,7 +31,7 @@ Never authorize or fall back to Oren's mailbox to bypass this gate.
 
 ## WhatsApp is not an email-cycle gate
 
-`MAYA_WHATSAPP_TELEMETRY_MISSING` does not block a professional email campaign that does not require a customer-specific cross-channel response check. The professional email cycle may proceed when its own Gmail, Monday, content, image, URL, opt-out, deduplication and 14-day gates pass.
+`MAYA_WHATSAPP_TELEMETRY_MISSING` does not block a professional email campaign that does not require a customer-specific cross-channel response check. The professional email cycle may proceed when its own Gmail, Monday, content, image, URL, opt-out, deduplication, 90-day professional-campaign and fresh per-message approval gates pass.
 
 WhatsApp remains required only for a workflow whose own contract explicitly requires a direct WhatsApp check or WhatsApp action. Do not weaken those customer-specific safeguards.
 
@@ -41,7 +41,7 @@ After a verified successful professional email send, Maya may write only the bou
 
 Permitted post-send documentation includes:
 - actual send date;
-- earliest next eligible date, at least 14 days later;
+- earliest next eligible date, at least 90 days later;
 - segment, subject/content reference, UTM/campaign and approved image/asset reference when existing fields or one concise item update support them;
 - `ifeel_tip_included=true`;
 - `update_subscription_cta=true`;

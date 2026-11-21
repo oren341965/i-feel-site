@@ -28,6 +28,7 @@ FORBIDDEN_NAMES = frozenset({
 FORBIDDEN_RESOURCES = frozenset({"filters", "forwardingAddresses"})
 BLOCKED_DOMAIN = "monday.com"
 MAX_UNANSWERED_ATTEMPTS = 2
+# Operational follow-up inside an existing thread. Not the 90-day professional campaign.
 MIN_FOLLOWUP_INTERVAL = timedelta(days=7)
 REQUIRED_RESPONSE_CHANNELS = frozenset({"GMAIL_ALL_THREADS", "WHATSAPP_DIRECT", "MONDAY_ITEM"})
 
