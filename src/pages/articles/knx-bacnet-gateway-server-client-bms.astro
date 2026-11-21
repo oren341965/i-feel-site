@@ -4,6 +4,7 @@ const title = "KNX ו-BACnet: בחירת Gateway ל-BMS | i-feel";
 const description = "Gateway KNX-BACnet: Server מול Client, מיפוי נקודות, COV, BACnet/SC, Modbus ו-Siemens Desigo. מדריך תכנון ומסירה ל-BMS.";
 const canonical = "https://i-feel.co.il/articles/knx-bacnet-gateway-server-client-bms/";
 const faq = [{"q": "KNX ו-BACnet הם פרוטוקולים מתחרים?", "a": "לא בהכרח. KNX מתאים לבקרת חדרים וחיישנים, ו-BACnet מקשר לעיתים קרובות בקרי מיזוג ומערכות ניהול. אפשר לשלב ביניהם בממשק מתאים."}, {"q": "מה ההבדל בין Gateway מסוג Server לבין Client?", "a": "בדגמי GVS המופיעים בקטלוג KNX, Server חושף מידע מ-KNX לצד BACnet/IP, ו-Client נועד לגשת לציוד BACnet/IP מתוך KNX. יש לאשר את הכיוון והתכונות לכל דגם."}, {"q": "האם כל Gateway מתאים ל-Siemens Desigo?", "a": "לא. יש לאמת פרוטוקול, גרסה, רישוי, טיפוסי אובייקטים, הרשאות ויכולת קריאה וכתיבה, ולבצע בדיקות התאמה."}, {"q": "מה זה BACnet COV?", "a": "Change of Value הוא מנגנון לקבלת עדכוני ערך כאשר חל שינוי באובייקט תומך. הוא אינו מחליף בדיקות תקשורת ותוקף נתונים."}, {"q": "מתי משתמשים ב-Modbus במקום BACnet?", "a": "Modbus נפוץ בציוד עם מפת רגיסטרים כגון מונים. חשוב לאמת יחידות, טיפוסי נתונים, Scaling וסדר בתים; הבחירה נעשית לפי הציוד בפועל."}, {"q": "מה צריך למסור בסיום אינטגרציית KNX ו-BMS?", "a": "מטריצת נקודות מאומתת, הפרדה בין פקודה למשוב, הרשאות, תוצאות בדיקות, קובצי תכנות והגדרות, ותוכנית טיפול בתקלות."}, {"q": "האם Gateway בין KNX ל-BACnet/IP מספק אוטומטית אבטחת BACnet/SC?", "a": "לא. BACnet/SC ו-KNX Secure הם מנגנוני אבטחה נפרדים. יכולות האבטחה תלויות בדגם, בממשקים ובתצורה, ויש לאמת אותן במפרט היצרן ובארכיטקטורת הרשת."}, {"q": "האם שער מיזוג עם KNX Secure מאבטח גם את הצד של המזגן?", "a": "לא בהכרח. יש לבדוק בנפרד את צד KNX, ממשק יצרן המיזוג וחיבור ה-BMS. תמיכה ב-KNX Data Secure אינה מוכיחה הצפנה בצד המיזוג או תמיכה ב-BACnet/SC."}, {"q": "מה כדאי לבדוק לפני שילוב מיזוג קיים עם KNX Secure?", "a": "מזהים את דגם המזגן והשער, מאמתים תמיכה במדריך היצרן ובגרסת היישום, ומגדירים פקודות, משובים והרשאות. בדיקת קבלה מתעדת מה נשלח, מה התקבל ואיך מוצגת תקלה, בלי לשנות מערכת פעילה ללא אישור."}];
+faq.push(...[{"q": "האם בדיקת ETS מוכיחה שהחיבור ל-BMS עובד?", "a": "בדיקת Devices Diagnostics ב-ETS מסייעת לבדוק התקנים ואת התאמתם לפרויקט. היא אינה מחליפה בדיקת קצה לקצה של נקודת KNX דרך ה-Gateway ועד מסך BMS, כולל יחידות, הרשאות, פקודה ומשוב."}, {"q": "אפשר לפנות ל-I Feel גם בלי לדעת איזה Gateway מותקן?", "a": "כן. מתחילים בשיחה על המערכת ועל הבעיה. צוות I Feel יכול לסייע בזיהוי הציוד, באיתור התיעוד ובהגדרת בדיקה בהתאם להרשאות ולציוד בפועל. אין צורך לאסוף מראש את כל המידע הטכני כדי לפנות."}]);
 const jsonLd = JSON.stringify({
   "@context": "https://schema.org",
   "@graph": [
@@ -14,7 +15,7 @@ const jsonLd = JSON.stringify({
       "url": canonical,
       "mainEntityOfPage": canonical,
       "datePublished": "2026-10-15",
-      "dateModified": "2026-10-29",
+      "dateModified": "2026-11-04",
       "inLanguage": "he-IL",
       "author": {"@type":"Organization","name":"i-feel","url":"https://i-feel.co.il/"},
       "publisher": {"@id":"https://i-feel.co.il/#business"}
@@ -41,7 +42,7 @@ const jsonLd = JSON.stringify({
 
 <BaseLayout title={title} description={description} canonical={canonical} ogTitle={title} ogDescription={description} ogUrl={canonical} jsonLd={jsonLd}>
 <article dir="rtl" class="bg-white">
-<header class="bg-brand-900 py-16 text-white"><div class="mx-auto max-w-4xl px-4"><a href="/articles/" class="font-bold text-accent-400">מרכז ידע מקצועי</a><p class="mt-4 text-brand-200">KNX · BACnet · BMS · 15.10.2026 · עודכן 29.10.2026</p><h1 class="mt-4 text-4xl font-extrabold leading-tight">KNX ו-BACnet: איך בוחרים Gateway ל-BMS וממפים נקודות נכון?</h1><p class="mt-4 text-lg leading-8 text-brand-100">Gateway Server או Client, מיפוי נקודות, COV ושילוב Siemens Desigo.</p></div></header>
+<header class="bg-brand-900 py-16 text-white"><div class="mx-auto max-w-4xl px-4"><a href="/articles/" class="font-bold text-accent-400">מרכז ידע מקצועי</a><p class="mt-4 text-brand-200">KNX · BACnet · BMS · 15.10.2026 · עודכן 4.11.2026</p><h1 class="mt-4 text-4xl font-extrabold leading-tight">KNX ו-BACnet: איך בוחרים Gateway ל-BMS וממפים נקודות נכון?</h1><p class="mt-4 text-lg leading-8 text-brand-100">Gateway Server או Client, מיפוי נקודות, COV ושילוב Siemens Desigo.</p></div></header>
 <div class="mx-auto max-w-4xl space-y-12 px-4 py-12">
 <section class="space-y-4"><h2 class="text-3xl font-bold text-brand-900">התשובה הקצרה: איך מחברים KNX למערכת BACnet?</h2>
 <p class="text-lg leading-8 text-brand-700">מתחילים ברשימת הנקודות שצריכות לעבור בין שתי המערכות: מדידות, סטטוסים, פקודות, משובים והתראות. אחר כך בוחרים ממשק תקשורת או בקר תואם, ממפים אובייקטי תקשורת של KNX לנקודות BACnet, קובעים מי רשאי לקרוא ולכתוב ומבצעים בדיקות בשטח. עצם העובדה ששני הצדדים תומכים ב-KNX וב-BACnet אינה מוכיחה שהאינטגרציה עובדת נכון.</p>
@@ -88,6 +89,23 @@ const jsonLd = JSON.stringify({
 <p class="text-lg leading-8 text-brand-700">כאשר Desigo היא שכבת הניהול, בודקים את המהדורה, הממשקים והרישוי, את מספר האובייקטים, גישת הקריאה והכתיבה ותצוגת המגמות וההתראות. תכנון מסודר קובע אילו פקודות רשאי מפעיל לתת, מה קדימות הפקודה המקומית ומה קורה כשמסך הניהול מאבד קשר עם הציוד.</p>
 <p class="text-lg leading-8 text-brand-700">אפשר להיעזר במרכז הידע Siemens BMS ובדפי בקרי DDC באתר i-feel; עבור מבנה קיים יש להעריך שדרוג בשלבים. מומלץ לתאם עם צוותי החשמל והמיזוג תרחישי בדיקה, ולא לבצע ניתוק יזום של ציוד חיוני ללא אישור ותוכנית חזרה לשגרה.</p>
 <p class="text-lg leading-8 text-brand-700">ראו גם <a class="text-accent-700 underline" href="/siemens-desigo-bms/">Siemens Desigo</a>, <a class="text-accent-700 underline" href="/ddc-controllers-bms/">בקרי DDC</a> ו-<a class="text-accent-700 underline" href="/bms-retrofit/">שדרוג BMS</a>.</p>
+</section>
+<section id="knx-bms-handover" class="space-y-4 scroll-mt-24">
+<h2 class="text-3xl font-bold text-brand-900">מסירת KNX ו-BMS: איך יודעים שהנקודה באמת עובדת?</h2>
+<p class="text-lg leading-8 text-brand-700">בדירה, בווילה או במבנה ציבורי, לחיצה על מסך אינה מספיקה כדי לאשר שהאינטגרציה הושלמה. לפני המסירה מגדירים יחד מה אמור לקרות בחדר ומה צריך להופיע במערכת הניהול. I Feel מסייעת בתכנון ובתכנות <a class="text-accent-700 underline" href="/knx-smart-home/">מערכות בית חכם KNX</a> ובאינטגרציה ל-<a class="text-accent-700 underline" href="/structure-control/">בקרת מבנה BMS</a>, בהתאם לציוד ולמפרט שסוכמו.</p>
+<h3 class="text-2xl font-bold text-brand-900">שתי בדיקות משלימות: ההתקן והממשק</h3>
+<p class="text-lg leading-8 text-brand-700">תיעוד KNX הרשמי מתאר ב-Devices Diagnostics בדיקות נגישות להתקן, מצב תוכנית היישום והתאמת שיוכי כתובות הקבוצה לפרויקט. זו בדיקה בצד KNX. בבדיקת הממשק מוסיפים את הדרך מההתקן דרך השער ועד מערכת הניהול: האם הערך מגיע לנקודה הנכונה, באילו יחידות, מי רשאי לשנות אותו ומה קורה לאחר שינוי מקומי. בדיקת ETS תקינה לבדה אינה תעודת קבלה של שילוב BACnet או <a class="text-accent-700 underline" href="/siemens-desigo-bms/">Siemens Desigo</a>.</p>
+<h3 class="text-2xl font-bold text-brand-900">דוגמת מסירה לחדר אחד</h3>
+<ul class="list-disc space-y-3 pr-6 text-lg leading-8 text-brand-700">
+<li><strong>תאורה:</strong> שולחים פקודה מהמסך ובודקים בנפרד את מצב היציאה המדווח ואת התוצאה בחדר. משוב ממסר אינו בהכרח מדידה חשמלית של גוף התאורה.</li>
+<li><strong>מיזוג:</strong> משנים טמפרטורה מבוקשת ובודקים שהמדידה בפועל נשארת נקודה נפרדת. מתעדים גם את יחידת המדידה ואת מקור הפקודה הפעיל.</li>
+<li><strong>שינוי מקומי:</strong> מפעילים מהמפסק בחדר ובודקים אם העדכון מגיע למסך. כך מאתרים תצוגה שמציגה רק את הפקודה האחרונה שנשלחה ממנה.</li>
+<li><strong>תקשורת:</strong> מגדירים איך יוצג מידע שלא התעדכן. ניתוק יזום מבצעים רק בחלון מאושר, עם אנשי האתר ותוכנית חזרה לעבודה.</li>
+</ul>
+<p class="text-lg leading-8 text-brand-700">הדוגמה היא תהליך מומלץ של I Feel, ולא דרישת תקן חדשה או דיווח על בדיקה שבוצעה בפרויקט מסוים. היקף המסירה, התיעוד והבדיקות נקבע בהצעה. אפשר להיעזר ב-<a class="text-accent-700 underline" href="/structure-control/projects/">פרויקטי בקרת המבנה שלנו</a> כדי להכיר את תחומי העבודה, ובשיחה לברר מה מתאים למבנה שלכם.</p>
+<p class="text-lg leading-8 text-brand-700">המערכת כבר קיימת ואתם לא יודעים איזה שער מותקן, או שהספק הקודם אינו נותן מענה? לא צריך להכין מטריצת נקודות לפני שפונים אלינו. מתחילים בתיאור קצר של מה שאינו עובד; יחד נזהה איזה מידע נחוץ ונגדיר בדיקה מקצועית. התאמה לציוד קיים, גישה לקובצי הפרויקט והיקף השדרוג נבדקים לגופו של מקרה.</p>
+<a href="/contactus/#project-enquiry" data-ga-event="cta_click" data-ga-params='{"cta_id":"knx_bms_handover_consultation","topic":"knx_bms_handover"}' class="inline-flex rounded-lg bg-accent-600 px-6 py-3 font-bold text-white">נדבר על חיבור KNX ו-BMS במערכת שלכם</a>
+<p class="text-sm leading-7 text-brand-600">מקור מקצועי: <a class="underline" href="https://support.knx.org/hc/en-us/articles/360019120699-Devices-Diagnostics-Detailed" target="_blank" rel="noopener noreferrer">KNX Association — Devices Diagnostics (Detailed)</a>, עודכן 1.9.2026; נבדק 4.11.2026. המלצות בדיקת הממשק הן פרשנות ותהליך מוצע של I Feel.</p>
 </section>
 <section class="space-y-4"><h2 class="text-3xl font-bold text-brand-900">שבע בדיקות מסירה שכדאי לתעד</h2>
 <p class="text-lg leading-8 text-brand-700">1. אישור רשימת נקודות בשני הצדדים; 2. פקודה מקומית ובדיקת משוב אמיתי ב-BMS; 3. השוואת ערכים אנלוגיים ליחידות וסקלת המדידה; 4. בדיקת קדימויות, שינוי ידני ולוחות זמנים; 5. בדיקת COV או רענון מחזורי לפי יכולת הציוד; 6. בדיקת אובדן תקשורת מבוקרת רק לאחר אישור האתר; 7. מסירת קובצי ETS, הגדרות Gateway, מטריצת נקודות, גרסאות ותוצאות בדיקות.</p>
