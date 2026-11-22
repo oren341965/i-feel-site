@@ -1,5 +1,9 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import ArchitectSolutionsCatalog from '../components/ArchitectSolutionsCatalog.astro';
+import { architectSolutions } from '../data/architect-solutions.mjs';
+const [beforeSolutions, afterSolutions] = content.split('<!-- ARCHITECT_SOLUTIONS_CATALOG -->');
+if (afterSolutions === undefined) throw new Error('Missing architect solution catalog placement.');
 import content from '../page-html/page-05.html?raw';
 import KnxAdvisorCta from '../components/KnxAdvisorCta.astro';
 import PeoniaExamples from '../components/PeoniaExamples.astro';
@@ -178,11 +182,7 @@ jsonLd['@graph'].push({
   '@type': 'ItemList',
   '@id': 'https://i-feel.co.il/catalogs/#architect-solutions',
   name: 'פתרונות לאדריכלים ולמעצבי פנים לפי האתגר בתכנון',
-  itemListElement: [
-    { '@type': 'ListItem', position: 1, name: 'שליטה בחדרי ישיבות עם קירות זכוכית', url: 'https://i-feel.co.il/catalogs/#glass-meeting-rooms' },
-    { '@type': 'ListItem', position: 2, name: 'שליטה משולבת בחדרי ישיבות', url: 'https://i-feel.co.il/control4-meeting-rooms/' },
-    { '@type': 'ListItem', position: 3, name: 'בחירת מפסקים לפי עיצוב ושימוש', url: 'https://i-feel.co.il/knx-switch-advisor/' },
-  ],
+  itemListElement: architectSolutions.map((item, index) => ({ '@type': 'ListItem', position: index + 1, name: item.title, url: 'https://i-feel.co.il/catalogs/#' + item.id })),
 });
 
 const meta = {
@@ -197,7 +197,9 @@ const meta = {
 };
 ---
 <BaseLayout {...meta}>
-  <Fragment set:html={content} />
+  <Fragment set:html={beforeSolutions} />
+  <ArchitectSolutionsCatalog />
+  <Fragment set:html={afterSolutions} />
 
   <section id="siemens-professional-resources" class="bg-white py-12 lg:py-16 border-b border-brand-100" dir="rtl">
     <div class="max-w-7xl mx-auto px-4">
