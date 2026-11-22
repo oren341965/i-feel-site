@@ -8,6 +8,7 @@
       <button type="button" data-share>העתקת קישור</button>
       <a data-pdf download>הורדת PDF</a>
       <button type="button" data-zoom aria-pressed="false">הגדלה</button>
+      <button type="button" data-sound aria-pressed="true">צליל דפדוף</button>
       <button type="button" data-video hidden>סרטון</button>
     </div>
     <div class="reader-body">
@@ -61,7 +62,14 @@
   #catalog-reader nav [aria-current="page"] { background: #142d49; color: white; }
   #catalog-reader .reader-scroll { overflow: auto; padding: .6rem; display: grid; align-items: start; justify-items: safe center; touch-action: pan-y pinch-zoom; }
   #catalog-reader .reader-scroll[data-enlarged] { touch-action: auto; }
-  #catalog-reader .reader-page { position: relative; box-shadow: 0 4px 16px #142d4933; transform-origin: right center; }
+  #catalog-reader .reader-page { position: relative; box-shadow: 0 4px 16px #142d4933; }
+  #catalog-reader [data-sound][aria-pressed="true"] { background: #e6eff9; border-color: #51779c; }
+  #catalog-reader .reader-turn-leaf { position: absolute; inset: 0; z-index: 1; pointer-events: none; transform-style: preserve-3d; }
+  #catalog-reader .reader-turn-front, #catalog-reader .reader-turn-back { position: absolute; inset: 0; overflow: hidden; backface-visibility: hidden; }
+  #catalog-reader .reader-turn-front { box-shadow: 0 5px 17px #142d4966; background: #fff; }
+  #catalog-reader .reader-turn-front canvas { width: 100% !important; height: 100% !important; }
+  #catalog-reader .reader-turn-front::after { position: absolute; inset: 0; content: ""; background: linear-gradient(105deg, transparent 55%, #142d4922 86%, #fff8); }
+  #catalog-reader .reader-turn-back { transform: rotateY(180deg); background: linear-gradient(105deg, #c2c7cf, #f8f6ef 28%, #eeeae3 78%, #cbd0d7); box-shadow: 0 5px 18px #142d4933; }
   #catalog-reader .reader-page canvas { display: block; max-width: none; }
   #catalog-reader .reader-page a { position: absolute; display: block; }
   #catalog-reader [data-player] { width: min(100%, 50rem); }
