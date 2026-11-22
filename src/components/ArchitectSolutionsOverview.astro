@@ -1,0 +1,26 @@
+---
+const mediaRoot = '/assets/videos/architect-solutions-overview';
+---
+<figure class="overflow-hidden rounded-2xl border border-brand-200 bg-white mb-8" aria-labelledby="architect-overview-title">
+  <div class="p-5 md:p-7">
+    <h3 id="architect-overview-title" class="text-2xl font-bold text-brand-900 mb-3">רעיונות שהופכים אתגר תכנוני לפתרון</h3>
+    <p id="architect-overview-description" class="text-brand-700 leading-7">סרטון היכרות עם פתרונות I FEEL לאדריכלים ולמעצבי פנים. לאחר הצפייה אפשר לחפש בספרייה לפי האתגר בתוכנית שלכם.</p>
+  </div>
+  <video controls playsinline preload="none" width="1280" height="720"
+    poster={`${mediaRoot}-poster.webp`}
+    aria-label="סרטון פתרונות I FEEL לאדריכלים ולמעצבי פנים"
+    aria-describedby="architect-overview-description"
+    class="block aspect-video w-full bg-brand-900 focus-visible:outline focus-visible:outline-4 focus-visible:outline-offset-2 focus-visible:outline-accent-500">
+    <source src={`${mediaRoot}.webm`} type="video/webm" />
+    <track kind="captions" src={`${mediaRoot}-he.vtt`} srclang="he" label="עברית" />
+    <p>הדפדפן אינו תומך בניגון הסרטון. <a href={`${mediaRoot}.webm`}>פתיחת הסרטון בקובץ WebM</a></p>
+  </video>
+  <figcaption class="p-5 text-brand-700 leading-7">
+    <details>
+      <summary class="font-bold cursor-pointer">תוכן הסרטון בקצרה</summary>
+      <p class="mt-2">איך ממקמים שליטה בחדר ישיבות עם קירות זכוכית, מסתירים מקרן בתקרה, מציבים מסך בלי קיר, מתכננים נישה בנגרות, מתאמים תאורה והצללה, בוחרים מפסק חכם, משלבים קופסאות השקעה ומתכננים מסכים בחוץ.</p>
+      <p class="mt-2">התאמת הציוד ופרט ההתקנה נבדקים לפי הדגם, התשתיות ותנאי הפרויקט.</p>
+    </details>
+    <a href={`${mediaRoot}.webm`} class="inline-block mt-3 font-bold underline">פתיחת הסרטון בנפרד</a>
+  </figcaption>
+</figure>

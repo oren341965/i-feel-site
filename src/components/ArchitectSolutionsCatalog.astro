@@ -1,4 +1,5 @@
 ---
+import ArchitectSolutionsOverview from './ArchitectSolutionsOverview.astro';
 import { architectSolutions } from '../data/architect-solutions.mjs';
 import { architectSolutionMedia } from '../data/architect-solution-media.mjs';
 const categories = [...new Set(architectSolutions.map((item) => item.category))];
@@ -9,6 +10,7 @@ for (const item of architectSolutions) if (!architectSolutionMedia[item.id]) thr
     <p class="text-accent-700 font-bold mb-3">I FEEL · ספריית פתרונות לאדריכלים ולמעצבי פנים</p>
     <h2 id="architect-solutions-title" class="text-3xl md:text-4xl font-extrabold text-brand-900 mb-4">אתגר לא שגרתי בתכנון? מתחילים מהבעיה.</h2>
     <p class="text-brand-700 text-lg leading-8 max-w-4xl mb-7">קיר זכוכית בלי מקום לחיווט מפסק, מקרן שצריך להיעלם בתקרה או מסך שאין לו קיר: מצאו כיוון מקצועי לפתרון, ראו מה צריך לבדוק ושלחו לנו את התוכנית של הלקוח.</p>
+    <ArchitectSolutionsOverview />
     <div class="grid md:grid-cols-2 gap-5 bg-white border border-brand-200 rounded-2xl p-5 mb-6">
       <div><label for="solution-search" class="block font-bold text-brand-900 mb-2">מה האתגר בתוכנית?</label><input id="solution-search" data-solution-search type="search" placeholder="למשל: זכוכית, מקרן נסתר, נגרות, גינה" class="w-full rounded-lg border border-brand-300 p-3 text-brand-900" /></div>
       <div><label for="solution-category" class="block font-bold text-brand-900 mb-2">תחום התכנון</label><select id="solution-category" data-solution-category class="w-full rounded-lg border border-brand-300 p-3 text-brand-900"><option value="">כל התחומים</option>{categories.map((category) => <option value={category}>{category}</option>)}</select></div>
@@ -22,10 +24,15 @@ for (const item of architectSolutions) if (!architectSolutionMedia[item.id]) thr
           <figure class="solution-media">
             {media.type === 'image' ? (
               <a href={media.src} target="_blank" rel="noopener noreferrer" aria-label={`פתיחת תמונה בגודל מלא: ${media.alt}`}><img src={media.src} alt={media.alt} loading="lazy" decoding="async" width="1600" height="1000" /></a>
+            ) : media.type === 'native-video' ? (
+              <video controls playsinline preload="none" width="576" height="442" poster={media.poster} aria-label={media.title}>
+                <source src={media.src} type="video/webm" />
+                <a href={media.src}>פתיחת קובץ הסרטון</a>
+              </video>
             ) : (
               <iframe src={`https://www.youtube-nocookie.com/embed/${media.videoId}`} title={media.title} loading="lazy" referrerpolicy="strict-origin-when-cross-origin" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
             )}
-            <figcaption><span class="solution-media-credit">{media.sourceLabel}</span><p>{media.caption}</p>{media.sourceUrl && <a href={media.sourceUrl} target="_blank" rel="noopener noreferrer">למקור ולהקשר המלא ↗</a>}{media.note && <p class="solution-media-note">{media.note}</p>}</figcaption>
+            <figcaption><span class="solution-media-credit">{media.sourceLabel}</span><p>{media.caption}</p>{media.sourceUrl && <a href={media.sourceUrl} target="_blank" rel="noopener noreferrer">{media.sourceLinkText ?? "למקור ולהקשר המלא ↗"}</a>}{media.note && <p class="solution-media-note">{media.note}</p>}</figcaption>
           </figure>
           <div class="solution-media-story"><p><strong>הבעיה:</strong> {media.problemCue}</p><p><strong>כך פותרים:</strong> {media.solutionCue}</p></div>
           {media.detailImage && <details class="solution-extra-media"><summary>לראות גם את פרט ההתקנה</summary><figure><a href={media.detailImage.src} target="_blank" rel="noopener noreferrer"><img src={media.detailImage.src} alt={media.detailImage.alt} width="1200" height="1600" loading="lazy" decoding="async" /></a><figcaption>{media.detailImage.caption}</figcaption></figure></details>}
@@ -35,7 +42,7 @@ for (const item of architectSolutions) if (!architectSolutionMedia[item.id]) thr
           <p class="text-brand-900 leading-7 bg-brand-50 rounded-lg p-4 mb-4"><strong>מה הלקוח מרוויח:</strong> {item.benefit}</p>
           <details class="border-y border-brand-100 py-4 mb-4"><summary class="font-bold text-brand-900 cursor-pointer">מה בודקים לפני שמכניסים לתוכנית?</summary><ul class="list-disc pr-5 text-brand-700 leading-7 space-y-2 mt-3">{item.checks.map((check) => <li>{check}</li>)}</ul><p class="text-brand-700 mt-4"><strong>מה לשלוח לנו:</strong> {item.request}</p></details>
           <p class="text-sm text-brand-600 mb-5">חומר מקצועי זמין: {item.evidence}.</p>
-          <div class="flex flex-wrap gap-4 mt-auto items-center"><a href={item.href} class="bg-brand-700 text-white hover:bg-brand-800 px-5 py-3 rounded-lg font-bold">{item.label}</a><a href={`/contactus/?solution=${item.id}`} class="text-brand-700 underline font-bold">שלחו תוכנית לפתרון הזה</a><a href={`/catalogs/#${item.id}`} class="text-brand-700 underline text-sm" aria-label={`קישור ישיר לפתרון: ${item.title}`}>קישור ישיר</a></div>
+          <div class="flex flex-wrap gap-4 mt-auto items-center"><a href={item.href} class="bg-brand-700 text-white hover:bg-brand-800 px-5 py-3 rounded-lg font-bold">{item.label}</a>{!item.href.startsWith('/contactus/') && <a href={`/contactus/?solution=${item.id}`} class="text-brand-700 underline font-bold">שלחו תוכנית לפתרון הזה</a>}<a href={`/catalogs/#${item.id}`} class="text-brand-700 underline text-sm" aria-label={`קישור ישיר לפתרון: ${item.title}`}>קישור ישיר</a></div>
         </article>
       ); })}
     </div>
@@ -47,6 +54,7 @@ for (const item of architectSolutions) if (!architectSolutionMedia[item.id]) thr
   .solution-card[hidden]{display:none}
   .solution-media{margin:0 0 1rem;overflow:hidden;border:1px solid #d8e3ed;border-radius:1rem;background:#f1f5f9}
   .solution-media img{display:block;width:100%;height:320px;object-fit:contain;background:#eaf0f5}
+  .solution-media video{display:block;width:100%;height:auto;max-height:380px;object-fit:contain;background:#0f2339}
   .solution-media iframe,.solution-extra-media iframe{display:block;width:100%;aspect-ratio:16/9;border:0;background:#0f2339}
   .solution-media figcaption{padding:1rem;background:#fff;font-size:.875rem;line-height:1.7;color:#36536e}
   .solution-media-credit{display:inline-block;margin-bottom:.4rem;color:#77531a;font-weight:700}

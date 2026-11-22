@@ -10,11 +10,13 @@ export const architectSolutionMedia = {
     secondaryVideo: { id: 'Y8EwY5k84hk', label: 'לסרטון ההסבר של I FEEL', note: 'סרטון שיווקי הכולל הדמיות וקריינות בקולו של אורן.' },
   },
   'projector-hidden-ceiling': {
-    type: 'youtube', videoId: 'O_DJi8hdlnY', title: 'Future Automation — מעלית מקרן PD2.5 בהתקנה באולם תצוגה',
-    caption: 'הדגמה מצולמת של Future Automation: המקרן יורד מהתקרה לצורך שימוש. הסרטון מציג התקנה באולם התצוגה של Crestron UK, ולא פרויקט של I FEEL.',
-    problemCue: 'מקרן קבוע שנשאר גלוי בתקרה', solutionCue: 'מנגנון שמוציא ומחזיר את המקרן',
-    sourceLabel: 'סרטון יצרן · Future Automation', sourceUrl: 'https://www.youtube.com/watch?v=O_DJi8hdlnY',
-    note: 'הסרטון ממחיש את עקרון ההסתרה; הדגם המצולם היסטורי. בחירת מנגנון וזמינות נבדקות בפרויקט.',
+    type: 'native-video', src: '/assets/architect-solutions/ifeel-projector-lift.webm',
+    poster: '/assets/architect-solutions/ifeel-projector-lift.webp',
+    title: 'צילום I FEEL: מעלית מקרן נפתחת ונסגרת בתקרה',
+    caption: 'צילום מהתקנה של I FEEL: הפתח בתקרה נפתח, המעלית יורדת לשימוש ועולה חזרה בסיום.',
+    problemCue: 'מקרן קבוע שנשאר גלוי בתקרה', solutionCue: 'מעלית מקרן שמשתלבת בתקרה כשהיא סגורה',
+    sourceLabel: 'צילום התקנה · I FEEL', sourceUrl: 'https://www.tiktok.com/@orenlevy4/video/7681276958734454037',
+    sourceLinkText: 'לסרטון המלא של I FEEL בטיקטוק ↗',
   },
   'tv-without-wall': {
     type: 'image', src: '/assets/tv-pole/floor-tv-pole-open-space.jpg',
@@ -50,5 +52,13 @@ export const architectSolutionMedia = {
     caption: 'צילום התקנת Siemens TC4 בקופסת השקעה: נקודת השליטה משתלבת במישור הגמר. מסגרת, קופסה ומספר הפעולות מתואמים לפני סגירת הקיר.',
     problemCue: 'נקודת שליטה שצריכה להתאים לעיצוב ולשימוש', solutionCue: 'בחירת ממשק ותכנון ההתקנה יחד', sourceLabel: 'צילום התקנה · I FEEL',
     secondaryVideo: { id: 'puG0qeaD-oU', label: 'לסרטון מבחר מפסקי KNX', note: 'סרטון מבחר הסדרות של I FEEL; התאמה נקבעת לפי הדגם והמערכת.' },
+  },
+  'custom-installation-boxes': {
+    type: 'image', src: '/assets/knx-advisor/tav-tc4-flush-installed.webp',
+    alt: 'מסך Siemens TC4 מותקן בקו הקיר באמצעות קופסת השקעה תואמת',
+    caption: 'דוגמה מצולמת: מסך Siemens TC4 בקופסת השקעה תואמת. למסכים, גלאים ואינטרקום אחרים בודקים התאמה לפי דגם.',
+    problemCue: 'המכשיר צריך להשתלב בקו הגמר', solutionCue: 'מתאמים קופסה לפי הדגם, העומק וגישה לשירות',
+    sourceLabel: 'צילום התקנה · I FEEL',
+    detailImage: { src: '/assets/knx-advisor/tav-tc4-flush-box.webp', alt: 'קופסת השקעה לדגם Siemens TC4', caption: 'הקופסה בצילום מתאימה לדגם TC4 ואינה קופסה אוניברסלית.' },
   },
 };
