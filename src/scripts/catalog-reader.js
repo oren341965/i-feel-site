@@ -1,5 +1,6 @@
 import knxVideo from '../data/knx-switches-video.json';
 import desigoVideo from '../data/desigo-video.json';
+import { createPageSound, turnPaper } from './catalog-paper-turn.js';
 
 const chapters = {
   'siemens-bms-catalog': [[1, 'שער'], [2, 'מסכי מגע TC5'], [5, 'מפסקים חכמים'], [7, 'בקרי KNX'], [9, 'גלאים חכמים']],
@@ -27,6 +28,27 @@ const prev = find('prev');
 const zoom = find('zoom');
 const video = find('video');
 const share = find('share');
+const paperSound = createPageSound();
+const soundToggle = find('sound');
+const soundPreference = 'ifeel-catalog-page-sound';
+let soundEnabled = true;
+try {
+  soundEnabled = localStorage.getItem(soundPreference) !== 'off';
+} catch {
+  // The control still works for the current visit.
+}
+soundToggle.setAttribute('aria-pressed', String(soundEnabled));
+soundToggle.addEventListener('click', () => {
+  soundEnabled = !soundEnabled;
+  soundToggle.setAttribute('aria-pressed', String(soundEnabled));
+  if (soundEnabled) paperSound.unlock();
+  else paperSound.stop();
+  try {
+    localStorage.setItem(soundPreference, soundEnabled ? 'on' : 'off');
+  } catch {
+    // The control still works for the current visit.
+  }
+});
 const links = document.querySelectorAll('.catalog-read-link');
 const catalogs = new Map();
 
@@ -113,6 +135,9 @@ async function showPage(number, animate = true) {
   const { pdf } = state;
   number = Math.max(1, Math.min(pdf.numPages, number));
   const direction = Math.sign(number - state.page);
+  const previousPage = animate && direction && !sheet.hidden ? sheet.querySelector(':scope > canvas') : null;
+  if (previousPage && soundEnabled) paperSound.unlock();
+  state.turn?.cancel();
   const revision = ++state.revision;
   const isCurrent = () => current === state && state.revision === revision;
   state.render?.cancel();
@@ -152,11 +177,9 @@ async function showPage(number, animate = true) {
     sheet.replaceChildren(canvas, ...elements);
     scroller.scrollTo(0, 0);
 
-    if (animate && direction && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
-      sheet.animate([
-        { transform: `perspective(1000px) rotateY(${direction * 32}deg)`, opacity: 0.65 },
-        { transform: 'perspective(1000px) rotateY(0)', opacity: 1 },
-      ], { duration: 280, easing: 'ease-out' });
+    if (previousPage) {
+      if (!matchMedia('(prefers-reduced-motion: reduce)').matches) state.turn = turnPaper(sheet, previousPage, direction);
+      if (soundEnabled) paperSound.play();
     }
   } catch {
     if (isCurrent()) {
@@ -260,6 +283,8 @@ dialog.addEventListener('close', () => {
   const state = current;
   current = undefined;
   state?.render?.cancel();
+  state?.turn?.cancel();
+  paperSound.stop();
   state?.task?.destroy().catch(() => {});
   showPdf();
   sheet.replaceChildren();
@@ -286,6 +311,8 @@ video.addEventListener('click', () => {
     showPage(current.page, false);
     return;
   }
+  current.turn?.cancel();
+  paperSound.stop();
   const clip = videos[current.id];
   const frame = document.createElement('iframe');
   frame.src = `https://www.youtube-nocookie.com/embed/${clip.youtubeId}`;
