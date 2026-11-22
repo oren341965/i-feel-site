@@ -1,6 +1,8 @@
 ---
 import { architectSolutions } from '../data/architect-solutions.mjs';
+import { architectSolutionMedia } from '../data/architect-solution-media.mjs';
 const categories = [...new Set(architectSolutions.map((item) => item.category))];
+for (const item of architectSolutions) if (!architectSolutionMedia[item.id]) throw new Error(`Missing media for architect solution ${item.id}`);
 ---
 <section id="architect-solutions" class="bg-brand-50 py-12 lg:py-16 border-y border-brand-100 scroll-mt-32" dir="rtl" aria-labelledby="architect-solutions-title">
   <div class="max-w-7xl mx-auto px-4" data-solutions-catalog>
@@ -13,10 +15,21 @@ const categories = [...new Set(architectSolutions.map((item) => item.category))]
     </div>
     <p class="text-brand-700 mb-5" data-solutions-count role="status" aria-live="polite">{architectSolutions.length} פתרונות בספרייה</p>
     <div class="grid md:grid-cols-2 gap-6">
-      {architectSolutions.map((item) => (
+      {architectSolutions.map((item) => { const media = architectSolutionMedia[item.id]; return (
         <article id={item.id} class="solution-card rounded-2xl border border-brand-200 bg-white p-6 lg:p-8 flex flex-col scroll-mt-32 shadow-sm" data-solution-card data-category={item.category} data-search={[item.title,item.problem,item.solution,item.category,item.keywords,item.request,...item.checks].join(' ')}>
           <p class="text-sm text-accent-700 font-bold mb-3">{item.category}</p>
           <h3 class="text-2xl font-extrabold text-brand-900 mb-4">{item.title}</h3>
+          <figure class="solution-media">
+            {media.type === 'image' ? (
+              <a href={media.src} target="_blank" rel="noopener noreferrer" aria-label={`פתיחת תמונה בגודל מלא: ${media.alt}`}><img src={media.src} alt={media.alt} loading="lazy" decoding="async" width="1600" height="1000" /></a>
+            ) : (
+              <iframe src={`https://www.youtube-nocookie.com/embed/${media.videoId}`} title={media.title} loading="lazy" referrerpolicy="strict-origin-when-cross-origin" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            )}
+            <figcaption><span class="solution-media-credit">{media.sourceLabel}</span><p>{media.caption}</p>{media.sourceUrl && <a href={media.sourceUrl} target="_blank" rel="noopener noreferrer">למקור ולהקשר המלא ↗</a>}{media.note && <p class="solution-media-note">{media.note}</p>}</figcaption>
+          </figure>
+          <div class="solution-media-story"><p><strong>הבעיה:</strong> {media.problemCue}</p><p><strong>כך פותרים:</strong> {media.solutionCue}</p></div>
+          {media.detailImage && <details class="solution-extra-media"><summary>לראות גם את פרט ההתקנה</summary><figure><a href={media.detailImage.src} target="_blank" rel="noopener noreferrer"><img src={media.detailImage.src} alt={media.detailImage.alt} width="1200" height="1600" loading="lazy" decoding="async" /></a><figcaption>{media.detailImage.caption}</figcaption></figure></details>}
+          {media.secondaryVideo && <details class="solution-extra-media"><summary>{media.secondaryVideo.label}</summary><iframe src={`https://www.youtube-nocookie.com/embed/${media.secondaryVideo.id}`} title={media.secondaryVideo.label} loading="lazy" referrerpolicy="strict-origin-when-cross-origin" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe><p>{media.secondaryVideo.note}</p></details>}
           <p class="text-brand-700 leading-7 mb-3"><strong>האתגר:</strong> {item.problem}</p>
           <p class="text-brand-700 leading-7 mb-3"><strong>כיוון הפתרון:</strong> {item.solution}</p>
           <p class="text-brand-900 leading-7 bg-brand-50 rounded-lg p-4 mb-4"><strong>מה הלקוח מרוויח:</strong> {item.benefit}</p>
@@ -24,13 +37,29 @@ const categories = [...new Set(architectSolutions.map((item) => item.category))]
           <p class="text-sm text-brand-600 mb-5">חומר מקצועי זמין: {item.evidence}.</p>
           <div class="flex flex-wrap gap-4 mt-auto items-center"><a href={item.href} class="bg-brand-700 text-white hover:bg-brand-800 px-5 py-3 rounded-lg font-bold">{item.label}</a><a href={`/contactus/?solution=${item.id}`} class="text-brand-700 underline font-bold">שלחו תוכנית לפתרון הזה</a><a href={`/catalogs/#${item.id}`} class="text-brand-700 underline text-sm" aria-label={`קישור ישיר לפתרון: ${item.title}`}>קישור ישיר</a></div>
         </article>
-      ))}
+      ); })}
     </div>
     <div data-solutions-empty hidden class="text-center bg-white border border-brand-200 rounded-xl p-8"><h3 class="text-xl font-bold text-brand-900 mb-3">לא מצאתם את האתגר שלכם?</h3><p class="text-brand-700 mb-4">נסו מילת חיפוש אחרת או שלחו לנו תוכנית ותיאור של הבעיה.</p><button type="button" data-solutions-reset class="text-brand-700 underline font-bold ml-5">ניקוי החיפוש</button><a href="/contactus/" class="text-brand-700 underline font-bold">שלחו לנו את האתגר</a></div>
     <aside class="mt-8 bg-brand-900 text-white rounded-2xl p-7"><h3 class="text-2xl font-bold mb-3">הפרט המורכב בתוכנית שלכם יכול להפוך לפתרון הבא.</h3><p class="leading-7 mb-4">שלחו תוכנית, צילום או חתך עם תיאור הצורך. נבחן התאמה, תשתיות ואינטגרציות לפני בחירת הציוד. הפתרונות בספרייה הם נקודת מוצא לאפיון; ההתאמה הסופית נקבעת לפי הפרויקט.</p><a href="/contactus/" class="inline-block bg-accent-500 text-brand-900 rounded-lg px-5 py-3 font-bold">שלחו תוכנית ל־I FEEL</a><a href="tel:+97235089553" class="inline-block underline mr-5">03-508-9553</a></aside>
   </div>
 </section>
-<style>.solution-card[hidden]{display:none}</style>
+<style>
+  .solution-card[hidden]{display:none}
+  .solution-media{margin:0 0 1rem;overflow:hidden;border:1px solid #d8e3ed;border-radius:1rem;background:#f1f5f9}
+  .solution-media img{display:block;width:100%;height:320px;object-fit:contain;background:#eaf0f5}
+  .solution-media iframe,.solution-extra-media iframe{display:block;width:100%;aspect-ratio:16/9;border:0;background:#0f2339}
+  .solution-media figcaption{padding:1rem;background:#fff;font-size:.875rem;line-height:1.7;color:#36536e}
+  .solution-media-credit{display:inline-block;margin-bottom:.4rem;color:#77531a;font-weight:700}
+  .solution-media figcaption a{text-decoration:underline;font-weight:700}
+  .solution-media-note{margin-top:.5rem}
+  .solution-media-story{display:grid;grid-template-columns:1fr 1fr;gap:.7rem;margin-bottom:1.1rem;color:#17395b}
+  .solution-media-story p{padding:.8rem;border-radius:.6rem;background:#eaf0f5;line-height:1.6}
+  .solution-extra-media{margin-bottom:1rem;color:#17395b}
+  .solution-extra-media summary{cursor:pointer;text-decoration:underline;font-weight:700;margin-bottom:.7rem}
+  .solution-extra-media img{display:block;width:100%;max-height:350px;object-fit:contain;background:#eaf0f5}
+  .solution-extra-media p,.solution-extra-media figcaption{font-size:.875rem;line-height:1.7;margin-top:.6rem}
+  @media(max-width:600px){.solution-media img{height:260px}.solution-media-story{grid-template-columns:1fr}}
+</style>
 <script>
   const catalog = document.querySelector<HTMLElement>('[data-solutions-catalog]');
   if (catalog) {
