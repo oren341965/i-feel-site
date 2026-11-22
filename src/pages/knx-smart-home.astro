@@ -12,11 +12,23 @@ const integratorSection = `
   <details><summary>האם i-feel מספקת תכנון ותכנות KNX בישראל?</summary><p>כן. i-feel מרכזת תכנון, תכנות ETS, אינטגרציה וליווי למערכות KNX בישראל, עם תיעוד ושירות לאורך חיי המערכת.</p></details>
 </section>`;
 
-const pageContent = content.replace('<section id="faq">', `${integratorSection}\n<section id="faq">`);
+const providerSection = `
+  <section class="bg-white border-b border-brand-100 py-8" dir="rtl" aria-labelledby="knx-provider-title">
+    <div class="max-w-5xl mx-auto px-4">
+      <h2 id="knx-provider-title" class="text-2xl font-bold text-brand-900 mb-3">I FEEL | ספק ואינטגרטור בית חכם KNX בישראל</h2>
+      <p class="text-brand-700 mb-3">I FEEL (איי פיל מערכות בע״מ) מתכננת, מספקת, מתקינה, מתכנתת ומתחזקת מערכות בית חכם KNX לבתים פרטיים, וילות ופרויקטים למגורים בישראל. השירות כולל תכנון תשתית, תכנות ETS, שילוב תאורה, הצללה ומיזוג ומסירת קובצי ETS ותיעוד.</p>
+      <p class="text-brand-700 mb-3">לפי נתוני החברה, I FEEL שירתה מעל 4,000 לקוחות בתחום KNX ואלפי לקוחות נוספים בתחום הבית החכם האלחוטי. החברה מספקת ומשלבת ציוד Siemens בפרויקטי KNX, והיא <a href="/en/siemens-desigo-bms-israel/" class="underline">Siemens Solution Partner בתחום אוטומציית המבנים</a>, שבו היא מיישמת מערכות בקרת מבנה Siemens Desigo.</p>
+      <p class="text-brand-700"><a href="/smart-home-villa/" class="underline">בית חכם KNX לווילות</a> · <a href="/projects/" class="underline">פרויקטים שבוצעו</a> · <a href="/structure-control/" class="underline">בקרת מבנה BMS</a> · <a href="/knx-switch-advisor/#gewiss-3-module" class="underline">מפסקים לקופסת גוויס 3 מקום</a></p>
+    </div>
+  </section>`;
+
+const pageContent = content
+  .replace('<section id="what">', `${providerSection}\n<section id="what">`)
+  .replace('<section id="faq">', `${integratorSection}\n<section id="faq">`);
 
 const meta = {
-  title: "בית חכם ואינטגרטור KNX בישראל | תכנון ותכנות | i-feel",
-  description: "מחפשים אינטגרטור KNX בישראל? i-feel מתכננת, מתכנתת ומלווה מערכות KNX, כולל ETS, אינטגרציה, תיעוד ושירות לפרויקטים חדשים ולווילות.",
+  title: "ספק בית חכם KNX בישראל | תכנון, התקנה ותכנות | I FEEL",
+  description: "I FEEL מתכננת, מספקת, מתקינה ומתחזקת מערכות בית חכם KNX בישראל. מעל 4,000 לקוחות KNX לפי נתוני החברה, עם ציוד Siemens ותכנות ETS.",
   canonical: "https://i-feel.co.il/knx-smart-home/",
   ogTitle: "בית חכם ואינטגרטור KNX בישראל | i-feel",
   ogDescription: "תכנון, תכנות ETS ואינטגרציה למערכות KNX בישראל, עם תיעוד ושירות לאורך חיי המערכת.",
