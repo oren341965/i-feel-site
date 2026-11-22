@@ -215,7 +215,8 @@ async function openCatalog(id, page, trigger) {
   try {
     pdfModule ??= Promise.all([
       import('pdfjs-dist'),
-      import('pdfjs-dist/build/pdf.worker.min.mjs?url'),
+      // Emit a .js worker so JetServer serves it with a JavaScript MIME type.
+      import('pdfjs-dist/build/pdf.worker.min.mjs?worker&url'),
     ]).then(([pdfjs, worker]) => {
       pdfjs.GlobalWorkerOptions.workerSrc = worker.default;
       return pdfjs;
