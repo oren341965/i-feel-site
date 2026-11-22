@@ -126,6 +126,7 @@
     .replace(/(^| )קיי אנ אקס(?= |$)/g, '$1knx')
     .replace(/(^| )(?:micro module|מיקרו מודול)(?= |$)/g, '$1micromodule')
     .replace(/\bwi fi\b/g, 'wifi')
+    .replace(/\b(?:9025 ?eelectron|eelectron ?9025)\b/g, 'eelectron 9025')
     .replace(/\b(os|tc|gp|pxc|ap|mega) (\d+[a-z]?)\b/g, '$1$2');
 
   const TERM_SYNONYMS: Record<string, string[]> = {
@@ -184,6 +185,12 @@
     'intercom': ['אינטרקומ'],
     'סימנס': ['siemens'],
     'siemens': ['סימנס'],
+    'gewiss': ['גוויס', 'גויס'],
+    'גוויס': ['gewiss', 'גויס'],
+    'גויס': ['gewiss', 'גוויס'],
+    'eelectron': ['איאלקטרונ', 'אי אלקטרונ'],
+    'איאלקטרונ': ['eelectron'],
+    'אלקטרונ': ['eelectron'],
   };
 
   const getTermVariants = (term: string) => {

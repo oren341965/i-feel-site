@@ -7,11 +7,15 @@ import DesignerSwitchExamples from '../components/DesignerSwitchExamples.astro';
 import '../styles/knx-advisor.css';
 
 const title = 'איזה מפסק KNX מתאים לבית? יועץ חשמל חכם | I Feel';
-const description = 'כלי אינטראקטיבי לבחירת מפסקי KNX: Siemens TC4/TC5, תאורה, תריסים, מיזוג והתקנה אסתטית בקו אפס עם קופסאות TAV TC4/TAV TC5.';
+const description = 'איזה מפסק KNX מתאים לגוויס 3 (Gewiss 503)? השוו Eelectron 9025 בגרסת 3 מודולים ומסך Siemens TC5, ובדקו תושבת, קופסה והזנת עזר עם I Feel.';
 const canonical = 'https://i-feel.co.il/knx-switch-advisor/';
 const switchesVideoSchema = knxSwitchesVideoSchema(canonical);
 
+const gewissQuestion = 'איזה מפסק KNX מתאים לקופסת גוויס 3 מקום?';
+const gewissAnswer = 'לקופסת גוויס 3 (Gewiss 503) בודקים שתי אפשרויות: לחצן KNX מדגם Eelectron 9025 בגרסת 3 מודולים, בכפוף לתושבת ולעומק הקופסה; או מסך מגע Siemens TC5, כאשר יש פתרון התקנה מתאים. מפרט Siemens מציין קיבוע ב־60 מ״מ, בעוד שקופסת גוויס 3 טיפוסית היא 83.5 מ״מ. לכן TC5 אינו מתחבר ישירות לברגי 83.5 מ״מ; I Feel בודקת אם אפשר להשתמש בתושבת מתאימה או שצריך קופסה אחרת. למסך נדרשת גם הזנת עזר.';
+
 const faqs = [
+  [gewissQuestion, gewissAnswer],
   ['מה ההבדל בין מפסק KNX מסוג מסך Siemens TC4 ל-TC5?', 'TC4 הוא מפסק KNX מסוג מסך בגודל 4 אינץ׳ ובמידות 86×86 מ״מ. TC5 הוא מפסק KNX מסוג מסך בגודל 5 אינץ׳ ובמידות 86×148.8 מ״מ, ולכן הוא גבוה יותר ומציג יותר מידע ופעולות. ההתאמה הסופית תלויה בכמות הפעולות, במערכות ובתכנון.'],
   ['כמה מפסקים צריך בחדר?', 'בדרך כלל מתחילים בנקודה בכניסה. בחדר שינה מוסיפים נקודה ליד המיטה, ובחדר הורים נהוג לשקול נקודה בכל צד של המיטה ובאזורים צמודים. הכלי מתאים את ההצעה למבנה החדר.'],
   ['האם מפסק KNX יכול לשלוט במזגן?', 'כן, בכפוף לסוג המזגן, לממשק התקשורת ולתכנון KNX. במערכת VRF נדרש בדרך כלל מתאם תקשורת מתאים ותיאום עם איש המיזוג.'],
@@ -107,6 +111,18 @@ const jsonLd = JSON.stringify({
           <p>הבחירה אינה רק לפי מספר לחצנים. צריך להבין האם נדרשת תצוגה משתנה, שליטה במיזוג, פעולה מהירה בחושך, עמידות באזור חוץ או התאמה לעיצוב הקיר.</p>
         </div>
 
+        <section class="advisor-flush-section" id="gewiss-3-module" aria-labelledby="gewiss-3-module-title">
+          <div class="advisor-section-head">
+            <h2 id="gewiss-3-module-title">{gewissQuestion}</h2>
+          </div>
+          <p>{gewissAnswer}</p>
+          <ul>
+            <li><h3>Eelectron 9025 — לחצן מגע ל־3 מודולים</h3><p>לחצן מגע לתאורה, תריסים ותרחישים. בוחרים את <a href="https://www.eelectron.com/en/products/9025-capacitive-knx-switch-3-modules-standard-range/">גרסת 3 המודולים</a> ואת החזית והתושבת לפי הדגם. <a href="/eelectron-knx-israel/">מוצרי Eelectron ב־I Feel</a>.</p></li>
+            <li><h3>Siemens TC5 — מסך מגע עם התקנה מתאימה</h3><p>מסך מגע KNX בגודל 5 אינץ׳. בדקו את <a href="https://cache.industry.siemens.com/dl/files/453/109959453/att_1270742/v1/A6V12259028.pdf">מפרט Siemens</a> מול <a href="https://www.gewiss.com/il/he/products/product.1000002.1000058.GW24403">מידות קופסת גוויס 3</a>. בבנייה חדשה, להתקנה בקו אפס אפשר לתכנן מראש <a href="#flush-boxes">קופסת השקעה TAV TC5</a>.</p></li>
+          </ul>
+          <p>לפני הזמנה יש לאמת דגם קופסה, מרחק בין ברגים, עומק ותשתית KNX. <a href="/contactus/#project-enquiry" data-track="advisor_gewiss_fit_check">בדיקת התאמה עם I Feel</a>.</p>
+        </section>
+
         <div class="advisor-scale-note">
           <strong>השוואת גודל אמיתית:</strong>
           <span>שני המוצרים מוצגים באותו רוחב של 86 מ״מ. TC4 מרובע בגובה 86 מ״מ; TC5 גבוה יותר — 148.8 מ״מ.</span>
@@ -191,15 +207,6 @@ const jsonLd = JSON.stringify({
             </div>
           </article>
         </div>
-
-        <section class="advisor-flush-section" id="gewiss-3-module" aria-labelledby="gewiss-3-module-title">
-          <div class="advisor-section-head">
-            <h2 id="gewiss-3-module-title">איזה מפסק KNX מתאים לקופסת גוויס 3 מקום?</h2>
-          </div>
-          <p>לקופסת Gewiss קיימת בפורמט 3 מודולים, אחת האפשרויות היא לחצן KNX מסדרת Gewiss ChoruSmart. לדוגמה, היצרן מציין שלושה מודולים בדגם <a href="https://www.gewiss.com/il/he/products/product.1000000.1008316.GW15784A">GW15784A</a>. לפני הזמנה בודקים את סדרת הקופסה, התושבת, המסגרת, העומק ותשתית ה-KNX.</p>
-          <p>למסכי Siemens TC4 ו-TC5 יש <a href="#flush-boxes">קופסאות השקעה ייעודיות לקו אפס</a>. אם יש כבר קופסת גוויס, שולחים ל-I FEEL תמונה ומידות כדי לבדוק אם אפשר להשתמש בה עם תושבת מתאימה או שצריך להחליף את הקופסה.</p>
-          <p><a href="/knx-smart-home/">תכנון ואספקה של מערכות בית חכם KNX עם I FEEL</a> · <a href="/contactus/#project-enquiry">בקשת בדיקת התאמה לפרויקט</a></p>
-        </section>
 
         <section class="advisor-flush-section" id="flush-boxes" aria-labelledby="flush-boxes-title">
           <div class="advisor-family-heading">
