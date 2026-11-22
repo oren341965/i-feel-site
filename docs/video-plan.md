@@ -103,3 +103,9 @@
 | לילה טוב | /smart-home/ | /assets/smartsphere/goodnight.webm |
 
 | בית הלוחם באשדוד — Siemens Desigo ותאורת KNX (2:30, הסברים כתובים) | BMS | `-_JsdqUoI3k` | /video/#beit-halochem-video, /structure-control/#beit-halochem-video, /siemens-desigo-bms/#beit-halochem-video |
+
+## הוכן לפרסום — חדרי ישיבות עם קירות זכוכית (2026-11-22)
+
+| נושא | קטגוריה | YouTube ID | הטמעה | מצב |
+|---|---|---|---|---|
+| חדר ישיבות עם קירות זכוכית — שליטה בתאורה ובווילונות | חדרי ישיבות ואודיו | `Y8EwY5k84hk` | /video/#glass-meeting-room, /smart-office/#glass-meeting-room-video | ממתין למיזוג ופריסה |
