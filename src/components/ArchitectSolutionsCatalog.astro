@@ -1,0 +1,61 @@
+---
+import { architectSolutions } from '../data/architect-solutions.mjs';
+const categories = [...new Set(architectSolutions.map((item) => item.category))];
+---
+<section id="architect-solutions" class="bg-brand-50 py-12 lg:py-16 border-y border-brand-100 scroll-mt-32" dir="rtl" aria-labelledby="architect-solutions-title">
+  <div class="max-w-7xl mx-auto px-4" data-solutions-catalog>
+    <p class="text-accent-700 font-bold mb-3">I FEEL · ספריית פתרונות לאדריכלים ולמעצבי פנים</p>
+    <h2 id="architect-solutions-title" class="text-3xl md:text-4xl font-extrabold text-brand-900 mb-4">אתגר לא שגרתי בתכנון? מתחילים מהבעיה.</h2>
+    <p class="text-brand-700 text-lg leading-8 max-w-4xl mb-7">קיר זכוכית בלי מקום לחיווט מפסק, מקרן שצריך להיעלם בתקרה או מסך שאין לו קיר: מצאו כיוון מקצועי לפתרון, ראו מה צריך לבדוק ושלחו לנו את התוכנית של הלקוח.</p>
+    <div class="grid md:grid-cols-2 gap-5 bg-white border border-brand-200 rounded-2xl p-5 mb-6">
+      <div><label for="solution-search" class="block font-bold text-brand-900 mb-2">מה האתגר בתוכנית?</label><input id="solution-search" data-solution-search type="search" placeholder="למשל: זכוכית, מקרן נסתר, נגרות, גינה" class="w-full rounded-lg border border-brand-300 p-3 text-brand-900" /></div>
+      <div><label for="solution-category" class="block font-bold text-brand-900 mb-2">תחום התכנון</label><select id="solution-category" data-solution-category class="w-full rounded-lg border border-brand-300 p-3 text-brand-900"><option value="">כל התחומים</option>{categories.map((category) => <option value={category}>{category}</option>)}</select></div>
+    </div>
+    <p class="text-brand-700 mb-5" data-solutions-count role="status" aria-live="polite">{architectSolutions.length} פתרונות בספרייה</p>
+    <div class="grid md:grid-cols-2 gap-6">
+      {architectSolutions.map((item) => (
+        <article id={item.id} class="solution-card rounded-2xl border border-brand-200 bg-white p-6 lg:p-8 flex flex-col scroll-mt-32 shadow-sm" data-solution-card data-category={item.category} data-search={[item.title,item.problem,item.solution,item.category,item.keywords,item.request,...item.checks].join(' ')}>
+          <p class="text-sm text-accent-700 font-bold mb-3">{item.category}</p>
+          <h3 class="text-2xl font-extrabold text-brand-900 mb-4">{item.title}</h3>
+          <p class="text-brand-700 leading-7 mb-3"><strong>האתגר:</strong> {item.problem}</p>
+          <p class="text-brand-700 leading-7 mb-3"><strong>כיוון הפתרון:</strong> {item.solution}</p>
+          <p class="text-brand-900 leading-7 bg-brand-50 rounded-lg p-4 mb-4"><strong>מה הלקוח מרוויח:</strong> {item.benefit}</p>
+          <details class="border-y border-brand-100 py-4 mb-4"><summary class="font-bold text-brand-900 cursor-pointer">מה בודקים לפני שמכניסים לתוכנית?</summary><ul class="list-disc pr-5 text-brand-700 leading-7 space-y-2 mt-3">{item.checks.map((check) => <li>{check}</li>)}</ul><p class="text-brand-700 mt-4"><strong>מה לשלוח לנו:</strong> {item.request}</p></details>
+          <p class="text-sm text-brand-600 mb-5">חומר מקצועי זמין: {item.evidence}.</p>
+          <div class="flex flex-wrap gap-4 mt-auto items-center"><a href={item.href} class="bg-brand-700 text-white hover:bg-brand-800 px-5 py-3 rounded-lg font-bold">{item.label}</a><a href={`/contactus/?solution=${item.id}`} class="text-brand-700 underline font-bold">שלחו תוכנית לפתרון הזה</a><a href={`/catalogs/#${item.id}`} class="text-brand-700 underline text-sm" aria-label={`קישור ישיר לפתרון: ${item.title}`}>קישור ישיר</a></div>
+        </article>
+      ))}
+    </div>
+    <div data-solutions-empty hidden class="text-center bg-white border border-brand-200 rounded-xl p-8"><h3 class="text-xl font-bold text-brand-900 mb-3">לא מצאתם את האתגר שלכם?</h3><p class="text-brand-700 mb-4">נסו מילת חיפוש אחרת או שלחו לנו תוכנית ותיאור של הבעיה.</p><button type="button" data-solutions-reset class="text-brand-700 underline font-bold ml-5">ניקוי החיפוש</button><a href="/contactus/" class="text-brand-700 underline font-bold">שלחו לנו את האתגר</a></div>
+    <aside class="mt-8 bg-brand-900 text-white rounded-2xl p-7"><h3 class="text-2xl font-bold mb-3">הפרט המורכב בתוכנית שלכם יכול להפוך לפתרון הבא.</h3><p class="leading-7 mb-4">שלחו תוכנית, צילום או חתך עם תיאור הצורך. נבחן התאמה, תשתיות ואינטגרציות לפני בחירת הציוד. הפתרונות בספרייה הם נקודת מוצא לאפיון; ההתאמה הסופית נקבעת לפי הפרויקט.</p><a href="/contactus/" class="inline-block bg-accent-500 text-brand-900 rounded-lg px-5 py-3 font-bold">שלחו תוכנית ל־I FEEL</a><a href="tel:+97235089553" class="inline-block underline mr-5">03-508-9553</a></aside>
+  </div>
+</section>
+<style>.solution-card[hidden]{display:none}</style>
+<script>
+  const catalog = document.querySelector<HTMLElement>('[data-solutions-catalog]');
+  if (catalog) {
+    const search = catalog.querySelector<HTMLInputElement>('[data-solution-search]')!;
+    const category = catalog.querySelector<HTMLSelectElement>('[data-solution-category]')!;
+    const cards = [...catalog.querySelectorAll<HTMLElement>('[data-solution-card]')];
+    const normalize = (value: string) => value.normalize('NFKD').replace(/[\u0591-\u05c7]/g, '').toLocaleLowerCase('he').trim();
+    const filter = () => {
+      const terms = normalize(search.value).split(/\s+/).filter(Boolean);
+      let count = 0;
+      for (const card of cards) {
+        const text = normalize(card.dataset.search || '');
+        card.hidden = !(terms.every(term => text.includes(term)) && (!category.value || card.dataset.category === category.value));
+        if (!card.hidden) count++;
+      }
+      catalog.querySelector<HTMLElement>('[data-solutions-count]')!.textContent = count === 1 ? 'פתרון מתאים אחד' : `${count} פתרונות מתאימים`;
+      catalog.querySelector<HTMLElement>('[data-solutions-empty]')!.hidden = count > 0;
+    };
+    search.addEventListener('input', filter);
+    category.addEventListener('change', filter);
+    catalog.querySelector('[data-solutions-reset]')!.addEventListener('click', () => { search.value = ''; category.value = ''; filter(); search.focus(); });
+    // A shared deep link always reveals its card, even after filtering in this visit.
+    window.addEventListener('hashchange', () => {
+      const target = cards.find(card => `#${card.id}` === window.location.hash);
+      if (target?.hidden) { search.value = ''; category.value = ''; filter(); target.scrollIntoView(); }
+    });
+  }
+</script>
