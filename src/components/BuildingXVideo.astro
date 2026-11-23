@@ -1,0 +1,42 @@
+---
+import { buildingXVideo as video } from '../data/building-x-video.mjs';
+
+const { card = false } = Astro.props;
+const sectionId = card ? 'building-x-video' : 'video';
+---
+<section
+  id={sectionId}
+  dir="rtl"
+  aria-labelledby={sectionId + '-heading'}
+  class:list={['scroll-mt-32 rounded-2xl border border-brand-100 overflow-hidden', card && 'mb-6 max-w-3xl bg-white']}
+>
+  <div class="p-4 sm:p-5">
+    <p class="mb-1 text-sm font-bold text-brand-700">וידאו · בקרת מבנה וניהול אנרגיה · 42 שניות</p>
+    {card ? (
+      <h3 id={sectionId + '-heading'} class="text-lg font-extrabold text-brand-900">
+        <a href="/articles/siemens-building-x/#video" class="hover:underline"><bdi>Siemens Building X:</bdi> ניהול אנרגיה ותפעול מבנים בענן</a>
+      </h3>
+    ) : (
+      <h2 id={sectionId + '-heading'} class="text-2xl font-extrabold text-brand-900">
+        <bdi>Siemens Building X:</bdi> ניהול אנרגיה ותפעול מבנים בענן
+      </h2>
+    )}
+  </div>
+  <div class="aspect-video bg-brand-900">
+    <iframe
+      class="block h-full w-full border-0"
+      src={video.embedUrl}
+      title={video.title}
+      width="1280"
+      height="720"
+      loading={card ? 'lazy' : 'eager'}
+      referrerpolicy="strict-origin-when-cross-origin"
+      allow="encrypted-media; picture-in-picture; fullscreen"
+      allowfullscreen
+    />
+  </div>
+  <div class="p-4 sm:p-5 text-sm text-brand-800">
+    <p>{video.description}</p>
+    <a class="mt-2 inline-block font-bold underline underline-offset-4" href={video.watchUrl}>לצפייה ביוטיוב</a>
+  </div>
+</section>

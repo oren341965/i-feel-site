@@ -13,6 +13,7 @@
 
 | נושא | קטגוריה ב-/video/ | YouTube ID | דף-נושא ייעודי |
 |------|-------------------|------------|----------------|
+| Siemens Building X: ניהול אנרגיה ותפעול מבנים בענן | BMS | `oWzPM6B1NJw` | `/articles/siemens-building-x/#video` |
 | תאורת DMX לבית: צבע ועמעום, DALI-2 ו־Siemens KNX | בית חכם ו-KNX | `IfWiNCE3fWY` | `/dmx-home-lighting/#video` |
 | תריסים ווילונות — שליטה והגדרת מצבים (פורסם ב־2026-11-04) | הדרכות שימוש | `eHC2rN1SNPE` | — |
 | Touchwand LCD — מסך מגע | הדרכות שימוש | `_94Ph8MSXS0` | — |

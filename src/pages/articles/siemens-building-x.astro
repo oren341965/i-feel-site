@@ -1,5 +1,7 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import BuildingXVideo from '../../components/BuildingXVideo.astro';
+import { buildingXVideoSchema } from '../../data/building-x-video.mjs';
 
 const canonical = 'https://i-feel.co.il/articles/siemens-building-x/';
 const heading = 'Siemens Building X: מה מרוויחים כשמחברים את בקרת המבנה לענן?';
@@ -15,8 +17,10 @@ const image = 'https://i-feel.co.il' + assets + 'building-x-dashboard.jpg';
 const jsonLd = JSON.stringify({
   '@context': 'https://schema.org',
   '@graph': [
+    buildingXVideoSchema,
     { '@type': 'Article', '@id': canonical + '#article', headline: heading, description,
-      inLanguage: 'he-IL', datePublished: '2026-11-22', dateModified: '2026-11-22',
+      inLanguage: 'he-IL', datePublished: '2026-11-22', dateModified: '2026-11-23',
+      video: { '@id': buildingXVideoSchema['@id'] },
       mainEntityOfPage: canonical, image, articleSection: 'בקרת מבנה',
       author: { '@type': 'Organization', name: 'I FEEL', url: 'https://i-feel.co.il/' },
       publisher: { '@id': 'https://i-feel.co.il/#business' } },
@@ -41,6 +45,7 @@ const jsonLd = JSON.stringify({
     </header>
 
     <div class="max-w-4xl mx-auto px-4 py-10 space-y-8">
+      <BuildingXVideo />
       <figure class="rounded-2xl overflow-hidden bg-brand-50 border border-brand-100">
         <img src={assets + 'building-x-dashboard.jpg'} width="1440" height="810" fetchpriority="high" alt="איש צוות מול לוחות מחוונים המציגים גרפים ונתוני מבנה בממשק Building X" class="block w-full h-auto" />
         <figcaption class="px-4 py-3 text-sm text-brand-800">הדגמת לוחות מחוונים ונתוני מבנה ב־Building X. מקור: Siemens.</figcaption>
