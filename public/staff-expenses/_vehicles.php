@@ -452,6 +452,97 @@ function portal_render_optional_vehicle_deadline(string $label, string $date): v
     <?php
 }
 
+function portal_vehicle_insurance_types(): array
+{
+    return [
+        'compulsory' => 'ביטוח חובה',
+        'comprehensive' => 'ביטוח מקיף',
+        'third_party' => 'ביטוח צד ג׳',
+    ];
+}
+
+function portal_vehicle_insurance_file(string $plate): string
+{
+    $plate = portal_normalize_vehicle_plate($plate);
+    if ($plate === null) {
+        throw new RuntimeException('מספר הרכב אינו תקין.');
+    }
+    return dirname(portal_vehicle_directory_file()) . DIRECTORY_SEPARATOR . 'vehicle-insurance-' . $plate . '.json';
+}
+
+function portal_save_vehicle_insurance(string $plate): void
+{
+    $plate = portal_normalize_vehicle_plate($plate) ?? '';
+    if (!isset(portal_vehicle_directory()[$plate])) {
+        throw new RuntimeException('הרכב שנבחר אינו קיים במערכת.');
+    }
+
+    $phone = portal_post('roadside_phone', 32);
+    $dial = preg_replace('/[ ().-]/', '', $phone);
+    if ($phone !== '' && !preg_match('/^(?:[+]?\d{7,15}|\*\d{3,7}|\d{3,5}\*)$/D', $dial)) {
+        throw new RuntimeException('יש להזין מספר תקין למוקד שירותי הדרך והגרירה.');
+    }
+
+    $details = ['roadside_phone' => $phone];
+    foreach (array_keys(portal_vehicle_insurance_types()) as $type) {
+        $details[$type] = [
+            'company' => portal_post($type . '_company', 160),
+            'policy' => portal_post($type . '_policy', 160),
+        ];
+    }
+    portal_json_write(portal_vehicle_insurance_file($plate), $details);
+    portal_audit('vehicle_insurance_saved', ['plate_hash' => hash('sha256', $plate)]);
+}
+
+function portal_render_vehicle_insurance(array $vehicle, array $details): void
+{
+    $phone = (string) ($details['roadside_phone'] ?? '');
+    $dial = preg_replace('/[ ().-]/', '', $phone);
+    if (str_ends_with($dial, '*')) {
+        $dial = '*' . rtrim($dial, '*');
+    }
+    ?>
+    <div class="vehicle-insurance">
+        <?php if ($dial !== ''): ?>
+            <a class="button button--primary" href="tel:<?= portal_h($dial) ?>">חיוג לשירותי דרך וגרירה <bdi><?= portal_h($phone) ?></bdi></a>
+        <?php else: ?>
+            <p class="muted-text">טרם הוזן מספר לשירותי דרך וגרירה.</p>
+        <?php endif; ?>
+        <?php if ($vehicle['insurance_company'] !== '' || $vehicle['policy_number'] !== ''): ?>
+            <p class="vehicle-card__meta">פרטי ביטוח כלליים: <?= portal_h($vehicle['insurance_company']) ?><?php if ($vehicle['policy_number'] !== ''): ?> · פוליסה <bdi><?= portal_h($vehicle['policy_number']) ?></bdi><?php endif; ?></p>
+        <?php endif; ?>
+        <div class="vehicle-deadlines">
+            <?php foreach (portal_vehicle_insurance_types() as $type => $label): ?>
+                <div>
+                    <?php portal_render_vehicle_deadline($label, $vehicle[$type . '_insurance_due_date'], $vehicle[$type . '_insurance_due_label'] ?? '', $vehicle[$type . '_insurance_status'] ?? ''); ?>
+                    <p class="vehicle-card__meta"><?= portal_h(($details[$type]['company'] ?? '') ?: 'חברת ביטוח טרם הוזנה') ?><?php if (($details[$type]['policy'] ?? '') !== ''): ?> · פוליסה <bdi><?= portal_h($details[$type]['policy']) ?></bdi><?php endif; ?></p>
+                </div>
+            <?php endforeach; ?>
+        </div>
+    </div>
+    <?php
+}
+
+function portal_render_vehicle_insurance_form(array $vehicle, array $details): void
+{
+    ?>
+    <details>
+        <summary>עריכת ביטוחים ומוקד גרירה</summary>
+        <form method="post" class="form-grid">
+            <input type="hidden" name="csrf" value="<?= portal_h(portal_csrf_token()) ?>">
+            <input type="hidden" name="action" value="save_vehicle_insurance">
+            <input type="hidden" name="plate" value="<?= portal_h($vehicle['plate']) ?>">
+            <label class="field field--full"><span>טלפון שירותי דרך וגרירה</span><input type="tel" name="roadside_phone" dir="ltr" maxlength="32" value="<?= portal_h($details['roadside_phone'] ?? '') ?>"></label>
+            <?php foreach (portal_vehicle_insurance_types() as $type => $label): ?>
+                <label class="field"><span><?= portal_h($label) ?> · חברת ביטוח</span><input type="text" name="<?= portal_h($type) ?>_company" maxlength="160" value="<?= portal_h($details[$type]['company'] ?? '') ?>"></label>
+                <label class="field"><span><?= portal_h($label) ?> · מספר פוליסה</span><input type="text" name="<?= portal_h($type) ?>_policy" dir="ltr" maxlength="160" value="<?= portal_h($details[$type]['policy'] ?? '') ?>"></label>
+            <?php endforeach; ?>
+            <div class="field--full"><button type="submit" class="button button--primary">שמירת פרטי הביטוח והגרירה</button></div>
+        </form>
+    </details>
+    <?php
+}
+
 function portal_render_employee_vehicle_card(array $user): void
 {
     $vehicles = portal_vehicles_for_employee($user);
@@ -474,15 +565,10 @@ function portal_render_employee_vehicle_card(array $user): void
                     <div class="vehicle-deadlines">
                         <?php portal_render_vehicle_deadline('רישיון', $vehicle['license_due_date'], $vehicle['license_due_label'], $vehicle['license_status']); ?>
                         <?php portal_render_vehicle_deadline('טסט שנתי', $vehicle['test_due_date'], $vehicle['test_due_label'], $vehicle['test_status']); ?>
-                        <?php portal_render_vehicle_deadline('ביטוח חובה', $vehicle['compulsory_insurance_due_date'], $vehicle['compulsory_insurance_due_label'], $vehicle['compulsory_insurance_status']); ?>
-                        <?php portal_render_optional_vehicle_deadline('ביטוח מקיף', $vehicle['comprehensive_insurance_due_date']); ?>
-                        <?php portal_render_vehicle_deadline('ביטוח צד ג׳', $vehicle['third_party_insurance_due_date']); ?>
                     </div>
+                    <?php portal_render_vehicle_insurance($vehicle, portal_json_read(portal_vehicle_insurance_file($vehicle['plate']))); ?>
                     <?php if ($vehicle['current_km'] !== ''): ?><p class="vehicle-card__meta">קילומטראז' בעדכון האחרון: <b><?= portal_h(number_format((float) preg_replace('/[^\d.]/', '', $vehicle['current_km']))) ?></b></p><?php endif; ?>
                     <?php if ($vehicle['last_update'] !== ''): ?><p class="vehicle-card__meta">עדכון אחרון: <?= portal_h($vehicle['last_update']) ?></p><?php endif; ?>
-                    <?php if ($vehicle['insurance_company'] !== '' || $vehicle['policy_number'] !== ''): ?>
-                        <p class="vehicle-card__meta">ביטוח: <?= portal_h(trim($vehicle['insurance_company'] . ($vehicle['policy_number'] !== '' ? ' · פוליסה ' . $vehicle['policy_number'] : ''))) ?></p>
-                    <?php endif; ?>
                     <?php if ($vehicle['notes'] !== ''): ?><p class="vehicle-card__meta"><?= portal_h($vehicle['notes']) ?></p><?php endif; ?>
                 </article>
             <?php endforeach; ?>
@@ -510,10 +596,10 @@ function portal_render_vehicle_admin(?array $flash): void
         <h2>רכבים במערכת</h2>
         <div class="table-wrap">
             <table class="records-table">
-                <thead><tr><th>עובד</th><th>רכב</th><th>מספר</th><th>רישיון</th><th>טסט</th><th>ביטוח חובה</th><th>ביטוח מקיף</th><th>ביטוח צד ג׳</th><th>ק"מ / עדכון</th></tr></thead>
+                <thead><tr><th>עובד</th><th>רכב</th><th>מספר</th><th>רישיון</th><th>טסט</th><th>ק"מ / עדכון</th><th>ביטוחים וגרירה</th></tr></thead>
                 <tbody>
                 <?php if ($vehicles === []): ?>
-                    <tr><td colspan="9" class="empty-cell">עדיין לא נשמרו רכבים.</td></tr>
+                    <tr><td colspan="7" class="empty-cell">עדיין לא נשמרו רכבים.</td></tr>
                 <?php else: ?>
                     <?php foreach ($vehicles as $vehicle): ?>
                         <?php $employee = $employees[$vehicle['employee_email']] ?? ['name' => '', 'email' => $vehicle['employee_email']]; ?>
@@ -523,10 +609,12 @@ function portal_render_vehicle_admin(?array $flash): void
                             <td dir="ltr"><?= portal_h(portal_format_vehicle_plate($vehicle['plate'])) ?></td>
                             <td><?php portal_render_vehicle_deadline('רישיון', $vehicle['license_due_date'], $vehicle['license_due_label'], $vehicle['license_status']); ?></td>
                             <td><?php portal_render_vehicle_deadline('טסט', $vehicle['test_due_date'], $vehicle['test_due_label'], $vehicle['test_status']); ?></td>
-                            <td><?php portal_render_vehicle_deadline('חובה', $vehicle['compulsory_insurance_due_date'], $vehicle['compulsory_insurance_due_label'], $vehicle['compulsory_insurance_status']); ?></td>
-                            <td><?php portal_render_optional_vehicle_deadline('מקיף', $vehicle['comprehensive_insurance_due_date']); ?></td>
-                            <td><?php portal_render_vehicle_deadline('צד ג׳', $vehicle['third_party_insurance_due_date']); ?></td>
                             <td><?= $vehicle['current_km'] !== '' ? portal_h($vehicle['current_km']) . ' ק"מ' : '—' ?><?= $vehicle['last_update'] !== '' ? '<br><small>' . portal_h($vehicle['last_update']) . '</small>' : '' ?></td>
+                            <?php $details = portal_json_read(portal_vehicle_insurance_file($vehicle['plate'])); ?>
+                            <td>
+                                <?php portal_render_vehicle_insurance($vehicle, $details); ?>
+                                <?php portal_render_vehicle_insurance_form($vehicle, $details); ?>
+                            </td>
                         </tr>
                     <?php endforeach; ?>
                 <?php endif; ?>
