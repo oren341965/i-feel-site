@@ -1,5 +1,18 @@
 export const equipmentProducts = [
   {
+    slug: 'siemens-up251-11-knx-wall-motion-detector', category: 'חיישני KNX', brand: 'Siemens', sku: '5WG1251-2AB11',
+    title: 'גלאי תנועה קיר Siemens UP 251/11 לתאורת מדרגות',
+    summary: 'גלאי קיר של סימנס המתחבר למערכת הבית החכם באמצעות KNX ומאפשר הדלקה וכיבוי אוטומטיים של תאורת מדרגות ומסדרונות.',
+    purpose: 'כחלק מציוד Siemens במערכת הבית החכם של I FEEL, הגלאי מזהה תנועה ושולח פקודת הדלקה לבקר התאורה דרך KNX. כאשר לא מזוהה תנועה, התאורה נכבית לאחר השהיה שנקבעת בתכנות. כך אפשר להאיר את המדרגות בזמן המעבר ולהגדיר הפעלה לפי רמת האור בסביבה.',
+    image: '/assets/knx-detectors/siemens-up251-11-wall-motion-detector.png',
+    imageAlt: 'גלאי קיר Siemens: דגם UP 251/11 הלבן משמאל ודגם UP 251/12 השחור מימין',
+    imageCaption: 'תמונת היצרן: UP 251/11 הלבן משמאל; לצדו UP 251/12 השחור. דף זה מתייחס לדגם הלבן.',
+    specifications: [['יצרן ודגם', 'Siemens UP 251/11'], ['מק״ט', '5WG1251-2AB11'], ['תקשורת', 'KNX'], ['טכנולוגיית גילוי', 'אינפרה אדום פסיבי (PIR)'], ['זווית גילוי', '180°'], ['שימוש', 'מדרגות ומסדרונות בתוך המבנה'], ['צבע', 'לבן']],
+    notes: ['הגלאי שולח פקודות לבקר תאורה מתאים במערכת KNX; מיתוג מעגל התאורה נעשה בבקר.', 'זמן הכיבוי, סף האור ומצב ההפעלה מוגדרים ב-ETS בהתאם לתכנון המדרגות והרגלי השימוש.', 'מיקום ההתקנה ואזור הגילוי מותאמים למבנה ולמסלול התנועה.'],
+    officialUrl: 'https://knx-td.sihub.siemens.com/en/tpi/5WG1_251_2AB1x_tpi_en_RS-AB.pdf',
+    related: [{ label: 'מוצרי Siemens KNX', href: '/siemens-knx-products/' }, { label: 'גלאי תנועה ונוכחות KNX', href: '/knx-presence-motion-detectors/' }, { label: 'מערכת הבית החכם של I FEEL', href: '/smart-home/' }],
+  },
+  {
     slug: 'siemens-n125-23-knx-power-supply', category: 'תשתית KNX', brand: 'Siemens', sku: '5WG1125-1AB23',
     title: 'ספק כוח KNX Siemens N 125/23 — 640mA',
     summary: 'ספק כוח למסילת DIN להזנת קו KNX, עם משנק ואפשרות לחיבור אספקת גיבוי כפי שמופיע במפרט הפרויקט.',

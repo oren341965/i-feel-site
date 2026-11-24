@@ -3,6 +3,12 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
 const products = [
   {
+    category: 'גלאי תנועה לקיר',
+    items: [
+      { title: 'גלאי קיר Siemens UP 251/11 לתאורת מדרגות', subtitle: 'חיבור לבית חכם KNX · הדלקה וכיבוי אוטומטיים לפי תנועה', partNumber: '5WG1251-2AB11', href: '/equipment/siemens-up251-11-knx-wall-motion-detector/', dwgFile: '' },
+    ],
+  },
+  {
     category: 'ספקי כוח ותשתית',
     items: [
       { title: 'ספק כוח KNX Siemens 640mA – N 125/22', subtitle: 'ספק כוח KNX ‏29V DC / 640mA', partNumber: '5WG1125-1AB22', href: '/articles/siemens-n12522-knx-power-supply-640ma/', dwgFile: '5WG1125-1AB22.dwg' },
@@ -84,7 +90,7 @@ const siemensKnowledgeResources = [
 const allItems = products.flatMap((group) => group.items);
 const canonical = 'https://i-feel.co.il/siemens-knx-products/';
 const title = 'מוצרים ומפרטים טכניים Siemens KNX | DWG ומק״טים | i-feel';
-const description = 'מרכז המוצרים והמפרטים הטכניים של Siemens KNX ב-I FEEL: בקרי יציאות, כניסות, תריסים, דימרים, ספקי כוח ו-KNX/DALI, כולל מק״טים וקובצי DWG.';
+const description = 'מרכז המוצרים והמפרטים הטכניים של Siemens KNX ב-I FEEL: בקרי יציאות, כניסות, תריסים, דימרים, ספקי כוח, גלאי תנועה לקיר ו-KNX/DALI, כולל מק״טים וקובצי DWG.';
 const jsonLd = JSON.stringify({
   '@context': 'https://schema.org',
   '@type': 'CollectionPage',
