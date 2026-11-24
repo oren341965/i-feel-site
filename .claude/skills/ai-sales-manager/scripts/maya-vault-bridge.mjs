@@ -1299,6 +1299,16 @@ function validateMayaProductionRuntimePolicy(runtime, task) {
     throw new Error('MAYA_PRODUCTION_ASSIGNMENT_INVALID');
   }
   if (task.execution_gate.ready !== true) throw new Error('MAYA_PRODUCTION_GATE_BLOCKED');
+  const emailRoute = runtime.config.taskQueue?.emailRouteAuthorization;
+  if (emailRoute !== undefined && emailRoute !== null) {
+    // The owner's email-only commissioning must not activate old WhatsApp
+    // assignments, even if a stale global control flag claims WhatsApp verified.
+    if (!Array.isArray(emailRoute.channels) || emailRoute.channels.length !== 1
+      || emailRoute.channels[0] !== 'EMAIL'
+      || (task.action_authorization && task.action_authorization.channel !== 'EMAIL')) {
+      throw new Error('MAYA_TASK_CHANNEL_NOT_AUTHORIZED');
+    }
+  }
   if (evaluateMayaProductionReadiness(runtime.config.controlState, {
     channel: task.action_authorization?.channel,
   }).ready !== true) {

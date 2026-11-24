@@ -98,6 +98,10 @@ Readiness is channel-specific when an immutable action authorization specifies
 `EMAIL`: unrelated global WhatsApp telemetry is not required. Unknown/legacy
 readiness callers and `WHATSAPP` tasks keep the WhatsApp requirement. All other
 identity, commissioning, exact-action and fresh-source gates remain mandatory.
+When `taskQueue.emailRouteAuthorization` is present, its channel list must be
+exactly `["EMAIL"]`; the runner rejects a WhatsApp assignment before its ACK even
+if an old global control flag claims WhatsApp readiness. This email authorization
+cannot be broadened into another channel through a configuration shortcut.
 
 For EMAIL, `channel.crossChannelResponseCheck` must contain `complete=true`, a
 fresh `checkedAt`, the matching `recipientIdentitySha256`, and `responseFound=false`.

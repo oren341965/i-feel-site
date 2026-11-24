@@ -73,20 +73,22 @@ test('email prepare keeps customer-specific evidence gates with WhatsApp disable
     ['cross-channel identity mismatch', 'STATUS_FOLLOWUP', (e) => { e.channel.crossChannelResponseCheck.recipientIdentitySha256 = '4'.repeat(64); }, 'CROSS_CHANNEL_RESPONSE_CHECK_INCOMPLETE'],
     ['stale cross-channel review', 'STATUS_FOLLOWUP', (e) => { e.channel.crossChannelResponseCheck.checkedAt = '2026-11-23T10:00:00.000Z'; }, 'CROSS_CHANNEL_EVIDENCE_STALE'],
     ['completed required checks', 'STATUS_FOLLOWUP', () => {}, 'READY_FOR_EXACT_APPROVED_ACTION'],
+    ['email scope blocks old WhatsApp tasks', 'STATUS_FOLLOWUP', () => {}, 'MAYA_TASK_CHANNEL_NOT_AUTHORIZED', 'WHATSAPP'],
+    ['email scope rejects a broadened channel list', 'STATUS_FOLLOWUP', (e, c) => { c.taskQueue.emailRouteAuthorization.channels.push('WHATSAPP'); }, 'MAYA_TASK_CHANNEL_NOT_AUTHORIZED'],
   ];
-  for (const [name, kind, modify, expected] of cases) await t.test(name, async (st) => {
+  for (const [name, kind, modify, expected, actionChannel = 'EMAIL'] of cases) await t.test(name, async (st) => {
     const f = await fixture(st);
     const now = new Date('2026-11-24T10:00:00.000Z');
     const config = JSON.parse(await readFile(f.mayaConfigPath, 'utf8'));
     config.identity = { role: 'maya-agent', machineId: 'synthetic-maya', serviceIdentityVerified: true, serviceIdentityId: 'synthetic-email-test' };
-    config.taskQueue = { productionExecutionAllowed: true, productionExecutionRequiresReadyGate: true, productionExecutionMode: 'TWO_PHASE_APPROVED_ACTION', mondayWritesAllowed: false };
+    config.taskQueue = { productionExecutionAllowed: true, productionExecutionRequiresReadyGate: true, productionExecutionMode: 'TWO_PHASE_APPROVED_ACTION', mondayWritesAllowed: false, emailRouteAuthorization: { channels: ['EMAIL'] } };
     config.controlState = { mayaState: 'ACTIVE', documentedOnly: false, verifiedSkillCount: 4,
-      serviceIdentityVerified: true, whatsappTelemetryVerified: false,
+      serviceIdentityVerified: true, whatsappTelemetryVerified: actionChannel === 'WHATSAPP',
       emailSnapshotFresh: true, gmailProfileRole: 'MAYA', proactiveMessagingApproval: 'APPROVED' };
     await writeFile(f.mayaConfigPath, JSON.stringify(config));
     const authorization = createMayaActionAuthorization({ approval_id: 'synthetic-email-approval',
       approved_at: '2026-11-24T09:00:00.000Z', expires_at: '2026-11-25T09:00:00.000Z',
-      channel: 'EMAIL', action_kind: kind, approved_content: 'Synthetic exact approved email.', next_treatment_date: '2026-11-25' });
+      channel: actionChannel, action_kind: kind, approved_content: 'Synthetic exact approved email.', next_treatment_date: '2026-11-25' });
     const { assignment } = await assignMayaSalesTask({ configPath: f.managerConfigPath, now, input: {
       task_id: `synthetic-email-${fixtureCounter}`, monday_board_id: '2732725332', monday_item_id: '1234567890',
       customer_name: 'Synthetic customer', current_sales_status: 'Open', instruction: 'Synthetic offline test.',
@@ -100,15 +102,21 @@ test('email prepare keeps customer-specific evidence gates with WhatsApp disable
       gmail: { checked: true, checkedAt: now.toISOString(), responseFound: false, optOutFound: false,
         newInbound: { verified: true, replyNeeded: true, alreadyAnswered: false, attachmentsVerified: true,
           checkedAt: now.toISOString(), receivedAt: now.toISOString(), messageIdSha256: '2'.repeat(64) } },
-      channel: { channel: 'EMAIL', identityVerified: true, directRecipientVerified: true, recentConversationRead: true,
+      channel: { channel: actionChannel, identityVerified: true, directRecipientVerified: true, recentConversationRead: true,
         verifiedAt: now.toISOString(), recipientIdentitySha256: '1'.repeat(64), responseFound: false, optOutFound: false,
         equivalentMessageWithinDays: false, unansweredAttempts: 0, isIsraeliHoliday: false,
         replyToMessageIdSha256: '2'.repeat(64), crossChannelResponseCheck: {
           complete: true, checkedAt: now.toISOString(), recipientIdentitySha256: '1'.repeat(64), responseFound: false } },
-      preview: { ready: true, idempotencyKey: assignment.task_id, channel: 'EMAIL', recipientType: 'CUSTOMER',
+      preview: { ready: true, idempotencyKey: assignment.task_id, channel: actionChannel, recipientType: 'CUSTOMER',
         directRecipientVerified: true, recipientIdentitySha256: '1'.repeat(64), approvedContentSha256: authorization.approved_content_sha256 },
     };
-    modify(evidence);
+    modify(evidence, config);
+    await writeFile(f.mayaConfigPath, JSON.stringify(config));
+    if (expected === 'MAYA_TASK_CHANNEL_NOT_AUTHORIZED') {
+      await assert.rejects(() => prepareMayaProductionTask({ configPath: f.mayaConfigPath, taskId: assignment.task_id, evidence, now }), /MAYA_TASK_CHANNEL_NOT_AUTHORIZED/);
+      assert.equal((await readdir(join(f.vaultRoot, 'AI-Sales', '_bus', 'maya-to-manager'))).length, 0);
+      return;
+    }
     const result = await prepareMayaProductionTask({ configPath: f.mayaConfigPath, taskId: assignment.task_id, evidence, now });
     if (expected === 'READY_FOR_EXACT_APPROVED_ACTION') assert.equal(result.status, expected);
     else { assert.equal(result.status, 'BLOCKED'); assert.equal(result.result.next_action, expected); }
