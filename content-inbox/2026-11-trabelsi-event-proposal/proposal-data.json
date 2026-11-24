@@ -1,0 +1,120 @@
+{
+  "client": "מוטי טרבלסי",
+  "project": "אולם אירועים",
+  "date": "2026-11-19",
+  "status": "draft",
+  "discountPercent": 0,
+  "currency": "ILS",
+  "items": [
+    {
+      "name": "ספק כוח KNX, 640mA",
+      "sku": "5WG1125-1AB23",
+      "qty": 1,
+      "price": 1500,
+      "type": "N 125/23",
+      "desc": "ספק כוח להזנת קו KNX בזרם נומינלי של 640mA.",
+      "url": "https://sid.siemens.com/v/u/A6V15300520"
+    },
+    {
+      "name": "מתאם תקשורת KNX/IP",
+      "sku": "5WG1148-1AB23",
+      "qty": 1,
+      "price": 2600,
+      "type": "N 148/23",
+      "desc": "ממשק תקשורת בין קו KNX לרשת IP. יש לתאם תשתית הזנה ורשת.",
+      "url": "https://sid.siemens.com/r/A6V11689766/15361518987_18708710539__en-US_15361561867"
+    },
+    {
+      "name": "מערכת שליטה וניהול",
+      "sku": "5WG1152-1AB01",
+      "qty": 1,
+      "price": 6500,
+      "type": "IP Control Center",
+      "desc": "שרת ויזואליזציה לניהול מערכת KNX. ממשק המשתמש והתרחישים יוגדרו בתכנון.",
+      "url": "https://mall.industry.siemens.com/mall/en/oms/Catalog/Product/5WG1152-1AB01"
+    },
+    {
+      "name": "בקר מיתוג 24 יציאות",
+      "sku": "5WG1568-1AB81",
+      "qty": 1,
+      "price": 4590,
+      "type": "N 568/81",
+      "desc": "בקר ממסרים למעגלי ON/OFF באזורים הרגילים. אינו בקר דימור.",
+      "url": "https://sid.siemens.com/api/khub/documents/QHpaRe5AzLTfZHRTZ9gDqg/content"
+    },
+    {
+      "name": "גלאי נוכחות Siemens",
+      "sku": "5WG1258-2EB22",
+      "qty": 17,
+      "price": 750,
+      "type": "UP 258E22",
+      "desc": "גלאי נוכחות תקרתי KNX. פריסת הגלאים והתאמתם לגובה ולכיסוי ייקבעו בתוכנית הביצוע.",
+      "url": "https://hit.sbt.siemens.com/RWD/AssetsByProduct.aspx?RC=WW&asset_type=Data+Sheet+for+Product&lang=en&prodId=5WG1258-2EB22"
+    },
+    {
+      "name": "ממשק PBI לארבעה לחצנים",
+      "sku": "5WG1220-2DB31",
+      "qty": 17,
+      "price": 555,
+      "type": "UP 220D31",
+      "desc": "ממשק 4 כניסות למפסקים רגילים. ממשק אחד בכל אחד מ־17 החללים; מפסק הקיר מסופק בידי החשמלאי.",
+      "url": "https://sid.siemens.com/v/u/A6V10416507"
+    }
+  ],
+  "pbiUnitPrices": [
+    {
+      "name": "ממשק PBI לארבעה לחצנים",
+      "sku": "5WG1220-2DB31",
+      "qty": 17,
+      "price": 555
+    }
+  ],
+  "pricedEquipmentSubtotalExVat": 37375,
+  "vatRate": 0.18,
+  "pricedEquipmentVat": 6727.5,
+  "pricedEquipmentSubtotalIncVat": 44102.5,
+  "finalProjectTotal": null,
+  "excluded": [
+    "all dimmers",
+    "central hall controls and equipment",
+    "HVAC controls"
+  ],
+  "open": [
+    "ordinary switch series and color",
+    "design installation programming commissioning pricing"
+  ],
+  "priceSource": {
+    "file": "רשימת פריטים ומוצרים כולל מחירים.pdf",
+    "date": "2026-03-29",
+    "pages": [
+      55,
+      56
+    ]
+  },
+  "sources": [
+    {
+      "originalName": "תוכנית חשמל ותאורה-Layout19.11.26 (2).pdf",
+      "file": "electrical-lighting-2026-11-19.pdf",
+      "sha256": "501eedfc32277eae8fe1b73b266c4e26dc5e0b395439b84ca62c45a546ca4e7f"
+    },
+    {
+      "originalName": "לוחות חשמל אולם טרבלסי -לוח ראשי דף 1.pdf",
+      "file": "main-panel-sheet-1.pdf",
+      "sha256": "9ea4e14668e4a330f3c6604a211c16beb88912d0b67b316672a7a07fcd193efb"
+    },
+    {
+      "originalName": "26004143 העמדה עקרונית Rev003.pdf",
+      "file": "hvac-layout-rev003.pdf",
+      "sha256": "f4dd6fcb0a2909c8d8e18f226e10e08da2b9106b887d621ff17121f122d34f2f"
+    }
+  ],
+  "websiteActivationRequestedAfterClarification": false,
+  "approvedSpaceCount": 17,
+  "ordinarySwitchPoints": {
+    "quantity": 17,
+    "supplyBy": "electrical contractor",
+    "includedInIfeelSupply": false
+  },
+  "quantityBasis": "User explicitly confirmed 17 spaces, 17 detectors and 17 PBI; one ordinary switch point per space. Not an independently verified count of all physical switch mechanisms in the architectural plan.",
+  "revision": "02"
+}
