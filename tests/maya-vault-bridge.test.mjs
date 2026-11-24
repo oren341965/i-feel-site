@@ -49,6 +49,81 @@ const CURRENT_MAYA_CONTROL = Object.freeze({
 let fixtureCounter = 0;
 const execFileAsync = promisify(execFile);
 
+test('email readiness removes only the unrelated global WhatsApp prerequisite', () => {
+  const control = { mayaState: 'ACTIVE', documentedOnly: false, verifiedSkillCount: 4,
+    serviceIdentityVerified: true, whatsappTelemetryVerified: false,
+    emailSnapshotFresh: true, gmailProfileRole: 'MAYA', proactiveMessagingApproval: 'APPROVED' };
+  assert.equal(evaluateMayaProductionReadiness(control, { channel: 'EMAIL' }).ready, true);
+  for (const channel of [undefined, 'WHATSAPP', 'UNKNOWN']) {
+    assert.deepEqual(evaluateMayaProductionReadiness(control, { channel }).blockers, ['MAYA_WHATSAPP_TELEMETRY_MISSING']);
+  }
+  assert.deepEqual(evaluateMayaProductionReadiness({ ...control, gmailProfileRole: 'OREN' }, { channel: 'EMAIL' }).blockers, ['WRONG_GMAIL_PROFILE']);
+  assert.equal(evaluateMayaProductionReadiness(CURRENT_MAYA_CONTROL, { channel: 'EMAIL' }).ready, false);
+});
+
+test('email prepare keeps customer-specific evidence gates with WhatsApp disabled', async (t) => {
+  const cases = [
+    ['new inbound acknowledgement', 'INBOUND_ACKNOWLEDGEMENT', () => {}, 'READY_FOR_EXACT_APPROVED_ACTION'],
+    ['verified files', 'FILES_RECEIVED_ACKNOWLEDGEMENT', () => {}, 'READY_FOR_EXACT_APPROVED_ACTION'],
+    ['unverified files', 'FILES_RECEIVED_ACKNOWLEDGEMENT', (e) => { e.gmail.newInbound.attachmentsVerified = false; }, 'ATTACHMENTS_NOT_VERIFIED'],
+    ['wrong inbound message', 'INBOUND_ACKNOWLEDGEMENT', (e) => { e.channel.replyToMessageIdSha256 = '3'.repeat(64); }, 'NEW_INBOUND_REPLY_NOT_VERIFIED'],
+    ['already answered inbound', 'INBOUND_ACKNOWLEDGEMENT', (e) => { e.gmail.newInbound.alreadyAnswered = true; }, 'NEW_INBOUND_REPLY_NOT_VERIFIED'],
+    ['old inbound message', 'INBOUND_ACKNOWLEDGEMENT', (e) => { e.gmail.newInbound.receivedAt = '2026-11-22T10:00:00.000Z'; }, 'INBOUND_MESSAGE_STALE'],
+    ['missing cross-channel review', 'STATUS_FOLLOWUP', (e) => { delete e.channel.crossChannelResponseCheck; }, 'CROSS_CHANNEL_RESPONSE_CHECK_INCOMPLETE'],
+    ['cross-channel identity mismatch', 'STATUS_FOLLOWUP', (e) => { e.channel.crossChannelResponseCheck.recipientIdentitySha256 = '4'.repeat(64); }, 'CROSS_CHANNEL_RESPONSE_CHECK_INCOMPLETE'],
+    ['stale cross-channel review', 'STATUS_FOLLOWUP', (e) => { e.channel.crossChannelResponseCheck.checkedAt = '2026-11-23T10:00:00.000Z'; }, 'CROSS_CHANNEL_EVIDENCE_STALE'],
+    ['completed required checks', 'STATUS_FOLLOWUP', () => {}, 'READY_FOR_EXACT_APPROVED_ACTION'],
+    ['email scope blocks old WhatsApp tasks', 'STATUS_FOLLOWUP', () => {}, 'MAYA_TASK_CHANNEL_NOT_AUTHORIZED', 'WHATSAPP'],
+    ['email scope rejects a broadened channel list', 'STATUS_FOLLOWUP', (e, c) => { c.taskQueue.emailRouteAuthorization.channels.push('WHATSAPP'); }, 'MAYA_TASK_CHANNEL_NOT_AUTHORIZED'],
+  ];
+  for (const [name, kind, modify, expected, actionChannel = 'EMAIL'] of cases) await t.test(name, async (st) => {
+    const f = await fixture(st);
+    const now = new Date('2026-11-24T10:00:00.000Z');
+    const config = JSON.parse(await readFile(f.mayaConfigPath, 'utf8'));
+    config.identity = { role: 'maya-agent', machineId: 'synthetic-maya', serviceIdentityVerified: true, serviceIdentityId: 'synthetic-email-test' };
+    config.taskQueue = { productionExecutionAllowed: true, productionExecutionRequiresReadyGate: true, productionExecutionMode: 'TWO_PHASE_APPROVED_ACTION', mondayWritesAllowed: false, emailRouteAuthorization: { channels: ['EMAIL'] } };
+    config.controlState = { mayaState: 'ACTIVE', documentedOnly: false, verifiedSkillCount: 4,
+      serviceIdentityVerified: true, whatsappTelemetryVerified: actionChannel === 'WHATSAPP',
+      emailSnapshotFresh: true, gmailProfileRole: 'MAYA', proactiveMessagingApproval: 'APPROVED' };
+    await writeFile(f.mayaConfigPath, JSON.stringify(config));
+    const authorization = createMayaActionAuthorization({ approval_id: 'synthetic-email-approval',
+      approved_at: '2026-11-24T09:00:00.000Z', expires_at: '2026-11-25T09:00:00.000Z',
+      channel: actionChannel, action_kind: kind, approved_content: 'Synthetic exact approved email.', next_treatment_date: '2026-11-25' });
+    const { assignment } = await assignMayaSalesTask({ configPath: f.managerConfigPath, now, input: {
+      task_id: `synthetic-email-${fixtureCounter}`, monday_board_id: '2732725332', monday_item_id: '1234567890',
+      customer_name: 'Synthetic customer', current_sales_status: 'Open', instruction: 'Synthetic offline test.',
+      required_action: kind, monday_item_source: 'MONDAY_LIVE', monday_item_verified_at: now.toISOString(),
+      control_state: config.controlState, action_authorization: authorization, test_task: false,
+    } });
+    assert.equal(assignment.execution_gate.ready, true);
+    const evidence = {
+      monday: { verified: true, boardId: assignment.monday_board_id, itemId: assignment.monday_item_id,
+        verifiedAt: now.toISOString(), eligible: true, futureTimeline: false, salesEnded: false, customerIdentitySha256: '1'.repeat(64) },
+      gmail: { checked: true, checkedAt: now.toISOString(), responseFound: false, optOutFound: false,
+        newInbound: { verified: true, replyNeeded: true, alreadyAnswered: false, attachmentsVerified: true,
+          checkedAt: now.toISOString(), receivedAt: now.toISOString(), messageIdSha256: '2'.repeat(64) } },
+      channel: { channel: actionChannel, identityVerified: true, directRecipientVerified: true, recentConversationRead: true,
+        verifiedAt: now.toISOString(), recipientIdentitySha256: '1'.repeat(64), responseFound: false, optOutFound: false,
+        equivalentMessageWithinDays: false, unansweredAttempts: 0, isIsraeliHoliday: false,
+        replyToMessageIdSha256: '2'.repeat(64), crossChannelResponseCheck: {
+          complete: true, checkedAt: now.toISOString(), recipientIdentitySha256: '1'.repeat(64), responseFound: false } },
+      preview: { ready: true, idempotencyKey: assignment.task_id, channel: actionChannel, recipientType: 'CUSTOMER',
+        directRecipientVerified: true, recipientIdentitySha256: '1'.repeat(64), approvedContentSha256: authorization.approved_content_sha256 },
+    };
+    modify(evidence, config);
+    await writeFile(f.mayaConfigPath, JSON.stringify(config));
+    if (expected === 'MAYA_TASK_CHANNEL_NOT_AUTHORIZED') {
+      await assert.rejects(() => prepareMayaProductionTask({ configPath: f.mayaConfigPath, taskId: assignment.task_id, evidence, now }), /MAYA_TASK_CHANNEL_NOT_AUTHORIZED/);
+      assert.equal((await readdir(join(f.vaultRoot, 'AI-Sales', '_bus', 'maya-to-manager'))).length, 0);
+      return;
+    }
+    const result = await prepareMayaProductionTask({ configPath: f.mayaConfigPath, taskId: assignment.task_id, evidence, now });
+    if (expected === 'READY_FOR_EXACT_APPROVED_ACTION') assert.equal(result.status, expected);
+    else { assert.equal(result.status, 'BLOCKED'); assert.equal(result.result.next_action, expected); }
+    assert.deepEqual(result.safety, { externalSends: 0, gmailMutations: 0, mondayWrites: 0 });
+  });
+});
+
 async function fixture(t) {
   fixtureCounter += 1;
   const root = resolve(REPO, `.ai-manager-data/maya-vault-bridge-${process.pid}-${fixtureCounter}`);

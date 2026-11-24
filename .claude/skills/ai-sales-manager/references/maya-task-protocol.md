@@ -4,6 +4,15 @@ Use this contract whenever Oren says `מאיה תבדוק`, `תעביר למאי
 
 ## Transport and ownership
 
+Oren's 2026-11-24 [Maya task authority](../../maya-email-maintenance/references/approved-task-authority.md)
+permits Brown, Kharish, Oren and Arik to originate work through the verified central
+manager. Keep `requested_by=ai-sales-manager` in this V2 wire contract; requester
+authority does not permit forged Bus identities or edits to immutable assignments.
+The same authority permits Maya's separate, verified Monday conversation/activity
+documentation phase. The send runner still performs zero Monday writes and its
+action authorization remains scoped to the exact customer communication. Earlier
+manager-only documentation wording below does not revoke the owner's newer grant.
+
 - The manager writes immutable assignments only to `${VAULT_ROOT}/AI-Sales/_bus/manager-to-maya`.
 - Maya reads that queue and writes immutable ACK and Result messages only to `${VAULT_ROOT}/AI-Sales/_bus/maya-to-manager`.
 - Every message uses `schema_version=2`, one stable `task_id`, and a unique `message_id`.
@@ -84,6 +93,25 @@ When Maya contacted the customer and is waiting, require a suitable `next_treatm
 During a sales review, use only board `2732725332`. Exclude the exact group `תהליך מכירה הסתיים`, a future authoritative `timeline`, and any item already handled in the current cycle without newer evidence. Never query a Projects board as part of the sales review.
 
 ## Production execution gate
+
+Readiness is channel-specific when an immutable action authorization specifies
+`EMAIL`: unrelated global WhatsApp telemetry is not required. Unknown/legacy
+readiness callers and `WHATSAPP` tasks keep the WhatsApp requirement. All other
+identity, commissioning, exact-action and fresh-source gates remain mandatory.
+When `taskQueue.emailRouteAuthorization` is present, its channel list must be
+exactly `["EMAIL"]`; the runner rejects a WhatsApp assignment before its ACK even
+if an old global control flag claims WhatsApp readiness. This email authorization
+cannot be broadened into another channel through a configuration shortcut.
+
+For EMAIL, `channel.crossChannelResponseCheck` must contain `complete=true`, a
+fresh `checkedAt`, the matching `recipientIdentitySha256`, and `responseFound=false`.
+The bounded inbound exception applies only to `INBOUND_ACKNOWLEDGEMENT`,
+`FILES_RECEIVED_ACKNOWLEDGEMENT`, or a reactive `REQUEST_MISSING_INFORMATION`:
+`gmail.newInbound` must have `verified=true`, `replyNeeded=true`,
+`alreadyAnswered=false`, a fresh `checkedAt`, a `receivedAt` within 24 hours, and
+`messageIdSha256` matching `channel.replyToMessageIdSha256`. Files acknowledgement
+also requires `attachmentsVerified=true`. These are live-read assertions supplied
+by the caller, never flags to synthesize from config or a task's instructions.
 
 Assignment is allowed even when Maya is not ready, because the task must remain visible and traceable. Production ACK and Result evidence are accepted as real only from the commissioned Maya workstation. Execution remains blocked when the live control state lacks verified skills, Service Identity, fresh worker evidence, the correct Maya Gmail profile, WhatsApp telemetry for WhatsApp work, or the required action-specific approval.
 
