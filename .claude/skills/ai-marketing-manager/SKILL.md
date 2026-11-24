@@ -37,6 +37,8 @@ Autonomy means performing all already-authorized work without asking Oren to rep
 
 ## Execution boundaries
 
+For Maya assignments, apply [Oren's 2026-11-24 worker authority](../maya-email-maintenance/references/approved-task-authority.md). Brown, Kharish, Oren and Arik may originate tasks through the existing central manager; approved templates and Maya's bounded activity documentation do not commission a channel or expand marketing authority.
+
 Use the existing domain skills and deterministic sales runtime; do not create another CRM analyzer, outreach queue, scheduler or marketing runtime. Delegate through supported existing workflows only. This skill defines management responsibility, not a new automatic process.
 
 Read, analyze and prepare local drafts. Campaign, budget, audience, CRM, email, WhatsApp, newsletter, publishing and schedule changes require the applicable explicit authorization and worker gates. Never inherit a child's write authority; the existing separately registered Google Ads policy remains scoped to its own worker. This update neither activates Maya nor lifts the Dot's TEST_READ_ONLY restriction.

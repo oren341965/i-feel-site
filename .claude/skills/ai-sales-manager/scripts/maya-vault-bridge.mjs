@@ -336,7 +336,7 @@ function boundedId(value, label) {
   return id;
 }
 
-export function evaluateMayaProductionReadiness(control = {}) {
+export function evaluateMayaProductionReadiness(control = {}, { channel = null } = {}) {
   const blockers = [];
   if (control.mayaState !== 'ACTIVE') blockers.push('MAYA_PAUSED_BY_PHASE_2');
   if (control.documentedOnly === true) blockers.push('MAYA_DOCUMENTED_ONLY');
@@ -344,7 +344,11 @@ export function evaluateMayaProductionReadiness(control = {}) {
     blockers.push('MAYA_VERIFIED_SKILLS_MISSING');
   }
   if (control.serviceIdentityVerified !== true) blockers.push('MAYA_SERVICE_IDENTITY_MISSING');
-  if (control.whatsappTelemetryVerified !== true) blockers.push('MAYA_WHATSAPP_TELEMETRY_MISSING');
+  // An explicitly authorized EMAIL task does not commission WhatsApp. Unknown
+  // and legacy callers keep the original conservative readiness requirement.
+  if (channel !== 'EMAIL' && control.whatsappTelemetryVerified !== true) {
+    blockers.push('MAYA_WHATSAPP_TELEMETRY_MISSING');
+  }
   if (control.emailSnapshotFresh !== true) blockers.push('MAYA_EMAIL_EVIDENCE_STALE');
   if (control.gmailProfileRole !== 'MAYA') blockers.push('WRONG_GMAIL_PROFILE');
   if (control.proactiveMessagingApproval !== 'APPROVED') {
@@ -569,7 +573,9 @@ export function createMayaSalesTask(input = {}, options = {}) {
   if (Number.isNaN(now.getTime())) throw new Error('Invalid Maya task creation time');
   const taskId = boundedId(input.task_id ?? `maya-sales-${randomUUID()}`, 'task_id');
   const executionGate = validatedExecutionGate(input.execution_gate
-    ?? evaluateMayaProductionReadiness(input.control_state));
+    ?? evaluateMayaProductionReadiness(input.control_state, {
+      channel: input.action_authorization?.channel,
+    }));
   return validateCreatedMayaSalesTaskMessage({
     schema_version: 2,
     message_id: taskId,
@@ -1212,6 +1218,35 @@ function validateProductionReadEvidence({ task, monday, gmail, channel, authoriz
     throw new Error('DIRECT_CHANNEL_NOT_VERIFIED');
   }
   requireFreshEvidenceTimestamp(channel.verifiedAt, 'CHANNEL_EVIDENCE', now);
+  if (authorization.channel === 'EMAIL') {
+    // Inbound acknowledgements may proceed without an unrelated channel. A
+    // reminder still needs a fresh, customer-specific cross-channel check.
+    const inboundAction = ['INBOUND_ACKNOWLEDGEMENT', 'FILES_RECEIVED_ACKNOWLEDGEMENT',
+      'REQUEST_MISSING_INFORMATION'].includes(authorization.action_kind);
+    const inbound = gmail.newInbound;
+    const verifiedInboundReply = inboundAction && inbound?.verified === true
+      && inbound.replyNeeded === true && inbound.alreadyAnswered === false
+      && /^[a-f0-9]{64}$/.test(inbound.messageIdSha256 ?? '')
+      && inbound.messageIdSha256 === channel.replyToMessageIdSha256;
+    if (['INBOUND_ACKNOWLEDGEMENT', 'FILES_RECEIVED_ACKNOWLEDGEMENT']
+      .includes(authorization.action_kind) && !verifiedInboundReply) {
+      throw new Error('NEW_INBOUND_REPLY_NOT_VERIFIED');
+    }
+    if (verifiedInboundReply) {
+      requireFreshEvidenceTimestamp(inbound.checkedAt, 'INBOUND_RESPONSE_EVIDENCE', now);
+      requireFreshEvidenceTimestamp(inbound.receivedAt, 'INBOUND_MESSAGE', now, 24 * 60);
+      if (authorization.action_kind === 'FILES_RECEIVED_ACKNOWLEDGEMENT'
+        && inbound.attachmentsVerified !== true) throw new Error('ATTACHMENTS_NOT_VERIFIED');
+    } else {
+      const crossChannel = channel.crossChannelResponseCheck;
+      if (crossChannel?.complete !== true
+        || crossChannel.recipientIdentitySha256 !== mondayIdentityHash
+        || crossChannel.responseFound !== false) {
+        throw new Error('CROSS_CHANNEL_RESPONSE_CHECK_INCOMPLETE');
+      }
+      requireFreshEvidenceTimestamp(crossChannel.checkedAt, 'CROSS_CHANNEL_EVIDENCE', now);
+    }
+  }
   if (gmail.optOutFound === true || channel.optOutFound === true) throw new Error('CUSTOMER_OPT_OUT');
   if (channel.equivalentMessageWithinDays === true) throw new Error('RECENT_DUPLICATE_FOUND');
   if (!Number.isInteger(channel.unansweredAttempts) || channel.unansweredAttempts < 0
@@ -1264,7 +1299,9 @@ function validateMayaProductionRuntimePolicy(runtime, task) {
     throw new Error('MAYA_PRODUCTION_ASSIGNMENT_INVALID');
   }
   if (task.execution_gate.ready !== true) throw new Error('MAYA_PRODUCTION_GATE_BLOCKED');
-  if (evaluateMayaProductionReadiness(runtime.config.controlState).ready !== true) {
+  if (evaluateMayaProductionReadiness(runtime.config.controlState, {
+    channel: task.action_authorization?.channel,
+  }).ready !== true) {
     throw new Error('MAYA_LIVE_CONTROL_GATE_BLOCKED');
   }
   const queuePolicy = runtime.config.taskQueue;
@@ -1797,7 +1834,9 @@ export async function processAssignedMayaTask({
     if (productionExecution) {
       const queuePolicy = runtime.config.taskQueue;
       if (task.execution_gate.ready !== true) throw new Error('MAYA_PRODUCTION_GATE_BLOCKED');
-      if (evaluateMayaProductionReadiness(runtime.config.controlState).ready !== true) {
+      if (evaluateMayaProductionReadiness(runtime.config.controlState, {
+        channel: task.action_authorization?.channel,
+      }).ready !== true) {
         throw new Error('MAYA_LIVE_CONTROL_GATE_BLOCKED');
       }
       if (queuePolicy?.productionExecutionAllowed !== true
