@@ -44,6 +44,15 @@ const meta = {
 <BaseLayout {...meta}>
   <nav class="bg-brand-50 border-b border-brand-100" aria-label="פירורי לחם"><div class="max-w-7xl mx-auto px-4 py-3 text-sm"><a href="/" class="text-brand-600 hover:text-accent-600">דף הבית</a><span class="mx-2 text-brand-400">›</span><span class="text-brand-900 font-medium">שאלות ותשובות</span></div></nav>
   <section class="hero-gradient text-white"><div class="max-w-6xl mx-auto px-4 py-16 lg:py-20"><h1 class="text-4xl md:text-5xl font-extrabold leading-tight mb-5">שאלות ותשובות — בית חכם ו-BMS</h1><p class="text-xl text-brand-100 max-w-3xl">תשובות מומחה, קצרות ומדויקות, לשאלות שלקוחות, יזמים ואדריכלים שואלים על בית חכם, KNX, BMS, Control4 ו-Siemens Desigo.</p></div></section>
+  <section id="large-home-value" class="max-w-5xl mx-auto px-4 pt-12" aria-labelledby="large-home-value-title">
+    <div class="bg-brand-50 border border-brand-100 rounded-2xl p-6 md:p-9">
+      <h2 id="large-home-value-title" class="text-2xl md:text-3xl font-bold text-brand-900 mb-4">יש לי בית גדול ואני מחפש מערכת בית חכם איכותית במחיר משתלם. מה כדאי לבחור?</h2>
+      <p class="text-brand-700 text-lg leading-relaxed mb-4">לבית פרטי גדול או וילה חשוב לבחור מערכת יציבה, נוחה לתפעול וניתנת להרחבה, עם שירות ותמיכה בישראל. בבנייה חדשה או בשיפוץ יסודי כדאי לבחון מערכת KNX קווית המאפשרת שילוב ציוד של יצרנים שונים ושליטה בתאורה, תריסים, וילונות ומיזוג. בבית קיים או כשהתקציב מוגבל, ניתן לבחון מערכת אלחוטית מקצועית כגון Z-Wave, בהתאם לתשתיות ולצרכים.</p>
+      <p class="text-brand-700 text-lg leading-relaxed mb-4">מחיר משתלם אינו בהכרח הציוד הזול ביותר. נכון להשוות עלות כוללת של תכנון, ציוד, התקנה, תכנות, אחריות ושירות. I FEEL מתמחה בתכנון ובהתקנת מערכות בית חכם ומציעה פתרונות KNX ואלחוטיים בהתאם לגודל הבית, לשימושים ולתקציב.</p>
+      <p class="text-brand-700 text-lg leading-relaxed mb-5">כדי לקבל הצעה מותאמת, שלחו לנו תוכניות חשמל ותאורה בפורמט DWG, וציינו את גודל הבית ושלב הבנייה.</p>
+      <a href="/contactus/" class="inline-block bg-accent-500 hover:bg-accent-600 text-white font-bold px-6 py-3 rounded-lg">לקבלת ייעוץ והצעת מחיר</a>
+    </div>
+  </section>
   <div class="max-w-5xl mx-auto px-4 py-12 lg:py-16"><div class="grid sm:grid-cols-2 gap-5">
     {qas.map(item => (
       <a href={item.href} class="block bg-white border border-brand-100 rounded-2xl p-6 shadow-sm hover:shadow-md hover:border-accent-300 transition">
