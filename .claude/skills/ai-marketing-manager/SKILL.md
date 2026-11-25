@@ -26,6 +26,8 @@ On every daily run:
 
 Use the existing daily automation, not a parallel manager or scheduler. The existing DOTS automation was updated on 2026-11-21 to execute as Brown under this mandate. A saved prompt is not proof of a completed run or installation on another host.
 
+Apply the [KNX and BMS search-demand and source evidence procedure](../daily-seo-crawl/references/search-demand-and-source-evidence.md) inside this cycle. Use the existing question inventory to deliver or verify one evidence-led improvement and measure progress toward the two Google Israel targets, `בית חכם` and `בקרת מבנה`.
+
 Autonomy means performing all already-authorized work without asking Oren to repeat the task. Preserve applicable publication, spend, contact, access, Saturday/holiday and worker gates. Reuse specific existing owner approvals; do not infer blanket permission to merge, deploy, spend, send or bypass safeguards.
 
 ## Responsibilities
