@@ -48,6 +48,100 @@ export type Article = {
 
 export const articles: Article[] = [
   {
+    slug: 'risco-lightsys-control4',
+    title: 'אזעקת RISCO בבית חכם Control4: חיבור LightSYS+ ו-LightSYS Air',
+    description: 'איך מחברים את מערכות האזעקה LightSYS+ ו-LightSYS Air של RISCO ל-Control4, מה רואים במסכי האבטחה ומה בודקים לפני שדרוג.',
+    category: 'בית חכם / אזעקות / Control4',
+    updated: '2026-11-26',
+    related: [
+      {
+        label: 'מערכת אזעקה אלחוטית',
+        href: '/wireless-alarm-system/'
+      },
+      {
+        label: 'איך מערכות הבית החכם עובדות יחד',
+        href: '/articles/smart-home-everything-works-together/'
+      }
+    ],
+    sources: [
+      {
+        label: 'הודעת RISCO על השילוב עם Control4',
+        href: 'https://riscogroup.com/en/lightsys-and-lightsys-air-now-integrate-with-control4/'
+      },
+      {
+        label: 'מפרט LightSYS+',
+        href: 'https://riscogroup.com/en/rscm_product/lightsys/'
+      },
+      {
+        label: 'מפרט LightSYS Air',
+        href: 'https://riscogroup.com/en/rscm_product/lightsys-air/'
+      },
+      {
+        label: 'מדריך Control4 למסכי האבטחה ומקור צילומי המסך',
+        href: 'https://docs.control4.com/help/c4/user/userguide/content/topics/security/security_panel.htm'
+      },
+      {
+        label: 'ChowmainSoft, מפתחת הדרייבר',
+        href: 'https://chowmain.software/'
+      }
+    ],
+    sections: [
+      {
+        heading: 'איך מערכות האזעקה מתחברות ל-Control4',
+        body: [
+          'דרייבר ייעודי של ChowmainSoft מחבר את בקר Control4 לרכזת RISCO ברשת המקומית. Control4 שולחת פקודות לרכזת ומקבלת ממנה חיווי על המערכת, המחיצות והאזורים. רכזת RISCO ממשיכה לנהל את הגלאים, את פעולות האזעקה ואת הרשאות המשתמשים.',
+          'מחיצה היא חלק שניתן לדרוך בנפרד, כמו יחידת דיור או משרד ביתי. אזור מייצג נקודת גילוי, למשל דלת או גלאי תנועה. החלוקה בשטח קובעת מה יופיע בממשק Control4.'
+        ]
+      },
+      {
+        heading: 'LightSYS+ או LightSYS Air',
+        body: [],
+        bullets: [
+          'LightSYS+ היא מערכת היברידית עם 8 אזורים מובנים ואפשרות הרחבה עד 512. היא משלבת גלאים קוויים, אלחוטיים ורכיבי RISCO Bus ותומכת בעד 500 משתמשים.',
+          'LightSYS Air היא מערכת אלחוטית עם עד 128 אזורים אלחוטיים, 128 משתמשים ו-32 מחיצות. היא מתאימה לפרויקטים שבהם רוצים לצמצם עבודות כבילה לגלאים.',
+          'בשתי הרכזות יש IP ו-Wi-Fi מובנים. בחירת הדגם תלויה בתשתית, במספר נקודות הגילוי ובחלוקה הנדרשת למחיצות.'
+        ]
+      },
+      {
+        heading: 'מסך מצב ודריכה ב-Control4',
+        body: [
+          'במסך האבטחה ניתן לראות אם המערכת מוכנה לדריכה ולבחור דריכה מלאה ביציאה (Away) או דריכה חלקית כשהדיירים בבית (Stay). בהתאם להגדרה ולהרשאות אפשר לדרוך ולנטרל גם מחיצות בנפרד ולראות השהיות כניסה ויציאה ומצב אזעקה.',
+          'צילום המסך להמחשה מתוך מדריך Control4. המראה תלוי בגרסת הממשק ובהגדרות הפרויקט.'
+        ],
+        image: {
+          src: '/images/articles/risco-control4/security-status.webp',
+          alt: 'צילום מסך רשמי של Control4 המציג את מצב מערכת האבטחה ואת לחצן הדריכה',
+          width: 1526,
+          height: 775
+        }
+      },
+      {
+        heading: 'מסך אזורים והיסטוריית אירועים',
+        body: [
+          'מסך האזורים מציג את מצב נקודות הגילוי. למשל, אם דלת נשארה פתוחה, אפשר לזהות את האזור הרלוונטי ולעיין בסיבה שבגללה המערכת אינה מוכנה לדריכה. הדרייבר תומך גם בעקיפה ובביטול עקיפה של אזורים, בהיסטוריית אירועים, בניהול קודי משתמש ובפקודות חירום, לפי הגדרות המערכת וההרשאות.',
+          'צילום המסך להמחשה מתוך מדריך Control4. שמות האזורים נקבעים בכל פרויקט.'
+        ],
+        image: {
+          src: '/images/articles/risco-control4/security-zones.webp',
+          alt: 'צילום מסך רשמי של Control4 המציג שמות אזורים ואת מצבם',
+          width: 1082,
+          height: 609
+        }
+      },
+      {
+        heading: 'מה בודקים לפני התקנה או שדרוג',
+        body: [
+          'RISCO מציינת שהאינטגרציה דורשת קושחה 3.6.x ומעלה ברכזת LightSYS+ או LightSYS Air. בפרויקט קיים בודקים את דגם הרכזת, גרסת Control4, תאימות הדרייבר, דרישות הרישוי והתקשורת ברשת המקומית.',
+          'במסירה בודקים שהפקודות והחיווי עובדים בשני הכיוונים, שהמחיצות והאזורים ממופים נכון, ושכל פעולה זמינה למשתמשים המתאימים. אפשר לשלב תרחישים כמו כיבוי תאורה והנמכת מיזוג לאחר קבלת חיווי דריכה מוצלחת.'
+        ],
+        cta: {
+          label: 'בדיקת התאמה עם I FEEL',
+          href: '/contactus/'
+        }
+      }
+    ]
+  },
+  {
     "slug": "knx-private-home-planning",
     "title": "מערכת KNX לבית פרטי שמתוכננת נכון לשנים קדימה",
     "description": "איך מתכננים מערכת KNX לבית פרטי לפני עבודות החשמל, ומשלבים תאורה, מיזוג והצללה בתשתית שתתאים גם לשדרוגים בעתיד.",
