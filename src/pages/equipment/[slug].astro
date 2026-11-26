@@ -45,6 +45,19 @@ const jsonLd = JSON.stringify({
           <h2 id="role-heading" class="mb-3 text-2xl font-bold text-brand-900">מה המוצר עושה</h2>
           <p class="text-lg leading-8 text-brand-700">{product.purpose}</p>
         </section>
+        {product.slug === 'siemens-up251-11-knx-wall-motion-detector' && (
+          <section id="video" aria-labelledby="product-video-heading" class="mb-9">
+            <h2 id="product-video-heading" class="mb-3 text-2xl font-bold text-brand-900">סרטון הדגמה לתאורת מדרגות</h2>
+            <iframe
+              class="aspect-[9/16] w-full max-w-xs rounded-xl"
+              src="https://www.youtube-nocookie.com/embed/mTmqreriE1E"
+              title="תאורת מדרגות חכמה עם גלאי Siemens UP 251/11"
+              loading="lazy"
+              allowfullscreen
+            ></iframe>
+            <a href="https://www.youtube.com/watch?v=mTmqreriE1E" class="mt-3 inline-block font-bold text-accent-700 underline">צפייה ביוטיוב</a>
+          </section>
+        )}
         <section aria-labelledby="spec-heading" class="mb-9">
           <h2 id="spec-heading" class="mb-4 text-2xl font-bold text-brand-900">מפרט טכני</h2>
           <div class="overflow-hidden rounded-xl border border-brand-200">
