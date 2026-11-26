@@ -23,6 +23,10 @@ This contract does not activate a worker, scheduler, connector or external-write
 If attribution is unavailable, prepare content/measurement repair drafts from independently verified
 evidence. Do not declare qualified-lead target achievement or increase budgets using platform conversions.
 
+## Return sales outcomes to Brown
+
+Apply [Brown’s 15-route lead execution contract](../../ai-marketing-manager/references/growth-and-sales-leadership.md#lead-execution-for-the-15-existing-routes) to the existing qualified-lead handoff. Return one referenced outcome per lead: intake evidence, verified source route, qualification, accountable salesperson, next action and due date, plus proposal and confirmed order references when available. Reuse the matching CRM record and earlier task when an inquiry already exists. Resolve overlapping channel and segment claims once, keep unverified attribution open, and omit contact details from shared reporting. Return ACK and Result via the existing task channel. If the route is blocked, send Brown the exact failing stage and what the authorized owner can do next.
+
 ## Failure recovery
 
 - Run `preflight-readonly.mjs` against the failing host's config. This checks every source without writes.
