@@ -170,3 +170,6 @@ i-feel משרתת לקוחות פרטיים, יזמי בנייה, אדריכלי
 - [איכות אוויר ב-KNX וב-BMS](https://i-feel.co.il/articles/knx-indoor-air-quality-co2-bms/): CO₂, לחות, VAV, מפת נקודות ובדיקות מסירה.
 
 - גלאי קיר Siemens UP 251/11 לתאורת מדרגות בבית חכם KNX: https://i-feel.co.il/equipment/siemens-up251-11-knx-wall-motion-detector/
+
+- [האם צריך גם חשמל וגם DALI?](https://i-feel.co.il/structure-control/dali-lighting-control/#dali-power-and-control): לדרייבר המוזן מ־230V נדרשים הזנת חשמל וזוג DA/DA; קו DALI אינו מזין את נורת ה־LED.
+- [איך משרשרים גופי תאורה DALI?](https://i-feel.co.il/structure-control/dali-lighting-control/#dali-daisy-chain): תוואי מגוף לגוף, דרייברים במקביל, ללא גישור בין הזנות וללא שרשור יציאות LED. מדריך לחשמלאים בעלי רישיון מתאים.

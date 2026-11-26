@@ -1,9 +1,11 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import { daliElectricianFaqs } from '../../data/dali-electrician-faqs.mjs';
 
 const pageUrl = 'https://i-feel.co.il/structure-control/dali-lighting-control/';
 
 const faqs = [
+  ...daliElectricianFaqs,
   { question: 'האם DALI מתאים גם לדירה ולבית פרטי?', answer: 'כן. ניתן לתכנן עמעום, קבוצות ותרחישים גם בבית ובדירה. אין חובה להתקין מערכת BMS; בוחרים בקר, דרייברים ותשתית לפי התאורה הרצויה.' },
   { question: 'אפשר לשלב DALI עם בית חכם אלחוטי?', answer: 'כן, באמצעות בקר או שער תואם למערכת האלחוטית ולציוד DALI. לא כל מערכת מתחברת ישירות. בפתרון עם שער ל-DALI קווי נדרשים גם הזנה וקו תקשורת בין השער לדרייברים.' },
   { question: 'האם DALI מאפשר שינוי גוון וצבע?', answer: 'אפשר עם ציוד תואם. לבן משתנה דורש תמיכה מתאימה כגון DT8 Tc, וצבע דורש סוג נתמך כגון RGBWAF. יש לבדוק את הבקר, הדרייבר וגוף התאורה יחד; עמעום רגיל אינו מבטיח שינוי צבע.' },
@@ -349,7 +351,14 @@ const meta = {
     </section>
       <section id="dali-wiring-electricians" class="my-12" dir="rtl">
 <h2>מדריך לחשמלאים: איך מחברים גופי תאורה DALI ו-DALI-2?</h2>
-<p><strong>כל דרייבר DALI רגיל המוזן מ־230V צריך גם הזנת חשמל וגם זוג מוליכי תקשורת.</strong> קו DALI אינו מזין את נורת ה-LED עצמה. פקודת כיבוי אינה מנתקת את מתח הרשת.</p>
+<p>שתי תשובות קצרות לשאלות שחוזרות בתכנון ובהתקנה. ההסבר מיועד לחשמלאים בעלי רישיון מתאים, וכפוף לתוכנית החשמל ולהוראות הציוד. פקודת כיבוי DALI אינה מנתקת את מתח הרשת.</p>
+{daliElectricianFaqs.map((faq) => (
+  <section id={faq.id} class="scroll-mt-32 bg-brand-50 rounded-xl p-5 my-5">
+    <h3>{faq.question}</h3><p>{faq.answer}</p>
+    <a href={`#${faq.id}`} class="text-sm font-bold">קישור ישיר לתשובה</a>
+  </section>
+))}
+<p class="text-sm">מקור מקצועי: <a href="https://resources.tridonic.com/PDB/Ressource/Web_TR/brochures/es/DALI-manual.pdf">מדריך DALI של Tridonic, סעיף 4.2.3 — חיווט</a>. דוגמת הזנה וקו תקשורת: <a href="https://resources.tridonic.com/PDB/resources/Web_TR/Brochures/es/DALI_important_facts_at_a_glance.pdf">DALI at a glance, תרשים קו DALI</a>.</p>
 <h3>איזה כבל מעבירים?</h3><p>במעגל מתאים, לפי תכנון החשמל ותקנות ההתקנה, אפשר להשתמש בכבל 5×1.5 ממ״ר בעל בידוד מתאים למתח הרשת. חלופה היא כבל הזנה 3×1.5 ממ״ר וזוג מוליכי DALI נפרד 2×1.5 ממ״ר בעל בידוד מתאים למתח הרשת. חתך ההזנה, ההגנות, סוג הכבל והמסלול נקבעים לפי העומס, תנאי ההתקנה והתכנון המאושר.</p>
 <div class="not-prose overflow-x-auto rounded-xl border border-brand-100"><table class="w-full text-right"><thead class="bg-brand-900 text-white"><tr><th class="p-3">צבע לדוגמה</th><th class="p-3">סימון</th><th class="p-3">תפקיד</th></tr></thead><tbody><tr class="border-b border-brand-100"><td class="p-3"><span aria-hidden="true" style="display:inline-block;width:28px;height:8px;border-radius:4px;background:#854d2c"></span> חום</td><td class="p-3" dir="ltr">L</td><td class="p-3">פאזה קבועה</td></tr><tr class="border-b border-brand-100"><td class="p-3"><span aria-hidden="true" style="display:inline-block;width:28px;height:8px;border-radius:4px;background:#2563eb"></span> כחול</td><td class="p-3" dir="ltr">N</td><td class="p-3">אפס</td></tr><tr class="border-b border-brand-100"><td class="p-3"><span aria-hidden="true" style="display:inline-block;width:28px;height:8px;border-radius:4px;background:repeating-linear-gradient(90deg,#15803d 0 7px,#facc15 7px 14px)"></span> צהוב/ירוק</td><td class="p-3" dir="ltr">PE</td><td class="p-3">הארקה</td></tr><tr class="border-b border-brand-100"><td class="p-3"><span aria-hidden="true" style="display:inline-block;width:28px;height:8px;border-radius:4px;background:#202020"></span> שחור</td><td class="p-3" dir="ltr">DA</td><td class="p-3">תקשורת DALI</td></tr><tr class="border-b border-brand-100"><td class="p-3"><span aria-hidden="true" style="display:inline-block;width:28px;height:8px;border-radius:4px;background:#9ca3af"></span> אפור</td><td class="p-3" dir="ltr">DA</td><td class="p-3">תקשורת DALI</td></tr></tbody></table></div>
 <p>שחור ואפור הם דוגמה לסימון זוג DA, ולא צבעי DALI מחייבים. יש לסמן את הזוג בשני הקצוות, לאמת את זיהוי המוליכים ולא להשתמש בכחול או בצהוב/ירוק כקו DALI.</p>
