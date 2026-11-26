@@ -4,6 +4,11 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 const pageUrl = 'https://i-feel.co.il/structure-control/dali-lighting-control/';
 
 const faqs = [
+  { question: 'האם DALI מתאים גם לדירה ולבית פרטי?', answer: 'כן. ניתן לתכנן עמעום, קבוצות ותרחישים גם בבית ובדירה. אין חובה להתקין מערכת BMS; בוחרים בקר, דרייברים ותשתית לפי התאורה הרצויה.' },
+  { question: 'אפשר לשלב DALI עם בית חכם אלחוטי?', answer: 'כן, באמצעות בקר או שער תואם למערכת האלחוטית ולציוד DALI. לא כל מערכת מתחברת ישירות. בפתרון עם שער ל-DALI קווי נדרשים גם הזנה וקו תקשורת בין השער לדרייברים.' },
+  { question: 'האם DALI מאפשר שינוי גוון וצבע?', answer: 'אפשר עם ציוד תואם. לבן משתנה דורש תמיכה מתאימה כגון DT8 Tc, וצבע דורש סוג נתמך כגון RGBWAF. יש לבדוק את הבקר, הדרייבר וגוף התאורה יחד; עמעום רגיל אינו מבטיח שינוי צבע.' },
+  { question: 'האם DALI בהכרח יקר יותר?', answer: 'לא ניתן לקבוע בלי מפרט. משווים מחיר עדכני של הבקר, הדרייברים, התשתית, התכנות והמסירה עבור אותן דרישות. מספר הקבוצות והיכולות המבוקשות משפיעים על הכדאיות.' },
+  { question: 'אפשר לשדרג בית קיים בלי להחליף הכול?', answer: 'לעיתים אפשר לשלב חלק מהציוד הקיים, אך בודקים התאמת דרייברים, מקום לבקר ונתיבי חיווט. שליטה אלחוטית אינה מבטיחה שצד התאורה אינו דורש תשתית.' },
   {
     question: 'מה זה DALI?',
     answer:
@@ -17,7 +22,7 @@ const faqs = [
   {
     question: 'האם Siemens תומכת ב-DALI-2?',
     answer:
-      'כן. Siemens תומכת בשילוב DALI ו-DALI-2 בפרויקטים של בקרת מבנה, בין היתר דרך בקרי Desigo, בקרי PXC3 ובקרי KNX/DALI מתאימים. כך ניתן לחבר תאורה דיגיטלית למערכת BMS מרכזית.',
+      'כן. שערי KNX/DALI מתאימים של Siemens משמשים לתאורה בבית ובבניין. אפשר לשלב גם בפתרונות Desigo, לפי הדגם והאינטגרציה. חיבור לבית אלחוטי מחייב בדיקת שער וממשקים נתמכים.',
   },
   {
     question: 'מה ההבדל בין DALI לבין 0-10V?',
@@ -37,7 +42,7 @@ const faqs = [
   {
     question: 'לאילו פרויקטים DALI מתאים?',
     answer:
-      'DALI מתאים במיוחד למשרדים, בתי מלון, מוזיאונים, חניונים, מבני ציבור, מרכזים מסחריים ופרויקטים שבהם יש צורך בניהול תאורה מתקדם כחלק ממערכת BMS.',
+      'DALI מתאים לדירות ולבתים פרטיים שרוצים עמעום ותרחישים, וגם למשרדים, מלונות ומבני ציבור. אפשר לשלב בבית אלחוטי, ב-KNX או ב-BMS, בהתאם לשער, לציוד ולתשתית.',
   },
 ];
 
@@ -45,9 +50,9 @@ const jsonLd = [
   {
     '@context': 'https://schema.org',
     '@type': 'Service',
-    name: 'בקרת תאורה DALI ו-DALI-2 במערכות BMS',
+    name: 'תאורת DALI ו-DALI-2 לבית חכם ולבקרת מבנה',
     description:
-      'תכנון, התקנה ואינטגרציה של מערכות בקרת תאורה DALI ו-DALI-2 כחלק ממערכות בקרת מבנה BMS, כולל שילוב עם Siemens Desigo, KNX, DDC ופתרונות 0-10V לפי צורך הפרויקט.',
+      'תכנון ואינטגרציה של תאורת DALI-2 לדירות, בתים ובניינים: שילוב בבית אלחוטי באמצעות שער תואם, ב-KNX או ב-Siemens Desigo, לפי הציוד והתשתית.',
     provider: {
       '@type': 'Organization',
       name: 'i-feel',
@@ -104,13 +109,13 @@ const jsonLd = [
 ];
 
 const meta = {
-  title: 'בקרת תאורה DALI כחלק ממערכת BMS | DALI-2 ו-0-10V | i-feel',
+  title: 'תאורת DALI-2 לבית חכם ולבקרת מבנה | i-feel',
   description:
-    'מה זה DALI, מה היתרון של DALI-2, איך Siemens Desigo תומכת בבקרת תאורה חכמה, ומה ההבדל בין DALI לבין 0-10V בפרויקטי BMS.',
+    'DALI-2 לבית ולבניין: עמעום, תרחישים, גוון וצבע, שילוב בבית אלחוטי או KNX ובבקרת מבנה. בדיקת התאמה ותכנון עם i-feel: 03-508-9553.',
   canonical: pageUrl,
-  ogTitle: 'בקרת תאורה DALI כחלק ממערכת BMS | i-feel',
+  ogTitle: 'תאורת DALI-2 לבית, לדירה ולבקרת מבנה | i-feel',
   ogDescription:
-    'סקירה מקצועית על בקרת תאורה DALI ו-DALI-2 במערכות BMS, שילוב Siemens Desigo, KNX ו-DDC, והשוואה מעשית מול 0-10V.',
+    'בחרו את המסלול שלכם: תאורה ותרחישים לבית, שילוב במערכת אלחוטית, או ניהול תאורה והתראות בבניין. התאמת ציוד, תשתית ותקציב.',
   ogUrl: pageUrl,
   ogImage: 'https://i-feel.co.il/assets/og-cover.jpg',
   jsonLd: JSON.stringify(jsonLd),
@@ -128,37 +133,89 @@ const meta = {
   </nav>
 
   <article dir="rtl">
-    <section class="bg-accent-50 border-b border-accent-100">
-      <div class="max-w-6xl mx-auto px-4 py-8">
-        <p class="text-sm font-bold text-accent-700 mb-2">חדש · Siemens GAMMA · DALI-2</p>
-        <h2 class="text-2xl font-extrabold text-brand-900 mb-3">Siemens N 141/14 ו-N 141/32 עם ETS 6.4</h2>
-        <p class="text-brand-700 mb-3">מדריך מעשי לתכנון KNX/DALI-2: קווים, חיישנים, DT8, Commissioning, החלפת ECG ושילוב BMS.</p>
-        <a href="/articles/siemens-knx-dali-n14114-n14132-ets64-commissioning/#dali-handover" class="text-accent-700 font-bold underline">למדריך ובדיקות המסירה</a>
-      </div>
-    </section>
+
     <header class="hero-gradient text-white">
       <div class="max-w-6xl mx-auto px-4 py-16 lg:py-24">
         <p class="inline-flex items-center gap-2 bg-white/10 border border-white/20 rounded-full px-4 py-1.5 text-sm font-bold mb-6">
-          DALI · DALI-2 · 0-10V · Siemens Desigo · BMS
+          בית פרטי · דירה · בית אלחוטי · KNX · בקרת מבנה
         </p>
         <h1 class="text-4xl md:text-6xl font-extrabold leading-tight max-w-5xl">
-          מה זה DALI בבקרת מבנה, מה היתרון של DALI-2, ואיך הוא משתלב עם Siemens Desigo?
+          תאורת DALI-2 לבית ולבניין — האור שמתאים לכם
         </h1>
         <p class="text-xl text-brand-100 mt-6 max-w-4xl leading-8">
-          i-feel מתמחה בתכנון, התקנה ואינטגרציה של מערכות תאורה חכמות כחלק ממערכות בקרת מבנה BMS. אנחנו משלבים DALI, DALI-2, KNX, DDC, Siemens Desigo ופתרונות 0-10V לפי אופי הפרויקט, רמת הבקרה הנדרשת והתקציב.
+          עמעום נעים, תרחישי אירוח, גוון אור משתנה ושליטה לפי אזורים. DALI מתאים גם לבית ולדירה עם מערכת חכמה קווית או אלחוטית, וגם לניהול תאורה בבניין. ב־i-feel מתאימים את הבקר, גופי התאורה והתשתית לחוויה שאתם רוצים ולתקציב שלכם.
         </p>
-        <div class="flex flex-wrap gap-3 mt-8"><a href="#dali-wiring-electricians" class="bg-white text-brand-900 px-6 py-3 rounded-lg font-bold">מדריך חיווט לחשמלאים</a>
-          <a href="/contactus/" class="bg-accent-500 hover:bg-accent-600 text-white px-6 py-3 rounded-lg font-semibold shadow-lg">בדיקת התאמה לפרויקט</a>
-          <a href="/structure-control/projects/" class="bg-white/10 hover:bg-white/20 text-white px-6 py-3 rounded-lg font-semibold border border-white/30">פרויקטי BMS עם תאורה חכמה</a>
+        <div class="flex flex-wrap gap-3 mt-8">
+          <a href="#home-lighting" class="bg-white text-brand-900 px-6 py-3 rounded-lg font-bold">לבית ולדירה</a>
+          <a href="#bms-value" class="bg-accent-500 hover:bg-accent-600 text-white px-6 py-3 rounded-lg font-bold">לבניין ולעסק</a>
+          <a href="#wireless-home" class="bg-white/10 text-white px-6 py-3 rounded-lg border border-white/30">יש לי בית אלחוטי</a>
         </div>
       </div>
     </header>
 
     <div class="max-w-5xl mx-auto px-4 py-12 lg:py-16 prose-he">
       <section id="intro">
-        <p>בעולם של בקרת מבנה מודרנית, התאורה כבר מזמן אינה מערכת פשוטה של הדלקה וכיבוי. בעבר, מערכת תאורה בבניין הייתה מבוססת בעיקר על מפסקים, ממסרים ודימרים בסיסיים. היום, בבנייני משרדים, בתי מלון, מרכזים מסחריים, מוסדות ציבור, מוזיאונים, חניונים ומגדלי מגורים יוקרתיים, התאורה היא חלק ממערכת ניהול חכמה שמחוברת למיזוג, חיישנים, לוחות זמנים, בקרת אנרגיה, תרחישים, מסכי שליטה ומערכת בקרת מבנה מרכזית.</p>
-        <p>אחד הפרוטוקולים החשובים ביותר בתחום הזה הוא <strong>DALI</strong>, ראשי תיבות של <strong>Digital Addressable Lighting Interface</strong>. מדובר בפרוטוקול תקשורת דיגיטלי ייעודי לשליטה בגופי תאורה, דרייברים, חיישנים, לחצנים, תאורת חירום ומערכות תאורה חכמות. בשנים האחרונות נכנס לשימוש גם <strong>DALI-2</strong>, שהוא הדור המתקדם והמעודכן יותר של התקן, עם שיפור משמעותי בתאימות בין יצרנים, בבדיקות הסמכה, באמינות וביכולת לשלב אביזרי קלט כמו חיישנים ולחצנים.</p>
-        <p>בפרויקטים של בקרת מבנה, DALI אינו עומד לבד. הוא משתלב בדרך כלל עם מערכות BMS, KNX או בקרים מתקדמים כמו <strong>Siemens Desigo</strong>. השילוב הזה מאפשר להפוך את התאורה ממערכת חשמל רגילה למערכת חכמה, מדויקת, חסכונית וגמישה, שמנוהלת כחלק בלתי נפרד מהמבנה כולו.</p>
+        <h2>מה תרצו לעשות עם התאורה?</h2>
+        <p>DALI הוא תקן לתקשורת עם ציוד תאורה תואם. בבית הוא מאפשר לתכנן שכבות אור ותרחישים; בבניין הוא משתלב גם בניהול אזורים, חיישנים והתראות. בחרו את המסלול שמתאים לכם, או התחילו בהסבר הפשוט על המערכת.</p>
+        <div class="not-prose grid md:grid-cols-2 gap-5 my-6">
+          <a href="#home-lighting" class="block rounded-2xl border border-brand-100 bg-brand-50 p-6 hover:shadow-lg"><h3 class="text-2xl font-bold text-brand-900 mb-3">אני מתכנן תאורה לבית</h3><p class="text-brand-700">דירה או בית פרטי, בבנייה או בשדרוג: עמעום, תאורת אווירה, גוון וצבע, שליטה אלחוטית או קווית.</p><span class="inline-block mt-4 text-accent-700 font-bold">לאפשרויות בבית ←</span></a>
+          <a href="#bms-value" class="block rounded-2xl border border-brand-100 bg-brand-50 p-6 hover:shadow-lg"><h3 class="text-2xl font-bold text-brand-900 mb-3">אני מנהל או מתכנן מבנה</h3><p class="text-brand-700">משרד, מלון או מבנה ציבור: חיסכון בחשמל, נוכחות, אור יום, תקלות ושילוב Siemens Desigo.</p><span class="inline-block mt-4 text-accent-700 font-bold">לבקרת תאורה בבניין ←</span></a>
+        </div>
+        <nav aria-label="ניווט במדריך DALI" class="not-prose flex flex-wrap gap-x-5 gap-y-3 my-6 text-accent-700 font-bold">
+          <a href="#what-is-dali">מה זה DALI?</a><a href="#wireless-home">שילוב אלחוטי</a><a href="#lighting-scenes">תרחישים וגוונים</a><a href="#cost">מחיר והתאמה</a><a href="#dali-wiring-electricians">מדריך לחשמלאים</a><a href="#faq">שאלות נפוצות</a>
+        </nav>
+      </section>
+
+
+
+      <section id="what-is-dali">
+        <h2>מה זה DALI, במילים פשוטות?</h2>
+        <p>במקום להסתפק בהדלקה וכיבוי של קו שלם, מערכת DALI שולחת פקודות דיגיטליות לדרייברים תואמים — הרכיבים שמפעילים את גופי התאורה. כך אפשר לעמעם, לשייך גופים לקבוצות ולשמור תרחישים. כל דרייבר מזוהה בכתובת, ויכולות המערכת תלויות בציוד ובתכנון.</p>
+        <p>לדוגמה: אור חזק במטבח בזמן הכנה, אור רך מעל השולחן ואור עדין בנישה בסלון. בלחיצה על ״אירוח״ אפשר לשנות כמה קבוצות יחד. אותה יכולת משמשת גם לחדר ישיבות או ללובי במלון.</p>
+        <p>אין צורך במערכת BMS כדי ליהנות מ־DALI בבית. אפשר לבחור בקר מתאים, לשלב במערכת בית חכם אלחוטית באמצעות שער תואם, או לחבר ל־KNX. בבניין מסחרי אפשר להוסיף חיבור למערכת ניהול מרכזית.</p>
+      </section>
+
+      <section id="home-lighting" class="scroll-mt-32">
+        <h2>DALI לבית ולדירה: לתכנן את האווירה שאתם אוהבים</h2>
+        <p>כשמתכננים סלון, מטבח או חדר שינה, השאלה היא איזו תאורה תרצו בכל רגע. DALI מאפשר להפריד בין תאורה כללית, תאורת עבודה ותאורת הדגשה, ולשלב אותן בתרחישים נוחים. הבחירה מתאימה גם לדירה, ולא נקבעת רק לפי גודל הנכס.</p>
+        <figure class="not-prose my-6"><img src="/projects/knx-smart-home-central-moshav/09-smart-living-room-knx.jpg" alt="חלל מגורים בבית חכם בפרויקט i-feel במושב במרכז" class="w-full max-h-96 object-cover rounded-2xl" loading="lazy" /><figcaption class="text-sm text-brand-600 mt-2">בית חכם בפרויקט i-feel במושב במרכז — להמחשת סביבת המגורים. התאמת DALI נבדקת בכל פרויקט.</figcaption></figure>
+        <div id="lighting-scenes" class="not-prose grid sm:grid-cols-2 gap-4 my-6 scroll-mt-32">
+          <div class="rounded-xl bg-brand-50 p-5"><h3 class="text-xl font-bold mb-2">אירוח וארוחה</h3><p>שולחן מואר, סלון בעוצמה רכה ותאורת הדגשה לפינות האהובות.</p></div>
+          <div class="rounded-xl bg-brand-50 p-5"><h3 class="text-xl font-bold mb-2">סרט וערב רגוע</h3><p>עמעום התאורה באזור המסך והשארת אור נעים במעברים.</p></div>
+          <div class="rounded-xl bg-brand-50 p-5"><h3 class="text-xl font-bold mb-2">לבן חם או קר</h3><p>שינוי גוון הלבן באמצעות Tunable White, כאשר הבקר, הדרייבר וגוף התאורה תומכים ב־DT8 מסוג Tc.</p></div>
+          <div class="rounded-xl bg-brand-50 p-5"><h3 class="text-xl font-bold mb-2">צבע ואווירה</h3><p>שילוב תאורה צבעונית בציוד תואם, למשל DT8 מסוג RGBWAF. תמיכה בעמעום אינה מבטיחה תמיכה בצבע.</p></div>
+        </div>
+        <p>אפשר להפעיל את התרחישים מלחצן, ממסך או מאפליקציה, לפי מערכת השליטה שנבחרה. לפרויקטים של אפקטים ותאורה צבעונית ראו גם <a href="/dmx-home-lighting/">שילוב DMX ותאורת אווירה בבית</a>.</p>
+        <p><a href="/smart-home/#smart-panel-video">לצפייה בהדגמת שליטה בבית חכם</a> · <a href="/projects/private-homes/">לפרויקטים של בתים פרטיים</a></p>
+        <p class="text-sm">מידע מקצועי: <a href="https://www.dali-alliance.org/dali/colour.html">סוגי בקרת גוון וצבע — DALI Alliance</a>.</p>
+        <p><a href="/contactus/?interest=dali-home" class="font-bold">בדיקת התאמה לתאורה בבית שלי ←</a></p>
+      </section>
+
+      <section id="wireless-home" class="scroll-mt-32 bg-brand-50 rounded-2xl p-6 my-10">
+        <h2>יש לכם בית חכם אלחוטי? אפשר לשלב גם DALI</h2>
+        <p><strong>מערכת בית חכם אלחוטית יכולה לשלוט בתאורת DALI באמצעות בקר או שער תואם.</strong> לא חייבים להתקין KNX בכל הבית. בודקים את דגם המערכת הקיימת, את שער החיבור ואת הפקודות הנתמכות — הדלקה, עמעום, תרחישים ולעיתים גם גוון וצבע.</p>
+        <p class="not-prose rounded-xl bg-white border border-brand-100 p-4 font-bold">לחצן או אפליקציה במערכת האלחוטית ← בקר / שער תואם ← קו DALI ← דרייברים וגופי תאורה</p>
+        <p>השליטה יכולה להיות אלחוטית, אך בפתרון עם שער ל־DALI קווי עדיין נדרשים הזנה וחיווט DALI בין השער לציוד התאורה. בשדרוג בית קיים בודקים מה כבר מותקן ומה ניתן להעביר. שילוב אלחוטי אינו מבטיח התקנה ללא עבודות תשתית.</p>
+        <p>כדאי לשלוח לנו את שם המערכת, דגם הבקר, מפרט גופי התאורה ותמונות של התשתית. נבדוק מה ניתן לשלב, האם השליטה מקומית או תלויה בענן, ומה קורה כשאין אינטרנט. ההתאמה נקבעת לפי הדגמים, ולא רק לפי שם המותג.</p>
+        <p><a href="/contactus/?interest=dali-wireless" class="font-bold">בדקו שילוב DALI בבית האלחוטי שלי ←</a></p>
+        <p class="text-sm">מידע מקצועי: <a href="https://www.dali-alliance.org/wireless/">שילוב DALI ומערכות אלחוטיות — DALI Alliance</a>.</p>
+      </section>
+
+      <section id="cost" class="scroll-mt-32">
+        <h2>כמה עולה DALI, ומתי הוא משתלם בבית?</h2>
+        <p>מחירי הרכיבים והחלופות משתנים, ולכן כדאי להשוות הצעות עדכניות במקום לפסול DALI מראש כפתרון יקר. כשמבקשים כמה קבוצות עמעום, תרחישים ושינויי גוון, בוחנים את התמורה של הפתרון כולו מול החלופות.</p>
+        <p>ההשוואה כוללת בקר או שער, דרייברים, גופי תאורה, חיווט, תכנות ומסירה. גם תשתית קיימת ומספר האזורים משפיעים על העלות. אין מחיר אחיד לבית ואין הנחה ש־DALI תמיד יקר יותר או תמיד זול יותר.</p>
+        <ul><li><strong>בנייה חדשה:</strong> מתאמים מוקדם את תוכנית התאורה, הדרייברים והחיווט.</li><li><strong>שיפוץ או שדרוג:</strong> בודקים תשתית והתאמה לפני שמזמינים גופים.</li><li><strong>בית אלחוטי קיים:</strong> בודקים שער נתמך ואת העבודה הנדרשת בצד התאורה.</li></ul>
+        <p><a href="/articles/knx-dimmers-triac-0-10v-dali2/">למדריך השוואת שיטות עמעום ובדיקת התאמה</a> · <a href="/contactus/?interest=dali-quote">לקבלת הצעה לפי תוכנית התאורה</a></p>
+      </section>
+
+
+      <section id="bms-value" class="scroll-mt-32">
+        <h2>לבניין ולעסק: חיסכון בחשמל וניהול תאורה מרכזי</h2>
+        <p>בקרת מבנה, או BMS, נועדה לרכז את הניהול של מערכות הבניין: מיזוג אוויר, תאורה, וילונות, בקרת כניסה, חיישנים, אנרגיה, התראות, לוחות חשמל ומערכות נוספות. כאשר התאורה מבוססת DALI, היא אינה מערכת מבודדת. היא הופכת לחלק מתפיסת הניהול הכוללת של הבניין.</p>
+        <p>לדוגמה, במבנה משרדים ניתן להגדיר שהתאורה תעבוד לפי שעות פעילות, נוכחות עובדים וכמות אור טבעי. בשעות הבוקר, התאורה ליד החלונות יכולה לעבוד בעוצמה נמוכה יותר בגלל אור השמש, ואילו אזורים פנימיים יקבלו תאורה חזקה יותר. בשעות הערב המערכת יכולה להעלות את עוצמת התאורה באזורים פעילים ולכבות אזורים ריקים.</p>
+        <p>בבתי מלון ניתן ליצור תרחישי תאורה שונים ללובי, מסדרונות, חדרי אירוח, חדרי ישיבות, אזורי שירות וחניון. במוזיאונים ניתן לשלוט באופן מדויק בעוצמות התאורה לפי מוצגים, שעות פתיחה, אירועים מיוחדים ודרישות שימור. בחניונים ניתן להפעיל תאורה בעוצמה נמוכה במצב רגיל ולהעלות את העוצמה כאשר מזוהה תנועה.</p>
+        <p>היכולת לחבר בין התאורה לבין שאר מערכות המבנה היא היתרון הגדול של DALI בפרויקטים מקצועיים. התאורה יכולה להגיב לנוכחות, לשעות פעילות, למצב מערכת המיזוג, לתרחישי חירום, לניהול אנרגיה ולפקודות ממסכי שליטה מרכזיים.</p>
       </section>
 
       <section class="not-prose grid md:grid-cols-2 gap-6 my-10" aria-label="בקרת תאורת DALI מבוססת Siemens בפרויקטים של i-feel">
@@ -171,34 +228,12 @@ const meta = {
           <figcaption class="text-sm text-brand-600 mt-3">תאורת DALI בפעולה — משרדי Iscar, התקנת i-feel.</figcaption>
         </figure>
       </section>
-
-      <section id="what-is-dali">
-        <h2>מהו DALI?</h2>
-        <p>DALI הוא פרוטוקול תקשורת דיגיטלי שמאפשר שליטה פרטנית בגופי תאורה. במקום שכל גוף תאורה יהיה מחובר רק למפסק חשמלי או לדימר אנלוגי, כל דרייבר במערכת יכול לקבל כתובת דיגיטלית משלו. המשמעות היא שניתן לשלוט בכל גוף תאורה בנפרד, לשייך אותו לקבוצות, להגדיר עוצמות תאורה שונות, ליצור תרחישים, לקבל מידע חוזר מהמערכת ולנהל את התאורה בצורה מתקדמת בהרבה.</p>
-        <p>לדוגמה, במשרד גדול אפשר להגדיר קבוצת תאורה לאזור ישיבה, קבוצת תאורה לחדר ישיבות, קבוצת תאורה למסדרון וקבוצת תאורה ליד חלונות. אם בעתיד משנים את החלוקה הפנימית של המשרד, לא תמיד צריך לשנות חיווט חשמלי. ניתן לעדכן קבוצות, כתובות ותרחישים דרך התוכנה. זו אחת הסיבות ש-DALI מתאים במיוחד לבניינים דינמיים, שבהם חללים משתנים לאורך השנים.</p>
-        <p>במערכת DALI ניתן להגדיר עוצמת תאורה, זמני מעבר בין מצבים, תרחישי תאורה, תגובה לחיישני נוכחות, שילוב עם חיישני אור יום, הפעלה לפי לוח זמנים וקבלת התראות על תקלות. בניגוד למערכת תאורה רגילה, שבה החשמלאי או איש האחזקה מזהים תקלה רק כאשר מישהו מדווח עליה, מערכת DALI יכולה להעביר מידע על גוף תאורה שלא מגיב, דרייבר תקול או בעיה במערכת.</p>
+      <section id="building-operations">
+        <h2>מההתראה ועד הטיפול — עם גישה מבוקרת</h2>
+        <p>בבניין מתכננים אילו חיוויים מהציוד יוצגו לצוות, כיצד מסווגים אותם ומי אחראי לבדיקה. אישור קבלת התראה אינו תיקון התקלה: חשוב להגדיר גם מעקב ואימות בסיום הטיפול. שילוב עם מערכת תחזוקה או ניתוב הודעות נקבע לפי ממשקים ורישוי.</p>
+        <p>מערכת Siemens Desigo יכולה להשתלב בניהול התאורה ושאר מערכות המבנה. מתכננים הרשאות לפי תפקיד, גישה מרחוק מבוקרת ותחזוקה בהתאם להנחיות היצרן. חיסכון בחשמל נבחן באמצעות נתוני מדידה מתאימים; אחוז עמעום לבדו אינו מדידת צריכה.</p>
+        <p><a href="/siemens-desigo-bms/">להיכרות עם Siemens Desigo ולסרטון ההסבר</a> · <a href="/contactus/?interest=dali-bms">לתכנון בקרת תאורה בבניין</a></p>
       </section>
-
-      <section id="dali-wiring-electricians" class="my-12" dir="rtl">
-<h2>מדריך לחשמלאים: איך מחברים גופי תאורה DALI ו-DALI-2?</h2>
-<p><strong>כל דרייבר DALI רגיל המוזן מ־230V צריך גם הזנת חשמל וגם זוג מוליכי תקשורת.</strong> קו DALI אינו מזין את נורת ה-LED עצמה. פקודת כיבוי אינה מנתקת את מתח הרשת.</p>
-<h3>איזה כבל מעבירים?</h3><p>במעגל מתאים, לפי תכנון החשמל ותקנות ההתקנה, אפשר להשתמש בכבל 5×1.5 ממ״ר בעל בידוד מתאים למתח הרשת. חלופה היא כבל הזנה 3×1.5 ממ״ר וזוג מוליכי DALI נפרד 2×1.5 ממ״ר בעל בידוד מתאים למתח הרשת. חתך ההזנה, ההגנות, סוג הכבל והמסלול נקבעים לפי העומס, תנאי ההתקנה והתכנון המאושר.</p>
-<div class="not-prose overflow-x-auto rounded-xl border border-brand-100"><table class="w-full text-right"><thead class="bg-brand-900 text-white"><tr><th class="p-3">צבע לדוגמה</th><th class="p-3">סימון</th><th class="p-3">תפקיד</th></tr></thead><tbody><tr class="border-b border-brand-100"><td class="p-3"><span aria-hidden="true" style="display:inline-block;width:28px;height:8px;border-radius:4px;background:#854d2c"></span> חום</td><td class="p-3" dir="ltr">L</td><td class="p-3">פאזה קבועה</td></tr><tr class="border-b border-brand-100"><td class="p-3"><span aria-hidden="true" style="display:inline-block;width:28px;height:8px;border-radius:4px;background:#2563eb"></span> כחול</td><td class="p-3" dir="ltr">N</td><td class="p-3">אפס</td></tr><tr class="border-b border-brand-100"><td class="p-3"><span aria-hidden="true" style="display:inline-block;width:28px;height:8px;border-radius:4px;background:repeating-linear-gradient(90deg,#15803d 0 7px,#facc15 7px 14px)"></span> צהוב/ירוק</td><td class="p-3" dir="ltr">PE</td><td class="p-3">הארקה</td></tr><tr class="border-b border-brand-100"><td class="p-3"><span aria-hidden="true" style="display:inline-block;width:28px;height:8px;border-radius:4px;background:#202020"></span> שחור</td><td class="p-3" dir="ltr">DA</td><td class="p-3">תקשורת DALI</td></tr><tr class="border-b border-brand-100"><td class="p-3"><span aria-hidden="true" style="display:inline-block;width:28px;height:8px;border-radius:4px;background:#9ca3af"></span> אפור</td><td class="p-3" dir="ltr">DA</td><td class="p-3">תקשורת DALI</td></tr></tbody></table></div>
-<p>שחור ואפור הם דוגמה לסימון זוג DA, ולא צבעי DALI מחייבים. יש לסמן את הזוג בשני הקצוות, לאמת את זיהוי המוליכים ולא להשתמש בכחול או בצהוב/ירוק כקו DALI.</p>
-<h3>שרשור מגוף תאורה לגוף תאורה</h3><figure class="not-prose bg-white border border-brand-100 rounded-xl p-4"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 320" role="img" aria-label="תרשים חיבור מקביל של שלושה דרייברים עם הזנה ותקשורת" style="width:100%;height:auto;background:#fff;border-radius:12px"><g font-family="Arial,sans-serif" fill="#172033" text-anchor="middle"><rect x="20" y="12" width="260" height="55" rx="8" fill="#e9eef4"/><text x="150" y="35" font-size="16">230V · L / N / PE</text><text x="150" y="54" font-size="12">הזנה ממעגל תאורה מוגן</text><rect x="430" y="12" width="260" height="55" rx="8" fill="#e9eef4"/><text x="560" y="35" font-size="16">KNX / DALI Gateway</text><text x="560" y="54" font-size="12">יציאת DA / DA</text><path d="M80 67 V85 H35 M35 85 H685" stroke="#854d2c" stroke-width="3" fill="none"/><path d="M130 67 V101 H35 M35 101 H685" stroke="#2563eb" stroke-width="3" fill="none"/><path d="M180 67 V117 H35 M35 117 H685" stroke="#15803d" stroke-width="3" fill="none"/><path d="M180 67 V117 H35 M35 117 H685" stroke="#facc15" stroke-width="2" stroke-dasharray="7 5" fill="none"/><path d="M520 67 V133 H685 M35 133 H685" stroke="#202020" stroke-width="3" fill="none"/><path d="M590 67 V149 H685 M35 149 H685" stroke="#9ca3af" stroke-width="3" fill="none"/><path d="M80 85 V205" stroke="#854d2c" stroke-width="3" fill="none"/><circle cx="80" cy="85" r="4" fill="#854d2c"/><text x="80" y="222" font-size="11">L</text><path d="M110 101 V205" stroke="#2563eb" stroke-width="3" fill="none"/><circle cx="110" cy="101" r="4" fill="#2563eb"/><text x="110" y="222" font-size="11">N</text><path d="M140 117 V205" stroke="#15803d" stroke-width="3" fill="none"/><circle cx="140" cy="117" r="4" fill="#15803d"/><path d="M140 117 V205" stroke="#facc15" stroke-width="2" stroke-dasharray="7 5"/><text x="140" y="222" font-size="11">PE</text><path d="M170 133 V205" stroke="#202020" stroke-width="3" fill="none"/><circle cx="170" cy="133" r="4" fill="#202020"/><text x="170" y="222" font-size="11">DA</text><path d="M200 149 V205" stroke="#9ca3af" stroke-width="3" fill="none"/><circle cx="200" cy="149" r="4" fill="#9ca3af"/><text x="200" y="222" font-size="11">DA</text><rect x="57" y="205" width="166" height="56" rx="5" fill="none" stroke="#64748b"/><text x="140" y="246" font-size="16">DALI Driver</text><path d="M140 261 V280" stroke="#64748b" stroke-width="2"/><rect x="92" y="280" width="96" height="9" rx="4" fill="#eab308"/><text x="140" y="310" font-size="13">גוף תאורה 1</text><path d="M300 85 V205" stroke="#854d2c" stroke-width="3" fill="none"/><circle cx="300" cy="85" r="4" fill="#854d2c"/><text x="300" y="222" font-size="11">L</text><path d="M330 101 V205" stroke="#2563eb" stroke-width="3" fill="none"/><circle cx="330" cy="101" r="4" fill="#2563eb"/><text x="330" y="222" font-size="11">N</text><path d="M360 117 V205" stroke="#15803d" stroke-width="3" fill="none"/><circle cx="360" cy="117" r="4" fill="#15803d"/><path d="M360 117 V205" stroke="#facc15" stroke-width="2" stroke-dasharray="7 5"/><text x="360" y="222" font-size="11">PE</text><path d="M390 133 V205" stroke="#202020" stroke-width="3" fill="none"/><circle cx="390" cy="133" r="4" fill="#202020"/><text x="390" y="222" font-size="11">DA</text><path d="M420 149 V205" stroke="#9ca3af" stroke-width="3" fill="none"/><circle cx="420" cy="149" r="4" fill="#9ca3af"/><text x="420" y="222" font-size="11">DA</text><rect x="277" y="205" width="166" height="56" rx="5" fill="none" stroke="#64748b"/><text x="360" y="246" font-size="16">DALI Driver</text><path d="M360 261 V280" stroke="#64748b" stroke-width="2"/><rect x="312" y="280" width="96" height="9" rx="4" fill="#eab308"/><text x="360" y="310" font-size="13">גוף תאורה 2</text><path d="M520 85 V205" stroke="#854d2c" stroke-width="3" fill="none"/><circle cx="520" cy="85" r="4" fill="#854d2c"/><text x="520" y="222" font-size="11">L</text><path d="M550 101 V205" stroke="#2563eb" stroke-width="3" fill="none"/><circle cx="550" cy="101" r="4" fill="#2563eb"/><text x="550" y="222" font-size="11">N</text><path d="M580 117 V205" stroke="#15803d" stroke-width="3" fill="none"/><circle cx="580" cy="117" r="4" fill="#15803d"/><path d="M580 117 V205" stroke="#facc15" stroke-width="2" stroke-dasharray="7 5"/><text x="580" y="222" font-size="11">PE</text><path d="M610 133 V205" stroke="#202020" stroke-width="3" fill="none"/><circle cx="610" cy="133" r="4" fill="#202020"/><text x="610" y="222" font-size="11">DA</text><path d="M640 149 V205" stroke="#9ca3af" stroke-width="3" fill="none"/><circle cx="640" cy="149" r="4" fill="#9ca3af"/><text x="640" y="222" font-size="11">DA</text><rect x="497" y="205" width="166" height="56" rx="5" fill="none" stroke="#64748b"/><text x="580" y="246" font-size="16">DALI Driver</text><path d="M580 261 V280" stroke="#64748b" stroke-width="2"/><rect x="532" y="280" width="96" height="9" rx="4" fill="#eab308"/><text x="580" y="310" font-size="13">גוף תאורה 3</text></g></svg><figcaption class="text-sm text-brand-600 mt-3">תרשים עקרוני בלבד: שלושה דרייברים במקביל באותו מעגל הזנה ובאותו קו DALI. הצמתים המסומנים הם חיבורים; הצטלבות ללא נקודה אינה חיבור. הארקה לגוף לפי סיווגו והוראות היצרן.</figcaption></figure>
-<p>ניתן להעביר את הכבל מגוף ראשון לשני ולשלישי. בכל נקודה ממשיכים את מוליכי ההזנה ואת זוג DA במקביל באמצעות מהדקים מתאימים ומאושרים, בהתאם לקיבולת המהדק ולהוראות היצרן. אין לחבר דרייברים בטור או לשרשר את יציאת ה-LED של דרייבר לכניסת הדרייבר הבא. אין לגשר בין הזנות של מעגלים נפרדים. גופים מסוג Class II אינם מקבלים חיבור PE לגוף עצמו, אך יש לשמור על רציפות ההארקה במעגל כנדרש.</p>
-<h3>כללי תכנון קו DALI</h3><ul><li>מותר קו, כוכב, עץ או שילוב שלהם; אין לסגור טבעת ואין צורך בנגד סיום.</li><li>בדרך כלל עד 64 כתובות של ציוד בקרת תאורה לקו, בכפוף לבקר ולתקציב הזרם. חיישנים והתקני קלט כפופים למגבלות נפרדות.</li><li>המרחק המומלץ בין שני ההתקנים הרחוקים ביותר הוא עד 300 מטר בכבל 1.5 ממ״ר ובזרם הזנת אפיק מרבי של 250mA; יש לבדוק נפילת מתח ומגבלות היצרן.</li><li>נדרש ספק מתח לאפיק DALI, לעיתים מובנה בשער. אין להוסיף ספק ללא בדיקת התאמה ותקציב זרם.</li><li>כניסות DA של דרייברים לרוב אינן תלויות קוטביות; כאשר ספק או ציוד מסומן DA+ / DA- יש לפעול לפי הוראותיו. אין לחבר 230V ל-DA ואין לחבר ישירות לאפיק KNX.</li></ul>
-<h3>בדיקות לפני מסירה</h3><p>חשמלאי בעל רישיון מתאים ינתק את כל מקורות המתח, יאמת היעדר מתח ויבדוק זיהוי, רציפות ובידוד לפי התכנון והוראות היצרן. יש לנתק ציוד אלקטרוני לפני בדיקות בידוד העלולות להזיק לו. לאחר אישור בטיחות מבצעים איתור כתובות, זיהוי כל גוף, בדיקת הדלקה ועמעום ותיעוד. אין להשתמש בכבל תקשורת רגיל כגון CAT6 כתחליף לזוג DALI ללא התאמה מפורשת לדרישות הבידוד וההתקנה.</p>
-<p>מקורות מקצועיים: <a href="https://www.dali-alliance.org/tech-notes/cable-length.html">DALI Alliance: אורך כבל</a> · <a href="https://productinfo.se.com/spacelogic_cbus_guides/nnz5955800-c-bus-dali-2-gateway-user-manual/English/DALI-2%20Gateway%20UM%20DALI2GW%20CBUS%20%28BOOKMAP%29_0000427955.xml/%24/GatewayDALIWiring-1679C46A">הנחיות חיווט DALI של Schneider Electric</a>.</p><p><strong>המדריך מיועד לחשמלאים מוסמכים בלבד ואינו מחליף תוכנית חשמל מאושרת, תקנות ישראליות והוראות הציוד.</strong> <a href="/contactus/">לתיאום תכנון ובדיקת התאמה עם I FEEL</a>.</p>
-</section>
-      <section id="bms-value">
-        <h2>למה DALI חשוב בבקרת מבנה?</h2>
-        <p>בקרת מבנה, או BMS, נועדה לרכז את הניהול של מערכות הבניין: מיזוג אוויר, תאורה, וילונות, בקרת כניסה, חיישנים, אנרגיה, התראות, לוחות חשמל ומערכות נוספות. כאשר התאורה מבוססת DALI, היא אינה מערכת מבודדת. היא הופכת לחלק מתפיסת הניהול הכוללת של הבניין.</p>
-        <p>לדוגמה, במבנה משרדים ניתן להגדיר שהתאורה תעבוד לפי שעות פעילות, נוכחות עובדים וכמות אור טבעי. בשעות הבוקר, התאורה ליד החלונות יכולה לעבוד בעוצמה נמוכה יותר בגלל אור השמש, ואילו אזורים פנימיים יקבלו תאורה חזקה יותר. בשעות הערב המערכת יכולה להעלות את עוצמת התאורה באזורים פעילים ולכבות אזורים ריקים.</p>
-        <p>בבתי מלון ניתן ליצור תרחישי תאורה שונים ללובי, מסדרונות, חדרי אירוח, חדרי ישיבות, אזורי שירות וחניון. במוזיאונים ניתן לשלוט באופן מדויק בעוצמות התאורה לפי מוצגים, שעות פתיחה, אירועים מיוחדים ודרישות שימור. בחניונים ניתן להפעיל תאורה בעוצמה נמוכה במצב רגיל ולהעלות את העוצמה כאשר מזוהה תנועה.</p>
-        <p>היכולת לחבר בין התאורה לבין שאר מערכות המבנה היא היתרון הגדול של DALI בפרויקטים מקצועיים. התאורה יכולה להגיב לנוכחות, לשעות פעילות, למצב מערכת המיזוג, לתרחישי חירום, לניהול אנרגיה ולפקודות ממסכי שליטה מרכזיים.</p>
-      </section>
-
       <section id="dali2">
         <h2>מה זה DALI-2?</h2>
         <p>DALI-2 הוא הדור החדש והמשופר של פרוטוקול DALI. אם DALI המקורי התמקד בעיקר בשליטה בדרייברים וגופי תאורה, DALI-2 הרחיב את התקן ושיפר את התאימות בין רכיבים של יצרנים שונים. זהו יתרון חשוב מאוד בפרויקטים גדולים, שבהם משתמשים לעיתים בדרייברים, חיישנים, לחצנים ובקרים ממספר יצרנים.</p>
@@ -208,11 +243,10 @@ const meta = {
       </section>
 
       <section id="siemens">
-        <h2>תמיכת Siemens ב-DALI-2</h2>
-        <p>אחד הנושאים החשובים עבור לקוחות, יועצים ומנהלי פרויקטים הוא בחירת יצרן אמין למערכת בקרת המבנה. Siemens היא אחת החברות המובילות בעולם בתחום BMS, ובמיוחד במערכות כמו <strong>Desigo</strong>. במסגרת פתרונות בקרת המבנה של Siemens קיימת תמיכה ב-DALI וב-DALI-2, כולל שילוב של תאורה חכמה כחלק מניהול המבנה.</p>
-        <p>בקרים מסדרת <strong>Siemens Desigo PXC3</strong> ושערי <strong>KNX/DALI</strong> של Siemens מאפשרים לשלב מערכות תאורה מבוססות DALI-2 בתוך פרויקט בקרת מבנה. המשמעות היא שהתאורה יכולה להיות מנוהלת דרך אותה תפיסת בקרה שמנהלת גם את המיזוג, החיישנים, לוחות הזמנים, האנרגיה וההתראות.</p>
-        <p>בנוסף, Siemens תומכת בפתרונות מתקדמים של <strong>Human Centric Lighting</strong>, כלומר תאורה שמתאימה את עצמה לצרכים האנושיים, לשעות היום ולסוג הפעילות בחלל. במשרדים, למשל, ניתן להגדיר תאורה קרה ובהירה יותר בשעות עבודה וריכוז, ותאורה חמה ונעימה יותר בשעות מנוחה, אזורי אירוח או שעות ערב. בבתי מלון, התאורה יכולה לתמוך בחוויית אורח נעימה יותר. במוסדות חינוך או בריאות, התאורה יכולה להיות מותאמת לשימושים שונים לאורך היום.</p>
-        <p>עבור i-feel, השילוב בין Siemens Desigo לבין DALI-2 הוא יתרון משמעותי. הוא מאפשר להציע ללקוח מערכת תאורה מקצועית, מתקדמת ועתידית, שאינה מוגבלת להדלקה וכיבוי, אלא משתלבת במערך בקרת המבנה המלא.</p>
+        <h2>בקרי סימנס: לבית חכם ולמערכת בקרת מבנה</h2>
+        <p>שערי KNX/DALI מתאימים של Siemens מאפשרים לחבר תאורת DALI למערכת KNX בבית או בבניין. בפרויקטי BMS בוחנים גם את החיבור ל־Desigo ואת המידע שרוצים להציג לצוות התפעול.</p>
+        <p>בוחרים דגם לפי מספר קווים, ציוד התאורה, חיישנים ופונקציות נדרשות. לשילוב בבית אלחוטי בודקים בנפרד את מסלול האינטגרציה; שער KNX/DALI אינו מתחבר אוטומטית לכל מערכת אלחוטית.</p>
+        <p><a href="/articles/siemens-knx-dali-n14114-n14132-ets64-commissioning/">מדריך מקצועי לבקרי Siemens N 141/14 ו־N 141/32</a></p>
       </section>
 
       <section id="architecture">
@@ -234,7 +268,7 @@ const meta = {
         <p>היתרון החמישי הוא תחזוקה. במבנים גדולים, היכולת לזהות תקלות, לקבל סטטוס ולנהל את התאורה בצורה מרכזית חוסכת זמן, כסף ותקלות שירות.</p>
 
         <h3>חסרונות DALI</h3>
-        <p>ל-DALI יש גם חסרונות. החיסרון המרכזי הוא עלות ומורכבות תכנון. נדרש תכנון מוקדם, בחירת דרייברים מתאימים, תכנון קווי תקשורת, כתובות, קבוצות ותכנות. בפרויקט קטן מאוד, שבו יש רק מספר מצומצם של גופי תאורה ואין צורך בתרחישים או בניהול מרכזי, ייתכן ש-DALI יהיה פתרון יקר מדי.</p>
+        <p>ל-DALI יש גם חסרונות. האתגר המרכזי הוא התאמת הציוד והתכנון. נדרש תכנון מוקדם, בחירת דרייברים מתאימים, תכנון קווי תקשורת, כתובות, קבוצות ותכנות. בפרויקט קטן מאוד, שבו יש רק מספר מצומצם של גופי תאורה ואין צורך בתרחישים או בניהול מרכזי, ייתכן ש-DALI יהיה פתרון יקר מדי.</p>
         <p>בנוסף, למרות ש-DALI-2 שיפר משמעותית את התאימות בין יצרנים, עדיין חשוב לבחור רכיבים איכותיים ולוודא שהמערכת מתוכננת נכון. תכנון לא מקצועי עלול לגרום לתקלות, הגדרות לא מדויקות או קושי בתחזוקה.</p>
 
         <h3>יתרונות 0-10V</h3>
@@ -264,7 +298,7 @@ const meta = {
               <tr class="border-b border-brand-100"><td class="p-4 font-bold">תרחישים</td><td class="p-4">מתקדמים</td><td class="p-4">בסיסיים</td></tr>
               <tr class="border-b border-brand-100"><td class="p-4 font-bold">שינוי קבוצות בתוכנה</td><td class="p-4">כן</td><td class="p-4">מוגבל</td></tr>
               <tr class="border-b border-brand-100"><td class="p-4 font-bold">התאמה ל-BMS</td><td class="p-4">גבוהה מאוד</td><td class="p-4">בסיסית</td></tr>
-              <tr class="border-b border-brand-100"><td class="p-4 font-bold">עלות התחלתית</td><td class="p-4">גבוהה יותר</td><td class="p-4">נמוכה יותר</td></tr>
+              <tr class="border-b border-brand-100"><td class="p-4 font-bold">עלות התחלתית</td><td class="p-4">לפי בקר, דרייברים ותשתית</td><td class="p-4">לפי ערוצי עמעום ותשתית</td></tr>
               <tr><td class="p-4 font-bold">תחזוקה ואבחון</td><td class="p-4">מתקדמים</td><td class="p-4">מוגבלים</td></tr>
             </tbody>
           </table>
@@ -272,9 +306,9 @@ const meta = {
       </section>
 
       <section id="when-to-choose">
-        <h2>מתי לבחור DALI ומתי לבחור 0-10V?</h2>
-        <p>הבחירה בין DALI לבין 0-10V תלויה באופי הפרויקט. כאשר מדובר בפרויקט קטן, פשוט וזול, שבו נדרש רק עמעום בסיסי, 0-10V יכול להתאים. אבל כאשר מדובר בבניין משרדים, בית מלון, מבנה ציבור, מוזיאון, מרכז מסחרי, חניון גדול או פרויקט שבו התאורה היא חלק מבקרת המבנה, DALI או DALI-2 הם הבחירה המקצועית יותר.</p>
-        <p>בפרויקטים שבהם יש דרישה לחיסכון באנרגיה, תחזוקה חכמה, חיישני נוכחות, חיישני אור יום, תרחישים, התאמה עתידית ושילוב עם BMS, DALI-2 מספק יתרון ברור. בפרויקטים שבהם דרישות הבקרה בסיסיות, התקציב מוגבל, ואין צורך אמיתי בניהול מרכזי או בדיווח תקלות, 0-10V יכול להיות פתרון יעיל ונכון.</p>
+        <h2>איך בוחרים בין DALI לבין שיטות עמעום אחרות?</h2>
+        <p>בבית עם כמה שכבות תאורה, תרחישים וגוון משתנה כדאי לבדוק DALI לצד החלופות. כשנדרש עמעום בסיסי לקבוצה מצומצמת, בוחנים גם פתרונות אחרים המתאימים לדרייברים. גודל הבית לבדו אינו קובע את הבחירה.</p>
+        <p>בבניין שבו נדרשים חיישנים, שינוי קבוצות, חיוויי תקלה וחיבור ל־BMS, יש ערך נוסף לבקרה דיגיטלית. בכל מקרה משווים את אותה תכולה: תוצאה רצויה, ציוד, התקנה, תכנות, שירות ועלות כוללת.</p>
       </section>
 
       <section id="projects" class="not-prose bg-brand-50 border border-brand-100 rounded-2xl p-6 md:p-8 my-10">
@@ -296,24 +330,35 @@ const meta = {
       </section>
 
       <section id="scope">
-        <h2>מה כלול בפרויקט בקרת תאורה DALI של i-feel?</h2>
-        <ul>
-          <li><strong>תכנון ואפיון:</strong> בחירת ארכיטקטורת DALI bus, מיפוי גופי תאורה, קבוצות, סצנות ותיאום מול תכנון החשמל והתאורה.</li>
-          <li><strong>אינטגרציה לבקרי DDC:</strong> חיבור DALI gateway לבקר, ותכנות הקשר בין חיישנים, לוחות זמנים ופקודות תאורה.</li>
-          <li><strong>שילוב ב-BMS המרכזי:</strong> חיבור לשרת הניהול, הגדרת תרחישים, התראות ודוחות צריכה.</li>
-          <li><strong>שילוב Siemens:</strong> התאמה לבקרי Siemens Desigo, בקרי KNX/DALI ופתרונות Human Centric Lighting לפי צרכי הפרויקט.</li>
-          <li><strong>Commissioning ובדיקות:</strong> בדיקת כתובות DALI, כיול חיישני אור יום ואימות תרחישי עבודה.</li>
-          <li><strong>תיעוד והדרכה:</strong> מסירת מפת כתובות, תרחישים, לוחות זמנים והדרכה לצוות האחזקה.</li>
-        </ul>
+        <h2>מה מתכננים יחד עם i-feel?</h2>
+        <ol><li><strong>מגדירים חוויה ושימוש:</strong> חדרים, קבוצות, עמעום, גוון ותרחישים.</li><li><strong>בודקים התאמה:</strong> מערכת אלחוטית, KNX או BMS, דרייברים ותשתית חשמל ותקשורת.</li><li><strong>מפרטים הצעה:</strong> בקר, ציוד משלים, עבודות ותכנות לפי התכולה המוסכמת.</li><li><strong>מתכנתים ובודקים:</strong> כתובות, קבוצות, תרחישים, הפעלה ידנית והתנהגות בתקלות.</li><li><strong>מוסרים ומדריכים:</strong> תיעוד והדרכה לבני הבית או לצוות האחזקה.</li></ol>
       </section>
 
       <section id="summary">
-        <h2>סיכום</h2>
-        <p>DALI הוא אחד הפרוטוקולים החשובים ביותר בעולם התאורה החכמה ובקרת המבנה. הוא מאפשר שליטה דיגיטלית מדויקת בגופי תאורה, יצירת תרחישים, חיסכון באנרגיה, קבלת סטטוס ותקלות, וגמישות גבוהה לאורך חיי המבנה.</p>
-        <p>DALI-2 לוקח את היכולות האלו צעד קדימה, עם תאימות טובה יותר, בדיקות הסמכה מתקדמות ותמיכה רחבה יותר באביזרי קלט כמו חיישנים ולחצנים. כאשר משלבים DALI-2 עם מערכות Siemens Desigo או בקרי KNX/DALI של Siemens, התאורה הופכת לחלק ממערכת בקרת מבנה מלאה, מקצועית ועתידית.</p>
-        <p>במקומות שבהם נדרש פתרון בסיסי וזול, 0-10V עדיין יכול להיות רלוונטי. אבל בפרויקטים מתקדמים שבהם חשוב לשלוט, למדוד, לתחזק, לחסוך באנרגיה ולנהל את התאורה כחלק מהמבנה כולו, DALI-2 הוא פתרון איכותי, גמיש ונכון יותר.</p>
+        <h2>איזה מסלול מתאים לכם?</h2>
+        <p><a href="#home-lighting">בית או דירה</a> — מתחילים באווירה ובתרחישים. <a href="#wireless-home">בית אלחוטי</a> — בודקים שער ותשתית. <a href="#bms-value">בניין או עסק</a> — מתכננים גם ניהול אנרגיה והתראות. לכל מסלול מתאימים ציוד, ממשק ותקציב.</p>
       </section>
 
+    <section class="bg-accent-50 border-b border-accent-100">
+      <div class="max-w-6xl mx-auto px-4 py-8">
+        <p class="text-sm font-bold text-accent-700 mb-2">חדש · Siemens GAMMA · DALI-2</p>
+        <h2 class="text-2xl font-extrabold text-brand-900 mb-3">Siemens N 141/14 ו-N 141/32 עם ETS 6.4</h2>
+        <p class="text-brand-700 mb-3">מדריך מעשי לתכנון KNX/DALI-2: קווים, חיישנים, DT8, Commissioning, החלפת ECG ושילוב BMS.</p>
+        <a href="/articles/siemens-knx-dali-n14114-n14132-ets64-commissioning/#dali-handover" class="text-accent-700 font-bold underline">למדריך ובדיקות המסירה</a>
+      </div>
+    </section>
+      <section id="dali-wiring-electricians" class="my-12" dir="rtl">
+<h2>מדריך לחשמלאים: איך מחברים גופי תאורה DALI ו-DALI-2?</h2>
+<p><strong>כל דרייבר DALI רגיל המוזן מ־230V צריך גם הזנת חשמל וגם זוג מוליכי תקשורת.</strong> קו DALI אינו מזין את נורת ה-LED עצמה. פקודת כיבוי אינה מנתקת את מתח הרשת.</p>
+<h3>איזה כבל מעבירים?</h3><p>במעגל מתאים, לפי תכנון החשמל ותקנות ההתקנה, אפשר להשתמש בכבל 5×1.5 ממ״ר בעל בידוד מתאים למתח הרשת. חלופה היא כבל הזנה 3×1.5 ממ״ר וזוג מוליכי DALI נפרד 2×1.5 ממ״ר בעל בידוד מתאים למתח הרשת. חתך ההזנה, ההגנות, סוג הכבל והמסלול נקבעים לפי העומס, תנאי ההתקנה והתכנון המאושר.</p>
+<div class="not-prose overflow-x-auto rounded-xl border border-brand-100"><table class="w-full text-right"><thead class="bg-brand-900 text-white"><tr><th class="p-3">צבע לדוגמה</th><th class="p-3">סימון</th><th class="p-3">תפקיד</th></tr></thead><tbody><tr class="border-b border-brand-100"><td class="p-3"><span aria-hidden="true" style="display:inline-block;width:28px;height:8px;border-radius:4px;background:#854d2c"></span> חום</td><td class="p-3" dir="ltr">L</td><td class="p-3">פאזה קבועה</td></tr><tr class="border-b border-brand-100"><td class="p-3"><span aria-hidden="true" style="display:inline-block;width:28px;height:8px;border-radius:4px;background:#2563eb"></span> כחול</td><td class="p-3" dir="ltr">N</td><td class="p-3">אפס</td></tr><tr class="border-b border-brand-100"><td class="p-3"><span aria-hidden="true" style="display:inline-block;width:28px;height:8px;border-radius:4px;background:repeating-linear-gradient(90deg,#15803d 0 7px,#facc15 7px 14px)"></span> צהוב/ירוק</td><td class="p-3" dir="ltr">PE</td><td class="p-3">הארקה</td></tr><tr class="border-b border-brand-100"><td class="p-3"><span aria-hidden="true" style="display:inline-block;width:28px;height:8px;border-radius:4px;background:#202020"></span> שחור</td><td class="p-3" dir="ltr">DA</td><td class="p-3">תקשורת DALI</td></tr><tr class="border-b border-brand-100"><td class="p-3"><span aria-hidden="true" style="display:inline-block;width:28px;height:8px;border-radius:4px;background:#9ca3af"></span> אפור</td><td class="p-3" dir="ltr">DA</td><td class="p-3">תקשורת DALI</td></tr></tbody></table></div>
+<p>שחור ואפור הם דוגמה לסימון זוג DA, ולא צבעי DALI מחייבים. יש לסמן את הזוג בשני הקצוות, לאמת את זיהוי המוליכים ולא להשתמש בכחול או בצהוב/ירוק כקו DALI.</p>
+<h3>שרשור מגוף תאורה לגוף תאורה</h3><figure class="not-prose bg-white border border-brand-100 rounded-xl p-4"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 320" role="img" aria-label="תרשים חיבור מקביל של שלושה דרייברים עם הזנה ותקשורת" style="width:100%;height:auto;background:#fff;border-radius:12px"><g font-family="Arial,sans-serif" fill="#172033" text-anchor="middle"><rect x="20" y="12" width="260" height="55" rx="8" fill="#e9eef4"/><text x="150" y="35" font-size="16">230V · L / N / PE</text><text x="150" y="54" font-size="12">הזנה ממעגל תאורה מוגן</text><rect x="430" y="12" width="260" height="55" rx="8" fill="#e9eef4"/><text x="560" y="35" font-size="16">KNX / DALI Gateway</text><text x="560" y="54" font-size="12">יציאת DA / DA</text><path d="M80 67 V85 H35 M35 85 H685" stroke="#854d2c" stroke-width="3" fill="none"/><path d="M130 67 V101 H35 M35 101 H685" stroke="#2563eb" stroke-width="3" fill="none"/><path d="M180 67 V117 H35 M35 117 H685" stroke="#15803d" stroke-width="3" fill="none"/><path d="M180 67 V117 H35 M35 117 H685" stroke="#facc15" stroke-width="2" stroke-dasharray="7 5" fill="none"/><path d="M520 67 V133 H685 M35 133 H685" stroke="#202020" stroke-width="3" fill="none"/><path d="M590 67 V149 H685 M35 149 H685" stroke="#9ca3af" stroke-width="3" fill="none"/><path d="M80 85 V205" stroke="#854d2c" stroke-width="3" fill="none"/><circle cx="80" cy="85" r="4" fill="#854d2c"/><text x="80" y="222" font-size="11">L</text><path d="M110 101 V205" stroke="#2563eb" stroke-width="3" fill="none"/><circle cx="110" cy="101" r="4" fill="#2563eb"/><text x="110" y="222" font-size="11">N</text><path d="M140 117 V205" stroke="#15803d" stroke-width="3" fill="none"/><circle cx="140" cy="117" r="4" fill="#15803d"/><path d="M140 117 V205" stroke="#facc15" stroke-width="2" stroke-dasharray="7 5"/><text x="140" y="222" font-size="11">PE</text><path d="M170 133 V205" stroke="#202020" stroke-width="3" fill="none"/><circle cx="170" cy="133" r="4" fill="#202020"/><text x="170" y="222" font-size="11">DA</text><path d="M200 149 V205" stroke="#9ca3af" stroke-width="3" fill="none"/><circle cx="200" cy="149" r="4" fill="#9ca3af"/><text x="200" y="222" font-size="11">DA</text><rect x="57" y="205" width="166" height="56" rx="5" fill="none" stroke="#64748b"/><text x="140" y="246" font-size="16">DALI Driver</text><path d="M140 261 V280" stroke="#64748b" stroke-width="2"/><rect x="92" y="280" width="96" height="9" rx="4" fill="#eab308"/><text x="140" y="310" font-size="13">גוף תאורה 1</text><path d="M300 85 V205" stroke="#854d2c" stroke-width="3" fill="none"/><circle cx="300" cy="85" r="4" fill="#854d2c"/><text x="300" y="222" font-size="11">L</text><path d="M330 101 V205" stroke="#2563eb" stroke-width="3" fill="none"/><circle cx="330" cy="101" r="4" fill="#2563eb"/><text x="330" y="222" font-size="11">N</text><path d="M360 117 V205" stroke="#15803d" stroke-width="3" fill="none"/><circle cx="360" cy="117" r="4" fill="#15803d"/><path d="M360 117 V205" stroke="#facc15" stroke-width="2" stroke-dasharray="7 5"/><text x="360" y="222" font-size="11">PE</text><path d="M390 133 V205" stroke="#202020" stroke-width="3" fill="none"/><circle cx="390" cy="133" r="4" fill="#202020"/><text x="390" y="222" font-size="11">DA</text><path d="M420 149 V205" stroke="#9ca3af" stroke-width="3" fill="none"/><circle cx="420" cy="149" r="4" fill="#9ca3af"/><text x="420" y="222" font-size="11">DA</text><rect x="277" y="205" width="166" height="56" rx="5" fill="none" stroke="#64748b"/><text x="360" y="246" font-size="16">DALI Driver</text><path d="M360 261 V280" stroke="#64748b" stroke-width="2"/><rect x="312" y="280" width="96" height="9" rx="4" fill="#eab308"/><text x="360" y="310" font-size="13">גוף תאורה 2</text><path d="M520 85 V205" stroke="#854d2c" stroke-width="3" fill="none"/><circle cx="520" cy="85" r="4" fill="#854d2c"/><text x="520" y="222" font-size="11">L</text><path d="M550 101 V205" stroke="#2563eb" stroke-width="3" fill="none"/><circle cx="550" cy="101" r="4" fill="#2563eb"/><text x="550" y="222" font-size="11">N</text><path d="M580 117 V205" stroke="#15803d" stroke-width="3" fill="none"/><circle cx="580" cy="117" r="4" fill="#15803d"/><path d="M580 117 V205" stroke="#facc15" stroke-width="2" stroke-dasharray="7 5"/><text x="580" y="222" font-size="11">PE</text><path d="M610 133 V205" stroke="#202020" stroke-width="3" fill="none"/><circle cx="610" cy="133" r="4" fill="#202020"/><text x="610" y="222" font-size="11">DA</text><path d="M640 149 V205" stroke="#9ca3af" stroke-width="3" fill="none"/><circle cx="640" cy="149" r="4" fill="#9ca3af"/><text x="640" y="222" font-size="11">DA</text><rect x="497" y="205" width="166" height="56" rx="5" fill="none" stroke="#64748b"/><text x="580" y="246" font-size="16">DALI Driver</text><path d="M580 261 V280" stroke="#64748b" stroke-width="2"/><rect x="532" y="280" width="96" height="9" rx="4" fill="#eab308"/><text x="580" y="310" font-size="13">גוף תאורה 3</text></g></svg><figcaption class="text-sm text-brand-600 mt-3">תרשים עקרוני בלבד: שלושה דרייברים במקביל באותו מעגל הזנה ובאותו קו DALI. הצמתים המסומנים הם חיבורים; הצטלבות ללא נקודה אינה חיבור. הארקה לגוף לפי סיווגו והוראות היצרן.</figcaption></figure>
+<p>ניתן להעביר את הכבל מגוף ראשון לשני ולשלישי. בכל נקודה ממשיכים את מוליכי ההזנה ואת זוג DA במקביל באמצעות מהדקים מתאימים ומאושרים, בהתאם לקיבולת המהדק ולהוראות היצרן. אין לחבר דרייברים בטור או לשרשר את יציאת ה-LED של דרייבר לכניסת הדרייבר הבא. אין לגשר בין הזנות של מעגלים נפרדים. גופים מסוג Class II אינם מקבלים חיבור PE לגוף עצמו, אך יש לשמור על רציפות ההארקה במעגל כנדרש.</p>
+<h3>כללי תכנון קו DALI</h3><ul><li>מותר קו, כוכב, עץ או שילוב שלהם; אין לסגור טבעת ואין צורך בנגד סיום.</li><li>בדרך כלל עד 64 כתובות של ציוד בקרת תאורה לקו, בכפוף לבקר ולתקציב הזרם. חיישנים והתקני קלט כפופים למגבלות נפרדות.</li><li>המרחק המומלץ בין שני ההתקנים הרחוקים ביותר הוא עד 300 מטר בכבל 1.5 ממ״ר ובזרם הזנת אפיק מרבי של 250mA; יש לבדוק נפילת מתח ומגבלות היצרן.</li><li>נדרש ספק מתח לאפיק DALI, לעיתים מובנה בשער. אין להוסיף ספק ללא בדיקת התאמה ותקציב זרם.</li><li>כניסות DA של דרייברים לרוב אינן תלויות קוטביות; כאשר ספק או ציוד מסומן DA+ / DA- יש לפעול לפי הוראותיו. אין לחבר 230V ל-DA ואין לחבר ישירות לאפיק KNX.</li></ul>
+<h3>בדיקות לפני מסירה</h3><p>חשמלאי בעל רישיון מתאים ינתק את כל מקורות המתח, יאמת היעדר מתח ויבדוק זיהוי, רציפות ובידוד לפי התכנון והוראות היצרן. יש לנתק ציוד אלקטרוני לפני בדיקות בידוד העלולות להזיק לו. לאחר אישור בטיחות מבצעים איתור כתובות, זיהוי כל גוף, בדיקת הדלקה ועמעום ותיעוד. אין להשתמש בכבל תקשורת רגיל כגון CAT6 כתחליף לזוג DALI ללא התאמה מפורשת לדרישות הבידוד וההתקנה.</p>
+<p>מקורות מקצועיים: <a href="https://www.dali-alliance.org/tech-notes/cable-length.html">DALI Alliance: אורך כבל</a> · <a href="https://productinfo.se.com/spacelogic_cbus_guides/nnz5955800-c-bus-dali-2-gateway-user-manual/English/DALI-2%20Gateway%20UM%20DALI2GW%20CBUS%20%28BOOKMAP%29_0000427955.xml/%24/GatewayDALIWiring-1679C46A">הנחיות חיווט DALI של Schneider Electric</a>.</p><p><strong>המדריך מיועד לחשמלאים מוסמכים בלבד ואינו מחליף תוכנית חשמל מאושרת, תקנות ישראליות והוראות הציוד.</strong> <a href="/contactus/">לתיאום תכנון ובדיקת התאמה עם I FEEL</a>.</p>
+</section>
       <section id="faq">
         <h2>שאלות נפוצות על DALI ו-DALI-2</h2>
         {faqs.map((faq) => (
@@ -325,8 +370,9 @@ const meta = {
       </section>
 
       <section id="links">
-        <h2>קישורים רלוונטיים</h2>
+        <h2>להמשך תכנון הבית או המבנה</h2>
         <ul>
+          <li><a href="/smart-home/">בית חכם לדירות ולבתים פרטיים</a> — תכנון ושליטה במערכות הבית.</li>
           <li><a href="/structure-control/">בקרת מבנה BMS</a> - סקירה כללית.</li>
           <li><a href="/structure-control/projects/">גלריית פרויקטי BMS</a> - פרויקטים בבקרת מבנה ותאורה חכמה.</li>
           <li><a href="/bms-offices/">BMS למשרדים</a> - בקרת מיזוג, תאורה ואנרגיה.</li>
@@ -339,7 +385,7 @@ const meta = {
     <section id="contact" class="bg-brand-900 text-white py-16">
       <div class="max-w-4xl mx-auto px-4 text-center">
         <h2 class="text-3xl md:text-4xl font-extrabold mb-4">רוצים לדעת אם DALI או 0-10V מתאים לפרויקט שלכם?</h2>
-        <p class="text-xl text-brand-200 mb-8">צרו קשר לשיחת ייעוץ ראשונית ונציע כיוון ארכיטקטוני ראשוני לבקרת תאורה בתוך מערכת BMS.</p>
+        <p class="text-xl text-brand-200 mb-8">צרו קשר לשיחת ייעוץ ראשונית ונתאים בקרת תאורה לבית פרטי, לדירה, לבית אלחוטי או למערכת BMS בבניין.</p>
         <div class="flex flex-wrap justify-center gap-3">
           <a href="tel:+972-3-508-9553" class="bg-accent-500 hover:bg-accent-600 text-white px-7 py-3.5 rounded-lg font-semibold text-lg">03-508-9553</a>
           <a href="/contactus/" class="bg-white/10 hover:bg-white/20 text-white px-7 py-3.5 rounded-lg font-semibold text-lg border border-white/30">צרו קשר</a>
