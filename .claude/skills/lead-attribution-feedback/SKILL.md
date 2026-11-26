@@ -29,7 +29,7 @@ Support at least: `how_did_you_hear`, `first_touch`, `last_touch`, `referrer`, `
 
 Produce structured, confidence-labeled aggregate feedback for `google-ads-manager`, `meta-ads-manager`, daily website/SEO, professional referrals and `ai-sales-manager`.
 
-For the 5–6 qualified-leads weekly goal, read [references/qualified-lead-contract.md](references/qualified-lead-contract.md).
+Use [Brown’s 15-route lead execution contract](../ai-marketing-manager/references/growth-and-sales-leadership.md#lead-execution-for-the-15-existing-routes) for current business targets. Read [the qualified-lead contract](references/qualified-lead-contract.md) for the legacy seven-day feedback projection and existing Ads readiness rules.
 Use `scripts/qualified-lead-feedback.mjs` for the deterministic projection. It is
 not a live qualification producer. Require a complete, fresh, reviewed CRM export
 with historical deduplication; never infer qualification from a conversion or

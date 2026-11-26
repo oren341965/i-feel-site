@@ -33,11 +33,38 @@ Marketing owns professional-relations strategy; the existing sales-side roster a
 5. Return channel spend, unique qualified leads, cost per qualified lead when supported, progression to proposal, win rate and attributed revenue. Use outcomes to adjust the next proposed content/channel plan.
 6. Report completed work, pending work, blockers with an owner/recovery action and exact decisions required to Oren. Do not claim a plan generated leads before evidence exists.
 
-Oren's explicit 2026-11-25 decision supersedes the former business targets of one daily and nine weekly qualified leads, including the former 4/2/3 mix. The new target is **one unique, human-qualified new lead per agent per two-day cycle for all 15 existing agents**, with a group target of at least 15 distinct leads per cycle, no duplicate attribution. Brown reviews the current Vault skills and previous results every morning, assigns each agent daily work and reports individual outcomes, blockers and corrective actions every evening. Preserve existing historical evidence, qualification rules and the **ILS 4,000 monthly paid-media ceiling**. Meta remains temporarily excluded.
+Oren's explicit 2026-11-25 decision supersedes the former business targets of one daily and nine weekly qualified leads, including the former 4/2/3 mix. The new target is **one unique, human-qualified new lead per agent per two-business-day cycle for all 15 existing agents**, with a group target of at least 15 distinct leads per cycle, no duplicate attribution. Brown reviews the current Vault skills and previous results every morning, assigns each agent daily work and reports individual outcomes, blockers and corrective actions every evening. Preserve existing historical evidence, qualification rules and the **ILS 4,000 monthly paid-media ceiling**. Meta remains temporarily excluded.
 
 The existing `marketingDecision.businessTarget` / `businessLeadGoal` runtime schema still expresses the historical weekly segment target. Until it is explicitly migrated and tested for the per-agent two-day target, identify the runtime as legacy and do not represent its output as compliance with the new mandate. Never convert it to an invented weekly segment allocation. Preserve `paidMediaBudget.monthlyCapNis`, the separate legacy v1 write-policy hold at five, POLICY_TARGET_MISMATCH, capacity and attribution safeguards, and all campaign spending and publishing approval gates.
 
 The owner also authorizes Brown to create new verified, unique leads only on the existing Monday sales board 2732725332, after deduplication and verification of contact, source and commercial fit. Do not edit or delete existing records, grant broader permissions, or bypass worker gates. The bounded writer must be implemented and verified before use; until then report the missing implementation and use an existing authorized handoff. Read back each created item before reporting success. This policy is not evidence of live permissions or successful execution.
+
+## Lead execution for the 15 existing routes
+
+Use the current business calendar in Asia/Jerusalem and the existing Brown work plan. Keep 15 rows, one for each canonical route. Use the same cycle and route to find open work before assigning or retrying.
+
+| Route | Action to take and verify |
+| --- | --- |
+| H01 Website and organic search | Use Search Console and GA4 to select a priority landing page. Inspect the call to action and link a real inquiry to Monday from verified form or source evidence. Where conversion is uninstrumented, prepare a concrete fix through the existing website workflow. |
+| H02 Google Ads | Match a real CRM inquiry to the campaign using click ID or approved attribution evidence and route the contact for qualification. Apply only existing Ads authority when acting on findings. |
+| H03 Maya outreach | Use the approved queue and eligible contacts. Verify transport, recipient, consent, suppression, cross-channel history and receipt before counting a send. When blocked, prepare eligible work and recover the approved path. |
+| H04 Video and social | Advance the existing approved production card through script, product media, destination page and traceable call to action. Verify each release and match subsequent inbound interest using tracking or explicit source evidence. |
+| H05 AI visibility | Run the existing GEO sample and choose a verified answer or citation gap to address. Track real AI referrals and match inquiries to CRM from verified referrer, tracking or customer-reported evidence. |
+| V01 Villas | Find a live villa project with a documented smart-home need and route it to the existing private-sales owner for qualification. |
+| V02 New apartments | Find a live apartment project or tenant-changes opportunity and verify the system scope and contact. |
+| V03 Existing homes | Find a net-new retrofit opportunity with an explicit need; keep existing-customer service and upgrades in the existing sales/service funnel. |
+| V04 Penthouses | Find a specific project and confirm a relevant owner or professional contact and planning stage. |
+| V05 Home cinema and AV | Confirm a new project, room or use case and assign technical discovery through the existing sales route. |
+| V06 Developers and contractors | Verify an active development and identify the relevant commercial or electrical project contact. |
+| V07 BMS | Verify a building, tender or controls upgrade and identify the facility operator, consultant or other relevant project contact. |
+| V08 Hotels | Verify an active hotel project and confirm a building or room-control need. |
+| V09 Logistics | Verify a logistics site and a relevant automation, monitoring or energy requirement. |
+| V10 Parking and industrial facilities | Verify a facility and a concrete controls, monitoring or lighting need with an identifiable project contact. |
+
+1. In the existing assignment path, record the route, owner, actionable output, deadline, task ID and evidence expected. Have each worker return ACK against that ID and a verified result or exact blocker. Brown recovers missing ACKs on the existing task, confirms its state before any retry and advances other authorized work independently. Use the existing internal fallback for recovery when a worker cannot accept an assignment and label the handoff state explicitly.
+2. Count outreach, audience activity, inquiries, qualified leads, proposals and orders as separate stages. Qualify a new acquisition using a real contact, explicit commercial need, source evidence and identity deduplication across CRM history. Record one source route, related segment or assisting routes, Monday item ID, sales owner and next action. Where route attribution is uncertain, leave it unknown. A lead contributes to only one route target. Confirm orders from approved order or signed acceptance evidence.
+3. Publish one internal report through Brown's existing brief. Per route include activity, unique inquiries, qualified leads, proposals, orders, source and evidence window, task ID/ACK/result, and the recovery owner and date when needed. Verify counts against the owning systems and label incomplete coverage. H01 reports comparable Google/GA4 windows. H05 reports mentions, citations and checked answers out of 40, separately from AI inquiries and orders. Apply the same handoff fields when a website or AI inquiry comes in during another route’s work.
+4. Keep permissions and anti-duplication checks on the existing paths. Do not interpret the business target as permission to send to an unverified recipient, alter an ad budget, publish content, or use a restricted channel. When CRM creation is unavailable to Brown, give the verified lead to the existing authorized sales intake owner and keep it pending until read-back.
 
 ## Rollout
 
