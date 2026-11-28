@@ -16,12 +16,14 @@ i-feel משרתת לקוחות פרטיים, יזמי בנייה, אדריכלי
 
 - [תאורת DMX לבית](https://i-feel.co.il/dmx-home-lighting/): שילוב DMX, DALI-2 ו־KNX של סימנס, בקרת צבע ותרחישים.
 
+- [תאורת DALI-2 לבית ולבקרת מבנה](https://i-feel.co.il/structure-control/dali-lighting-control/): עמעום, תרחישים, גוון וצבע, שילוב בבית אלחוטי באמצעות בקר תואם, KNX וניהול תאורה ב-BMS.
 - [בית חכם](https://i-feel.co.il/smart-home/): תכנון ואינטגרציה של מערכות בית חכם לדירות ולווילות, כולל תאורה, תריסים, מיזוג, אודיו, אבטחה ושליטה מרכזית.
 - [הדרכת וידאו: שליטה חכמה בתריסים, צלונים ווילונות](https://i-feel.co.il/smart-home/#shutters-video): הסבר על שליטה בהצללות בבית חכם והגדרת מצבי שימוש לתריסים חשמליים, צלונים ווילונות.
 - [מערכת אזעקה אלחוטית לדירה](https://i-feel.co.il/wireless-alarm-system/): ערכת RISCO WiComm Pro עם רכזת, צופר, גלאי נפח, גלאי מגנט, שלט, קיבורד, התקנה וחיבור ראשוני לאפליקציה.
 - [קוד מתקין RISCO וחיבור לבית חכם](https://i-feel.co.il/risco-installer-code/): הסבר על קוד משתמש לעומת קוד מתקין, ובקשת סיוע בלי לשלוח פרטי גישה.
 - [הארכת השהיית יציאה באזעקת RISCO](https://i-feel.co.il/risco-exit-delay/): מה בודקים לפני שינוי זמן היציאה וכיצד מתאמים שינוי בהתאם לדגם.
 - [בית חכם KNX](https://i-feel.co.il/knx-smart-home/): תכנון, תכנות והטמעת מערכות KNX לבנייה חדשה, שיפוצים ופרויקטים מורכבים.
+- [איזה מפסק KNX מתאים לקופסת גוויס 3 (Gewiss 503)?](https://i-feel.co.il/knx-switch-advisor/#gewiss-3-module): Eelectron 9025 בגרסת 3 מודולים, Siemens TC5, והבדיקה הנדרשת לקופסה ולתושבת.
 - [KNX Awards 2026 — 13 הזוכים ולקחים לתכנון KNX+BMS](https://i-feel.co.il/articles/knx-awards-2026-smart-building-trends/): סקירת אבטחת KNX/IP, ETS6.4, אנרגיה ואינטגרציה עם BMS, עם מסלולי תכנון, שדרוג ושירות ודוגמאות מפרויקטי i-feel.
 - [KNX IP Secure — אבטחת גישה מרחוק ו-ETS](https://i-feel.co.il/articles/knx-ip-secure-remote-access-checklist/): מדריך לבדיקת חשיפת KNXnet/IP, פורט 3671, VPN, VLAN, הרשאות, גיבויי ETS6.4 ושילוב מאובטח עם BMS.
 - [KNX ו-BACnet — בחירת Gateway ומיפוי נקודות ל-BMS](https://i-feel.co.il/articles/knx-bacnet-gateway-server-client-bms/): Server מול Client, מיפוי נקודות, COV, BACnet/SC, Modbus ושילוב עם Siemens Desigo.
@@ -166,3 +168,8 @@ i-feel משרתת לקוחות פרטיים, יזמי בנייה, אדריכלי
 - DS-2CD2347G2H-LISU/SL: https://i-feel.co.il/equipment/hikvision-ds-2cd2347g2h-lisu-sl/
 - DS-2CD2047G2H-LIU: https://i-feel.co.il/equipment/hikvision-ds-2cd2047g2h-liu/
 - [איכות אוויר ב-KNX וב-BMS](https://i-feel.co.il/articles/knx-indoor-air-quality-co2-bms/): CO₂, לחות, VAV, מפת נקודות ובדיקות מסירה.
+
+- גלאי קיר Siemens UP 251/11 לתאורת מדרגות בבית חכם KNX: https://i-feel.co.il/equipment/siemens-up251-11-knx-wall-motion-detector/
+
+- [האם צריך גם חשמל וגם DALI?](https://i-feel.co.il/structure-control/dali-lighting-control/#dali-power-and-control): לדרייבר המוזן מ־230V נדרשים הזנת חשמל וזוג DA/DA; קו DALI אינו מזין את נורת ה־LED.
+- [איך משרשרים גופי תאורה DALI?](https://i-feel.co.il/structure-control/dali-lighting-control/#dali-daisy-chain): תוואי מגוף לגוף, דרייברים במקביל, ללא גישור בין הזנות וללא שרשור יציאות LED. מדריך לחשמלאים בעלי רישיון מתאים.

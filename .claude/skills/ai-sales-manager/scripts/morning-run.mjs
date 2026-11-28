@@ -7,7 +7,6 @@ import { respondToMayaSystemTests } from './maya-vault-bridge.mjs';
 import { inspectClaudeJudgmentResponses } from './claude-vault-bridge.mjs';
 import { persistMorningArtifacts, prepareVault } from './vault-runtime.mjs';
 import { collectGoogleAdsReadOnly } from '../../google-ads-manager/scripts/google-ads-readonly.mjs';
-import { collectMetaAdsReadOnly } from '../../meta-ads-manager/scripts/meta-ads-readonly.mjs';
 import { collectAttributionReadOnly } from '../../lead-attribution-feedback/scripts/attribution-readonly.mjs';
 import { refreshAttributionSnapshotReadOnly } from '../../lead-attribution-feedback/scripts/refresh-attribution-snapshot-readonly.mjs';
 import { refreshMondaySalesSnapshotReadOnly } from './monday-sales-live-readonly.mjs';
@@ -30,7 +29,6 @@ export async function runMorningDryRun({
   configPath = DEFAULT_CONFIG,
   now,
   googleAdsCollector = collectGoogleAdsReadOnly,
-  metaAdsCollector = collectMetaAdsReadOnly,
   attributionCollector = collectAttributionReadOnly,
   attributionSnapshotRefresher = refreshAttributionSnapshotReadOnly,
   mondaySnapshotRefresher = refreshMondaySalesSnapshotReadOnly,
@@ -69,14 +67,8 @@ export async function runMorningDryRun({
   if (googleAdsReadOnly && googleAdsReadOnly.connection?.status !== 'CONNECTED_READ_ONLY') {
     await morningStage('google-ads', () => { throw new Error('Google Ads live-read verification failed closed'); });
   }
-  const metaAdsConfigured = config.connections?.metaAds?.connected === true
-    && config.connections?.metaAds?.liveVerified === true;
-  const metaAdsReadOnly = metaAdsConfigured
-    ? await morningStage('meta-ads', () => metaAdsCollector({ configPath, now: new Date(now ?? Date.now()) }))
-    : null;
-  if (metaAdsReadOnly && metaAdsReadOnly.connection?.status !== 'CONNECTED_READ_ONLY') {
-    await morningStage('meta-ads', () => { throw new Error('Meta Ads live-read verification failed closed'); });
-  }
+  // Meta is outside Shark's scope, even on hosts with legacy connected flags.
+  const metaAdsReadOnly = null;
   const paidMediaBudgetGuard = evaluatePaidMediaBudgetGuard({
     policy: config.paidMediaBudget,
     googleAdsReadOnly,

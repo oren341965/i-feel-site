@@ -100,17 +100,17 @@ test('v2 orchestration keeps the existing manager as parent and includes every r
   ]) assert.equal(result.dailyBriefSections.includes(section), true, section);
 });
 
-test('Google and Meta require verified live connections', () => {
+test('Google requires verification and Meta stays excluded from Shark', () => {
   assert.equal(evaluateLiveConnection().status, 'CONNECTION_MISSING');
   assert.equal(evaluateLiveConnection({ connected: true, liveVerified: false }).status, 'CONNECTION_MISSING');
   assert.equal(evaluateLiveConnection({ connected: true, liveVerified: true }).status, 'CONNECTED_READ_ONLY');
 
   const result = orchestrateSalesSystem();
   assert.equal(result.connections.googleAds.status, 'CONNECTION_MISSING');
-  assert.equal(result.connections.metaAds.status, 'CONNECTION_MISSING');
+  assert.equal(result.connections.metaAds.status, 'EXCLUDED_BY_OWNER_TEMPORARY');
   assert.equal(result.connections.googleAds.accountId, '251-497-1872');
   assert.deepEqual(result.connections.googleAds.auditChecks, [...GOOGLE_ADS_AUDIT_CHECKS]);
-  assert.deepEqual(result.connections.metaAds.auditChecks, [...META_ADS_AUDIT_CHECKS]);
+  assert.deepEqual(result.connections.metaAds.auditChecks, []);
   assert.equal(result.connections.googleAds.historicalReference.referenceOnly, true);
 });
 
@@ -417,7 +417,7 @@ test('morning runtime activates the Vault, writes bounded artifacts, and stays d
   assert.equal(morning.vault.foldersChecked.length, VAULT_RELATIVE_FOLDERS.length);
   assert.equal(morning.postRunSelfCheck.externalActionsPerformed, false);
   assert.equal(morning.connections.googleAds.status, 'CONNECTION_MISSING');
-  assert.equal(morning.connections.metaAds.status, 'CONNECTION_MISSING');
+  assert.equal(morning.connections.metaAds.status, 'EXCLUDED_BY_OWNER_TEMPORARY');
   assert.equal(morning.googleAdsReadOnly, null);
   assert.equal(morning.metaAdsReadOnly, null);
   assert.equal(morning.attributionReadOnly, null);
@@ -473,7 +473,7 @@ test('morning runtime activates the Vault, writes bounded artifacts, and stays d
   assert.equal(evening.vaultSnapshotWritten, false);
 });
 
-test('morning runtime includes verified Meta live-read evidence and keeps writes blocked', async (t) => {
+test('morning runtime excludes failing Meta even with legacy connected flags and keeps writes blocked', async (t) => {
   const fixture = await createVaultRuntimeFixture(t);
   fixture.config.connections.metaAds.connected = true;
   fixture.config.connections.metaAds.liveVerified = true;
@@ -483,24 +483,15 @@ test('morning runtime includes verified Meta live-read evidence and keeps writes
   const morning = await runMorningDryRun({
     configPath: fixture.configPath,
     now: NOW,
-    metaAdsCollector: async ({ configPath, now }) => {
+    metaAdsCollector: async () => {
       collectorCalls += 1;
-      assert.equal(configPath, fixture.configPath);
-      assert.equal(now.toISOString(), NOW);
-      return {
-        mode: 'READ_ONLY',
-        connection: { status: 'CONNECTED_READ_ONLY', adAccountId: 'act_123' },
-        insights: [{ spend: 10, actions: { lead: 1 } }],
-        campaigns: [],
-        adSets: [],
-        ads: [],
-        safety: { mutationMethodsAvailable: false, platformWrites: 0, budgetChanges: 0 },
-      };
+      throw new Error('Meta unavailable: must not stop Shark');
     },
   });
-  assert.equal(collectorCalls, 1);
-  assert.equal(morning.connections.metaAds.status, 'CONNECTED_READ_ONLY');
-  assert.equal(morning.metaAdsReadOnly.insights[0].spend, 10);
+  assert.equal(collectorCalls, 0);
+  assert.equal(morning.connections.metaAds.status, 'EXCLUDED_BY_OWNER_TEMPORARY');
+  assert.equal(morning.metaAdsReadOnly, null);
+  assert.equal(fixture.config.connections.metaAds.connected, true);
   assert.equal(morning.postRunSelfCheck.externalActionsPerformed, false);
   assert.equal(morning.postRunSelfCheck.budgetChangesPerformed, false);
 });

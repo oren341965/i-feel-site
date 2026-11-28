@@ -1,0 +1,85 @@
+<dialog id="catalog-reader" dir="rtl" aria-labelledby="catalog-reader-title" data-lenis-prevent>
+  <div class="reader-shell">
+    <header>
+      <h2 id="catalog-reader-title">קטלוג דיגיטלי</h2>
+      <button type="button" data-close autofocus aria-label="סגירת הקטלוג">✕</button>
+    </header>
+    <div class="reader-tools">
+      <button type="button" data-share>העתקת קישור</button>
+      <a data-pdf download>הורדת PDF</a>
+      <button type="button" data-zoom aria-pressed="false">הגדלה</button>
+      <button type="button" data-sound aria-pressed="true">צליל דפדוף</button>
+      <button type="button" data-video hidden>סרטון</button>
+    </div>
+    <div class="reader-body">
+      <aside aria-label="ניווט בקטלוג">
+        <details open>
+          <summary>תוכן עניינים</summary>
+          <nav data-contents aria-label="פרקי הקטלוג"></nav>
+        </details>
+      </aside>
+      <div class="reader-scroll" data-scroll>
+        <div class="reader-page" data-sheet></div>
+        <div data-player hidden></div>
+      </div>
+    </div>
+    <footer>
+      <button type="button" data-prev>→ הקודם</button>
+      <label>עמוד <select data-pages aria-label="מעבר לעמוד"></select></label>
+      <span data-total></span>
+      <button type="button" data-next>הבא ←</button>
+      <p data-status role="status"></p>
+    </footer>
+  </div>
+</dialog>
+
+<script>
+  import '../scripts/catalog-reader.js';
+</script>
+
+<style is:global>
+  a.catalog-read-link { display: none; }
+  .catalog-reader-ready a.catalog-read-link {
+    display: inline-flex; align-self: flex-start; margin-block: .4rem;
+    padding: .5rem .8rem; border: 1px solid currentColor; border-radius: .55rem;
+    font-weight: 700; color: #173d65;
+  }
+  #catalog-reader { margin: auto; padding: 0; width: min(72rem, 96vw); max-width: none; height: 94dvh; max-height: none; border: 0; border-radius: 1rem; background: white; color: #142d49; }
+  #catalog-reader::backdrop { background: rgb(12 28 46 / 75%); }
+  #catalog-reader [hidden] { display: none !important; }
+  #catalog-reader .reader-shell { display: grid; height: 100%; grid-template-rows: auto auto minmax(0, 1fr) auto; }
+  #catalog-reader header, #catalog-reader footer, #catalog-reader .reader-tools { display: flex; align-items: center; flex-wrap: wrap; gap: .45rem; padding: .5rem .8rem; }
+  #catalog-reader header { justify-content: space-between; background: #142d49; color: white; }
+  #catalog-reader h2 { font-size: clamp(1rem, 3vw, 1.4rem); font-weight: 700; flex: 1; }
+  #catalog-reader button, #catalog-reader select, #catalog-reader .reader-tools a { border: 1px solid #b4c5d6; border-radius: .45rem; padding: .35rem .55rem; min-height: 42px; background: white; color: #142d49; }
+  #catalog-reader button:disabled { opacity: .45; cursor: default; }
+  #catalog-reader :focus-visible { outline: 3px solid #1579b9; outline-offset: 2px; }
+  #catalog-reader .reader-body { display: grid; grid-template-columns: minmax(10rem, 16rem) minmax(0, 1fr); min-height: 0; background: #e8eef5; }
+  #catalog-reader aside { overflow: auto; background: #f5f8fc; padding: .5rem .75rem; }
+  #catalog-reader summary { font-weight: 700; cursor: pointer; padding: .35rem 0; }
+  #catalog-reader nav { display: grid; gap: .3rem; }
+  #catalog-reader nav button { text-align: start; }
+  #catalog-reader nav [aria-current="page"] { background: #142d49; color: white; }
+  #catalog-reader .reader-scroll { overflow: auto; padding: .6rem; display: grid; align-items: start; justify-items: safe center; touch-action: pan-y pinch-zoom; }
+  #catalog-reader .reader-scroll[data-enlarged] { touch-action: auto; }
+  #catalog-reader .reader-page { position: relative; box-shadow: 0 4px 16px #142d4933; }
+  #catalog-reader [data-sound][aria-pressed="true"] { background: #e6eff9; border-color: #51779c; }
+  #catalog-reader .reader-turn-leaf { position: absolute; inset: 0; z-index: 1; pointer-events: none; transform-style: preserve-3d; }
+  #catalog-reader .reader-turn-front, #catalog-reader .reader-turn-back { position: absolute; inset: 0; overflow: hidden; backface-visibility: hidden; }
+  #catalog-reader .reader-turn-front { box-shadow: 0 5px 17px #142d4966; background: #fff; }
+  #catalog-reader .reader-turn-front canvas { width: 100% !important; height: 100% !important; }
+  #catalog-reader .reader-turn-front::after { position: absolute; inset: 0; content: ""; background: linear-gradient(105deg, transparent 55%, #142d4922 86%, #fff8); }
+  #catalog-reader .reader-turn-back { transform: rotateY(180deg); background: linear-gradient(105deg, #c2c7cf, #f8f6ef 28%, #eeeae3 78%, #cbd0d7); box-shadow: 0 5px 18px #142d4933; }
+  #catalog-reader .reader-page canvas { display: block; max-width: none; }
+  #catalog-reader .reader-page a { position: absolute; display: block; }
+  #catalog-reader [data-player] { width: min(100%, 50rem); }
+  #catalog-reader [data-player] iframe { width: 100%; aspect-ratio: 16 / 9; border: 0; }
+  #catalog-reader footer { justify-content: center; }
+  #catalog-reader [data-status] { margin: 0; }
+  #catalog-reader [data-status]:not(:empty) { width: 100%; text-align: center; }
+  @media (max-width: 680px) {
+    #catalog-reader { width: 100%; height: 100dvh; border-radius: 0; }
+    #catalog-reader .reader-body { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto minmax(0, 1fr); }
+    #catalog-reader aside { max-height: 24dvh; }
+  }
+</style>

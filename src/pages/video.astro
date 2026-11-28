@@ -6,6 +6,8 @@ import { intercomVideoSchema } from '../data/intercom-video-schema.mjs';
 import content from '../page-html/page-20.html?raw';
 import KnxSwitchesVideo from '../components/KnxSwitchesVideo.astro';
 import OutdoorLedVideo from '../components/OutdoorLedVideo.astro';
+import BuildingXVideo from '../components/BuildingXVideo.astro';
+import { buildingXVideoSchema } from '../data/building-x-video.mjs';
 import { outdoorLedVideoSchema } from '../data/outdoor-led-video.mjs';
 import { knxSwitchesVideoSchema } from '../data/knx-switches-video-schema.mjs';
 import { desigoVideoSchema } from '../data/desigo-video-schema.mjs';
@@ -13,6 +15,8 @@ const [beforeSwitchesVideo, afterSwitchesVideo] = content.split('<!-- KNX_SWITCH
 if (afterSwitchesVideo === undefined) throw new Error('Missing KNX video placement in explanations category.');
 const [beforeOutdoorVideo, afterOutdoorVideo] = afterSwitchesVideo.split('<!-- OUTDOOR_LED_VIDEO -->');
 if (afterOutdoorVideo === undefined) throw new Error('Missing outdoor LED video placement in audio category.');
+const [beforeBuildingXVideo, afterBuildingXVideo] = afterOutdoorVideo.split('<!-- BUILDING_X_VIDEO -->');
+if (afterBuildingXVideo === undefined) throw new Error('Missing Building X video placement in BMS category.');
 
 const meta = {
   title: "הדרכות וידאו | בית חכם, KNX, BMS ופרויקטים | i-feel",
@@ -154,6 +158,7 @@ dmxVideoGraph['@graph'].push(outdoorLedVideoSchema(meta.canonical));
 if (switchesVideoSchema) {
   dmxVideoGraph['@graph'].push(switchesVideoSchema);
 }
+dmxVideoGraph['@graph'].push(buildingXVideoSchema);
 dmxVideoGraph['@graph'].push(desigoVideoSchema(meta.canonical));
 dmxVideoGraph['@graph'].push(beitHalochemVideoSchema(meta.canonical));
 dmxVideoGraph['@graph'].push(intercomVideoSchema(meta.canonical));
@@ -180,6 +185,21 @@ dmxVideoGraph['@graph'].push({
   inLanguage: 'he-IL',
   publisher: { '@id': 'https://i-feel.co.il/#business' }
 });
+dmxVideoGraph['@graph'].push({
+  "@type": "VideoObject",
+  "@id": "https://i-feel.co.il/video/#v-glass-meeting-room",
+  "name": "חדר ישיבות עם קירות זכוכית — שליטה בתאורה ובווילונות",
+  "description": "נקודת שליטה נגישה ללא חיווט חשמל למפסק, תוך שמירה על העיצוב הנקי של קיר הזכוכית. התאורה והווילונות משתלבים בהתאם לאינטגרציה המתוכננת והמוגדרת לפרויקט.",
+  "uploadDate": "2026-11-22",
+  "duration": "PT1M16S",
+  "thumbnailUrl": "https://i.ytimg.com/vi/Y8EwY5k84hk/hqdefault.jpg",
+  "contentUrl": "https://www.youtube.com/watch?v=Y8EwY5k84hk",
+  "embedUrl": "https://www.youtube-nocookie.com/embed/Y8EwY5k84hk",
+  "inLanguage": "he-IL",
+  "publisher": {
+    "@id": "https://i-feel.co.il/#business"
+  }
+});
 meta.jsonLd = JSON.stringify(dmxVideoGraph);
 
 ---
@@ -188,7 +208,9 @@ meta.jsonLd = JSON.stringify(dmxVideoGraph);
   <KnxSwitchesVideo card />
   <Fragment set:html={beforeOutdoorVideo} />
   <OutdoorLedVideo card />
-  <Fragment set:html={afterOutdoorVideo} />
+  <Fragment set:html={beforeBuildingXVideo} />
+  <BuildingXVideo card />
+  <Fragment set:html={afterBuildingXVideo} />
   <nav class="max-w-7xl mx-auto px-4 py-8" aria-label="מדריכי תאורה">
     <a href="/video/lighting-dimmer/" class="text-brand-700 underline">מדריך וידאו: תאורה ודימר בבית החכם</a>
   </nav>

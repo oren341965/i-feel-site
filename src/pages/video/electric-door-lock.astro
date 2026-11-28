@@ -1,0 +1,84 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+const pageUrl = 'https://i-feel.co.il/video/electric-door-lock/';
+const title = 'חיבור מנעול חשמלי לבית חכם באמצעות מגע יבש';
+const description = 'הדגמה מפרויקט של I FEEL: חיבור מנעול חשמלי לדלת באמצעות מגע יבש, עם פתיחה מהאפליקציה ומהאינטרקום ושילוב בתרחישי הבית החכם.';
+const question = 'איזה מנעול חשמלי או מנעול דלת מתחבר למערכת בית חכם?';
+const answer = 'מנעול חשמלי עם בקר שתומך בפקודת פתיחה באמצעות מגע יבש יכול להתחבר למערכת בית חכם. גם מנעול דלת חכם עם ממשק אינטגרציה תואם יכול להתאים. את ההתאמה בודקים לפי דגם המנעול, סוג הדלת, ההזנה וממשק הבקרה.';
+const integration = 'בפתרון של I FEEL אנו מחברים את המנעול לאפליקציית השליטה ומשלבים אותו עם כלל המערכות המחוברות לבית החכם. לפי תכנון הפרויקט והרשאות המשתמשים אפשר לפתוח את הדלת מהאפליקציה או מהאינטרקום ולשלב אותה בתרחישים עם תאורה, מצלמות ואזעקה.';
+const videoId = 'CRJVLtIC38M';
+const embedUrl = `https://www.youtube-nocookie.com/embed/${videoId}`;
+const watchUrl = `https://www.youtube.com/watch?v=${videoId}`;
+const thumbnailUrl = `https://i.ytimg.com/vi/${videoId}/hqdefault.jpg`;
+const jsonLd = JSON.stringify({
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'WebPage',
+      '@id': `${pageUrl}#page`,
+      url: pageUrl,
+      name: title,
+      description,
+      inLanguage: 'he-IL',
+      mainEntity: { '@id': `${pageUrl}#video` },
+    },
+    {
+      '@type': 'VideoObject',
+      '@id': `${pageUrl}#video`,
+      name: title,
+      description,
+      uploadDate: '2026-08-13T07:37:08Z',
+      thumbnailUrl,
+      embedUrl,
+      inLanguage: 'he-IL',
+      publisher: { '@id': 'https://i-feel.co.il/#business' },
+    },
+  ],
+});
+---
+<BaseLayout
+  title={`${title} | I FEEL`}
+  description={description}
+  canonical={pageUrl}
+  ogTitle={title}
+  ogDescription={description}
+  ogUrl={pageUrl}
+  ogImage={thumbnailUrl}
+  jsonLd={jsonLd}
+>
+  <nav class="bg-brand-50 border-b border-brand-100" aria-label="פירורי לחם">
+    <div class="max-w-5xl mx-auto px-4 py-3 text-sm">
+      <a href="/video/" class="text-brand-700 hover:underline">הדרכות וידאו</a>
+      <span class="mx-2" aria-hidden="true">›</span>
+      <span>מנעול חשמלי לבית חכם</span>
+    </div>
+  </nav>
+
+  <section class="max-w-5xl mx-auto px-4 py-8 lg:py-10">
+    <h1 class="text-3xl md:text-4xl font-extrabold text-brand-900 mb-5">{title}</h1>
+    <div class="bg-brand-900 rounded-2xl flex justify-center p-4">
+      <iframe
+        class="block w-full max-w-[300px] aspect-[9/16] rounded-xl"
+        src={embedUrl}
+        title={title}
+        loading="eager"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+        allowfullscreen
+      ></iframe>
+    </div>
+    <p class="mt-4 text-brand-700">{description}</p>
+    <a href={watchUrl} class="inline-block mt-3 text-accent-700 font-semibold hover:underline">צפייה ב־YouTube</a>
+
+    <section id="which-lock" class="scroll-mt-32 border-t border-brand-100 mt-8 pt-8" aria-labelledby="which-lock-title">
+      <h2 id="which-lock-title" class="text-2xl font-extrabold text-brand-900 mb-3">{question}</h2>
+      <p class="text-brand-700 leading-8">{answer}</p>
+      <p class="mt-3 text-brand-700 leading-8">{integration}</p>
+      <div class="mt-5 flex flex-wrap gap-x-6 gap-y-2 font-semibold text-accent-700">
+        <a href="/smart-home/" class="hover:underline">מערכות בית חכם</a>
+        <a href="/akuvox-mega-city-50/" class="hover:underline">תכנון אינטרקום ובקרת כניסה</a>
+        <a href="/contactus/#project-enquiry" class="hover:underline">בדיקת התאמה לפרויקט שלכם</a>
+      </div>
+    </section>
+  </section>
+</BaseLayout>

@@ -2,6 +2,24 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import content from '../page-html/smart-home-villa.html?raw';
 
+const planningAnswers = [
+  {
+    id: 'knx-quote-files',
+    question: 'מה שולחים כדי לקבל הצעת מחיר למערכת KNX לווילה?',
+    answer: 'שלחו לאיי פיל תוכנית אדריכלית ותוכנית חשמל לכל קומה, רצוי ב־DWG, או ב־PDF עדכני עם קנה מידה אם אין עדיין DWG. ציינו את שלב הבנייה, מיקום הלוחות, מעגלי התאורה והעמעום, התריסים, סוג המיזוג והחדרים שצריכים שליטה. כשחסרים פרטים אפשר להתחיל באומדן ולהשלים באפיון את הכמויות והחריגים להצעה.',
+  },
+  {
+    id: 'knx-electrician-handoff',
+    question: 'מה צריך לסגור עם החשמלאי לפני שסוגרים את הקירות?',
+    answer: 'עברו לפי חדרים על מיקום הלחצנים והחיישנים, מעגלי התאורה וההצללה, הכנת כבל ה־BUS והמקום בלוחות החשמל. ליד כל מפסק ציינו גם את הדגם או סוג הקופסה, העומק והתושבת. במיזוג ובגינה סמנו מי מספק את הממשק ואילו פעולות בודקים במסירה. רשימה חתומה או תוכנית מעודכנת מונעות אי־הבנות בין האדריכל, החשמלאי וספק ה־KNX.',
+  },
+  {
+    id: 'knx-compare-quotes',
+    question: 'איך משווים שתי הצעות מחיר לבית חכם KNX?',
+    answer: 'בקשו מכל ספק לענות על אותה רשימת חדרים ומעגלים. השוו את דגמי הלחצנים והבקרים, את היקף העמעום והמיזוג, את ההתקנה ואת תכנות התרחישים ב־ETS. בקשו לציין מה באחריות החשמלאי או ספק המיזוג, מה נבדק במסירה, אילו שרטוטים וקובץ פרויקט יימסרו ומה כלול בשירות לאחר האכלוס.',
+  },
+];
+
 const meta = {
   title: "בית חכם לווילה | תכנון KNX מקצה לקצה לבנייה פרטית | i-feel",
   description: "בית חכם לווילה חדשה: תאורה, תריסים, מיזוג, אודיו, אבטחה וגינה במערכת KNX אחת. תכנון משלב החשמל, התקנה ותכנות בחברה אחת. אפיון וטווח תקציב — 03-508-9553.",
@@ -79,7 +97,12 @@ const meta = {
               "@type": "Answer",
               "text": "העלות תלויה בגודל הווילה, במספר מעגלי התאורה והתריסים וברמת האינטגרציה עם מיזוג, אבטחה, אודיו וגינה. תכנון מוקדם בבנייה חדשה מאפשר להגדיר תשתית נכונה ולקבל טווח תקציב ראשוני אחרי אפיון."
             }
-          }
+          },
+          ...planningAnswers.map(({ question, answer }) => ({
+            "@type": "Question",
+            "name": question,
+            "acceptedAnswer": { "@type": "Answer", "text": answer }
+          }))
         ]
       }
     ]
@@ -88,6 +111,22 @@ const meta = {
 ---
 <BaseLayout {...meta}>
   <Fragment set:html={content} />
+  <section class="max-w-5xl mx-auto px-4 py-10" aria-labelledby="villa-knx-planning-questions">
+    <h2 id="villa-knx-planning-questions" class="text-2xl font-extrabold mb-5">שלוש שאלות לפני שסוגרים הצעת KNX לווילה</h2>
+    <div class="space-y-5">
+      {planningAnswers.map(({ id, question, answer }) => (
+        <div id={id}>
+          <h3 class="text-lg font-bold mb-2">{question}</h3>
+          <p class="leading-relaxed">{answer}</p>
+        </div>
+      ))}
+    </div>
+    <p class="mt-5 text-sm leading-relaxed">
+      להמשך: <a class="underline" href="/smart-home-price/">מדריך עלויות לבית חכם</a>,
+      <a class="underline" href="/knx-switch-advisor/#gewiss-3-module">התאמת מפסקי KNX לקופסת גוויס 3</a>,
+      ו<a class="underline" href="https://www.knx.org/what-ets">הסבר על ETS של KNX Association</a>.
+    </p>
+  </section>
   <section class="max-w-5xl mx-auto px-4 py-10" aria-labelledby="villa-consultation">
     <h2 id="villa-consultation" class="text-2xl font-extrabold mb-3">עלות ואחריות לבית חכם לווילה</h2>
     <p class="mb-4">בשיחת תכנון נבדוק מה כדאי להכין בשלב הנוכחי, מה משפיע על האומדן ואיך להגדיר אחריות לציוד, להתקנה ולתכנות.</p>

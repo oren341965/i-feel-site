@@ -1,6 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
+    <loc>https://i-feel.co.il/articles/siemens-building-x/</loc>
+    <lastmod>2026-11-23</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://i-feel.co.il/equipment/</loc>
     <lastmod>2026-10-06</lastmod>
     <changefreq>monthly</changefreq>
@@ -158,7 +164,7 @@
   </url>
   <url>
     <loc>https://i-feel.co.il/smart-home/</loc>
-    <lastmod>2026-11-09</lastmod>
+    <lastmod>2026-11-26</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
@@ -252,7 +258,7 @@
   <url><loc>https://i-feel.co.il/en/siemens-desigo-bms-israel/</loc><lastmod>2026-06-24</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
   <url><loc>https://i-feel.co.il/answers/what-is-bms/</loc><lastmod>2026-06-24</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
   <url><loc>https://i-feel.co.il/answers/bms-vs-smart-home/</loc><lastmod>2026-06-24</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://i-feel.co.il/answers/what-is-dali/</loc><lastmod>2026-06-24</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://i-feel.co.il/answers/what-is-dali/</loc><lastmod>2026-11-26</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
   <url><loc>https://i-feel.co.il/answers/what-is-ddc/</loc><lastmod>2026-06-24</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
   <url><loc>https://i-feel.co.il/answers/what-is-bacnet/</loc><lastmod>2026-06-24</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
   <url><loc>https://i-feel.co.il/answers/bms-for-hotels/</loc><lastmod>2026-10-07</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
@@ -367,7 +373,7 @@
   </url>
   <url>
     <loc>https://i-feel.co.il/structure-control/</loc>
-    <lastmod>2026-11-09</lastmod>
+    <lastmod>2026-11-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
@@ -637,7 +643,7 @@
     <priority>0.7</priority>
   </url>  <url>
     <loc>https://i-feel.co.il/structure-control/dali-lighting-control/</loc>
-    <lastmod>2026-10-08</lastmod>
+    <lastmod>2026-11-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>  <url>
@@ -1061,6 +1067,7 @@
   <url><loc>https://i-feel.co.il/articles/roborock-smart-home-integration-2026/</loc></url>
   <url><loc>https://i-feel.co.il/smart-home-support/</loc></url>
   <url><loc>https://i-feel.co.il/video/lighting-dimmer/</loc></url>
+  <url><loc>https://i-feel.co.il/video/electric-door-lock/</loc></url>
   <url><loc>https://i-feel.co.il/articles/siemens-knx-push-button-interface/</loc><lastmod>2026-11-02</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url>
     <loc>https://i-feel.co.il/articles/knx-awards-2026-smart-building-trends/</loc>
@@ -1068,10 +1075,10 @@
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
-  <url><loc>https://i-feel.co.il/siemens-knx-products/</loc><lastmod>2026-11-02</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://i-feel.co.il/siemens-knx-products/</loc><lastmod>2026-11-24</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url>
     <loc>https://i-feel.co.il/dmx-home-lighting/</loc>
-    <lastmod>2026-10-08</lastmod>
+    <lastmod>2026-11-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -1147,4 +1154,11 @@
   <url><loc>https://i-feel.co.il/av/origin-acoustics-os65/</loc><lastmod>2026-11-18</lastmod></url>
   <url><loc>https://i-feel.co.il/structure-control/tzeirei-modiin-synagogue/</loc></url>
   <url><loc>https://i-feel.co.il/forms/</loc><lastmod>2026-11-11</lastmod></url>
+  <url><loc>https://i-feel.co.il/equipment/siemens-up251-11-knx-wall-motion-detector/</loc><lastmod>2026-11-24</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url>
+    <loc>https://i-feel.co.il/articles/siemens-nvidia-eda-design-verification/</loc>
+    <lastmod>2026-11-28</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
 </urlset>

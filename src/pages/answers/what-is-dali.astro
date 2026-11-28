@@ -1,8 +1,9 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import { daliElectricianFaqs } from '../../data/dali-electrician-faqs.mjs';
 const url = 'https://i-feel.co.il/answers/what-is-dali/';
 const question = 'מה זה DALI?';
-const answer = 'DALI (Digital Addressable Lighting Interface) הוא פרוטוקול תקני דיגיטלי לבקרת תאורה, שמאפשר לתת לכל גוף תאורה כתובת ייחודית — ומכאן עמעום מדויק, תרחישים, שליטה אזורית ודיווח סטטוס ותקלות לכל גוף בנפרד. DALI נפוץ במשרדים, מבני ציבור ומבנים מסחריים, ומשתלב במערכת בקרת מבנה (BMS) וב-KNX.';
+const answer = 'DALI (Digital Addressable Lighting Interface) הוא פרוטוקול דיגיטלי לבקרת ציוד תאורה תואם: כתובות לדרייברים, עמעום, קבוצות, תרחישים וחיוויי מצב לפי יכולות הציוד. הוא מתאים לבית ולדירה וגם למשרדים ולמבני ציבור. ניתן לשלבו ב-KNX, ב-BMS או במערכת בית חכם אלחוטית באמצעות בקר תואם ובדיקת התשתית.';
 const meta = {
   title: 'מה זה DALI? בקרת תאורה דיגיטלית | i-feel',
   description: answer.slice(0,155), canonical: url, ogTitle: question+' | i-feel', ogDescription: 'פרוטוקול בקרת תאורה DALI — כתובת לכל גוף, עמעום, תרחישים ודיווח סטטוס.', ogUrl: url, ogImage: 'https://i-feel.co.il/assets/og-cover.jpg',
@@ -11,9 +12,10 @@ const meta = {
     { '@type':'BreadcrumbList', itemListElement:[ { '@type':'ListItem', position:1, name:'דף הבית', item:'https://i-feel.co.il/' }, { '@type':'ListItem', position:2, name:'שאלות ותשובות', item:'https://i-feel.co.il/answers/' }, { '@type':'ListItem', position:3, name:question, item:url } ] },
     { '@type':'Article', headline:question, author:{ '@id':'https://i-feel.co.il/#business' }, publisher:{ '@id':'https://i-feel.co.il/#business' }, mainEntityOfPage:url, inLanguage:'he-IL' },
     { '@type':'FAQPage', mainEntity:[
+      ...daliElectricianFaqs.map((faq) => ({ '@type':'Question', name:faq.question, acceptedAnswer:{ '@type':'Answer', text:faq.answer } })),
       { '@type':'Question', name:question, acceptedAnswer:{ '@type':'Answer', text:answer } },
       { '@type':'Question', name:'מה היתרון של DALI על פני בקרת תאורה רגילה?', acceptedAnswer:{ '@type':'Answer', text:'לכל גוף תאורה כתובת ייחודית — עמעום מדויק, חלוקה לאזורים בתוכנה, תרחישים, ודיווח סטטוס ותקלות פר גוף, בלי לשנות חיווט.' } },
-      { '@type':'Question', name:'איך DALI משתלב ב-BMS?', acceptedAnswer:{ '@type':'Answer', text:'DALI מתחבר למערכת בקרת המבנה דרך שער/בקר (למשל KNX-DALI gateway או Siemens Desigo), כך שהתאורה מנוהלת יחד עם המיזוג והאנרגיה ממסוף מרכזי.' } } ] }
+      { '@type':'Question', name:'איך DALI משתלב ב-BMS?', acceptedAnswer:{ '@type':'Answer', text:'DALI מתחבר למערכת בקרת המבנה דרך בקר (למשל KNX-DALI gateway או Siemens Desigo), כך שהתאורה מנוהלת יחד עם המיזוג והאנרגיה ממסוף מרכזי.' } } ] }
   ] })
 };
 ---
@@ -24,7 +26,13 @@ const meta = {
     <div class="not-prose bg-brand-50 border-r-4 border-accent-500 rounded-lg p-6 my-6"><p class="text-lg leading-relaxed text-brand-800" style="margin:0"><strong>תשובה קצרה:</strong> {answer}</p></div>
     <h2>למה DALI שונה</h2><p>בניגוד לבקרה מסורתית, ב-DALI לכל גוף תאורה <strong>כתובת ייחודית</strong> — אפשר לעמעם, לחלק לאזורים בתוכנה (בלי לשנות חיווט), להריץ תרחישים ולקבל דיווח סטטוס ותקלות לכל גוף. לפירוט מלא כולל DALI-2 וההשוואה ל-0-10V ראו <a href="/structure-control/dali-lighting-control/">בקרת תאורה DALI</a>.</p>
     <p>לפני הזמנת תאורה לבית או לווילה, ראו <a href="/articles/knx-dimmers-triac-0-10v-dali2/#dimming-sample-review">איך מתעדים בדיקת עמעום לדוגמה עם KNX ו־DALI-2</a>, מהדגם שנבדק ועד לתוצאה שאושרה.</p>
-    <h2>DALI בבקרת מבנה</h2><p>DALI משתלב ב-<a href="/structure-control/">בקרת מבנה</a> וב-<a href="/knx-smart-home/">KNX</a> דרך שער ייעודי, כך שהתאורה מנוהלת יחד עם המיזוג והאנרגיה — נפוץ במשרדים ובמבני ציבור.</p>
+    <h2>DALI בבית ובבקרת מבנה</h2><p>לבחירת המסלול המתאים: <a href="/structure-control/dali-lighting-control/#home-lighting">תאורה לבית ולדירה</a>, <a href="/structure-control/dali-lighting-control/#wireless-home">שילוב עם בית אלחוטי</a> או <a href="/structure-control/dali-lighting-control/#bms-value">בקרת תאורה בבניין</a>.</p>
+    {daliElectricianFaqs.map((faq) => (
+      <section id={faq.id} class="scroll-mt-32">
+        <h2>{faq.question}</h2><p>{faq.answer}</p>
+        <p><a href={`/structure-control/dali-lighting-control/#${faq.id}`}>לתשובה במדריך החיווט המלא של i-feel</a> · <a href="/structure-control/dali-lighting-control/#dali-wiring-electricians">לתרשים ולכללי ההתקנה</a></p>
+      </section>
+    ))}
     <div class="not-prose bg-brand-50 rounded-lg p-5 my-8"><p class="font-bold text-brand-900 mb-2" style="margin:0">שאלות קשורות</p><ul class="space-y-1" style="margin:0"><li><a href="/structure-control/dali-lighting-control/" class="text-accent-600 font-semibold hover:underline">בקרת תאורה DALI ו-DALI-2 (מדריך מלא)</a></li><li><a href="/answers/what-is-bms/" class="text-accent-600 font-semibold hover:underline">מה זה BMS?</a></li></ul></div>
   </div></article>
   <section class="bg-brand-900 text-white py-14"><div class="max-w-4xl mx-auto px-4 text-center"><h2 class="text-2xl md:text-3xl font-extrabold mb-4">צריכים בקרת תאורה DALI?</h2><div class="flex flex-wrap justify-center gap-3"><a href="tel:+972-3-508-9553" class="bg-accent-500 hover:bg-accent-600 text-white px-7 py-3 rounded-lg font-semibold">03-508-9553</a><a href="/structure-control/dali-lighting-control/" class="bg-white/10 text-white px-7 py-3 rounded-lg font-semibold border border-white/30">לעמוד DALI</a></div></div></section>

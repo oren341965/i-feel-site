@@ -304,6 +304,30 @@ meta.jsonLd = JSON.stringify(eilatVideoGraph);
 ---
 <BaseLayout {...meta}>
   <Fragment set:html={enhancedContent} />
+  <section class="bg-brand-50 border-y border-brand-100 py-10" dir="rtl" aria-labelledby="bms-building-x">
+    <div class="max-w-4xl mx-auto px-4">
+      <p class="text-sm font-bold text-brand-700 mb-2">מדריך · ניהול אנרגיה ובקרת מבנה</p>
+      <h2 id="bms-building-x" class="text-2xl font-bold text-brand-900 mb-3"><bdi>Siemens Building X:</bdi> מה מוסיף הענן למערכת הבקרה?</h2>
+      <p class="text-brand-700 leading-relaxed mb-4">איך מאתרים צריכת אנרגיה חריגה, מנתחים תקלות מרחוק ומשווים בין מבנים, ומה אפשר למדוד כבר באתר הראשון.</p>
+      <a href="/articles/siemens-building-x/" class="text-accent-700 font-bold underline">לסרטון ולכתבה על Siemens Building X</a>
+    </div>
+  </section>
+  <section class="bg-white border-y border-brand-100 py-10" dir="rtl" aria-labelledby="bms-project-examples">
+    <div class="max-w-4xl mx-auto px-4">
+      <h2 id="bms-project-examples" class="text-2xl font-bold text-brand-900 mb-3">בקרת מבנה בפועל: מבקרי DDC ועד Siemens Desigo CC</h2>
+      <p class="text-brand-700 leading-relaxed mb-4"><a href="/structure-control/caesarea-rail-campus/" class="font-bold underline">קמפוס רכבת קיסריה</a> מדגים איך מערכת Siemens Desigo מרכזת מידע ממבנים מרובים, כולל צ׳ילרים, יחידות טיפול באוויר, מונים ולוחות חשמל. צוות התפעול רואה מצבי ציוד, צריכה ומגמות בממשק מרכזי.</p>
+      <dl class="grid gap-4 md:grid-cols-2 text-brand-700">
+        <div><dt class="font-bold text-brand-900">ציוד בקרה בשטח</dt><dd>בקרי Siemens Desigo PXC ומודולי TX-I/O לפי הצורך, לחיבור חיישנים, מונים, שסתומים ומדפים ולהפעלת רצפי הבקרה המקומיים.</dd></div>
+        <div><dt class="font-bold text-brand-900">ניהול מרכזי ב־Desigo CC</dt><dd>מסכי תפעול, התראות, מגמות, לוחות זמנים והרשאות לפי מבנה, אזור ומערכת.</dd></div>
+        <div><dt class="font-bold text-brand-900">מיזוג, אנרגיה ותשתיות</dt><dd>בקרת צ׳ילרים, יט״אות, משאבות ומפוחים, ניטור מונים וחיווי לוחות וגנרטורים לפי המפרט וממשקי הציוד.</dd></div>
+        <div><dt class="font-bold text-brand-900">אינטגרציה ותאורה</dt><dd>חיבור מערכות קיימות באמצעות BACnet ו־Modbus, ושילוב KNX ו־DALI-2 לפי התאימות והרישוי.</dd></div>
+      </dl>
+      <p class="text-brand-700 leading-relaxed mt-4"><strong>דוגמאות נוספות:</strong> <a href="/structure-control/projects/" class="underline">ברינקס, בני ברק</a> לבקרה במתקן תפעולי, ו<a href="/structure-control/beit-halochem-ashdod/" class="underline">בית הלוחם באשדוד</a> לשליטה בתאורה וחיווי מרכזי. <a href="/bms-universities-campuses/" class="underline">בקמפוסים אקדמיים</a> אפשר להגדיר לוחות זמנים וניטור אנרגיה לכל מבנה ואזור.</p>
+      <p class="text-brand-700 leading-relaxed mt-4">I FEEL מלווה את היועצים משלב סקירת המפרט והגדרת נקודות I/O, דרך תכנות ובדיקות נקודה לנקודה, ועד להפעלה, הדרכה ותיעוד למסירה.</p>
+      <a href="/video/" class="inline-block mt-3 text-accent-700 font-bold underline">לסרטוני הפרויקטים וההדגמות</a>
+      <a href="/structure-control/ifeel-bms-overview.pdf" class="inline-block mt-3 mr-4 text-accent-700 font-bold underline">להורדת פלייר בקרת המבנה (PDF)</a>
+    </div>
+  </section>
   <DesigoVideo heading="איך עובדת מערכת בקרת מבנה מקצה לקצה — Siemens Desigo" />
   <section class="bg-accent-50 border-y border-accent-100 py-10" dir="rtl" aria-label="ממשקי KNX ו-BACnet">
     <div class="max-w-4xl mx-auto px-4">

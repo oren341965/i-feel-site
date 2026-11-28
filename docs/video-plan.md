@@ -13,6 +13,7 @@
 
 | נושא | קטגוריה ב-/video/ | YouTube ID | דף-נושא ייעודי |
 |------|-------------------|------------|----------------|
+| Siemens Building X: ניהול אנרגיה ותפעול מבנים בענן | BMS | `oWzPM6B1NJw` | `/articles/siemens-building-x/#video` |
 | תאורת DMX לבית: צבע ועמעום, DALI-2 ו־Siemens KNX | בית חכם ו-KNX | `IfWiNCE3fWY` | `/dmx-home-lighting/#video` |
 | תריסים ווילונות — שליטה והגדרת מצבים (פורסם ב־2026-11-04) | הדרכות שימוש | `eHC2rN1SNPE` | — |
 | Touchwand LCD — מסך מגע | הדרכות שימוש | `_94Ph8MSXS0` | — |
@@ -103,3 +104,9 @@
 | לילה טוב | /smart-home/ | /assets/smartsphere/goodnight.webm |
 
 | בית הלוחם באשדוד — Siemens Desigo ותאורת KNX (2:30, הסברים כתובים) | BMS | `-_JsdqUoI3k` | /video/#beit-halochem-video, /structure-control/#beit-halochem-video, /siemens-desigo-bms/#beit-halochem-video |
+
+## הוכן לפרסום — חדרי ישיבות עם קירות זכוכית (2026-11-22)
+
+| נושא | קטגוריה | YouTube ID | הטמעה | מצב |
+|---|---|---|---|---|
+| חדר ישיבות עם קירות זכוכית — שליטה בתאורה ובווילונות | חדרי ישיבות ואודיו | `Y8EwY5k84hk` | /video/#glass-meeting-room, /smart-office/#glass-meeting-room-video | ממתין למיזוג ופריסה |

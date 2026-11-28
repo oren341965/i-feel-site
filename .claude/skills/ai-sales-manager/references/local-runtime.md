@@ -2,6 +2,8 @@
 
 The intended runtime root is `C:\ifeel-sales`. Repository files are templates only; installation is a separate approved step. Do not register Task Scheduler jobs in phase A.
 
+Meta is outside Shark's workflow scope per Oren's 2026-11-28 instruction. `morning-run.mjs` and `preflight-readonly.mjs` skip its collector even when old host configuration says connected/liveVerified. The report marks it `EXCLUDED_BY_OWNER_TEMPORARY`, with no synthetic spend or lead counts. Existing Google/Monday/attribution failures still block their dependent work. The total paid-media budget guard still treats missing Meta spend as incomplete evidence if the budget policy includes Meta; it does not abort the read-only sales run or authorize an increase. Deploy this canonical skill through the managed installer after merge; do not change secrets, connector flags or schedules to implement the exclusion.
+
 ```text
 C:\ifeel-sales\
   data\

@@ -1,3 +1,5 @@
+import { excludedMetaSource } from './sales-source-scope.mjs';
+
 const MATURITY_DRY_RUN = 0;
 
 export const SALES_SYSTEM_CONSTANTS = Object.freeze({
@@ -503,7 +505,7 @@ export function orchestrateSalesSystem(input = {}) {
   const maturity = MATURITY_DRY_RUN;
   const capacity = evaluateCapacity(input.capacity);
   const googleAds = evaluateLiveConnection(input.connections?.googleAds);
-  const metaAds = evaluateLiveConnection(input.connections?.metaAds);
+  const metaAds = excludedMetaSource();
   const mayaStack = new Set(input.mayaStack?.availableSkills ?? []);
   const availableSkills = [
     ...(Array.isArray(input.availableSkills) ? input.availableSkills : []),
@@ -553,7 +555,7 @@ export function orchestrateSalesSystem(input = {}) {
       },
       metaAds: {
         ...metaAds,
-        auditChecks: [...META_ADS_AUDIT_CHECKS],
+        auditChecks: [],
       },
     },
     baseline: {

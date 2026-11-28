@@ -22,6 +22,7 @@ const jsonLd = JSON.stringify({
     brand: { '@type': 'Brand', name: product.brand },
     manufacturer: { '@type': 'Organization', name: product.brand },
   } : {}),
+  ...('image' in product ? { image: `https://i-feel.co.il${product.image}` } : {}),
   url: canonical,
 });
 ---
@@ -39,10 +40,24 @@ const jsonLd = JSON.stringify({
 
     <div class="mx-auto grid max-w-5xl gap-10 px-4 py-10 lg:grid-cols-[minmax(0,1fr)_18rem]">
       <article class="min-w-0">
+        {'image' in product && <figure class="mb-9 rounded-xl border border-brand-100 bg-white p-6"><img src={product.image} alt={product.imageAlt} width="5730" height="2105" class="mx-auto h-auto max-h-96 w-auto max-w-full object-contain" /><figcaption class="mt-3 text-center text-sm text-brand-600">{'imageCaption' in product ? product.imageCaption : product.title}</figcaption></figure>}
         <section aria-labelledby="role-heading" class="mb-9">
           <h2 id="role-heading" class="mb-3 text-2xl font-bold text-brand-900">מה המוצר עושה</h2>
           <p class="text-lg leading-8 text-brand-700">{product.purpose}</p>
         </section>
+        {product.slug === 'siemens-up251-11-knx-wall-motion-detector' && (
+          <section id="video" aria-labelledby="product-video-heading" class="mb-9">
+            <h2 id="product-video-heading" class="mb-3 text-2xl font-bold text-brand-900">סרטון הדגמה לתאורת מדרגות</h2>
+            <iframe
+              class="aspect-[9/16] w-full max-w-xs rounded-xl"
+              src="https://www.youtube-nocookie.com/embed/mTmqreriE1E"
+              title="תאורת מדרגות חכמה עם גלאי Siemens UP 251/11"
+              loading="lazy"
+              allowfullscreen
+            ></iframe>
+            <a href="https://www.youtube.com/watch?v=mTmqreriE1E" class="mt-3 inline-block font-bold text-accent-700 underline">צפייה ביוטיוב</a>
+          </section>
+        )}
         <section aria-labelledby="spec-heading" class="mb-9">
           <h2 id="spec-heading" class="mb-4 text-2xl font-bold text-brand-900">מפרט טכני</h2>
           <div class="overflow-hidden rounded-xl border border-brand-200">

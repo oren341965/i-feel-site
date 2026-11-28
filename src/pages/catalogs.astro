@@ -1,5 +1,15 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import ArchitectSolutionsCatalog from '../components/ArchitectSolutionsCatalog.astro';
+import { architectSolutions } from '../data/architect-solutions.mjs';
+import CatalogReader from '../components/CatalogReader.astro';
+
+const catalogContent = content.replace(
+  /(<a href="\/assets\/catalogs\/([a-z0-9-]+)\.pdf"[^>]*>)/g,
+  '<a href="/catalogs/?catalog=$2" class="catalog-read-link" data-catalog="$2">דפדוף בקטלוג</a> $1',
+);
+const [beforeSolutions, afterSolutions] = catalogContent.split('<!-- ARCHITECT_SOLUTIONS_CATALOG -->');
+if (afterSolutions === undefined) throw new Error('Missing architect solution catalog placement.');
 import content from '../page-html/page-05.html?raw';
 import KnxAdvisorCta from '../components/KnxAdvisorCta.astro';
 import PeoniaExamples from '../components/PeoniaExamples.astro';
@@ -118,7 +128,7 @@ const jsonLd = {
       '@type': 'CollectionPage',
       '@id': 'https://i-feel.co.il/catalogs/#page',
       url: 'https://i-feel.co.il/catalogs/',
-      name: 'קטלוגים להורדה',
+      name: 'קטלוגים לצפייה ולהורדה',
       description: 'אוסף הקטלוגים הרשמיים של i-feel, בית חכם אלחוטי, KNX, בקרת מבנה BMS, סימנס, בנייה רוויה, אדריכלים, מלונאות ומדריכי התקנה.',
       inLanguage: 'he-IL',
       isPartOf: { '@id': 'https://i-feel.co.il/#website' },
@@ -174,11 +184,18 @@ const jsonLd = {
   ],
 };
 
+jsonLd['@graph'].push({
+  '@type': 'ItemList',
+  '@id': 'https://i-feel.co.il/catalogs/#architect-solutions',
+  name: 'פתרונות לאדריכלים ולמעצבי פנים לפי האתגר בתכנון',
+  itemListElement: architectSolutions.map((item, index) => ({ '@type': 'ListItem', position: index + 1, name: item.title, url: 'https://i-feel.co.il/catalogs/#' + item.id })),
+});
+
 const meta = {
-  title: 'קטלוגים להורדה | בית חכם, KNX, BMS ובנייה רוויה | i-feel',
+  title: 'קטלוגים לצפייה ולהורדה | בית חכם, KNX, BMS ובנייה רוויה | i-feel',
   description: 'קטלוגים רשמיים של i-feel להורדה, בית חכם אלחוטי, KNX קווי, בקרת מבנה BMS, סימנס, בנייה רוויה, אדריכלים ומלונאות. PDF, ללא הרשמה.',
   canonical: 'https://i-feel.co.il/catalogs/',
-  ogTitle: 'קטלוגים להורדה | i-feel',
+  ogTitle: 'קטלוגים לצפייה ולהורדה | i-feel',
   ogDescription: 'כל הקטלוגים הרשמיים של i-feel, בית חכם, KNX, BMS, בנייה רוויה ומלונאות. PDF להורדה.',
   ogUrl: 'https://i-feel.co.il/catalogs/',
   ogImage: 'https://i-feel.co.il/assets/og-cover.jpg',
@@ -186,7 +203,10 @@ const meta = {
 };
 ---
 <BaseLayout {...meta}>
-  <Fragment set:html={content} />
+  <Fragment set:html={beforeSolutions} />
+  <ArchitectSolutionsCatalog />
+  <Fragment set:html={afterSolutions} />
+  <CatalogReader />
 
   <section id="siemens-professional-resources" class="bg-white py-12 lg:py-16 border-b border-brand-100" dir="rtl">
     <div class="max-w-7xl mx-auto px-4">

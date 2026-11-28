@@ -9,6 +9,8 @@ Keep Maya's work inbox small, classified and actionable without losing customer 
 
 ## Identity and schedule gate
 
+- For Oren's 2026-11-24 task-route authorization, first read [approved task authority](references/approved-task-authority.md). It records the four permitted task requesters, the four exact approved email templates, and Maya's bounded permission to document conversations and activity in the matching Monday item. These specific permissions supersede earlier actor-level prohibitions below; they do not change runtime readiness, enable WhatsApp, or authorize unrelated writes.
+
 - An explicit channel-specific instruction from Oren may authorize an operational email run, including a scheduled run, beyond the default REPORT_ONLY mode below. Apply only the named permissions; do not infer production commissioning, credential changes, Monday writes or WhatsApp activation. Use [approved email operations](references/approved-email-operations.md) for this mode. For proactive sends, use the canonical protected ledger and transaction in [proactive send ledger](references/proactive-send-ledger.md). A running scheduler is not evidence of completed mailbox work.
 
 - Before every run, read the authenticated Gmail profile and compare it with the Maya mailbox configured by the automation. Stop with `WRONG_MAILBOX` when the address is absent, belongs to Oren or does not exactly match the configured Maya address.
