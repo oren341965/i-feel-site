@@ -3,7 +3,7 @@ import { isAbsolute, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import { collectGoogleAdsReadOnly } from '../../google-ads-manager/scripts/google-ads-readonly.mjs';
-import { collectMetaAdsReadOnly } from '../../meta-ads-manager/scripts/meta-ads-readonly.mjs';
+import { excludedMetaSource } from './sales-source-scope.mjs';
 import { collectAttributionReadOnly } from '../../lead-attribution-feedback/scripts/attribution-readonly.mjs';
 import { collectMondaySnapshotReadOnly } from './monday-snapshot-readonly.mjs';
 import { evaluateCapacity } from './orchestrate-sales-system.mjs';
@@ -38,10 +38,6 @@ function parseArgs(argv) {
 function finiteNumber(value) {
   const number = Number(value);
   return Number.isFinite(number) ? number : 0;
-}
-
-function sum(rows, field) {
-  return rows.reduce((total, row) => total + finiteNumber(row?.[field]), 0);
 }
 
 async function directoryFileCount(path) {
@@ -141,7 +137,6 @@ export async function runSalesPreflightReadOnly({
   now = new Date(),
   mondayCollector = collectMondaySnapshotReadOnly,
   googleAdsCollector = collectGoogleAdsReadOnly,
-  metaAdsCollector = collectMetaAdsReadOnly,
   attributionCollector = collectAttributionReadOnly,
   vaultInspector = inspectVaultReadOnly,
   contentInspector = inspectContentReadOnly,
@@ -157,22 +152,18 @@ export async function runSalesPreflightReadOnly({
   const settled = await Promise.allSettled([
     mondayCollector({ configPath, now: evidenceTime }),
     googleAdsCollector({ configPath, now: evidenceTime }),
-    metaAdsCollector({ configPath, now: evidenceTime }),
     attributionCollector({ configPath, now: evidenceTime }),
     vaultInspector(config),
     contentInspector(config),
     websiteInspector(config, evidenceTime),
   ]);
-  const [monday, googleAds, metaAds, attribution, vault, content, website] = settled.map(settledResult);
+  const [monday, googleAds, attribution, vault, content, website] = settled.map(settledResult);
   const blockers = [];
-  for (const [source, result] of Object.entries({ monday, googleAds, metaAds, attribution, vault, website, content })) {
+  for (const [source, result] of Object.entries({ monday, googleAds, attribution, vault, website, content })) {
     if (!result.ok) blockers.push(`${sourceBlockerName(source)}_READ_FAILED`);
   }
   if (attribution.ok && attribution.value.connection?.status !== 'LOCAL_SNAPSHOT_READ_ONLY') {
     blockers.push('ATTRIBUTION_NOT_VERIFIED');
-  }
-  if (metaAds.ok && metaAds.value.leadData?.status !== 'CONNECTED_READ_ONLY') {
-    blockers.push('META_LEAD_FORMS_CONNECTION_MISSING');
   }
   if (website.ok && website.value.status !== 'LOCAL_SNAPSHOT_READ_ONLY') blockers.push('WEBSITE_SNAPSHOT_STALE_OR_MISSING');
   if (vault.ok && vault.value.status !== 'READY_READ_ONLY') blockers.push('VAULT_NOT_READY');
@@ -226,21 +217,7 @@ export async function runSalesPreflightReadOnly({
         clicks: finiteNumber(googleAds.value.account?.metrics?.clicks),
         conversions: finiteNumber(googleAds.value.account?.metrics?.conversions),
       } : { status: 'READ_FAILED', reason: googleAds.error },
-      metaAds: metaAds.ok ? {
-        status: metaAds.value.connection?.status,
-        evidenceTime: metaAds.value.connection?.evidenceTime,
-        campaigns: metaAds.value.campaigns?.length ?? 0,
-        adSets: metaAds.value.adSets?.length ?? 0,
-        ads: metaAds.value.ads?.length ?? 0,
-        spend: sum(metaAds.value.insights ?? [], 'spend'),
-        clicks: sum(metaAds.value.insights ?? [], 'clicks'),
-        leadForms: metaAds.value.leadData?.status ?? 'CONNECTION_MISSING',
-        leadFormsReason: metaAds.value.leadData?.reason ?? null,
-        leadPermissionSignalsVerified: metaAds.value.leadData?.permissionSignalsVerified === true,
-        missingLeadPermissionSignals: Array.isArray(metaAds.value.leadData?.missingPermissionSignals)
-          ? metaAds.value.leadData.missingPermissionSignals
-          : [],
-      } : { status: 'READ_FAILED', reason: metaAds.error },
+      metaAds: excludedMetaSource(),
       attribution: attribution.ok ? {
         status: attribution.value.connection?.status,
         generatedAt: attribution.value.generatedAt ?? null,

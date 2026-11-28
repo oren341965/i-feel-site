@@ -15,6 +15,7 @@ async function fixture() {
     VAULT_ROOT: join(root, 'vault'),
     mondayBoardId: '2732725332',
     googleAdsAccountId: '251-497-1872',
+    connections: { metaAds: { connected: true, liveVerified: true, readOnly: true } },
     capacity: {
       activeUnownedLeadThreshold: 5,
       requireTrustedAttribution: true,
@@ -65,7 +66,7 @@ test('preflight aggregates read-only sources and never exposes operational rows 
       now: new Date('2026-08-27T09:00:00.000Z'),
       mondayCollector: monday,
       googleAdsCollector: googleAds,
-      metaAdsCollector: metaAds,
+      metaAdsCollector: () => { throw new Error('Excluded Meta must never be called'); },
       attributionCollector: attribution,
       vaultInspector: async () => ({ status: 'READY_READ_ONLY', obsidianDetected: true, busDetected: true }),
       contentInspector: async () => ({ status: 'EMPTY', totalFiles: 0, folders: {} }),
@@ -80,9 +81,10 @@ test('preflight aggregates read-only sources and never exposes operational rows 
     assert.equal(result.safety.schedulersChanged, 0);
     assert.equal(result.safety.mayaActivated, false);
     assert.equal(JSON.stringify(result).includes('not-exposed-by-preflight'), false);
-    assert.ok(result.blockers.includes('META_LEAD_FORMS_CONNECTION_MISSING'));
-    assert.equal(result.sources.metaAds.leadFormsReason, 'LEAD_FORM_LIST_FAILED_OR_PERMISSION_MISSING');
-    assert.deepEqual(result.sources.metaAds.missingLeadPermissionSignals, ['ads_management', 'pages_manage_ads']);
+    assert.equal(result.blockers.some((code) => code.startsWith('META_')), false);
+    assert.equal(result.sources.metaAds.status, 'EXCLUDED_BY_OWNER_TEMPORARY');
+    assert.equal('spend' in result.sources.metaAds, false);
+    assert.equal(result.status, 'READY_FOR_BOUNDED_DRY_RUN');
     assert.equal(result.capacity.status, 'CAPACITY_INPUT_MISSING');
     assert.equal(result.capacity.reasons.includes('ACTIVE_UNOWNED_LEADS_OVER_THRESHOLD'), false);
   } finally {

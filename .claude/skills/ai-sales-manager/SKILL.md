@@ -1,6 +1,6 @@
 ---
 name: ai-sales-manager
-description: Manage I Feel sales under ai-marketing-manager: audit Monday, coordinate Maya, review owners, follow-up, proposals and outcomes. Preserve attribution, capacity and adapters.
+description: "Manage I Feel sales under ai-marketing-manager: audit Monday, coordinate Maya, review owners, follow-up, proposals and outcomes. Preserve attribution, capacity and adapters."
 ---
 
 # I Feel AI Sales Manager
@@ -29,6 +29,8 @@ description: Manage I Feel sales under ai-marketing-manager: audit Monday, coord
 
 ## Non-negotiable invariants
 
+- Skip Meta per Oren; see `references/local-runtime.md`.
+
 - Monday is read-only unless Oren gives explicit, action-specific authorization. Never change its structure from this skill.
 - Quote-tracking runs use Gmail and the designated Google Sheet only. Do not access Monday or contact customers for quote-status work unless Oren explicitly authorizes the specific action in the current request.
 - On an explicitly authorized Hashavshevet customer-intake write, never confuse `מפתח` with `מספר`: copy the readable `מפתח` value to Monday column `______9` (`חשבשבת`) and verify it by reading the item back before reporting success.
@@ -52,7 +54,7 @@ description: Manage I Feel sales under ai-marketing-manager: audit Monday, coord
 
 - Pipeline analysis: `scripts/analyze-sales.mjs`
 - Audit ingestion: `scripts/report-sales-audit.mjs`; only after complete `live_read_only` analysis, using the same telemetry run key and no lead details.
-- Marketing ingestion: `scripts/report-marketing-audit.mjs`; reconcile Google, Meta, attribution and capacity into a PII-free snapshot with the same registered run key and zero protected actions.
+- Marketing ingestion: `scripts/report-marketing-audit.mjs`; requires separately verified sources, PII-free counters and the same run key.
 - Full-system dry run: `scripts/orchestrate-sales-system.mjs`
 - Bounded daily Google Ads decision: `../google-ads-manager/scripts/google-ads-decision-loop.mjs`
 - Morning dry run: `scripts/morning-run.mjs`; apply the [paid-media cap](references/paid-media-budget-policy.md).
