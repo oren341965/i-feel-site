@@ -55,7 +55,7 @@ export const articles: Article[] = [
     "updated": "2026-11-28",
     "image": "/assets/office-bms.jpeg",
     "imageAlt": "תמונת המחשה מאתר I FEEL לתחום בקרת מבנה",
-    "video": { "id": "rNpdTwzwJ44", "title": "ממשקי סימנס עם אינווידיה", "description": "מה אפשר ללמוד מהדגמת Siemens ו-NVIDIA על אימות לוחות ובקרת מבנה.", "uploadDate": "2026-11-28" },
+    "video": { "id": "_DSpsKfu2DY", "title": "ממשקי סימנס עם אינווידיה", "description": "מה אפשר ללמוד מהדגמת Siemens ו-NVIDIA על אימות לוחות ובקרת מבנה.", "uploadDate": "2026-11-28" },
     "related": [
       { "label": "ממשקי סימנס עם אינווידיה בטיקטוק", "href": "https://www.tiktok.com/@orenlevy4/video/7713169512241171719" },
       {
