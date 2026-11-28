@@ -49,12 +49,13 @@ export type Article = {
 export const articles: Article[] = [
   {
     "slug": "siemens-nvidia-eda-design-verification",
-    "title": "Siemens ו-NVIDIA מציגות סוכני AI לתכנון שבבים. מה אפשר ללמוד לבקרת מבנה?",
+    "title": "ממשקי סימנס עם אינווידיה",
     "description": "מה Siemens הדגימה בכנס GTC Berlin ואיך עקרונות האימות ההנדסי מתחברים לבדיקות לוחות ובקרת מבנה, משלב המפרט ועד למסירה.",
     "category": "עדכוני Siemens / בקרת מבנה",
     "updated": "2026-11-28",
     "image": "/assets/office-bms.jpeg",
     "imageAlt": "תמונת המחשה מאתר I FEEL לתחום בקרת מבנה",
+    "video": { "id": "rNpdTwzwJ44", "title": "ממשקי סימנס עם אינווידיה", "description": "מה אפשר ללמוד מהדגמת Siemens ו-NVIDIA על אימות לוחות ובקרת מבנה.", "uploadDate": "2026-11-28" },
     "related": [
       {
         "label": "בקרת מבנה BMS",
