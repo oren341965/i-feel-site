@@ -1155,4 +1155,10 @@
   <url><loc>https://i-feel.co.il/structure-control/tzeirei-modiin-synagogue/</loc></url>
   <url><loc>https://i-feel.co.il/forms/</loc><lastmod>2026-11-11</lastmod></url>
   <url><loc>https://i-feel.co.il/equipment/siemens-up251-11-knx-wall-motion-detector/</loc><lastmod>2026-11-24</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url>
+    <loc>https://i-feel.co.il/articles/siemens-nvidia-eda-design-verification/</loc>
+    <lastmod>2026-11-28</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
 </urlset>
